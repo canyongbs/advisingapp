@@ -74,6 +74,7 @@ class SendEmailAction
         return Action::make('send_email')
             ->label('Send Email')
             ->icon('heroicon-m-chat-bubble-bottom-center-text')
+            ->slideOver()
             ->modalHeading('Send Message')
             ->model(Engagement::class)
             ->authorize(fn () => Auth::user()->can('create', Engagement::class))

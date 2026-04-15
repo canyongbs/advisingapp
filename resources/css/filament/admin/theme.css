@@ -409,11 +409,6 @@
     }
 }
 
-/* Modal Height */
-.fi-modal:not(.fi-modal-slide-over):not(.fi-width-screen) > .fi-modal-window-ctn > .fi-modal-window {
-    @apply max-h-[90dvh] overflow-y-auto;
-}
-
 .def-fo-searchable-input-dropdown-list-item {
     @apply dark:hover:bg-white/10 dark:active:bg-white/20;
 }

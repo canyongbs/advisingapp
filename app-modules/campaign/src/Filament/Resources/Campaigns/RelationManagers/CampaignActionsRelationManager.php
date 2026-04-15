@@ -98,6 +98,7 @@ class CampaignActionsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Action::make('create')
+                    ->slideOver()
                     ->label('New')
                     ->modalHeading('Create Journey Steps')
                     ->schema([
@@ -151,6 +152,7 @@ class CampaignActionsRelationManager extends RelationManager
                     })
                     ->databaseTransaction(),
                 EditAction::make()
+                    ->slideOver()
                     ->modalHeading(fn (CampaignAction $action) => 'Edit ' . $action->type->getLabel())
                     ->hidden(fn (CampaignAction $record) => $campaign->hasBeenExecuted() === true || $record->cancelled_at !== null)
                     ->mutateRecordDataUsing(function (array $data): array {

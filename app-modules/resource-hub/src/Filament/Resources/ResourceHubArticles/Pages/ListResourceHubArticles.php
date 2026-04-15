@@ -233,6 +233,7 @@ class ListResourceHubArticles extends ListRecords
     {
         return [
             CreateAction::make()
+                ->slideOver()
                 ->disabled(fn (): bool => ! auth()->user()->can('resource_hub_article.create'))
                 ->createAnother(false)
                 ->successRedirectUrl(fn (Model $record): string => ResourceHubArticleResource::getUrl('edit', ['record' => $record])),
