@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -52,7 +52,7 @@ class ConsentAgreementSeeder extends Seeder
                 'body' => <<<EOT
                 PLEASE READ THIS POLICY CAREFULLY. BY CLICKING "I ACCEPT" OR OTHERWISE USING ANY PART OF THIS ENTERPRISE ARTIFICIAL INTELLIGENCE (“AI”) ASSISTANT TOOL, YOU ARE AGREEING TO THE TERMS OF THIS POLICY. If you do not agree to these terms, please do not use this AI Assistant tool.
 
-                Welcome to [Institution Name]'s AI Assistant Tool. This Acceptable Use Policy ("Policy”) governs the use of generative AI assistant tools (“AI Assistant Tool”), including but not limited to the Advising App by Canyon GBS™, by all employees (“You” or “Your”). By using the AI Assistant Tool, You agree to comply with this Policy. Failure to comply may result in disciplinary action, up to and including termination of access and legal consequences.
+                Welcome to [Institution Name]'s AI Assistant Tool. This Acceptable Use Policy ("Policy”) governs the use of generative AI assistant tools (“AI Assistant Tool”), including but not limited to the Advising App by Canyon GBS®, by all employees (“You” or “Your”). By using the AI Assistant Tool, You agree to comply with this Policy. Failure to comply may result in disciplinary action, up to and including termination of access and legal consequences.
 
                 Acceptable Uses
 

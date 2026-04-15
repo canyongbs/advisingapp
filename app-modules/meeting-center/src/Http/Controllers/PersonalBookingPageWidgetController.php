@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -41,7 +41,6 @@ use AdvisingApp\MeetingCenter\Http\Requests\BookPersonalCalendarSlotRequest;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
-use App\Features\MaximumLeadTimeFeature;
 use App\Http\Controllers\Controller;
 use App\Settings\CollegeBrandingSettings;
 use Carbon\Carbon;
@@ -203,7 +202,7 @@ class PersonalBookingPageWidgetController extends Controller
         }
 
         // Check if the appointment exceeds the maximum lead time
-        $maxLeadTimeDays = MaximumLeadTimeFeature::active() ? ($bookingPage->maximum_booking_lead_time_days ?? 0) : 0;
+        $maxLeadTimeDays = $bookingPage->maximum_booking_lead_time_days ?? 0;
 
         if ($maxLeadTimeDays > 0) {
             $latestAllowed = now()->addDays($maxLeadTimeDays);

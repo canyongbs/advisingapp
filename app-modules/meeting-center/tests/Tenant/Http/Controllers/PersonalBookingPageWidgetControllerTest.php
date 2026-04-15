@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -39,7 +39,6 @@ use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use App\Features\MaximumLeadTimeFeature;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Mockery\MockInterface;
@@ -186,8 +185,6 @@ it('allows booking outside minimum lead time window', function () use ($workingH
 // Maximum Lead Time Tests
 
 it('rejects booking beyond maximum lead time window', function () use ($workingHours) {
-    MaximumLeadTimeFeature::activate();
-
     Carbon::setTestNow(Carbon::parse('2026-04-06 10:00:00', 'UTC'));
 
     $user = User::factory()
@@ -222,8 +219,6 @@ it('rejects booking beyond maximum lead time window', function () use ($workingH
 });
 
 it('allows booking within maximum lead time window', function () use ($workingHours) {
-    MaximumLeadTimeFeature::activate();
-
     Carbon::setTestNow(Carbon::parse('2026-04-06 10:00:00', 'UTC'));
 
     $user = User::factory()
@@ -250,48 +245,6 @@ it('allows booking within maximum lead time window', function () use ($workingHo
 
     $response = postJson(
         route('widgets.booking-page.personal.api.book', ['slug' => 'test-max-lead-time-ok']),
-        [
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'starts_at' => $bookingDate->copy()->setHour(10)->toIso8601String(),
-            'ends_at' => $bookingDate->copy()->setHour(10)->addMinutes(30)->toIso8601String(),
-        ]
-    );
-
-    $response->assertStatus(201);
-    $response->assertJsonFragment(['success' => true]);
-});
-
-// TODO: FeatureFlag Cleanup - This test can be removed when MaximumLeadTimeFeature is removed
-it('allows booking beyond maximum lead time when feature is inactive', function () use ($workingHours) {
-    MaximumLeadTimeFeature::deactivate();
-
-    Carbon::setTestNow(Carbon::parse('2026-04-06 10:00:00', 'UTC'));
-
-    $user = User::factory()
-        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
-
-    PersonalBookingPage::factory()
-        ->for($user)
-        ->enabled()
-        ->create([
-            'slug' => 'test-max-no-flag',
-            'maximum_booking_lead_time_days' => 7,
-        ]);
-
-    // Book 15 days from now - beyond 7-day max, but flag is off - pick a weekday
-    $bookingDate = now()->addDays(15);
-
-    while ($bookingDate->isWeekend()) {
-        $bookingDate->addDay();
-    }
-
-    $response = postJson(
-        route('widgets.booking-page.personal.api.book', ['slug' => 'test-max-no-flag']),
         [
             'name' => 'Test User',
             'email' => 'test@example.com',

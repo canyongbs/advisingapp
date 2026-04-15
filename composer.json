@@ -1,7 +1,7 @@
 {
     "name": "canyongbs/advisingapp",
     "type": "project",
-    "description": "Advising App™ by Canyon GBS™ is a Conversational AI and CRM ecosystem solution built specifically for postsecondary education use, adding features, functionality, and sector capabilities.",
+    "description": "Advising App® by Canyon GBS® is a Conversational AI and CRM ecosystem solution built specifically for postsecondary education use, adding features, functionality, and sector capabilities.",
     "keywords": [
         "higher",
         "education",
@@ -62,8 +62,8 @@
         "canyon-gbs/stock-media": "*",
         "canyon-gbs/workflow": "*",
         "canyongbs/common": "^2.12.1",
-        "canyongbs/filament-tiptap-editor": "^2.3.6",
-        "canyongbs/model-state-machine": "^2.0.5",
+        "canyongbs/filament-tiptap-editor": "^2.3.8",
+        "canyongbs/model-state-machine": "^2.0.6",
         "cknow/laravel-money": "^8.1",
         "composer/composer": "^2.7",
         "dedoc/scramble": "^0.12.23",

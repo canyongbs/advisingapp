@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -40,7 +40,6 @@ use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use App\Features\MaximumLeadTimeFeature;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Mockery\MockInterface;
@@ -201,8 +200,6 @@ it('allows group booking outside effective lead time window', function () use ($
 // Maximum Lead Time Tests
 
 it('rejects group booking beyond effective maximum lead time', function () use ($workingHours) {
-    MaximumLeadTimeFeature::activate();
-
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
@@ -249,8 +246,6 @@ it('rejects group booking beyond effective maximum lead time', function () use (
 });
 
 it('allows group booking within effective maximum lead time', function () use ($workingHours) {
-    MaximumLeadTimeFeature::activate();
-
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
@@ -278,49 +273,6 @@ it('allows group booking within effective maximum lead time', function () use ($
 
     $response = postJson(
         route('widgets.booking-page.group.api.book', ['slug' => 'test-group-max-lead-ok']),
-        [
-            'name' => 'Test Visitor',
-            'email' => 'visitor@example.com',
-            'starts_at' => $bookingDate->copy()->setHour(10)->toIso8601String(),
-            'ends_at' => $bookingDate->copy()->setHour(11)->toIso8601String(),
-        ]
-    );
-
-    $response->assertStatus(201);
-    $response->assertJsonFragment(['success' => true]);
-});
-
-// TODO: FeatureFlag Cleanup - This test can be removed when MaximumLeadTimeFeature is removed
-it('ignores maximum lead time for group booking when feature is inactive', function () use ($workingHours) {
-    MaximumLeadTimeFeature::deactivate();
-
-    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
-
-    $meetingOwner = User::factory()
-        ->has(Calendar::factory()->state(['provider_id' => 'owner-no-flag']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
-
-    $bookingGroup = BookingGroup::factory()
-        ->hasAttached($meetingOwner, [], 'users')
-        ->create([
-            'slug' => 'test-group-max-no-flag',
-            'maximum_booking_lead_time_days' => 7,
-            'meeting_owner_id' => $meetingOwner->id,
-            'available_appointment_hours' => $workingHours,
-        ]);
-
-    // Book 30 days from now - beyond 7-day max, but flag is off - pick a weekday
-    $bookingDate = now()->addDays(30);
-
-    while ($bookingDate->isWeekend()) {
-        $bookingDate->addDay();
-    }
-
-    $response = postJson(
-        route('widgets.booking-page.group.api.book', ['slug' => 'test-group-max-no-flag']),
         [
             'name' => 'Test Visitor',
             'email' => 'visitor@example.com',

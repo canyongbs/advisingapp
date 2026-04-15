@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -39,7 +39,7 @@ namespace AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableNameFormFieldBlock;
 use Closure;
-use FilamentTiptapEditor\TiptapEditor;
+use Filament\Forms\Components\RichEditor;
 
 trait ValidatesProspectGenerationFields
 {
@@ -47,23 +47,19 @@ trait ValidatesProspectGenerationFields
     {
         $contentComponent = $this->form->getComponent('content');
 
-        if (! $contentComponent instanceof TiptapEditor) {
+        if (! $contentComponent instanceof RichEditor) {
             $fail('Forms that generate prospects must include required email and name fields.');
 
             return;
         }
 
-        $componentState = $contentComponent->getState();
+        $content = $contentComponent->getState();
 
-        if (! filled($componentState)) {
-            $fail('Forms that generate prospects must include required email and name fields.');
-
-            return;
+        if (is_string($content)) {
+            $content = json_decode($content, true);
         }
 
-        $content = $contentComponent->decodeBlocks($contentComponent->getJSON(decoded: true));
-
-        if (! $content || ! isset($content['content'])) {
+        if (! is_array($content) || ! isset($content['content'])) {
             $fail('Forms that generate prospects must include required email and name fields.');
 
             return;
@@ -115,7 +111,7 @@ trait ValidatesProspectGenerationFields
 
             $contentComponent = $childContainer->getComponent('content');
 
-            if (! $contentComponent instanceof TiptapEditor) {
+            if (! $contentComponent instanceof RichEditor) {
                 continue;
             }
 
@@ -125,15 +121,15 @@ trait ValidatesProspectGenerationFields
                 continue;
             }
 
-            $decoded = $contentComponent->decodeBlocks(
-                is_string($stepContent) ? json_decode($stepContent, true) : $stepContent
-            );
+            if (is_string($stepContent)) {
+                $stepContent = json_decode($stepContent, true);
+            }
 
-            if (! $decoded || ! isset($decoded['content'])) {
+            if (! is_array($stepContent) || ! isset($stepContent['content'])) {
                 continue;
             }
 
-            $result = $this->checkContentForRequiredFields($decoded['content']);
+            $result = $this->checkContentForRequiredFields($stepContent['content']);
 
             if ($result['email']) {
                 $hasRequiredEmail = true;
@@ -171,12 +167,12 @@ trait ValidatesProspectGenerationFields
         $hasRequiredName = false;
 
         foreach ($content as $component) {
-            if (isset($component['type']) && $component['type'] === 'tiptapBlock') {
-                $blockType = $component['attrs']['type'] ?? null;
-                $blockData = $component['attrs']['data'] ?? [];
+            if (isset($component['type']) && $component['type'] === 'customBlock') {
+                $blockType = $component['attrs']['id'] ?? null;
+                $blockConfig = $component['attrs']['config'] ?? [];
 
                 if ($blockType === EducatableEmailFormFieldBlock::type()) {
-                    $isRequired = $blockData['isRequired'] ?? $blockData['is_required'] ?? false;
+                    $isRequired = $blockConfig['isRequired'] ?? $blockConfig['is_required'] ?? false;
 
                     if ($isRequired) {
                         $hasRequiredEmail = true;

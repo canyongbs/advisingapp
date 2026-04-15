@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -55,36 +55,57 @@ class InjectSubmissionStateIntoTipTapContent
                 continue;
             }
 
-            if (($component['type'] ?? null) !== 'tiptapBlock') {
-                continue;
-            }
-
-            $componentAttributes = $component['attrs'] ?? [];
-
-            if (blank($componentAttributes['id'] ?? null)) {
-                continue;
-            }
-
-            /** @var FormFieldBlock $block */
-            $block = $blocks[$componentAttributes['type']] ?? null;
-
-            if (blank($block)) {
-                continue;
-            }
-
-            $field = $submission->fields
-                ->first(fn (SubmissibleField $field): bool => $field->getKey() === $componentAttributes['id']);
-
-            if (! $field) {
-                continue;
-            }
-
-            $content[$componentKey]['attrs']['data'] = [
-                ...$component['attrs']['data'],
-                ...$block::getSubmissionState($field, $field->pivot->response),
-            ];
+            $content[$componentKey] = $this->processBlock($submission, $component, $blocks);
         }
 
         return $content;
+    }
+
+    /**
+     * @param  array<string, mixed>  $component
+     * @param  array<string, mixed>  $blocks
+     *
+     * @return array<string, mixed>
+     */
+    protected function processBlock(Submission $submission, array $component, array $blocks): array
+    {
+        $componentType = $component['type'] ?? null;
+        $componentAttributes = $component['attrs'] ?? [];
+
+        // Support both new RichEditor (customBlock) and legacy TipTap (tiptapBlock) formats
+        if ($componentType === 'customBlock') {
+            $config = $componentAttributes['config'] ?? [];
+            $fieldId = $config['fieldId'] ?? null;
+            $blockType = $componentAttributes['id'] ?? null;
+            $stateKey = 'config';
+        } elseif ($componentType === 'tiptapBlock') {
+            $config = $componentAttributes['data'] ?? [];
+            $fieldId = $componentAttributes['id'] ?? null;
+            $blockType = $componentAttributes['type'] ?? null;
+            $stateKey = 'data';
+        } else {
+            return $component;
+        }
+
+        if (blank($fieldId) || blank($blocks[$blockType] ?? null)) {
+            return $component;
+        }
+
+        /** @var FormFieldBlock $block */
+        $block = $blocks[$blockType];
+
+        $field = $submission->fields
+            ->first(fn (SubmissibleField $field): bool => $field->getKey() === $fieldId);
+
+        if (! $field) {
+            return $component;
+        }
+
+        $component['attrs'][$stateKey] = [
+            ...$config,
+            ...$block::getSubmissionState($field, $field->pivot->response),
+        ];
+
+        return $component;
     }
 }

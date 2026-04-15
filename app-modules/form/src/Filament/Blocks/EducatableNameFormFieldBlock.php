@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -42,30 +42,27 @@ use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\TextInput as FilamentTextInput;
 
 class EducatableNameFormFieldBlock extends FormFieldBlock
 {
-    public ?string $label = 'Name';
-
-    public string $preview = 'form::blocks.previews.educatable-name';
-
-    public string $rendered = 'form::blocks.submissions.educatable-name';
-
-    public ?string $icon = 'heroicon-m-user';
-
     public static function type(): string
     {
         return 'educatable_name';
     }
 
-    /**
-     * @return array<int, mixed>
-     */
-    public function getFormSchema(): array
+    public static function getLabel(): string
     {
-        return [
+        return 'Name';
+    }
+
+    public static function configureEditorAction(Action $action): Action
+    {
+        return $action->schema([
+            Hidden::make('fieldId'),
             FilamentTextInput::make('label')
                 ->required()
                 ->string()
@@ -106,7 +103,7 @@ class EducatableNameFormFieldBlock extends FormFieldBlock
             Checkbox::make('preferredNameRequired')
                 ->label('Preferred Name Required')
                 ->default(false),
-        ];
+        ]);
     }
 
     /**
@@ -187,5 +184,15 @@ class EducatableNameFormFieldBlock extends FormFieldBlock
             'last_name' => ['required', 'string', 'max:255'],
             'preferred' => $preferredNameRequired ? ['required', 'string', 'max:255'] : ['nullable', 'string', 'max:255'],
         ];
+    }
+
+    protected static function previewView(): string
+    {
+        return 'form::blocks.previews.educatable-name';
+    }
+
+    protected static function renderedView(): string
+    {
+        return 'form::blocks.submissions.educatable-name';
     }
 }

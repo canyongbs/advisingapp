@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -43,6 +43,8 @@ use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
@@ -50,9 +52,9 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ManageFormEmailAutoReply extends EditRecord
 {
@@ -88,32 +90,28 @@ class ManageFormEmailAutoReply extends EditRecord
                         Toggle::make('is_enabled')
                             ->label('Enabled')
                             ->live(),
-                        TiptapEditor::make('subject')
-                            ->mergeTags([
-                                'recipient first name',
-                                'recipient last name',
-                                'recipient full name',
-                                'recipient email',
-                                'recipient preferred name',
-                            ])
-                            ->profile('sms')
+                        RichEditor::make('subject')
+                            ->toolbarButtons([])
+                            ->json()
                             ->required(fn (Get $get) => $get('is_enabled'))
                             ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull()
-                            ->placeholder('Enter the email subject here...')
-                            ->showMergeTagsInBlocksPanel(false),
-                        TiptapEditor::make('body')
-                            ->disk('s3-public')
-                            ->mergeTags([
-                                'recipient first name',
-                                'recipient last name',
-                                'recipient full name',
-                                'recipient email',
-                                'recipient preferred name',
+                            ->placeholder('Enter the email subject here...'),
+                        RichEditor::make('body')
+                            ->fileAttachmentsDisk('s3-public')
+                            ->toolbarButtons([
+                                ['bold', 'italic', 'link'],
+                                [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                                ['small', 'textColor'],
+                                ['attachFiles'],
+                                ['clearFormatting'],
+                                ['mergeTags'],
                             ])
-                            ->profile('email')
+                            ->resizableImages()
+                            ->activePanel('mergeTags')
+                            ->json()
                             ->required(fn (Get $get) => $get('is_enabled'))
-                            ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
+                            ->hintAction(fn (RichEditor $component) => Action::make('loadEmailTemplate')
                                 ->schema([
                                     Select::make('emailTemplate')
                                         ->searchable()
@@ -186,10 +184,15 @@ class ManageFormEmailAutoReply extends EditRecord
                                         return;
                                     }
 
-                                    $component->state(
-                                        $component->generateImageUrls($template->content),
-                                    );
+                                    $component->state($template->content);
                                 }))
+                            ->getFileAttachmentUrlFromAnotherRecordUsing(function (mixed $file): ?string {
+                                return Media::query()
+                                    ->where('uuid', $file)
+                                    ->where('model_type', (new EmailTemplate())->getMorphClass())
+                                    ->first()
+                                    ?->getUrl();
+                            })
                             ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull()
                             ->live(),
