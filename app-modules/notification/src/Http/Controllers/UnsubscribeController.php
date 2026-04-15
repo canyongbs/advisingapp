@@ -48,6 +48,10 @@ class UnsubscribeController extends Controller
 {
     public function show(Request $request): View
     {
+        $request->validate([
+            'email' => ['required', 'email'],
+        ]);
+
         $email = $request->query('email');
 
         $confirmUrl = URL::signedRoute('unsubscribe.store', ['email' => $email]);
@@ -63,6 +67,10 @@ class UnsubscribeController extends Controller
         if ($request->isMethod('HEAD')) {
             return response()->noContent();
         }
+
+        $request->validate([
+            'email' => ['required', 'email'],
+        ]);
 
         $email = $request->query('email');
 
