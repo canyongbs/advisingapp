@@ -39,8 +39,10 @@ namespace AdvisingApp\Engagement\Jobs;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
+use App\Features\EmailTypeFeature;
 use DateTimeInterface;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -97,6 +99,10 @@ class CreateBatchedEngagement implements ShouldQueue
         $engagement->subject = $this->engagementBatch->subject;
         $engagement->body = $this->engagementBatch->body;
         $engagement->scheduled_at = $this->engagementBatch->scheduled_at;
+
+        if (EmailTypeFeature::active()) {
+            $engagement->email_type = $this->engagementBatch->email_type ?? EmailType::Transactional;
+        }
 
         if (! $engagement->scheduled_at) {
             $engagement->dispatched_at = now();

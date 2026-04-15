@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Engagement\DataTransferObjects;
 
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use App\Models\User;
@@ -62,5 +63,6 @@ class EngagementCreationData extends Data
         public ?string $recipientRoute = null,
         public ?Model $source = null,
         public ?Schema $schema = null,
+        public ?EmailType $emailType = EmailType::Transactional,
     ) {}
 }

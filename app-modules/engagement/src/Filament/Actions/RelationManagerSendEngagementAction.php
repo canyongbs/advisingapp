@@ -79,6 +79,7 @@ class RelationManagerSendEngagementAction extends CreateAction
 
         $this->icon('heroicon-m-chat-bubble-bottom-center-text')
             ->label('New')
+            ->slideOver()
             ->modalHeading('Send Message')
             ->modalDescription(function (RelationManager $livewire): string {
                 $educatable = $livewire->getOwnerRecord();

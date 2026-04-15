@@ -183,8 +183,10 @@ class EnrollmentsRelationManager extends RelationManager
                     ->searchable(),
             ])
             ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
+                ViewAction::make()
+                    ->slideOver(),
+                EditAction::make()
+                    ->slideOver(),
                 DeleteAction::make()
                     ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed'),
             ])
@@ -239,7 +241,8 @@ class EnrollmentsRelationManager extends RelationManager
                 ]),
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                    ->slideOver(),
                 ImportAction::make()
                     ->importer(EnrollmentImporter::class)
                     ->authorize('import', Enrollment::class)

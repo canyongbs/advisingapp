@@ -34,7 +34,9 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Workflow\Jobs\EngagementEmailWorkflowActionJob;
@@ -148,4 +150,74 @@ it('throws exception for non-email channel', function () {
 
     expect(fn () => $job->handle())
         ->toThrow(Exception::class, 'The notification channel is not email.');
+});
+
+it('creates an engagement with the correct email_type from workflow details', function () {
+    $user = User::factory()->create();
+    $student = Student::factory()->create();
+
+    $workflowTrigger = WorkflowTrigger::factory()->create([
+        'created_by_type' => User::class,
+        'created_by_id' => $user->id,
+    ]);
+
+    $workflowRun = WorkflowRun::factory()->create([
+        'workflow_trigger_id' => $workflowTrigger->id,
+        'related_type' => Student::class,
+        'related_id' => $student->getKey(),
+    ]);
+
+    $emailDetails = WorkflowEngagementEmailDetails::factory()->create([
+        'channel' => NotificationChannel::Email,
+        'email_type' => EmailType::Marketing,
+        'subject' => [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => 'Marketing Subject',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'body' => [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => 'Marketing email body content',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $workflowRunStep = WorkflowRunStep::factory()->withDetails($emailDetails)->create([
+        'workflow_run_id' => $workflowRun->id,
+        'execute_at' => now(),
+        'delay_minutes' => 0,
+        'previous_workflow_run_step_id' => null,
+    ]);
+
+    $job = new EngagementEmailWorkflowActionJob($workflowRunStep);
+    $job->handle();
+
+    /** @var Engagement $engagement */
+    $engagement = Engagement::query()->first();
+
+    expect($engagement)->not->toBeNull()
+        ->and($engagement->email_type)->toBe(EmailType::Marketing);
+
+    Notification::assertSentTo(
+        $student,
+        EngagementNotification::class,
+    );
 });

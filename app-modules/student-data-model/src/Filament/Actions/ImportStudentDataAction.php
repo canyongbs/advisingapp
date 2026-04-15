@@ -222,6 +222,7 @@ class ImportStudentDataAction
 
         return $action
             ->label('Sync Records')
+            ->slideOver()
             ->importer(StudentImporter::class)
             ->authorize('import', Student::class)
             ->modalHeading('Synchronize Students, Programs, and Enrollments')

@@ -89,7 +89,8 @@ class FormSubmissionsRelationManager extends RelationManager
                 FormSubmissionStatusFilter::make(),
             ])
             ->headerActions([
-                RequestFormSubmission::make(),
+                RequestFormSubmission::make()
+                    ->slideOver(),
             ])
             ->recordActions([
                 ViewAction::make()

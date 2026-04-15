@@ -81,6 +81,7 @@ class SendEngagementAction extends Action
         parent::setUp();
 
         $this->icon('heroicon-m-chat-bubble-bottom-center-text')
+            ->slideOver()
             ->modalHeading('Send Message')
             ->modalDescription(function (): ?string {
                 $educatable = $this->getEducatable();
