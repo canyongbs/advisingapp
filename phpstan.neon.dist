@@ -4,6 +4,7 @@ includes:
     - ./phpstan-baseline.php
     - ./vendor/pestphp/pest/extension.neon
     - ./vendor/orrison/meliorstan/config/extension.neon
+    - ./vendor/canyongbs/common/phpstan-extension.neon
 
 rules:
     - Orrison\MeliorStan\Rules\BooleanGetMethodName\BooleanGetMethodNameRule
@@ -81,3 +82,6 @@ parameters:
             paths:
                 - tests/*
                 - app-modules/*/tests/*
+        -
+            message: '#Anonymous function should return Illuminate\\Database\\Eloquent\\Builder<Illuminate\\Database\\Eloquent\\Model> but returns Illuminate\\Database\\Eloquent\\Builder<.+>#'
+            identifier: return.type       

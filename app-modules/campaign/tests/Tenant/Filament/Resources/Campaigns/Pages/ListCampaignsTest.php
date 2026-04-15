@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Tests\Actions;
+namespace AdvisingApp\Campaign\Tests\Tenant\Filament\Resources\Campaigns\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\ListCampaigns;
@@ -179,4 +179,18 @@ it('can filter campaigns by `In Progress`', function () {
         ->assertCanNotSeeTableRecords([
             $completeCampaign,
         ]);
+});
+
+it('excludes archived campaigns from the list', function () {
+    asSuperAdmin();
+
+    $activeCampaign = Campaign::factory()->create();
+    $archivedCampaign = Campaign::factory()->create();
+
+    $archivedCampaign->archive();
+
+    livewire(ListCampaigns::class)
+        ->assertCanSeeTableRecords([$activeCampaign])
+        ->assertCanNotSeeTableRecords([$archivedCampaign])
+        ->assertCountTableRecords(1);
 });

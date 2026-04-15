@@ -38,6 +38,7 @@ namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
+use App\Features\CampaignArchivingFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
 use Filament\Actions\CreateAction;
@@ -83,6 +84,15 @@ class ListCampaigns extends ListRecords
                     ->searchable()
                     ->sortable(),
             ])
+            // @phpstan-ignore argument.templateType
+            ->modifyQueryUsing(function (Builder $query) {
+                /** @var Builder<Campaign> $query */
+                if (CampaignArchivingFeature::active()) {
+                    $query->withoutArchived();
+                }
+
+                return $query;
+            })
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make()
