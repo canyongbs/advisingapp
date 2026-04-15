@@ -108,8 +108,6 @@ class EditCampaign extends EditRecord
                             ->title('Failed to archive campaign')
                             ->body($exception->getMessage())
                             ->send();
-
-                        throw $exception;
                     }
                 }),
             DeleteAction::make(),
