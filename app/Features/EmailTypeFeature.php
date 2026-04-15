@@ -34,25 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Database\Factories;
+namespace App\Features;
 
-use AdvisingApp\Notification\Enums\EmailType;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @extends Factory<WorkflowEngagementEmailDetails>
- */
-class WorkflowEngagementEmailDetailsFactory extends Factory
+class EmailTypeFeature extends AbstractFeatureFlag
 {
-    public function definition(): array
+    public function resolve(mixed $scope): mixed
     {
-        return [
-            'channel' => NotificationChannel::Email,
-            'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->sentence]]]]],
-            'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->paragraphs(3, true)]]]]],
-            'email_type' => EmailType::Transactional,
-        ];
+        return false;
     }
 }

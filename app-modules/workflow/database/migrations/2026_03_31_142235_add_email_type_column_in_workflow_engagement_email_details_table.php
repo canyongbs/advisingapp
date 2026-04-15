@@ -34,25 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Database\Factories;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Notification\Enums\EmailType;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends Factory<WorkflowEngagementEmailDetails>
- */
-class WorkflowEngagementEmailDetailsFactory extends Factory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'channel' => NotificationChannel::Email,
-            'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->sentence]]]]],
-            'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->paragraphs(3, true)]]]]],
-            'email_type' => EmailType::Transactional,
-        ];
+        Schema::table('workflow_engagement_email_details', function (Blueprint $table) {
+            $table->string('email_type')->initial('transactional');
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('workflow_engagement_email_details', function (Blueprint $table) {
+            $table->dropColumn('email_type');
+        });
+    }
+};

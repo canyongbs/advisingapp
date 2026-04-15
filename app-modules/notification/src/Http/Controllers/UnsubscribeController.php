@@ -34,56 +34,54 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Database\Factories;
+namespace AdvisingApp\Notification\Http\Controllers;
 
-use AdvisingApp\Engagement\Models\EngagementBatch;
-use AdvisingApp\Notification\Enums\EmailType;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
+use AdvisingApp\StudentDataModel\Models\EmailAddressOptInOptOut;
+use App\Http\Controllers\Controller;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\URL;
 
-/**
- * @extends Factory<EngagementBatch>
- */
-class EngagementBatchFactory extends Factory
+class UnsubscribeController extends Controller
 {
-    public function definition(): array
+    public function show(Request $request): View
     {
-        return [
-            'user_id' => User::factory(),
-            'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->sentence]]]]],
-            'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->paragraph]]]]],
-            'scheduled_at' => $this->faker->dateTimeBetween('-1 year', '-1 day'),
-            'channel' => $this->faker->randomElement([NotificationChannel::Email, NotificationChannel::Sms]),
-            'email_type' => $this->faker->randomElement([EmailType::Transactional, EmailType::Marketing]),
-        ];
-    }
+        $request->validate([
+            'email' => ['required', 'email'],
+        ]);
 
-    public function deliverNow(): self
-    {
-        return $this->state([
-            'scheduled_at' => null,
+        $email = $request->query('email');
+
+        $confirmUrl = URL::signedRoute('unsubscribe.store', ['email' => $email]);
+
+        return view('notification::unsubscribe', [
+            'confirmUrl' => $confirmUrl,
+            'optedOut' => false,
         ]);
     }
 
-    public function deliverLater(): self
+    public function store(Request $request): Response|View
     {
-        return $this->state([
-            'scheduled_at' => $this->faker->dateTimeBetween('+1 day', '+1 week'),
-        ]);
-    }
+        if ($request->isMethod('HEAD')) {
+            return response()->noContent();
+        }
 
-    public function email(): self
-    {
-        return $this->state([
-            'channel' => NotificationChannel::Email,
+        $request->validate([
+            'email' => ['required', 'email'],
         ]);
-    }
 
-    public function sms(): self
-    {
-        return $this->state([
-            'channel' => NotificationChannel::Sms,
+        $email = $request->query('email');
+
+        EmailAddressOptInOptOut::updateOrCreate(
+            ['address' => $email],
+            ['status' => EmailAddressOptInOptOutStatus::OptedOut],
+        );
+
+        return view('notification::unsubscribe', [
+            'confirmUrl' => null,
+            'optedOut' => true,
         ]);
     }
 }

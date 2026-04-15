@@ -39,6 +39,8 @@ namespace AdvisingApp\Engagement\Actions;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
+use AdvisingApp\Notification\Enums\EmailType;
+use App\Features\EmailTypeFeature;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -60,6 +62,10 @@ class CreateEngagement
         $engagement->channel = $data->channel;
         $engagement->subject = $data->subject;
         $engagement->scheduled_at = $data->scheduledAt;
+
+        if (EmailTypeFeature::active()) {
+            $engagement->email_type = $data->emailType ?? EmailType::Transactional;
+        }
 
         $engagement->recipient_route = $data->recipientRoute;
 

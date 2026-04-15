@@ -34,56 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Database\Factories;
+namespace AdvisingApp\Notification\Notifications\Contracts;
 
-use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Notification\Enums\EmailType;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends Factory<EngagementBatch>
- */
-class EngagementBatchFactory extends Factory
+interface HasEmailType
 {
-    public function definition(): array
-    {
-        return [
-            'user_id' => User::factory(),
-            'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->sentence]]]]],
-            'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->paragraph]]]]],
-            'scheduled_at' => $this->faker->dateTimeBetween('-1 year', '-1 day'),
-            'channel' => $this->faker->randomElement([NotificationChannel::Email, NotificationChannel::Sms]),
-            'email_type' => $this->faker->randomElement([EmailType::Transactional, EmailType::Marketing]),
-        ];
-    }
-
-    public function deliverNow(): self
-    {
-        return $this->state([
-            'scheduled_at' => null,
-        ]);
-    }
-
-    public function deliverLater(): self
-    {
-        return $this->state([
-            'scheduled_at' => $this->faker->dateTimeBetween('+1 day', '+1 week'),
-        ]);
-    }
-
-    public function email(): self
-    {
-        return $this->state([
-            'channel' => NotificationChannel::Email,
-        ]);
-    }
-
-    public function sms(): self
-    {
-        return $this->state([
-            'channel' => NotificationChannel::Sms,
-        ]);
-    }
+    public function getEmailType(): EmailType;
 }

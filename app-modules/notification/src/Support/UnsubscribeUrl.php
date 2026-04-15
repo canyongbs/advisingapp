@@ -34,25 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Database\Factories;
+namespace AdvisingApp\Notification\Support;
 
-use AdvisingApp\Notification\Enums\EmailType;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\URL;
 
-/**
- * @extends Factory<WorkflowEngagementEmailDetails>
- */
-class WorkflowEngagementEmailDetailsFactory extends Factory
+class UnsubscribeUrl
 {
-    public function definition(): array
+    /**
+     * Generate a tamper-proof unsubscribe URL for the given email address.
+     *
+     * Uses Laravel signed URLs to ensure the email parameter cannot be modified
+     * without invalidating the signature. No database table needed.
+     *
+     * @param  string  $email  The recipient email address
+     *
+     * @return string The signed unsubscribe URL
+     */
+    public static function generate(string $email): string
     {
-        return [
-            'channel' => NotificationChannel::Email,
-            'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->sentence]]]]],
-            'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->paragraphs(3, true)]]]]],
-            'email_type' => EmailType::Transactional,
-        ];
+        return URL::signedRoute(
+            'unsubscribe',
+            ['email' => $email],
+        );
     }
 }

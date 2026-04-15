@@ -38,6 +38,7 @@ namespace AdvisingApp\Campaign\Jobs;
 
 use AdvisingApp\Engagement\Actions\CreateEngagement;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use App\Models\User;
@@ -103,6 +104,7 @@ class EngagementCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                         subject: $action->data['subject'] ?? null,
                         body: $action->data['body'] ?? null,
                         source: $action,
+                        emailType: EmailType::tryFrom($action->data['email_type'] ?? '') ?? EmailType::Transactional,
                     ),
                     notifyNow: true,
                 );

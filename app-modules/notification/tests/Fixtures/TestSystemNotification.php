@@ -34,25 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Database\Factories;
+namespace AdvisingApp\Notification\Tests\Fixtures;
 
-use AdvisingApp\Notification\Enums\EmailType;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
-/**
- * @extends Factory<WorkflowEngagementEmailDetails>
- */
-class WorkflowEngagementEmailDetailsFactory extends Factory
+#[SystemNotification]
+class TestSystemNotification extends Notification implements ShouldQueue
 {
-    public function definition(): array
+    use Queueable;
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
     {
-        return [
-            'channel' => NotificationChannel::Email,
-            'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->sentence]]]]],
-            'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->paragraphs(3, true)]]]]],
-            'email_type' => EmailType::Transactional,
-        ];
+        return ['mail'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        return MailMessage::make()
+            ->subject('Test Subject')
+            ->greeting('Test Greeting')
+            ->content('This is a test email');
     }
 }

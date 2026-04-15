@@ -33,26 +33,31 @@
 
 </COPYRIGHT>
 */
+use App\Features\EmailTypeFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-namespace AdvisingApp\Workflow\Database\Factories;
-
-use AdvisingApp\Notification\Enums\EmailType;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends Factory<WorkflowEngagementEmailDetails>
- */
-class WorkflowEngagementEmailDetailsFactory extends Factory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'channel' => NotificationChannel::Email,
-            'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->sentence]]]]],
-            'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->paragraphs(3, true)]]]]],
-            'email_type' => EmailType::Transactional,
-        ];
+        DB::transaction(function () {
+            Schema::table('email_messages', function (Blueprint $table) {
+                $table->string('email_type')->initial('transactional');
+            });
+
+            EmailTypeFeature::activate();
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            EmailTypeFeature::deactivate();
+            Schema::table('email_messages', function (Blueprint $table) {
+                $table->dropColumn('email_type');
+            });
+        });
+    }
+};

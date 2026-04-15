@@ -81,6 +81,9 @@ class EngagementEmailBlock extends WorkflowActionBlock
         return [
             Hidden::make('channel')
                 ->default(NotificationChannel::Email->value),
+            Hidden::make('email_type')
+                ->default('transactional')
+                ->dehydrated(),
             RichEditor::make('subject')
                 ->label('Subject')
                 ->toolbarButtons([])

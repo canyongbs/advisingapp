@@ -39,6 +39,7 @@ namespace AdvisingApp\Notification\Notifications\Channels;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 use AdvisingApp\Notification\DataTransferObjects\EmailChannelResultData;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Exceptions\BouncedEmailException;
 use AdvisingApp\Notification\Exceptions\NotificationQuotaExceeded;
@@ -48,8 +49,10 @@ use AdvisingApp\Notification\Models\StoredAnonymousNotifiable;
 use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
+use AdvisingApp\Notification\Notifications\Contracts\HasEmailType;
 use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Notification\Support\UnsubscribeUrl;
 use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
 use App\Models\Tenant;
 use App\Models\User;
@@ -99,6 +102,19 @@ class MailChannel extends BaseMailChannel
             'recipient_type' => $recipientType,
             'recipient_address' => is_array($recipientAddress) ? null : $recipientAddress,
         ]);
+
+        $emailType = $notification instanceof HasEmailType
+        ? $notification->getEmailType()
+        : EmailType::Transactional;
+
+        $emailMessage->email_type = $emailType;
+
+        if ($emailType === EmailType::Marketing && is_string($recipientAddress)) {
+            $message->viewData = array_merge(
+                $message->viewData,
+                ['unsubscribeUrl' => UnsubscribeUrl::generate($recipientAddress)],
+            );
+        }
 
         if ($notification instanceof HasBeforeSendHook) {
             $notification->beforeSend(

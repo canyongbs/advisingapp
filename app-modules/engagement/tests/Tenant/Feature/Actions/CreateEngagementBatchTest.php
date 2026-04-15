@@ -36,8 +36,10 @@
 
 use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Tests\Tenant\RequestFactories\CreateEngagementBatchRequestFactory;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Bus;
@@ -59,6 +61,7 @@ it('will create an engagement batch', function () {
         subject: $data['subject'],
         body: $data['body'],
         scheduledAt: Carbon::parse($data['scheduledAt']),
+        emailType: EmailType::Transactional,
     ));
 
     assertDatabaseCount(EngagementBatch::class, 1);
@@ -72,4 +75,34 @@ it('will create an engagement batch', function () {
         ->scheduled_at->startOfSecond()->eq(Carbon::parse($data['scheduledAt'])->startOfSecond())->toBeTrue();
 
     Bus::assertBatched(fn (PendingBatchFake $batch): bool => $batch->jobs->count() === 10);
+});
+
+it('will create a marketing engagement batch and each child engagement inherits marketing email type', function () {
+    assertDatabaseCount(EngagementBatch::class, 0);
+    $data = CreateEngagementBatchRequestFactory::new()->email()->create([
+        'emailType' => EmailType::Marketing,
+    ]);
+
+    app(CreateEngagementBatch::class)->execute(new EngagementCreationData(
+        user: $data['user'],
+        recipient: Student::factory()->count(10)->create(),
+        channel: $data['channel'],
+        subject: $data['subject'],
+        body: $data['body'],
+        scheduledAt: null,
+        emailType: EmailType::Marketing,
+    ));
+
+    $batch = EngagementBatch::first();
+
+    expect($batch)->not->toBeNull()
+        ->and($batch->email_type)->toBe(EmailType::Marketing);
+
+    $engagements = Engagement::where('engagement_batch_id', $batch->getKey())->get();
+
+    expect($engagements)->toHaveCount(10);
+
+    $engagements->each(function (Engagement $engagement) {
+        expect($engagement->email_type)->toBe(EmailType::Marketing);
+    });
 });

@@ -48,6 +48,7 @@ use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 // Add tests for migration files here
 
@@ -480,9 +481,16 @@ test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables engag
     isolatedMigration(
         '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
-            $engagement = Engagement::factory()->createQuietly([
+            $engagement = Engagement::factory()->make([
+                'id' => Str::uuid()->toString(),
                 'body' => imageContent(),
             ]);
+
+            DB::table('engagements')->insert(
+                collect($engagement->getAttributes())
+                    ->except('email_type')
+                    ->toArray()
+            );
 
             $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
 
@@ -507,9 +515,16 @@ test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables engag
     isolatedMigration(
         '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
-            $batch = EngagementBatch::factory()->createQuietly([
+            $batch = EngagementBatch::factory()->make([
+                'id' => Str::uuid()->toString(),
                 'body' => imageContent(),
             ]);
+
+            DB::table('engagement_batches')->insert(
+                collect($batch->getAttributes())
+                    ->except('email_type')
+                    ->toArray()
+            );
 
             $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
 
@@ -534,9 +549,16 @@ test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables workf
     isolatedMigration(
         '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
-            $details = WorkflowEngagementEmailDetails::factory()->createQuietly([
+            $details = WorkflowEngagementEmailDetails::factory()->make([
+                'id' => Str::uuid()->toString(),
                 'body' => imageContent(),
             ]);
+
+            DB::table('workflow_engagement_email_details')->insert(
+                collect($details->getAttributes())
+                    ->except('email_type')
+                    ->toArray()
+            );
 
             $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
 
@@ -692,9 +714,16 @@ test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables trans
     isolatedMigration(
         '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
-            $engagement = Engagement::factory()->createQuietly([
+            $engagement = Engagement::factory()->make([
+                'id' => Str::uuid()->toString(),
                 'body' => textColorContent(),
             ]);
+
+            DB::table('engagements')->insert(
+                collect($engagement->getAttributes())
+                    ->except('email_type')
+                    ->toArray()
+            );
 
             $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
 
@@ -767,9 +796,16 @@ test('2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables renam
     isolatedMigration(
         '2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables',
         function () {
-            $engagement = Engagement::factory()->createQuietly([
+            $engagement = Engagement::factory()->make([
+                'id' => Str::uuid()->toString(),
                 'body' => studentMergeTagContent(),
             ]);
+
+            DB::table('engagements')->insert(
+                collect($engagement->getAttributes())
+                    ->except('email_type')
+                    ->toArray()
+            );
 
             $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_03_24_192248_tmp_data_process_rich_content_in_engagement_tables.php']);
 

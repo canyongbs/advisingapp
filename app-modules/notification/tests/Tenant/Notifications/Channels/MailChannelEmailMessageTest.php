@@ -35,15 +35,17 @@
 */
 
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Models\EmailMessage;
-use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Tests\Fixtures\TestEmailNotification;
+use AdvisingApp\Notification\Tests\Fixtures\TestMarketingNotification;
+use AdvisingApp\Notification\Tests\Fixtures\TestSystemNotification;
+use AdvisingApp\Notification\Tests\Fixtures\TestTransactionalNotification;
+use AdvisingApp\Prospect\Models\Prospect;
 use App\Models\Tenant;
 use App\Models\User;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Notification;
+use Illuminate\Mail\Events\MessageSent;
+use Illuminate\Support\Facades\Event;
 
 it('will create an EmailMessage for the notification', function () {
     $notifiable = User::factory()->create();
@@ -123,21 +125,74 @@ it('will not send system notifications in demo mode when system notifications ar
     expect($emailMessages->first()->events->first()->type)->toBe(EmailMessageEventType::BlockedByDemoMode);
 });
 
-#[SystemNotification]
-class TestSystemNotification extends Notification implements ShouldQueue
-{
-    use Queueable;
+it('sets email_type to marketing when notification implements HasEmailType returning Marketing', function () {
+    $notifiable = Prospect::factory()->create();
 
-    public function via(object $notifiable): array
-    {
-        return ['mail'];
-    }
+    $notification = new TestMarketingNotification();
 
-    public function toMail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->subject('Test Subject')
-            ->greeting('Test Greeting')
-            ->content('This is a test email');
-    }
-}
+    $notifiable->notify($notification);
+
+    $emailMessage = EmailMessage::first();
+
+    expect($emailMessage)->not->toBeNull()
+        ->and($emailMessage->email_type)->toBe(EmailType::Marketing);
+});
+
+it('sets email_type to transactional when notification implements HasEmailType returning Transactional', function () {
+    $notifiable = Prospect::factory()->create();
+
+    $notification = new TestTransactionalNotification();
+
+    $notifiable->notify($notification);
+
+    $emailMessage = EmailMessage::first();
+
+    expect($emailMessage)->not->toBeNull()
+        ->and($emailMessage->email_type)->toBe(EmailType::Transactional);
+});
+
+it('defaults email_type to transactional when notification does not implement HasEmailType', function () {
+    $notifiable = User::factory()->create();
+
+    $notification = new TestEmailNotification();
+
+    $notifiable->notify($notification);
+
+    $emailMessage = EmailMessage::first();
+
+    expect($emailMessage)->not->toBeNull()
+        ->and($emailMessage->email_type)->toBe(EmailType::Transactional);
+});
+
+it('includes unsubscribeUrl in viewData for marketing email', function () {
+    Event::fake(MessageSent::class);
+
+    $notifiable = Prospect::factory()->create();
+
+    $notification = new TestMarketingNotification();
+
+    $notifiable->notify($notification);
+
+    Event::assertDispatched(function (MessageSent $event) {
+        $htmlBody = $event->message->getHtmlBody();
+
+        return str_contains($htmlBody, 'Unsubscribe')
+            && str_contains($htmlBody, '/unsubscribe');
+    });
+});
+
+it('does not include unsubscribeUrl in viewData for transactional email', function () {
+    Event::fake(MessageSent::class);
+
+    $notifiable = Prospect::factory()->create();
+
+    $notification = new TestTransactionalNotification();
+
+    $notifiable->notify($notification);
+
+    Event::assertDispatched(function (MessageSent $event) {
+        $htmlBody = $event->message->getHtmlBody();
+
+        return ! str_contains($htmlBody, '/unsubscribe');
+    });
+});

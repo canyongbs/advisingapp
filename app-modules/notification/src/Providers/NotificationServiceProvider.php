@@ -83,6 +83,9 @@ class NotificationServiceProvider extends ServiceProvider
             'stored_anonymous_notifiable' => StoredAnonymousNotifiable::class,
         ]);
 
+        $this->loadRoutesFrom(__DIR__ . '/../../routes/web.php');
+        $this->loadViewsFrom(__DIR__ . '/../../resources/views', 'notification');
+
         $this->registerEvents();
     }
 

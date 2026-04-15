@@ -34,25 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Database\Factories;
+namespace AdvisingApp\Notification\Enums;
 
-use AdvisingApp\Notification\Enums\EmailType;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Filament\Support\Contracts\HasLabel;
 
-/**
- * @extends Factory<WorkflowEngagementEmailDetails>
- */
-class WorkflowEngagementEmailDetailsFactory extends Factory
+enum EmailType: string implements HasLabel
 {
-    public function definition(): array
+    case Marketing = 'marketing';
+    case Transactional = 'transactional';
+
+    public function getLabel(): string
     {
-        return [
-            'channel' => NotificationChannel::Email,
-            'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->sentence]]]]],
-            'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->paragraphs(3, true)]]]]],
-            'email_type' => EmailType::Transactional,
-        ];
+        return $this->name;
     }
 }

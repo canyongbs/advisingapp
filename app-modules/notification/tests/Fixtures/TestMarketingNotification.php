@@ -34,56 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Database\Factories;
+namespace AdvisingApp\Notification\Tests\Fixtures;
 
-use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Notification\Enums\EmailType;
-use AdvisingApp\Notification\Enums\NotificationChannel;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\Notification\Notifications\Contracts\HasEmailType;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
-/**
- * @extends Factory<EngagementBatch>
- */
-class EngagementBatchFactory extends Factory
+class TestMarketingNotification extends Notification implements ShouldQueue, HasEmailType
 {
-    public function definition(): array
+    use Queueable;
+
+    public function getEmailType(): EmailType
     {
-        return [
-            'user_id' => User::factory(),
-            'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->sentence]]]]],
-            'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->paragraph]]]]],
-            'scheduled_at' => $this->faker->dateTimeBetween('-1 year', '-1 day'),
-            'channel' => $this->faker->randomElement([NotificationChannel::Email, NotificationChannel::Sms]),
-            'email_type' => $this->faker->randomElement([EmailType::Transactional, EmailType::Marketing]),
-        ];
+        return EmailType::Marketing;
     }
 
-    public function deliverNow(): self
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
     {
-        return $this->state([
-            'scheduled_at' => null,
-        ]);
+        return ['mail'];
     }
 
-    public function deliverLater(): self
+    public function toMail(object $notifiable): MailMessage
     {
-        return $this->state([
-            'scheduled_at' => $this->faker->dateTimeBetween('+1 day', '+1 week'),
-        ]);
-    }
-
-    public function email(): self
-    {
-        return $this->state([
-            'channel' => NotificationChannel::Email,
-        ]);
-    }
-
-    public function sms(): self
-    {
-        return $this->state([
-            'channel' => NotificationChannel::Sms,
-        ]);
+        return MailMessage::make()
+            ->subject('Marketing Campaign')
+            ->greeting('Hello!')
+            ->content('This is a marketing email.');
     }
 }
