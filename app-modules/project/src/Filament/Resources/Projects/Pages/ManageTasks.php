@@ -92,6 +92,7 @@ class ManageTasks extends ManageRelatedRecords
             ])
             ->headerActions([
                 CreateAction::make()
+                    ->slideOver()
                     ->authorize(fn () => auth()->user()->can('create', [Task::class, null]))
                     ->schema([
                         Fieldset::make('Confidentiality')
@@ -146,6 +147,7 @@ class ManageTasks extends ManageRelatedRecords
             ])
             ->recordActions([
                 ViewAction::make()
+                    ->slideOver()
                     ->authorize('view', Task::class)
                     ->extraModalFooterActions([
                         Action::make('mark_as_in_progress')
@@ -226,6 +228,7 @@ class ManageTasks extends ManageRelatedRecords
                         ])->from('md'),
                     ]),
                 EditAction::make()
+                    ->slideOver()
                     ->schema([
                         Fieldset::make('Confidentiality')
                             ->schema([

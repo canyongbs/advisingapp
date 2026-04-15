@@ -110,7 +110,7 @@ class LegacyAiMessageLogResource extends Resource
                     ->searchable(),
             ])
             ->recordActions([
-                ViewAction::make(),
+                ViewAction::make()->slideOver(),
                 DeleteAction::make(),
             ])
             ->toolbarActions([

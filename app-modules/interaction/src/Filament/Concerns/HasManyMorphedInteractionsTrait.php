@@ -188,6 +188,7 @@ trait HasManyMorphedInteractionsTrait
             ])
             ->headerActions([
                 CreateAction::make()
+                    ->slideOver()
                     ->steps(function () use ($ownerRecord) {
                         return InteractionForm::getSteps($ownerRecord);
                     })
@@ -197,6 +198,7 @@ trait HasManyMorphedInteractionsTrait
             ])
             ->recordActions([
                 ViewAction::make()
+                    ->slideOver()
                     ->modalHeading('Interaction Details')
                     ->extraModalFooterActions([
                         DeleteAction::make()
@@ -204,6 +206,7 @@ trait HasManyMorphedInteractionsTrait
                             ->cancelParentActions(),
                     ]),
                 EditAction::make()
+                    ->slideOver()
                     ->steps(function () use ($ownerRecord) {
                         return InteractionForm::getSteps($ownerRecord);
                     })

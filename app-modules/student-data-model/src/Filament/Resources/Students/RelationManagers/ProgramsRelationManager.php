@@ -155,8 +155,10 @@ class ProgramsRelationManager extends RelationManager
             ])
             ->recordActions([
                 ViewAction::make()
+                    ->slideOver()
                     ->modalHeading('Program Information'),
                 EditAction::make()
+                    ->slideOver()
                     ->mutateRecordDataUsing(function (array $data): array {
                         $acadPlan = $data['acad_plan'] ?? [];
 
@@ -234,6 +236,7 @@ class ProgramsRelationManager extends RelationManager
             ])
             ->headerActions([
                 CreateAction::make()
+                    ->slideOver()
                     ->using(function (array $data, RelationManager $livewire): Model {
                         $data['acad_plan'] = [
                             'major' => filled($data['acad_plan_major'] ?? null)
