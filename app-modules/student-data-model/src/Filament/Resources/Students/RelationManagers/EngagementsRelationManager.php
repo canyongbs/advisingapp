@@ -239,21 +239,31 @@ class EngagementsRelationManager extends RelationManager
                                     return Str::limit($timelineable->getBodyText(), 50);
                                 }
 
-                                return Str::limit(html_entity_decode(strip_tags($body), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50);
+                                return Str::limit($this->cleanUpBody($timelineable->getBody()), 50);
                             }
 
                             return null;
                         }
                     )
-                    ->state(fn (Timeline $record) => match ($record->timelineable::class) {
-                        Engagement::class => $record->timelineable->channel === NotificationChannel::Sms
-                                ? Str::limit($record->timelineable->getBodyText(), 50)
-                                : Str::limit((string) $record->timelineable->getSubject(), 50),
-                        EngagementResponse::class => $record->timelineable->type === EngagementResponseType::Sms
-                                ? Str::limit(html_entity_decode(strip_tags($record->timelineable->getBody()), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50)
-                                : Str::limit(html_entity_decode(strip_tags($record->timelineable->subject), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50),
+                    ->state(function (Timeline $record): string {
+                        $timelineable = $record->timelineable;
 
-                        default => '',
+                        return match (true) {
+                            $timelineable instanceof Engagement => $timelineable->channel === NotificationChannel::Sms
+                                ? Str::limit($timelineable->getBodyText(), 50)
+                                : Str::limit((string) $timelineable->getSubject(), 50),
+
+                            $timelineable instanceof EngagementResponse => Str::limit(
+                                $this->cleanUpBody(
+                                    $timelineable->type === EngagementResponseType::Sms
+                                        ? (string) $timelineable->getBody()
+                                        : (string) $timelineable->subject
+                                ),
+                                50
+                            ),
+
+                            default => '',
+                        };
                     }),
                 TextColumn::make('type')
                     ->state(function (Timeline $record) {
@@ -356,5 +366,14 @@ class EngagementsRelationManager extends RelationManager
     {
         return auth()->user()->can('viewAny', Engagement::class)
             || auth()->user()->can('viewAny', EngagementResponse::class);
+    }
+
+    private function cleanUpBody(string $body): string
+    {
+        $text = html_entity_decode(strip_tags($body), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = preg_replace('/!\[[^\]]*\]\([^)]*\)/', '', $text) ?? $text;
+        $text = preg_replace('/\[([^\]]*)\]\([^)]*\)/', '$1', $text) ?? $text;
+
+        return trim(preg_replace('/\s+/u', ' ', $text) ?? $text);
     }
 }

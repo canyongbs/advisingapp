@@ -130,15 +130,11 @@ class Inbox extends Page implements HasTable
                             return $record->subject;
                         }
 
-                        return filled($body = $record->getBody())
-                            ? Str::limit(html_entity_decode(strip_tags($body), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50)
-                            : null;
+                        return filled($body = $record->getBody()) ? Str::limit($this->cleanUpBody($body), 50) : null;
                     })
                     ->description(function (EngagementResponse $record): ?string {
                         if ($record->type === EngagementResponseType::Email && filled($record->subject)) {
-                            return filled($body = $record->getBody())
-                                ? Str::limit(html_entity_decode(strip_tags($body), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50)
-                                : null;
+                            return filled($body = $record->getBody()) ? Str::limit($this->cleanUpBody($body), 50) : null;
                         }
 
                         return null;
@@ -280,5 +276,14 @@ class Inbox extends Page implements HasTable
                 }
             }
         );
+    }
+
+    protected function cleanUpBody(string $body): string
+    {
+        $text = html_entity_decode(strip_tags($body), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = preg_replace('/!\[[^\]]*\]\([^)]*\)/', '', $text) ?? $text;
+        $text = preg_replace('/\[([^\]]*)\]\([^)]*\)/', '$1', $text) ?? $text;
+
+        return trim(preg_replace('/\s+/u', ' ', $text) ?? $text);
     }
 }

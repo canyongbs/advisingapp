@@ -259,6 +259,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
         $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
+        $text = preg_replace('/!\[[^\]]*\]\([^)]*\)/', '', $text) ?? $text;
+        $text = preg_replace('/\[([^\]]*)\]\([^)]*\)/', '$1', $text) ?? $text;
+
         return trim(preg_replace('/\s+/u', ' ', $text) ?? '');
     }
 
