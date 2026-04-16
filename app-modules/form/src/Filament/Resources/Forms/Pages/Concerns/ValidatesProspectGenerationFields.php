@@ -48,7 +48,7 @@ trait ValidatesProspectGenerationFields
         $contentComponent = $this->form->getComponent('content');
 
         if (! $contentComponent instanceof RichEditor) {
-            $fail('Forms that generate prospects must include required email and name fields.');
+            $fail('Forms that generate prospects must include a required Mapped Primary Email Address field and a required Mapped Name field.');
 
             return;
         }
@@ -60,7 +60,7 @@ trait ValidatesProspectGenerationFields
         }
 
         if (! is_array($content) || ! isset($content['content'])) {
-            $fail('Forms that generate prospects must include required email and name fields.');
+            $fail('Forms that generate prospects must include a required Mapped Primary Email Address field and a required Mapped Name field.');
 
             return;
         }
@@ -71,11 +71,11 @@ trait ValidatesProspectGenerationFields
             $missingFields = [];
 
             if (! $result['email']) {
-                $missingFields[] = 'a required Educatable Email field';
+                $missingFields[] = 'a required Mapped Primary Email Address field';
             }
 
             if (! $result['name']) {
-                $missingFields[] = 'an Educatable Name field';
+                $missingFields[] = 'a required Mapped Name field';
             }
 
             $message = 'Forms that generate prospects must include ' . implode(' and ', $missingFields) . '.';
@@ -86,7 +86,7 @@ trait ValidatesProspectGenerationFields
     public function validateWizardStepsFromRules(mixed $steps, Closure $fail): void
     {
         if (empty($steps) || ! is_array($steps)) {
-            $fail('Forms that generate prospects must include required email and name fields.');
+            $fail('Forms that generate prospects must include a required Mapped Primary Email Address field and a required Mapped Name field.');
 
             return;
         }
@@ -97,7 +97,7 @@ trait ValidatesProspectGenerationFields
         $stepsComponent = $this->form->getComponent('steps');
 
         if (! $stepsComponent) {
-            $fail('Forms that generate prospects must include required email and name fields.');
+            $fail('Forms that generate prospects must include a required Mapped Primary Email Address field and a required Mapped Name field.');
 
             return;
         }
@@ -144,11 +144,11 @@ trait ValidatesProspectGenerationFields
             $missingFields = [];
 
             if (! $hasRequiredEmail) {
-                $missingFields[] = 'a required Educatable Email field';
+                $missingFields[] = 'a required Mapped Primary Email Address field';
             }
 
             if (! $hasRequiredName) {
-                $missingFields[] = 'an Educatable Name field';
+                $missingFields[] = 'a required Mapped Name field';
             }
 
             $message = 'Forms that generate prospects must include ' . implode(' and ', $missingFields) . '.';
