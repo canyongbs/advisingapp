@@ -34,59 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Models;
+use App\Features\BookingGroupRoundRobinFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\MeetingCenter\Database\Factories\BookingGroupAppointmentFactory;
-use App\Models\BaseModel;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
-/**
- * @mixin IdeHelperBookingGroupAppointment
- */
-class BookingGroupAppointment extends BaseModel
-{
-    /** @use HasFactory<BookingGroupAppointmentFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'booking_group_id',
-        'calendar_event_provider_uid',
-        'name',
-        'email',
-        'starts_at',
-        'ends_at',
-        'meeting_owner_id',
-    ];
-
-    protected $casts = [
-        'starts_at' => 'datetime',
-        'ends_at' => 'datetime',
-    ];
-
-    /**
-     * @return BelongsTo<BookingGroup, $this>
-     */
-    public function bookingGroup(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->belongsTo(BookingGroup::class);
+        DB::transaction(function () {
+            Schema::table('booking_groups', function (Blueprint $table) {
+                $table->foreignUuid('round_robin_last_assigned_id')->nullable()->constrained('users')->nullOnDelete();
+            });
+
+            Schema::table('booking_group_appointments', function (Blueprint $table) {
+                $table->foreignUuid('meeting_owner_id')->nullable()->constrained('users')->nullOnDelete();
+            });
+
+            BookingGroupRoundRobinFeature::activate();
+        });
     }
 
-    /**
-     * @return HasMany<CalendarEvent, $this>
-     */
-    public function calendarEvents(): HasMany
+    public function down(): void
     {
-        return $this->hasMany(CalendarEvent::class, 'provider_uid', 'calendar_event_provider_uid');
-    }
+        DB::transaction(function () {
+            BookingGroupRoundRobinFeature::deactivate();
 
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function meetingOwner(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'meeting_owner_id');
+            Schema::table('booking_group_appointments', function (Blueprint $table) {
+                $table->dropConstrainedForeignId('meeting_owner_id');
+            });
+
+            Schema::table('booking_groups', function (Blueprint $table) {
+                $table->dropConstrainedForeignId('round_robin_last_assigned_id');
+            });
+        });
     }
-}
+};

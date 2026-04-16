@@ -36,16 +36,40 @@
 
 namespace AdvisingApp\MeetingCenter\Enums;
 
+use AdvisingApp\MeetingCenter\Services\BookingGroup\Assigners\BookingGroupMemberAssigner;
+use AdvisingApp\MeetingCenter\Services\BookingGroup\Assigners\RoundRobinMemberAssigner;
+use AdvisingApp\MeetingCenter\Services\BookingGroup\Bookers\AllBooker;
+use AdvisingApp\MeetingCenter\Services\BookingGroup\Bookers\BookingGroupBooker;
+use AdvisingApp\MeetingCenter\Services\BookingGroup\Bookers\RoundRobinBooker;
 use Filament\Support\Contracts\HasLabel;
 
 enum BookingGroupBookWith: string implements HasLabel
 {
     case All = 'all';
 
+    case RoundRobin = 'round_robin';
+
     public function getLabel(): string
     {
         return match ($this) {
             self::All => 'All',
+            self::RoundRobin => 'Round Robin',
+        };
+    }
+
+    public function getAssignerClass(): ?BookingGroupMemberAssigner
+    {
+        return match ($this) {
+            self::RoundRobin => app(RoundRobinMemberAssigner::class),
+            default => null,
+        };
+    }
+
+    public function getBookerClass(): BookingGroupBooker
+    {
+        return match ($this) {
+            self::All => app(AllBooker::class),
+            self::RoundRobin => app(RoundRobinBooker::class),
         };
     }
 }

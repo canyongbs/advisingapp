@@ -39,6 +39,7 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use App\Features\BookingGroupRoundRobinFeature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
@@ -103,6 +104,7 @@ class EditBookingGroup extends EditRecord
                     Select::make('book_with')
                         ->label('Book With')
                         ->options(BookingGroupBookWith::class)
+                        ->disableOptionWhen(fn (string $value): bool => $value === BookingGroupBookWith::RoundRobin->value && ! BookingGroupRoundRobinFeature::active())
                         ->default(BookingGroupBookWith::All)
                         ->live()
                         ->required(),

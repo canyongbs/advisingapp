@@ -41,6 +41,7 @@ use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
+use App\Features\BookingGroupRoundRobinFeature;
 use App\Models\User;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Builder;
@@ -52,9 +53,13 @@ class GetAvailableGroupAppointmentSlots
     /**
      * @return array<int, array{start: string, end: string}>
      */
-    public function __invoke(BookingGroup $bookingGroup, int $year, int $month): array
+    public function __invoke(BookingGroup $bookingGroup, int $year, int $month, ?User $forMember = null): array
     {
-        $members = $bookingGroup->allMembers();
+        if ($forMember) {
+            $members = collect([$forMember]);
+        } else {
+            $members = $bookingGroup->allMembers();
+        }
 
         if ($members->isEmpty()) {
             return [];
@@ -96,7 +101,7 @@ class GetAvailableGroupAppointmentSlots
 
         $allBusyPeriods = $this->getAllMemberBusyPeriods($members, $monthStart, $monthEnd);
         $allBusyPeriods = $allBusyPeriods->merge(
-            $this->getGroupAppointmentBusyPeriods($bookingGroup, $monthStart, $monthEnd),
+            $this->getGroupAppointmentBusyPeriods($bookingGroup, $monthStart, $monthEnd, $forMember),
         );
 
         $now = now()->addHours($effectiveLeadTime);
@@ -334,10 +339,11 @@ class GetAvailableGroupAppointmentSlots
     /**
      * @return Collection<int, array{start: Carbon, end: Carbon}>
      */
-    protected function getGroupAppointmentBusyPeriods(BookingGroup $bookingGroup, Carbon $start, Carbon $end): Collection
+    protected function getGroupAppointmentBusyPeriods(BookingGroup $bookingGroup, Carbon $start, Carbon $end, ?User $forMember = null): Collection
     {
         return BookingGroupAppointment::query()
             ->whereBelongsTo($bookingGroup)
+            ->when($forMember && BookingGroupRoundRobinFeature::active(), fn ($query) => $query->where('meeting_owner_id', $forMember->id))
             ->where('starts_at', '<', $end)
             ->where('ends_at', '>', $start)
             ->get()

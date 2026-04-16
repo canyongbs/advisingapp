@@ -136,8 +136,8 @@
             if (response.ok && data.success) {
                 emit('booking-success', data);
             } else if (response.status === 409) {
-                // Slot conflict
-                emit('booking-conflict', data.message);
+                // Slot conflict - emit full data so parent can auto-refresh with new blocks
+                emit('booking-conflict', data);
             } else if (response.status === 403) {
                 // Restricted to existing students only
                 error.value = data.message || 'You are not authorized to book this appointment.';

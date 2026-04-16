@@ -74,6 +74,7 @@ class BookingGroup extends BaseModel implements Auditable
         'available_appointment_hours',
         'minimum_booking_lead_time_hours',
         'maximum_booking_lead_time_days',
+        'round_robin_last_assigned_id',
     ];
 
     protected $casts = [
@@ -121,6 +122,14 @@ class BookingGroup extends BaseModel implements Auditable
     public function meetingOwner(): BelongsTo
     {
         return $this->belongsTo(User::class, 'meeting_owner_id');
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function roundRobinLastAssignedUser(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'round_robin_last_assigned_id');
     }
 
     /**
