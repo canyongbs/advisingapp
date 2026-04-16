@@ -41,19 +41,19 @@ use Spatie\LaravelSettings\Migrations\SettingsMigration;
 return new class () extends SettingsMigration {
     public function up(): void
     {
-    $this->migrator->inGroup('azure_sso', function (SettingsBlueprint $blueprint): void {
-      try {
-        $blueprint->add('is_expiration_notice_enabled', false);
-      } catch (SettingAlreadyExists $exception) {
-        // do nothing
-      }
+        $this->migrator->inGroup('azure_sso', function (SettingsBlueprint $blueprint): void {
+            try {
+                $blueprint->add('is_expiration_notice_enabled', false);
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
         });
     }
 
     public function down(): void
     {
-    $this->migrator->inGroup('azure_sso', function (SettingsBlueprint $blueprint): void {
-      $blueprint->delete('is_expiration_notice_enabled');
+        $this->migrator->inGroup('azure_sso', function (SettingsBlueprint $blueprint): void {
+            $blueprint->delete('is_expiration_notice_enabled');
         });
     }
 };
