@@ -39,7 +39,7 @@ namespace AdvisingApp\Engagement\Filament\Actions;
 use AdvisingApp\Engagement\Actions\CreateEngagement;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
-use AdvisingApp\Engagement\Filament\Support\EducatableContactabilityHelper;
+
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -116,13 +116,13 @@ class SendEngagementAction extends Action
                     ]);
                 } else {
                     $defaultChannel = $educatable
-                        ? EducatableContactabilityHelper::getDefaultChannel($educatable)
+                        ? $educatable->getDefaultEngagementChannel()
                         : null;
 
                     $schema->fill([
                         'channel' => $defaultChannel?->value,
                         'recipient_route_id' => ($educatable && $defaultChannel)
-                            ? EducatableContactabilityHelper::getDefaultRouteForChannel($educatable, $defaultChannel)
+                            ? $educatable->getDefaultRouteForEngagementChannel($defaultChannel)
                             : null,
                         'signature' => auth()->user()->signature,
                     ]);
@@ -143,7 +143,7 @@ class SendEngagementAction extends Action
                                         if (! array_key_exists($cacheKey, $noContactCache)) {
                                             $educatable = Student::find($value) ?? Prospect::find($value);
                                             $noContactCache[$cacheKey] = $educatable
-                                                ? ! EducatableContactabilityHelper::hasAnyValidRoute($educatable)
+                                                ? ! $educatable->hasAnyValidContactRoute()
                                                 : false;
                                         }
 
@@ -167,11 +167,11 @@ class SendEngagementAction extends Action
                                         return;
                                     }
 
-                                    $defaultChannel = EducatableContactabilityHelper::getDefaultChannel($educatable);
+                                    $defaultChannel = $educatable->getDefaultEngagementChannel();
 
                                     if ($defaultChannel) {
                                         $set('channel', $defaultChannel->value);
-                                        $set('recipient_route_id', EducatableContactabilityHelper::getDefaultRouteForChannel($educatable, $defaultChannel));
+                                        $set('recipient_route_id', $educatable->getDefaultRouteForEngagementChannel($defaultChannel));
 
                                         return;
                                     }
@@ -204,8 +204,8 @@ class SendEngagementAction extends Action
                                                             }
 
                                                             return match ($channel) {
-                                                                NotificationChannel::Email => EducatableContactabilityHelper::hasValidEmail($educatable),
-                                                                NotificationChannel::Sms => EducatableContactabilityHelper::hasValidSms($educatable),
+                                                                NotificationChannel::Email => $educatable->hasValidEmail(),
+                                                                NotificationChannel::Sms => $educatable->hasValidSms(),
                                                                 default => true,
                                                             };
                                                         },
@@ -227,7 +227,7 @@ class SendEngagementAction extends Action
                                                     }
 
                                                     $channel = NotificationChannel::parse($state);
-                                                    $set('recipient_route_id', EducatableContactabilityHelper::getDefaultRouteForChannel($educatable, $channel));
+                                                    $set('recipient_route_id', $educatable->getDefaultRouteForEngagementChannel($channel));
                                                 }),
                                             Select::make('recipient_route_id')
                                                 ->label(fn (Get $get): string => match (NotificationChannel::parse($get('channel'))) {
@@ -284,7 +284,7 @@ class SendEngagementAction extends Action
                                                 default => null,
                                             };
 
-                                            return $educatable !== null && EducatableContactabilityHelper::hasAnyValidRoute($educatable);
+                                            return $educatable !== null && $educatable->hasAnyValidContactRoute();
                                         })
                                         ->columnSpanFull(),
                                     Text::make('This recipient does not have valid contact information. Please select a different recipient.')
@@ -295,7 +295,7 @@ class SendEngagementAction extends Action
                                                 default => null,
                                             };
 
-                                            return $educatable !== null && ! EducatableContactabilityHelper::hasAnyValidRoute($educatable);
+                                            return $educatable !== null && ! $educatable->hasAnyValidContactRoute();
                                         })
                                         ->columnSpanFull(),
                                 ];

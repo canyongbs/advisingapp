@@ -39,7 +39,7 @@ namespace AdvisingApp\Engagement\Filament\Actions;
 use AdvisingApp\Engagement\Actions\CreateEngagement;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
-use AdvisingApp\Engagement\Filament\Support\EducatableContactabilityHelper;
+
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -101,14 +101,14 @@ class RelationManagerSendEngagementAction extends CreateAction
 
                 assert($educatable instanceof Educatable);
 
-                return ! EducatableContactabilityHelper::hasAnyValidRoute($educatable);
+                return ! $educatable->hasAnyValidContactRoute();
             })
             ->tooltip(function (RelationManager $livewire): ?string {
                 $educatable = $livewire->getOwnerRecord();
 
                 assert($educatable instanceof Educatable);
 
-                if (! EducatableContactabilityHelper::hasAnyValidRoute($educatable)) {
+                if (! $educatable->hasAnyValidContactRoute()) {
                     $label = $educatable::getLabel();
 
                     return "This {$label} does not have valid contact information in their record.";
@@ -121,12 +121,12 @@ class RelationManagerSendEngagementAction extends CreateAction
 
                 assert($educatable instanceof Educatable);
 
-                $defaultChannel = EducatableContactabilityHelper::getDefaultChannel($educatable);
+                $defaultChannel = $educatable->getDefaultEngagementChannel();
 
                 $schema->fill([
                     'channel' => $defaultChannel?->value,
                     'recipient_route_id' => $defaultChannel
-                        ? EducatableContactabilityHelper::getDefaultRouteForChannel($educatable, $defaultChannel)
+                        ? $educatable->getDefaultRouteForEngagementChannel($defaultChannel)
                         : null,
                 ]);
             })
@@ -152,8 +152,8 @@ class RelationManagerSendEngagementAction extends CreateAction
                                                 }
 
                                                 return match ($channel) {
-                                                    NotificationChannel::Email => EducatableContactabilityHelper::hasValidEmail($educatable),
-                                                    NotificationChannel::Sms => EducatableContactabilityHelper::hasValidSms($educatable),
+                                                    NotificationChannel::Email => $educatable->hasValidEmail(),
+                                                    NotificationChannel::Sms => $educatable->hasValidSms(),
                                                     default => true,
                                                 };
                                             },
@@ -164,7 +164,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                                         $educatable = $livewire->getOwnerRecord();
                                         assert($educatable instanceof Educatable);
 
-                                        return EducatableContactabilityHelper::getDefaultChannel($educatable)?->value;
+                                        return $educatable->getDefaultEngagementChannel()?->value;
                                     })
                                     ->live()
                                     ->afterStateUpdated(function (mixed $state, RelationManager $livewire, Set $set) {
@@ -179,7 +179,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                                             return;
                                         }
 
-                                        $route = EducatableContactabilityHelper::getDefaultRouteForChannel($educatable, $channel);
+                                        $route = $educatable->getDefaultRouteForEngagementChannel($channel);
 
                                         $set('recipient_route_id', $route);
                                     }),

@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Engagement\Filament\Support\EducatableContactabilityHelper;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
@@ -131,8 +130,8 @@ it('shows no-contact-info message when student has no valid email or sms', funct
     $student->save();
     $student->refresh();
 
-    // Verify that helper correctly identifies no valid route
-    $this->assertFalse(EducatableContactabilityHelper::hasAnyValidRoute($student));
+    // Verify that model correctly identifies no valid route
+    $this->assertFalse($student->hasAnyValidContactRoute());
 });
 
 it('disables channel options when student has bounced email', function () {
@@ -160,7 +159,7 @@ it('disables channel options when student has bounced email', function () {
     $student->refresh();
 
     // Verify no valid channels
-    $this->assertFalse(EducatableContactabilityHelper::hasAnyValidRoute($student));
+    $this->assertFalse($student->hasAnyValidContactRoute());
 });
 
 it('excludes bounced phones from sms channel options', function () {
@@ -215,6 +214,6 @@ it('shows only sms channel when student has no valid email but valid sms', funct
     $student->refresh();
 
     // Verify SMS-only scenario
-    $this->assertFalse(EducatableContactabilityHelper::hasValidEmail($student));
-    $this->assertTrue(EducatableContactabilityHelper::hasValidSms($student));
+    $this->assertFalse($student->hasValidEmail());
+    $this->assertTrue($student->hasValidSms());
 });
