@@ -38,6 +38,7 @@ namespace AdvisingApp\Project\Filament\Resources\Projects\Pages;
 
 use AdvisingApp\Pipeline\Filament\Resources\Pipelines\PipelineResource;
 use AdvisingApp\Pipeline\Models\Pipeline;
+use AdvisingApp\Pipeline\Settings\ProspectPipelineSettings;
 use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
 use BackedEnum;
 use Filament\Actions\CreateAction;
@@ -58,6 +59,11 @@ class ManageProjectPipelines extends ManageRelatedRecords
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $title = 'Pipelines';
+
+    public static function canAccess(array $arguments = []): bool
+    {
+        return app(ProspectPipelineSettings::class)->is_enabled && parent::canAccess($arguments);
+    }
 
     public function table(Table $table): Table
     {
