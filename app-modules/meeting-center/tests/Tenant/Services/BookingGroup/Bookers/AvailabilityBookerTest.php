@@ -359,7 +359,7 @@ it('uses round robin tiebreaker when members have equal meeting hours', function
     expect($appointment2->meeting_owner_id)->toBe($bob->id);
 });
 
-it('seamlessly books with new most-available member on conflict', function () use ($workingHours) {
+it('returns 409 with fresh blocks when resolved member has a conflict', function () use ($workingHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
@@ -378,88 +378,15 @@ it('seamlessly books with new most-available member on conflict', function () us
             'working_hours' => $workingHours,
         ]);
 
-    // Both have 0 hours, so tied — Alice resolves first (alphabetically)
-    // But Alice has a conflict at the requested time
-    CalendarEvent::factory()->create([
-        'calendar_id' => $alice->calendar->id,
-        'starts_at' => now()->addDays(1)->setHour(10),
-        'ends_at' => now()->addDays(1)->setHour(11),
-        'transparency' => 'busy',
-    ]);
-
-    $bookingGroup = BookingGroup::factory()
-        ->hasAttached($alice, [], 'users')
-        ->hasAttached($bob, [], 'users')
-        ->create([
-            'slug' => 'avail-seamless',
-            'book_with' => BookingGroupBookWith::Availability,
-            'available_appointment_hours' => $workingHours,
-        ]);
-
-    // Alice has 1h of meetings, Bob has 0h — Bob is most available
-    // Alice would NOT be resolved first since Bob has fewer hours
-    // But if Alice were resolved (e.g. via tiebreaker), Bob would take over seamlessly
-    // With the 1h event, Bob is clearly most available, so this books with Bob directly
-    $response = postJson(
-        route('widgets.booking-page.group.api.book', ['slug' => 'avail-seamless']),
-        [
-            'name' => 'Test Visitor',
-            'email' => 'visitor@example.com',
-            'starts_at' => now()->addDays(1)->setHour(10)->toIso8601String(),
-            'ends_at' => now()->addDays(1)->setHour(11)->toIso8601String(),
-        ]
-    );
-
-    $response->assertStatus(201);
-    $response->assertJson([
-        'success' => true,
-        'message' => 'Your appointment has been successfully booked!',
-        'event' => [
-            'title' => 'Group Meeting with Test Visitor',
-            'starts_at' => now()->addDays(1)->setHour(10)->toIso8601String(),
-            'ends_at' => now()->addDays(1)->setHour(11)->toIso8601String(),
-        ],
-    ]);
-
-    $appointment = BookingGroupAppointment::where('booking_group_id', $bookingGroup->id)->first();
-    expect($appointment->meeting_owner_id)->toBe($bob->id);
-});
-
-it('seamlessly rebooks with fallback member when resolved member has conflict', function () use ($workingHours) {
-    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
-
-    $alice = User::factory()
-        ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
-        ->create([
-            'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
-
-    $bob = User::factory()
-        ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
-        ->create([
-            'name' => 'Bob',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
-
-    // Both have 2 hours — tied. Alice resolves first (alphabetically, no cursor).
-    CalendarEvent::factory()->create([
-        'calendar_id' => $alice->calendar->id,
-        'starts_at' => now()->addDays(2)->setHour(14),
-        'ends_at' => now()->addDays(2)->setHour(16),
-        'transparency' => 'busy',
-    ]);
-
+    // Bob has more hours, so Alice resolves as most available
     CalendarEvent::factory()->create([
         'calendar_id' => $bob->calendar->id,
-        'starts_at' => now()->addDays(3)->setHour(14),
-        'ends_at' => now()->addDays(3)->setHour(16),
+        'starts_at' => now()->addDays(2)->setHour(10),
+        'ends_at' => now()->addDays(2)->setHour(14),
         'transparency' => 'busy',
     ]);
 
-    // Alice also has a conflict at the exact booking time
+    // Alice has a conflict at the exact booking time
     CalendarEvent::factory()->create([
         'calendar_id' => $alice->calendar->id,
         'starts_at' => now()->addDays(1)->setHour(10),
@@ -471,15 +398,13 @@ it('seamlessly rebooks with fallback member when resolved member has conflict', 
         ->hasAttached($alice, [], 'users')
         ->hasAttached($bob, [], 'users')
         ->create([
-            'slug' => 'avail-fallback',
+            'slug' => 'avail-conflict',
             'book_with' => BookingGroupBookWith::Availability,
             'available_appointment_hours' => $workingHours,
         ]);
 
-    // Alice resolves first (tied at 2h each, first alphabetically with no cursor)
-    // Alice has conflict at 10-11, so re-resolve picks Bob, who has no conflict → books seamlessly
     $response = postJson(
-        route('widgets.booking-page.group.api.book', ['slug' => 'avail-fallback']),
+        route('widgets.booking-page.group.api.book', ['slug' => 'avail-conflict']),
         [
             'name' => 'Test Visitor',
             'email' => 'visitor@example.com',
@@ -488,21 +413,12 @@ it('seamlessly rebooks with fallback member when resolved member has conflict', 
         ]
     );
 
-    $response->assertStatus(201);
+    $response->assertStatus(409);
     $response->assertJson([
-        'success' => true,
-        'message' => 'Your appointment has been successfully booked!',
-        'event' => [
-            'title' => 'Group Meeting with Test Visitor',
-            'starts_at' => now()->addDays(1)->setHour(10)->toIso8601String(),
-            'ends_at' => now()->addDays(1)->setHour(11)->toIso8601String(),
-        ],
+        'success' => false,
+        'message' => 'This time slot is no longer available.',
     ]);
-
-    $appointment = BookingGroupAppointment::where('booking_group_id', $bookingGroup->id)->first();
-    expect($appointment->meeting_owner_id)->toBe($bob->id);
-    $bookingGroup->refresh();
-    expect($bookingGroup->round_robin_last_assigned_id)->toBe($bob->id);
+    expect($response->json('blocks'))->toHaveCount(8);
 });
 
 it('returns 409 with fresh blocks when all members have conflicts', function () use ($workingHours) {
