@@ -41,6 +41,7 @@ use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
 use AdvisingApp\Pipeline\Models\Pipeline;
@@ -92,6 +93,16 @@ interface Educatable extends Identifiable, CanBeNotified
     public function eventAttendeeRecords(): HasManyThrough;
 
     public function canReceiveSms(): bool;
+
+    public function hasValidEmail(): bool;
+
+    public function hasValidSms(): bool;
+
+    public function hasAnyValidContactRoute(): bool;
+
+    public function getDefaultEngagementChannel(): ?NotificationChannel;
+
+    public function getDefaultRouteForEngagementChannel(NotificationChannel $channel): ?string;
 
     /**
      * @return MorphToMany<Tag, covariant Student|Prospect, covariant Taggable>

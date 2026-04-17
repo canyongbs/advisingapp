@@ -73,15 +73,21 @@ class EducatableSelect extends Component
         $this->isExcludingConvertedProspects = $isExcludingConvertedProspects;
     }
 
-    public static function make(string $name, bool $isExcludingConvertedProspects = true): EducatableSelect | MorphToSelect
+    public static function make(string $name, bool $isExcludingConvertedProspects = true, ?Closure $modifyKeySelectUsing = null): EducatableSelect | MorphToSelect
     {
         if (auth()->user()->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
-            return MorphToSelect::make($name)
+            $morphToSelect = MorphToSelect::make($name)
                 ->searchable()
                 ->types(fn (?Model $record, MorphToSelect $component) => [
                     static::getStudentType(),
                     static::getProspectType($component->getRelationship()->getForeignKeyName(), $isExcludingConvertedProspects, $record),
                 ]);
+
+            if ($modifyKeySelectUsing) {
+                $morphToSelect->modifyKeySelectUsing($modifyKeySelectUsing);
+            }
+
+            return $morphToSelect;
         }
 
         $static = app(static::class, ['name' => $name]);

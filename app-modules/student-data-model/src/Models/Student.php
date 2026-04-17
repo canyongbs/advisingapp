@@ -52,6 +52,7 @@ use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Group\Models\GroupSubject;
 use AdvisingApp\Interaction\Models\Concerns\HasManyMorphedInteractions;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Concerns\HasSubscriptions;
 use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
@@ -527,7 +528,77 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     public function canReceiveSms(): bool
     {
-        return $this->primaryPhoneNumber?->can_receive_sms && (! $this->primaryPhoneNumber->smsOptOut()->exists());
+        return $this->primaryPhoneNumber?->can_receive_sms
+            && (! $this->primaryPhoneNumber->smsOptOut()->exists())
+            && (! $this->primaryPhoneNumber->bounced()->exists());
+    }
+
+    public function hasValidEmail(): bool
+    {
+        return $this->emailAddresses()
+            ->whereDoesntHave('bounced')
+            ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', 'opted_out'))
+            ->exists();
+    }
+
+    public function hasValidSms(): bool
+    {
+        return $this->phoneNumbers()
+            ->where('can_receive_sms', true)
+            ->whereDoesntHave('smsOptOut')
+            ->whereDoesntHave('bounced')
+            ->exists();
+    }
+
+    public function hasAnyValidContactRoute(): bool
+    {
+        return $this->hasValidEmail() || $this->hasValidSms();
+    }
+
+    public function getDefaultEngagementChannel(): ?NotificationChannel
+    {
+        if ($this->hasValidEmail()) {
+            return NotificationChannel::Email;
+        }
+
+        if ($this->hasValidSms()) {
+            return NotificationChannel::Sms;
+        }
+
+        return null;
+    }
+
+    public function getDefaultRouteForEngagementChannel(NotificationChannel $channel): ?string
+    {
+        return match ($channel) {
+            NotificationChannel::Email => $this->primaryEmailAddress()
+                ->whereDoesntHave('bounced')
+                ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', 'opted_out'))
+                ->first()
+                ?->getKey()
+                ?? $this->emailAddresses()
+                    ->whereDoesntHave('bounced')
+                    ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', 'opted_out'))
+                    ->orderBy('order')
+                    ->first()
+                    ?->getKey(),
+
+            NotificationChannel::Sms => $this->primaryPhoneNumber()
+                ->where('can_receive_sms', true)
+                ->whereDoesntHave('smsOptOut')
+                ->whereDoesntHave('bounced')
+                ->first()
+                ?->getKey()
+                ?? $this->phoneNumbers()
+                    ->where('can_receive_sms', true)
+                    ->whereDoesntHave('smsOptOut')
+                    ->whereDoesntHave('bounced')
+                    ->orderBy('order')
+                    ->first()
+                    ?->getKey(),
+
+            default => null,
+        };
     }
 
     /**
