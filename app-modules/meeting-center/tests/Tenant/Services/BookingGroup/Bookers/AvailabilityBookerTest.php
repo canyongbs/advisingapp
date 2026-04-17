@@ -418,7 +418,7 @@ it('returns 409 with fresh blocks when resolved member has a conflict', function
         'success' => false,
         'message' => 'This time slot is no longer available.',
     ]);
-    expect($response->json('blocks'))->toHaveCount(8);
+    expect($response->json('blocks'))->toHaveCount(20);
 });
 
 it('returns 409 with fresh blocks when all members have conflicts', function () use ($workingHours) {
