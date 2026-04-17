@@ -103,7 +103,7 @@ class GroupBookingPageWidgetController extends Controller
         $year = $request->integer('year', now()->year);
         $month = $request->integer('month', now()->month);
 
-        if ($bookingGroup->book_with === BookingGroupBookWith::RoundRobin && ! BookingGroupRoundRobinFeature::active()) {
+        if (in_array($bookingGroup->book_with, [BookingGroupBookWith::RoundRobin, BookingGroupBookWith::Availability]) && ! BookingGroupRoundRobinFeature::active()) {
             return response()->json([
                 'blocks' => [],
             ]);
@@ -118,10 +118,10 @@ class GroupBookingPageWidgetController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
-        if ($bookingGroup->book_with === BookingGroupBookWith::RoundRobin && ! BookingGroupRoundRobinFeature::active()) {
+        if (in_array($bookingGroup->book_with, [BookingGroupBookWith::RoundRobin, BookingGroupBookWith::Availability]) && ! BookingGroupRoundRobinFeature::active()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Round robin booking is not currently available.',
+                'message' => 'This booking type is not currently available.',
             ], 422);
         }
 

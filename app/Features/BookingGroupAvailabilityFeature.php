@@ -34,49 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Enums;
+namespace App\Features;
 
-use AdvisingApp\MeetingCenter\Services\BookingGroup\Assigners\AvailabilityMemberAssigner;
-use AdvisingApp\MeetingCenter\Services\BookingGroup\Assigners\BookingGroupMemberAssigner;
-use AdvisingApp\MeetingCenter\Services\BookingGroup\Assigners\RoundRobinMemberAssigner;
-use AdvisingApp\MeetingCenter\Services\BookingGroup\Bookers\AllBooker;
-use AdvisingApp\MeetingCenter\Services\BookingGroup\Bookers\AvailabilityBooker;
-use AdvisingApp\MeetingCenter\Services\BookingGroup\Bookers\BookingGroupBooker;
-use AdvisingApp\MeetingCenter\Services\BookingGroup\Bookers\RoundRobinBooker;
-use Filament\Support\Contracts\HasLabel;
+use App\Support\AbstractFeatureFlag;
 
-enum BookingGroupBookWith: string implements HasLabel
+class BookingGroupAvailabilityFeature extends AbstractFeatureFlag
 {
-    case All = 'all';
-
-    case RoundRobin = 'round_robin';
-
-    case Availability = 'availability';
-
-    public function getLabel(): string
+    public function resolve(mixed $scope): mixed
     {
-        return match ($this) {
-            self::All => 'All',
-            self::RoundRobin => 'Round Robin',
-            self::Availability => 'Availability',
-        };
-    }
-
-    public function getAssignerClass(): ?BookingGroupMemberAssigner
-    {
-        return match ($this) {
-            self::RoundRobin => app(RoundRobinMemberAssigner::class),
-            self::Availability => app(AvailabilityMemberAssigner::class),
-            default => null,
-        };
-    }
-
-    public function getBookerClass(): BookingGroupBooker
-    {
-        return match ($this) {
-            self::All => app(AllBooker::class),
-            self::RoundRobin => app(RoundRobinBooker::class),
-            self::Availability => app(AvailabilityBooker::class),
-        };
+        return false;
     }
 }

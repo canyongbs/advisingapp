@@ -90,7 +90,7 @@ class CreateBookingGroup extends CreateRecord
                     Select::make('book_with')
                         ->label('Book With')
                         ->options(BookingGroupBookWith::class)
-                        ->disableOptionWhen(fn (string $value): bool => $value === BookingGroupBookWith::RoundRobin->value && ! BookingGroupRoundRobinFeature::active())
+                        ->disableOptionWhen(fn (string $value): bool => $value !== BookingGroupBookWith::All->value && ! BookingGroupRoundRobinFeature::active())
                         ->default(BookingGroupBookWith::All)
                         ->live()
                         ->required(),
