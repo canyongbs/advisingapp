@@ -34,34 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Services\BookingGroup\Bookers;
+namespace AdvisingApp\MeetingCenter\Services\BookingGroup;
 
-use AdvisingApp\MeetingCenter\Actions\GetAvailableGroupAppointmentSlots;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Carbon;
 
-class AvailabilityBooker extends RoundRobinBooker
+class BookableWindowResolver
 {
-    public function availableSlots(BookingGroup $bookingGroup, int $year, int $month): JsonResponse
+    /**
+     * @return array{Carbon, Carbon}
+     */
+    public static function resolve(BookingGroup $bookingGroup): array
     {
-        $assigner = $bookingGroup->book_with->getAssigner();
-        $member = $assigner->resolve($bookingGroup);
+        $windowStart = now()->startOfDay();
+        $windowEnd = now()->startOfDay()->addMonths(3);
 
-        if (! $member) {
-            return response()->json([
-                'blocks' => [],
-            ]);
+        $minLeadTimeHours = $bookingGroup->minimum_booking_lead_time_hours;
+        $maxLeadTimeDays = $bookingGroup->maximum_booking_lead_time_days;
+
+        if ($minLeadTimeHours) {
+            $windowStart = now()->addHours($minLeadTimeHours);
         }
 
-        $blocks = app(GetAvailableGroupAppointmentSlots::class)(
-            $bookingGroup,
-            $year,
-            $month,
-            $member,
-        );
+        if ($maxLeadTimeDays) {
+            $windowEnd = now()->addDays($maxLeadTimeDays);
+        } elseif ($minLeadTimeHours) {
+            $windowEnd = $windowStart->copy()->addMonths(3);
+        }
 
-        return response()->json([
-            'blocks' => $blocks,
-        ]);
+        return [$windowStart, $windowEnd];
     }
 }

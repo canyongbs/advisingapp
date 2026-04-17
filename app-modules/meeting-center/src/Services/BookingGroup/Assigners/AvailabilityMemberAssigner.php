@@ -39,6 +39,7 @@ namespace AdvisingApp\MeetingCenter\Services\BookingGroup\Assigners;
 use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Services\BookingGroup\BookableWindowResolver;
 use App\Features\BookingGroupRoundRobinFeature;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -68,21 +69,7 @@ class AvailabilityMemberAssigner implements BookingGroupMemberAssigner
             return null;
         }
 
-        $windowStart = now()->startOfDay();
-        $windowEnd = now()->startOfDay()->addMonths(3);
-
-        $minLeadTimeHours = $bookingGroup->minimum_booking_lead_time_hours;
-        $maxLeadTimeDays = $bookingGroup->maximum_booking_lead_time_days;
-
-        if ($minLeadTimeHours) {
-            $windowStart = now()->addHours($minLeadTimeHours);
-        }
-
-        if ($maxLeadTimeDays) {
-            $windowEnd = now()->addDays($maxLeadTimeDays);
-        } elseif ($minLeadTimeHours) {
-            $windowEnd = $windowStart->copy()->addMonths(3);
-        }
+        [$windowStart, $windowEnd] = BookableWindowResolver::resolve($bookingGroup);
 
         $memberHours = $this->calculateMemberMeetingHours($eligibleMembers, $windowStart, $windowEnd);
 

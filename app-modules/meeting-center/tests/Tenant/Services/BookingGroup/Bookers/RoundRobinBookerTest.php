@@ -576,3 +576,148 @@ it('only shows availability for the assigned member, not other members', functio
     // Apr 7 is a full block because Alice has no conflicts
     expect($blocks[1])->toBe(['start' => '2026-04-07T08:00:00+00:00', 'end' => '2026-04-07T20:00:00+00:00']);
 });
+
+$noWorkingHours = [
+    'monday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+    'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+    'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+    'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+    'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+    'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+    'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+];
+
+it('skips member with no availability and shows next members slots', function () use ($workingHours, $noWorkingHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $alice = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
+        ->create([
+            'name' => 'Alice',
+            'working_hours_are_enabled' => true,
+            'working_hours' => $noWorkingHours,
+        ]);
+
+    $bob = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
+        ->create([
+            'name' => 'Bob',
+            'working_hours_are_enabled' => true,
+            'working_hours' => $workingHours,
+        ]);
+
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($alice, [], 'users')
+        ->hasAttached($bob, [], 'users')
+        ->create([
+            'slug' => 'rr-skip',
+            'book_with' => BookingGroupBookWith::RoundRobin,
+            'available_appointment_hours' => $workingHours,
+        ]);
+
+    // Alice resolves first (alphabetically) but has no working hours — zero availability
+    // Should skip to Bob and advance cursor past Alice
+    $response = getJson(
+        route('widgets.booking-page.group.api.available-slots', ['slug' => 'rr-skip', 'year' => 2026, 'month' => 4])
+    );
+
+    $response->assertOk();
+    $blocks = $response->json('blocks');
+    expect($blocks)->not->toBeEmpty();
+
+    $bookingGroup->refresh();
+    expect($bookingGroup->round_robin_last_assigned_id)->toBe($alice->id);
+});
+
+it('shows empty calendar when all members have no availability without advancing cursor', function () use ($noWorkingHours, $workingHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $alice = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
+        ->create([
+            'name' => 'Alice',
+            'working_hours_are_enabled' => true,
+            'working_hours' => $noWorkingHours,
+        ]);
+
+    $bob = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
+        ->create([
+            'name' => 'Bob',
+            'working_hours_are_enabled' => true,
+            'working_hours' => $noWorkingHours,
+        ]);
+
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($alice, [], 'users')
+        ->hasAttached($bob, [], 'users')
+        ->create([
+            'slug' => 'rr-all-empty',
+            'book_with' => BookingGroupBookWith::RoundRobin,
+            'available_appointment_hours' => $workingHours,
+        ]);
+
+    $response = getJson(
+        route('widgets.booking-page.group.api.available-slots', ['slug' => 'rr-all-empty', 'year' => 2026, 'month' => 4])
+    );
+
+    $response->assertOk();
+    expect($response->json('blocks'))->toBeEmpty();
+
+    // Cursor should not have moved
+    $bookingGroup->refresh();
+    expect($bookingGroup->round_robin_last_assigned_id)->toBeNull();
+});
+
+it('skips multiple unavailable members to find one with availability', function () use ($workingHours, $noWorkingHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $alice = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
+        ->create([
+            'name' => 'Alice',
+            'working_hours_are_enabled' => true,
+            'working_hours' => $noWorkingHours,
+        ]);
+
+    $bob = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
+        ->create([
+            'name' => 'Bob',
+            'working_hours_are_enabled' => true,
+            'working_hours' => $noWorkingHours,
+        ]);
+
+    $charlie = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-charlie']))
+        ->create([
+            'name' => 'Charlie',
+            'working_hours_are_enabled' => true,
+            'working_hours' => $workingHours,
+        ]);
+
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($alice, [], 'users')
+        ->hasAttached($bob, [], 'users')
+        ->hasAttached($charlie, [], 'users')
+        ->create([
+            'slug' => 'rr-skip-multi',
+            'book_with' => BookingGroupBookWith::RoundRobin,
+            'available_appointment_hours' => $workingHours,
+        ]);
+
+    // Alice resolves first, no availability → skip
+    // Bob resolves next, no availability → skip
+    // Charlie resolves, has availability → use him
+    $response = getJson(
+        route('widgets.booking-page.group.api.available-slots', ['slug' => 'rr-skip-multi', 'year' => 2026, 'month' => 4])
+    );
+
+    $response->assertOk();
+    $blocks = $response->json('blocks');
+    expect($blocks)->not->toBeEmpty();
+
+    // Cursor should have advanced past Alice and Bob
+    $bookingGroup->refresh();
+    expect($bookingGroup->round_robin_last_assigned_id)->toBe($bob->id);
+});

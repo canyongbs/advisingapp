@@ -41,9 +41,11 @@ use AdvisingApp\MeetingCenter\Http\Requests\BookGroupCalendarSlotRequest;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Services\BookingGroup\BookableWindowResolver;
 use App\Features\BookingGroupRoundRobinFeature;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
@@ -52,19 +54,53 @@ class RoundRobinBooker extends BookingGroupBooker
     public function availableSlots(BookingGroup $bookingGroup, int $year, int $month): JsonResponse
     {
         $assigner = $bookingGroup->book_with->getAssigner();
-        $roundRobinMember = $assigner->resolve($bookingGroup);
+        $originalMember = $assigner->resolve($bookingGroup);
 
-        if (! $roundRobinMember) {
+        if (! $originalMember) {
             return response()->json([
                 'blocks' => [],
             ]);
+        }
+
+        $currentMember = $originalMember;
+        $originalCursorId = $bookingGroup->round_robin_last_assigned_id;
+
+        $eligibleCount = User::query()
+            ->whereIn('users.id', $bookingGroup->allMembers()->pluck('id'))
+            ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('provider_id'))
+            ->count();
+
+        $triedCount = 0;
+
+        while ($triedCount < $eligibleCount) {
+            if ($this->memberHasAvailabilityInWindow($bookingGroup, $currentMember)) {
+                break;
+            }
+
+            $assigner->advance($bookingGroup, $currentMember);
+            $bookingGroup->refresh();
+            $bookingGroup->unsetRelation('roundRobinLastAssignedUser');
+            $nextMember = $assigner->resolve($bookingGroup);
+            $triedCount++;
+
+            if (! $nextMember || $nextMember->id === $originalMember->id) {
+                break;
+            }
+
+            $currentMember = $nextMember;
+        }
+
+        if ($triedCount >= $eligibleCount) {
+            $bookingGroup->round_robin_last_assigned_id = $originalCursorId;
+            $bookingGroup->save();
+            $currentMember = $originalMember;
         }
 
         $blocks = app(GetAvailableGroupAppointmentSlots::class)(
             $bookingGroup,
             $year,
             $month,
-            $roundRobinMember,
+            $currentMember,
         );
 
         return response()->json([
@@ -181,5 +217,29 @@ class RoundRobinBooker extends BookingGroupBooker
             'message' => 'This time slot is no longer available.',
             'blocks' => $freshBlocks,
         ], 409);
+    }
+
+    private function memberHasAvailabilityInWindow(BookingGroup $bookingGroup, User $member): bool
+    {
+        [$windowStart, $windowEnd] = BookableWindowResolver::resolve($bookingGroup);
+
+        $current = $windowStart->copy()->startOfMonth();
+
+        while ($current->lte($windowEnd)) {
+            $slots = app(GetAvailableGroupAppointmentSlots::class)(
+                $bookingGroup,
+                $current->year,
+                $current->month,
+                $member,
+            );
+
+            if (! empty($slots)) {
+                return true;
+            }
+
+            $current->addMonth();
+        }
+
+        return false;
     }
 }
