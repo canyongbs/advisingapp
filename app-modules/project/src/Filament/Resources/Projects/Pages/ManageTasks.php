@@ -189,16 +189,16 @@ class ManageTasks extends ManageRelatedRecords
                                         TextEntry::make('concern.full_name')
                                             ->label('Related To')
                                             ->getStateUsing(
-                                                fn (Task $record): ?string => match ($record->concern->getMorphClass()) {
-                                                    Student::class => $record->concern->full_name,
-                                                    Prospect::class => $record->concern->full_name,
+                                                fn (Task $record): ?string => match (true) {
+                                                    $record->concern instanceof Student => $record->concern->full_name,
+                                                    $record->concern instanceof Prospect => $record->concern->full_name,
                                                     default => null,
                                                 }
                                             )
                                             ->url(
-                                                fn (Task $record): string|null => match ($record->concern->getMorphClass()) {
-                                                    Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
-                                                    Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
+                                                fn (Task $record): string|null => match (true) {
+                                                    $record->concern instanceof Student => StudentResource::getUrl('view', ['record' => $record->concern]),
+                                                    $record->concern instanceof Prospect => ProspectResource::getUrl('view', ['record' => $record->concern]),
                                                     default => null,
                                                 }
                                             )
