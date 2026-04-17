@@ -67,7 +67,7 @@ class TaskPolicy implements PerformsChecksBeforeAuthorization
 
     public function view(Authenticatable $authenticatable, Task $task): Response
     {
-        if (! $authenticatable->hasLicense($task->concern->getLicenseType())) {
+        if (! $authenticatable->hasLicense($task->concern?->getLicenseType())) {
             return Response::deny('You do not have permission to view this task.');
         }
 
@@ -91,11 +91,11 @@ class TaskPolicy implements PerformsChecksBeforeAuthorization
 
     public function update(Authenticatable $authenticatable, Task $task): Response
     {
-        if ($task->concern_type === (new Prospect())->getMorphClass() && filled($task->concern->student_id)) {
+        if ($task->concern_type === (new Prospect())->getMorphClass() && filled($task->concern?->student_id)) {
             return Response::deny('You cannot edit this task as the related Prospect has been converted to a Student.');
         }
 
-        if (! $authenticatable->hasLicense($task->concern->getLicenseType())) {
+        if (! $authenticatable->hasLicense($task->concern?->getLicenseType())) {
             return Response::deny('You do not have permission to update this task.');
         }
 
@@ -111,7 +111,7 @@ class TaskPolicy implements PerformsChecksBeforeAuthorization
 
     public function delete(Authenticatable $authenticatable, Task $task): Response
     {
-        if (! $authenticatable->hasLicense($task->concern->getLicenseType())) {
+        if (! $authenticatable->hasLicense($task->concern?->getLicenseType())) {
             return Response::deny('You do not have permission to delete this task.');
         }
 
@@ -123,7 +123,7 @@ class TaskPolicy implements PerformsChecksBeforeAuthorization
 
     public function restore(Authenticatable $authenticatable, Task $task): Response
     {
-        if (! $authenticatable->hasLicense($task->concern->getLicenseType())) {
+        if (! $authenticatable->hasLicense($task->concern?->getLicenseType())) {
             return Response::deny('You do not have permission to restore this task.');
         }
 
@@ -135,7 +135,7 @@ class TaskPolicy implements PerformsChecksBeforeAuthorization
 
     public function forceDelete(Authenticatable $authenticatable, Task $task): Response
     {
-        if (! $authenticatable->hasLicense($task->concern->getLicenseType())) {
+        if (! $authenticatable->hasLicense($task->concern?->getLicenseType())) {
             return Response::deny('You do not have permission to permanently delete this task.');
         }
 
