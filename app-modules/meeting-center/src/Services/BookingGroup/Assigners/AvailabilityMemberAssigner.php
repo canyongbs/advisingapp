@@ -71,6 +71,19 @@ class AvailabilityMemberAssigner implements BookingGroupMemberAssigner
         $windowStart = now()->startOfDay();
         $windowEnd = now()->startOfDay()->addMonths(3);
 
+        $minLeadTimeHours = $bookingGroup->minimum_booking_lead_time_hours;
+        $maxLeadTimeDays = $bookingGroup->maximum_booking_lead_time_days;
+
+        if ($minLeadTimeHours) {
+            $windowStart = now()->addHours($minLeadTimeHours);
+        }
+
+        if ($maxLeadTimeDays) {
+            $windowEnd = now()->addDays($maxLeadTimeDays);
+        } elseif ($minLeadTimeHours) {
+            $windowEnd = $windowStart->copy()->addMonths(3);
+        }
+
         $memberHours = $this->calculateMemberMeetingHours($eligibleMembers, $windowStart, $windowEnd);
 
         $minHours = (float) $memberHours->min();

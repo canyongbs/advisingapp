@@ -713,3 +713,205 @@ it('only counts busy transparency events toward meeting hours', function () use 
     $appointment = BookingGroupAppointment::where('booking_group_id', $bookingGroup->id)->first();
     expect($appointment->meeting_owner_id)->toBe($alice->id);
 });
+
+it('uses min lead time as availability window start', function () use ($workingHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $alice = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
+        ->create([
+            'name' => 'Alice',
+            'working_hours_are_enabled' => true,
+            'working_hours' => $workingHours,
+        ]);
+
+    $bob = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
+        ->create([
+            'name' => 'Bob',
+            'working_hours_are_enabled' => true,
+            'working_hours' => $workingHours,
+        ]);
+
+    // Alice has 2h of meetings BEFORE the min lead time window (within 48h from now)
+    // These should NOT count toward her hours
+    CalendarEvent::factory()->create([
+        'calendar_id' => $alice->calendar->id,
+        'starts_at' => now()->addHours(12)->setMinute(0),
+        'ends_at' => now()->addHours(14)->setMinute(0),
+        'transparency' => 'busy',
+    ]);
+
+    // Bob has 2h of meetings AFTER the min lead time window
+    // These SHOULD count toward his hours
+    CalendarEvent::factory()->create([
+        'calendar_id' => $bob->calendar->id,
+        'starts_at' => now()->addDays(3)->setHour(10),
+        'ends_at' => now()->addDays(3)->setHour(12),
+        'transparency' => 'busy',
+    ]);
+
+    // Min lead time = 48 hours, so window starts at now()+48h
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($alice, [], 'users')
+        ->hasAttached($bob, [], 'users')
+        ->create([
+            'slug' => 'avail-min-lead',
+            'book_with' => BookingGroupBookWith::Availability,
+            'available_appointment_hours' => $workingHours,
+            'minimum_booking_lead_time_hours' => 48,
+        ]);
+
+    $response = postJson(
+        route('widgets.booking-page.group.api.book', ['slug' => 'avail-min-lead']),
+        [
+            'name' => 'Test Visitor',
+            'email' => 'visitor@example.com',
+            'starts_at' => now()->addDays(3)->setHour(14)->toIso8601String(),
+            'ends_at' => now()->addDays(3)->setHour(15)->toIso8601String(),
+        ]
+    );
+
+    $response->assertStatus(201);
+
+    // Alice has 0h in window (her event is before lead time), Bob has 2h — Alice is most available
+    $appointment = BookingGroupAppointment::where('booking_group_id', $bookingGroup->id)->first();
+    expect($appointment->meeting_owner_id)->toBe($alice->id);
+});
+
+it('uses max lead time as availability window end', function () use ($workingHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $alice = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
+        ->create([
+            'name' => 'Alice',
+            'working_hours_are_enabled' => true,
+            'working_hours' => $workingHours,
+        ]);
+
+    $bob = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
+        ->create([
+            'name' => 'Bob',
+            'working_hours_are_enabled' => true,
+            'working_hours' => $workingHours,
+        ]);
+
+    // Alice has 2h of meetings BEYOND the max lead time (30 days)
+    // These should NOT count toward her hours
+    CalendarEvent::factory()->create([
+        'calendar_id' => $alice->calendar->id,
+        'starts_at' => now()->addDays(35)->setHour(10),
+        'ends_at' => now()->addDays(35)->setHour(12),
+        'transparency' => 'busy',
+    ]);
+
+    // Bob has 2h of meetings WITHIN the max lead time
+    // These SHOULD count toward his hours
+    CalendarEvent::factory()->create([
+        'calendar_id' => $bob->calendar->id,
+        'starts_at' => now()->addDays(10)->setHour(10),
+        'ends_at' => now()->addDays(10)->setHour(12),
+        'transparency' => 'busy',
+    ]);
+
+    // Max lead time = 30 days, so window ends at now()+30d
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($alice, [], 'users')
+        ->hasAttached($bob, [], 'users')
+        ->create([
+            'slug' => 'avail-max-lead',
+            'book_with' => BookingGroupBookWith::Availability,
+            'available_appointment_hours' => $workingHours,
+            'maximum_booking_lead_time_days' => 30,
+        ]);
+
+    $response = postJson(
+        route('widgets.booking-page.group.api.book', ['slug' => 'avail-max-lead']),
+        [
+            'name' => 'Test Visitor',
+            'email' => 'visitor@example.com',
+            'starts_at' => now()->addDays(1)->setHour(10)->toIso8601String(),
+            'ends_at' => now()->addDays(1)->setHour(11)->toIso8601String(),
+        ]
+    );
+
+    $response->assertStatus(201);
+
+    // Alice has 0h in window (her event is beyond max lead time), Bob has 2h — Alice is most available
+    $appointment = BookingGroupAppointment::where('booking_group_id', $bookingGroup->id)->first();
+    expect($appointment->meeting_owner_id)->toBe($alice->id);
+});
+
+it('uses both min and max lead time to bound the availability window', function () use ($workingHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $alice = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
+        ->create([
+            'name' => 'Alice',
+            'working_hours_are_enabled' => true,
+            'working_hours' => $workingHours,
+        ]);
+
+    $bob = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
+        ->create([
+            'name' => 'Bob',
+            'working_hours_are_enabled' => true,
+            'working_hours' => $workingHours,
+        ]);
+
+    // Alice has events OUTSIDE the window (before min lead time AND after max lead time)
+    // Before min lead time (within 24h)
+    CalendarEvent::factory()->create([
+        'calendar_id' => $alice->calendar->id,
+        'starts_at' => now()->addHours(6)->setMinute(0),
+        'ends_at' => now()->addHours(8)->setMinute(0),
+        'transparency' => 'busy',
+    ]);
+    // After max lead time (beyond 14 days)
+    CalendarEvent::factory()->create([
+        'calendar_id' => $alice->calendar->id,
+        'starts_at' => now()->addDays(20)->setHour(10),
+        'ends_at' => now()->addDays(20)->setHour(12),
+        'transparency' => 'busy',
+    ]);
+
+    // Bob has 3h of meetings INSIDE the window (between 24h and 14 days from now)
+    CalendarEvent::factory()->create([
+        'calendar_id' => $bob->calendar->id,
+        'starts_at' => now()->addDays(5)->setHour(10),
+        'ends_at' => now()->addDays(5)->setHour(13),
+        'transparency' => 'busy',
+    ]);
+
+    // Min lead time = 24h, max lead time = 14 days
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($alice, [], 'users')
+        ->hasAttached($bob, [], 'users')
+        ->create([
+            'slug' => 'avail-both-lead',
+            'book_with' => BookingGroupBookWith::Availability,
+            'available_appointment_hours' => $workingHours,
+            'minimum_booking_lead_time_hours' => 24,
+            'maximum_booking_lead_time_days' => 14,
+        ]);
+
+    $response = postJson(
+        route('widgets.booking-page.group.api.book', ['slug' => 'avail-both-lead']),
+        [
+            'name' => 'Test Visitor',
+            'email' => 'visitor@example.com',
+            'starts_at' => now()->addDays(2)->setHour(10)->toIso8601String(),
+            'ends_at' => now()->addDays(2)->setHour(11)->toIso8601String(),
+        ]
+    );
+
+    $response->assertStatus(201);
+
+    // Alice has 0h in window (both events outside), Bob has 3h — Alice is most available
+    $appointment = BookingGroupAppointment::where('booking_group_id', $bookingGroup->id)->first();
+    expect($appointment->meeting_owner_id)->toBe($alice->id);
+});
