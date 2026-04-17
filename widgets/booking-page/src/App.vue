@@ -250,12 +250,16 @@
         showBookingForm.value = false;
     }
 
-    function handleBookingConflict(message) {
-        conflictError.value = message;
+    function handleBookingConflict(data) {
+        conflictError.value = typeof data === 'string' ? data : data.message;
         showBookingForm.value = false;
         selectedSlot.value = null;
-        // Refresh the available slots to get updated availability
-        fetchAvailableBlocks();
+
+        if (data.blocks) {
+            availableBlocks.value = data.blocks;
+        } else {
+            fetchAvailableBlocks();
+        }
     }
 
     function handleCancelBooking() {

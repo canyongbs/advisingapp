@@ -34,59 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Models;
+namespace App\Features;
 
-use AdvisingApp\MeetingCenter\Database\Factories\BookingGroupAppointmentFactory;
-use App\Models\BaseModel;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @mixin IdeHelperBookingGroupAppointment
- */
-class BookingGroupAppointment extends BaseModel
+class BookingGroupRoundRobinFeature extends AbstractFeatureFlag
 {
-    /** @use HasFactory<BookingGroupAppointmentFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'booking_group_id',
-        'calendar_event_provider_uid',
-        'name',
-        'email',
-        'starts_at',
-        'ends_at',
-        'meeting_owner_id',
-    ];
-
-    protected $casts = [
-        'starts_at' => 'datetime',
-        'ends_at' => 'datetime',
-    ];
-
-    /**
-     * @return BelongsTo<BookingGroup, $this>
-     */
-    public function bookingGroup(): BelongsTo
+    public function resolve(mixed $scope): mixed
     {
-        return $this->belongsTo(BookingGroup::class);
-    }
-
-    /**
-     * @return HasMany<CalendarEvent, $this>
-     */
-    public function calendarEvents(): HasMany
-    {
-        return $this->hasMany(CalendarEvent::class, 'provider_uid', 'calendar_event_provider_uid');
-    }
-
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function meetingOwner(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'meeting_owner_id');
+        return false;
     }
 }

@@ -34,59 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Models;
+namespace AdvisingApp\MeetingCenter\Services\BookingGroup;
 
-use AdvisingApp\MeetingCenter\Database\Factories\BookingGroupAppointmentFactory;
-use App\Models\BaseModel;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use Illuminate\Support\Carbon;
 
-/**
- * @mixin IdeHelperBookingGroupAppointment
- */
-class BookingGroupAppointment extends BaseModel
+class BookableWindowResolver
 {
-    /** @use HasFactory<BookingGroupAppointmentFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'booking_group_id',
-        'calendar_event_provider_uid',
-        'name',
-        'email',
-        'starts_at',
-        'ends_at',
-        'meeting_owner_id',
-    ];
-
-    protected $casts = [
-        'starts_at' => 'datetime',
-        'ends_at' => 'datetime',
-    ];
-
     /**
-     * @return BelongsTo<BookingGroup, $this>
+     * @return array{Carbon, Carbon}
      */
-    public function bookingGroup(): BelongsTo
+    public static function resolve(BookingGroup $bookingGroup): array
     {
-        return $this->belongsTo(BookingGroup::class);
-    }
+        $windowStart = now()->startOfDay();
+        $windowEnd = now()->startOfDay()->addMonths(3);
 
-    /**
-     * @return HasMany<CalendarEvent, $this>
-     */
-    public function calendarEvents(): HasMany
-    {
-        return $this->hasMany(CalendarEvent::class, 'provider_uid', 'calendar_event_provider_uid');
-    }
+        $minLeadTimeHours = $bookingGroup->minimum_booking_lead_time_hours;
+        $maxLeadTimeDays = $bookingGroup->maximum_booking_lead_time_days;
 
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function meetingOwner(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'meeting_owner_id');
+        if ($minLeadTimeHours) {
+            $windowStart = now()->addHours($minLeadTimeHours);
+        }
+
+        if ($maxLeadTimeDays) {
+            $windowEnd = now()->addDays($maxLeadTimeDays);
+        } elseif ($minLeadTimeHours) {
+            $windowEnd = $windowStart->copy()->addMonths(3);
+        }
+
+        return [$windowStart, $windowEnd];
     }
 }

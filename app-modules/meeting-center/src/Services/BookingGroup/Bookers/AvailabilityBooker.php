@@ -34,59 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Models;
+namespace AdvisingApp\MeetingCenter\Services\BookingGroup\Bookers;
 
-use AdvisingApp\MeetingCenter\Database\Factories\BookingGroupAppointmentFactory;
-use App\Models\BaseModel;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use AdvisingApp\MeetingCenter\Actions\GetAvailableGroupAppointmentSlots;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use Illuminate\Http\JsonResponse;
 
-/**
- * @mixin IdeHelperBookingGroupAppointment
- */
-class BookingGroupAppointment extends BaseModel
+class AvailabilityBooker extends RoundRobinBooker
 {
-    /** @use HasFactory<BookingGroupAppointmentFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'booking_group_id',
-        'calendar_event_provider_uid',
-        'name',
-        'email',
-        'starts_at',
-        'ends_at',
-        'meeting_owner_id',
-    ];
-
-    protected $casts = [
-        'starts_at' => 'datetime',
-        'ends_at' => 'datetime',
-    ];
-
-    /**
-     * @return BelongsTo<BookingGroup, $this>
-     */
-    public function bookingGroup(): BelongsTo
+    public function availableSlots(BookingGroup $bookingGroup, int $year, int $month): JsonResponse
     {
-        return $this->belongsTo(BookingGroup::class);
-    }
+        $assigner = $bookingGroup->book_with->getAssigner();
+        $member = $assigner->resolve($bookingGroup);
 
-    /**
-     * @return HasMany<CalendarEvent, $this>
-     */
-    public function calendarEvents(): HasMany
-    {
-        return $this->hasMany(CalendarEvent::class, 'provider_uid', 'calendar_event_provider_uid');
-    }
+        if (! $member) {
+            return response()->json([
+                'blocks' => [],
+            ]);
+        }
 
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function meetingOwner(): BelongsTo
-    {
-        return $this->belongsTo(User::class, 'meeting_owner_id');
+        $blocks = app(GetAvailableGroupAppointmentSlots::class)(
+            $bookingGroup,
+            $year,
+            $month,
+            $member,
+        );
+
+        return response()->json([
+            'blocks' => $blocks,
+        ]);
     }
 }
