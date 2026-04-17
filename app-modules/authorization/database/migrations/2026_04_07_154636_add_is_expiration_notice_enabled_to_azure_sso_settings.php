@@ -34,8 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\AzureExpirationNoticeFeature;
-use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsBlueprint;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
@@ -43,27 +41,19 @@ use Spatie\LaravelSettings\Migrations\SettingsMigration;
 return new class () extends SettingsMigration {
     public function up(): void
     {
-        DB::transaction(function () {
-            $this->migrator->inGroup('azure_sso', function (SettingsBlueprint $blueprint): void {
-                try {
-                    $blueprint->add('is_expiration_notice_enabled', false);
-                } catch (SettingAlreadyExists $exception) {
-                    // do nothing
-                }
-            });
-
-            AzureExpirationNoticeFeature::activate();
+        $this->migrator->inGroup('azure_sso', function (SettingsBlueprint $blueprint): void {
+            try {
+                $blueprint->add('is_expiration_notice_enabled', false);
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
         });
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            AzureExpirationNoticeFeature::deactivate();
-
-            $this->migrator->inGroup('azure_sso', function (SettingsBlueprint $blueprint): void {
-                $blueprint->delete('is_expiration_notice_enabled');
-            });
+        $this->migrator->inGroup('azure_sso', function (SettingsBlueprint $blueprint): void {
+            $blueprint->delete('is_expiration_notice_enabled');
         });
     }
 };
