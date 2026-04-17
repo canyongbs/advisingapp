@@ -62,7 +62,7 @@ enum BookingGroupBookWith: string implements HasLabel
         };
     }
 
-    public function getAssignerClass(): ?BookingGroupMemberAssigner
+    public function getAssigner(): ?BookingGroupMemberAssigner
     {
         return match ($this) {
             self::RoundRobin => app(RoundRobinMemberAssigner::class),
@@ -71,7 +71,7 @@ enum BookingGroupBookWith: string implements HasLabel
         };
     }
 
-    public function getBookerClass(): BookingGroupBooker
+    public function getBooker(): BookingGroupBooker
     {
         return match ($this) {
             self::All => app(AllBooker::class),

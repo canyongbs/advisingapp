@@ -69,8 +69,10 @@ class AvailabilityBooker extends RoundRobinBooker
 
         return DB::transaction(function () use ($bookingGroup, $startsAt, $endsAt, $conflictCheckStart, $conflictCheckEnd, $request) {
             BookingGroup::query()->where('id', $bookingGroup->id)->lockForUpdate()->first();
+            $bookingGroup->refresh();
+            $bookingGroup->unsetRelations();
 
-            $assigner = $bookingGroup->book_with->getAssignerClass();
+            $assigner = $bookingGroup->book_with->getAssigner();
             $member = $assigner->resolve($bookingGroup);
 
             if (! $member) {

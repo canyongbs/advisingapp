@@ -51,7 +51,7 @@ class RoundRobinBooker extends BookingGroupBooker
 {
     public function availableSlots(BookingGroup $bookingGroup, int $year, int $month): JsonResponse
     {
-        $assigner = $bookingGroup->book_with->getAssignerClass();
+        $assigner = $bookingGroup->book_with->getAssigner();
         $roundRobinMember = $assigner->resolve($bookingGroup);
 
         if (! $roundRobinMember) {
@@ -97,8 +97,10 @@ class RoundRobinBooker extends BookingGroupBooker
 
         return DB::transaction(function () use ($bookingGroup, $startsAt, $endsAt, $conflictCheckStart, $conflictCheckEnd, $request) {
             BookingGroup::query()->where('id', $bookingGroup->id)->lockForUpdate()->first();
+            $bookingGroup->refresh();
+            $bookingGroup->unsetRelations();
 
-            $assigner = $bookingGroup->book_with->getAssignerClass();
+            $assigner = $bookingGroup->book_with->getAssigner();
             $roundRobinMember = $assigner->resolve($bookingGroup);
 
             if (! $roundRobinMember) {
@@ -160,7 +162,7 @@ class RoundRobinBooker extends BookingGroupBooker
     protected function conflictResponseWithFreshBlocks(BookingGroup $bookingGroup, Carbon $startsAt): JsonResponse
     {
         $bookingGroup->unsetRelation('roundRobinLastAssignedUser');
-        $assigner = $bookingGroup->book_with->getAssignerClass();
+        $assigner = $bookingGroup->book_with->getAssigner();
         $newMember = $assigner->resolve($bookingGroup);
 
         $freshBlocks = [];

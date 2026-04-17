@@ -109,7 +109,7 @@ class GroupBookingPageWidgetController extends Controller
             ]);
         }
 
-        return $bookingGroup->book_with->getBookerClass()->availableSlots($bookingGroup, $year, $month);
+        return $bookingGroup->book_with->getBooker()->availableSlots($bookingGroup, $year, $month);
     }
 
     public function book(BookGroupCalendarSlotRequest $request, string $slug): JsonResponse
@@ -125,6 +125,6 @@ class GroupBookingPageWidgetController extends Controller
             ], 422);
         }
 
-        return $bookingGroup->book_with->getBookerClass()->book($request, $bookingGroup);
+        return $bookingGroup->book_with->getBooker()->book($request, $bookingGroup);
     }
 }
