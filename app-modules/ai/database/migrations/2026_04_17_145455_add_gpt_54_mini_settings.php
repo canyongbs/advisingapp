@@ -39,7 +39,7 @@ return new class () extends SettingsMigration {
             }
 
             try {
-                $this->migrator->add('ai.open_ai_gpt_54_mini_image_generation_deployment', true);
+                $this->migrator->add('ai.open_ai_gpt_54_mini_image_generation_deployment', encrypted: true);
             } catch (SettingAlreadyExists $exception) {
                 // do nothing
             }
