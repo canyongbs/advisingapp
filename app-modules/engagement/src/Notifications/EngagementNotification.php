@@ -53,7 +53,6 @@ use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasEmailType;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
-use App\Features\EmailTypeFeature;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
@@ -72,7 +71,7 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
 
     public function getEmailType(): EmailType
     {
-        return EmailTypeFeature::active() ? $this->engagement->email_type : EmailType::Transactional;
+        return $this->engagement->email_type;
     }
 
     /**
