@@ -43,6 +43,7 @@ use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt41MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt41NanoService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oMiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt54MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt5MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt5NanoService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt5Service;
@@ -70,6 +71,8 @@ enum AiModel: string implements HasLabel
 
     case OpenAiGpt5Mini = 'openai_gpt_5_mini';
 
+    case OpenAiGpt54Mini = 'openai_gpt_54_mini';
+
     case OpenAiGpt5Nano = 'openai_gpt_5_nano';
 
     case OpenAiGptTest = 'openai_gpt_test';
@@ -93,6 +96,7 @@ enum AiModel: string implements HasLabel
             self::OpenAiGptO4Mini => $aiIntegrationSettings->open_ai_gpt_o4_mini_model_name ?? 'Canyon o4 mini',
             self::OpenAiGpt5 => $aiIntegrationSettings->open_ai_gpt_5_model_name ?? 'Canyon 5',
             self::OpenAiGpt5Mini => $aiIntegrationSettings->open_ai_gpt_5_mini_model_name ?? 'Canyon 5 mini',
+            self::OpenAiGpt54Mini => $aiIntegrationSettings->open_ai_gpt_54_mini_model_name ?? 'Canyon 5.4 mini',
             self::OpenAiGpt5Nano => $aiIntegrationSettings->open_ai_gpt_5_nano_model_name ?? 'Canyon 5 nano',
             self::JinaDeepSearchV1 => $aiIntegrationSettings->jina_deepsearch_v1_model_name ?? 'Canyon Deep Search',
             self::LlamaParse => $aiIntegrationSettings->llamaparse_model_name ?? 'Canyon Parsing Service',
@@ -117,6 +121,7 @@ enum AiModel: string implements HasLabel
             self::OpenAiGptO4Mini => $aiIntegrationSettings->open_ai_gpt_o4_mini_applicable_features,
             self::OpenAiGpt5 => $aiIntegrationSettings->open_ai_gpt_5_applicable_features,
             self::OpenAiGpt5Mini => $aiIntegrationSettings->open_ai_gpt_5_mini_applicable_features,
+            self::OpenAiGpt54Mini => $aiIntegrationSettings->open_ai_gpt_54_mini_applicable_features,
             self::OpenAiGpt5Nano => $aiIntegrationSettings->open_ai_gpt_5_nano_applicable_features,
             self::JinaDeepSearchV1 => $aiIntegrationSettings->jina_deepsearch_v1_applicable_features,
             self::LlamaParse => [],
@@ -150,6 +155,7 @@ enum AiModel: string implements HasLabel
             self::OpenAiGpt5 => OpenAiGpt5Service::class,
             self::OpenAiGpt5Mini => OpenAiGpt5MiniService::class,
             self::OpenAiGpt5Nano => OpenAiGpt5NanoService::class,
+            self::OpenAiGpt54Mini => OpenAiGpt54MiniService::class,
             self::OpenAiGptTest => OpenAiGptTestService::class,
             self::Test => TestAiService::class,
             default => throw new Exception('No Service class found for this model.'),
