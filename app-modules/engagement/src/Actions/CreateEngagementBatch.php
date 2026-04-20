@@ -43,7 +43,6 @@ use AdvisingApp\Engagement\Notifications\EngagementBatchFinishedNotification;
 use AdvisingApp\Engagement\Notifications\EngagementBatchStartedNotification;
 use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use App\Features\EmailTypeFeature;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\DB;
 use Throwable;
@@ -61,10 +60,7 @@ class CreateEngagementBatch
         $engagementBatch->processed_engagements = 0;
         $engagementBatch->successful_engagements = 0;
         $engagementBatch->body = $data->body;
-
-        if (EmailTypeFeature::active()) {
-            $engagementBatch->email_type = $data->emailType ?? EmailType::Transactional;
-        }
+        $engagementBatch->email_type = $data->emailType ?? EmailType::Transactional;
 
         DB::transaction(function () use ($engagementBatch, $data) {
             $engagementBatch->save();

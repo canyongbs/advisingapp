@@ -33,7 +33,6 @@
 
 </COPYRIGHT>
 */
-use App\Features\EmailTypeFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
@@ -46,15 +45,12 @@ return new class () extends Migration {
             Schema::table('email_messages', function (Blueprint $table) {
                 $table->string('email_type')->initial('transactional');
             });
-
-            EmailTypeFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            EmailTypeFeature::deactivate();
             Schema::table('email_messages', function (Blueprint $table) {
                 $table->dropColumn('email_type');
             });
