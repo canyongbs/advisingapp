@@ -106,4 +106,10 @@ return [
     'gpt_54_mini_api_key' => env('OPEN_AI_GPT_54_MINI_API_KEY'),
 
     'gpt_54_mini_model' => env('OPEN_AI_GPT_54_MINI_MODEL'),
+    
+    'gpt_54_nano_base_uri' => env('OPEN_AI_GPT_54_NANO_BASE_URI'),
+
+    'gpt_54_nano_api_key' => env('OPEN_AI_GPT_54_NANO_API_KEY'),
+
+    'gpt_54_nano_model' => env('OPEN_AI_GPT_54_NANO_MODEL'),
 ];

@@ -184,6 +184,21 @@ class AiIntegrationsSettings extends Settings
      * @var array<string>
      */
     public array $open_ai_gpt_54_mini_applicable_features = [];
+    
+    public ?string $open_ai_gpt_54_nano_model_name = null;
+
+    public ?string $open_ai_gpt_54_nano_base_uri = null;
+
+    public ?string $open_ai_gpt_54_nano_api_key = null;
+
+    public ?string $open_ai_gpt_54_nano_model = null;
+
+    public ?string $open_ai_gpt_54_nano_image_generation_deployment = null;
+
+    /**
+     * @var array<string>
+     */
+    public array $open_ai_gpt_54_nano_applicable_features = [];
 
     /**
      * @var array<string>
@@ -251,6 +266,10 @@ class AiIntegrationsSettings extends Settings
             'open_ai_gpt_54_mini_api_key',
             'open_ai_gpt_54_mini_model',
             'open_ai_gpt_54_mini_image_generation_deployment',
+            'open_ai_gpt_54_nano_base_uri',
+            'open_ai_gpt_54_nano_api_key',
+            'open_ai_gpt_54_nano_model',
+            'open_ai_gpt_54_nano_image_generation_deployment',
             'jina_deepsearch_v1_api_key',
             'llamaparse_api_key',
         ];

@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Filament\Pages;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use App\Features\Gpt54MiniFeature;
+use App\Features\Gpt54NanoFeature;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Forms\Components\Select;
@@ -347,6 +348,33 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->multiple()
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ])->visible(fn () => Gpt54MiniFeature::active()),
+                        Section::make('GPT 5.4 nano')
+                            ->collapsible()
+                            ->schema([
+                                TextInput::make('open_ai_gpt_54_nano_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon 5.4 nano')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
+                                TextInput::make('open_ai_gpt_54_nano_base_uri')
+                                    ->label('Base URI')
+                                    ->placeholder('https://example.openai.azure.com/openai')
+                                    ->url(),
+                                TextInput::make('open_ai_gpt_54_nano_api_key')
+                                    ->label('API Key')
+                                    ->password()
+                                    ->autocomplete(false),
+                                TextInput::make('open_ai_gpt_54_nano_model')
+                                    ->label('Model'),
+                                TextInput::make('open_ai_gpt_54_nano_image_generation_deployment')
+                                    ->label('Image generation model'),
+                                Select::make('open_ai_gpt_54_nano_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
+                            ])->visible(fn() => Gpt54NanoFeature::active()),
                     ]),
                 Section::make('Jina AI')
                     ->collapsible()
