@@ -34,32 +34,22 @@
 </COPYRIGHT>
 */
 
-use App\Features\CampaignArchivingFeature;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('campaigns', function (Blueprint $table) {
-                $table->timestamp('archived_at')->nullable();
-            });
-
-            CampaignArchivingFeature::activate();
+        Schema::table('campaigns', function (Blueprint $table) {
+            $table->timestamp('archived_at')->nullable();
         });
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            CampaignArchivingFeature::deactivate();
-
-            Schema::table('campaigns', function (Blueprint $table) {
-                $table->dropColumn('archived_at');
-            });
+        Schema::table('campaigns', function (Blueprint $table) {
+            $table->dropColumn('archived_at');
         });
     }
 };

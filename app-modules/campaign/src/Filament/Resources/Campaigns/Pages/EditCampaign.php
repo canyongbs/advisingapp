@@ -39,7 +39,6 @@ namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Group\Models\Group;
-use App\Features\CampaignArchivingFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\DeleteAction;
@@ -86,7 +85,6 @@ class EditCampaign extends EditRecord
                 ->label(fn (Campaign $record): string => $record->enabled ? 'Disable and Archive' : 'Archive')
                 ->modalHeading(fn (Campaign $record): string => $record->enabled ? 'Disable and Archive Campaign' : 'Archive Campaign')
                 ->modalSubmitActionLabel(fn (Campaign $record): string => $record->enabled ? 'Disable and Archive' : 'Archive')
-                ->hidden(fn (): bool => ! CampaignArchivingFeature::active())
                 ->action(function (Campaign $record): void {
                     try {
                         DB::transaction(function () use ($record) {
