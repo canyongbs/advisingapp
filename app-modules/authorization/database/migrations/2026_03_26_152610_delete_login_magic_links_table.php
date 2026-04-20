@@ -42,9 +42,7 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::dropIfExists('login_magic_links');
-        });
+        Schema::dropIfExists('login_magic_links');
     }
 
     public function down(): void
