@@ -188,6 +188,14 @@ abstract class BaseOpenAiService implements AiService
         try {
             $vectorStoreId = $this->getReadyVectorStoreId($files, $filesContext);
 
+            $tools = [
+                ...filled($vectorStoreId) ? [[
+                    'type' => 'file_search',
+                    'vector_store_ids' => [$vectorStoreId],
+                ]] : [],
+                ['type' => 'web_search'],
+            ];
+
             $request = Prism::text()
                 ->using('azure_open_ai', $this->getModel())
                 ->withClientOptions([
@@ -198,12 +206,7 @@ abstract class BaseOpenAiService implements AiService
                 ->withProviderOptions([
                     'instructions' => $prompt,
                     'truncation' => 'auto',
-                    ...(filled($vectorStoreId) ? [
-                        'tools' => [[
-                            'type' => 'file_search',
-                            'vector_store_ids' => [$vectorStoreId],
-                        ]],
-                    ] : []),
+                    'tools' => $tools,
                     ...$options,
                 ])
                 ->withPrompt($content)
@@ -317,6 +320,17 @@ abstract class BaseOpenAiService implements AiService
         try {
             $vectorStoreId = $this->getReadyVectorStoreId($files, $filesContext);
 
+            $tools = [
+                ...filled($vectorStoreId) ? [[
+                    'type' => 'file_search',
+                    'vector_store_ids' => [$vectorStoreId],
+                ]] : [],
+                ...$hasImageGeneration ? [[
+                    'type' => 'image_generation',
+                ]] : [],
+                ['type' => 'web_search'],
+            ];
+
             $request = Prism::text()
                 ->using('azure_open_ai', $this->getModel())
                 ->withClientOptions([
@@ -328,17 +342,7 @@ abstract class BaseOpenAiService implements AiService
                 ->withProviderOptions([
                     ...(filled($prompt) ? ['instructions' => $prompt] : []),
                     'truncation' => 'auto',
-                    ...((filled($vectorStoreId) || $hasImageGeneration) ? [
-                        'tools' => [
-                            ...filled($vectorStoreId) ? [[
-                                'type' => 'file_search',
-                                'vector_store_ids' => [$vectorStoreId],
-                            ]] : [],
-                            ...$hasImageGeneration ? [[
-                                'type' => 'image_generation',
-                            ]] : [],
-                        ],
-                    ] : []),
+                    'tools' => $tools,
                     ...$options,
                 ]);
 
@@ -811,6 +815,18 @@ abstract class BaseOpenAiService implements AiService
                 ], $message->thread->assistant),
             ]));
 
+            $tools = [
+                ...filled($vectorStoreIds) ? [[
+                    'type' => 'file_search',
+                    'vector_store_ids' => $vectorStoreIds,
+                ]] : [],
+                ...$hasImageGeneration ? [[
+                    'type' => 'image_generation',
+                    'output_format' => 'jpeg',
+                ]] : [],
+                ['type' => 'web_search'],
+            ];
+
             return $this->streamRaw(
                 prompt: $this->hasReasoning() ? null : $instructions,
                 options: [
@@ -820,18 +836,7 @@ abstract class BaseOpenAiService implements AiService
                             'effort' => $aiSettings->reasoning_effort->value,
                         ],
                     ] : []),
-                    ...((filled($vectorStoreIds) || $hasImageGeneration) ? [
-                        'tools' => [
-                            ...filled($vectorStoreIds) ? [[
-                                'type' => 'file_search',
-                                'vector_store_ids' => $vectorStoreIds,
-                            ]] : [],
-                            ...$hasImageGeneration ? [[
-                                'type' => 'image_generation',
-                                'output_format' => 'jpeg',
-                            ]] : [],
-                        ],
-                    ] : []),
+                    'tools' => $tools,
                 ],
                 messages: [
                     ...$previousMessages,

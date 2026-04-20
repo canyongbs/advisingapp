@@ -45,11 +45,13 @@ use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use AdvisingApp\Research\Models\ResearchRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use Prism\Prism\Enums\FinishReason;
 use Prism\Prism\Prism;
+use Prism\Prism\Testing\StructuredResponseFake;
 use Prism\Prism\Testing\TextResponseFake;
 
 use function Tests\asSuperAdmin;
@@ -89,6 +91,95 @@ it('can send a message', function () {
         ->toHaveCount(1)
         ->each
         ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
+});
+
+it('includes the web_search tool on every outbound message', function () {
+    Queue::fake();
+
+    asSuperAdmin();
+
+    $service = app(OpenAiGptTestService::class);
+
+    $message = AiMessage::factory()
+        ->for(AiThread::factory()
+            ->for(AiAssistant::factory()->state([
+                'application' => AiAssistantApplication::PersonalAssistant,
+                'is_default' => true,
+                'model' => AiModel::OpenAiGptTest,
+            ]), 'assistant')
+            ->for(auth()->user()), 'thread')
+        ->make();
+
+    $fake = Prism::fake([
+        TextResponseFake::make()
+            ->withText(strrev($message->content))
+            ->withFinishReason(FinishReason::Stop),
+    ]);
+
+    $stream = $service->sendMessage($message, files: []);
+
+    iterator_to_array($stream());
+
+    $fake->assertRequest(function (array $requests) {
+        expect($requests)->toHaveCount(1);
+
+        $tools = $requests[0]->providerOptions('tools');
+
+        expect($tools)->toBeArray();
+        expect(array_column($tools, 'type'))->toContain('web_search');
+    });
+});
+
+it('includes the web_search tool when streaming a prompt', function () {
+    Queue::fake();
+
+    asSuperAdmin();
+
+    $service = app(OpenAiGptTestService::class);
+
+    $fake = Prism::fake([
+        TextResponseFake::make()
+            ->withText(Str::random())
+            ->withFinishReason(FinishReason::Stop),
+    ]);
+
+    $stream = $service->stream(Str::random(), Str::random(), files: []);
+
+    iterator_to_array($stream());
+
+    $fake->assertRequest(function (array $requests) {
+        expect($requests)->toHaveCount(1);
+
+        $tools = $requests[0]->providerOptions('tools');
+
+        expect($tools)->toBeArray();
+        expect(array_column($tools, 'type'))->toContain('web_search');
+    });
+});
+
+it('includes the web_search tool when generating research request search queries', function () {
+    asSuperAdmin();
+
+    $service = app(OpenAiGptTestService::class);
+
+    $researchRequest = ResearchRequest::factory()->create();
+
+    $fake = Prism::fake([
+        StructuredResponseFake::make()
+            ->withStructured(['description' => []])
+            ->withFinishReason(FinishReason::Stop),
+    ]);
+
+    $service->getResearchRequestRequestSearchQueries($researchRequest, Str::random(), Str::random());
+
+    $fake->assertRequest(function (array $requests) {
+        expect($requests)->toHaveCount(1);
+
+        $tools = $requests[0]->providerOptions('tools');
+
+        expect($tools)->toBeArray();
+        expect(array_column($tools, 'type'))->toContain('web_search');
+    });
 });
 
 it('can complete a message response', function () {
