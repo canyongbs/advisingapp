@@ -33,31 +33,15 @@
 
 </COPYRIGHT>
 */
-use App\Features\EmailTypeFeature;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-return new class () extends Migration {
-    public function up(): void
+namespace App\Features;
+
+use App\Support\AbstractFeatureFlag;
+
+class EmailTypeFeature extends AbstractFeatureFlag
+{
+    public function resolve(mixed $scope): mixed
     {
-        DB::transaction(function () {
-            Schema::table('email_messages', function (Blueprint $table) {
-                $table->string('email_type')->initial('transactional');
-            });
-
-            EmailTypeFeature::activate();
-        });
+        return false;
     }
-
-    public function down(): void
-    {
-        DB::transaction(function () {
-            EmailTypeFeature::deactivate();
-            Schema::table('email_messages', function (Blueprint $table) {
-                $table->dropColumn('email_type');
-            });
-        });
-    }
-};
+}
