@@ -4,7 +4,7 @@ use App\Features\Gpt54MiniFeature;
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-return new class() extends SettingsMigration {
+return new class () extends SettingsMigration {
     public function up(): void
     {
         DB::transaction(function () {
@@ -38,6 +38,12 @@ return new class() extends SettingsMigration {
                 // do nothing
             }
 
+            try {
+                $this->migrator->add('ai.open_ai_gpt_54_mini_image_generation_deployment', true);
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+
             Gpt54MiniFeature::activate();
         });
     }
@@ -52,6 +58,7 @@ return new class() extends SettingsMigration {
             $this->migrator->deleteIfExists('ai.open_ai_gpt_54_mini_model');
             $this->migrator->deleteIfExists('ai.open_ai_gpt_54_mini_applicable_features');
             $this->migrator->deleteIfExists('ai.open_ai_gpt_54_mini_model_name');
+            $this->migrator->deleteIfExists('ai.open_ai_gpt_54_mini_image_generation_deployment');
         });
     }
 };

@@ -346,7 +346,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->options(AiModelApplicabilityFeature::class)
                                     ->multiple()
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
-                            ])->visible(fn() => Gpt54MiniFeature::active()),
+                            ])->visible(fn () => Gpt54MiniFeature::active()),
                     ]),
                 Section::make('Jina AI')
                     ->collapsible()
