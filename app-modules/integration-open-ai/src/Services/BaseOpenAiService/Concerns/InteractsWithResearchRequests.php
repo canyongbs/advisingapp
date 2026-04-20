@@ -76,13 +76,10 @@ trait InteractsWithResearchRequests
                 ]),
             ]),
             providerOptions: [
-                'tools' => [
-                    [
-                        'type' => 'file_search',
-                        'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),
-                    ],
-                    ['type' => 'web_search'],
-                ],
+                'tools' => [[
+                    'type' => 'file_search',
+                    'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),
+                ]],
             ],
         )['description'] ?? [];
     }
@@ -168,13 +165,10 @@ trait InteractsWithResearchRequests
                 'requiredFields' => ['abstract', 'introduction', 'sections', 'conclusion'],
             ]),
             providerOptions: [
-                'tools' => [
-                    [
-                        'type' => 'file_search',
-                        'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),
-                    ],
-                    ['type' => 'web_search'],
-                ],
+                'tools' => [[
+                    'type' => 'file_search',
+                    'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),
+                ]],
             ],
             responseId: $responseId,
         );
@@ -203,13 +197,10 @@ trait InteractsWithResearchRequests
                     'deployment' => $this->getDeployment(),
                 ])
                 ->withProviderOptions([
-                    'tools' => [
-                        [
-                            'type' => 'file_search',
-                            'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),
-                        ],
-                        ['type' => 'web_search'],
-                    ],
+                    'tools' => [[
+                        'type' => 'file_search',
+                        'vector_store_ids' => $this->getReadyResearchRequestVectorStoreIds($researchRequest),
+                    ]],
                     'truncation' => 'auto',
                     ...$options,
                 ])
