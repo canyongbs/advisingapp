@@ -170,6 +170,21 @@ class AiIntegrationsSettings extends Settings
 
     public ?string $open_ai_gpt_5_nano_image_generation_deployment = null;
 
+    public ?string $open_ai_gpt_54_mini_model_name = null;
+
+    public ?string $open_ai_gpt_54_mini_base_uri = null;
+
+    public ?string $open_ai_gpt_54_mini_api_key = null;
+
+    public ?string $open_ai_gpt_54_mini_model = null;
+
+    public ?string $open_ai_gpt_54_mini_image_generation_deployment = null;
+
+    /**
+     * @var array<string>
+     */
+    public array $open_ai_gpt_54_mini_applicable_features = [];
+
     /**
      * @var array<string>
      */
