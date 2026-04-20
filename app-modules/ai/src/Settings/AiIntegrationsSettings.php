@@ -247,6 +247,10 @@ class AiIntegrationsSettings extends Settings
             'open_ai_gpt_5_nano_api_key',
             'open_ai_gpt_5_nano_model',
             'open_ai_gpt_5_nano_image_generation_deployment',
+            'open_ai_gpt_54_mini_base_uri',
+            'open_ai_gpt_54_mini_api_key',
+            'open_ai_gpt_54_mini_model',
+            'open_ai_gpt_54_mini_image_generation_deployment',
             'jina_deepsearch_v1_api_key',
             'llamaparse_api_key',
         ];
