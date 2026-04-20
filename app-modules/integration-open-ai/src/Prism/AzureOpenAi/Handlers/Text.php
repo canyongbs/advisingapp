@@ -38,8 +38,8 @@ namespace AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi\Handlers;
 
 use Illuminate\Http\Client\Response as ClientResponse;
 use Illuminate\Support\Arr;
+use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi\Maps\MessageMap;
 use Prism\Prism\Providers\OpenAI\Handlers\Text as BaseText;
-use Prism\Prism\Providers\OpenAI\Maps\MessageMap;
 use Prism\Prism\Providers\OpenAI\Maps\ToolCallMap;
 use Prism\Prism\Providers\OpenAI\Maps\ToolChoiceMap;
 use Prism\Prism\Text\Request;
