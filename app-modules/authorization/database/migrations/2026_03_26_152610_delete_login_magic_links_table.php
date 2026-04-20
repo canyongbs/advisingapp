@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\OtpCodeLoginFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
@@ -45,16 +44,12 @@ return new class () extends Migration {
     {
         DB::transaction(function () {
             Schema::dropIfExists('login_magic_links');
-
-            OtpCodeLoginFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            OtpCodeLoginFeature::deactivate();
-
             Schema::create('login_magic_links', function (Blueprint $table) {
                 $table->uuid('id')->primary();
                 $table->text('code');
