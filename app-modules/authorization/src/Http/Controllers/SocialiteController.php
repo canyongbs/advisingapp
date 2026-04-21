@@ -56,12 +56,18 @@ class SocialiteController extends Controller
 {
     public function redirect(SocialiteProvider $provider, Request $request)
     {
+        $intendedUrl = $request->session()->pull('url.intended');
+
         // Regenerate session and logout user to try to fix InvalidStateException
         if ($request->hasSession()) {
             $request->session()->regenerate(true);
         }
 
         auth()->guard('web')->logout();
+
+        if ($intendedUrl) {
+            $request->session()->put('url.intended', $intendedUrl);
+        }
 
         $driver = $provider->driver()
             ->setConfig($provider->config());
@@ -133,6 +139,6 @@ class SocialiteController extends Controller
 
         session(['auth_via' => $provider]);
 
-        return redirect()->to(Filament::getUrl());
+        return redirect()->intended(Filament::getUrl());
     }
 }

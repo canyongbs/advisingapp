@@ -195,7 +195,7 @@ class Login extends \Filament\Auth\Pages\Login
 
                 session()->regenerate();
 
-                redirect()->route('filament.admin.pages.dashboard');
+                redirect()->intended(Filament::getUrl());
             });
     }
 
