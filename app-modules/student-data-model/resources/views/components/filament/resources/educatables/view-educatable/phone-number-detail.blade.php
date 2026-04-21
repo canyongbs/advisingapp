@@ -34,13 +34,16 @@
 @php
     use AdvisingApp\Engagement\Models\Engagement;
     use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
+    use AdvisingApp\StudentDataModel\Enums\PhoneHealthStatus;
     use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 
-    $isOptedOut = $phoneNumber instanceof StudentPhoneNumber && $phoneNumber->smsOptOut()->exists();
+    $healthStatus = $phoneNumber->getHealthStatus();
+
+    $isDisabled = $healthStatus !== PhoneHealthStatus::Healthy;
 @endphp
 
 <button
-    class="flex items-center gap-2"
+    class="flex items-start gap-2 break-all text-left"
     type="button"
     x-data="{ isLoading: false }"
     x-on:engage-action-finished-loading.window="isLoading = false"
@@ -48,10 +51,8 @@
         isLoading = true
         $dispatch('send-sms', { phoneNumberKey: @js($phoneNumber->getKey()) })
     "
-    @if (!$isOptedOut) x-tooltip.raw="Click to send an SMS" @endif
     @disabled(
-        $isOptedOut ||
-        ! $phoneNumber->can_receive_sms ||
+        $isDisabled ||
         ! auth()
             ->user()
             ->can('create', [
@@ -60,21 +61,28 @@
             ])
     )
 >
-    @svg('heroicon-m-phone', 'size-5', ['x-show' => '! isLoading'])
+    @svg('heroicon-m-phone', 'h-5 w-5 shrink-0', ['x-show' => '! isLoading'])
 
-    <x-filament::loading-indicator class="size-5" x-show="isLoading" x-cloak />
+    <x-filament::loading-indicator class="h-5 w-5 shrink-0" x-show="isLoading" x-cloak />
 
-    {{ $phoneNumber->number }}
+    <span @if (!$isDisabled) x-tooltip.raw="Click to send an SMS" @endif>
+        {{ $phoneNumber->number }}
 
-    @if (filled($phoneNumber->ext))
-        (ext. {{ $phoneNumber->ext }})
-    @endif
+        @if (filled($phoneNumber->ext))
+            (ext. {{ $phoneNumber->ext }})
+        @endif
 
-    @if (filled($phoneNumber->type))
-        ({{ $phoneNumber->type }})
-    @endif
+        @if (filled($phoneNumber->type))
+            ({{ $phoneNumber->type }})
+        @endif
+    </span>
 
-    @if ($isOptedOut)
-        <x-filament::icon class="text-danger-500 ml-1 h-6 w-6" icon="heroicon-s-x-circle" x-tooltip.raw="SMS Opt Out" />
-    @endif
+    <x-filament::icon
+        class="h-5 w-5 shrink-0"
+        style="color: {{ $healthStatus->getLightModeColor() }};"
+        x-bind:style="$store.theme === 'dark' ? 'color: {{ $healthStatus->getDarkModeColor() }};' :
+            'color: {{ $healthStatus->getLightModeColor() }};'"
+        icon="{{ $healthStatus->getIcon() }}"
+        x-tooltip.raw="{{ $healthStatus->getTooltipText() }}"
+    />
 </button>
