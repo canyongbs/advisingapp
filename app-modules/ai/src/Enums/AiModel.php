@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -43,6 +43,8 @@ use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt41MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt41NanoService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oMiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt4oService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt54MiniService;
+use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt54NanoService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt5MiniService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt5NanoService;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGpt5Service;
@@ -70,7 +72,11 @@ enum AiModel: string implements HasLabel
 
     case OpenAiGpt5Mini = 'openai_gpt_5_mini';
 
+    case OpenAiGpt54Mini = 'openai_gpt_54_mini';
+
     case OpenAiGpt5Nano = 'openai_gpt_5_nano';
+
+    case OpenAiGpt54Nano = 'openai_gpt_54_nano';
 
     case OpenAiGptTest = 'openai_gpt_test';
 
@@ -93,7 +99,9 @@ enum AiModel: string implements HasLabel
             self::OpenAiGptO4Mini => $aiIntegrationSettings->open_ai_gpt_o4_mini_model_name ?? 'Canyon o4 mini',
             self::OpenAiGpt5 => $aiIntegrationSettings->open_ai_gpt_5_model_name ?? 'Canyon 5',
             self::OpenAiGpt5Mini => $aiIntegrationSettings->open_ai_gpt_5_mini_model_name ?? 'Canyon 5 mini',
+            self::OpenAiGpt54Mini => $aiIntegrationSettings->open_ai_gpt_54_mini_model_name ?? 'Canyon 5.4 mini',
             self::OpenAiGpt5Nano => $aiIntegrationSettings->open_ai_gpt_5_nano_model_name ?? 'Canyon 5 nano',
+            self::OpenAiGpt54Nano => $aiIntegrationSettings->open_ai_gpt_54_nano_model_name ?? 'Canyon 5.4 nano',
             self::JinaDeepSearchV1 => $aiIntegrationSettings->jina_deepsearch_v1_model_name ?? 'Canyon Deep Search',
             self::LlamaParse => $aiIntegrationSettings->llamaparse_model_name ?? 'Canyon Parsing Service',
             self::OpenAiGptTest => 'Canyon Test',
@@ -117,7 +125,9 @@ enum AiModel: string implements HasLabel
             self::OpenAiGptO4Mini => $aiIntegrationSettings->open_ai_gpt_o4_mini_applicable_features,
             self::OpenAiGpt5 => $aiIntegrationSettings->open_ai_gpt_5_applicable_features,
             self::OpenAiGpt5Mini => $aiIntegrationSettings->open_ai_gpt_5_mini_applicable_features,
+            self::OpenAiGpt54Mini => $aiIntegrationSettings->open_ai_gpt_54_mini_applicable_features,
             self::OpenAiGpt5Nano => $aiIntegrationSettings->open_ai_gpt_5_nano_applicable_features,
+            self::OpenAiGpt54Nano => $aiIntegrationSettings->open_ai_gpt_54_nano_applicable_features,
             self::JinaDeepSearchV1 => $aiIntegrationSettings->jina_deepsearch_v1_applicable_features,
             self::LlamaParse => [],
             self::OpenAiGptTest => app()->hasDebugModeEnabled() ? AiModelApplicabilityFeature::cases() : [],
@@ -150,6 +160,8 @@ enum AiModel: string implements HasLabel
             self::OpenAiGpt5 => OpenAiGpt5Service::class,
             self::OpenAiGpt5Mini => OpenAiGpt5MiniService::class,
             self::OpenAiGpt5Nano => OpenAiGpt5NanoService::class,
+            self::OpenAiGpt54Mini => OpenAiGpt54MiniService::class,
+            self::OpenAiGpt54Nano => OpenAiGpt54NanoService::class,
             self::OpenAiGptTest => OpenAiGptTestService::class,
             self::Test => TestAiService::class,
             default => throw new Exception('No Service class found for this model.'),

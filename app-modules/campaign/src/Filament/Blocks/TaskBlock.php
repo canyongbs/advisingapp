@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -37,7 +37,11 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
+use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Team\Models\Team;
+use App\Models\User;
+use Closure;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -45,61 +49,119 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Utilities\Get;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\Auth;
 
 class TaskBlock extends CampaignActionBlock
 {
+    /**
+     * @var Model | array<string, mixed> | class-string<Model> | Closure | null
+     */
+    protected Model | array | string | Closure | null $model = Task::class;
+
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->model(Task::class);
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
-    public function generateFields(string $fieldPrefix = ''): array
+    public function generateFields(): array
     {
         return [
             Fieldset::make('Details')
                 ->schema([
-                    Fieldset::make($fieldPrefix . 'Confidentiality')
+                    Fieldset::make('Confidentiality')
                         ->schema([
                             Checkbox::make('is_confidential')
                                 ->label('Confidential')
                                 ->live(),
                             Select::make('confidential_task_projects')
-                                ->relationship('confidentialAccessProjects', 'name')
-                                ->preload()
+                                ->options(fn () => Project::query()
+                                    ->orderBy('name')
+                                    ->limit(50)
+                                    ->pluck('name', 'id')
+                                    ->all())
+                                ->searchable()
+                                ->getSearchResultsUsing(fn (string $search): array => Project::query()
+                                    ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
+                                    ->limit(50)
+                                    ->pluck('name', 'id')
+                                    ->all())
+                                ->getOptionLabelsUsing(
+                                    fn (array $values): array => Project::query()
+                                        ->whereKey($values)
+                                        ->pluck('name', 'id')
+                                        ->all(),
+                                )
                                 ->label('Projects')
                                 ->multiple()
+                                ->dehydrated(true)
                                 ->exists('projects', 'id')
                                 ->visible(fn (Get $get) => $get('is_confidential')),
                             Select::make('confidential_task_users')
-                                ->relationship('confidentialAccessUsers', 'name')
-                                ->preload()
+                                ->options(fn () => User::query()
+                                    ->orderBy('name')
+                                    ->limit(50)
+                                    ->pluck('name', 'id')
+                                    ->all())
+                                ->searchable()
+                                ->getSearchResultsUsing(fn (string $search): array => User::query()
+                                    ->orderBy('name')
+                                    ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
+                                    ->limit(50)
+                                    ->pluck('name', 'id')
+                                    ->all())
+                                ->getOptionLabelUsing(
+                                    fn (array $values): array => User::query()
+                                        ->whereKey($values)
+                                        ->pluck('name', 'id')
+                                        ->all(),
+                                )
+
                                 ->label('Users')
                                 ->multiple()
+                                ->dehydrated(true)
                                 ->exists('users', 'id')
                                 ->visible(fn (Get $get) => $get('is_confidential')),
                             Select::make('confidential_task_teams')
-                                ->relationship('confidentialAccessTeams', 'name')
-                                ->preload()
+                                ->options(fn () => Team::query()
+                                    ->orderBy('name')
+                                    ->limit(50)
+                                    ->pluck('name', 'id')
+                                    ->all())
+                                ->searchable()
+                                ->getSearchResultsUsing(fn (string $search): array => Team::query()
+                                    ->orderBy('name')
+                                    ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
+                                    ->limit(50)
+                                    ->pluck('name', 'id')
+                                    ->all())
+                                ->getOptionLabelUsing(
+                                    fn (array $values): array => Team::query()
+                                        ->whereKey($values)
+                                        ->pluck('name', 'id')
+                                        ->all(),
+                                )
                                 ->label('Teams')
                                 ->multiple()
+                                ->dehydrated(true)
                                 ->exists('teams', 'id')
                                 ->visible(fn (Get $get) => $get('is_confidential')),
                         ]),
-                    TextInput::make($fieldPrefix . 'title')
+                    TextInput::make('title')
                         ->required()
                         ->maxLength(100)
                         ->string(),
-                    Textarea::make($fieldPrefix . 'description')
+                    Textarea::make('description')
                         ->required()
                         ->string(),
-                    DateTimePicker::make($fieldPrefix . 'due')
+                    DateTimePicker::make('due')
                         ->label('Due Date'),
-                    Select::make($fieldPrefix . 'assigned_to')
+                    Select::make('assigned_to')
                         ->label('Assigned To')
                         ->relationship('assignedTo', 'name')
                         ->model(Task::class)

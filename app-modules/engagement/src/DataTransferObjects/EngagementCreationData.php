@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -36,11 +36,12 @@
 
 namespace AdvisingApp\Engagement\DataTransferObjects;
 
-use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use App\Models\User;
 use Carbon\CarbonInterface;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\LaravelData\Data;
@@ -50,7 +51,6 @@ class EngagementCreationData extends Data
     /**
      * @param array<string, mixed>|null $subject
      * @param array<string, mixed>|null $body
-     * @param array<array<string, mixed>> $temporaryBodyImages
      */
     public function __construct(
         public User $user,
@@ -59,9 +59,10 @@ class EngagementCreationData extends Data
         public NotificationChannel $channel,
         public ?array $subject = null,
         public ?array $body = null,
-        public array $temporaryBodyImages = [],
         public ?CarbonInterface $scheduledAt = null,
         public ?string $recipientRoute = null,
-        public ?CampaignAction $campaignAction = null,
+        public ?Model $source = null,
+        public ?Schema $schema = null,
+        public ?EmailType $emailType = EmailType::Transactional,
     ) {}
 }

@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -39,12 +39,16 @@ namespace AdvisingApp\Engagement\Filament\Actions;
 use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Actions;
@@ -52,13 +56,12 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class BulkEmailAction
 {
@@ -67,41 +70,38 @@ class BulkEmailAction
         return BulkAction::make('send_email')
             ->label('Send Email')
             ->icon('heroicon-o-envelope')
+            ->slideOver()
             ->modalHeading('Send Bulk Email')
             ->modalDescription(fn (Collection $records) => "You have selected {$records->count()} {$context} to send email.")
+            ->model(EngagementBatch::class)
             ->steps([
                 Step::make('Engagement Details')
                     ->description("Add the details that will be sent to the selected {$context}")
                     ->schema([
-                        TiptapEditor::make('subject')
+                        RichEditor::make('subject')
                             ->label('Subject')
-                            ->mergeTags([
-                                'recipient first name',
-                                'recipient last name',
-                                'recipient full name',
-                                'recipient email',
-                                'recipient preferred name',
-                            ])
-                            ->showMergeTagsInBlocksPanel(false)
-                            ->helperText('You may use “merge tags” to substitute information about a recipient into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags')
-                            ->profile('sms')
+                            ->toolbarButtons([])
+                            ->json()
+                            ->helperText('You may use "merge tags" to substitute information about a recipient into your subject line. Insert a "{{" in the subject line field to see a list of available merge tags')
                             ->required()
                             ->placeholder('Enter the email subject here...')
                             ->columnSpanFull(),
-                        TiptapEditor::make('body')
-                            ->disk('s3-public')
+                        RichEditor::make('body')
+                            ->fileAttachmentsDisk('s3-public')
                             ->label('Body')
-                            ->mergeTags($mergeTags = [
-                                'recipient first name',
-                                'recipient last name',
-                                'recipient full name',
-                                'recipient email',
-                                'recipient preferred name',
+                            ->toolbarButtons([
+                                ['bold', 'italic', 'link'],
+                                [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                                ['textColor', 'small'],
+                                ['attachFiles', 'mergeTags'],
+                                ['clearFormatting'],
+                                ['undo', 'redo'],
                             ])
-                            ->showMergeTagsInBlocksPanel(false)
-                            ->profile('email')
+                            ->activePanel('mergeTags')
+                            ->resizableImages()
+                            ->json()
                             ->required()
-                            ->hintAction(fn (TiptapEditor $component) => Action::make('loadEmailTemplate')
+                            ->hintAction(fn (RichEditor $component) => Action::make('loadEmailTemplate')
                                 ->schema([
                                     Select::make('emailTemplate')
                                         ->searchable()
@@ -165,15 +165,32 @@ class BulkEmailAction
                                         return;
                                     }
 
-                                    $component->state(
-                                        $component->generateImageUrls($template->content),
-                                    );
+                                    $component->state($template->content);
                                 }))
+                            ->getFileAttachmentUrlFromAnotherRecordUsing(function (mixed $file): ?string {
+                                return Media::query()
+                                    ->where('uuid', $file)
+                                    ->where('model_type', (new EmailTemplate())->getMorphClass())
+                                    ->first()
+                                    ?->getUrl();
+                            })
+                            ->saveFileAttachmentFromAnotherRecordUsing(function (mixed $file, ?EngagementBatch $record): ?string {
+                                if (! $record) {
+                                    return null;
+                                }
+
+                                return Media::query()
+                                    ->where('uuid', $file)
+                                    ->where('model_type', (new EmailTemplate())->getMorphClass())
+                                    ->first()
+                                    ?->copy($record, 'body', 's3-public')
+                                    ->uuid;
+                            })
                             ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
                             ->columnSpanFull(),
                         Actions::make([
                             BulkDraftWithAiAction::make()
-                                ->mergeTags($mergeTags),
+                                ->mergeTags(Engagement::getMergeTags()),
                         ]),
                     ]),
                 Step::make('Schedule')
@@ -195,15 +212,8 @@ class BulkEmailAction
                     channel: NotificationChannel::Email,
                     subject: $data['subject'] ?? null,
                     body: $data['body'] ?? null,
-                    temporaryBodyImages: array_map(
-                        fn (TemporaryUploadedFile $file): array => [
-                            'extension' => $file->getClientOriginalExtension(),
-                            'path' => (fn () => $this->path)->call($file),
-                        ],
-                        /**@phpstan-ignore-next-line */
-                        $schema->getFlatFields()['body']->getTemporaryImages(),
-                    ),
                     scheduledAt: ($data['send_later'] ?? false) ? Carbon::parse($data['scheduled_at'] ?? null) : null,
+                    schema: $schema,
                 ));
             })
             ->modalSubmitActionLabel('Send')

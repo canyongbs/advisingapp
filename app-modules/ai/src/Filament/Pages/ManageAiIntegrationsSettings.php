@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -38,6 +38,8 @@ namespace AdvisingApp\Ai\Filament\Pages;
 
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use App\Features\Gpt54MiniFeature;
+use App\Features\Gpt54NanoFeature;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Forms\Components\Select;
@@ -319,6 +321,60 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->multiple()
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
+                        Section::make('GPT 5.4 mini')
+                            ->collapsible()
+                            ->schema([
+                                TextInput::make('open_ai_gpt_54_mini_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon 5.4 mini')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
+                                TextInput::make('open_ai_gpt_54_mini_base_uri')
+                                    ->label('Base URI')
+                                    ->placeholder('https://example.openai.azure.com/openai')
+                                    ->url(),
+                                TextInput::make('open_ai_gpt_54_mini_api_key')
+                                    ->label('API Key')
+                                    ->password()
+                                    ->autocomplete(false),
+                                TextInput::make('open_ai_gpt_54_mini_model')
+                                    ->label('Model'),
+                                TextInput::make('open_ai_gpt_54_mini_image_generation_deployment')
+                                    ->label('Image generation model'),
+                                Select::make('open_ai_gpt_54_mini_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
+                            ])->visible(fn () => Gpt54MiniFeature::active()),
+                        Section::make('GPT 5.4 nano')
+                            ->collapsible()
+                            ->schema([
+                                TextInput::make('open_ai_gpt_54_nano_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon 5.4 nano')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
+                                TextInput::make('open_ai_gpt_54_nano_base_uri')
+                                    ->label('Base URI')
+                                    ->placeholder('https://example.openai.azure.com/openai')
+                                    ->url(),
+                                TextInput::make('open_ai_gpt_54_nano_api_key')
+                                    ->label('API Key')
+                                    ->password()
+                                    ->autocomplete(false),
+                                TextInput::make('open_ai_gpt_54_nano_model')
+                                    ->label('Model'),
+                                TextInput::make('open_ai_gpt_54_nano_image_generation_deployment')
+                                    ->label('Image generation model'),
+                                Select::make('open_ai_gpt_54_nano_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
+                            ])->visible(fn () => Gpt54NanoFeature::active()),
                     ]),
                 Section::make('Jina AI')
                     ->collapsible()

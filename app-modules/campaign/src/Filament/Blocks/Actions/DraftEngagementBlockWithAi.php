@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -46,13 +46,13 @@ use App\Settings\LicenseSettings;
 use Closure;
 use Exception;
 use Filament\Actions\Action;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\Width;
 use Illuminate\Support\Facades\Vite;
-use Illuminate\Support\Str;
 
 class DraftEngagementBlockWithAi extends Action
 {
@@ -60,8 +60,6 @@ class DraftEngagementBlockWithAi extends Action
     protected array | Closure $mergeTags = [];
 
     protected NotificationChannel | Closure $channel;
-
-    protected string | Closure $fieldPrefix = '';
 
     protected function setUp(): void
     {
@@ -127,7 +125,7 @@ class DraftEngagementBlockWithAi extends Action
                         return;
                     }
 
-                    $set("{$this->getFieldPrefix()}body", Str::markdown($content));
+                    $set('body', RichContentRenderer::make((string) str($content)->markdown())->toArray());
 
                     return;
                 }
@@ -167,11 +165,9 @@ class DraftEngagementBlockWithAi extends Action
                     return;
                 }
 
-                $set("{$this->getFieldPrefix()}subject", (string) str($content)
-                    ->before("\n")
-                    ->trim());
+                $set('subject', RichContentRenderer::make((string) str($content)->before("\n")->trim())->toArray());
 
-                $set("{$this->getFieldPrefix()}body", (string) str($content)->after("\n")->markdown());
+                $set('body', RichContentRenderer::make((string) str($content)->after("\n")->markdown())->toArray());
             })
             ->visible(
                 auth()->user()->hasLicense(LicenseType::ConversationalAi)
@@ -211,17 +207,5 @@ class DraftEngagementBlockWithAi extends Action
     public function getDeliveryMethod(): NotificationChannel
     {
         return $this->evaluate($this->channel ?? throw new Exception('The [channel()] must be set when using [' . static::class . '].'));
-    }
-
-    public function fieldPrefix(string | Closure $prefix): static
-    {
-        $this->fieldPrefix = $prefix;
-
-        return $this;
-    }
-
-    public function getFieldPrefix(): string
-    {
-        return $this->evaluate($this->fieldPrefix);
     }
 }

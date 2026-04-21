@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -41,8 +41,7 @@ use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use App\Features\MaximumLeadTimeFeature;
-use App\Features\MinimumLeadTimeFeature;
+use App\Features\BookingGroupRoundRobinFeature;
 use App\Models\User;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Builder;
@@ -54,9 +53,13 @@ class GetAvailableGroupAppointmentSlots
     /**
      * @return array<int, array{start: string, end: string}>
      */
-    public function __invoke(BookingGroup $bookingGroup, int $year, int $month): array
+    public function __invoke(BookingGroup $bookingGroup, int $year, int $month, ?User $forMember = null): array
     {
-        $members = $bookingGroup->allMembers();
+        if ($forMember) {
+            $members = collect([$forMember]);
+        } else {
+            $members = $bookingGroup->allMembers();
+        }
 
         if ($members->isEmpty()) {
             return [];
@@ -77,10 +80,6 @@ class GetAvailableGroupAppointmentSlots
             : 0;
 
         $resolveEffectiveLeadTime = function (BookingGroup $bookingGroup, Collection $members): int {
-            if (! MinimumLeadTimeFeature::active()) {
-                return 0;
-            }
-
             $memberMaxLeadTime = PersonalBookingPage::query()
                 ->whereIn('user_id', $members->pluck('id'))
                 ->max('minimum_booking_lead_time_hours') ?? 0;
@@ -90,14 +89,10 @@ class GetAvailableGroupAppointmentSlots
 
         $effectiveLeadTime = $resolveEffectiveLeadTime($bookingGroup, $members);
 
-        $effectiveMaxLeadTimeDays = 0;
-
-        if (MaximumLeadTimeFeature::active()) {
-            $memberMaxLeadTimeDays = PersonalBookingPage::query()
-                ->whereIn('user_id', $members->pluck('id'))
-                ->max('maximum_booking_lead_time_days') ?? 0;
-            $effectiveMaxLeadTimeDays = max($bookingGroup->maximum_booking_lead_time_days ?? 0, $memberMaxLeadTimeDays);
-        }
+        $memberMaxLeadTimeDays = PersonalBookingPage::query()
+            ->whereIn('user_id', $members->pluck('id'))
+            ->max('maximum_booking_lead_time_days') ?? 0;
+        $effectiveMaxLeadTimeDays = max($bookingGroup->maximum_booking_lead_time_days ?? 0, $memberMaxLeadTimeDays);
 
         $latestAllowed = ($effectiveMaxLeadTimeDays > 0) ? now()->addDays($effectiveMaxLeadTimeDays) : null;
 
@@ -106,7 +101,7 @@ class GetAvailableGroupAppointmentSlots
 
         $allBusyPeriods = $this->getAllMemberBusyPeriods($members, $monthStart, $monthEnd);
         $allBusyPeriods = $allBusyPeriods->merge(
-            $this->getGroupAppointmentBusyPeriods($bookingGroup, $monthStart, $monthEnd),
+            $this->getGroupAppointmentBusyPeriods($bookingGroup, $monthStart, $monthEnd, $forMember),
         );
 
         $now = now()->addHours($effectiveLeadTime);
@@ -344,10 +339,11 @@ class GetAvailableGroupAppointmentSlots
     /**
      * @return Collection<int, array{start: Carbon, end: Carbon}>
      */
-    protected function getGroupAppointmentBusyPeriods(BookingGroup $bookingGroup, Carbon $start, Carbon $end): Collection
+    protected function getGroupAppointmentBusyPeriods(BookingGroup $bookingGroup, Carbon $start, Carbon $end, ?User $forMember = null): Collection
     {
         return BookingGroupAppointment::query()
             ->whereBelongsTo($bookingGroup)
+            ->when($forMember && BookingGroupRoundRobinFeature::active(), fn ($query) => $query->where('meeting_owner_id', $forMember->id))
             ->where('starts_at', '<', $end)
             ->where('ends_at', '>', $start)
             ->get()

@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -37,6 +37,7 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
+use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -187,14 +188,14 @@ class ProspectMessagesDetailTable extends BaseWidget
                 TextColumn::make('details')
                     ->state(fn (HolisticEngagement $record) => ! is_null($record->record) ? match ($record->record::class) {
                         Engagement::class => Str::limit(match ($record->record->channel) {
-                            NotificationChannel::Email => $record->record->getSubjectMarkdown(),
-                            NotificationChannel::Sms => $record->record->getBodyMarkdown(),
+                            NotificationChannel::Email => (string) $record->record->getSubject(),
+                            NotificationChannel::Sms => $record->record->getBodyText(),
                             default => 'N/A',
                         }, 50),
-                        EngagementResponse::class => Str::limit(match ($record->record->type) {
+                        EngagementResponse::class => Str::limit(html_entity_decode(strip_tags(match ($record->record->type) {
                             EngagementResponseType::Email => $record->record->subject,
-                            EngagementResponseType::Sms => $record->record->getBodyMarkdown(),
-                        }, 50),
+                            EngagementResponseType::Sms => $record->record->getBody(),
+                        }), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50),
                         default => throw new Exception('Invalid record type'),
                     } : null),
                 TextColumn::make('record_sortable_date')
@@ -212,9 +213,10 @@ class ProspectMessagesDetailTable extends BaseWidget
                                     FROM campaigns c
                                     INNER JOIN campaign_actions ca ON ca.campaign_id = c.id
                                     WHERE ca.id = (
-                                        SELECT campaign_action_id
+                                        SELECT source_id
                                         FROM engagements
                                         WHERE id = record_id
+                                        AND source_type = 'campaign_action'
                                     )
                                 )
                                 ELSE NULL
@@ -222,18 +224,14 @@ class ProspectMessagesDetailTable extends BaseWidget
                         ", [$engagementModel->getMorphClass()]);
                     })
                     ->state(
-                        fn (HolisticEngagement $record) => $record->record instanceof Engagement
-                            ? $record->record->campaignAction?->campaign->name ?? 'N/A'
+                        fn (HolisticEngagement $record) => $record->record instanceof Engagement && $record->record->source instanceof CampaignAction
+                            ? $record->record->source->campaign->name ?? 'N/A'
                             : 'N/A'
                     )
                     ->url(
-                        fn (HolisticEngagement $record) => $record->record instanceof Engagement
-                        ? (
-                            $record->record->campaignAction?->campaign
-                                ? CampaignResource::getUrl('view', ['record' => $record->record->campaignAction->campaign->getKey()])
-                                : null
-                        )
-                        : null
+                        fn (HolisticEngagement $record) => $record->record instanceof Engagement && $record->record->source instanceof CampaignAction
+                            ? CampaignResource::getUrl('view', ['record' => $record->record->source->campaign->getKey()])
+                            : null
                     )
                     ->openUrlInNewTab(),
             ])

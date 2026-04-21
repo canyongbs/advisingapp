@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -89,6 +89,70 @@ it('can send a message', function () {
         ->toHaveCount(1)
         ->each
         ->toHaveProperties(['type' => TrackedEventType::AiExchange]);
+});
+
+it('includes the web_search tool on every outbound message', function () {
+    Queue::fake();
+
+    asSuperAdmin();
+
+    $service = app(OpenAiGptTestService::class);
+
+    $message = AiMessage::factory()
+        ->for(AiThread::factory()
+            ->for(AiAssistant::factory()->state([
+                'application' => AiAssistantApplication::PersonalAssistant,
+                'is_default' => true,
+                'model' => AiModel::OpenAiGptTest,
+            ]), 'assistant')
+            ->for(auth()->user()), 'thread')
+        ->make();
+
+    $fake = Prism::fake([
+        TextResponseFake::make()
+            ->withText(strrev($message->content))
+            ->withFinishReason(FinishReason::Stop),
+    ]);
+
+    $stream = $service->sendMessage($message, files: []);
+
+    iterator_to_array($stream());
+
+    $fake->assertRequest(function (array $requests) {
+        expect($requests)->toHaveCount(1);
+
+        $tools = $requests[0]->providerOptions('tools');
+
+        expect($tools)->toBeArray();
+        expect(array_column($tools, 'type'))->toContain('web_search');
+    });
+});
+
+it('includes the web_search tool when streaming a prompt', function () {
+    Queue::fake();
+
+    asSuperAdmin();
+
+    $service = app(OpenAiGptTestService::class);
+
+    $fake = Prism::fake([
+        TextResponseFake::make()
+            ->withText(Str::random())
+            ->withFinishReason(FinishReason::Stop),
+    ]);
+
+    $stream = $service->stream(Str::random(), Str::random(), files: []);
+
+    iterator_to_array($stream());
+
+    $fake->assertRequest(function (array $requests) {
+        expect($requests)->toHaveCount(1);
+
+        $tools = $requests[0]->providerOptions('tools');
+
+        expect($tools)->toBeArray();
+        expect(array_column($tools, 'type'))->toContain('web_search');
+    });
 });
 
 it('can complete a message response', function () {

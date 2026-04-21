@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -36,24 +36,15 @@
 
 namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
-use AdvisingApp\MeetingCenter\Actions\GetAvailableGroupAppointmentSlots;
-use AdvisingApp\MeetingCenter\Enums\EventTransparency;
+use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use AdvisingApp\MeetingCenter\Http\Requests\BookGroupCalendarSlotRequest;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
-use AdvisingApp\MeetingCenter\Models\CalendarEvent;
-use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use App\Features\MaximumLeadTimeFeature;
-use App\Features\MinimumLeadTimeFeature;
+use App\Features\BookingGroupRoundRobinFeature;
 use App\Http\Controllers\Controller;
 use App\Settings\CollegeBrandingSettings;
-use Carbon\Carbon;
-use Exception;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
 class GroupBookingPageWidgetController extends Controller
@@ -97,12 +88,13 @@ class GroupBookingPageWidgetController extends Controller
             'duration' => $bookingGroup->default_appointment_duration,
             'timezone' => config('app.timezone'),
             'primary_color' => $primaryColor,
+            'book_with' => $bookingGroup->book_with->value,
             'booking_url' => route('widgets.booking-page.group.api.book', ['slug' => $slug]),
             'available_slots_url' => route('widgets.booking-page.group.api.available-slots', ['slug' => $slug]),
         ]);
     }
 
-    public function availableSlots(Request $request, string $slug, GetAvailableGroupAppointmentSlots $getAvailableSlots): JsonResponse
+    public function availableSlots(Request $request, string $slug): JsonResponse
     {
         $bookingGroup = BookingGroup::query()
             ->where('slug', $slug)
@@ -111,15 +103,13 @@ class GroupBookingPageWidgetController extends Controller
         $year = $request->integer('year', now()->year);
         $month = $request->integer('month', now()->month);
 
-        $blocks = $getAvailableSlots(
-            $bookingGroup,
-            $year,
-            $month
-        );
+        if (in_array($bookingGroup->book_with, [BookingGroupBookWith::RoundRobin, BookingGroupBookWith::Availability]) && ! BookingGroupRoundRobinFeature::active()) {
+            return response()->json([
+                'blocks' => [],
+            ]);
+        }
 
-        return response()->json([
-            'blocks' => $blocks,
-        ]);
+        return $bookingGroup->book_with->getBooker()->availableSlots($bookingGroup, $year, $month);
     }
 
     public function book(BookGroupCalendarSlotRequest $request, string $slug): JsonResponse
@@ -128,183 +118,13 @@ class GroupBookingPageWidgetController extends Controller
             ->where('slug', $slug)
             ->firstOrFail();
 
-        $members = $bookingGroup->allMembers();
-        $meetingOwner = $bookingGroup->meetingOwner;
-
-        if (! $meetingOwner || ! $members->contains('id', $meetingOwner->id)) {
+        if (in_array($bookingGroup->book_with, [BookingGroupBookWith::RoundRobin, BookingGroupBookWith::Availability]) && ! BookingGroupRoundRobinFeature::active()) {
             return response()->json([
                 'success' => false,
-                'message' => 'This booking group does not have a valid meeting owner configured.',
+                'message' => 'This booking type is not currently available.',
             ], 422);
         }
 
-        if (! $meetingOwner->calendar?->provider_id) {
-            return response()->json([
-                'success' => false,
-                'message' => 'This booking group does not have a valid meeting owner calendar configured.',
-            ], 422);
-        }
-
-        $startsAt = Carbon::parse($request->validated('starts_at'));
-        $endsAt = Carbon::parse($request->validated('ends_at'));
-
-        // Calculate effective lead time: max of group's lead time and all members' lead times
-        $resolveEffectiveLeadTime = function (BookingGroup $bookingGroup, Collection $members): int {
-            if (! MinimumLeadTimeFeature::active()) {
-                return 0;
-            }
-
-            $memberMaxLeadTime = PersonalBookingPage::query()
-                ->whereIn('user_id', $members->pluck('id'))
-                ->max('minimum_booking_lead_time_hours') ?? 0;
-
-            return max($bookingGroup->minimum_booking_lead_time_hours ?? 0, $memberMaxLeadTime);
-        };
-
-        $effectiveLeadTime = $resolveEffectiveLeadTime($bookingGroup, $members);
-        $earliestAllowed = now()->addHours($effectiveLeadTime);
-
-        if ($startsAt->isBefore($earliestAllowed)) {
-            return response()->json([
-                'success' => false,
-                'message' => $effectiveLeadTime > 0
-                    ? "Bookings require at least {$effectiveLeadTime} hours advance notice. Please select a later time slot."
-                    : 'Cannot book appointments that have already started. Please select a future time slot.',
-            ], 422);
-        }
-
-        // Check if the appointment exceeds the maximum lead time
-        $effectiveMaxLeadTimeDays = 0;
-
-        if (MaximumLeadTimeFeature::active()) {
-            $memberMaxLeadTimeDays = PersonalBookingPage::query()
-                ->whereIn('user_id', $members->pluck('id'))
-                ->max('maximum_booking_lead_time_days') ?? 0;
-            $effectiveMaxLeadTimeDays = max($bookingGroup->maximum_booking_lead_time_days ?? 0, $memberMaxLeadTimeDays);
-        }
-
-        if ($effectiveMaxLeadTimeDays > 0) {
-            $latestAllowed = now()->addDays($effectiveMaxLeadTimeDays);
-
-            if ($startsAt->isAfter($latestAllowed)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => "Bookings cannot be made more than {$effectiveMaxLeadTimeDays} days in advance. Please select an earlier time slot.",
-                ], 422);
-            }
-        }
-
-        $bufferBefore = $bookingGroup->is_default_appointment_buffer_enabled
-            ? $bookingGroup->default_appointment_buffer_before_duration
-            : 0;
-
-        $bufferAfter = $bookingGroup->is_default_appointment_buffer_enabled
-            ? $bookingGroup->default_appointment_buffer_after_duration
-            : 0;
-
-        $conflictCheckStart = $startsAt->copy()->subMinutes($bufferBefore);
-        $conflictCheckEnd = $endsAt->copy()->addMinutes($bufferAfter);
-
-        // Validate the requested slot fits within regenerated available blocks
-        $availableBlocks = app(GetAvailableGroupAppointmentSlots::class)(
-            $bookingGroup,
-            $startsAt->year,
-            $startsAt->month,
-        );
-
-        $slotIsValid = collect($availableBlocks)->contains(function (array $block) use ($startsAt, $endsAt) {
-            $blockStart = Carbon::parse($block['start']);
-            $blockEnd = Carbon::parse($block['end']);
-
-            return $startsAt->gte($blockStart) && $endsAt->lte($blockEnd);
-        });
-
-        if (! $slotIsValid) {
-            return response()->json([
-                'success' => false,
-                'message' => 'This time slot is no longer available. Please select another time.',
-            ], 409);
-        }
-
-        return DB::transaction(function () use ($bookingGroup, $members, $meetingOwner, $startsAt, $endsAt, $conflictCheckStart, $conflictCheckEnd, $request) {
-            // Check for overlapping events across ALL members' calendars, accounting for buffer time
-            foreach ($members as $member) {
-                if (! $member->calendar) {
-                    continue;
-                }
-
-                $hasConflict = CalendarEvent::query()
-                    ->where('calendar_id', $member->calendar->id)
-                    ->where('starts_at', '<', $conflictCheckEnd)
-                    ->where('ends_at', '>', $conflictCheckStart)
-                    ->lockForUpdate()
-                    ->exists();
-
-                if ($hasConflict) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'This time slot has already been booked. Please select another time.',
-                    ], 409);
-                }
-            }
-
-            $groupAppointmentConflict = BookingGroupAppointment::query()
-                ->whereBelongsTo($bookingGroup)
-                ->where('starts_at', '<', $conflictCheckEnd)
-                ->where('ends_at', '>', $conflictCheckStart)
-                ->lockForUpdate()
-                ->exists();
-
-            if ($groupAppointmentConflict) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'This time slot has already been booked. Please select another time.',
-                ], 409);
-            }
-
-            $description = 'Booked via group booking page: ' . $bookingGroup->name;
-
-            $attendees = $members
-                ->pluck('email')
-                ->push($request->validated('email'))
-                ->filter()
-                ->unique()
-                ->values()
-                ->all();
-
-            $calendarEvent = CalendarEvent::create([
-                'calendar_id' => $meetingOwner->calendar->id,
-                'title' => 'Group Meeting with ' . $request->validated('name'),
-                'description' => $description,
-                'starts_at' => $startsAt,
-                'ends_at' => $endsAt,
-                'attendees' => $attendees,
-                'transparency' => EventTransparency::Busy,
-            ]);
-
-            if ($calendarEvent->provider_uid === null) {
-                report(new Exception('Calendar event was created but provider UID was not returned.'));
-            }
-
-            $appointment = BookingGroupAppointment::create([
-                'booking_group_id' => $bookingGroup->id,
-                'calendar_event_provider_uid' => $calendarEvent->provider_uid,
-                'name' => $request->validated('name'),
-                'email' => $request->validated('email'),
-                'starts_at' => $startsAt,
-                'ends_at' => $endsAt,
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Your appointment has been successfully booked!',
-                'event' => [
-                    'id' => $appointment->id,
-                    'title' => 'Group Meeting with ' . $request->validated('name'),
-                    'starts_at' => $startsAt->toIso8601String(),
-                    'ends_at' => $endsAt->toIso8601String(),
-                ],
-            ], 201);
-        });
+        return $bookingGroup->book_with->getBooker()->book($request, $bookingGroup);
     }
 }

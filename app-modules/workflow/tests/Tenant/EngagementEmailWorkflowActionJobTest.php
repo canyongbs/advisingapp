@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -34,7 +34,9 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Workflow\Jobs\EngagementEmailWorkflowActionJob;
@@ -148,4 +150,74 @@ it('throws exception for non-email channel', function () {
 
     expect(fn () => $job->handle())
         ->toThrow(Exception::class, 'The notification channel is not email.');
+});
+
+it('creates an engagement with the correct email_type from workflow details', function () {
+    $user = User::factory()->create();
+    $student = Student::factory()->create();
+
+    $workflowTrigger = WorkflowTrigger::factory()->create([
+        'created_by_type' => User::class,
+        'created_by_id' => $user->id,
+    ]);
+
+    $workflowRun = WorkflowRun::factory()->create([
+        'workflow_trigger_id' => $workflowTrigger->id,
+        'related_type' => Student::class,
+        'related_id' => $student->getKey(),
+    ]);
+
+    $emailDetails = WorkflowEngagementEmailDetails::factory()->create([
+        'channel' => NotificationChannel::Email,
+        'email_type' => EmailType::Marketing,
+        'subject' => [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => 'Marketing Subject',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+        'body' => [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        [
+                            'type' => 'text',
+                            'text' => 'Marketing email body content',
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ]);
+
+    $workflowRunStep = WorkflowRunStep::factory()->withDetails($emailDetails)->create([
+        'workflow_run_id' => $workflowRun->id,
+        'execute_at' => now(),
+        'delay_minutes' => 0,
+        'previous_workflow_run_step_id' => null,
+    ]);
+
+    $job = new EngagementEmailWorkflowActionJob($workflowRunStep);
+    $job->handle();
+
+    /** @var Engagement $engagement */
+    $engagement = Engagement::query()->first();
+
+    expect($engagement)->not->toBeNull()
+        ->and($engagement->email_type)->toBe(EmailType::Marketing);
+
+    Notification::assertSentTo(
+        $student,
+        EngagementNotification::class,
+    );
 });

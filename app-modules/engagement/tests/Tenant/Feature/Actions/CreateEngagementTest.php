@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -39,6 +39,7 @@ use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
 use AdvisingApp\Engagement\Tests\Tenant\RequestFactories\CreateEngagementRequestFactory;
+use AdvisingApp\Notification\Enums\EmailType;
 use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\assertDatabaseCount;
@@ -57,6 +58,7 @@ it('will create and send an engagement immediately', function () {
         subject: $data['subject'],
         body: $data['body'],
         scheduledAt: null,
+        emailType: EmailType::Transactional,
     ));
 
     assertDatabaseCount(Engagement::class, 1);
@@ -69,7 +71,8 @@ it('will create and send an engagement immediately', function () {
         ->subject->toMatchArray($data['subject'])
         ->body->toMatchArray($data['body'])
         ->scheduled_at->toBeNull()
-        ->dispatched_at->not->toBeNull();
+        ->dispatched_at->not->toBeNull()
+        ->email_type->toBe(EmailType::Transactional);
 
     Notification::assertSentTo(
         $data['recipient'],
@@ -91,6 +94,7 @@ it('will create but not dispatch a scheduled engagement', function () {
         subject: $data['subject'],
         body: $data['body'],
         scheduledAt: $scheduledAt = now()->addMinute(),
+        emailType: EmailType::Transactional,
     ));
 
     assertDatabaseCount(Engagement::class, 1);
@@ -106,6 +110,34 @@ it('will create but not dispatch a scheduled engagement', function () {
         ->dispatched_at->toBeNull();
 
     Notification::assertNotSentTo(
+        $data['recipient'],
+        EngagementNotification::class
+    );
+});
+
+it('will create a marketing engagement with email_type set to marketing', function () {
+    Notification::fake();
+
+    $data = CreateEngagementRequestFactory::new()->email()->create();
+
+    app(CreateEngagement::class)->execute(new EngagementCreationData(
+        user: $data['user'],
+        recipient: $data['recipient'],
+        channel: $data['channel'],
+        subject: $data['subject'],
+        body: $data['body'],
+        scheduledAt: null,
+        emailType: EmailType::Marketing,
+    ));
+
+    assertDatabaseCount(Engagement::class, 1);
+
+    // @phpstan-ignore method.nonObject
+    expect(Engagement::first())
+        ->email_type->toBe(EmailType::Marketing)
+        ->dispatched_at->not->toBeNull();
+
+    Notification::assertSentTo(
         $data['recipient'],
         EngagementNotification::class
     );

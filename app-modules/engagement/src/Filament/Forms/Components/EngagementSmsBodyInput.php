@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -42,34 +42,26 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Field;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Schemas\Schema;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 
 class EngagementSmsBodyInput
 {
-    public static function make(string $context, ?Schema $form = null, string $fieldPrefix = '', bool $withTemplateAction = true)
+    public static function make(string $context, bool $withTemplateAction = true)
     {
         // TODO Implement length validation (320 characters max)
         // https://www.twilio.com/docs/glossary/what-sms-character-limit#:~:text=Twilio's%20platform%20supports%20long%20messages,best%20deliverability%20and%20user%20experience.
-        return TiptapEditor::make("{$fieldPrefix}body")
+        return RichEditor::make('body')
             ->label('Body')
-            ->mergeTags([
-                'recipient first name',
-                'recipient last name',
-                'recipient full name',
-                'recipient email',
-                'recipient preferred name',
-            ])
-            ->showMergeTagsInBlocksPanel(is_null($form) ? false : ! ($form->getLivewire() instanceof RelationManager))
-            ->profile('sms')
+            ->activePanel('mergeTags')
+            ->toolbarButtons([])
+            ->json()
             ->required()
-            ->when($withTemplateAction, fn (TiptapEditor $component) => $component->hintAction(fn (TiptapEditor $component) => Action::make('loadSmsTemplate')
+            ->when($withTemplateAction, fn (RichEditor $component) => $component->hintAction(fn (RichEditor $component) => Action::make('loadSmsTemplate')
                 ->label('Load SMS template')
                 ->schema([
                     Select::make('smsTemplate')

@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -46,6 +46,7 @@ use AdvisingApp\Engagement\Notifications\EngagementNotification;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -247,3 +248,98 @@ it('will throw an exception if a canRecieve check fails', function (Educatable $
         Exception::class,
         'The educatable cannot receive notifications on this channel.'
     );
+
+it('creates an engagement with the correct email_type when email_type is present in action data', function () {
+    Notification::fake();
+
+    $prospect = Prospect::factory()->create();
+
+    /** @var Group $group */
+    $group = Group::factory()->create([
+        'type' => GroupType::Static,
+        'model' => GroupModel::Prospect,
+    ]);
+
+    $campaign = Campaign::factory()
+        ->for($group, 'group')
+        ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
+        ->create();
+
+    $subject = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->sentence]]]]];
+    $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]];
+
+    /** @var CampaignAction $action */
+    $action = CampaignAction::factory()
+        ->for($campaign, 'campaign')
+        ->create([
+            'type' => CampaignActionType::BulkEngagementEmail,
+            'data' => [
+                'channel' => NotificationChannel::Email->value,
+                'subject' => $subject,
+                'body' => $body,
+                'email_type' => EmailType::Marketing->value,
+            ],
+        ]);
+
+    $campaignActionEducatable = CampaignActionEducatable::factory()
+        ->for($action, 'campaignAction')
+        ->for($prospect, 'educatable')
+        ->create();
+
+    [$job] = (new EngagementCampaignActionJob($campaignActionEducatable))->withFakeBatch();
+
+    $job->handle();
+
+    /** @var Engagement $engagement */
+    $engagement = Engagement::query()->first();
+
+    expect($engagement)->not->toBeNull()
+        ->and($engagement->email_type)->toBe(EmailType::Marketing);
+});
+
+it('defaults engagement email_type to transactional when email_type is absent from action data', function () {
+    Notification::fake();
+
+    $prospect = Prospect::factory()->create();
+
+    /** @var Group $group */
+    $group = Group::factory()->create([
+        'type' => GroupType::Static,
+        'model' => GroupModel::Prospect,
+    ]);
+
+    $campaign = Campaign::factory()
+        ->for($group, 'group')
+        ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
+        ->create();
+
+    $subject = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->sentence]]]]];
+    $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => fake()->paragraph]]]]];
+
+    /** @var CampaignAction $action */
+    $action = CampaignAction::factory()
+        ->for($campaign, 'campaign')
+        ->create([
+            'type' => CampaignActionType::BulkEngagementEmail,
+            'data' => [
+                'channel' => NotificationChannel::Email->value,
+                'subject' => $subject,
+                'body' => $body,
+            ],
+        ]);
+
+    $campaignActionEducatable = CampaignActionEducatable::factory()
+        ->for($action, 'campaignAction')
+        ->for($prospect, 'educatable')
+        ->create();
+
+    [$job] = (new EngagementCampaignActionJob($campaignActionEducatable))->withFakeBatch();
+
+    $job->handle();
+
+    /** @var Engagement $engagement */
+    $engagement = Engagement::query()->first();
+
+    expect($engagement)->not->toBeNull()
+        ->and($engagement->email_type)->toBe(EmailType::Transactional);
+});

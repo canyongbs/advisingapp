@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -68,24 +68,24 @@ class InteractionBlock extends CampaignActionBlock
 
         $this->label('Interaction');
 
-        $this->schema($this->createFields());
+        $this->schema($this->generateFields());
     }
 
-    public function generateFields(string $fieldPrefix = ''): array
+    public function generateFields(): array
     {
         $settings = app(InteractionManagementSettings::class);
 
         return [
             Fieldset::make('Details')
                 ->schema([
-                    Select::make($fieldPrefix . 'interaction_initiative_id')
+                    Select::make('interaction_initiative_id')
                         ->relationship('initiative', 'name')
                         ->model(Interaction::class)
                         ->label('Initiative')
                         ->required(fn () => $settings->is_initiative_required)
                         ->visible(fn () => $settings->is_initiative_enabled)
                         ->exists((new InteractionInitiative())->getTable(), 'id'),
-                    Select::make($fieldPrefix . 'interaction_driver_id')
+                    Select::make('interaction_driver_id')
                         ->relationship('driver', 'name')
                         ->model(Interaction::class)
                         ->preload()
@@ -93,7 +93,7 @@ class InteractionBlock extends CampaignActionBlock
                         ->required(fn () => $settings->is_driver_required)
                         ->visible(fn () => $settings->is_driver_enabled)
                         ->exists((new InteractionDriver())->getTable(), 'id'),
-                    Select::make($fieldPrefix . 'division_id')
+                    Select::make('division_id')
                         ->relationship('division', 'name')
                         ->model(Interaction::class)
                         ->preload()
@@ -111,7 +111,7 @@ class InteractionBlock extends CampaignActionBlock
                         ->dehydratedWhenHidden()
                         ->required()
                         ->exists((new Division())->getTable(), 'id'),
-                    Select::make($fieldPrefix . 'interaction_outcome_id')
+                    Select::make('interaction_outcome_id')
                         ->relationship('outcome', 'name')
                         ->model(Interaction::class)
                         ->preload()
@@ -119,7 +119,7 @@ class InteractionBlock extends CampaignActionBlock
                         ->required(fn () => $settings->is_outcome_required)
                         ->visible(fn () => $settings->is_outcome_enabled)
                         ->exists((new InteractionOutcome())->getTable(), 'id'),
-                    Select::make($fieldPrefix . 'interaction_relation_id')
+                    Select::make('interaction_relation_id')
                         ->relationship('relation', 'name')
                         ->model(Interaction::class)
                         ->preload()
@@ -127,7 +127,7 @@ class InteractionBlock extends CampaignActionBlock
                         ->required(fn () => $settings->is_relation_required)
                         ->visible(fn () => $settings->is_relation_enabled)
                         ->exists((new InteractionRelation())->getTable(), 'id'),
-                    Select::make($fieldPrefix . 'interaction_status_id')
+                    Select::make('interaction_status_id')
                         ->relationship('status', 'name')
                         ->model(Interaction::class)
                         ->preload()
@@ -135,7 +135,7 @@ class InteractionBlock extends CampaignActionBlock
                         ->required(fn () => $settings->is_status_required)
                         ->visible(fn () => $settings->is_status_enabled)
                         ->exists((new InteractionStatus())->getTable(), 'id'),
-                    Select::make($fieldPrefix . 'interaction_type_id')
+                    Select::make('interaction_type_id')
                         ->relationship('type', 'name')
                         ->model(Interaction::class)
                         ->preload()
@@ -146,18 +146,18 @@ class InteractionBlock extends CampaignActionBlock
                 ]),
             Fieldset::make('Time')
                 ->schema([
-                    DateTimePicker::make($fieldPrefix . 'start_datetime')
+                    DateTimePicker::make('start_datetime')
                         ->seconds(false)
                         ->required(),
-                    DateTimePicker::make($fieldPrefix . 'end_datetime')
+                    DateTimePicker::make('end_datetime')
                         ->seconds(false)
                         ->required(),
                 ]),
             Fieldset::make('Notes')
                 ->schema([
-                    TextInput::make($fieldPrefix . 'subject')
+                    TextInput::make('subject')
                         ->required(),
-                    Textarea::make($fieldPrefix . 'description')
+                    Textarea::make('description')
                         ->required(),
                 ]),
             CampaignDateTimeInput::make(),

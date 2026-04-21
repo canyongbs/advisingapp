@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -37,11 +37,10 @@
 namespace AdvisingApp\Engagement\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Engagement\Actions\GenerateEngagementBodyContent;
-use AdvisingApp\Engagement\Actions\GenerateEngagementSubjectContent;
+use AdvisingApp\Engagement\Models\Concerns\EngagementFileAttachmentProvider;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Observers\EngagementObserver;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
@@ -58,7 +57,8 @@ use AdvisingApp\Timeline\Timelines\EngagementTimeline;
 use App\Models\BaseModel;
 use App\Models\User;
 use CanyonGBS\Common\Parser\Parser;
-use Exception;
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -69,6 +69,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 use League\HTMLToMarkdown\HtmlConverter;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
@@ -80,12 +81,13 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  * @mixin IdeHelperEngagement
  */
 #[ObservedBy([EngagementObserver::class])]
-class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline, HasDeliveryMethod, HasMedia
+class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscription, ProvidesATimeline, HasDeliveryMethod, HasMedia, HasRichContent
 {
     use AuditableTrait;
     use BelongsToEducatable;
-    use SoftDeletes;
     use InteractsWithMedia;
+    use InteractsWithRichContent;
+    use SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -98,8 +100,10 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'scheduled_at',
         'dispatched_at',
         'channel',
-        'campaign_action_id',
+        'source_id',
+        'source_type',
         'dispatch_failed_at',
+        'email_type',
     ];
 
     protected $casts = [
@@ -109,6 +113,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         'channel' => NotificationChannel::class,
         'subject' => 'array',
         'dispatch_failed_at' => 'datetime',
+        'email_type' => EmailType::class,
     ];
 
     // TODO Consider changing this relationship if we ever needed to timeline something else where records might be shared across entities
@@ -191,11 +196,11 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     }
 
     /**
-     * @return BelongsTo<CampaignAction, $this>
+     * @return MorphTo<Model, $this>
      */
-    public function campaignAction(): BelongsTo
+    public function source(): MorphTo
     {
-        return $this->belongsTo(CampaignAction::class);
+        return $this->morphTo();
     }
 
     /**
@@ -233,22 +238,43 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function getBody(): HtmlString
     {
-        return app(GenerateEngagementBodyContent::class)(
-            $this->body,
-            $this->getMergeData(),
-            $this->batch ?? $this->campaignAction ?? $this,
-            $this->campaignAction ? 'data.body' : 'body',
-        );
+        if ($this->batch) {
+            $attribute = $this->batch->getRichContentAttribute('body')?->mergeTags($this->getMergeData());
+
+            return new HtmlString($attribute?->toHtml() ?? '');
+        }
+
+        $attribute = $this->getRichContentAttribute('body')?->mergeTags($this->getMergeData());
+
+        return new HtmlString($attribute?->toHtml() ?? '');
+    }
+
+    public function getBodyText(): string
+    {
+        if ($this->batch) {
+            $text = $this->batch->getRichContentAttribute('body')?->mergeTags($this->getMergeData())?->toText() ?? '';
+        } else {
+            $text = $this->getRichContentAttribute('body')?->mergeTags($this->getMergeData())?->toText() ?? '';
+        }
+
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+
+        return trim(preg_replace('/\s+/u', ' ', $text) ?? '');
     }
 
     public function getSubject(): ?HtmlString
     {
-        return $this->subject ? app(GenerateEngagementSubjectContent::class)(
-            $this->subject,
-            $this->getMergeData(),
-            $this->batch ?? $this->campaignAction ?? $this,
-            $this->campaignAction ? 'data.subject' : 'subject',
-        ) : null;
+        if ($this->batch) {
+            $attribute = $this->batch->getRichContentAttribute('subject')?->mergeTags($this->getMergeData());
+        } else {
+            $attribute = $this->getRichContentAttribute('subject')?->mergeTags($this->getMergeData());
+        }
+
+        $subject = $attribute?->toText() ?? '';
+        $subject = html_entity_decode($subject, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $subject = trim(preg_replace('/\s+/u', ' ', $subject) ?? '');
+
+        return $subject ? new HtmlString(Str::limit($subject, 988, '')) : null;
     }
 
     public function getBodyMarkdown(): string
@@ -263,49 +289,46 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 
     public function getMergeData(): array
     {
-        throw_unless(($this->recipient instanceof Student) || ($this->recipient instanceof Prospect), new Exception('Recipient is not a student or prospect.'));
-
         return [
-            'recipient first name' => $this->recipient->getAttribute($this->recipient->displayFirstNameKey()),
-            'recipient last name' => $this->recipient->getAttribute($this->recipient->displayLastNameKey()),
-            'recipient full name' => $this->recipient->getAttribute($this->recipient->displayNameKey()),
-            'recipient email' => $this->recipient->primaryEmailAddress?->address,
-            'recipient preferred name' => $this->recipient->getAttribute($this->recipient->displayPreferredNameKey()),
-            'student first name' => $this->recipient->getAttribute($this->recipient->displayFirstNameKey()),
-            'student last name' => $this->recipient->getAttribute($this->recipient->displayLastNameKey()),
-            'student full name' => $this->recipient->getAttribute($this->recipient->displayNameKey()),
-            'student email' => $this->recipient->primaryEmailAddress?->address,
-            'student preferred name' => $this->recipient->getAttribute($this->recipient->displayPreferredNameKey()),
-            'user first name' => $this->user ? (new Parser())->parse($this->user->name)->getFirstname() : null,
-            'user full name' => $this->user?->name,
-            'user job title' => $this->user?->job_title,
-            'user email' => $this->user?->email,
-            'user phone number' => $this->user?->phone_number,
+            'recipient first name' => fn () => $this->recipient?->getAttribute($this->recipient->displayFirstNameKey()), /** @phpstan-ignore method.notFound */
+            'recipient last name' => fn () => $this->recipient?->getAttribute($this->recipient->displayLastNameKey()), /** @phpstan-ignore method.notFound */
+            'recipient full name' => fn () => $this->recipient?->getAttribute($this->recipient->displayNameKey()),
+            'recipient email' => fn () => $this->recipient?->primaryEmailAddress?->address,
+            'recipient preferred name' => fn () => $this->recipient?->getAttribute($this->recipient->displayPreferredNameKey()), /** @phpstan-ignore method.notFound */
+            'user first name' => fn () => $this->user ? (new Parser())->parse($this->user->name)->getFirstname() : null,
+            'user full name' => fn () => $this->user?->name,
+            'user job title' => fn () => $this->user?->job_title,
+            'user email' => fn () => $this->user?->email,
+            'user phone number' => fn () => $this->user?->phone_number,
         ];
     }
 
-    /**
-     * @param class-string $type
-     */
-    public static function getMergeTags(string $type): array
+    public static function getMergeTags(bool $withUserTags = true): array
     {
-        return [
-            'recipient first name',
-            'recipient last name',
-            'recipient full name',
-            'recipient email',
-            'recipient preferred name',
-            'user first name',
-            'user full name',
-            'user job title',
-            'user email',
-            'user phone number',
-        ];
+        $tags = array_keys((new self())->getMergeData());
+
+        if (! $withUserTags) {
+            $tags = array_values(array_filter($tags, fn (string $tag) => ! str_starts_with($tag, 'user ')));
+        }
+
+        return $tags;
     }
 
     public function getDeliveryMethod(): NotificationChannel
     {
         return $this->channel;
+    }
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('subject')
+            ->mergeTags($this->getMergeData());
+
+        $this->registerRichContent('body')
+            ->fileAttachmentsDisk('s3-public')
+            ->fileAttachmentProvider(EngagementFileAttachmentProvider::make())
+            ->fileAttachmentsVisibility('public')
+            ->mergeTags($this->getMergeData());
     }
 
     protected static function booted(): void

@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -91,7 +91,8 @@ class GenerateFormKitSchema
                 'small' => ['$el' => 'small', 'children' => $this->content($blocks, $component['content'] ?? [], $submissible, $fields)],
                 'text' => $this->text($component),
                 'image' => $this->getImageSrc($component, $submissible),
-                'tiptapBlock' => ($field = ($fields[$component['attrs']['id']] ?? null)) ? (isset($blocks[$component['attrs']['type']]) ? $blocks[$component['attrs']['type']]::getFormKitSchema($field, $actualSubmissible, $this->author) : []) : [],
+                'customBlock' => ($field = ($fields[$component['attrs']['config']['fieldId'] ?? ''] ?? null)) ? (isset($blocks[$component['attrs']['id']]) ? $blocks[$component['attrs']['id']]::getFormKitSchema($field, $actualSubmissible, $this->author) : []) : [],
+                'tiptapBlock' => ($field = ($fields[$component['attrs']['id'] ?? ''] ?? null)) ? (isset($blocks[$component['attrs']['type']]) ? $blocks[$component['attrs']['type']]::getFormKitSchema($field, $actualSubmissible, $this->author) : []) : [],
                 default => [],
             },
             $content,
@@ -100,22 +101,52 @@ class GenerateFormKitSchema
 
     public function grid(array $blocks, array $component, ?Collection $fields, Submissible|SubmissibleStep $submissible): array
     {
+        $children = $component['content'] ?? [];
+
+        // Support both old TipTap format (type/cols) and new RichEditor format (data-cols/data-from-breakpoint)
+        if (isset($component['attrs']['type'])) {
+            $cssClass = match ($component['attrs']['type']) {
+                'asymetric-left-thirds' => 'asymetric-grid-left-thirds',
+                'asymetric-right-thirds' => 'asymetric-grid-right-thirds',
+                'asymetric-left-fourths' => 'asymetric-grid-left-fourths',
+                'asymetric-right-fourths' => 'asymetric-grid-right-fourths',
+                'fixed' => 'fixed-grid-' . $component['attrs']['cols'],
+                'responsive' => 'responsive-grid-' . $component['attrs']['cols'],
+                default => 'responsive-grid-' . ($component['attrs']['cols'] ?? '2'),
+            };
+        } else {
+            $dataCols = $component['attrs']['data-cols'] ?? '2';
+            $fromBreakpoint = $component['attrs']['data-from-breakpoint'] ?? 'lg';
+
+            $colSpans = array_map(
+                fn ($child) => (int) ($child['attrs']['data-col-span'] ?? 1),
+                $children,
+            );
+            $isAsymmetric = count(array_unique($colSpans)) > 1;
+
+            if ($isAsymmetric && $dataCols === '3') {
+                $cssClass = $colSpans[0] < $colSpans[1]
+                    ? 'asymetric-grid-left-thirds'
+                    : 'asymetric-grid-right-thirds';
+            } elseif ($isAsymmetric && $dataCols === '4') {
+                $cssClass = $colSpans[0] < $colSpans[1]
+                    ? 'asymetric-grid-left-fourths'
+                    : 'asymetric-grid-right-fourths';
+            } elseif ($fromBreakpoint === 'default') {
+                $cssClass = 'fixed-grid-' . $dataCols;
+            } else {
+                $cssClass = 'responsive-grid-' . $dataCols;
+            }
+        }
+
         return [
             '$el' => 'div',
             'attrs' => [
                 'class' => [
-                    ...match ($component['attrs']['type']) {
-                        'asymetric-left-thirds' => ['asymetric-grid-left-thirds' => true],
-                        'asymetric-right-thirds' => ['asymetric-grid-right-thirds' => true],
-                        'asymetric-left-fourths' => ['asymetric-grid-left-fourths' => true],
-                        'asymetric-right-fourths' => ['asymetric-grid-right-fourths' => true],
-                        'fixed' => ['fixed-grid-' . $component['attrs']['cols'] => true],
-                        'responsive' => ['responsive-grid-' . $component['attrs']['cols'] => true],
-                        default => [],
-                    },
+                    $cssClass => true,
                 ],
             ],
-            'children' => $this->content($blocks, $component['content'], $submissible, $fields),
+            'children' => $this->content($blocks, $children, $submissible, $fields),
         ];
     }
 

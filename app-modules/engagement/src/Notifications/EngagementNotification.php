@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -44,11 +44,13 @@ use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Settings\EngagementSettings;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Message;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
+use AdvisingApp\Notification\Notifications\Contracts\HasEmailType;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use Illuminate\Bus\Queueable;
@@ -59,13 +61,18 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class EngagementNotification extends Notification implements ShouldQueue, HasBeforeSendHook, HasAfterSendHook
+class EngagementNotification extends Notification implements ShouldQueue, HasBeforeSendHook, HasAfterSendHook, HasEmailType
 {
     use Queueable;
 
     public function __construct(
         public Engagement $engagement
     ) {}
+
+    public function getEmailType(): EmailType
+    {
+        return $this->engagement->email_type;
+    }
 
     /**
      * @return array<int, int>
@@ -88,22 +95,33 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
 
     public function toMail(object $notifiable): MailMessage
     {
+        $bodyContent = (string) $this->engagement->getBody();
+
+        // Convert CSS variable-based text colors to inline color styles for email client compatibility.
+        // The RichEditor renders textColor marks as <span class="color" style="--color: #hex; --dark-color: #hex">
+        // but email clients don't support CSS custom properties.
+        $bodyContent = (string) preg_replace(
+            '/style="--color:\s*([^;]+);\s*--dark-color:\s*[^"]*"/',
+            'style="color: $1"',
+            $bodyContent,
+        );
+
         return MailMessage::make()
             ->to($this->engagement->recipient_route)
             ->when(
                 app(EngagementSettings::class)->are_dynamic_engagements_enabled && $this->engagement->user,
                 fn (MailMessage $message) => $message->from(name: $this->engagement->user->name),
             )
-            ->subject(strip_tags($this->engagement->getSubject()))
+            ->subject((string) $this->engagement->getSubject())
             ->greeting("Hello {$this->engagement->recipient->display_name}!")
-            ->content($this->engagement->getBody());
+            ->content($bodyContent);
     }
 
     public function toSms(object $notifiable): TwilioMessage
     {
         return TwilioMessage::make($notifiable)
             ->to($this->engagement->recipient_route)
-            ->content(strip_tags($this->engagement->getBodyMarkdown()));
+            ->content($this->engagement->getBodyText());
     }
 
     public function failed(?Throwable $exception): void

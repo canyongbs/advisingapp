@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -75,7 +75,10 @@ class WorkflowStepsRelationManager extends RelationManager
                 Group::make(function (WorkflowStep $record) {
                     assert($record->currentDetails instanceof WorkflowDetails);
 
-                    return $record->currentDetails->getEditFields();
+                    return [
+                        Group::make($record->currentDetails->getGenerateFields())
+                            ->model($record->currentDetails),
+                    ];
                 }),
             ])
             ->columns(1);
@@ -234,8 +237,8 @@ class WorkflowStepsRelationManager extends RelationManager
             ]),
             'workflow_engagement_email_details' => WorkflowEngagementEmailDetails::create([
                 'channel' => $transformedData['channel'],
-                'subject' => $transformedData['subject'],
-                'body' => $transformedData['body'],
+                'subject' => $transformedData['subject'] ?? ['type' => 'doc', 'content' => []],
+                'body' => $transformedData['body'] ?? ['type' => 'doc', 'content' => []],
             ]),
             'workflow_engagement_sms_details' => WorkflowEngagementSmsDetails::create([
                 'channel' => $transformedData['channel'],

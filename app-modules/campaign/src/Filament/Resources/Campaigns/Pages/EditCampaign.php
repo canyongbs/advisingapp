@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -37,14 +37,19 @@
 namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
+use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Group\Models\Group;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class EditCampaign extends EditRecord
 {
@@ -76,6 +81,33 @@ class EditCampaign extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            ArchiveAction::make()
+                ->label(fn (Campaign $record): string => $record->enabled ? 'Disable and Archive' : 'Archive')
+                ->modalHeading(fn (Campaign $record): string => $record->enabled ? 'Disable and Archive Campaign' : 'Archive Campaign')
+                ->modalSubmitActionLabel(fn (Campaign $record): string => $record->enabled ? 'Disable and Archive' : 'Archive')
+                ->action(function (Campaign $record): void {
+                    try {
+                        DB::transaction(function () use ($record) {
+                            if ($record->enabled) {
+                                $record->update(['enabled' => false]);
+                            }
+                            $record->archive();
+                        });
+
+                        Notification::make()
+                            ->success()
+                            ->title('Campaign archived successfully')
+                            ->send();
+                    } catch (Throwable $exception) {
+                        report($exception);
+
+                        Notification::make()
+                            ->danger()
+                            ->title('Failed to archive campaign')
+                            ->body($exception->getMessage())
+                            ->send();
+                    }
+                }),
             DeleteAction::make(),
         ];
     }

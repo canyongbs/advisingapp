@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -37,12 +37,16 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Workflow\Database\Factories\WorkflowEngagementEmailDetailsFactory;
 use AdvisingApp\Workflow\Filament\Blocks\EngagementEmailBlock;
 use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Jobs\EngagementEmailWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -53,12 +57,13 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 /**
  * @mixin IdeHelperWorkflowEngagementEmailDetails
  */
-class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditable, HasMedia
+class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditable, HasMedia, HasRichContent
 {
     use SoftDeletes;
     use AuditableTrait;
     use HasUuids;
     use InteractsWithMedia;
+    use InteractsWithRichContent;
 
     /** @use HasFactory<WorkflowEngagementEmailDetailsFactory> */
     use HasFactory;
@@ -67,12 +72,14 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
         'channel',
         'subject',
         'body',
+        'email_type',
     ];
 
     protected $casts = [
         'channel' => NotificationChannel::class,
         'subject' => 'array',
         'body' => 'array',
+        'email_type' => EmailType::class,
     ];
 
     public function getLabel(): string
@@ -88,5 +95,25 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
     public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
     {
         return new EngagementEmailWorkflowActionJob($workflowRunStep);
+    }
+
+    public function setUpRichContent(): void
+    {
+        $mergeTags = [
+            'recipient first name' => '{{ recipient first name }}',
+            'recipient last name' => '{{ recipient last name }}',
+            'recipient full name' => '{{ recipient full name }}',
+            'recipient email' => '{{ recipient email }}',
+            'recipient preferred name' => '{{ recipient preferred name }}',
+        ];
+
+        $this->registerRichContent('subject')
+            ->mergeTags($mergeTags);
+
+        $this->registerRichContent('body')
+            ->fileAttachmentsDisk('s3-public')
+            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make())
+            ->fileAttachmentsVisibility('public')
+            ->mergeTags($mergeTags);
     }
 }

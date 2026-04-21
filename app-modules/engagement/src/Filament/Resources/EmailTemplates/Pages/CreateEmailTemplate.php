@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -38,14 +38,20 @@ namespace AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages;
 
 use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\EmailTemplateResource;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
+use AdvisingApp\StockMedia\Enums\StockMediaProvider;
+use AdvisingApp\StockMedia\Settings\StockMediaSettings;
+use CanyonGBS\Common\Filament\Forms\RichContentPlugins\StockImageRichContentPlugin;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\TiptapEditor;
+use Illuminate\Support\Facades\URL;
 
 class CreateEmailTemplate extends CreateRecord
 {
@@ -62,25 +68,42 @@ class CreateEmailTemplate extends CreateRecord
                     ->autocomplete(false),
                 Textarea::make('description')
                     ->string(),
-                TiptapEditor::make('content')
-                    ->disk('s3-public')
-                    ->mergeTags($mergeTags = [
-                        'recipient first name',
-                        'recipient last name',
-                        'recipient full name',
-                        'recipient email',
-                        'recipient preferred name',
+                RichEditor::make('content')
+                    ->fileAttachmentsDisk('s3-public')
+                    ->toolbarButtons([
+                        ['bold', 'italic', 'link'],
+                        [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                        ['textColor', 'small'],
+                        ['attachFiles', ...($this->getStockImagePlugin() ? ['stockImage'] : []), 'mergeTags'],
+                        ['clearFormatting'],
+                        ['undo', 'redo'],
                     ])
-                    ->tools(['bold', 'italic', 'small', 'link', 'color', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', 'media', 'stock-image', '|', 'clear-formatting'])
+                    ->plugins(array_filter([
+                        $this->getStockImagePlugin(),
+                    ]))
+                    ->activePanel('mergeTags')
+                    ->resizableImages()
                     ->columnSpanFull()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
+                    ->json()
                     ->required(),
                 Actions::make([
                     DraftTemplateWithAiAction::make()
                         ->channel(NotificationChannel::Email)
-                        ->mergeTags($mergeTags),
+                        ->mergeTags(Engagement::getMergeTags()),
                 ]),
             ]);
+    }
+
+    protected function getStockImagePlugin(): ?StockImageRichContentPlugin
+    {
+        $settings = app(StockMediaSettings::class);
+
+        if (! $settings->is_active || $settings->provider !== StockMediaProvider::Pexels || blank($settings->pexels_api_key)) {
+            return null;
+        }
+
+        return StockImageRichContentPlugin::make(URL::temporarySignedRoute('api.stock-images', now()->addHour()));
     }
 
     protected function getRedirectUrl(): string

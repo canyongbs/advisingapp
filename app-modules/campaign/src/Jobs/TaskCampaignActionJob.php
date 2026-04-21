@@ -3,9 +3,9 @@
 /*
 <COPYRIGHT>
 
-    Copyright © 2016-2026, Canyon GBS LLC. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
-    Advising App™ is licensed under the Elastic License 2.0. For more details,
+    Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
 
     Notice:
@@ -19,12 +19,12 @@
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
       of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
-    - Canyon GBS LLC respects the intellectual property rights of others and expects the
-      same in return. Canyon GBS™ and Advising App™ are registered trademarks of
-      Canyon GBS LLC, and we are committed to enforcing and protecting our trademarks
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
       vigorously.
     - The software solution, including services, infrastructure, and code, is offered as a
-      Software as a Service (SaaS) by Canyon GBS LLC.
+      Software as a Service (SaaS) by Canyon GBS Inc.
     - Use of this software implies agreement to the license terms and conditions as stated
       in the Elastic License 2.0.
 
@@ -76,7 +76,17 @@ class TaskCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             }
 
             $task->concern()->associate($educatable);
+
+            $isConfidential = ! empty($action->data['is_confidential']);
+            $task->is_confidential = $isConfidential;
+
             $task->save();
+
+            if ($isConfidential) {
+                $this->syncConfidentialAccess($task, 'confidentialAccessProjects', $action->data['confidential_task_projects'] ?? []);
+                $this->syncConfidentialAccess($task, 'confidentialAccessUsers', $action->data['confidential_task_users'] ?? []);
+                $this->syncConfidentialAccess($task, 'confidentialAccessTeams', $action->data['confidential_task_teams'] ?? []);
+            }
 
             $this->actionEducatable->succeeded_at = now();
             $this->actionEducatable
@@ -96,5 +106,20 @@ class TaskCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
 
             throw $e;
         }
+    }
+
+    /**
+     * @param array<int, string> $ids
+     *
+     * @return void
+     */
+    private function syncConfidentialAccess(Task $task, string $relationship, array $ids): void
+    {
+        throw_unless(
+            method_exists($task, $relationship),
+            new Exception("Relationship [{$relationship}] does not exist on " . Task::class . '.')
+        );
+
+        $task->{$relationship}()->sync($ids);
     }
 }
