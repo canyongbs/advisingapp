@@ -45,7 +45,7 @@ return new class () extends Migration {
     }
 
     public function down(): void
-    {        
+    {
         Schema::create('login_magic_links', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->text('code');
