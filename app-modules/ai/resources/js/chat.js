@@ -104,9 +104,13 @@ document.addEventListener('alpine:init', () => {
             users: [],
             hasSetUpNewMessageForResponse: false,
             isCompletingPreviousResponse: false,
+            isThinking: false,
+            reasoningText: '',
+            reasoningHtml: '',
             responseTimeout: null,
             downloadImageUrl,
             csrfToken,
+            lockedMessage: null,
             clickHandler: null,
 
             init: async function () {
@@ -188,6 +192,9 @@ document.addEventListener('alpine:init', () => {
                         const combined = chunks.join('');
                         this.rawIncomingResponse += combined;
                         this.pendingResponse = this.pendingResponse.slice(combined.length);
+                        this.isThinking = false;
+                        this.reasoningText = '';
+                        this.reasoningHtml = '';
 
                         if (this.messages.length > 0) {
                             const parsedMarkdown = marked.parse(this.rawIncomingResponse);
@@ -276,6 +283,9 @@ document.addEventListener('alpine:init', () => {
                     .listen('.advisor-message.finished', (event) => {
                         this.clearResponseTimeout();
                         this.hasImagePlaceholder = false;
+                        this.isThinking = false;
+                        this.reasoningText = '';
+                        this.reasoningHtml = '';
 
                         if (this.pendingResponse) {
                             this.rawIncomingResponse += this.pendingResponse;
@@ -356,6 +366,13 @@ document.addEventListener('alpine:init', () => {
                         }
 
                         this.$wire.refreshThreads();
+                    })
+                    .listen('.advisor-message.reasoning', (event) => {
+                        this.reasoningText += event.content;
+                        this.reasoningHtml = DOMPurify.sanitize(marked.parse(this.reasoningText), {
+                            ADD_TAGS: ['a'],
+                            ADD_ATTR: ['href', 'title'],
+                        });
                     });
 
                 this.isLoading = false;
@@ -379,6 +396,7 @@ document.addEventListener('alpine:init', () => {
                         this.isRetryable = true;
                         this.isRateLimited = false;
                         this.isSendingMessage = false;
+                        this.isThinking = false;
                         this.hasImagePlaceholder = false;
                         this.responseTimeout = null;
                     },
@@ -403,6 +421,8 @@ document.addEventListener('alpine:init', () => {
                     this.isRetryable = !responseJson.isThreadLocked;
                     this.isRateLimited = false;
                     this.isSendingMessage = false;
+                    this.isThinking = false;
+                    this.isReasoning = false;
                     this.hasImagePlaceholder = false;
 
                     if (responseJson.isThreadLocked) {
@@ -416,6 +436,8 @@ document.addEventListener('alpine:init', () => {
 
                 if (this.hasImageGeneration) {
                     this.hasImagePlaceholder = true;
+                    this.isThinking = false;
+                    this.isReasoning = false;
                 }
 
                 if (!this.isCompletingPreviousResponse) {
@@ -432,6 +454,7 @@ document.addEventListener('alpine:init', () => {
 
                 this.isSendingMessage = true;
                 this.isIncomplete = false;
+                this.isThinking = true;
                 this.error = null;
 
                 this.$dispatch('message-sent', { threadId: threadId });
@@ -493,6 +516,7 @@ document.addEventListener('alpine:init', () => {
 
                 this.isSendingMessage = true;
                 this.isIncomplete = false;
+                this.isThinking = true;
                 this.error = null;
 
                 this.$dispatch('message-sent', { threadId: threadId });
@@ -523,6 +547,7 @@ document.addEventListener('alpine:init', () => {
             completeResponse: async function () {
                 this.isSendingMessage = true;
                 this.isIncomplete = false;
+                this.isThinking = true;
                 this.error = null;
 
                 this.$dispatch('message-sent', { threadId: threadId });
