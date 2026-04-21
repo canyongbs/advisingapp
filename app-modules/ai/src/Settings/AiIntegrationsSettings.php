@@ -184,7 +184,7 @@ class AiIntegrationsSettings extends Settings
      * @var array<string>
      */
     public array $open_ai_gpt_54_mini_applicable_features = [];
-    
+
     public ?string $open_ai_gpt_54_nano_model_name = null;
 
     public ?string $open_ai_gpt_54_nano_base_uri = null;
