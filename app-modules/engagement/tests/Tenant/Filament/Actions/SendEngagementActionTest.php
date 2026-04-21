@@ -119,22 +119,24 @@ it('shows no-contact-info message when student has no valid email or sms', funct
     /** @var Student $student */
     $student = Student::factory()->create();
 
-    // Remove primary email
-    $student->primaryEmailAddress?->delete();
+    // Remove all emails and phones
+    $student->emailAddresses()->delete();
     $student->primary_email_id = null;
-
-    // Remove primary phone or make it non-SMS capable
-    $student->primaryPhoneNumber?->delete();
+    $student->phoneNumbers()->delete();
     $student->primary_phone_id = null;
 
     $student->save();
     $student->refresh();
 
-    // Verify that model correctly identifies no valid route
-    $this->assertFalse($student->hasAnyValidContactRoute());
+    expect($student->hasAnyValidContactRoute())->toBeFalse();
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertActionDisabled('engage');
 });
 
-it('disables channel options when student has bounced email', function () {
+it('disables channel options when student has bounced email and no phone', function () {
     asSuperAdmin();
 
     $settings = app(TwilioSettings::class);
@@ -146,20 +148,27 @@ it('disables channel options when student has bounced email', function () {
     /** @var Student $student */
     $student = Student::factory()->create();
 
-    // Bounce the primary email
+    // Remove all non-primary emails so bouncing the primary covers all emails
     $primaryEmail = $student->primaryEmailAddress;
+    $student->emailAddresses()->where('id', '!=', $primaryEmail->getKey())->delete();
+
+    // Bounce the primary email
     BouncedEmailAddress::factory()->create([
         'address' => $primaryEmail->address,
     ]);
 
-    // Remove phone or make it non-SMS capable
-    $student->primaryPhoneNumber?->delete();
+    // Remove all phones
+    $student->phoneNumbers()->delete();
     $student->primary_phone_id = null;
     $student->save();
     $student->refresh();
 
-    // Verify no valid channels
-    $this->assertFalse($student->hasAnyValidContactRoute());
+    expect($student->hasAnyValidContactRoute())->toBeFalse();
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertActionDisabled('engage');
 });
 
 it('excludes bounced phones from sms channel options', function () {
@@ -174,11 +183,13 @@ it('excludes bounced phones from sms channel options', function () {
     /** @var Student $student */
     $student = Student::factory()->create();
 
-    // Remove email
-    $student->primaryEmailAddress?->delete();
+    // Remove all emails and phones
+    $student->emailAddresses()->delete();
     $student->primary_email_id = null;
+    $student->phoneNumbers()->delete();
+    $student->primary_phone_id = null;
 
-    // Add a bounced phone as primary
+    // Add a bounced phone as the only phone
     $phoneNumber = StudentPhoneNumber::factory()
         ->for($student, 'student')
         ->create(['can_receive_sms' => true]);
@@ -191,11 +202,16 @@ it('excludes bounced phones from sms channel options', function () {
     $student->save();
     $student->refresh();
 
-    // Verify bounced phone is detected by model
-    $this->assertFalse($student->canReceiveSms(), 'Model should detect bounced phone via canReceiveSms() method');
+    expect($student->canReceiveSms())->toBeFalse();
+    expect($student->hasAnyValidContactRoute())->toBeFalse();
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertActionDisabled('engage');
 });
 
-it('shows only sms channel when student has no valid email but valid sms', function () {
+it('enables action when student has no valid email but valid sms', function () {
     asSuperAdmin();
 
     $settings = app(TwilioSettings::class);
@@ -207,13 +223,17 @@ it('shows only sms channel when student has no valid email but valid sms', funct
     /** @var Student $student */
     $student = Student::factory()->create();
 
-    // Remove email
-    $student->primaryEmailAddress?->delete();
+    // Remove all emails
+    $student->emailAddresses()->delete();
     $student->primary_email_id = null;
     $student->save();
     $student->refresh();
 
-    // Verify SMS-only scenario
-    $this->assertFalse($student->hasValidEmail());
-    $this->assertTrue($student->hasValidSms());
+    expect($student->hasValidEmail())->toBeFalse();
+    expect($student->hasValidSms())->toBeTrue();
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertActionEnabled('engage');
 });

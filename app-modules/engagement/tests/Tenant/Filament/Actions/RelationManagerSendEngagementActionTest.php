@@ -120,12 +120,10 @@ it('disables new action when student has no valid email or sms', function () {
     /** @var Student $student */
     $student = Student::factory()->create();
 
-    // Remove primary email
-    $student->primaryEmailAddress?->delete();
+    // Remove all emails and phones
+    $student->emailAddresses()->delete();
     $student->primary_email_id = null;
-
-    // Remove primary phone or make it non-SMS capable
-    $student->primaryPhoneNumber?->delete();
+    $student->phoneNumbers()->delete();
     $student->primary_phone_id = null;
 
     $student->save();
@@ -157,14 +155,17 @@ it('disables new action when student email is bounced and phone unavailable', fu
     /** @var Student $student */
     $student = Student::factory()->create();
 
-    // Bounce the primary email
+    // Remove all non-primary emails so bouncing the primary covers all emails
     $primaryEmail = $student->primaryEmailAddress;
+    $student->emailAddresses()->where('id', '!=', $primaryEmail->getKey())->delete();
+
+    // Bounce the primary email
     BouncedEmailAddress::factory()->create([
         'address' => $primaryEmail->address,
     ]);
 
-    // Remove phone
-    $student->primaryPhoneNumber?->delete();
+    // Remove all phones
+    $student->phoneNumbers()->delete();
     $student->primary_phone_id = null;
     $student->save();
     $student->refresh();

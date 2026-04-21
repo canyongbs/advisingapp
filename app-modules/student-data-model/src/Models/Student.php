@@ -62,6 +62,7 @@ use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Database\Factories\StudentFactory;
+use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
 use AdvisingApp\StudentDataModel\Enums\EmailHealthStatus;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
@@ -537,7 +538,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     {
         return $this->emailAddresses()
             ->whereDoesntHave('bounced')
-            ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', 'opted_out'))
+            ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', EmailAddressOptInOptOutStatus::OptedOut))
             ->exists();
     }
 
@@ -557,11 +558,11 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     public function getDefaultEngagementChannel(): ?NotificationChannel
     {
-        if ($this->hasValidEmail()) {
+        if ($this->hasValidEmail() && ! NotificationChannel::Email->getCaseDisabled()) {
             return NotificationChannel::Email;
         }
 
-        if ($this->hasValidSms()) {
+        if ($this->hasValidSms() && ! NotificationChannel::Sms->getCaseDisabled()) {
             return NotificationChannel::Sms;
         }
 
@@ -573,12 +574,12 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         return match ($channel) {
             NotificationChannel::Email => $this->primaryEmailAddress()
                 ->whereDoesntHave('bounced')
-                ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', 'opted_out'))
+                ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', EmailAddressOptInOptOutStatus::OptedOut))
                 ->first()
                 ?->getKey()
                 ?? $this->emailAddresses()
                     ->whereDoesntHave('bounced')
-                    ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', 'opted_out'))
+                    ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', EmailAddressOptInOptOutStatus::OptedOut))
                     ->orderBy('order')
                     ->first()
                     ?->getKey(),

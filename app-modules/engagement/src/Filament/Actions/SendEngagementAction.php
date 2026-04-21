@@ -45,6 +45,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
+use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
@@ -102,6 +103,30 @@ class SendEngagementAction extends Action
                 $educatable = $this->getEducatable();
 
                 return auth()->user()->can('create', [Engagement::class, $educatable instanceof Prospect ? $educatable : null]);
+            })
+            ->disabled(function (): bool {
+                $educatable = $this->getEducatable();
+
+                if (! $educatable) {
+                    return false;
+                }
+
+                return ! $educatable->hasAnyValidContactRoute();
+            })
+            ->tooltip(function (): ?string {
+                $educatable = $this->getEducatable();
+
+                if (! $educatable) {
+                    return null;
+                }
+
+                if (! $educatable->hasAnyValidContactRoute()) {
+                    $label = $educatable::getLabel();
+
+                    return "This {$label} does not have valid contact information in their record.";
+                }
+
+                return null;
             })
             ->mountUsing(function (array $arguments, Schema $schema, Page $livewire) {
                 $livewire->dispatch('engage-action-finished-loading');
@@ -184,11 +209,7 @@ class SendEngagementAction extends Action
                                         ->schema([
                                             ToggleButtons::make('channel')
                                                 ->options(function (Get $get) use ($action): array {
-                                                    $educatable = $action->getEducatable() ?? match ($get('recipient_type')) {
-                                                        'student' => Student::find($get('recipient_id')),
-                                                        'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
-                                                        default => null,
-                                                    };
+                                                    $educatable = $action->resolveEducatable($get);
 
                                                     if (! $educatable) {
                                                         return [];
@@ -216,11 +237,7 @@ class SendEngagementAction extends Action
                                                 ->inline()
                                                 ->live()
                                                 ->afterStateUpdated(function (mixed $state, Get $get, Set $set) use ($action): void {
-                                                    $educatable = $action->getEducatable() ?? match ($get('recipient_type')) {
-                                                        'student' => Student::find($get('recipient_id')),
-                                                        'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
-                                                        default => null,
-                                                    };
+                                                    $educatable = $action->resolveEducatable($get);
 
                                                     if (! $educatable) {
                                                         return;
@@ -236,11 +253,7 @@ class SendEngagementAction extends Action
                                                     default => throw new Exception('Invalid channel.'),
                                                 })
                                                 ->options(function (Get $get) use ($action): array {
-                                                    $educatable = $action->getEducatable() ?? match ($get('recipient_type')) {
-                                                        'student' => Student::find($get('recipient_id')),
-                                                        'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
-                                                        default => null,
-                                                    };
+                                                    $educatable = $action->resolveEducatable($get);
 
                                                     if (! $educatable) {
                                                         return [];
@@ -249,7 +262,7 @@ class SendEngagementAction extends Action
                                                     return match (NotificationChannel::parse($get('channel'))) {
                                                         NotificationChannel::Email => $educatable->emailAddresses()
                                                             ->whereDoesntHave('bounced')
-                                                            ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', 'opted_out'))
+                                                            ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', EmailAddressOptInOptOutStatus::OptedOut))
                                                             ->get()
                                                             ->mapWithKeys(fn (StudentEmailAddress | ProspectEmailAddress $emailAddress): array => [
                                                                 $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
@@ -258,6 +271,7 @@ class SendEngagementAction extends Action
                                                         NotificationChannel::Sms => $educatable->phoneNumbers()
                                                             ->where('can_receive_sms', true)
                                                             ->whereDoesntHave('smsOptOut')
+                                                            ->whereDoesntHave('bounced')
                                                             ->get()
                                                             ->mapWithKeys(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber): array => [
                                                                 $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
@@ -267,33 +281,21 @@ class SendEngagementAction extends Action
                                                     };
                                                 })
                                                 ->disabled(function (Get $get) use ($action): bool {
-                                                    $educatable = $action->getEducatable() ?? match ($get('recipient_type')) {
-                                                        'student' => Student::find($get('recipient_id')),
-                                                        'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
-                                                        default => null,
-                                                    };
+                                                    $educatable = $action->resolveEducatable($get);
 
                                                     return blank($educatable);
                                                 })
                                                 ->required(),
                                         ])
                                         ->visible(function (Get $get) use ($action): bool {
-                                            $educatable = $action->getEducatable() ?? match ($get('recipient_type')) {
-                                                'student' => Student::find($get('recipient_id')),
-                                                'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
-                                                default => null,
-                                            };
+                                            $educatable = $action->resolveEducatable($get);
 
                                             return $educatable !== null && $educatable->hasAnyValidContactRoute();
                                         })
                                         ->columnSpanFull(),
                                     Text::make('This recipient does not have valid contact information. Please select a different recipient.')
                                         ->visible(function (Get $get) use ($action): bool {
-                                            $educatable = $action->getEducatable() ?? match ($get('recipient_type')) {
-                                                'student' => Student::find($get('recipient_id')),
-                                                'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
-                                                default => null,
-                                            };
+                                            $educatable = $action->resolveEducatable($get);
 
                                             return $educatable !== null && ! $educatable->hasAnyValidContactRoute();
                                         })
@@ -304,11 +306,7 @@ class SendEngagementAction extends Action
                     ]),
                 Step::make('Message Details')
                     ->schema(function (Get $get): array {
-                        $educatable = $this->getEducatable() ?? match ($get('recipient_type')) {
-                            'student' => Student::find($get('recipient_id')),
-                            'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
-                            default => null,
-                        };
+                        $educatable = $this->resolveEducatable($get);
 
                         return [
                             RichEditor::make('subject')
@@ -519,5 +517,14 @@ class SendEngagementAction extends Action
     public function getEducatable(): Student | Prospect | null
     {
         return $this->educatable;
+    }
+
+    public function resolveEducatable(Get $get): Student | Prospect | null
+    {
+        return $this->getEducatable() ?? match ($get('recipient_type')) {
+            'student' => Student::find($get('recipient_id')),
+            'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
+            default => null,
+        };
     }
 }

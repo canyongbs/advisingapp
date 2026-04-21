@@ -45,6 +45,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
+use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
@@ -194,7 +195,7 @@ class RelationManagerSendEngagementAction extends CreateAction
                                         return match (NotificationChannel::parse($get('channel'))) {
                                             NotificationChannel::Email => $livewire->getOwnerRecord()->emailAddresses()
                                                 ->whereDoesntHave('bounced')
-                                                ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', 'opted_out'))
+                                                ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', EmailAddressOptInOptOutStatus::OptedOut))
                                                 ->get()
                                                 ->mapWithKeys(fn (StudentEmailAddress | ProspectEmailAddress $emailAddress): array => [
                                                     $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
@@ -212,21 +213,17 @@ class RelationManagerSendEngagementAction extends CreateAction
                                         };
                                     })
                                     ->default(function (RelationManager $livewire): ?string {
-                                        assert($livewire->getOwnerRecord() instanceof Educatable);
+                                        $educatable = $livewire->getOwnerRecord();
 
-                                        return $livewire->getOwnerRecord()->emailAddresses()
-                                            ->whereDoesntHave('bounced')
-                                            ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', 'opted_out'))
-                                            ->orderBy('order')
-                                            ->first()
-                                            ?->getKey()
-                                            ?? $livewire->getOwnerRecord()->phoneNumbers()
-                                                ->where('can_receive_sms', true)
-                                                ->whereDoesntHave('smsOptOut')
-                                                ->whereDoesntHave('bounced')
-                                                ->orderBy('order')
-                                                ->first()
-                                                ?->getKey();
+                                        assert($educatable instanceof Educatable);
+
+                                        $channel = $educatable->getDefaultEngagementChannel();
+
+                                        if (! $channel) {
+                                            return null;
+                                        }
+
+                                        return $educatable->getDefaultRouteForEngagementChannel($channel);
                                     })
                                     ->required(),
                             ]),
