@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\StudentDataModel\Enums\PhoneHealthStatus;
 use AdvisingApp\StudentDataModel\Observers\StudentPhoneNumberObserver;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -89,5 +90,22 @@ class StudentPhoneNumber extends BaseModel implements Auditable
     public function bounced(): HasOne
     {
         return $this->hasOne(BouncedPhoneNumber::class, 'number', 'number');
+    }
+
+    public function getHealthStatus(): PhoneHealthStatus
+    {
+        if ($this->bounced()->exists()) {
+            return PhoneHealthStatus::Bounced;
+        }
+
+        if ($this->smsOptOut()->exists()) {
+            return PhoneHealthStatus::OptedOut;
+        }
+
+        if (! $this->can_receive_sms) {
+            return PhoneHealthStatus::NoSmsCapability;
+        }
+
+        return PhoneHealthStatus::Healthy;
     }
 }

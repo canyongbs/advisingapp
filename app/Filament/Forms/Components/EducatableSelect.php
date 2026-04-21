@@ -63,6 +63,8 @@ class EducatableSelect extends Component
 
     protected bool $isExcludingConvertedProspects = false;
 
+    protected ?Closure $modifyKeySelectUsing = null;
+
     final public function __construct(string $name)
     {
         $this->name($name);
@@ -73,21 +75,28 @@ class EducatableSelect extends Component
         $this->isExcludingConvertedProspects = $isExcludingConvertedProspects;
     }
 
-    public static function make(string $name, bool $isExcludingConvertedProspects = true): EducatableSelect | MorphToSelect
+    public static function make(string $name, bool $isExcludingConvertedProspects = true, ?Closure $modifyKeySelectUsing = null): EducatableSelect | MorphToSelect
     {
         if (auth()->user()->hasLicense([Student::getLicenseType(), Prospect::getLicenseType()])) {
-            return MorphToSelect::make($name)
+            $morphToSelect = MorphToSelect::make($name)
                 ->searchable()
                 ->types(fn (?Model $record, MorphToSelect $component) => [
                     static::getStudentType(),
                     static::getProspectType($component->getRelationship()->getForeignKeyName(), $isExcludingConvertedProspects, $record),
                 ]);
+
+            if ($modifyKeySelectUsing) {
+                $morphToSelect->modifyKeySelectUsing($modifyKeySelectUsing);
+            }
+
+            return $morphToSelect;
         }
 
         $static = app(static::class, ['name' => $name]);
         $static->configure();
 
         $static->excludeConvertedProspects($isExcludingConvertedProspects);
+        $static->modifyKeySelectUsing = $modifyKeySelectUsing;
 
         return $static;
     }
@@ -137,19 +146,25 @@ class EducatableSelect extends Component
             return [];
         }
 
+        $keySelect = Select::make($relationship->getForeignKeyName())
+            ->label($this->getLabel())
+            ->options($type->getOptionsUsing)
+            ->getSearchResultsUsing($type->getSearchResultsUsing)
+            ->getOptionLabelUsing($type->getOptionLabelUsing)
+            ->required($this->isRequired())
+            ->searchable()
+            ->afterStateUpdated(function () {
+                $this->callAfterStateUpdatedForChildComponent();
+            });
+
+        if ($this->modifyKeySelectUsing) {
+            $keySelect = ($this->modifyKeySelectUsing)($keySelect) ?? $keySelect;
+        }
+
         return [
             Hidden::make($relationship->getMorphType())
                 ->dehydrateStateUsing(fn (): string => $type->getAlias()),
-            Select::make($relationship->getForeignKeyName())
-                ->label($this->getLabel())
-                ->options($type->getOptionsUsing)
-                ->getSearchResultsUsing($type->getSearchResultsUsing)
-                ->getOptionLabelUsing($type->getOptionLabelUsing)
-                ->required($this->isRequired())
-                ->searchable()
-                ->afterStateUpdated(function () {
-                    $this->callAfterStateUpdatedForChildComponent();
-                }),
+            $keySelect,
         ];
     }
 

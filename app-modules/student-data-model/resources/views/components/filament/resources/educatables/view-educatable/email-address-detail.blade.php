@@ -45,7 +45,7 @@
 @endphp
 
 <button
-    class="flex items-start gap-2 break-all text-left"
+    class="flex items-start gap-2 wrap-break-word text-left"
     type="button"
     x-data="{ isLoading: false }"
     x-on:engage-action-finished-loading.window="isLoading = false"
@@ -63,11 +63,9 @@
             ])
     )
 >
-    <div class="mt-1">
-        @svg('heroicon-m-envelope', 'size-5', ['x-show' => '! isLoading'])
-    </div>
+    @svg('heroicon-m-envelope', 'h-5 w-5 shrink-0', ['x-show' => '! isLoading'])
 
-    <x-filament::loading-indicator class="size-5" x-show="isLoading" x-cloak />
+    <x-filament::loading-indicator class="h-5 w-5 shrink-0" x-show="isLoading" x-cloak />
 
     <span @if (!$isDisabled) x-tooltip.raw="Click to send an email" @endif>
         {{ $emailAddress->address }}
@@ -78,10 +76,7 @@
     </span>
 
     <x-filament::icon
-        class="ml-1 h-6 w-6"
-        style="color: {{ $healthStatus->getLightModeColor() }};"
-        x-bind:style="$store.theme === 'dark' ? 'color: {{ $healthStatus->getDarkModeColor() }};' :
-            'color: {{ $healthStatus->getLightModeColor() }};'"
+        class="h-5 w-5 shrink-0 {{ $healthStatus->getColorClasses() }}"
         icon="{{ $healthStatus->getIcon() }}"
         x-tooltip.raw="{{ $healthStatus->getTooltipText() }}"
     />

@@ -38,6 +38,7 @@ use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EngagementsRelationManager;
+use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Facades\Queue;
 
@@ -111,4 +112,93 @@ it('can create an SMS Engagement properly', function () {
     expect($student->engagements()->count())->toBe(1);
     expect($student->engagements()->first()->channel)->toEqual(NotificationChannel::Sms);
     expect($student->engagements()->first()->body)->toEqual($body);
+});
+
+it('disables new action when student has no valid email or sms', function () {
+    asSuperAdmin();
+
+    /** @var Student $student */
+    $student = Student::factory()->create();
+
+    // Remove all emails and phones
+    $student->emailAddresses()->delete();
+    $student->primary_email_id = null;
+    $student->phoneNumbers()->delete();
+    $student->primary_phone_id = null;
+
+    $student->save();
+    $student->refresh();
+
+    livewire(EngagementsRelationManager::class, [
+        'ownerRecord' => $student,
+        'pageClass' => ViewStudent::class,
+    ])
+        ->assertTableActionDisabled('engage');
+});
+
+it('enables new action when student has valid email', function () {
+    asSuperAdmin();
+
+    /** @var Student $student */
+    $student = Student::factory()->create();
+
+    livewire(EngagementsRelationManager::class, [
+        'ownerRecord' => $student,
+        'pageClass' => ViewStudent::class,
+    ])
+        ->assertTableActionEnabled('engage');
+});
+
+it('disables new action when student email is bounced and phone unavailable', function () {
+    asSuperAdmin();
+
+    /** @var Student $student */
+    $student = Student::factory()->create();
+
+    // Remove all non-primary emails so bouncing the primary covers all emails
+    $primaryEmail = $student->primaryEmailAddress;
+    $student->emailAddresses()->where('id', '!=', $primaryEmail->getKey())->delete();
+
+    // Bounce the primary email
+    BouncedEmailAddress::factory()->create([
+        'address' => $primaryEmail->address,
+    ]);
+
+    // Remove all phones
+    $student->phoneNumbers()->delete();
+    $student->primary_phone_id = null;
+    $student->save();
+    $student->refresh();
+
+    livewire(EngagementsRelationManager::class, [
+        'ownerRecord' => $student,
+        'pageClass' => ViewStudent::class,
+    ])
+        ->assertTableActionDisabled('engage');
+});
+
+it('shows enabled action when bounced email but valid sms exists', function () {
+    asSuperAdmin();
+
+    $settings = app(TwilioSettings::class);
+    $settings->account_sid = 'abc123';
+    $settings->auth_token = 'abc123';
+    $settings->from_number = '+11231231234';
+    $settings->save();
+
+    /** @var Student $student */
+    $student = Student::factory()->create();
+
+    // Bounce the primary email
+    $primaryEmail = $student->primaryEmailAddress;
+    BouncedEmailAddress::factory()->create([
+        'address' => $primaryEmail->address,
+    ]);
+
+    // Phone remains valid
+    livewire(EngagementsRelationManager::class, [
+        'ownerRecord' => $student,
+        'pageClass' => ViewStudent::class,
+    ])
+        ->assertTableActionEnabled('engage');
 });

@@ -38,7 +38,7 @@ namespace AdvisingApp\StudentDataModel\Enums;
 
 use Filament\Support\Contracts\HasLabel;
 
-enum EmailHealthStatus: string implements HasLabel
+enum PhoneHealthStatus: string implements HasLabel
 {
     case Healthy = 'healthy';
 
@@ -46,12 +46,15 @@ enum EmailHealthStatus: string implements HasLabel
 
     case OptedOut = 'opted_out';
 
+    case NoSmsCapability = 'no_sms_capability';
+
     public function getLabel(): string
     {
         return match ($this) {
             self::Healthy => 'Healthy',
             self::Bounced => 'Bounced',
             self::OptedOut => 'Opted Out',
+            self::NoSmsCapability => 'No SMS Capability',
         };
     }
 
@@ -59,8 +62,9 @@ enum EmailHealthStatus: string implements HasLabel
     {
         return match ($this) {
             self::Healthy => 'Healthy. No delivery issues detected.',
-            self::Bounced => 'Bounced. Email delivery failed and a bounce was received from our email provider.',
-            self::OptedOut => 'Opted out. This contact has chosen not to receive email communications.',
+            self::Bounced => 'Bounced. SMS delivery failed and a bounce was received from our messaging provider.',
+            self::OptedOut => 'Opted out. This contact has chosen not to receive SMS communications.',
+            self::NoSmsCapability => 'This phone number cannot receive SMS messages.',
         };
     }
 
@@ -70,6 +74,7 @@ enum EmailHealthStatus: string implements HasLabel
             self::Healthy => 'heroicon-m-check-circle',
             self::Bounced => 'heroicon-m-exclamation-triangle',
             self::OptedOut => 'heroicon-m-no-symbol',
+            self::NoSmsCapability => 'heroicon-m-no-symbol',
         };
     }
 
@@ -79,6 +84,7 @@ enum EmailHealthStatus: string implements HasLabel
             self::Healthy => 'text-success-600 dark:text-success-400',
             self::Bounced => 'text-warning-600 dark:text-warning-400',
             self::OptedOut => 'text-danger-500 dark:text-danger-400',
+            self::NoSmsCapability => 'text-gray-500 dark:text-gray-400',
         };
     }
 }
