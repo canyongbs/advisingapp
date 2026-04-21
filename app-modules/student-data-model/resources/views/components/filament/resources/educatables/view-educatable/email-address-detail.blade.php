@@ -45,7 +45,7 @@
 @endphp
 
 <button
-    class="flex items-start gap-2 break-all text-left"
+    class="flex items-start gap-2 wrap-break-word text-left"
     type="button"
     x-data="{ isLoading: false }"
     x-on:engage-action-finished-loading.window="isLoading = false"
@@ -76,10 +76,7 @@
     </span>
 
     <x-filament::icon
-        class="h-5 w-5 shrink-0"
-        style="color: {{ $healthStatus->getLightModeColor() }};"
-        x-bind:style="$store.theme === 'dark' ? 'color: {{ $healthStatus->getDarkModeColor() }};' :
-            'color: {{ $healthStatus->getLightModeColor() }};'"
+        class="h-5 w-5 shrink-0 {{ $healthStatus->getColorClasses() }}"
         icon="{{ $healthStatus->getIcon() }}"
         x-tooltip.raw="{{ $healthStatus->getTooltipText() }}"
     />

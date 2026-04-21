@@ -71,30 +71,20 @@ enum PhoneHealthStatus: string implements HasLabel
     public function getIcon(): string
     {
         return match ($this) {
-            self::Healthy => 'heroicon-s-check-circle',
-            self::Bounced => 'heroicon-s-exclamation-triangle',
-            self::OptedOut => 'heroicon-o-no-symbol',
-            self::NoSmsCapability => 'heroicon-o-no-symbol',
+            self::Healthy => 'heroicon-m-check-circle',
+            self::Bounced => 'heroicon-m-exclamation-triangle',
+            self::OptedOut => 'heroicon-m-no-symbol',
+            self::NoSmsCapability => 'heroicon-m-no-symbol',
         };
     }
 
-    public function getLightModeColor(): string
+    public function getColorClasses(): string
     {
         return match ($this) {
-            self::Healthy => '#16A34A',
-            self::Bounced => '#D97706',
-            self::OptedOut => '#64748B',
-            self::NoSmsCapability => '#64748B',
-        };
-    }
-
-    public function getDarkModeColor(): string
-    {
-        return match ($this) {
-            self::Healthy => '#4ADE80',
-            self::Bounced => '#FBBF24',
-            self::OptedOut => '#CBD5E1',
-            self::NoSmsCapability => '#CBD5E1',
+            self::Healthy => 'text-success-600 dark:text-success-400',
+            self::Bounced => 'text-warning-600 dark:text-warning-400',
+            self::OptedOut => 'text-danger-500 dark:text-danger-400',
+            self::NoSmsCapability => 'text-gray-500 dark:text-gray-400',
         };
     }
 }

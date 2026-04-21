@@ -52,6 +52,7 @@ export default {
     ],
     content: [
         './app/Filament/**/*.php',
+        './app-modules/**/src/Enums/**/*.php',
         './app-modules/**/src/Filament/**/*.php',
         './app-modules/**/resources/views/**/*.php',
         './resources/views/**/*.blade.php',
