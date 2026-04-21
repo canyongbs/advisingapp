@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
+use AdvisingApp\Ai\Enums\AiReasoningEffort;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
@@ -48,6 +49,7 @@ use AdvisingApp\Ai\Support\StreamingChunks\Finish;
 use AdvisingApp\Ai\Support\StreamingChunks\Image;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
+use AdvisingApp\Ai\Support\StreamingChunks\Thinking;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use AdvisingApp\IntegrationOpenAi\Prism\ValueObjects\Messages\DeveloperMessage;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns\InteractsWithResearchRequests;
@@ -193,7 +195,9 @@ abstract class BaseOpenAiService implements AiService
                     'type' => 'file_search',
                     'vector_store_ids' => [$vectorStoreId],
                 ]] : [],
-                ['type' => 'web_search'],
+                ...(($options['reasoning']['effort'] ?? null) === AiReasoningEffort::Minimal->value)
+                    ? []
+                    : [['type' => 'web_search']],
             ];
 
             $request = Prism::text()
@@ -328,7 +332,9 @@ abstract class BaseOpenAiService implements AiService
                 ...$hasImageGeneration ? [[
                     'type' => 'image_generation',
                 ]] : [],
-                ['type' => 'web_search'],
+                ...(($options['reasoning']['effort'] ?? null) === AiReasoningEffort::Minimal->value)
+                    ? []
+                    : [['type' => 'web_search']],
             ];
 
             $request = Prism::text()
@@ -465,6 +471,12 @@ abstract class BaseOpenAiService implements AiService
                                     messageId: $chunk->meta->id,
                                     nextRequestOptions: ['previous_response_id' => $chunk->meta->id],
                                 );
+
+                                continue;
+                            }
+
+                            if ($chunk->chunkType === ChunkType::Thinking) {
+                                yield new Thinking($chunk->text);
 
                                 continue;
                             }
@@ -824,7 +836,9 @@ abstract class BaseOpenAiService implements AiService
                     'type' => 'image_generation',
                     'output_format' => 'jpeg',
                 ]] : [],
-                ['type' => 'web_search'],
+                ...($this->hasReasoning() && $aiSettings->reasoning_effort === AiReasoningEffort::Minimal)
+                    ? []
+                    : [['type' => 'web_search']],
             ];
 
             return $this->streamRaw(
@@ -834,6 +848,7 @@ abstract class BaseOpenAiService implements AiService
                     ...($this->hasReasoning() ? [
                         'reasoning' => [
                             'effort' => $aiSettings->reasoning_effort->value,
+                            'summary' => 'auto',
                         ],
                     ] : []),
                     'tools' => $tools,

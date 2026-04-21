@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Jobs\Advisors;
 
 use AdvisingApp\Ai\Events\Advisors\AdvisorMessageChunk;
 use AdvisingApp\Ai\Events\Advisors\AdvisorMessageFinished;
+use AdvisingApp\Ai\Events\Advisors\AdvisorReasoningChunk;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
@@ -45,6 +46,7 @@ use AdvisingApp\Ai\Support\StreamingChunks\Finish;
 use AdvisingApp\Ai\Support\StreamingChunks\Image;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
+use AdvisingApp\Ai\Support\StreamingChunks\Thinking;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -116,6 +118,9 @@ class RetryAdvisorMessage implements ShouldQueue
         $chunkBuffer = [];
         $chunkCount = 0;
 
+        $reasoningBuffer = [];
+        $reasoningChunkCount = 0;
+
         $finishChunk = null;
 
         foreach ($stream() as $chunk) {
@@ -123,6 +128,33 @@ class RetryAdvisorMessage implements ShouldQueue
                 $response->message_id = $chunk->messageId;
 
                 continue;
+            }
+
+            if ($chunk instanceof Thinking) {
+                $reasoningBuffer[] = $chunk->content;
+                $reasoningChunkCount++;
+
+                if ($reasoningChunkCount >= 30) {
+                    event(new AdvisorReasoningChunk(
+                        $this->thread,
+                        content: implode('', $reasoningBuffer),
+                    ));
+
+                    $reasoningBuffer = [];
+                    $reasoningChunkCount = 0;
+                }
+
+                continue;
+            }
+
+            if (! empty($reasoningBuffer)) {
+                event(new AdvisorReasoningChunk(
+                    $this->thread,
+                    content: implode('', $reasoningBuffer),
+                ));
+
+                $reasoningBuffer = [];
+                $reasoningChunkCount = 0;
             }
 
             if ($chunk instanceof Finish) {

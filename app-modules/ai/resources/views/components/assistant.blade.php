@@ -665,6 +665,43 @@
                                 </div>
                             </div>
                         </template>
+
+                        <div class="group w-full bg-white dark:bg-gray-900" x-cloak x-show="isThinking">
+                            <div class="m-auto justify-center px-4 py-4 text-base md:gap-6 md:py-6">
+                                <div
+                                    class="mx-auto flex flex-1 gap-4 text-base md:max-w-2xl md:gap-6 lg:max-w-[38rem] xl:max-w-3xl"
+                                >
+                                    <div class="relative flex flex-shrink-0 flex-col items-end">
+                                        <img
+                                            class="h-8 w-8 rounded-full object-cover object-center"
+                                            src="{{ $this->thread->assistant->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'thumbnail') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg') }}"
+                                            alt="{{ $this->thread->assistant->name }} avatar"
+                                        />
+                                    </div>
+                                    <div
+                                        class="relative flex w-[calc(100%-50px)] flex-col gap-1 md:gap-3 lg:w-[calc(100%-115px)]"
+                                    >
+                                        <div class="flex max-w-full flex-grow flex-col gap-3">
+                                            <div
+                                                class="flex min-h-[20px] flex-col items-start gap-3 overflow-x-auto break-words"
+                                            >
+                                                <div
+                                                    class="prose dark:prose-invert flex items-center gap-2 font-medium text-gray-500 dark:text-gray-400"
+                                                >
+                                                    <x-filament::loading-indicator class="h-4 w-4" />
+                                                    Thinking
+                                                </div>
+                                                <div
+                                                    x-show="reasoningHtml"
+                                                    class="prose dark:prose-invert italic text-gray-500 dark:text-gray-400"
+                                                    x-html="reasoningHtml"
+                                                ></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     @if (! $hasMessages && $isInstitutionalAdvisor)
