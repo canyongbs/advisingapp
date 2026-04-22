@@ -59,6 +59,7 @@ class RequestFormSubmission extends Action
                 ->schema([
                     Select::make('form_id')
                         ->label('Form')
+                        ->required()
                         ->options(fn (): array => Form::query()
                             ->where('is_authenticated', true)
                             ->limit(50)
