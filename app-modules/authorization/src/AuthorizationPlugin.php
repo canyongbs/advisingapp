@@ -73,7 +73,9 @@ class AuthorizationPlugin implements Plugin
                 RedirectIfPasswordNotSet::class,
             ])
             ->authenticatedRoutes(function () {
-                Route::get('/set-password', SetPassword::class)->name('auth.set-password');
+                Route::get('/set-password', SetPassword::class)
+                    ->withoutMiddleware(RedirectIfPasswordNotSet::class)
+                    ->name('auth.set-password');
             });
 
         Livewire::component(app(ComponentRegistry::class)->getName(SetPassword::class), SetPassword::class);
