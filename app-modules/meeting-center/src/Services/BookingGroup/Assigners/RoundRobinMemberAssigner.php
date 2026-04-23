@@ -37,7 +37,6 @@
 namespace AdvisingApp\MeetingCenter\Services\BookingGroup\Assigners;
 
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use App\Features\BookingGroupRoundRobinFeature;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -45,10 +44,6 @@ class RoundRobinMemberAssigner implements BookingGroupMemberAssigner
 {
     public function resolve(BookingGroup $bookingGroup): ?User
     {
-        if (! BookingGroupRoundRobinFeature::active()) {
-            return null;
-        }
-
         $memberIds = $bookingGroup->allMembers()->pluck('id');
 
         if ($memberIds->isEmpty()) {
@@ -86,10 +81,6 @@ class RoundRobinMemberAssigner implements BookingGroupMemberAssigner
 
     public function advance(BookingGroup $bookingGroup, User $member): void
     {
-        if (! BookingGroupRoundRobinFeature::active()) {
-            return;
-        }
-
         $bookingGroup->round_robin_last_assigned_id = $member->getKey();
         $bookingGroup->save();
     }

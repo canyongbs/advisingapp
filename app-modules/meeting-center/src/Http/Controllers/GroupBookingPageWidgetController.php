@@ -36,10 +36,8 @@
 
 namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
-use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use AdvisingApp\MeetingCenter\Http\Requests\BookGroupCalendarSlotRequest;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use App\Features\BookingGroupRoundRobinFeature;
 use App\Http\Controllers\Controller;
 use App\Settings\CollegeBrandingSettings;
 use Filament\Support\Colors\Color;
@@ -103,12 +101,6 @@ class GroupBookingPageWidgetController extends Controller
         $year = $request->integer('year', now()->year);
         $month = $request->integer('month', now()->month);
 
-        if (in_array($bookingGroup->book_with, [BookingGroupBookWith::RoundRobin, BookingGroupBookWith::Availability]) && ! BookingGroupRoundRobinFeature::active()) {
-            return response()->json([
-                'blocks' => [],
-            ]);
-        }
-
         return $bookingGroup->book_with->getBooker()->availableSlots($bookingGroup, $year, $month);
     }
 
@@ -117,13 +109,6 @@ class GroupBookingPageWidgetController extends Controller
         $bookingGroup = BookingGroup::query()
             ->where('slug', $slug)
             ->firstOrFail();
-
-        if (in_array($bookingGroup->book_with, [BookingGroupBookWith::RoundRobin, BookingGroupBookWith::Availability]) && ! BookingGroupRoundRobinFeature::active()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'This booking type is not currently available.',
-            ], 422);
-        }
 
         return $bookingGroup->book_with->getBooker()->book($request, $bookingGroup);
     }
