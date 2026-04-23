@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use App\Features\Gpt54MiniFeature;
+use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
@@ -77,16 +77,12 @@ return new class () extends SettingsMigration {
             } catch (SettingAlreadyExists $exception) {
                 // do nothing
             }
-
-            Gpt54MiniFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            Gpt54MiniFeature::deactivate();
-
             $this->migrator->deleteIfExists('ai.open_ai_gpt_54_mini_base_uri');
             $this->migrator->deleteIfExists('ai.open_ai_gpt_54_mini_api_key');
             $this->migrator->deleteIfExists('ai.open_ai_gpt_54_mini_model');
