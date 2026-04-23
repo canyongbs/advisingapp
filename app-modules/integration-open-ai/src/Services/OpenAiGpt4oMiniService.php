@@ -57,4 +57,14 @@ class OpenAiGpt4oMiniService extends BaseOpenAiService
     {
         return $this->settings->open_ai_gpt_4o_mini_image_generation_deployment;
     }
+
+    public function hasTemperature(): bool
+    {
+        return true;
+    }
+
+    public function hasReasoning(): bool
+    {
+        return false;
+    }
 }

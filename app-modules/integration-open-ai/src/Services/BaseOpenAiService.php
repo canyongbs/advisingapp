@@ -655,12 +655,12 @@ abstract class BaseOpenAiService implements AiService
 
     public function hasReasoning(): bool
     {
-        return false;
+        return true;
     }
 
     public function hasTemperature(): bool
     {
-        return true;
+        return false;
     }
 
     abstract public function getDeployment(): ?string;
