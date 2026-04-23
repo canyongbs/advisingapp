@@ -42,7 +42,6 @@ use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use App\Features\BookingGroupRoundRobinFeature;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -157,7 +156,7 @@ abstract class BookingGroupBooker
             'email' => $email,
             'starts_at' => $startsAt,
             'ends_at' => $endsAt,
-            'meeting_owner_id' => BookingGroupRoundRobinFeature::active() ? $meetingOwnerId : null,
+            'meeting_owner_id' => $meetingOwnerId,
         ]);
 
         return [$calendarEvent, $appointment];

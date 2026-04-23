@@ -42,7 +42,6 @@ use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Services\BookingGroup\BookableWindowResolver;
-use App\Features\BookingGroupRoundRobinFeature;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
@@ -188,7 +187,7 @@ class RoundRobinBooker extends BookingGroupBooker
 
         return BookingGroupAppointment::query()
             ->whereBelongsTo($bookingGroup)
-            ->when(BookingGroupRoundRobinFeature::active(), fn ($query) => $query->where('meeting_owner_id', $member->id))
+            ->where('meeting_owner_id', $member->id)
             ->where('starts_at', '<', $conflictCheckEnd)
             ->where('ends_at', '>', $conflictCheckStart)
             ->lockForUpdate()

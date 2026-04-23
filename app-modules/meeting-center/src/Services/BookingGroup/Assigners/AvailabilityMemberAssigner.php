@@ -40,7 +40,6 @@ use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Services\BookingGroup\BookableWindowResolver;
-use App\Features\BookingGroupRoundRobinFeature;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
@@ -50,10 +49,6 @@ class AvailabilityMemberAssigner implements BookingGroupMemberAssigner
 {
     public function resolve(BookingGroup $bookingGroup): ?User
     {
-        if (! BookingGroupRoundRobinFeature::active()) {
-            return null;
-        }
-
         $memberIds = $bookingGroup->allMembers()->pluck('id');
 
         if ($memberIds->isEmpty()) {
@@ -86,10 +81,6 @@ class AvailabilityMemberAssigner implements BookingGroupMemberAssigner
 
     public function advance(BookingGroup $bookingGroup, User $member): void
     {
-        if (! BookingGroupRoundRobinFeature::active()) {
-            return;
-        }
-
         $bookingGroup->round_robin_last_assigned_id = $member->getKey();
         $bookingGroup->save();
     }

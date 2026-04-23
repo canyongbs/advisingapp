@@ -41,7 +41,6 @@ use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use App\Features\BookingGroupRoundRobinFeature;
 use App\Models\User;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Builder;
@@ -343,7 +342,7 @@ class GetAvailableGroupAppointmentSlots
     {
         return BookingGroupAppointment::query()
             ->whereBelongsTo($bookingGroup)
-            ->when($forMember && BookingGroupRoundRobinFeature::active(), fn ($query) => $query->where('meeting_owner_id', $forMember->id))
+            ->when($forMember, fn ($query) => $query->where('meeting_owner_id', $forMember->id))
             ->where('starts_at', '<', $end)
             ->where('ends_at', '>', $start)
             ->get()
