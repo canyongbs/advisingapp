@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\Gpt54NanoFeature;
 use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
@@ -78,16 +77,12 @@ return new class () extends SettingsMigration {
             } catch (SettingAlreadyExists $exception) {
                 // do nothing
             }
-
-            Gpt54NanoFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            Gpt54NanoFeature::deactivate();
-
             $this->migrator->deleteIfExists('ai.open_ai_gpt_54_nano_base_uri');
             $this->migrator->deleteIfExists('ai.open_ai_gpt_54_nano_api_key');
             $this->migrator->deleteIfExists('ai.open_ai_gpt_54_nano_model');
