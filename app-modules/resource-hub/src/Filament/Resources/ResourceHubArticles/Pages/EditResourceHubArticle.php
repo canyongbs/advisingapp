@@ -54,7 +54,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
@@ -172,16 +171,13 @@ class EditResourceHubArticle extends EditRecord
                                     ->preload()
                                     ->visible(fn (): bool => Division::count() > 1)
                                     ->exists((new Division())->getTable(), (new Division())->getKeyName()),
-                                Section::make()
-                                    ->schema([
-                                        Select::make('manager_ids')
-                                            ->label('Managers')
-                                            ->relationship('managers', 'name')
-                                            ->multiple()
-                                            ->searchable()
-                                            ->preload()
-                                            ->exists('users', 'id'),
-                                    ]),
+                                Select::make('manager_ids')
+                                    ->label('Managers')
+                                    ->relationship('managers', 'name')
+                                    ->multiple()
+                                    ->searchable()
+                                    ->preload()
+                                    ->exists('users', 'id'),
                             ]),
                     ])
                     ->columnSpanFull(),
