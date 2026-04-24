@@ -57,14 +57,4 @@ class OpenAiGptO3Service extends BaseOpenAiService
     {
         return $this->settings->open_ai_gpt_o3_image_generation_deployment;
     }
-
-    public function hasReasoning(): bool
-    {
-        return true;
-    }
-
-    public function hasTemperature(): bool
-    {
-        return false;
-    }
 }
