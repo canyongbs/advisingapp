@@ -172,16 +172,13 @@ class EditResourceHubArticle extends EditRecord
                                     ->preload()
                                     ->visible(fn (): bool => Division::count() > 1)
                                     ->exists((new Division())->getTable(), (new Division())->getKeyName()),
-                                Section::make()
-                                    ->schema([
-                                        Select::make('manager_ids')
-                                            ->label('Managers')
-                                            ->relationship('managers', 'name')
-                                            ->multiple()
-                                            ->searchable()
-                                            ->preload()
-                                            ->exists('users', 'id'),
-                                    ]),
+                                Select::make('manager_ids')
+                                    ->label('Managers')
+                                    ->relationship('managers', 'name')
+                                    ->multiple()
+                                    ->searchable()
+                                    ->preload()
+                                    ->exists('users', 'id'),
                             ]),
                     ])
                     ->columnSpanFull(),

@@ -116,7 +116,6 @@ class CreateResourceHubArticle extends CreateRecord
                             ->exists((new Division())->getTable(), (new Division())->getKeyName()),
                         Select::make('manager_ids')
                             ->label('Managers')
-                            ->options(fn (): array => User::query()->limit(50)->pluck('name', 'id')->all())
                             ->relationship('managers', 'name')
                             ->multiple()
                             ->searchable()
