@@ -5,6 +5,8 @@
     "scripts": {
         "build": "npm run build:resource-hub",
         "build:resource-hub": "(cd resource-hub && vite build)",
+        "watch": "npm run watch:resource-hub",
+        "watch:resource-hub": "(cd resource-hub && vite build --watch)",
         "postinstall": "node ../npm-postinstall.cjs"
     },
     "dependencies": {
