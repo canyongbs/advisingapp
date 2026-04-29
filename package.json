@@ -8,8 +8,8 @@
         "build:vite": "vite build",
         "build:widgets": "(cd widgets && npm i && npm run build)",
         "dev": "vite",
-        "watch:widgets": "(cd widgets && npm i && npm run watch)",
-        "watch:portals": "(cd portals && npm i && npm run watch)",
+        "dev:widgets": "(cd widgets && npm i && npm run dev)",
+        "dev:portals": "(cd portals && npm i && npm run dev)",
         "postinstall": "node npm-postinstall.cjs"
     },
     "dependencies": {
