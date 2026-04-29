@@ -53,6 +53,10 @@ class CalendarFactory extends Factory
         return [
             'provider_type' => CalendarProvider::Google,
             'provider_email' => $this->faker->safeEmail(),
+            'provider_id' => $this->faker->uuid(),
+            'oauth_token' => $this->faker->sha256(),
+            'oauth_refresh_token' => $this->faker->sha256(),
+            'oauth_token_expires_at' => now()->addHour(),
         ];
     }
 }

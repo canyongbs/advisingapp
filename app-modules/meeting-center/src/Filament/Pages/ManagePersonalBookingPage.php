@@ -90,7 +90,7 @@ class ManagePersonalBookingPage extends ProfilePage
         $hasHours = $this->userHasHoursConfigured($user);
         $bookingPage = PersonalBookingPage::query()->whereBelongsTo($user)->first();
         $hasCrmLicense = $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
-        $bookingPageEnabled = $bookingPage?->is_enabled ?? false;
+        $bookingPageEnabled = $bookingPage->is_enabled ?? false;
 
         return $schema
             ->columns(1)
