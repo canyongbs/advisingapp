@@ -66,7 +66,7 @@ class RoundRobinBooker extends BookingGroupBooker
 
         $eligibleCount = User::query()
             ->whereIn('users.id', $bookingGroup->allMembers()->pluck('id'))
-            ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('provider_id'))
+            ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
             ->count();
 
         $triedCount = 0;

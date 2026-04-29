@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Observers;
 
+use AdvisingApp\MeetingCenter\Exceptions\CouldNotRefreshToken;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 
@@ -44,27 +45,39 @@ class CalendarEventObserver
     public function created(CalendarEvent $event): void
     {
         if ($event->calendar) {
-            resolve(CalendarManager::class)
-                ->driver($event->calendar->provider_type->value)
-                ->createEvent($event);
+            try {
+                resolve(CalendarManager::class)
+                    ->driver($event->calendar->provider_type->value)
+                    ->createEvent($event);
+            } catch (CouldNotRefreshToken) {
+                // Tokens have been cleared and the user has been notified; nothing further needed.
+            }
         }
     }
 
     public function updated(CalendarEvent $event): void
     {
         if ($event->calendar) {
-            resolve(CalendarManager::class)
-                ->driver($event->calendar->provider_type->value)
-                ->updateEvent($event);
+            try {
+                resolve(CalendarManager::class)
+                    ->driver($event->calendar->provider_type->value)
+                    ->updateEvent($event);
+            } catch (CouldNotRefreshToken) {
+                // Tokens have been cleared and the user has been notified; nothing further needed.
+            }
         }
     }
 
     public function deleted(CalendarEvent $event): void
     {
         if ($event->calendar) {
-            resolve(CalendarManager::class)
-                ->driver($event->calendar->provider_type->value)
-                ->deleteEvent($event);
+            try {
+                resolve(CalendarManager::class)
+                    ->driver($event->calendar->provider_type->value)
+                    ->deleteEvent($event);
+            } catch (CouldNotRefreshToken) {
+                // Tokens have been cleared and the user has been notified; nothing further needed.
+            }
         }
     }
 }

@@ -57,7 +57,7 @@ class GetAvailableGroupAppointmentSlots
         if ($forMember) {
             $members = collect([$forMember]);
         } else {
-            $members = $bookingGroup->allMembers();
+            $members = $bookingGroup->connectedMembers();
         }
 
         if ($members->isEmpty()) {

@@ -42,8 +42,10 @@ use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Callout;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\HtmlString;
 
 class ViewBookingGroup extends ViewRecord
 {
@@ -55,6 +57,10 @@ class ViewBookingGroup extends ViewRecord
 
     public function infolist(Schema $schema): Schema
     {
+        $bookingGroup = $this->getRecord();
+
+        assert($bookingGroup instanceof BookingGroup);
+
         return $schema->schema([
             Section::make()
                 ->schema([
@@ -70,6 +76,22 @@ class ViewBookingGroup extends ViewRecord
                         ->placeholder('N/A')
                         ->badge()
                         ->label('Teams'),
+                    Callout::make('Some group members do not have a connected calendar and will be skipped during bookings.')
+                        ->warning()
+                        ->description(function () use ($bookingGroup): HtmlString {
+                            $data = $bookingGroup->disconnectedCalendarMembers();
+
+                            return new HtmlString(view('meeting-center::filament.components.disconnected-calendar-members', [
+                                'directUsers' => $data['directUsers'],
+                                'teamGroups' => $data['teamGroups'],
+                            ])->render());
+                        })
+                        ->visible(function () use ($bookingGroup): bool {
+                            $data = $bookingGroup->disconnectedCalendarMembers();
+
+                            return $data['directUsers']->isNotEmpty() || $data['teamGroups']->isNotEmpty();
+                        })
+                        ->columnSpanFull(),
                 ]),
         ]);
     }

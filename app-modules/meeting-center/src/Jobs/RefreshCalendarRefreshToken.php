@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Jobs;
 
+use AdvisingApp\MeetingCenter\Exceptions\CouldNotRefreshToken;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\Calendar;
@@ -63,6 +64,11 @@ class RefreshCalendarRefreshToken implements ShouldQueue
         $calendarManager = resolve(CalendarManager::class)
             ->driver($this->calendar->provider_type->value);
 
-        $calendarManager->refreshToken($this->calendar);
+        try {
+            $calendarManager->refreshToken($this->calendar);
+        } catch (CouldNotRefreshToken $exception) {
+            // Tokens have been cleared and the user has been notified; nothing further needed.
+            $this->fail($exception);
+        }
     }
 }

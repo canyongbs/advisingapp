@@ -43,6 +43,7 @@ use AdvisingApp\Team\Models\Team;
 use App\Models\BaseModel;
 use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -169,5 +170,59 @@ class BookingGroup extends BaseModel implements Auditable
             : new Collection();
 
         return $directUsers->merge($teamMembers)->unique('id')->values();
+    }
+
+    /**
+     * @return Collection<int, User>
+     */
+    public function connectedMembers(): Collection
+    {
+        $directUsers = $this->users()
+            ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
+            ->get();
+
+        $teamIds = $this->teams()->pluck('teams.id');
+
+        $teamMembers = $teamIds->isNotEmpty()
+            ? User::query()
+                ->whereIn('team_id', $teamIds)
+                ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
+                ->get()
+            : new Collection();
+
+        return $directUsers->merge($teamMembers)->unique('id')->values();
+    }
+
+    /**
+     * @return array{directUsers: Collection<int, User>, teamGroups: Collection<string, Collection<int, User>>}
+     */
+    public function disconnectedCalendarMembers(): array
+    {
+        $disconnectedDirectUsers = $this->users()
+            ->whereDoesntHave('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
+            ->orderBy('name')
+            ->get();
+
+        $teamIds = $this->teams()->pluck('teams.id');
+        $teamsWithDisconnected = collect();
+
+        if ($teamIds->isNotEmpty()) {
+            foreach ($this->teams()->orderBy('name')->get() as $team) {
+                $disconnected = User::query()
+                    ->where('team_id', $team->id)
+                    ->whereDoesntHave('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
+                    ->orderBy('name')
+                    ->get();
+
+                if ($disconnected->isNotEmpty()) {
+                    $teamsWithDisconnected->put($team->name, $disconnected);
+                }
+            }
+        }
+
+        return [
+            'directUsers' => $disconnectedDirectUsers,
+            'teamGroups' => $teamsWithDisconnected,
+        ];
     }
 }

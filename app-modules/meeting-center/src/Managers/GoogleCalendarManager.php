@@ -37,6 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Managers;
 
 use AdvisingApp\MeetingCenter\Enums\EventTransparency;
+use AdvisingApp\MeetingCenter\Exceptions\CouldNotRefreshToken;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
@@ -291,7 +292,7 @@ class GoogleCalendarManager implements CalendarInterface
 
             $calendar->user->notify(new CalendarRequiresReconnectNotification($calendar));
 
-            throw $e;
+            throw new CouldNotRefreshToken(message: $e->getMessage(), previous: $e);
         }
 
         return $calendar;

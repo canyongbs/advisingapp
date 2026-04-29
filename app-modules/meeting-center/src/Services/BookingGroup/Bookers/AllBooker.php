@@ -74,7 +74,7 @@ class AllBooker extends BookingGroupBooker
             ], 422);
         }
 
-        if (! $meetingOwner->calendar?->provider_id) {
+        if (! $meetingOwner->calendar?->oauth_token) {
             return response()->json([
                 'success' => false,
                 'message' => 'This booking group does not have a valid meeting owner calendar configured.',

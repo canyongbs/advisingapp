@@ -39,6 +39,7 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use AdvisingApp\Team\Models\Team;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
@@ -52,11 +53,13 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Callout;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 
@@ -72,10 +75,6 @@ class EditBookingGroup extends EditRecord
 
     public function form(Schema $schema): Schema
     {
-        $bookingGroup = $this->getRecord();
-
-        assert($bookingGroup instanceof BookingGroup);
-
         return $schema->components([
             Section::make('Booking Group Details')
                 ->schema([
@@ -155,7 +154,7 @@ class EditBookingGroup extends EditRecord
 
                                     $hasCalendar = User::query()
                                         ->whereKey($value)
-                                        ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('provider_id'))
+                                        ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
                                         ->exists();
 
                                     if (! $hasCalendar) {
@@ -164,6 +163,54 @@ class EditBookingGroup extends EditRecord
                                 };
                             },
                         ]),
+                    Callout::make('Some group members do not have a connected calendar and will be skipped during bookings.')
+                        ->warning()
+                        ->description(function (Get $get): HtmlString {
+                            $selectedUserIds = array_values(array_filter(is_array($get('users')) ? $get('users') : []));
+                            $selectedTeamIds = array_values(array_filter(is_array($get('teams')) ? $get('teams') : []));
+
+                            $directUsers = User::query()
+                                ->whereIn('id', $selectedUserIds)
+                                ->whereDoesntHave('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
+                                ->orderBy('name')
+                                ->get();
+
+                            $teamGroups = collect();
+
+                            foreach (Team::query()->whereIn('id', $selectedTeamIds)->orderBy('name')->get() as $team) {
+                                $disconnected = User::query()
+                                    ->where('team_id', $team->id)
+                                    ->whereDoesntHave('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
+                                    ->orderBy('name')
+                                    ->get();
+
+                                if ($disconnected->isNotEmpty()) {
+                                    $teamGroups->put($team->name, $disconnected);
+                                }
+                            }
+
+                            return new HtmlString(view('meeting-center::filament.components.disconnected-calendar-members', [
+                                'directUsers' => $directUsers,
+                                'teamGroups' => $teamGroups,
+                            ])->render());
+                        })
+                        ->visible(function (Get $get): bool {
+                            $selectedUserIds = array_values(array_filter(is_array($get('users')) ? $get('users') : []));
+                            $selectedTeamIds = array_values(array_filter(is_array($get('teams')) ? $get('teams') : []));
+
+                            if (User::query()
+                                ->whereIn('id', $selectedUserIds)
+                                ->whereDoesntHave('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
+                                ->exists()) {
+                                return true;
+                            }
+
+                            return ! empty($selectedTeamIds) && User::query()
+                                ->whereIn('team_id', $selectedTeamIds)
+                                ->whereDoesntHave('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
+                                ->exists();
+                        })
+                        ->columnSpanFull(),
                 ]),
             Section::make('Availability')
                 ->schema([

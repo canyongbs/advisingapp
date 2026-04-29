@@ -57,7 +57,7 @@ class AvailabilityMemberAssigner implements BookingGroupMemberAssigner
 
         $eligibleMembers = User::query()
             ->whereIn('users.id', $memberIds)
-            ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('provider_id'))
+            ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
             ->get();
 
         if ($eligibleMembers->isEmpty()) {
@@ -136,7 +136,7 @@ class AvailabilityMemberAssigner implements BookingGroupMemberAssigner
         if ($lastAssignee && $tiedMemberIds->contains($lastAssignee->id)) {
             $user = User::query()
                 ->whereIn('users.id', $tiedMemberIds)
-                ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('provider_id'))
+                ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
                 ->where('name', '>=', $lastAssignee->name)
                 ->where(fn (Builder $query) => $query
                     ->where('name', '!=', $lastAssignee->name)
@@ -152,7 +152,7 @@ class AvailabilityMemberAssigner implements BookingGroupMemberAssigner
 
         return User::query()
             ->whereIn('users.id', $tiedMemberIds)
-            ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('provider_id'))
+            ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
             ->orderBy('name')
             ->orderBy('users.id')
             ->first();

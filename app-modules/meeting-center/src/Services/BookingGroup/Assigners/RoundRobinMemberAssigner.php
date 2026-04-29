@@ -57,7 +57,7 @@ class RoundRobinMemberAssigner implements BookingGroupMemberAssigner
         if ($lastAssignee) {
             $user = User::query()
                 ->whereIn('users.id', $memberIds)
-                ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('provider_id'))
+                ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
                 ->where('name', '>=', $lastAssignee->name)
                 ->where(fn (Builder $query) => $query
                     ->where('name', '!=', $lastAssignee->name)
@@ -70,7 +70,7 @@ class RoundRobinMemberAssigner implements BookingGroupMemberAssigner
         if ($user === null) {
             $user = User::query()
                 ->whereIn('users.id', $memberIds)
-                ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('provider_id'))
+                ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
                 ->orderBy('name')
                 ->orderBy('users.id')
                 ->first();

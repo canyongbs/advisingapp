@@ -135,8 +135,14 @@ class PersonalBookingPageWidgetController extends Controller
         $bookingPage = PersonalBookingPage::query()
             ->where('slug', $slug)
             ->where('is_enabled', true)
-            ->with('user')
+            ->with(['user', 'user.calendar'])
             ->firstOrFail();
+
+        if (! $bookingPage->user->calendar?->oauth_token) {
+            return response()->json([
+                'blocks' => [],
+            ]);
+        }
 
         $year = $request->integer('year', now()->year);
         $month = $request->integer('month', now()->month);
@@ -164,7 +170,7 @@ class PersonalBookingPageWidgetController extends Controller
 
         $user = $bookingPage->user;
 
-        if (! $user->calendar) {
+        if (! $user->calendar?->oauth_token) {
             return response()->json([
                 'success' => false,
                 'message' => 'Calendar is not configured for this user.',

@@ -37,6 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\CalendarEventResource;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use App\Filament\Forms\Components\DailyHoursRepeater;
@@ -49,6 +50,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Callout;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
@@ -84,18 +86,30 @@ class ManagePersonalBookingPage extends ProfilePage
     {
         $user = auth()->user();
         assert($user instanceof User);
-        $hasCalendar = Calendar::query()->whereBelongsTo($user)->exists();
+        $hasCalendar = Calendar::query()->whereBelongsTo($user)->whereNotNull('oauth_token')->exists();
         $hasHours = $this->userHasHoursConfigured($user);
         $bookingPage = PersonalBookingPage::query()->whereBelongsTo($user)->first();
         $hasCrmLicense = $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
+        $bookingPageEnabled = $bookingPage?->is_enabled ?? false;
 
         return $schema
             ->columns(1)
             ->components([
+                Callout::make('Your calendar connection has been revoked.')
+                    ->danger()
+                    ->description('Your personal booking page has been temporarily disabled. Please reconnect your calendar to re-enable it.')
+                    ->actions([
+                        Action::make('reconnect_calendar')
+                            ->label('Reconnect your calendar')
+                            ->url(CalendarEventResource::getUrl())
+                            ->color('danger')
+                            ->outlined(),
+                    ])
+                    ->visible(! $hasCalendar && $bookingPageEnabled),
                 Section::make()
                     ->belowContent(
                         match (true) {
-                            ! $hasCalendar => 'This feature is only available if your Google or Outlook calendar is connected.',
+                            ! $hasCalendar && ! $bookingPageEnabled => 'This feature is only available if your Google or Outlook calendar is connected.',
                             ! $hasHours => 'This feature requires you to configure your office hours or working hours first.',
                             default => null,
                         }
@@ -270,7 +284,7 @@ class ManagePersonalBookingPage extends ProfilePage
         $user = auth()->user();
         assert($user instanceof User);
         $bookingPage = PersonalBookingPage::query()->whereBelongsTo($user)->first();
-        $hasCalendar = Calendar::query()->whereBelongsTo($user)->exists();
+        $hasCalendar = Calendar::query()->whereBelongsTo($user)->whereNotNull('oauth_token')->exists();
 
         if ($bookingPage) {
             return [

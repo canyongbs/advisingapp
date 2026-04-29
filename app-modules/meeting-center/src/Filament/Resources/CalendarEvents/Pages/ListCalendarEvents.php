@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages;
 
+use AdvisingApp\MeetingCenter\Exceptions\CouldNotRefreshToken;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\CalendarEventResource;
 use AdvisingApp\MeetingCenter\Jobs\SyncCalendar;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
@@ -102,7 +103,17 @@ class ListCalendarEvents extends ListRecords
                         $calendarManager = resolve(CalendarManager::class)
                             ->driver($calendar->provider_type->value);
 
-                        return $calendarManager->getCalendars($calendar);
+                        try {
+                            return $calendarManager->getCalendars($calendar);
+                        } catch (CouldNotRefreshToken) {
+                            Notification::make()
+                                ->danger()
+                                ->title('Your calendar connection has been revoked.')
+                                ->body('Please reconnect your calendar to continue.')
+                                ->send();
+
+                            return [];
+                        }
                     })
                     ->required(),
             ])
@@ -116,9 +127,19 @@ class ListCalendarEvents extends ListRecords
                 $calendar = $user->calendar;
                 $calendar->provider_id = $data['provider_id'];
 
-                $calendars = resolve(CalendarManager::class)
-                    ->driver($calendar->provider_type->value)
-                    ->getCalendars($calendar);
+                try {
+                    $calendars = resolve(CalendarManager::class)
+                        ->driver($calendar->provider_type->value)
+                        ->getCalendars($calendar);
+                } catch (CouldNotRefreshToken) {
+                    Notification::make()
+                        ->danger()
+                        ->title('Your calendar connection has been revoked.')
+                        ->body('Please reconnect your calendar to continue.')
+                        ->send();
+
+                    return;
+                }
 
                 $calendar->name = $calendars[$data['provider_id']];
 
