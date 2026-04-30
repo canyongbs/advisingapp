@@ -11,10 +11,18 @@ For background on why Feature Flags are used, see [Feature Flags](../explanation
 Generate a new class-based Feature Flag using the artisan command:
 
 ```bash
-php artisan pennant:feature [The name you want for your Feature Flag class like SomeFeature]
+php artisan make:ff SomeFeature
 ```
 
-This class will contain helpers for managing Feature Flags, such as activating, deactivating, and checking the status. It extends a base abstract class and will automatically be registered in the container, making it immediately available for use.
+This command creates the Feature Flag class and prompts you to create or select a [cleanup task](common/manage-cleanup-tasks.md) to track its eventual removal. Use `--no-cleanup` to skip the cleanup task prompt.
+
+Alternatively, you can use Laravel Pennant's built-in command directly (without cleanup task integration):
+
+```bash
+php artisan pennant:feature SomeFeature
+```
+
+The generated class will contain helpers for managing Feature Flags, such as activating, deactivating, and checking the status. It extends a base abstract class and will automatically be registered in the container, making it immediately available for use.
 
 In most cases the Feature Flag class can be left as generated. Its `resolve` method will return `false`, causing it to be deactivated until specifically activated by a data migration.
 
@@ -104,41 +112,46 @@ In most cases, clean up is straightforward—search for usages of the Feature Fl
 When cleanup requires more than simply removing conditionals, add comments to guide the person doing the cleanup. Use this pattern:
 
 ```php
-// TODO: FeatureFlag Cleanup - Details on what changes should be made
+// TODO: Cleanup Task - Details on what changes should be made
 ```
 
 Multiline comments can be used for more detailed instructions or code examples:
 
 ```php
 /*
- * TODO: FeatureFlag Cleanup - After SomeFeature is removed:
+ * TODO: Cleanup Task - After SomeFeature is removed:
  * - Change this default value from 'legacy' to 'new_format'
  * - Update the config in config/app.php to set 'feature_mode' => true
  * - Remove the fallback query below
  */
 ```
 
-Adapt the comment syntax for the language of the file (e.g., `<!-- TODO: FeatureFlag Cleanup -->` in Blade templates).
+Adapt the comment syntax for the language of the file (e.g., `<!-- TODO: Cleanup Task -->` in Blade templates).
 
-This pattern makes it easy to search the codebase for `TODO: FeatureFlag Cleanup` to find all locations that need attention, without relying on filenames or line numbers that may change.
+This pattern makes it easy to search the codebase for `TODO: Cleanup Task` to find all locations that need attention, without relying on filenames or line numbers that may change.
 
 ---
 
 ## Cleaning up a Feature Flag
 
-After the deployment containing your new changes and Feature Flag has gone out and successfully executed, there will generally be a task in the next release cycle to remove the Feature Flag.
+After the deployment containing your new changes and Feature Flag has gone out and successfully executed, there will generally be a task in the next release cycle to remove the Feature Flag. This is tracked via [Cleanup Tasks](common/manage-cleanup-tasks.md).
 
 To remove a Feature Flag:
 
-- Search the codebase for `TODO: FeatureFlag Cleanup` to find any documented cleanup tasks
+- Check the associated cleanup task file in `.cleanup-tasks/`
+- Search the codebase for `TODO: Cleanup Task` to find any documented inline cleanup instructions
 - Delete all references to the Feature Flag throughout the codebase
 - Adjust any logic to work as if the Feature Flag were active
 - Delete any unneeded legacy code
 - Delete the activation migration
 - Delete the Feature Flag class
+- Remove the entry from (or delete) the cleanup task file
 
 The Feature Flag will be purged from the database automatically if it is no longer present.
 
 ---
 
-See also [Data Migrations](./data-migrations.md)
+See also:
+
+- [Data Migrations](./data-migrations.md)
+- [Manage Cleanup Tasks](common/manage-cleanup-tasks.md)
