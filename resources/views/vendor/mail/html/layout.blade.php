@@ -59,15 +59,15 @@
         }
 
         @php
-            $color = \Filament\Support\Colors\Color::all()[$settings?->primary_color ?? 'blue'];
+            $color = \Filament\Support\Colors\Color::convertToRgb(\Filament\Support\Colors\Color::all()[$settings?->primary_color ?? 'blue'][600]);
         @endphp
 
         .button-primary {
-            background-color: rgb({{ $color[600] }});
-            border-bottom: 8px solid rgb({{ $color[600] }});
-            border-left: 18px solid rgb({{ $color[600] }});
-            border-right: 18px solid rgb({{ $color[600] }});
-            border-top: 8px solid rgb({{ $color[600] }});
+            background-color: {{ $color }};
+            border-bottom: 8px solid {{ $color }};
+            border-left: 18px solid {{ $color }};
+            border-right: 18px solid {{ $color }};
+            border-top: 8px solid {{ $color }};
         }
     </style>
 </head>
