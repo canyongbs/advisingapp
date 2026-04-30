@@ -48,7 +48,7 @@
 </script>
 
 <template>
-    <div class="hidden h-full lg:flex lg:w-72 lg:flex-col">
+    <div class="hidden h-full lg:flex lg:w-72 lg:flex-col flex-shrink-0">
         <div class="flex flex-col grow overflow-y-auto bg-white ring-1 ring-black/5 mr-px shadow-xs">
             <SidebarContent :categories="categories" :api-url="apiUrl"></SidebarContent>
         </div>

@@ -125,7 +125,7 @@
                 searchUrl.value = response.data.search_url;
 
                 portalRounding.value = {
-                    none: {
+                     none: {
                         sm: '0px',
                         default: '0px',
                         md: '0px',
@@ -340,7 +340,7 @@
                     <p class="text-lg text-red-500">Please try again later</p>
                 </div>
 
-                <div v-else class="flex flex-row">
+                <div v-else class="flex flex-row h-dvh overflow-hidden">
                     <MobileSidebar
                         v-if="showMobileMenu"
                         @sidebar-closed="showMobileMenu = !showMobileMenu"
@@ -350,7 +350,7 @@
 
                     <DesktopSidebar :categories="categories" :api-url="apiUrl" />
 
-                    <div class="w-3/4">
+                    <div class="flex-1 min-w-0 overflow-y-auto">
                         <RouterView
                             @sidebar-opened="showMobileMenu = !showMobileMenu"
                             :search-url="searchUrl"
