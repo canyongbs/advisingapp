@@ -31,19 +31,6 @@
     
     </COPYRIGHT>
 --}}
-@use('AdvisingApp\Engagement\Filament\Pages\Inbox')
-@use('AdvisingApp\Engagement\Filament\Pages\SentItems')
-
 <x-filament-panels::page>
-    <x-filament::tabs>
-        <x-filament::tabs.item tag="a" :href="Inbox::getUrl()" :active="true">Inbox</x-filament::tabs.item>
-
-        @if (SentItems::canAccess())
-            <x-filament::tabs.item tag="a" :href="SentItems::getUrl()" :active="false">
-                Sent Items
-            </x-filament::tabs.item>
-        @endif
-    </x-filament::tabs>
-
     {{ $this->table }}
 </x-filament-panels::page>
