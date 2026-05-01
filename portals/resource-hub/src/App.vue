@@ -125,7 +125,7 @@
                 searchUrl.value = response.data.search_url;
 
                 portalRounding.value = {
-                     none: {
+                    none: {
                         sm: '0px',
                         default: '0px',
                         md: '0px',
