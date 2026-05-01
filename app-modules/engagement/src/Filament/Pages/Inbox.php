@@ -54,6 +54,7 @@ use App\Models\User;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\ViewAction;
 use Filament\Navigation\NavigationItem;
+use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -69,6 +70,8 @@ use Illuminate\Support\Str;
 class Inbox extends Page implements HasTable
 {
     use InteractsWithTable;
+
+    protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     protected string $view = 'engagement::filament.pages.inbox';
 
