@@ -211,7 +211,6 @@ test('migration fixes content stored as object with numeric keys in forms', func
 
             $raw = DB::table('forms')->where('id', $form->id)->value('content');
             expect($raw)->toContain('"0":'); /** @phpstan-ignore-line */
-
             $migrate = Artisan::call('migrate', ['--path' => $fixTiptapMigrationPath]);
             expect($migrate)->toBe(Command::SUCCESS);
 
