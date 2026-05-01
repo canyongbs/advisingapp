@@ -90,7 +90,7 @@ class ManageStudentInformationSystemSettings extends SettingsPage
                     ])
                     ->disabled(),
                 Section::make('Student Record Management')
-                    ->belowContent('If toggled, this enables direct editing of student records without relying on SIS synchronization.')
+                    ->description('If toggled, this enables direct editing of student records without relying on SIS synchronization.')
                     ->schema([
                         Toggle::make('student_record_management_enabled')
                             ->label('Enable')
