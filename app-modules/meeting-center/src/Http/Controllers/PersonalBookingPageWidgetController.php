@@ -37,6 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Http\Controllers;
 
 use AdvisingApp\MeetingCenter\Actions\GetAvailableAppointmentSlots;
+use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Http\Requests\BookPersonalCalendarSlotRequest;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
@@ -248,6 +249,7 @@ class PersonalBookingPageWidgetController extends Controller
                 'attendees' => [
                     $request->validated('email'),
                 ],
+                'transparency' => EventTransparency::Busy,
             ]);
 
             return response()->json([

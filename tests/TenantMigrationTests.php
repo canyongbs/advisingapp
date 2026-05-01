@@ -36,6 +36,8 @@
 
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Form\Models\FormField;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -87,6 +89,259 @@ test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements
 
             expect($withoutSource->source_id)->toBeNull(); /** @phpstan-ignore-line */
             expect($withoutSource->source_type)->toBeNull(); /** @phpstan-ignore-line */
+        }
+    );
+});
+
+$fixTiptapMigrationPath = 'app-modules/form/database/migrations/2026_04_30_095742_fix_tiptap_content_array_keys_and_text_style_marks.php';
+
+/** @return array<string, mixed> */
+function contentWithObjectKeys(): array
+{
+    return [
+        'type' => 'doc',
+        'content' => [
+            0 => [
+                'type' => 'customBlock',
+                'attrs' => [
+                    'config' => ['label' => 'First Name', 'isRequired' => true, 'fieldId' => 'field-1'],
+                    'id' => 'text_input',
+                ],
+            ],
+            1 => [
+                'type' => 'customBlock',
+                'attrs' => [
+                    'config' => ['label' => 'Last Name', 'isRequired' => true, 'fieldId' => 'field-2'],
+                    'id' => 'text_input',
+                ],
+            ],
+            4 => [
+                'type' => 'customBlock',
+                'attrs' => [
+                    'config' => ['label' => 'Email', 'isRequired' => true, 'fieldId' => 'field-3'],
+                    'id' => 'text_input',
+                ],
+            ],
+        ],
+    ];
+}
+
+/** @return array<string, mixed> */
+function contentWithTextStyleMarks(): array
+{
+    return [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'heading',
+                'attrs' => ['level' => 1],
+                'content' => [
+                    [
+                        'type' => 'text',
+                        'marks' => [
+                            ['type' => 'textStyle', 'attrs' => ['style' => 'font-size:23pt;color:#999999;']],
+                            ['type' => 'bold'],
+                        ],
+                        'text' => 'Hello World',
+                    ],
+                ],
+            ],
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    [
+                        'type' => 'text',
+                        'marks' => [
+                            ['type' => 'textStyle', 'attrs' => ['style' => 'font-size:14pt;']],
+                        ],
+                        'text' => 'Some paragraph text',
+                    ],
+                ],
+            ],
+            [
+                'type' => 'customBlock',
+                'attrs' => [
+                    'config' => ['label' => 'Name', 'isRequired' => true, 'fieldId' => 'field-1'],
+                    'id' => 'text_input',
+                ],
+            ],
+        ],
+    ];
+}
+
+/** @return array<string, mixed> */
+function contentWithBothIssues(): array
+{
+    return [
+        'type' => 'doc',
+        'content' => [
+            0 => [
+                'type' => 'heading',
+                'attrs' => ['level' => 1],
+                'content' => [
+                    [
+                        'type' => 'text',
+                        'marks' => [
+                            ['type' => 'textStyle', 'attrs' => ['style' => 'font-size:23pt;']],
+                            ['type' => 'bold'],
+                        ],
+                        'text' => 'Title',
+                    ],
+                ],
+            ],
+            3 => [
+                'type' => 'customBlock',
+                'attrs' => [
+                    'config' => ['label' => 'Field', 'isRequired' => true, 'fieldId' => 'field-1'],
+                    'id' => 'text_input',
+                ],
+            ],
+        ],
+    ];
+}
+
+test('migration fixes content stored as object with numeric keys in forms', function () use ($fixTiptapMigrationPath) {
+    isolatedMigration(
+        '2026_04_30_095742_fix_tiptap_content_array_keys_and_text_style_marks',
+        function () use ($fixTiptapMigrationPath) {
+            $form = Form::factory()->createQuietly();
+            FormField::factory()->createQuietly(['form_id' => $form->id]);
+
+            DB::table('forms')->where('id', $form->id)->update(['content' => json_encode(contentWithObjectKeys())]);
+
+            $raw = DB::table('forms')->where('id', $form->id)->value('content');
+            expect($raw)->toContain('"0":'); /** @phpstan-ignore-line */
+            $migrate = Artisan::call('migrate', ['--path' => $fixTiptapMigrationPath]);
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('forms')->where('id', $form->id)->value('content'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect(array_is_list($content['content']))->toBeTrue();
+            /** @phpstan-ignore-next-line */
+            expect($content['content'])->toHaveCount(3);
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['config']['label'])->toBe('First Name');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][1]['attrs']['config']['label'])->toBe('Last Name');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][2]['attrs']['config']['label'])->toBe('Email');
+        }
+    );
+});
+
+test('migration strips textStyle marks from form content', function () use ($fixTiptapMigrationPath) {
+    isolatedMigration(
+        '2026_04_30_095742_fix_tiptap_content_array_keys_and_text_style_marks',
+        function () use ($fixTiptapMigrationPath) {
+            $form = Form::factory()->createQuietly();
+            FormField::factory()->createQuietly(['form_id' => $form->id]);
+
+            DB::table('forms')->where('id', $form->id)->update(['content' => json_encode(contentWithTextStyleMarks())]);
+
+            $migrate = Artisan::call('migrate', ['--path' => $fixTiptapMigrationPath]);
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('forms')->where('id', $form->id)->value('content'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            $headingText = $content['content'][0]['content'][0];
+            expect($headingText['marks'])->toHaveCount(1);
+            expect($headingText['marks'][0]['type'])->toBe('bold');
+
+            /** @phpstan-ignore-next-line */
+            $paragraphText = $content['content'][1]['content'][0];
+            expect($paragraphText)->not->toHaveKey('marks');
+            expect($paragraphText['text'])->toBe('Some paragraph text');
+
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][2]['type'])->toBe('customBlock');
+        }
+    );
+});
+
+test('migration fixes both object keys and textStyle marks together', function () use ($fixTiptapMigrationPath) {
+    isolatedMigration(
+        '2026_04_30_095742_fix_tiptap_content_array_keys_and_text_style_marks',
+        function () use ($fixTiptapMigrationPath) {
+            $form = Form::factory()->createQuietly();
+            FormField::factory()->createQuietly(['form_id' => $form->id]);
+
+            DB::table('forms')->where('id', $form->id)->update(['content' => json_encode(contentWithBothIssues())]);
+
+            $migrate = Artisan::call('migrate', ['--path' => $fixTiptapMigrationPath]);
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('forms')->where('id', $form->id)->value('content'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect(array_is_list($content['content']))->toBeTrue();
+            /** @phpstan-ignore-next-line */
+            expect($content['content'])->toHaveCount(2);
+
+            /** @phpstan-ignore-next-line */
+            $headingText = $content['content'][0]['content'][0];
+            expect($headingText['marks'])->toHaveCount(1);
+            expect($headingText['marks'][0]['type'])->toBe('bold');
+
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][1]['type'])->toBe('customBlock');
+        }
+    );
+});
+
+test('migration does not modify content that has no issues', function () use ($fixTiptapMigrationPath) {
+    isolatedMigration(
+        '2026_04_30_095742_fix_tiptap_content_array_keys_and_text_style_marks',
+        function () use ($fixTiptapMigrationPath) {
+            $form = Form::factory()->createQuietly();
+            FormField::factory()->createQuietly(['form_id' => $form->id]);
+
+            $cleanContent = [
+                'type' => 'doc',
+                'content' => [
+                    [
+                        'type' => 'heading',
+                        'attrs' => ['level' => 1],
+                        'content' => [
+                            ['type' => 'text', 'marks' => [['type' => 'bold']], 'text' => 'Title'],
+                        ],
+                    ],
+                    [
+                        'type' => 'customBlock',
+                        'attrs' => [
+                            'config' => ['label' => 'Name', 'isRequired' => true, 'fieldId' => 'field-1'],
+                            'id' => 'text_input',
+                        ],
+                    ],
+                ],
+            ];
+
+            $encoded = json_encode($cleanContent);
+            DB::table('forms')->where('id', $form->id)->update(['content' => $encoded]);
+
+            $migrate = Artisan::call('migrate', ['--path' => $fixTiptapMigrationPath]);
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $raw = DB::table('forms')->where('id', $form->id)->value('content');
+            expect($raw)->toBe($encoded);
+        }
+    );
+});
+
+test('migration skips null content in forms', function () use ($fixTiptapMigrationPath) {
+    isolatedMigration(
+        '2026_04_30_095742_fix_tiptap_content_array_keys_and_text_style_marks',
+        function () use ($fixTiptapMigrationPath) {
+            $form = Form::factory()->createQuietly();
+            FormField::factory()->createQuietly(['form_id' => $form->id]);
+            DB::table('forms')->where('id', $form->id)->update(['content' => null]);
+
+            $migrate = Artisan::call('migrate', ['--path' => $fixTiptapMigrationPath]);
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = DB::table('forms')->where('id', $form->id)->value('content');
+            expect($content)->toBeNull();
         }
     );
 });
