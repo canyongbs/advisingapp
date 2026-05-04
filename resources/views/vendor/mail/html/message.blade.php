@@ -50,8 +50,4 @@
         </x-slot:subcopy>
     @endisset
 
-    {{-- Footer --}}
-    <x-slot:footer>
-        <x-mail::footer></x-mail::footer>
-    </x-slot:footer>
 </x-mail::layout>

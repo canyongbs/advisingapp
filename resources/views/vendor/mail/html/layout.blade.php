@@ -42,6 +42,12 @@
     <meta name="color-scheme" content="light">
     <meta name="supported-color-schemes" content="light">
     <style>
+        body,
+        .panel-content,
+        .panel-content p {
+            color: #000000;
+        }
+
         @media only screen and (max-width: 600px) {
             .inner-body {
                 width: 100% !important;
@@ -96,8 +102,19 @@
                     </td>
                 </tr>
 
-                {{ $footer ?? '' }}
             </table>
+            {{-- Footer --}}
+            <tr>
+                <td>
+                <table class="footer" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation">
+                <tr>
+                <td class="content-cell" align="center">
+                    This email was sent using Advising App®. <br /> <br /> © 2016-{{ date('Y') }} Canyon GBS Inc. All Rights Reserved. Canyon GBS® and Advising App® are trademarks of Canyon GBS Inc.
+                </td>
+                </tr>
+                </table>
+                </td>
+            </tr>
             {{-- Unsubscribe Link --}}
             @if (! empty($unsubscribeUrl))
             <p style="text-align: center; margin-top: 20px; font-size: 12px; color: #999999;">
