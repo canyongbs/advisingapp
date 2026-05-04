@@ -38,6 +38,8 @@ namespace AdvisingApp\Application\Observers;
 
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
+use AdvisingApp\Application\Events\ApplicationSubmissionStateEntered;
+use AdvisingApp\Application\Events\ApplicationSubmissionStateExited;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use Illuminate\Support\Facades\Cache;
@@ -73,11 +75,55 @@ class ApplicationSubmissionObserver
             event: new ApplicationSubmissionCreated(submission: $submission)
         );
 
+        $submission->loadMissing('state');
+
+        if ($submission->state) {
+            Event::dispatch(
+                event: new ApplicationSubmissionStateEntered(
+                    submission: $submission,
+                    state: $submission->state,
+                )
+            );
+        }
+
         if (! is_null($submission->author)) {
             Cache::tags('{application-submission-count}')
                 ->forget(
                     "application-submission-count-{$submission->author->getKey()}"
                 );
+        }
+    }
+
+    public function updated(ApplicationSubmission $submission): void
+    {
+        if (! $submission->wasChanged('state_id')) {
+            return;
+        }
+
+        $previousStateId = $submission->getOriginal('state_id');
+
+        if ($previousStateId) {
+            $previousState = ApplicationSubmissionState::withTrashed()->find($previousStateId);
+
+            if ($previousState) {
+                Event::dispatch(
+                    event: new ApplicationSubmissionStateExited(
+                        submission: $submission,
+                        state: $previousState,
+                    )
+                );
+            }
+        }
+
+        $submission->load('state');
+
+        if ($submission->state) {
+            Event::dispatch(
+                event: new ApplicationSubmissionStateEntered(
+                    submission: $submission,
+                    state: $submission->state,
+                )
+            );
         }
     }
 }

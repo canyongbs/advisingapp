@@ -38,9 +38,11 @@ namespace AdvisingApp\Application\Providers;
 
 use AdvisingApp\Application\ApplicationPlugin;
 use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
+use AdvisingApp\Application\Events\ApplicationSubmissionStateEntered;
+use AdvisingApp\Application\Events\ApplicationSubmissionStateExited;
 use AdvisingApp\Application\Listeners\ClearApplicationSubmissionCountCache;
 use AdvisingApp\Application\Listeners\NotifySubscribersOfApplicationSubmission;
-use AdvisingApp\Application\Listeners\TriggerApplicationSubmissionWorkflows;
+use AdvisingApp\Application\Listeners\TriggerApplicationSubmissionStageWorkflows;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
 use AdvisingApp\Application\Models\ApplicationField;
@@ -86,12 +88,17 @@ class ApplicationServiceProvider extends ServiceProvider
 
         Event::listen(
             events: ApplicationSubmissionCreated::class,
-            listener: TriggerApplicationSubmissionWorkflows::class
+            listener: ClearApplicationSubmissionCountCache::class
         );
 
         Event::listen(
-            events: ApplicationSubmissionCreated::class,
-            listener: ClearApplicationSubmissionCountCache::class
+            events: ApplicationSubmissionStateEntered::class,
+            listener: [TriggerApplicationSubmissionStageWorkflows::class, 'handleEntered']
+        );
+
+        Event::listen(
+            events: ApplicationSubmissionStateExited::class,
+            listener: [TriggerApplicationSubmissionStageWorkflows::class, 'handleExited']
         );
     }
 }

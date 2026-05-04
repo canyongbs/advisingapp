@@ -36,8 +36,12 @@
 
 namespace AdvisingApp\Application\Listeners;
 
-use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
+use AdvisingApp\Application\Events\ApplicationSubmissionStateEntered;
+use AdvisingApp\Application\Events\ApplicationSubmissionStateExited;
 use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use AdvisingApp\Workflow\Enums\WorkflowTriggerEvent;
 use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowRun;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
@@ -48,43 +52,73 @@ use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class TriggerApplicationSubmissionWorkflows implements ShouldQueueAfterCommit
+class TriggerApplicationSubmissionStageWorkflows implements ShouldQueueAfterCommit
 {
-    public function handle(ApplicationSubmissionCreated $event): void
+    public function handleEntered(ApplicationSubmissionStateEntered $event): void
     {
-        $application = $event->submission->submissible;
+        $this->dispatchMatchingWorkflows(
+            submission: $event->submission,
+            state: $event->state,
+            triggerEvent: WorkflowTriggerEvent::Enter,
+        );
+    }
 
-        assert($application instanceof Application);
+    public function handleExited(ApplicationSubmissionStateExited $event): void
+    {
+        $this->dispatchMatchingWorkflows(
+            submission: $event->submission,
+            state: $event->state,
+            triggerEvent: WorkflowTriggerEvent::Exit,
+        );
+    }
 
-        if (is_null($event->submission->author)) {
-            // If the submission has no author, we cannot trigger workflows.
+    private function dispatchMatchingWorkflows(
+        ApplicationSubmission $submission,
+        ApplicationSubmissionState $state,
+        WorkflowTriggerEvent $triggerEvent,
+    ): void {
+        if (is_null($submission->author)) {
+            return;
+        }
+
+        $application = $submission->submissible;
+
+        if (! $application instanceof Application) {
+            return;
+        }
+
+        $application->loadMissing('workflowTriggers.workflow.workflowSteps.currentDetails');
+
+        $matchingTriggers = $application->workflowTriggers
+            ->where('application_submission_state_id', $state->getKey())
+            ->where('event', $triggerEvent);
+
+        if ($matchingTriggers->isEmpty()) {
             return;
         }
 
         try {
             DB::beginTransaction();
 
-            $application->loadMissing('workflowTriggers.workflow.workflowSteps.currentDetails');
-
-            $application->workflowTriggers->each(function (WorkflowTrigger $workflowTrigger) use ($event) {
-                if (! $workflowTrigger->workflow->is_enabled) {
+            $matchingTriggers->each(function (WorkflowTrigger $workflowTrigger) use ($submission) {
+                if (! $workflowTrigger->workflow?->is_enabled) {
                     return;
                 }
 
                 $workflowRun = new WorkflowRun(['started_at' => now()]);
-                $workflowRun->related()->associate($event->submission->author);
+                $workflowRun->related()->associate($submission->author);
                 $workflowRun->workflowTrigger()->associate($workflowTrigger);
                 $workflowRun->saveOrFail();
 
                 $previousRunStep = null;
 
-                $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step, int $index) use ($event, $workflowRun, &$previousRunStep) {
+                $workflowTrigger->workflow->workflowSteps->each(function (WorkflowStep $step, int $index) use ($submission, $workflowRun, &$previousRunStep) {
                     assert($step->currentDetails instanceof WorkflowDetails);
 
                     $executeAt = null;
 
                     if ($index === 0) {
-                        $executeAt = $this->getStepScheduledAt($step, $event);
+                        $executeAt = $this->getStepScheduledAt($step, $submission);
                     }
 
                     $workflowRunStep = new WorkflowRunStep([
@@ -110,9 +144,9 @@ class TriggerApplicationSubmissionWorkflows implements ShouldQueueAfterCommit
         }
     }
 
-    private function getStepScheduledAt(WorkflowStep $workflowStep, ApplicationSubmissionCreated $event): Carbon
+    private function getStepScheduledAt(WorkflowStep $workflowStep, ApplicationSubmission $submission): Carbon
     {
-        $delayFrom = $event->submission->created_at->toMutable();
+        $delayFrom = now()->toMutable();
         $delayFrom->addMinutes($workflowStep->delay_minutes);
 
         return $delayFrom;
