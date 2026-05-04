@@ -56,7 +56,7 @@ class CustomAdvisorReport extends AiReport
     protected static string | UnitEnum | null $navigationGroup = 'Enterprise AI';
 
     protected static ?string $title = 'Employee Advisor';
-  
+
     protected static string $routePath = 'employee-advisor-report';
 
     protected static ?int $navigationSort = 160;
