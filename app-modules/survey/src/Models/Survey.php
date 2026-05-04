@@ -81,7 +81,7 @@ class Survey extends Submissible
      */
     public function steps(): HasMany
     {
-        return $this->hasMany(SurveyStep::class)->orderBy('sort');
+        return $this->hasMany(SurveyStep::class);
     }
 
     /**

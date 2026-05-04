@@ -38,11 +38,11 @@ namespace AdvisingApp\Form\Models;
 
 use App\Models\Attributes\NoPermissions;
 use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Query\Builder;
 
 /**
  * @property string $label
@@ -75,7 +75,7 @@ abstract class SubmissibleStep extends BaseModel
             fn (SubmissibleStep $step) => $step->sort ??= $step->submissible->steps->count(),
         );
 
-        static::withGlobalScope(
+        static::addGlobalScope(
             'sort',
             fn (Builder $query) => $query->orderBy('sort'),
         );

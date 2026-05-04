@@ -99,7 +99,7 @@ class Form extends Submissible
      */
     public function steps(): HasMany
     {
-        return $this->hasMany(FormStep::class)->orderBy('sort');
+        return $this->hasMany(FormStep::class);
     }
 
     /**

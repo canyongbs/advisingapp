@@ -105,7 +105,7 @@ class Application extends Submissible implements HasMedia, HasRichContent
      */
     public function steps(): HasMany
     {
-        return $this->hasMany(ApplicationStep::class)->orderBy('sort');
+        return $this->hasMany(ApplicationStep::class);
     }
 
     /**

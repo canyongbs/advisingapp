@@ -87,7 +87,7 @@ class CaseForm extends Submissible
      */
     public function steps(): HasMany
     {
-        return $this->hasMany(CaseFormStep::class, 'case_form_id')->orderBy('sort');
+        return $this->hasMany(CaseFormStep::class, 'case_form_id');
     }
 
     /**

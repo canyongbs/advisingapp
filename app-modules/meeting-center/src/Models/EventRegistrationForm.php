@@ -91,7 +91,7 @@ class EventRegistrationForm extends Submissible
      */
     public function steps(): HasMany
     {
-        return $this->hasMany(EventRegistrationFormStep::class, 'form_id')->orderBy('sort');
+        return $this->hasMany(EventRegistrationFormStep::class, 'form_id');
     }
 
     /**
