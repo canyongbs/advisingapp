@@ -147,7 +147,7 @@ trait HasSharedEventFormConfiguration
                         ->visible(fn (Get $get) => $get('is_wizard'))
                         ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists())
                         ->relationship()
-                        ->reorderable()
+                        ->orderColumn('sort')
                         ->columnSpanFull(),
                     Section::make('Appearance')
                         ->schema([

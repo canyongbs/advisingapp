@@ -128,7 +128,7 @@ class ViewApplication extends ViewRecord
                     ->visible(fn (Application $record) => $record->is_wizard)
                     ->disabled()
                     ->relationship()
-                    ->reorderable()
+                    ->orderColumn('sort')
                     ->columnSpanFull(),
                 Section::make('Appearance')
                     ->schema([
