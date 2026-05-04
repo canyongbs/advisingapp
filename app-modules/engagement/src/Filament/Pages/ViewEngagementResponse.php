@@ -42,6 +42,7 @@ use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Filament\Actions\DraftWithAiAction;
+use AdvisingApp\Engagement\Filament\Actions\EngagementResponseMarkAsActionedAction;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -55,6 +56,7 @@ use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
@@ -304,6 +306,12 @@ class ViewEngagementResponse extends Page
     {
         $this->record->status = $this->getInvertedStatus();
         $this->record->save();
+    }
+
+    public function markAsActionedAction(): Action
+    {
+        return EngagementResponseMarkAsActionedAction::make('markAsActioned')
+            ->record($this->record);
     }
 
     protected function generateEmailReplyBody(string $content = '<p></p>'): string
