@@ -59,11 +59,14 @@
                     Reply
                 </x-filament::button>
 
-                @if (EngagementResponseMarkAsActionedFeature::active() &&  $this->record->status === EngagementResponseStatus::New)
-                    
-                    <x-filament::button wire:click="mountAction('markAsActioned')">Mark as {{ $this->getInvertedStatus()->name }}</x-filament::button>
+                @if (EngagementResponseMarkAsActionedFeature::active() && $this->record->status === EngagementResponseStatus::New)
+                    <x-filament::button wire:click="mountAction('markAsActioned')">
+                        Mark as {{ $this->getInvertedStatus()->name }}
+                    </x-filament::button>
                 @else
-                <x-filament::button wire:click="changeStatus()">Mark as {{ $this->getInvertedStatus()->name }}</x-filament::button>
+                    <x-filament::button wire:click="changeStatus()">
+                        Mark as {{ $this->getInvertedStatus()->name }}
+                    </x-filament::button>
                 @endif
             </div>
 
@@ -91,9 +94,13 @@
                 </div>
 
                 @if (EngagementResponseMarkAsActionedFeature::active() && $this->record->status === EngagementResponseStatus::New)
-                <x-filament::button wire:click="mountAction('markAsActioned')">Mark as {{ $this->getInvertedStatus()->name }}</x-filament::button>
+                    <x-filament::button wire:click="mountAction('markAsActioned')">
+                        Mark as {{ $this->getInvertedStatus()->name }}
+                    </x-filament::button>
                 @else
-                <x-filament::button wire:click="changeStatus()">Mark as {{ $this->getInvertedStatus()->name }}</x-filament::button>
+                    <x-filament::button wire:click="changeStatus()">
+                        Mark as {{ $this->getInvertedStatus()->name }}
+                    </x-filament::button>
                 @endif
             </div>
         </div>
