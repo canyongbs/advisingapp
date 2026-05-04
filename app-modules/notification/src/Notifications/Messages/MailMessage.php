@@ -62,10 +62,14 @@ class MailMessage extends BaseMailMessage
 
     public function content(string $content): static
     {
-        $this->viewData = [
-            $this->viewData,
-            'content' => $content,
-        ];
+        $this->viewData['content'] = $content;
+
+        return $this;
+    }
+
+    public function hideFooter(bool $hide = true): static
+    {
+        $this->viewData['hideFooter'] = $hide;
 
         return $this;
     }
@@ -81,10 +85,7 @@ class MailMessage extends BaseMailMessage
             $this->from(name: $setting->from_name);
         }
 
-        $this->viewData = [
-            $this->viewData,
-            'settings' => $setting,
-        ];
+        $this->viewData['settings'] = $setting;
 
         return $this;
     }

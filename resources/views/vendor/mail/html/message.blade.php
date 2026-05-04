@@ -32,7 +32,7 @@
     </COPYRIGHT>
 --}}
 @props(['settings' => null, 'unsubscribeUrl' => null])
-<x-mail::layout :settings="$settings" :unsubscribeUrl="$unsubscribeUrl">
+<x-mail::layout :settings="$settings" :unsubscribeUrl="$unsubscribeUrl" :hideFooter="$hideFooter ?? false">
     {{-- Header --}}
     <x-slot:header>
         <x-mail::header :url="config('app.url')" :settings="$settings"></x-mail::header>

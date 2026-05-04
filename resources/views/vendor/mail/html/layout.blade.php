@@ -31,7 +31,7 @@
     
     </COPYRIGHT>
 --}}
-@props(['settings' => null, 'unsubscribeUrl' => null])
+@props(['settings' => null, 'unsubscribeUrl' => null, 'hideFooter' => false])
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -104,6 +104,7 @@
 
             </table>
             {{-- Footer --}}
+            @unless($hideFooter)
             <tr>
                 <td>
                 <table class="footer" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation">
@@ -115,6 +116,7 @@
                 </table>
                 </td>
             </tr>
+            @endunless
             {{-- Unsubscribe Link --}}
             @if (! empty($unsubscribeUrl))
             <p style="text-align: center; margin-top: 20px; font-size: 12px; color: #999999;">
