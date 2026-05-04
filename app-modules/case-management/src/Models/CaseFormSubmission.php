@@ -125,12 +125,13 @@ class CaseFormSubmission extends Submission
 
     public function deliverRequest(): void
     {
+        // @phpstan-ignore-next-line
         $this->request_method->deliver($this);
     }
 
     public function scopeRequested(Builder $query): Builder
     {
-        return $query->notSubmitted()->notCanceled();
+        return $query->whereNull('submitted_at')->whereNull('canceled_at');
     }
 
     public function scopeSubmitted(Builder $query): Builder
@@ -140,7 +141,7 @@ class CaseFormSubmission extends Submission
 
     public function scopeCanceled(Builder $query): Builder
     {
-        return $query->notSubmitted()->whereNotNull('canceled_at');
+        return $query->whereNull('submitted_at')->whereNotNull('canceled_at');
     }
 
     public function scopeNotSubmitted(Builder $query): Builder

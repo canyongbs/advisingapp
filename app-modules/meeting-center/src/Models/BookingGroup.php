@@ -52,6 +52,8 @@ use Illuminate\Support\Collection;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
+ * @property string|null $round_robin_last_assigned_id
+ *
  * @mixin IdeHelperBookingGroup
  */
 class BookingGroup extends BaseModel implements Auditable

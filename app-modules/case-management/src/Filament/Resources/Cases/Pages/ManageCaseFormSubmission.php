@@ -65,7 +65,10 @@ class ManageCaseFormSubmission extends ManageRelatedRecords
         return static::managers($this->getRecord());
     }
 
-    private static function managers(?Model $record = null): array
+    /**
+     * @return array<int, class-string<CaseFormSubmissionRelationManager>>
+     */
+    protected static function managers(?Model $record = null): array
     {
         return collect([
             CaseFormSubmissionRelationManager::class,

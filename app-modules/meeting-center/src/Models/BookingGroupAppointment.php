@@ -44,6 +44,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
+ * @property string|null $meeting_owner_id
+ *
  * @mixin IdeHelperBookingGroupAppointment
  */
 class BookingGroupAppointment extends BaseModel
