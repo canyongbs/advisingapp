@@ -117,6 +117,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     ];
 
     // TODO Consider changing this relationship if we ever needed to timeline something else where records might be shared across entities
+    /**
+     *  MorphOne<Timeline, $this>
+     */
     public function timelineRecord(): MorphOne
     {
         return $this->morphOne(Timeline::class, 'timelineable');
@@ -127,6 +130,11 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return new EngagementTimeline($this);
     }
 
+    /**
+     *  Model&object{orderedEngagements(): MorphMany} $forModel
+     *
+     *  Collection<int, self>
+     */
     public static function getTimelineData(Model $forModel): Collection
     {
         return $forModel->orderedEngagements()->with(['latestEmailMessage', 'latestSmsMessage', 'batch'])->get();
@@ -140,6 +148,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return $this->belongsTo(User::class);
     }
 
+    /**
+     *  BelongsTo<User, $this>
+     */
     public function createdBy(): BelongsTo
     {
         return $this->user();
@@ -159,6 +170,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         );
     }
 
+    /**
+     *  MorphOne<EmailMessage, $this>
+     */
     public function latestEmailMessage(): MorphOne
     {
         return $this->morphOne(EmailMessage::class, 'related')->latestOfMany();
@@ -178,6 +192,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         );
     }
 
+    /**
+     *  MorphOne<SmsMessage, $this>
+     */
     public function latestSmsMessage(): MorphOne
     {
         return $this->morphOne(SmsMessage::class, 'related')->latestOfMany();
@@ -211,21 +228,33 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return $this->belongsTo(EngagementBatch::class);
     }
 
+    /**
+     *  BelongsTo<EngagementBatch, $this>
+     */
     public function batch(): BelongsTo
     {
         return $this->engagementBatch();
     }
 
+    /**
+     *  Builder<self> $query
+     */
     public function scopeIsNotPartOfABatch(Builder $query): void
     {
         $query->whereNull('engagement_batch_id');
     }
 
+    /**
+     *  Builder<self> $query
+     */
     public function scopeSentToStudent(Builder $query): void
     {
         $query->where('recipient_type', resolve(Student::class)->getMorphClass());
     }
 
+    /**
+     *  Builder<self> $query
+     */
     public function scopeSentToProspect(Builder $query): void
     {
         $query->where('recipient_type', resolve(Prospect::class)->getMorphClass());
@@ -287,6 +316,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return $this->getSubject() ? stripslashes((new HtmlConverter())->convert($this->getSubject())) : null;
     }
 
+    /**
+     *  array<string, \Closure(): mixed>
+     */
     public function getMergeData(): array
     {
         return [
@@ -303,6 +335,9 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         ];
     }
 
+    /**
+     *  array<int, string>
+     */
     public static function getMergeTags(bool $withUserTags = true): array
     {
         $tags = array_keys((new self())->getMergeData());

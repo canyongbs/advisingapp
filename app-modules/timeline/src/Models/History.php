@@ -44,8 +44,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 
 /**
- * @property array $new
- * @property array $old
+ * @property array<string, mixed> $new
+ * @property array<string, mixed> $old
  */
 abstract class History extends BaseModel
 {
@@ -72,6 +72,9 @@ abstract class History extends BaseModel
         return $this->morphTo();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getFormattedValueForKey(string $key): array
     {
         return [
@@ -81,6 +84,9 @@ abstract class History extends BaseModel
         ];
     }
 
+    /**
+     * @return Collection<string, array<string, mixed>>
+     */
     public function getFormattedValues(): Collection
     {
         return collect($this->new)
@@ -88,6 +94,9 @@ abstract class History extends BaseModel
             ->mapWithKeys(fn (string $key) => [$key => $this->getFormattedValueForKey($key)]);
     }
 
+    /**
+     * @return Attribute<mixed, never>
+     */
     public function formatted(): Attribute
     {
         return Attribute::get(fn () => $this->getFormattedValues()->filter());

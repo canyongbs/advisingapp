@@ -37,6 +37,7 @@
 namespace AdvisingApp\Notification\Models\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
  * @phpstan-require-extends Model
@@ -45,16 +46,41 @@ use Illuminate\Database\Eloquent\Model;
  */
 interface CanBeNotified
 {
+    /**
+     * @param mixed $instance
+     *
+     * @return mixed
+     */
     public function notify($instance);
 
+    /**
+     * @param mixed $instance
+     * @param array<int, string>|null $channels
+     *
+     * @return mixed
+     */
     public function notifyNow($instance, ?array $channels = null);
 
-    public function routeNotificationFor($driver, $notification = null);
+    /**
+     * @param mixed $notification
+     *
+     * @return mixed
+     */
+    public function routeNotificationFor(string $driver, $notification = null);
 
+    /**
+     * @return MorphMany<\Illuminate\Notifications\DatabaseNotification, static>
+     */
     public function notifications();
 
+    /**
+     * @return MorphMany<\Illuminate\Notifications\DatabaseNotification, static>
+     */
     public function readNotifications();
 
+    /**
+     * @return MorphMany<\Illuminate\Notifications\DatabaseNotification, static>
+     */
     public function unreadNotifications();
 
     public function canReceiveEmail(): bool;

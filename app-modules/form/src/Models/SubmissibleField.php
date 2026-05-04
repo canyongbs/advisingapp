@@ -44,31 +44,49 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property bool $is_required
  * @property string $type
  * @property string $label
- * @property array $config
+ * @property array<string, mixed> $config
  * @property-read Submissible $submissible
  * @property-read SubmissibleStep $step
  */
 abstract class SubmissibleField extends BaseModel
 {
+    /**
+     * @return BelongsTo<Submissible, static>
+     */
     abstract public function submissible(): BelongsTo;
 
+    /**
+     * @return BelongsTo<SubmissibleStep, static>
+     */
     abstract public function step(): BelongsTo;
 
+    /**
+     * @return Attribute<mixed, never>
+     */
     protected function isRequired(): Attribute
     {
         return Attribute::make(get: fn ($value) => $this->hasCast('is_required') ? $this->castAttribute('is_required', $value) : $value);
     }
 
+    /**
+     * @return Attribute<mixed, never>
+     */
     protected function type(): Attribute
     {
         return Attribute::make(get: fn ($value) => $this->hasCast('type') ? $this->castAttribute('type', $value) : $value);
     }
 
+    /**
+     * @return Attribute<mixed, never>
+     */
     protected function label(): Attribute
     {
         return Attribute::make(get: fn ($value) => $this->hasCast('label') ? $this->castAttribute('label', $value) : $value);
     }
 
+    /**
+     * @return Attribute<mixed, never>
+     */
     protected function config(): Attribute
     {
         return Attribute::make(get: fn ($value) => $this->hasCast('config') ? $this->castAttribute('config', $value) : $value);

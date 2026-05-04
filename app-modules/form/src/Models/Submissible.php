@@ -46,11 +46,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
+ * @phpstan-use HasUuids<static>
+ *
  * @property string $name
- * @property ?array $content
+ * @property ?array<string, mixed> $content
  * @property bool $embed_enabled
  * @property bool $is_wizard
- * @property ?array $allowed_domains
+ * @property ?array<string, mixed> $allowed_domains
  * @property-read Collection<int, SubmissibleStep> $steps
  * @property-read Collection<int, SubmissibleField> $fields
  */
@@ -60,32 +62,56 @@ abstract class Submissible extends Model
     use HasUuids;
     use UsesTenantConnection;
 
+    /**
+     * @return HasMany<\Illuminate\Database\Eloquent\Model, static>
+     */
     abstract public function fields(): HasMany;
 
+    /**
+     * @return HasMany<\Illuminate\Database\Eloquent\Model, static>
+     */
     abstract public function steps(): HasMany;
 
+    /**
+     * @return HasMany<\Illuminate\Database\Eloquent\Model, static>
+     */
     abstract public function submissions(): HasMany;
 
+    /**
+     * @return Attribute<mixed, never>
+     */
     protected function name(): Attribute
     {
         return Attribute::make(get: fn ($value) => $this->hasCast('name') ? $this->castAttribute('name', $value) : $value);
     }
 
+    /**
+     * @return Attribute<mixed, never>
+     */
     protected function content(): Attribute
     {
         return Attribute::make(get: fn ($value) => $this->hasCast('content') ? $this->castAttribute('content', $value) : $value);
     }
 
+    /**
+     * @return Attribute<mixed, never>
+     */
     protected function embedEnabled(): Attribute
     {
         return Attribute::make(get: fn ($value) => $this->hasCast('embed_enabled') ? $this->castAttribute('embed_enabled', $value) : $value);
     }
 
+    /**
+     * @return Attribute<mixed, never>
+     */
     protected function allowedDomains(): Attribute
     {
         return Attribute::make(get: fn ($value) => $this->hasCast('allowed_domains') ? $this->castAttribute('allowed_domains', $value) : $value);
     }
 
+    /**
+     * @return Attribute<mixed, never>
+     */
     protected function isWizard(): Attribute
     {
         return Attribute::make(get: fn ($value) => $this->hasCast('is_wizard') ? $this->castAttribute('is_wizard', $value) : $value);

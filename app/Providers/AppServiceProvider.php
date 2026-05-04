@@ -97,7 +97,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CreateXlsxFile::class, CreateXlsxFileOverride::class);
         $this->app->bind(ResetPassword::class, ResetPasswordNotification::class);
 
-        $this->app->scoped(StartSession::class, function ($app) {
+        $this->app->scoped(StartSession::class, function (\Illuminate\Foundation\Application $app) {
             return new OverrideStartSession($app->make(SessionManager::class), function () use ($app) {
                 return $app->make(CacheFactory::class);
             });
@@ -155,11 +155,11 @@ class AppServiceProvider extends ServiceProvider
             });
         });
 
-        $this->app->singleton(PermissionMigrationCreator::class, function ($app) {
+        $this->app->singleton(PermissionMigrationCreator::class, function (\Illuminate\Foundation\Application $app) {
             return new PermissionMigrationCreator($app['files'], $app->basePath('stubs'));
         });
 
-        $this->app->singleton('current-commit', function ($app) {
+        $this->app->singleton('current-commit', function (\Illuminate\Foundation\Application $app) {
             $commitProcess = Process::run('git log --pretty="%h" -n1 HEAD');
 
             if ($commitProcess->successful()) {
@@ -170,7 +170,7 @@ class AppServiceProvider extends ServiceProvider
             return null;
         });
 
-        $this->app->singleton('current-version', function ($app) {
+        $this->app->singleton('current-version', function (\Illuminate\Foundation\Application $app) {
             $gitVersion = Process::run('git describe --tags $(git rev-list --tags --max-count=1)');
 
             if ($gitVersion->successful()) {

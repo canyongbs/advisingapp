@@ -61,6 +61,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\JoinClause;
 
 class CaseUpdateResource extends Resource
 {
@@ -118,10 +119,10 @@ class CaseUpdateResource extends Resource
                 IdColumn::make(),
                 TextColumn::make('case.respondent.full')
                     ->label('Related To')
-                    ->sortable(query: function (Builder $query, string $direction, $record): Builder {
+                    ->sortable(query: function (Builder $query, string $direction, CaseUpdate $record): Builder {
                         // TODO: Update this to work with other respondent types
                         return $query->join('cases', 'case_updates.case_model_id', '=', 'cases.id')
-                            ->join('students', function ($join) {
+                            ->join('students', function (JoinClause $join) {
                                 $join->on('cases.respondent_id', '=', 'students.sisid')
                                     ->where('cases.respondent_type', '=', 'student');
                             })
@@ -130,10 +131,10 @@ class CaseUpdateResource extends Resource
                     ->searchable(),
                 TextColumn::make('case.respondent.sisid')
                     ->label('SIS ID')
-                    ->sortable(query: function (Builder $query, string $direction, $record): Builder {
+                    ->sortable(query: function (Builder $query, string $direction, CaseUpdate $record): Builder {
                         // TODO: Update this to work with other respondent types
                         return $query->join('cases', 'case_updates.case_model_id', '=', 'cases.id')
-                            ->join('students', function ($join) {
+                            ->join('students', function (JoinClause $join) {
                                 $join->on('cases.respondent_id', '=', 'students.sisid')
                                     ->where('cases.respondent_type', '=', 'student');
                             })
@@ -142,10 +143,10 @@ class CaseUpdateResource extends Resource
                     ->searchable(),
                 TextColumn::make('case.respondent.otherid')
                     ->label('Other ID')
-                    ->sortable(query: function (Builder $query, string $direction, $record): Builder {
+                    ->sortable(query: function (Builder $query, string $direction, CaseUpdate $record): Builder {
                         // TODO: Update this to work with other respondent types
                         return $query->join('cases', 'case_updates.case_model_id', '=', 'cases.id')
-                            ->join('students', function ($join) {
+                            ->join('students', function (JoinClause $join) {
                                 $join->on('cases.respondent_id', '=', 'students.sisid')
                                     ->where('cases.respondent_type', '=', 'student');
                             })

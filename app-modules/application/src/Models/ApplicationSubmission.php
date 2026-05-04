@@ -88,6 +88,9 @@ class ApplicationSubmission extends Submission
             ->belongsTo(ApplicationSubmissionState::class, 'state_id');
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getStateMachineFields(): array
     {
         return [

@@ -52,7 +52,7 @@ use Illuminate\Support\Collection;
 use Livewire\Component;
 
 /**
- * @property-read Collection $recoveryCodes
+ * @property-read Collection<int, string> $recoveryCodes
  */
 class MultifactorAuthenticationManagement extends Component implements HasActions, HasForms
 {
@@ -63,12 +63,12 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
 
     public int $code;
 
-    public function render()
+    public function render(): \Illuminate\Contracts\View\View
     {
         return view('multifactor-authentication::livewire.multifactor-authentication-management');
     }
 
-    public function mount()
+    public function mount(): void
     {
         $this->user ??= Filament::getCurrentOrDefaultPanel()->auth()->user();
     }
@@ -118,7 +118,7 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
                     ->numeric()
                     ->required(),
             ])
-            ->action(function ($data, $action, $livewire) {
+            ->action(function (array $data, Action $action, Component $livewire) {
                 if (! app(MultifactorService::class)->verify(code: $data['code'])) {
                     $livewire->addError('mountedActionsData.0.code', 'The code you have entered is invalid.');
                     $action->halt();
@@ -168,12 +168,15 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
             });
     }
 
+    /**
+     * @return Collection<int, string>
+     */
     public function getRecoveryCodesProperty(): Collection
     {
         return collect($this->user->multifactor_recovery_codes ?? []);
     }
 
-    public function getMultifactorQrCode()
+    public function getMultifactorQrCode(): string
     {
         return app(MultifactorService::class)->getMultifactorQrCodeSvg($this->user->getMultifactorQrCodeUrl());
     }

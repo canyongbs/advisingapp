@@ -62,6 +62,9 @@ class DuplicateEvent
         $duplicatedEventRegistrationForm->save();
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function replicateSteps(): array
     {
         $stepMap = [];
@@ -77,6 +80,11 @@ class DuplicateEvent
         return $stepMap;
     }
 
+    /**
+     * @param array<string, string> $stepMap
+     *
+     * @return array<string, string>
+     */
     private function replicateFields(array $stepMap): array
     {
         $fieldMap = [];
@@ -93,6 +101,9 @@ class DuplicateEvent
         return $fieldMap;
     }
 
+    /**
+     * @param array<string, string> $fieldMap
+     */
     private function updateStepContent(array $fieldMap): void
     {
         $this->replica->eventRegistrationForm->steps()->each(function (EventRegistrationFormStep $step) use ($fieldMap) {
@@ -103,7 +114,12 @@ class DuplicateEvent
         });
     }
 
-    private function replaceIdsInContent(&$content, $fieldMap)
+    /**
+     * @param array<string, string> $fieldMap
+     *
+     * @return mixed
+     */
+    private function replaceIdsInContent(mixed &$content, array $fieldMap): mixed
     {
         if (is_array($content)) {
             foreach ($content as $key => &$value) {

@@ -59,6 +59,18 @@ class GenerateFormKitSchema
         return $this->author;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
+     */
+    /**
+     * @return array<string, mixed>
+     */
     public function __invoke(Submissible $submissible): array
     {
         return [
@@ -74,6 +86,13 @@ class GenerateFormKitSchema
         ];
     }
 
+    /**
+     * @param array<string, mixed> $blocks
+     * @param array<string, mixed> $content
+     * @param Collection<int, \Illuminate\Database\Eloquent\Model>|null $fields
+     *
+     * @return array<int, array<string, mixed>|string>
+     */
     public function content(array $blocks, array $content, Submissible|SubmissibleStep $submissible, ?Collection $fields = null): array
     {
         $actualSubmissible = $submissible instanceof SubmissibleStep ? $submissible->submissible : $submissible;
@@ -99,6 +118,13 @@ class GenerateFormKitSchema
         );
     }
 
+    /**
+     * @param array<string, mixed> $blocks
+     * @param array<string, mixed> $component
+     * @param Collection<int, \Illuminate\Database\Eloquent\Model>|null $fields
+     *
+     * @return array<string, mixed>
+     */
     public function grid(array $blocks, array $component, ?Collection $fields, Submissible|SubmissibleStep $submissible): array
     {
         $children = $component['content'] ?? [];
@@ -150,6 +176,11 @@ class GenerateFormKitSchema
         ];
     }
 
+    /**
+     * @param array<string, mixed> $component
+     *
+     * @return array<string, mixed>|string
+     */
     public function text(array $component): array | string
     {
         if (filled($component['marks'] ?? [])) {
@@ -185,6 +216,11 @@ class GenerateFormKitSchema
         return $component['text'];
     }
 
+    /**
+     * @param array<string, mixed> $blocks
+     *
+     * @return array<int, array<string, mixed>>
+     */
     public function wizardContent(array $blocks, Submissible $submissible): array
     {
         return [
@@ -297,6 +333,9 @@ class GenerateFormKitSchema
         ];
     }
 
+    /**
+     * @return array<int, array<string, mixed>>
+     */
     protected function generateContent(Submissible $submissible): array
     {
         $blocks = app(ResolveBlockRegistry::class)($submissible);

@@ -111,7 +111,7 @@ class ProspectInteractionUsersTable extends BaseWidget
             ->columns([
                 TextColumn::make('name')
                     ->label('Name')
-                    ->description(function ($record) {
+                    ->description(function (User $record) {
                         $jobTitle = $record->job_title ?? null;
                         $teamName = $record->team->name ?? null;
 
@@ -128,10 +128,10 @@ class ProspectInteractionUsersTable extends BaseWidget
                     ->searchable(
                         query: function (Builder $query, string $search) {
                             $search = Str::lower($search);
-                            $query->where(function ($query) use ($search) {
+                            $query->where(function (Builder $query) use ($search) {
                                 $query->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"])
                                     ->orWhereRaw('LOWER(job_title) LIKE ?', ["%{$search}%"])
-                                    ->orWhereHas('team', function ($teamQuery) use ($search) {
+                                    ->orWhereHas('team', function (Builder $teamQuery) use ($search) {
                                         $teamQuery->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"]);
                                     });
                             });
@@ -139,7 +139,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                     ),
                 TextColumn::make('first_interaction_at')
                     ->label('First')
-                    ->state(function ($record) use ($startDate, $endDate) {
+                    ->state(function (User $record) use ($startDate, $endDate) {
                         $first = $record
                             ->interactions()
                             ->whereHasMorph(
@@ -157,7 +157,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                     }),
                 TextColumn::make('most_recent_interaction_at')
                     ->label('Most Recent')
-                    ->state(function ($record) use ($startDate, $endDate) {
+                    ->state(function (User $record) use ($startDate, $endDate) {
                         $last = $record
                             ->interactions()
                             ->whereHasMorph(
@@ -175,7 +175,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                     }),
                 TextColumn::make('total_interactions')
                     ->label('Total')
-                    ->state(function ($record) use ($startDate, $endDate) {
+                    ->state(function (User $record) use ($startDate, $endDate) {
                         return $record
                             ->interactions()
                             ->whereHasMorph(
@@ -190,7 +190,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                     }),
                 TextColumn::make('total_interactions_percent')
                     ->label('Total %')
-                    ->state(function ($record) use ($startDate, $endDate) {
+                    ->state(function (User $record) use ($startDate, $endDate) {
                         $allInteractions = Interaction::whereHasMorph('interactable', Prospect::class)->count();
                         $userInteractionsCount = $record
                             ->interactions()
@@ -214,7 +214,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                     }),
                 TextColumn::make('avg_interaction_duration')
                     ->label('Avg. Duration')
-                    ->state(function ($record) use ($startDate, $endDate) {
+                    ->state(function (User $record) use ($startDate, $endDate) {
                         $durations = $record
                             ->interactions()
                             ->whereHasMorph(
@@ -226,7 +226,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                                 fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                             )
                             ->get()
-                            ->map(function ($interaction) {
+                            ->map(function (Interaction $interaction) {
                                 return Carbon::parse($interaction->end_datetime)
                                     ->diffInMinutes(Carbon::parse($interaction->start_datetime), true);
                             })->filter();
