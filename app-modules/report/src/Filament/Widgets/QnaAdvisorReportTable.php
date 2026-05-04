@@ -59,7 +59,7 @@ class QnaAdvisorReportTable extends TableWidget
 
     protected int | string | array $columnSpan = 'full';
 
-    protected static ?string $heading = 'Most Recent QnA Advisor Chats';
+    protected static ?string $heading = 'Most Recent Customer Advisor Chats';
 
     #[Url]
     public string $activeTab = QnaAdvisorReportTableTab::Student->value;

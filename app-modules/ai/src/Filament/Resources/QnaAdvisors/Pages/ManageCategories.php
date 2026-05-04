@@ -123,12 +123,12 @@ class ManageCategories extends ManageRelatedRecords
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->modalHeading('Create QnA Advisor Category'),
+                    ->modalHeading('Create Customer Advisor Category'),
             ])
             ->recordActions([
                 EditAction::make(),
             ])
-            ->emptyStateHeading('No QnA Advisor Categories Found')
+            ->emptyStateHeading('No Customer Advisor Categories Found')
             ->emptyStateDescription('');
     }
 }

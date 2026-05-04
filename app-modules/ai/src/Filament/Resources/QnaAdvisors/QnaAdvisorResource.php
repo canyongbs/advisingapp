@@ -58,7 +58,7 @@ class QnaAdvisorResource extends Resource
 
     protected static string | UnitEnum | null $navigationGroup = 'Chatbots';
 
-    protected static ?string $modelLabel = 'QnA Advisor';
+    protected static ?string $modelLabel = 'Customer Advisor';
 
     protected static ?int $navigationSort = 40;
 

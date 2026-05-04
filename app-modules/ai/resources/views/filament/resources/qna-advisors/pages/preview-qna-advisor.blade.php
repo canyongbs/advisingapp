@@ -41,7 +41,7 @@
 <x-filament-panels::page>
     @if ($this->isFailed)
         <x-filament::empty-state icon="heroicon-o-x-circle">
-            <x-slot name="heading">QnA Advisor Failed to Learn</x-slot>
+            <x-slot name="heading">Customer Advisor Failed to Learn</x-slot>
 
             <x-slot name="description">
                 There was an issue while trying to learn from the materials you have uploaded/provided. Please
@@ -57,7 +57,7 @@
         </x-filament::empty-state>
     @elseif ($this->isProcessing)
         <x-filament::empty-state icon="heroicon-o-clock">
-            <x-slot name="heading">QnA Advisor is Learning</x-slot>
+            <x-slot name="heading">Customer Advisor is Learning</x-slot>
 
             <x-slot name="description">
                 This AI advisor is still learning from the materials you have uploaded/provided. Please check back in

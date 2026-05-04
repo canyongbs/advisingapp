@@ -52,13 +52,13 @@ class QnaAdvisorReport extends AiReport
 
     protected static string | UnitEnum | null $navigationGroup = 'Enterprise AI';
 
-    protected static ?string $title = 'QnA Advisor';
+    protected static ?string $title = 'Customer Advisor';
 
-    protected static string $routePath = 'qna-advisor-report';
+    protected static string $routePath = 'customer-advisor-report';
 
     protected static ?int $navigationSort = 180;
 
-    protected string $cacheTag = 'qna-advisor-report';
+    protected string $cacheTag = 'customer-advisor-report';
 
     public static function canAccess(): bool
     {

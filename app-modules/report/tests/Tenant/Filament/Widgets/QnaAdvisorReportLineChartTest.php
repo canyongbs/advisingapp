@@ -63,7 +63,7 @@ it('returns correct QnaAdvisorMessage counts grouped by month within the given d
         ])->create();
 
         $widgetInstance = new QnaAdvisorReportLineChart();
-        $widgetInstance->cacheTag = 'qna-advisor-report-cache';
+        $widgetInstance->cacheTag = 'customer-advisor-report-cache';
         $widgetInstance->pageFilters = [
             'startDate' => $startDate->toDateString(),
             'endDate' => $endDate->toDateString(),

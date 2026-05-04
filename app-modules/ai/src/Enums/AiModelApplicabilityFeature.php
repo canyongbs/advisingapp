@@ -54,9 +54,9 @@ enum AiModelApplicabilityFeature: string implements HasLabel
     {
         return match ($this) {
             self::InstitutionalAdvisor => 'Institutional Advisor',
-            self::CustomAdvisors => 'Custom Advisors',
+            self::CustomAdvisors => 'Employee Advisors',
             self::ResearchAdvisor => 'Research Advisor',
-            self::QuestionAndAnswerAdvisor => 'QnA Advisor',
+            self::QuestionAndAnswerAdvisor => 'Customer Advisor',
             self::IntegratedAdvisor => 'Integrated Advisor',
         };
     }

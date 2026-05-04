@@ -58,7 +58,7 @@ class QnaAdvisorCategoryPolicy
     {
         return $authenticatable->canOrElse(
             abilities: 'qna_advisor.view-any',
-            denyResponse: 'You do not have permission to view QnA Advisor Categories.'
+            denyResponse: 'You do not have permission to view Customer Advisor Categories.'
         );
     }
 
@@ -66,7 +66,7 @@ class QnaAdvisorCategoryPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['qna_advisor.*.view'],
-            denyResponse: 'You do not have permission to view this QnA Advisor Category.'
+            denyResponse: 'You do not have permission to view this Customer Advisor Category.'
         );
     }
 
@@ -74,7 +74,7 @@ class QnaAdvisorCategoryPolicy
     {
         return $authenticatable->canOrElse(
             abilities: 'qna_advisor.create',
-            denyResponse: 'You do not have permission to create QnA Advisor Categories.'
+            denyResponse: 'You do not have permission to create Customer Advisor Categories.'
         );
     }
 
@@ -82,7 +82,7 @@ class QnaAdvisorCategoryPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['qna_advisor.*.update'],
-            denyResponse: 'You do not have permission to update this QnA Advisor Category.'
+            denyResponse: 'You do not have permission to update this Customer Advisor Category.'
         );
     }
 
@@ -90,7 +90,7 @@ class QnaAdvisorCategoryPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['qna_advisor.*.delete'],
-            denyResponse: 'You do not have permission to delete this QnA Advisor Category.'
+            denyResponse: 'You do not have permission to delete this Customer Advisor Category.'
         );
     }
 
@@ -98,7 +98,7 @@ class QnaAdvisorCategoryPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['qna_advisor.*.restore'],
-            denyResponse: 'You do not have permission to restore this QnA Advisor Category.'
+            denyResponse: 'You do not have permission to restore this Customer Advisor Category.'
         );
     }
 
@@ -106,7 +106,7 @@ class QnaAdvisorCategoryPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['qna_advisor.*.force-delete'],
-            denyResponse: 'You do not have permission to force-delete this QnA Advisor Category.'
+            denyResponse: 'You do not have permission to force-delete this Customer Advisor Category.'
         );
     }
 }

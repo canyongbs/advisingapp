@@ -83,7 +83,7 @@ class CreateQnaAdvisorThreadInteraction implements ShouldQueue
             $interaction = $this->thread->author->interactions()->create([
                 'start_datetime' => $this->thread->messages()->oldest()->value('created_at'),
                 'end_datetime' => $this->thread->messages()->latest()->value('created_at'),
-                'subject' => "{$this->thread->advisor->name} (QnA Advisor) Chat Session",
+                'subject' => "{$this->thread->advisor->name} (Customer Advisor) Chat Session",
                 'description' => <<<"EOD"
                     **Summary:**
 

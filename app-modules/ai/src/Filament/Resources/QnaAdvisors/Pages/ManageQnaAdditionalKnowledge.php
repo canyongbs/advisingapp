@@ -102,7 +102,7 @@ class ManageQnaAdditionalKnowledge extends EditRecord
         return $schema
             ->components([
                 Section::make('Additional Knowledge')
-                    ->description('Add additional knowledge to this QnA Advisor to improve its responses.')
+                    ->description('Add additional knowledge to this Customer Advisor to improve its responses.')
                     ->reactive()
                     ->columns([
                         'sm' => 1,
@@ -132,7 +132,7 @@ class ManageQnaAdditionalKnowledge extends EditRecord
                             ->deleteAction(
                                 fn (Action $action) => $action->requiresConfirmation()
                                     ->modalHeading('Are you sure you want to delete this file?')
-                                    ->modalDescription('This file will be permanently removed from this QnA Advisor, and cannot be restored.')
+                                    ->modalDescription('This file will be permanently removed from this Customer Advisor, and cannot be restored.')
                             ),
                         FileUpload::make('uploaded_files')
                             ->hiddenLabel()
@@ -144,10 +144,10 @@ class ManageQnaAdditionalKnowledge extends EditRecord
                             ->storeFiles(false)
                             ->helperText(function (QnaAdvisor $record): string {
                                 if ($record->files->count() < 25) {
-                                    return 'You may upload a total of 25 files to this QnA Advisor. Files must be less than ' . Number::fileSize(config('ai.file_size_limit_kb') * 1000) . '.';
+                                    return 'You may upload a total of 25 files to this Customer Advisor. Files must be less than ' . Number::fileSize(config('ai.file_size_limit_kb') * 1000) . '.';
                                 }
 
-                                return "You've reached the maximum file upload limit of 25 for this QnA Advisor. Please delete a file if you wish to upload another.";
+                                return "You've reached the maximum file upload limit of 25 for this Customer Advisor. Please delete a file if you wish to upload another.";
                             })
                             ->maxSize(config('ai.file_size_limit_kb'))
                             ->columnSpan(function (Get $get) {

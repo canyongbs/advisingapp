@@ -85,7 +85,7 @@ it('returns correct total QnaAdvisor stats of QnaAdvisors, students, prospects a
         ->create();
 
     $widget = new QnaAdvisorReportStats();
-    $widget->cacheTag = 'qna-advisor-report-cache';
+    $widget->cacheTag = 'customer-advisor-report-cache';
     $widget->pageFilters = [
         'startDate' => $startDate->toDateString(),
         'endDate' => $endDate->toDateString(),

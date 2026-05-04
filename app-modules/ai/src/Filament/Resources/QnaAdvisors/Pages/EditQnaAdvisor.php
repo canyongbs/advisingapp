@@ -66,7 +66,7 @@ class EditQnaAdvisor extends EditRecord
 
     protected static ?string $navigationLabel = 'Edit';
 
-    protected static string | UnitEnum | null $navigationGroup = 'QnA Advisor';
+    protected static string | UnitEnum | null $navigationGroup = 'Customer Advisor';
 
     /**
      * @return array<int|string, string|null>
@@ -165,7 +165,7 @@ class EditQnaAdvisor extends EditRecord
                     $qnaAdvisor->save();
 
                     Notification::make()
-                        ->title('QnA Advisor archived')
+                        ->title('Customer Advisor archived')
                         ->success()
                         ->send();
                 })
@@ -178,7 +178,7 @@ class EditQnaAdvisor extends EditRecord
                     $qnaAdvisor->save();
 
                     Notification::make()
-                        ->title('QnA Advisor restored')
+                        ->title('Customer Advisor restored')
                         ->success()
                         ->send();
                 })

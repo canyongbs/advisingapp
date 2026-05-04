@@ -105,7 +105,7 @@ class CustomAdvisorStats extends StatsOverviewReportWidget
             );
 
         return [
-            Stat::make('Custom Advisors', Number::abbreviate(
+            Stat::make('Employee Advisors', Number::abbreviate(
                 $customAdvisorsCount,
                 maxPrecision: 2,
             )),

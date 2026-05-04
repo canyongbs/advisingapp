@@ -57,13 +57,15 @@ class ManageAiCustomAdvisorSettings extends SettingsPage
 {
     protected static string $settings = AiCustomAdvisorSettings::class;
 
-    protected static ?string $title = 'Custom Advisor';
+    protected static ?string $title = 'Employee Advisor';
 
     protected static ?string $cluster = GlobalArtificialIntelligence::class;
 
     protected static ?int $navigationSort = 15;
 
     protected ?bool $hasDatabaseTransactions = true;
+
+    protected static ?string $slug = 'manage-ai-employee-advisor-settings';
 
     public static function canAccess(): bool
     {
@@ -84,7 +86,7 @@ class ManageAiCustomAdvisorSettings extends SettingsPage
             ->components([
                 Toggle::make('allow_selection_of_model')
                     ->label('Allow selection of model?')
-                    ->helperText('If enabled, users can select a model when creating or editing custom advisors.')
+                    ->helperText('If enabled, users can select a model when creating or editing employee advisors.')
                     ->live(),
                 Select::make('preselected_model')
                     ->label('Select Model')
@@ -97,7 +99,7 @@ class ManageAiCustomAdvisorSettings extends SettingsPage
                         },
                     ]))
                     ->searchable()
-                    ->helperText('This model will be the model used for custom advisors.')
+                    ->helperText('This model will be the model used for employee advisors.')
                     ->required()
                     ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomAdvisors->getModels()))
                     ->visible(fn (Get $get): bool => ! $get('allow_selection_of_model')),

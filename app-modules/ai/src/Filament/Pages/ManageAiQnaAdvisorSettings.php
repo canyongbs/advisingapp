@@ -52,11 +52,13 @@ class ManageAiQnaAdvisorSettings extends ManageAiCustomAdvisorSettings
 {
     protected static string $settings = AiQnaAdvisorSettings::class;
 
-    protected static ?string $title = 'QnA Advisor';
+    protected static ?string $title = 'Customer Advisor';
 
     protected static ?int $navigationSort = 40;
 
     protected static ?string $cluster = GlobalArtificialIntelligence::class;
+
+    protected static ?string $slug = 'manage-ai-customer-advisor-settings';
 
     public static function canAccess(): bool
     {
@@ -73,7 +75,7 @@ class ManageAiQnaAdvisorSettings extends ManageAiCustomAdvisorSettings
             ->components([
                 Toggle::make('allow_selection_of_model')
                     ->label('Allow selection of model?')
-                    ->helperText('If enabled, admin can select a model when creating or editing QnA advisors.')
+                    ->helperText('If enabled, admin can select a model when creating or editing Customer advisors.')
                     ->columnSpanFull()
                     ->live(),
                 Select::make('preselected_model')
@@ -87,7 +89,7 @@ class ManageAiQnaAdvisorSettings extends ManageAiCustomAdvisorSettings
                         },
                     ]))
                     ->searchable()
-                    ->helperText('This model will be the model used for QnA advisors.')
+                    ->helperText('This model will be the model used for Customer advisors.')
                     ->columnSpanFull()
                     ->required()
                     ->visible(fn (Get $get): bool => ! $get('allow_selection_of_model'))
@@ -109,7 +111,7 @@ class ManageAiQnaAdvisorSettings extends ManageAiCustomAdvisorSettings
                     ->columnSpanFull()
                     ->rows(10)
                     ->maxLength(65535)
-                    ->helperText('These restrictions will be applied to the QnA advisor. Use this field to specify any limitations or guidelines for the AI model.')
+                    ->helperText('These restrictions will be applied to the Customer advisor. Use this field to specify any limitations or guidelines for the AI model.')
                     ->required(),
             ]);
     }

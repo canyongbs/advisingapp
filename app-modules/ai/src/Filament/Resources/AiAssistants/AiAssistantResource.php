@@ -52,11 +52,13 @@ class AiAssistantResource extends Resource
 
     protected static string | UnitEnum | null $navigationGroup = 'Enterprise AI';
 
-    protected static ?string $navigationLabel = 'Custom Advisors';
+    protected static ?string $navigationLabel = 'Employee Advisors';
 
-    protected static ?string $modelLabel = 'Custom Advisor';
+    protected static ?string $modelLabel = 'Employee Advisor';
 
     protected static ?int $navigationSort = 30;
+
+    protected static ?string $slug = 'employee-advisors';
 
     public static function getPages(): array
     {

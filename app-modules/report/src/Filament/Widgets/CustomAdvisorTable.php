@@ -50,7 +50,7 @@ class CustomAdvisorTable extends BaseWidget
 
     public string $cacheTag;
 
-    protected static ?string $heading = 'Custom Advisors';
+    protected static ?string $heading = 'Employee Advisors';
 
     protected static ?string $pollingInterval = null;
 

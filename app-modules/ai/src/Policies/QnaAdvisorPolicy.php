@@ -54,7 +54,7 @@ class QnaAdvisorPolicy
         }
 
         if (! Gate::check(Feature::QnAAdvisor->getGateName())) {
-            return Response::deny('QnA Advisors are not enabled.');
+            return Response::deny('Customer Advisors are not enabled.');
         }
 
         return null;
@@ -64,7 +64,7 @@ class QnaAdvisorPolicy
     {
         return $authenticatable->canOrElse(
             abilities: 'qna_advisor.view-any',
-            denyResponse: 'You do not have permission to view QnA Advisors.'
+            denyResponse: 'You do not have permission to view Customer Advisors.'
         );
     }
 
@@ -72,7 +72,7 @@ class QnaAdvisorPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['qna_advisor.*.view'],
-            denyResponse: 'You do not have permission to view this QnA Advisor.'
+            denyResponse: 'You do not have permission to view this Customer Advisor.'
         );
     }
 
@@ -80,7 +80,7 @@ class QnaAdvisorPolicy
     {
         return $authenticatable->canOrElse(
             abilities: 'qna_advisor.create',
-            denyResponse: 'You do not have permission to create QnA Advisors.'
+            denyResponse: 'You do not have permission to create Customer Advisors.'
         );
     }
 
@@ -88,22 +88,22 @@ class QnaAdvisorPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['qna_advisor.*.update'],
-            denyResponse: 'You do not have permission to update this QnA Advisor.'
+            denyResponse: 'You do not have permission to update this Customer Advisor.'
         );
     }
 
     public function delete(Authenticatable $authenticatable): Response
     {
-        return Response::deny('QnA Advisor cannot be deleted.');
+        return Response::deny('Customer Advisor cannot be deleted.');
     }
 
     public function restore(Authenticatable $authenticatable): Response
     {
-        return Response::deny('QnA Advisor cannot be restored.');
+        return Response::deny('Customer Advisor cannot be restored.');
     }
 
     public function forceDelete(Authenticatable $authenticatable): Response
     {
-        return Response::deny('QnA Advisor cannot be permanently deleted.');
+        return Response::deny('Customer Advisor cannot be permanently deleted.');
     }
 }

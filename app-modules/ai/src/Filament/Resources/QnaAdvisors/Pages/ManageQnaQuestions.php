@@ -144,7 +144,7 @@ class ManageQnaQuestions extends ManageRelatedRecords
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->modalHeading('Create QnA Advisor Question'),
+                    ->modalHeading('Create Customer Advisor Question'),
             ])
             ->recordActions([
                 EditAction::make(),
@@ -155,7 +155,7 @@ class ManageQnaQuestions extends ManageRelatedRecords
                     DeleteBulkAction::make(),
                 ]),
             ])
-            ->emptyStateHeading('No QnA Advisor Questions Found')
+            ->emptyStateHeading('No Customer Advisor Questions Found')
             ->emptyStateDescription('');
     }
 }

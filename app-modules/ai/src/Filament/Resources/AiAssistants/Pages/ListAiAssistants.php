@@ -77,8 +77,8 @@ class ListAiAssistants extends ListRecords
             ->recordActions([
                 EditAction::make(),
             ])
-            ->emptyStateHeading('No AI Assistants')
-            ->emptyStateDescription('Add a new custom AI Assistant by clicking the "Create AI Assistant" button above.')
+            ->emptyStateHeading('No Employee Advisors')
+            ->emptyStateDescription('Add a new Employee Advisor by clicking the "New" button above.')
             ->modifyQueryUsing(fn (Builder $query) => $query->where('is_default', false));
     }
 

@@ -59,7 +59,7 @@ class ViewQnaAdvisor extends ViewRecord
 
     protected static ?string $navigationLabel = 'View';
 
-    protected static string | UnitEnum | null $navigationGroup = 'QnA Advisor';
+    protected static string | UnitEnum | null $navigationGroup = 'Customer Advisor';
 
     public function infolist(Schema $schema): Schema
     {
@@ -145,7 +145,7 @@ class ViewQnaAdvisor extends ViewRecord
                     $record->save();
 
                     Notification::make()
-                        ->title('QnA Advisor archived')
+                        ->title('Customer Advisor archived')
                         ->success()
                         ->send();
                 })
@@ -158,7 +158,7 @@ class ViewQnaAdvisor extends ViewRecord
                     $record->save();
 
                     Notification::make()
-                        ->title('QnA Advisor restored')
+                        ->title('Customer Advisor restored')
                         ->success()
                         ->send();
                 })

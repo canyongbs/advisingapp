@@ -72,7 +72,7 @@ it('displays only QnaAdvisorThreads added within the selected date range based o
 
     // for student tab
     $component = livewire(QnaAdvisorReportTable::class, [
-        'cacheTag' => 'qna-advisor-thread-report-cache',
+        'cacheTag' => 'customer-advisor-thread-report-cache',
         'pageFilters' => $filters,
         'activeTab' => QnaAdvisorReportTableTab::Student->value,
     ]);
@@ -85,7 +85,7 @@ it('displays only QnaAdvisorThreads added within the selected date range based o
 
     // for prospect tab
     $component = livewire(QnaAdvisorReportTable::class, [
-        'cacheTag' => 'qna-advisor-thread-report-cache',
+        'cacheTag' => 'customer-advisor-thread-report-cache',
         'pageFilters' => $filters,
         'activeTab' => QnaAdvisorReportTableTab::Prospect->value,
     ]);
@@ -98,7 +98,7 @@ it('displays only QnaAdvisorThreads added within the selected date range based o
 
     // for unauthorized tab
     $component = livewire(QnaAdvisorReportTable::class, [
-        'cacheTag' => 'qna-advisor-thread-report-cache',
+        'cacheTag' => 'customer-advisor-thread-report-cache',
         'pageFilters' => $filters,
         'activeTab' => QnaAdvisorReportTableTab::Unauthenticated->value,
     ]);
