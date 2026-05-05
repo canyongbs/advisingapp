@@ -1,0 +1,9 @@
+#!/command/with-contenv bash
+
+if [ -S /run/php-fpm.sock ]; then
+  echo "✅ PHP-FPM socket is available."
+  exit 0
+else
+  echo "Waiting for PHP-FPM socket..."
+  exit 1
+fi

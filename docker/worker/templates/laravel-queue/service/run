@@ -14,6 +14,4 @@ echo "Starting Laravel Queue Worker for queue VAR_QUEUE..."
 
 cd "$WEBUSER_HOME"
 
-USERNAME=$(id -nu "$PUID")
-
-s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" queue:work --sleep=$SLEEP_TIME --queue=VAR_QUEUE
+exec php "$WEBUSER_HOME/artisan" queue:work --sleep=$SLEEP_TIME --queue=VAR_QUEUE

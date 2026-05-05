@@ -7,13 +7,11 @@ fi
 
 cd "$WEBUSER_HOME" || exit 0
 
-USERNAME=$(id -nu "$PUID")
-
 if [ "${LANDLORD_MIGRATE:="true"}" == "true" ]; then
   echo "Processing landlord migrations..."
 
   {
-    s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" migrate --database=landlord --path=database/landlord --force --isolated \
+    php "$WEBUSER_HOME/artisan" migrate --database=landlord --path=database/landlord --force --isolated \
     && echo "Landlord migrations finished!"
   } || {
     echo "Landlord migrations failed!"
@@ -25,7 +23,7 @@ else
 fi
 
 if [ "${TENANT_MIGRATE:="true"}" == "true" ]; then
-  output=$(s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" tenants:artisan "migrate --database=tenant --force --isolated" 2>&1)
+  output=$(php "$WEBUSER_HOME/artisan" tenants:artisan "migrate --database=tenant --force --isolated" 2>&1)
   exit_code=$?
 
   echo "$output"

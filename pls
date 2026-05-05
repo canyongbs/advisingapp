@@ -105,7 +105,7 @@ main() {
         service=app
       fi
 
-      exec "${COMPOSE_CMD[@]}" exec -it -u webuser "$service" /bin/bash
+      exec "${COMPOSE_CMD[@]}" exec -it -u "${PLS_EXEC_USER:-www-data}" "$service" /bin/bash
       ;;
     rshell)
       local service=$1

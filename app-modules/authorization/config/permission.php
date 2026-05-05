@@ -147,7 +147,7 @@ return [
      * this will refresh permissions on every TickTerminated, TaskTerminated and RequestTerminated
      * NOTE: This should not be needed in most cases, but an Octane/Vapor combination benefited from it.
      */
-    'register_octane_reset_listener' => true,
+    'register_octane_reset_listener' => false,
 
     /*
      * When set to true the package implements teams using the 'team_foreign_key'. If you want
