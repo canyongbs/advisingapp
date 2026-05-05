@@ -155,9 +155,6 @@ class TriggerApplicationSubmissionStageWorkflows implements ShouldQueueAfterComm
 
     private function getStepScheduledAt(WorkflowStep $workflowStep): Carbon
     {
-        $delayFrom = now()->toMutable();
-        $delayFrom->addMinutes($workflowStep->delay_minutes);
-
-        return $delayFrom;
+        return now()->toMutable()->addMinutes($workflowStep->delay_minutes);
     }
 }

@@ -193,8 +193,6 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
 
         return [
             $action->action(function (array $data): void {
-                $workflow = null;
-
                 try {
                     DB::beginTransaction();
 

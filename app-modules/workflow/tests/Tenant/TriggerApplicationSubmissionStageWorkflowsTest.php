@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Events\ApplicationSubmissionStateEntered;
 use AdvisingApp\Application\Events\ApplicationSubmissionStateExited;
@@ -50,26 +49,17 @@ use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
 use Illuminate\Support\Facades\Event;
 
-use function Pest\Laravel\seed;
-
-beforeEach(function () {
-    seed(ApplicationSubmissionStateSeeder::class);
-});
-
-function stateByClassification(ApplicationSubmissionStateClassification $classification): ApplicationSubmissionState
-{
-    return ApplicationSubmissionState::query()
-        ->where('classification', $classification)
-        ->firstOrFail();
-}
-
 it('triggers Enter workflows when application submission is created', function () {
+    $receivedState = ApplicationSubmissionState::factory()
+        ->state(['classification' => ApplicationSubmissionStateClassification::Received])
+        ->create();
+
     $application = Application::factory()->create();
 
     $workflowTrigger = WorkflowTrigger::factory()
         ->for($application, 'related')
         ->for(User::factory(), 'createdBy')
-        ->for(stateByClassification(ApplicationSubmissionStateClassification::Received))
+        ->for($receivedState)
         ->state([
             'type' => WorkflowTriggerType::EventBased,
             'event' => WorkflowTriggerEvent::Enter,
@@ -95,12 +85,20 @@ it('triggers Enter workflows when application submission is created', function (
 });
 
 it('triggers Exit workflows when submission state changes', function () {
+    $receivedState = ApplicationSubmissionState::factory()
+        ->state(['classification' => ApplicationSubmissionStateClassification::Received])
+        ->create();
+
+    $reviewState = ApplicationSubmissionState::factory()
+        ->state(['classification' => ApplicationSubmissionStateClassification::Review])
+        ->create();
+
     $application = Application::factory()->create();
 
     $exitTrigger = WorkflowTrigger::factory()
         ->for($application, 'related')
         ->for(User::factory(), 'createdBy')
-        ->for(stateByClassification(ApplicationSubmissionStateClassification::Received))
+        ->for($receivedState)
         ->state([
             'type' => WorkflowTriggerType::EventBased,
             'event' => WorkflowTriggerEvent::Exit,
@@ -119,7 +117,7 @@ it('triggers Exit workflows when submission state changes', function () {
     // Enter on Received fired during creation; we only care about the Exit run on transition.
     WorkflowRun::query()->delete();
 
-    $submission->state()->associate(stateByClassification(ApplicationSubmissionStateClassification::Review));
+    $submission->state()->associate($reviewState);
     $submission->save();
 
     expect(WorkflowRun::count())->toBe(1);
@@ -127,13 +125,21 @@ it('triggers Exit workflows when submission state changes', function () {
 });
 
 it('triggers both Exit and Enter workflows on a single state transition', function () {
+    $receivedState = ApplicationSubmissionState::factory()
+        ->state(['classification' => ApplicationSubmissionStateClassification::Received])
+        ->create();
+
+    $reviewState = ApplicationSubmissionState::factory()
+        ->state(['classification' => ApplicationSubmissionStateClassification::Review])
+        ->create();
+
     $application = Application::factory()->create();
     $user = User::factory()->create();
 
     $exitReceivedTrigger = WorkflowTrigger::factory()
         ->for($application, 'related')
         ->for($user, 'createdBy')
-        ->for(stateByClassification(ApplicationSubmissionStateClassification::Received))
+        ->for($receivedState)
         ->state([
             'type' => WorkflowTriggerType::EventBased,
             'event' => WorkflowTriggerEvent::Exit,
@@ -144,7 +150,7 @@ it('triggers both Exit and Enter workflows on a single state transition', functi
     $enterReviewTrigger = WorkflowTrigger::factory()
         ->for($application, 'related')
         ->for($user, 'createdBy')
-        ->for(stateByClassification(ApplicationSubmissionStateClassification::Review))
+        ->for($reviewState)
         ->state([
             'type' => WorkflowTriggerType::EventBased,
             'event' => WorkflowTriggerEvent::Enter,
@@ -159,7 +165,7 @@ it('triggers both Exit and Enter workflows on a single state transition', functi
     // Discard the Enter-on-Received run that fired during creation.
     WorkflowRun::query()->delete();
 
-    $submission->state()->associate(stateByClassification(ApplicationSubmissionStateClassification::Review));
+    $submission->state()->associate($reviewState);
     $submission->save();
 
     $triggerIds = WorkflowRun::query()->pluck('workflow_trigger_id')->all();
@@ -169,12 +175,21 @@ it('triggers both Exit and Enter workflows on a single state transition', functi
 });
 
 it('does not trigger workflows whose stage does not match the transition', function () {
+    // Received must exist so the observer can pick it as the submission's default state.
+    ApplicationSubmissionState::factory()
+        ->state(['classification' => ApplicationSubmissionStateClassification::Received])
+        ->create();
+
+    $reviewState = ApplicationSubmissionState::factory()
+        ->state(['classification' => ApplicationSubmissionStateClassification::Review])
+        ->create();
+
     $application = Application::factory()->create();
 
     WorkflowTrigger::factory()
         ->for($application, 'related')
         ->for(User::factory(), 'createdBy')
-        ->for(stateByClassification(ApplicationSubmissionStateClassification::Review))
+        ->for($reviewState)
         ->state([
             'type' => WorkflowTriggerType::EventBased,
             'event' => WorkflowTriggerEvent::Enter,
@@ -190,12 +205,16 @@ it('does not trigger workflows whose stage does not match the transition', funct
 });
 
 it('does not trigger disabled workflows', function () {
+    $receivedState = ApplicationSubmissionState::factory()
+        ->state(['classification' => ApplicationSubmissionStateClassification::Received])
+        ->create();
+
     $application = Application::factory()->create();
 
     WorkflowTrigger::factory()
         ->for($application, 'related')
         ->for(User::factory(), 'createdBy')
-        ->for(stateByClassification(ApplicationSubmissionStateClassification::Received))
+        ->for($receivedState)
         ->state([
             'type' => WorkflowTriggerType::EventBased,
             'event' => WorkflowTriggerEvent::Enter,
