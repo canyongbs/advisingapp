@@ -43,15 +43,30 @@
     View {{ $timelineable->getDeliveryMethod()->getLabel() }}
 </h1>
 @if ($status)
-    @if ($tooltip ?? null)
+    {{--
+        @if ($tooltip ?? null)
         <span x-data x-tooltip="{{ json_encode($tooltip) }}" class="mt-2 flex w-auto text-gray-400 dark:text-gray-500">
-            <x-filament::badge>
-                {{ $status }}
-            </x-filament::badge>
+        <x-filament::badge>
+        {{ $status }}
+        </x-filament::badge>
         </span>
-    @else
-        <x-filament::badge class="mt-2 flex w-auto text-gray-400 dark:text-gray-500">
+        @else
+        <span class="mt-2 flex w-auto text-gray-400 dark:text-gray-500">
+        <x-filament::badge>
+        {{ $status }}
+        </x-filament::badge>
+        </span>
+        @endif
+    --}}
+    <span
+        @if (! empty($tooltip))
+            x-data
+            x-tooltip="@json($tooltip)"
+        @endif
+        class="mt-2 flex w-auto text-gray-400 dark:text-gray-500"
+    >
+        <x-filament::badge>
             {{ $status }}
         </x-filament::badge>
-    @endif
+    </span>
 @endif

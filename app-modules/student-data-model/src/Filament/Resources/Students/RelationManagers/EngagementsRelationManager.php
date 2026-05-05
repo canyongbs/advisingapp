@@ -275,6 +275,7 @@ class EngagementsRelationManager extends RelationManager
             ])
             ->recordActions([
                 ViewAction::make()
+                    ->slideOver()
                     ->modalHeading(function (Timeline $record): Htmlable {
                         $status = match ($record->timelineable::class) {
                             EngagementResponse::class => $record->timelineable->status->getLabel(),
@@ -283,7 +284,7 @@ class EngagementsRelationManager extends RelationManager
 
                         $tooltip = null;
 
-                        if ($record->timelineable instanceof EngagementResponse && $record->timelineable->status === EngagementResponseStatus::Actioned) {
+                        if (EngagementResponseMarkAsActionedFeature::active() && $record->timelineable instanceof EngagementResponse && $record->timelineable->status === EngagementResponseStatus::Actioned) {
                             $tooltip = $record->timelineable->latestActionedNote?->getActionedNoteTooltip();
                         }
 

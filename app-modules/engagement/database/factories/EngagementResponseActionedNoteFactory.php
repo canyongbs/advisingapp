@@ -37,12 +37,13 @@
 namespace AdvisingApp\Engagement\Database\Factories;
 
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\Engagement\Models\EngagementResponseActionedNote;
 use AdvisingApp\Engagement\Models\Model;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Model>
+ * @extends Factory<EngagementResponseActionedNote>
  */
 class EngagementResponseActionedNoteFactory extends Factory
 {

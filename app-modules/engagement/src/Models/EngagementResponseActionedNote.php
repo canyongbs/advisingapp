@@ -37,13 +37,16 @@
 namespace AdvisingApp\Engagement\Models;
 
 use AdvisingApp\Engagement\Database\Factories\EngagementResponseActionedNoteFactory;
+use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Workbench\App\Models\User;
 
+/**
+ * @mixin IdeHelperEngagementResponseActionedNote
+ */
 class EngagementResponseActionedNote extends Model
 {
     /** @use HasFactory<EngagementResponseActionedNoteFactory> */
