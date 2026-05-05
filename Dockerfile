@@ -297,8 +297,8 @@ RUN apt-get update \
     && chown -R www-data:www-data /var/www/html/ \
     \
     # ensure nginx/fpm directories are writable by www-data (non-root) \
-    && mkdir -p /var/cache/nginx /var/log/nginx /etc/ssl/web \
-    && chown -R www-data:www-data /var/cache/nginx /var/log/nginx /run /etc/ssl/web \
+    && mkdir -p /var/cache/nginx /var/log/nginx /etc/ssl/web /etc/nginx/sites-enabled \
+    && chown -R www-data:www-data /var/cache/nginx /var/log/nginx /run /etc/ssl/web /etc/nginx/sites-enabled \
     \
     # cleanup \
     && apt-get clean \
