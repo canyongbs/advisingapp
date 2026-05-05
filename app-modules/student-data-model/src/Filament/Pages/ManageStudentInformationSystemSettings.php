@@ -37,9 +37,12 @@
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
 use AdvisingApp\StudentDataModel\Enums\SisSystem;
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use App\Filament\Clusters\ProductIntegrations;
 use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
@@ -70,19 +73,79 @@ class ManageStudentInformationSystemSettings extends SettingsPage
         return $schema
             ->columns(1)
             ->components([
-                Toggle::make('is_enabled')
-                    ->live(),
                 Section::make()
                     ->schema([
-                        Select::make('sis_system')
-                            ->label('SIS System')
-                            ->options(SisSystem::class)
-                            ->enum(SisSystem::class)
-                            ->required()
-                            ->dehydrateStateUsing(fn (string|SisSystem $state) => SisSystem::parse($state)),
+                        Toggle::make('is_enabled')
+                            ->live(),
+                        Section::make()
+                            ->schema([
+                                Select::make('sis_system')
+                                    ->label('SIS System')
+                                    ->options(SisSystem::class)
+                                    ->enum(SisSystem::class)
+                                    ->required()
+                                    ->dehydrateStateUsing(fn (string|SisSystem $state) => SisSystem::parse($state)),
+                            ])
+                            ->visible(fn (Get $get) => $get('is_enabled')),
                     ])
-                    ->visible(fn (Get $get) => $get('is_enabled')),
-            ])
-            ->disabled();
+                    ->disabled(),
+                Section::make('Student Record Management')
+                    ->description('If toggled, this enables direct editing of student records without relying on SIS synchronization.')
+                    ->schema([
+                        Toggle::make('student_record_management_enabled')
+                            ->label('Enable')
+                            ->default(false),
+                    ])
+                    ->disabled(! auth()->user()->can('product_admin.*.update')),
+            ]);
+    }
+
+    public function save(): void
+    {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return;
+        }
+
+        parent::save();
+    }
+
+    /**
+     * @return array<Action | ActionGroup>
+     */
+    public function getFormActions(): array
+    {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return [];
+        }
+
+        return parent::getFormActions();
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     *
+     * @return array<string, mixed>
+     */
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $data['student_record_management_enabled'] = app(ManageStudentConfigurationSettings::class)->is_enabled;
+
+        return $data;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     *
+     * @return array<string, mixed>
+     */
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $studentConfig = app(ManageStudentConfigurationSettings::class);
+        $studentConfig->is_enabled = $data['student_record_management_enabled'] ?? false;
+        $studentConfig->save();
+
+        unset($data['student_record_management_enabled']);
+
+        return $data;
     }
 }

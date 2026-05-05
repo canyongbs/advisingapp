@@ -44,7 +44,29 @@ Temporary migrations are one-time migrations (or portions of migrations) that wi
 - One-time data clean up or transformation tasks
 - Back filling data that only needs to happen once
 
-**If the entire migration file should be deleted after it has run**, prefix the migration name with `tmp_`:
+**If the entire migration file should be deleted after it has run**, prefix the migration name with `tmp_`.
+
+The preferred way to create a temporary migration is using the dedicated command, which automatically adds the `tmp_` prefix and prompts for a [cleanup task](common/manage-cleanup-tasks.md):
+
+```bash
+php artisan make:tmp-migration backfill_user_preferences
+```
+
+This creates a migration file named `YYYY_MM_DD_HHMMSS_tmp_backfill_user_preferences.php` and prompts you to associate it with a cleanup task for tracking its eventual deletion.
+
+To skip the cleanup task prompt:
+
+```bash
+php artisan make:tmp-migration backfill_user_preferences --no-cleanup
+```
+
+For modular projects, use the `--module` flag:
+
+```bash
+php artisan make:tmp-migration backfill_user_preferences --module=student-data-model
+```
+
+Alternatively, you can use Laravel's standard migration command directly (without cleanup task integration):
 
 ```bash
 php artisan make:migration tmp_backfill_user_preferences
@@ -67,10 +89,10 @@ Create a migration using the standard Laravel Artisan command:
 php artisan make:migration add_status_column_to_orders_table
 ```
 
-For temporary migrations that will be deleted after running:
+For temporary migrations that will be deleted after running, use the dedicated command:
 
 ```bash
-php artisan make:migration tmp_seed_default_settings_for_existing_tenants
+php artisan make:tmp-migration seed_default_settings_for_existing_tenants
 ```
 
 ---
@@ -97,3 +119,4 @@ See also:
 
 - [Manage Feature Flags](./manage-feature-flags.md) — for activating Feature Flags within migrations
 - [Creating Permissions](./creating-permissions.md) — for permission-related migrations
+- [Manage Cleanup Tasks](common/manage-cleanup-tasks.md) — for tracking temporary migration cleanup

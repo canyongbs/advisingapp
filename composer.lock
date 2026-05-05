@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "012282ed4a6c73abf7228b475654efc3",
+    "content-hash": "abc811d3131bc2568802522b2e8474e0",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -2144,21 +2144,24 @@
         },
         {
             "name": "canyongbs/common",
-            "version": "2.12.1",
+            "version": "2.13.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/common.git",
-                "reference": "61445c39aa590cf5c2c64a570d9e8c5b141a9d59"
+                "reference": "4c2e7cba76003d4c6d0dd79e25b99b937211d0a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/common/zipball/61445c39aa590cf5c2c64a570d9e8c5b141a9d59",
-                "reference": "61445c39aa590cf5c2c64a570d9e8c5b141a9d59",
+                "url": "https://api.github.com/repos/canyongbs/common/zipball/4c2e7cba76003d4c6d0dd79e25b99b937211d0a0",
+                "reference": "4c2e7cba76003d4c6d0dd79e25b99b937211d0a0",
                 "shasum": ""
             },
             "require": {
                 "filament/filament": "^4.9.1",
+                "internachi/modular": "^2.0",
                 "laravel/framework": "^11.0|^12.0",
+                "laravel/pennant": "^1.0",
+                "laravel/prompts": "^0.3",
                 "php": "8.4.*",
                 "tapp/filament-timezone-field": "^3.0"
             },
@@ -2199,9 +2202,9 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/common/issues",
-                "source": "https://github.com/canyongbs/common/tree/2.12.1"
+                "source": "https://github.com/canyongbs/common/tree/2.13.0"
             },
-            "time": "2026-04-13T14:27:06+00:00"
+            "time": "2026-05-04T10:42:02+00:00"
         },
         {
             "name": "canyongbs/filament-tiptap-editor",

@@ -54,6 +54,7 @@ use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
 use Filament\Actions\ViewAction;
 use Filament\Navigation\NavigationItem;
+use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -67,6 +68,8 @@ use Illuminate\Support\Str;
 class SentItems extends Page implements HasTable
 {
     use InteractsWithTable;
+
+    protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     protected static ?string $navigationLabel = 'Sent Items';
 

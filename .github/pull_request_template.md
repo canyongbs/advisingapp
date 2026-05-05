@@ -15,13 +15,13 @@
 > If yes, please replace this block with a description of the deployment steps required and apply the `Deployment Steps` label to the PR.
 > If no, please replace this block with "No".
 
-### Are any Feature Flags and/or Data Migrations that can eventually be removed Added?
+### Cleanup Tasks
 
-> Specifically Feature Flags to gate and control logic/flow changes to protect against database schema changes. And Data Migrations to provide some type of data fix that can be removed after they are run
+> If this PR adds Feature Flags, temporary data migrations, or other work that requires post-deployment cleanup, ensure a [cleanup task file](docs/how-tos/common/manage-cleanup-tasks.md) has been created or updated.
 >
-> If yes to Feature Flags, please list the name of the added Feature Flag/s and apply the `Feature Flag Added` label to the PR.
-> If yes to Data Migrations, please list the full relative file path of the added Data Migration/s.
-> If no, please replace this block with "No".
+> The `make:ff` and `make:tmp-migration` commands will prompt you to create one automatically. You can also create one directly with `make:cleanup`.
+>
+> If not applicable, replace this block with "N/A".
 
 ---
 
