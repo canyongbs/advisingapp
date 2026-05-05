@@ -63,7 +63,7 @@ class CustomAdvisorStats extends StatsOverviewReportWidget
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
-                'custom-advisor-advisors-count',
+                'employee-advisor-advisors-count',
                 now()->addHours(24),
                 fn (): int => AiAssistant::query()
                     ->where('is_default', false)
@@ -79,7 +79,7 @@ class CustomAdvisorStats extends StatsOverviewReportWidget
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
-                'custom-advisor-exchanges-count',
+                'employee-advisor-exchanges-count',
                 now()->addHours(24),
                 fn (): int => AiAssistantUse::query()
                     ->whereRelation('assistant', 'is_default', false)
@@ -96,7 +96,7 @@ class CustomAdvisorStats extends StatsOverviewReportWidget
                 ->distinct('user_id')
                 ->count('user_id')
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
-                'custom-advisor-unique-users-count',
+                'employee-advisor-unique-users-count',
                 now()->addHours(24),
                 fn (): int => AiAssistantUse::query()
                     ->whereRelation('assistant', 'is_default', false)
