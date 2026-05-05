@@ -97,7 +97,7 @@ class Inbox extends Page implements HasTable
     {
         return $table
             ->query(
-                EngagementResponse::query()
+                EngagementResponse::query()->with('latestActionedNote')
             )
             ->columns([
                 TextColumn::make('direction')

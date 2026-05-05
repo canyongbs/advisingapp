@@ -67,7 +67,7 @@ class BulkChangeStatusAction
                     ->helperText('Please describe the steps you have taken.')
                     ->rows(4)
                     ->visible(fn (Get $get): bool => EngagementResponseMarkAsActionedFeature::active() && $get('status') === EngagementResponseStatus::Actioned)
-                    ->required(fn (Get $get): bool => $get('status') === EngagementResponseStatus::Actioned),
+                    ->required(fn (Get $get): bool => EngagementResponseMarkAsActionedFeature::active() && $get('status') === EngagementResponseStatus::Actioned),
             ])
             ->action(function (Collection $records, array $data): void {
                 $isActioned = $data['status'] === EngagementResponseStatus::Actioned;

@@ -198,10 +198,13 @@ class EngagementsRelationManager extends RelationManager
                         ...($canAccessEngagementResponses ? [EngagementResponse::class] : []),
                     ])
                     ->with([
-                        'timelineable' => function ($morphQuery) use ($canAccessEngagements) {
+                        'timelineable' => function ($morphQuery) use ($canAccessEngagements, $canAccessEngagementResponses) {
                             $morphQuery->when(
                                 $canAccessEngagements && $morphQuery->getModel() instanceof Engagement,
                                 fn (Builder $query) => $query->with(['latestEmailMessage.events', 'latestSmsMessage.events'])
+                            )->when(
+                                $canAccessEngagementResponses && $morphQuery->getModel() instanceof EngagementResponse,
+                                fn (Builder $query) => $query->with('latestActionedNote')
                             );
                         },
                     ])
