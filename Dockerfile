@@ -257,7 +257,8 @@ COPY --chmod=755 docker/etc/php/8.4/fpm/php.ini /etc/php/8.4/fpm/php.ini
 
 # Ensure www-data owns necessary directories
 RUN mkdir -p /var/www/html /composer \
-    && chown -R www-data:www-data /var/www/html /run /composer
+    && chown -R www-data:www-data /var/www/html /run /composer \
+    && git config --system --add safe.directory /var/www/html
 
 WORKDIR /var/www/html
 
