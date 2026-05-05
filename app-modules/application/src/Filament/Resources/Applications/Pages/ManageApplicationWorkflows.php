@@ -37,17 +37,24 @@
 namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use AdvisingApp\Workflow\Enums\WorkflowTriggerEvent;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\WorkflowResource;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
+use App\Features\AdmissionsStageWorkflowTriggersFeature;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -62,12 +69,72 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
         return 'Workflows';
     }
 
+    public function getDefaultActiveTab(): string | int | null
+    {
+        if (! AdmissionsStageWorkflowTriggersFeature::active()) {
+            return null;
+        }
+
+        // @phpstan-ignore method.notFound
+        $firstState = ApplicationSubmissionState::query()
+            ->withoutArchivedAndUnused()
+            ->oldest('id')
+            ->first();
+
+        return $firstState
+            ? $firstState->id
+            : 'all';
+    }
+
+    public function getTabs(): array
+    {
+        if (! AdmissionsStageWorkflowTriggersFeature::active()) {
+            return [];
+        }
+
+        $states = ApplicationSubmissionState::query()
+            ->withCount('workflowTriggers')
+            ->oldest('id')
+            ->get();
+
+        $tabs = [];
+
+        foreach ($states as $state) {
+            if (filled($state->archived_at) && $state->workflow_triggers_count === 0) {
+                continue;
+            }
+
+            $label = $state->name;
+
+            if (filled($state->archived_at)) {
+                $label .= ' (Archived)';
+            }
+
+            $tabs[$state->id] = Tab::make($label)
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas(
+                    'workflowTrigger',
+                    fn (Builder $query) => $query->where('application_submission_state_id', $state->id),
+                ));
+        }
+
+        $tabs['all'] = Tab::make('All');
+
+        return $tabs;
+    }
+
     public function table(Table $table): Table
     {
         return $table
             ->recordTitleAttribute('id')
             ->columns([
                 TextColumn::make('name'),
+                TextColumn::make('workflowTrigger.applicationSubmissionState.name')
+                    ->label('Stage')
+                    ->visible(fn (): bool => AdmissionsStageWorkflowTriggersFeature::active()),
+                TextColumn::make('workflowTrigger.event')
+                    ->label('Trigger')
+                    ->badge()
+                    ->visible(fn (): bool => AdmissionsStageWorkflowTriggersFeature::active()),
                 IconColumn::make('is_enabled')
                     ->label('Enabled')
                     ->boolean(),
@@ -88,38 +155,97 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
      */
     public function getHeaderActions(): array
     {
+        $action = Action::make('create')
+            ->label('Create New Workflow');
+
+        // TODO: Cleanup Task - Once AdmissionsStageWorkflowTriggersFeature is removed:
+        //   - Delete the surrounding `if (...::active()) { ... }` and KEEP what's inside it
+        //     (the slide-over modal with the Stage + Trigger fields is the new UX).
+        //   - Inside the action callback below, drop the second `::active()` check and the
+        //     ternaries — just pass $data['application_submission_state_id'] and $data['event']
+        //     directly to the WorkflowTrigger.
+        if (AdmissionsStageWorkflowTriggersFeature::active()) {
+            $action = $action
+                ->slideOver()
+                ->modalHeading('Create New Workflow')
+                ->schema([
+                    Select::make('application_submission_state_id')
+                        ->label('Stage')
+                        ->options(
+                            // @phpstan-ignore method.notFound
+                            fn (): array => ApplicationSubmissionState::query()
+                                ->withoutArchived()
+                                ->oldest('id')
+                                ->pluck('name', 'id')
+                                ->all(),
+                        )
+                        ->default(fn (): ?string => $this->resolveDefaultStateId())
+                        ->required(),
+                    Radio::make('event')
+                        ->label('Trigger')
+                        ->options(WorkflowTriggerEvent::class)
+                        ->default(WorkflowTriggerEvent::Enter->value)
+                        ->required()
+                        ->inline()
+                        ->inlineLabel(false),
+                ]);
+        }
+
         return [
-            Action::make('create')
-                ->label('Create New Workflow')
-                ->action(function () {
-                    try {
-                        DB::beginTransaction();
+            $action->action(function (array $data): void {
+                $workflow = null;
 
-                        $workflowTrigger = new WorkflowTrigger(['type' => WorkflowTriggerType::EventBased]);
+                try {
+                    DB::beginTransaction();
 
-                        $workflowTrigger->related()->associate($this->getOwnerRecord());
-                        $workflowTrigger->createdBy()->associate(auth()->user());
+                    $workflowTrigger = new WorkflowTrigger([
+                        'type' => WorkflowTriggerType::EventBased,
+                        'application_submission_state_id' => AdmissionsStageWorkflowTriggersFeature::active()
+                            ? $data['application_submission_state_id']
+                            : null,
+                        'event' => AdmissionsStageWorkflowTriggersFeature::active()
+                            ? $data['event']
+                            : null,
+                    ]);
 
-                        $workflowTrigger->save();
+                    $workflowTrigger->related()->associate($this->getOwnerRecord());
+                    $workflowTrigger->createdBy()->associate(auth()->user());
 
-                        $workflow = new Workflow([
-                            'name' => 'Application Workflow',
-                            'is_enabled' => false,
-                        ]);
+                    $workflowTrigger->save();
 
-                        $workflow->workflowTrigger()->associate($workflowTrigger);
+                    $workflow = new Workflow([
+                        'name' => 'Application Workflow',
+                        'is_enabled' => false,
+                    ]);
 
-                        $workflow->save();
+                    $workflow->workflowTrigger()->associate($workflowTrigger);
 
-                        DB::commit();
-                    } catch (Throwable $throw) {
-                        DB::rollBack();
+                    $workflow->save();
 
-                        throw $throw;
-                    }
+                    DB::commit();
+                } catch (Throwable $throw) {
+                    DB::rollBack();
 
-                    redirect(WorkflowResource::getUrl('edit', [$workflow]));
-                }),
+                    throw $throw;
+                }
+
+                redirect(WorkflowResource::getUrl('edit', [$workflow]));
+            }),
         ];
+    }
+
+    private function resolveDefaultStateId(): ?string
+    {
+        $activeTab = $this->activeTab;
+
+        if (is_string($activeTab) && $activeTab !== 'all') {
+            return $activeTab;
+        }
+
+        // @phpstan-ignore method.notFound
+        return ApplicationSubmissionState::query()
+            ->withoutArchived()
+            ->oldest('id')
+            ->value('id');
     }
 }

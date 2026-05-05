@@ -34,54 +34,17 @@
 </COPYRIGHT>
 */
 
+use App\Features\AdmissionsStageWorkflowTriggersFeature;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            $hasTriggersToBackfill = DB::table('workflow_triggers')
-                ->where('related_type', 'application')
-                ->whereNull('application_submission_state_id')
-                ->exists();
-
-            if (! $hasTriggersToBackfill) {
-                return;
-            }
-
-            $defaultStateId = DB::table('application_submission_states')
-                ->whereNull('archived_at')
-                ->whereNull('deleted_at')
-                ->where('classification', 'received')
-                ->orderBy('id')
-                ->value('id');
-
-            if (! $defaultStateId) {
-                throw new RuntimeException(
-                    'Cannot backfill application workflow triggers: no ApplicationSubmissionState with the "Received" classification exists.'
-                );
-            }
-
-            DB::table('workflow_triggers')
-                ->where('related_type', 'application')
-                ->whereNull('application_submission_state_id')
-                ->update([
-                    'application_submission_state_id' => $defaultStateId,
-                    'event' => 'enter',
-                ]);
-        });
+        AdmissionsStageWorkflowTriggersFeature::activate();
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            DB::table('workflow_triggers')
-                ->where('related_type', 'application')
-                ->update([
-                    'application_submission_state_id' => null,
-                    'event' => null,
-                ]);
-        });
+        AdmissionsStageWorkflowTriggersFeature::deactivate();
     }
 };

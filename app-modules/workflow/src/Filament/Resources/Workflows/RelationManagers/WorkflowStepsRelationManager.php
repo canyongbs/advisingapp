@@ -107,6 +107,7 @@ class WorkflowStepsRelationManager extends RelationManager
             ->headerActions([
                 Action::make('create')
                     ->label('New Step')
+                    ->slideOver()
                     ->modalHeading('Create Workflow Steps')
                     ->schema([
                         Builder::make('data')
@@ -163,6 +164,7 @@ class WorkflowStepsRelationManager extends RelationManager
             ])
             ->recordActions([
                 EditAction::make()
+                    ->slideOver()
                     ->modalHeading(function (WorkflowStep $workflowStep) {
                         assert($workflowStep->currentDetails instanceof WorkflowDetails);
 

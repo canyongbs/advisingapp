@@ -45,6 +45,7 @@ use AdvisingApp\Workflow\Models\Workflow;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
 
 class EditWorkflow extends EditRecord
 {
@@ -60,19 +61,29 @@ class EditWorkflow extends EditRecord
 
         assert($record instanceof Workflow);
 
-        return match ($record->workflowTrigger->related_type) {
-            'form' => [
-                FormResource::getUrl() => FormResource::getBreadcrumb(),
-                FormResource::getUrl('edit', [$record->workflowTrigger->related_id]) => FormResource::getRecordTitle(Form::find($record->workflowTrigger->related_id)),
-                $resource::getUrl() => $resource::getBreadcrumb(),
-            ],
-            'application' => [
-                ApplicationResource::getUrl() => ApplicationResource::getBreadcrumb(),
-                ApplicationResource::getUrl('edit', [$record->workflowTrigger->related_id]) => ApplicationResource::getRecordTitle(Application::find($record->workflowTrigger->related_id)),
-                $resource::getUrl() => $resource::getBreadcrumb(),
-            ],
-            default => [$resource::getUrl() => $resource::getBreadcrumb()]
-        };
+        if ($record->workflowTrigger->related_type && $record->workflowTrigger->related_id) {
+            $related = $record->workflowTrigger->related;
+
+            $breadcrumbs = match ($record->workflowTrigger->related_type) {
+                app(Form::class)->getMorphClass() => [
+                    FormResource::getUrl() => FormResource::getBreadcrumb(),
+                    FormResource::getUrl('edit', [$record->workflowTrigger->related_id]) => FormResource::getRecordTitle($related),
+                    FormResource::getUrl('manage-form-workflows', [$record->workflowTrigger->related_id]) => 'Manage Form Workflows',
+                ],
+                app(Application::class)->getMorphClass() => [
+                    ApplicationResource::getUrl() => ApplicationResource::getBreadcrumb(),
+                    ApplicationResource::getUrl('edit', [$record->workflowTrigger->related_id]) => ApplicationResource::getRecordTitle($related),
+                    ApplicationResource::getUrl('manage-application-workflows', [$record->workflowTrigger->related_id]) => 'Manage Application Workflows',
+                ],
+                default => [$resource::getUrl() => $resource::getBreadcrumb()],
+            };
+
+            $breadcrumbs[] = 'Edit';
+
+            return $breadcrumbs;
+        }
+
+        return parent::getBreadcrumbs();
     }
 
     protected function getHeaderActions(): array
@@ -81,10 +92,41 @@ class EditWorkflow extends EditRecord
             DeleteAction::make()
                 ->successRedirectUrl(function (Workflow $record) {
                     return match ($record->workflowTrigger->related_type) {
-                        Form::class => FormResource::getUrl('edit', [$record->workflowTrigger->related_id]),
+                        app(Form::class)->getMorphClass() => FormResource::getUrl('manage-form-workflows', [$record->workflowTrigger->related_id]),
+                        app(Application::class)->getMorphClass() => ApplicationResource::getUrl('manage-application-workflows', [$record->workflowTrigger->related_id]),
                         default => route('filament.admin.pages.dashboard'),
                     };
                 }),
         ];
+    }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $record = $this->getRecord();
+
+        assert($record instanceof Workflow);
+
+        $data['workflowTrigger'] = [
+            'application_submission_state_id' => $record->workflowTrigger->application_submission_state_id,
+            'event' => $record->workflowTrigger->event?->value,
+        ];
+
+        return $data;
+    }
+
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        assert($record instanceof Workflow);
+
+        $triggerData = $data['workflowTrigger'] ?? [];
+        unset($data['workflowTrigger']);
+
+        $record->update($data);
+
+        if (! empty($triggerData)) {
+            $record->workflowTrigger->update($triggerData);
+        }
+
+        return $record;
     }
 }

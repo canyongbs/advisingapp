@@ -56,31 +56,34 @@ beforeEach(function () {
     seed(ApplicationSubmissionStateSeeder::class);
 });
 
-it('triggers Enter workflows when application submission is created', function () {
-    $receivedState = ApplicationSubmissionState::query()
-        ->where('classification', ApplicationSubmissionStateClassification::Received)
+function stateByClassification(ApplicationSubmissionStateClassification $classification): ApplicationSubmissionState
+{
+    return ApplicationSubmissionState::query()
+        ->where('classification', $classification)
         ->firstOrFail();
+}
 
+it('triggers Enter workflows when application submission is created', function () {
     $application = Application::factory()->create();
-    $user = User::factory()->create();
 
-    $workflowTrigger = WorkflowTrigger::factory()->create([
-        'type' => WorkflowTriggerType::EventBased,
-        'related_type' => $application->getMorphClass(),
-        'related_id' => $application->id,
-        'created_by_id' => $user->id,
-        'application_submission_state_id' => $receivedState->id,
-        'event' => WorkflowTriggerEvent::Enter,
-    ]);
+    $workflowTrigger = WorkflowTrigger::factory()
+        ->for($application, 'related')
+        ->for(User::factory(), 'createdBy')
+        ->for(stateByClassification(ApplicationSubmissionStateClassification::Received))
+        ->state([
+            'type' => WorkflowTriggerType::EventBased,
+            'event' => WorkflowTriggerEvent::Enter,
+        ])
+        ->create();
 
-    $workflow = Workflow::factory()->create([
-        'workflow_trigger_id' => $workflowTrigger->id,
-        'is_enabled' => true,
-    ]);
+    $workflow = Workflow::factory()
+        ->for($workflowTrigger)
+        ->state(['is_enabled' => true])
+        ->create();
 
-    $submission = ApplicationSubmission::factory()->create([
-        'application_id' => $application->id,
-    ]);
+    $submission = ApplicationSubmission::factory()
+        ->for($application, 'submissible')
+        ->create();
 
     expect(WorkflowRun::count())->toBe(1);
 
@@ -92,99 +95,117 @@ it('triggers Enter workflows when application submission is created', function (
 });
 
 it('triggers Exit workflows when submission state changes', function () {
-    $receivedState = ApplicationSubmissionState::query()
-        ->where('classification', ApplicationSubmissionStateClassification::Received)
-        ->firstOrFail();
-
-    $reviewState = ApplicationSubmissionState::query()
-        ->where('classification', ApplicationSubmissionStateClassification::Review)
-        ->firstOrFail();
-
     $application = Application::factory()->create();
-    $user = User::factory()->create();
 
-    $exitTrigger = WorkflowTrigger::factory()->create([
-        'type' => WorkflowTriggerType::EventBased,
-        'related_type' => $application->getMorphClass(),
-        'related_id' => $application->id,
-        'created_by_id' => $user->id,
-        'application_submission_state_id' => $receivedState->id,
-        'event' => WorkflowTriggerEvent::Exit,
-    ]);
+    $exitTrigger = WorkflowTrigger::factory()
+        ->for($application, 'related')
+        ->for(User::factory(), 'createdBy')
+        ->for(stateByClassification(ApplicationSubmissionStateClassification::Received))
+        ->state([
+            'type' => WorkflowTriggerType::EventBased,
+            'event' => WorkflowTriggerEvent::Exit,
+        ])
+        ->create();
 
-    Workflow::factory()->create([
-        'workflow_trigger_id' => $exitTrigger->id,
-        'is_enabled' => true,
-    ]);
+    Workflow::factory()
+        ->for($exitTrigger)
+        ->state(['is_enabled' => true])
+        ->create();
 
-    $submission = ApplicationSubmission::factory()->create([
-        'application_id' => $application->id,
-    ]);
+    $submission = ApplicationSubmission::factory()
+        ->for($application, 'submissible')
+        ->create();
 
-    // Enter on Received fired during creation; Exit fires on transition.
+    // Enter on Received fired during creation; we only care about the Exit run on transition.
     WorkflowRun::query()->delete();
 
-    $submission->state()->associate($reviewState);
+    $submission->state()->associate(stateByClassification(ApplicationSubmissionStateClassification::Review));
     $submission->save();
 
     expect(WorkflowRun::count())->toBe(1);
     expect(WorkflowRun::first()->workflow_trigger_id)->toBe($exitTrigger->id);
 });
 
-it('does not trigger workflows whose stage does not match the transition', function () {
-    $reviewState = ApplicationSubmissionState::query()
-        ->where('classification', ApplicationSubmissionStateClassification::Review)
-        ->firstOrFail();
-
+it('triggers both Exit and Enter workflows on a single state transition', function () {
     $application = Application::factory()->create();
     $user = User::factory()->create();
 
-    $workflowTrigger = WorkflowTrigger::factory()->create([
-        'type' => WorkflowTriggerType::EventBased,
-        'related_type' => $application->getMorphClass(),
-        'related_id' => $application->id,
-        'created_by_id' => $user->id,
-        'application_submission_state_id' => $reviewState->id,
-        'event' => WorkflowTriggerEvent::Enter,
-    ]);
+    $exitReceivedTrigger = WorkflowTrigger::factory()
+        ->for($application, 'related')
+        ->for($user, 'createdBy')
+        ->for(stateByClassification(ApplicationSubmissionStateClassification::Received))
+        ->state([
+            'type' => WorkflowTriggerType::EventBased,
+            'event' => WorkflowTriggerEvent::Exit,
+        ])
+        ->has(Workflow::factory()->state(['is_enabled' => true]))
+        ->create();
 
-    Workflow::factory()->create([
-        'workflow_trigger_id' => $workflowTrigger->id,
-        'is_enabled' => true,
-    ]);
+    $enterReviewTrigger = WorkflowTrigger::factory()
+        ->for($application, 'related')
+        ->for($user, 'createdBy')
+        ->for(stateByClassification(ApplicationSubmissionStateClassification::Review))
+        ->state([
+            'type' => WorkflowTriggerType::EventBased,
+            'event' => WorkflowTriggerEvent::Enter,
+        ])
+        ->has(Workflow::factory()->state(['is_enabled' => true]))
+        ->create();
 
-    ApplicationSubmission::factory()->create([
-        'application_id' => $application->id,
-    ]);
+    $submission = ApplicationSubmission::factory()
+        ->for($application, 'submissible')
+        ->create();
+
+    // Discard the Enter-on-Received run that fired during creation.
+    WorkflowRun::query()->delete();
+
+    $submission->state()->associate(stateByClassification(ApplicationSubmissionStateClassification::Review));
+    $submission->save();
+
+    $triggerIds = WorkflowRun::query()->pluck('workflow_trigger_id')->all();
+
+    expect($triggerIds)->toHaveCount(2);
+    expect($triggerIds)->toContain($exitReceivedTrigger->id, $enterReviewTrigger->id);
+});
+
+it('does not trigger workflows whose stage does not match the transition', function () {
+    $application = Application::factory()->create();
+
+    WorkflowTrigger::factory()
+        ->for($application, 'related')
+        ->for(User::factory(), 'createdBy')
+        ->for(stateByClassification(ApplicationSubmissionStateClassification::Review))
+        ->state([
+            'type' => WorkflowTriggerType::EventBased,
+            'event' => WorkflowTriggerEvent::Enter,
+        ])
+        ->has(Workflow::factory()->state(['is_enabled' => true]))
+        ->create();
+
+    ApplicationSubmission::factory()
+        ->for($application, 'submissible')
+        ->create();
 
     expect(WorkflowRun::count())->toBe(0);
 });
 
 it('does not trigger disabled workflows', function () {
-    $receivedState = ApplicationSubmissionState::query()
-        ->where('classification', ApplicationSubmissionStateClassification::Received)
-        ->firstOrFail();
-
     $application = Application::factory()->create();
-    $user = User::factory()->create();
 
-    $workflowTrigger = WorkflowTrigger::factory()->create([
-        'type' => WorkflowTriggerType::EventBased,
-        'related_type' => $application->getMorphClass(),
-        'related_id' => $application->id,
-        'created_by_id' => $user->id,
-        'application_submission_state_id' => $receivedState->id,
-        'event' => WorkflowTriggerEvent::Enter,
-    ]);
+    WorkflowTrigger::factory()
+        ->for($application, 'related')
+        ->for(User::factory(), 'createdBy')
+        ->for(stateByClassification(ApplicationSubmissionStateClassification::Received))
+        ->state([
+            'type' => WorkflowTriggerType::EventBased,
+            'event' => WorkflowTriggerEvent::Enter,
+        ])
+        ->has(Workflow::factory()->state(['is_enabled' => false]))
+        ->create();
 
-    Workflow::factory()->create([
-        'workflow_trigger_id' => $workflowTrigger->id,
-        'is_enabled' => false,
-    ]);
-
-    ApplicationSubmission::factory()->create([
-        'application_id' => $application->id,
-    ]);
+    ApplicationSubmission::factory()
+        ->for($application, 'submissible')
+        ->create();
 
     expect(WorkflowRun::count())->toBe(0);
 });

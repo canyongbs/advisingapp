@@ -77,14 +77,12 @@ class ApplicationSubmissionObserver
 
         $submission->loadMissing('state');
 
-        if ($submission->state) {
-            Event::dispatch(
-                event: new ApplicationSubmissionStateEntered(
-                    submission: $submission,
-                    state: $submission->state,
-                )
-            );
-        }
+        Event::dispatch(
+            event: new ApplicationSubmissionStateEntered(
+                submission: $submission,
+                state: $submission->state,
+            )
+        );
 
         if (! is_null($submission->author)) {
             Cache::tags('{application-submission-count}')
@@ -117,13 +115,11 @@ class ApplicationSubmissionObserver
 
         $submission->load('state');
 
-        if ($submission->state) {
-            Event::dispatch(
-                event: new ApplicationSubmissionStateEntered(
-                    submission: $submission,
-                    state: $submission->state,
-                )
-            );
-        }
+        Event::dispatch(
+            event: new ApplicationSubmissionStateEntered(
+                submission: $submission,
+                state: $submission->state,
+            )
+        );
     }
 }
