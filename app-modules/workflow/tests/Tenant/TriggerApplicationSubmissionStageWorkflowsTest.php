@@ -59,7 +59,7 @@ it('triggers Enter workflows when application submission is created', function (
     $workflowTrigger = WorkflowTrigger::factory()
         ->for($application, 'related')
         ->for(User::factory(), 'createdBy')
-        ->for($receivedState)
+        ->for($receivedState, 'subRelated')
         ->state([
             'type' => WorkflowTriggerType::EventBased,
             'event' => WorkflowTriggerEvent::Enter,
@@ -98,7 +98,7 @@ it('triggers Exit workflows when submission state changes', function () {
     $exitTrigger = WorkflowTrigger::factory()
         ->for($application, 'related')
         ->for(User::factory(), 'createdBy')
-        ->for($receivedState)
+        ->for($receivedState, 'subRelated')
         ->state([
             'type' => WorkflowTriggerType::EventBased,
             'event' => WorkflowTriggerEvent::Exit,
@@ -139,7 +139,7 @@ it('triggers both Exit and Enter workflows on a single state transition', functi
     $exitReceivedTrigger = WorkflowTrigger::factory()
         ->for($application, 'related')
         ->for($user, 'createdBy')
-        ->for($receivedState)
+        ->for($receivedState, 'subRelated')
         ->state([
             'type' => WorkflowTriggerType::EventBased,
             'event' => WorkflowTriggerEvent::Exit,
@@ -150,7 +150,7 @@ it('triggers both Exit and Enter workflows on a single state transition', functi
     $enterReviewTrigger = WorkflowTrigger::factory()
         ->for($application, 'related')
         ->for($user, 'createdBy')
-        ->for($reviewState)
+        ->for($reviewState, 'subRelated')
         ->state([
             'type' => WorkflowTriggerType::EventBased,
             'event' => WorkflowTriggerEvent::Enter,
@@ -189,7 +189,7 @@ it('does not trigger workflows whose stage does not match the transition', funct
     WorkflowTrigger::factory()
         ->for($application, 'related')
         ->for(User::factory(), 'createdBy')
-        ->for($reviewState)
+        ->for($reviewState, 'subRelated')
         ->state([
             'type' => WorkflowTriggerType::EventBased,
             'event' => WorkflowTriggerEvent::Enter,
@@ -214,7 +214,7 @@ it('does not trigger disabled workflows', function () {
     WorkflowTrigger::factory()
         ->for($application, 'related')
         ->for(User::factory(), 'createdBy')
-        ->for($receivedState)
+        ->for($receivedState, 'subRelated')
         ->state([
             'type' => WorkflowTriggerType::EventBased,
             'event' => WorkflowTriggerEvent::Enter,

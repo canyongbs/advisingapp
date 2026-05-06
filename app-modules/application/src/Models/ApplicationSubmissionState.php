@@ -46,6 +46,7 @@ use CanyonGBS\Common\Models\Concerns\CanBeArchived;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -82,11 +83,11 @@ class ApplicationSubmissionState extends BaseModel implements Auditable
     }
 
     /**
-     * @return HasMany<WorkflowTrigger, $this>
+     * @return MorphMany<WorkflowTrigger, $this>
      */
-    public function workflowTriggers(): HasMany
+    public function workflowTriggers(): MorphMany
     {
-        return $this->hasMany(WorkflowTrigger::class);
+        return $this->morphMany(WorkflowTrigger::class, 'sub_related');
     }
 
     /**

@@ -42,23 +42,21 @@ return new class () extends Migration {
     public function up(): void
     {
         Schema::table('workflow_triggers', function (Blueprint $table) {
-            $table->foreignUuid('application_submission_state_id')
-                ->nullable()
-                ->constrained('application_submission_states')
-                ->nullOnDelete();
-
+            $table->string('sub_related_type')->nullable();
+            $table->uuid('sub_related_id')->nullable();
             $table->string('event')->nullable();
 
-            $table->index(['application_submission_state_id', 'event']);
+            $table->index(['sub_related_type', 'sub_related_id']);
+            $table->index(['sub_related_type', 'sub_related_id', 'event']);
         });
     }
 
     public function down(): void
     {
         Schema::table('workflow_triggers', function (Blueprint $table) {
-            $table->dropIndex(['application_submission_state_id', 'event']);
-            $table->dropConstrainedForeignId('application_submission_state_id');
-            $table->dropColumn('event');
+            $table->dropIndex(['sub_related_type', 'sub_related_id', 'event']);
+            $table->dropIndex(['sub_related_type', 'sub_related_id']);
+            $table->dropColumn(['sub_related_type', 'sub_related_id', 'event']);
         });
     }
 };

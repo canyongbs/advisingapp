@@ -34,17 +34,34 @@
 </COPYRIGHT>
 */
 
-use App\Features\AdmissionsStageWorkflowTriggersFeature;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\Workflow\Filament\Forms;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        AdmissionsStageWorkflowTriggersFeature::activate();
-    }
+use AdvisingApp\Workflow\Models\Workflow;
+use Filament\Schemas\Schema;
 
-    public function down(): void
+abstract class WorkflowTypeForm
+{
+    /**
+     * The morph alias of the model a workflow's trigger is `related` to.
+     * Used by the registry to resolve which form class extends the workflow
+     * edit form for that workflow type (e.g. 'application', 'form', ...).
+     */
+    abstract public static function relatedType(): string;
+
+    /**
+     * Append type-specific fields to the workflow edit form schema.
+     */
+    abstract public static function configureForm(Schema $schema): Schema;
+
+    /**
+     * Pre-fill form data from the workflow record before the edit form renders.
+     * Override in concrete forms to project trigger columns into the form state.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    public static function fillFormData(array $data, Workflow $workflow): array
     {
-        AdmissionsStageWorkflowTriggersFeature::deactivate();
+        return $data;
     }
-};
+}

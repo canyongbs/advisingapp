@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Workflow\Models;
 
-use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Workflow\Database\Factories\WorkflowTriggerFactory;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerEvent;
@@ -45,7 +44,6 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -69,7 +67,8 @@ class WorkflowTrigger extends BaseModel implements Auditable
         'related_id',
         'created_by_type',
         'created_by_id',
-        'application_submission_state_id',
+        'sub_related_type',
+        'sub_related_id',
         'event',
     ];
 
@@ -111,10 +110,10 @@ class WorkflowTrigger extends BaseModel implements Auditable
     }
 
     /**
-     * @return BelongsTo<ApplicationSubmissionState, $this>
+     * @return MorphTo<Model, $this>
      */
-    public function applicationSubmissionState(): BelongsTo
+    public function subRelated(): MorphTo
     {
-        return $this->belongsTo(ApplicationSubmissionState::class);
+        return $this->morphTo();
     }
 }

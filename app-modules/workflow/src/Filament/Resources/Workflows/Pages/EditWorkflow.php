@@ -40,9 +40,9 @@ use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Workflow\Filament\Forms\WorkflowTypeFormRegistry;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\WorkflowResource;
 use AdvisingApp\Workflow\Models\Workflow;
-use App\Features\AdmissionsStageWorkflowTriggersFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
@@ -107,16 +107,11 @@ class EditWorkflow extends EditRecord
 
         assert($record instanceof Workflow);
 
-        // Only pre-fill the Stage + Trigger fields when they will actually be shown
-        // (mirrors the visibility check on WorkflowResource::form()).
-        if (
-            AdmissionsStageWorkflowTriggersFeature::active()
-            && $record->workflowTrigger->related_type === 'application'
-        ) {
-            $data['workflowTrigger'] = [
-                'application_submission_state_id' => $record->workflowTrigger->application_submission_state_id,
-                'event' => $record->workflowTrigger->event?->value,
-            ];
+        $typeFormClass = app(WorkflowTypeFormRegistry::class)
+            ->for($record->workflowTrigger->related_type);
+
+        if ($typeFormClass !== null) {
+            $data = $typeFormClass::fillFormData($data, $record);
         }
 
         return $data;

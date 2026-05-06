@@ -152,7 +152,8 @@ test('can successfully edit workflow name through edit workflow page', function 
                 ->state([
                     'related_type' => $application->getMorphClass(),
                     'related_id' => $application->id,
-                    'application_submission_state_id' => ApplicationSubmissionState::query()
+                    'sub_related_type' => 'application_submission_state',
+                    'sub_related_id' => ApplicationSubmissionState::query()
                         ->where('classification', ApplicationSubmissionStateClassification::Received)
                         ->value('id'),
                     'event' => WorkflowTriggerEvent::Enter,
@@ -182,7 +183,8 @@ test('can enable workflow through edit workflow page', function () {
                 ->state([
                     'related_type' => $application->getMorphClass(),
                     'related_id' => $application->id,
-                    'application_submission_state_id' => ApplicationSubmissionState::query()
+                    'sub_related_type' => 'application_submission_state',
+                    'sub_related_id' => ApplicationSubmissionState::query()
                         ->where('classification', ApplicationSubmissionStateClassification::Received)
                         ->value('id'),
                     'event' => WorkflowTriggerEvent::Enter,
@@ -210,7 +212,8 @@ test('can disable workflow through edit workflow page', function () {
                 ->state([
                     'related_type' => $application->getMorphClass(),
                     'related_id' => $application->id,
-                    'application_submission_state_id' => ApplicationSubmissionState::query()
+                    'sub_related_type' => 'application_submission_state',
+                    'sub_related_id' => ApplicationSubmissionState::query()
                         ->where('classification', ApplicationSubmissionStateClassification::Received)
                         ->value('id'),
                     'event' => WorkflowTriggerEvent::Enter,
@@ -238,7 +241,8 @@ test('validates workflow name is required when editing', function () {
                 ->state([
                     'related_type' => $application->getMorphClass(),
                     'related_id' => $application->id,
-                    'application_submission_state_id' => ApplicationSubmissionState::query()
+                    'sub_related_type' => 'application_submission_state',
+                    'sub_related_id' => ApplicationSubmissionState::query()
                         ->where('classification', ApplicationSubmissionStateClassification::Received)
                         ->value('id'),
                     'event' => WorkflowTriggerEvent::Enter,
@@ -262,7 +266,8 @@ test('validates workflow name has maximum length when editing', function () {
                 ->state([
                     'related_type' => $application->getMorphClass(),
                     'related_id' => $application->id,
-                    'application_submission_state_id' => ApplicationSubmissionState::query()
+                    'sub_related_type' => 'application_submission_state',
+                    'sub_related_id' => ApplicationSubmissionState::query()
                         ->where('classification', ApplicationSubmissionStateClassification::Received)
                         ->value('id'),
                     'event' => WorkflowTriggerEvent::Enter,
@@ -287,7 +292,8 @@ test('workflow editing succeeds with proper permissions', function () {
                 ->state([
                     'related_type' => $application->getMorphClass(),
                     'related_id' => $application->id,
-                    'application_submission_state_id' => ApplicationSubmissionState::query()
+                    'sub_related_type' => 'application_submission_state',
+                    'sub_related_id' => ApplicationSubmissionState::query()
                         ->where('classification', ApplicationSubmissionStateClassification::Received)
                         ->value('id'),
                     'event' => WorkflowTriggerEvent::Enter,
@@ -321,7 +327,8 @@ test('workflow deletion succeeds with proper permissions', function () {
                 ->state([
                     'related_type' => $application->getMorphClass(),
                     'related_id' => $application->id,
-                    'application_submission_state_id' => ApplicationSubmissionState::query()
+                    'sub_related_type' => 'application_submission_state',
+                    'sub_related_id' => ApplicationSubmissionState::query()
                         ->where('classification', ApplicationSubmissionStateClassification::Received)
                         ->value('id'),
                     'event' => WorkflowTriggerEvent::Enter,
@@ -360,12 +367,13 @@ test('create action persists Stage and Trigger event from form data', function (
 
     livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
         ->callAction('create', [
-            'application_submission_state_id' => $reviewState->id,
+            'sub_related_id' => $reviewState->id,
             'event' => WorkflowTriggerEvent::Exit->value,
         ]);
 
     $workflowTrigger = WorkflowTrigger::firstOrFail();
-    expect($workflowTrigger->application_submission_state_id)->toBe($reviewState->id);
+    expect($workflowTrigger->sub_related_type)->toBe($reviewState->getMorphClass());
+    expect($workflowTrigger->sub_related_id)->toBe($reviewState->id);
     expect($workflowTrigger->event)->toBe(WorkflowTriggerEvent::Exit);
 });
 
@@ -384,7 +392,8 @@ test('create action defaults Stage to first non-archived state when no tab is ac
         ->callAction('create');
 
     $workflowTrigger = WorkflowTrigger::firstOrFail();
-    expect($workflowTrigger->application_submission_state_id)->toBe($firstState->id);
+    expect($workflowTrigger->sub_related_type)->toBe($firstState->getMorphClass());
+    expect($workflowTrigger->sub_related_id)->toBe($firstState->id);
     expect($workflowTrigger->event)->toBe(WorkflowTriggerEvent::Enter);
 });
 

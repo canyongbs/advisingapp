@@ -92,8 +92,14 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
             return [];
         }
 
+        $owner = $this->getOwnerRecord();
+
         $states = ApplicationSubmissionState::query()
-            ->withCount('workflowTriggers')
+            ->withCount([
+                'workflowTriggers' => fn (Builder $query) => $query
+                    ->where('related_type', $owner->getMorphClass())
+                    ->where('related_id', $owner->getKey()),
+            ])
             ->oldest('id')
             ->get();
 
@@ -113,7 +119,9 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
             $tabs[$state->id] = Tab::make($label)
                 ->modifyQueryUsing(fn (Builder $query) => $query->whereHas(
                     'workflowTrigger',
-                    fn (Builder $query) => $query->where('application_submission_state_id', $state->id),
+                    fn (Builder $query) => $query
+                        ->where('sub_related_type', $state->getMorphClass())
+                        ->where('sub_related_id', $state->id),
                 ));
         }
 
@@ -128,7 +136,7 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
             ->recordTitleAttribute('id')
             ->columns([
                 TextColumn::make('name'),
-                TextColumn::make('workflowTrigger.applicationSubmissionState.name')
+                TextColumn::make('workflowTrigger.subRelated.name')
                     ->label('Stage')
                     ->visible(fn (): bool => AdmissionsStageWorkflowTriggersFeature::active()),
                 TextColumn::make('workflowTrigger.event')
@@ -162,14 +170,15 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
         //   - Delete the surrounding `if (...::active()) { ... }` and KEEP what's inside it
         //     (the slide-over modal with the Stage + Trigger fields is the new UX).
         //   - Inside the action callback below, drop the second `::active()` check and the
-        //     ternaries — just pass $data['application_submission_state_id'] and $data['event']
-        //     directly to the WorkflowTrigger.
+        //     ternaries — just pass $data['sub_related_id'] and $data['event'] directly
+        //     to the WorkflowTrigger (sub_related_type is always 'application_submission_state'
+        //     for this page).
         if (AdmissionsStageWorkflowTriggersFeature::active()) {
             $action = $action
                 ->slideOver()
                 ->modalHeading('Create New Workflow')
                 ->schema([
-                    Select::make('application_submission_state_id')
+                    Select::make('sub_related_id')
                         ->label('Stage')
                         ->options(
                             // @phpstan-ignore method.notFound
@@ -198,8 +207,11 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
 
                     $workflowTrigger = new WorkflowTrigger([
                         'type' => WorkflowTriggerType::EventBased,
-                        'application_submission_state_id' => AdmissionsStageWorkflowTriggersFeature::active()
-                            ? $data['application_submission_state_id']
+                        'sub_related_type' => AdmissionsStageWorkflowTriggersFeature::active()
+                            ? (new ApplicationSubmissionState())->getMorphClass()
+                            : null,
+                        'sub_related_id' => AdmissionsStageWorkflowTriggersFeature::active()
+                            ? $data['sub_related_id']
                             : null,
                         'event' => AdmissionsStageWorkflowTriggersFeature::active()
                             ? $data['event']

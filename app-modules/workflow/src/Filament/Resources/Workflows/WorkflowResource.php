@@ -36,15 +36,11 @@
 
 namespace AdvisingApp\Workflow\Filament\Resources\Workflows;
 
-use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use AdvisingApp\Workflow\Enums\WorkflowTriggerEvent;
+use AdvisingApp\Workflow\Filament\Forms\WorkflowTypeFormRegistry;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\EditWorkflow;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\ListWorkflows;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\RelationManagers\WorkflowStepsRelationManager;
 use AdvisingApp\Workflow\Models\Workflow;
-use App\Features\AdmissionsStageWorkflowTriggersFeature;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Resource;
@@ -58,36 +54,27 @@ class WorkflowResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema
-            ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Toggle::make('is_enabled')
-                    ->label('Enabled?')
-                    ->inline(false),
-                Select::make('workflowTrigger.application_submission_state_id')
-                    ->label('Stage')
-                    ->options(
-                        // @phpstan-ignore method.notFound
-                        fn (): array => ApplicationSubmissionState::query()
-                            ->withoutArchived()
-                            ->oldest('id')
-                            ->pluck('name', 'id')
-                            ->all(),
-                    )
-                    ->required()
-                    ->visible(fn (?Workflow $record): bool => AdmissionsStageWorkflowTriggersFeature::active()
-                        && $record?->workflowTrigger?->related_type === 'application'),
-                Radio::make('workflowTrigger.event')
-                    ->label('Trigger')
-                    ->options(WorkflowTriggerEvent::class)
-                    ->required()
-                    ->inline()
-                    ->inlineLabel(false)
-                    ->visible(fn (?Workflow $record): bool => AdmissionsStageWorkflowTriggersFeature::active()
-                        && $record?->workflowTrigger?->related_type === 'application'),
-            ]);
+        $schema = $schema->components([
+            TextInput::make('name')
+                ->required()
+                ->maxLength(255),
+            Toggle::make('is_enabled')
+                ->label('Enabled?')
+                ->inline(false),
+        ]);
+
+        $record = $schema->getRecord();
+
+        if ($record instanceof Workflow) {
+            $typeFormClass = app(WorkflowTypeFormRegistry::class)
+                ->for($record->workflowTrigger->related_type);
+
+            if ($typeFormClass !== null) {
+                $schema = $typeFormClass::configureForm($schema);
+            }
+        }
+
+        return $schema;
     }
 
     public static function getRelations(): array

@@ -10,7 +10,6 @@ created: 2026-05-05
 ## Temporary Migrations
 
 - database/migrations/2026_05_04_172646_tmp_data_backfill_application_workflow_triggers_with_default_stage.php
-- database/migrations/2026_05_05_124659_data_activate_admissions_stage_workflow_triggers_feature.php
 
 ## Additional Cleanup
 
@@ -18,10 +17,13 @@ created: 2026-05-05
 - Delete the legacy listener: [app-modules/application/src/Listeners/TriggerApplicationSubmissionWorkflows.php](../app-modules/application/src/Listeners/TriggerApplicationSubmissionWorkflows.php).
 - In [app-modules/application/src/Providers/ApplicationServiceProvider.php](../app-modules/application/src/Providers/ApplicationServiceProvider.php) `registerEvents()`: remove the `Event::listen(ApplicationSubmissionCreated::class, TriggerApplicationSubmissionWorkflows::class)` call and the matching `use` import.
 - In [app-modules/application/src/Listeners/TriggerApplicationSubmissionStageWorkflows.php](../app-modules/application/src/Listeners/TriggerApplicationSubmissionStageWorkflows.php): remove the `if (! AdmissionsStageWorkflowTriggersFeature::active()) return;` guard at the top of `handleEntered()` and `handleExited()`, plus the `AdmissionsStageWorkflowTriggersFeature` import.
-- In [app-modules/workflow/src/Filament/Resources/Workflows/WorkflowResource.php](../app-modules/workflow/src/Filament/Resources/Workflows/WorkflowResource.php): simplify the two `visible()` callbacks on the Stage and Trigger fields so they only check `related_type === 'application'` (drop the `AdmissionsStageWorkflowTriggersFeature::active()` part).
+- In [app-modules/application/src/Filament/Forms/ApplicationWorkflowForm.php](../app-modules/application/src/Filament/Forms/ApplicationWorkflowForm.php):
+  - `configureForm()`: drop the `AdmissionsStageWorkflowTriggersFeature::active()` check from both `visible()` callbacks (the registry already gates these fields to application workflows; once the FF is gone, they should always render).
+  - `fillFormData()`: drop the `AdmissionsStageWorkflowTriggersFeature::active()` early-return — the registry already gates this method to application workflows.
+  - Remove the `AdmissionsStageWorkflowTriggersFeature` import.
 - In [app-modules/application/src/Filament/Resources/Applications/Pages/ManageApplicationWorkflows.php](../app-modules/application/src/Filament/Resources/Applications/Pages/ManageApplicationWorkflows.php):
   - `getDefaultActiveTab()` and `getTabs()`: delete the `if (! AdmissionsStageWorkflowTriggersFeature::active())` early-returns.
   - `table()`: drop the `->visible(fn (): bool => AdmissionsStageWorkflowTriggersFeature::active())` calls on the "Stage" and "Trigger" columns.
-  - `getHeaderActions()`: delete the `if (AdmissionsStageWorkflowTriggersFeature::active()) { ... }` wrapper around the slide-over schema (keep the inner builder calls — they become the only path), and drop the ternaries inside the action callback so it always passes `$data['application_submission_state_id']` and `$data['event']` straight through.
+  - `getHeaderActions()`: delete the `if (AdmissionsStageWorkflowTriggersFeature::active()) { ... }` wrapper around the slide-over schema (keep the inner builder calls — they become the only path), and drop the ternaries inside the action callback so it always passes `$data['sub_related_id']` and `$data['event']` straight through (the `sub_related_type` value stays hard-coded to `(new ApplicationSubmissionState)->getMorphClass()`).
 - Remove every remaining `use App\Features\AdmissionsStageWorkflowTriggersFeature;` import that becomes unused after the above edits.
 - Delete the feature flag class itself: `app/Features/AdmissionsStageWorkflowTriggersFeature.php`.

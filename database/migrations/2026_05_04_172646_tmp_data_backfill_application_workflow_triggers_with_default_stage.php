@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use App\Features\AdmissionsStageWorkflowTriggersFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
@@ -43,43 +44,47 @@ return new class () extends Migration {
         DB::transaction(function () {
             $hasTriggersToBackfill = DB::table('workflow_triggers')
                 ->where('related_type', 'application')
-                ->whereNull('application_submission_state_id')
+                ->whereNull('sub_related_id')
                 ->exists();
 
-            if (! $hasTriggersToBackfill) {
-                return;
+            if ($hasTriggersToBackfill) {
+                $defaultStateId = DB::table('application_submission_states')
+                    ->whereNull('archived_at')
+                    ->whereNull('deleted_at')
+                    ->where('classification', 'received')
+                    ->orderBy('id')
+                    ->value('id');
+
+                if (! $defaultStateId) {
+                    throw new RuntimeException(
+                        'Cannot backfill application workflow triggers: no ApplicationSubmissionState with the "Received" classification exists.'
+                    );
+                }
+
+                DB::table('workflow_triggers')
+                    ->where('related_type', 'application')
+                    ->whereNull('sub_related_id')
+                    ->update([
+                        'sub_related_type' => 'application_submission_state',
+                        'sub_related_id' => $defaultStateId,
+                        'event' => 'enter',
+                    ]);
             }
 
-            $defaultStateId = DB::table('application_submission_states')
-                ->whereNull('archived_at')
-                ->whereNull('deleted_at')
-                ->where('classification', 'received')
-                ->orderBy('id')
-                ->value('id');
-
-            if (! $defaultStateId) {
-                throw new RuntimeException(
-                    'Cannot backfill application workflow triggers: no ApplicationSubmissionState with the "Received" classification exists.'
-                );
-            }
-
-            DB::table('workflow_triggers')
-                ->where('related_type', 'application')
-                ->whereNull('application_submission_state_id')
-                ->update([
-                    'application_submission_state_id' => $defaultStateId,
-                    'event' => 'enter',
-                ]);
+            AdmissionsStageWorkflowTriggersFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
+            AdmissionsStageWorkflowTriggersFeature::deactivate();
+
             DB::table('workflow_triggers')
                 ->where('related_type', 'application')
                 ->update([
-                    'application_submission_state_id' => null,
+                    'sub_related_type' => null,
+                    'sub_related_id' => null,
                     'event' => null,
                 ]);
         });

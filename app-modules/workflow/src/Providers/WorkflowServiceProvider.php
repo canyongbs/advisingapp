@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Workflow\Providers;
 
+use AdvisingApp\Workflow\Filament\Forms\WorkflowTypeFormRegistry;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowCareTeamDetails;
 use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
@@ -62,6 +63,8 @@ class WorkflowServiceProvider extends ServiceProvider
     public function register()
     {
         Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new WorkflowPlugin()));
+
+        $this->app->singleton(WorkflowTypeFormRegistry::class);
     }
 
     public function boot(): void

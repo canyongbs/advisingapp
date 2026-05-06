@@ -99,7 +99,8 @@ class TriggerApplicationSubmissionStageWorkflows implements ShouldQueueAfterComm
         $application->loadMissing('workflowTriggers.workflow.workflowSteps.currentDetails');
 
         $matchingTriggers = $application->workflowTriggers
-            ->where('application_submission_state_id', $state->getKey())
+            ->where('sub_related_type', $state->getMorphClass())
+            ->where('sub_related_id', $state->getKey())
             ->where('event', $triggerEvent);
 
         if ($matchingTriggers->isEmpty()) {

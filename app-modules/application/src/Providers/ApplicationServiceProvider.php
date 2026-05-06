@@ -40,6 +40,7 @@ use AdvisingApp\Application\ApplicationPlugin;
 use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
 use AdvisingApp\Application\Events\ApplicationSubmissionStateEntered;
 use AdvisingApp\Application\Events\ApplicationSubmissionStateExited;
+use AdvisingApp\Application\Filament\Forms\ApplicationWorkflowForm;
 use AdvisingApp\Application\Listeners\ClearApplicationSubmissionCountCache;
 use AdvisingApp\Application\Listeners\NotifySubscribersOfApplicationSubmission;
 use AdvisingApp\Application\Listeners\TriggerApplicationSubmissionStageWorkflows;
@@ -51,6 +52,7 @@ use AdvisingApp\Application\Models\ApplicationFieldSubmission;
 use AdvisingApp\Application\Models\ApplicationStep;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use AdvisingApp\Workflow\Filament\Forms\WorkflowTypeFormRegistry;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
@@ -76,6 +78,9 @@ class ApplicationServiceProvider extends ServiceProvider
         ]);
 
         $this->registerEvents();
+
+        $this->app->make(WorkflowTypeFormRegistry::class)
+            ->register(ApplicationWorkflowForm::class);
 
         $this->loadRoutesFrom(__DIR__ . '/../../routes/widgets.php');
     }
