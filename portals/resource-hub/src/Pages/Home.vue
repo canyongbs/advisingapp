@@ -94,12 +94,14 @@
 </script>
 
 <template>
-    <div class="top-0 z-40 flex flex-col items-center bg-gray-50">
-        <button class="w-full p-3 lg:hidden" type="button" @click="$emit('sidebarOpened')">
-            <span class="sr-only">Open sidebar</span>
+    <div class="flex flex-col bg-gray-50">
+        <div class="sticky top-0 z-40 bg-gray-50 lg:hidden">
+            <button class="w-full p-3" type="button" @click="$emit('sidebarOpened')">
+                <span class="sr-only">Open sidebar</span>
 
-            <Bars3Icon class="h-6 w-6 text-gray-900"></Bars3Icon>
-        </button>
+                <Bars3Icon class="h-6 w-6 text-gray-900"></Bars3Icon>
+            </button>
+        </div>
 
         <div
             class="bg-[linear-gradient(to_right_bottom,rgba(var(--primary-500),1),rgba(var(--primary-800),1))] w-full px-6"
@@ -129,18 +131,17 @@
                 </form>
             </div>
         </div>
+        <main class="px-6">
+            <div class="max-w-screen-xl flex flex-col gap-y-6 mx-auto py-8">
+                <SearchResults
+                    v-if="searchQuery"
+                    :searchQuery="searchQuery"
+                    :searchResults="searchResults"
+                    :loadingResults="loadingResults"
+                ></SearchResults>
+
+                <HelpCenter v-else :categories="categories"></HelpCenter>
+            </div>
+        </main>
     </div>
-
-    <main class="px-6">
-        <div class="max-w-screen-xl flex flex-col gap-y-6 mx-auto py-8">
-            <SearchResults
-                v-if="searchQuery"
-                :searchQuery="searchQuery"
-                :searchResults="searchResults"
-                :loadingResults="loadingResults"
-            ></SearchResults>
-
-            <HelpCenter v-else :categories="categories"></HelpCenter>
-        </div>
-    </main>
 </template>
