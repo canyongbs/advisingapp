@@ -136,7 +136,7 @@ class EngagementResponseMarkAsActionedAction extends Action
     }
 
     public function getEngagementResponse(?Model $record): ?EngagementResponse
-    {Emai
+    {
         return match (true) {
             $record instanceof EngagementResponse => $record,
             $record instanceof HolisticEngagement && $record->record instanceof EngagementResponse => $record->record,
