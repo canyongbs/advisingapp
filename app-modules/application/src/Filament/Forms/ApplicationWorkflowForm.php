@@ -40,7 +40,6 @@ use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerEvent;
 use AdvisingApp\Workflow\Filament\Forms\WorkflowTypeForm;
-use AdvisingApp\Workflow\Models\Workflow;
 use App\Features\AdmissionsStageWorkflowTriggersFeature;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Radio;
@@ -85,20 +84,5 @@ class ApplicationWorkflowForm extends WorkflowTypeForm
                     ->inlineLabel(false)
                     ->visible(fn (): bool => AdmissionsStageWorkflowTriggersFeature::active()),
             ]);
-    }
-
-    public static function fillFormData(array $data, Workflow $workflow): array
-    {
-        if (! AdmissionsStageWorkflowTriggersFeature::active()) {
-            return $data;
-        }
-
-        $data['workflowTrigger'] = [
-            'sub_related_type' => $workflow->workflowTrigger->sub_related_type,
-            'sub_related_id' => $workflow->workflowTrigger->sub_related_id,
-            'event' => $workflow->workflowTrigger->event?->value,
-        ];
-
-        return $data;
     }
 }

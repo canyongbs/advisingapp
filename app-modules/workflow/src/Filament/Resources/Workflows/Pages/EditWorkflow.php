@@ -40,7 +40,6 @@ use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Models\Form;
-use AdvisingApp\Workflow\Filament\Forms\WorkflowTypeFormRegistry;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\WorkflowResource;
 use AdvisingApp\Workflow\Models\Workflow;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
@@ -107,12 +106,11 @@ class EditWorkflow extends EditRecord
 
         assert($record instanceof Workflow);
 
-        $typeFormClass = app(WorkflowTypeFormRegistry::class)
-            ->for($record->workflowTrigger->related_type);
-
-        if ($typeFormClass !== null) {
-            $data = $typeFormClass::fillFormData($data, $record);
-        }
+        $data['workflowTrigger'] = [
+            'sub_related_type' => $record->workflowTrigger->sub_related_type,
+            'sub_related_id' => $record->workflowTrigger->sub_related_id,
+            'event' => $record->workflowTrigger->event?->value,
+        ];
 
         return $data;
     }

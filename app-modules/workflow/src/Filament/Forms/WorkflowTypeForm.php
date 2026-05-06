@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Workflow\Filament\Forms;
 
-use AdvisingApp\Workflow\Models\Workflow;
 use Filament\Schemas\Schema;
 
 abstract class WorkflowTypeForm
@@ -52,16 +51,4 @@ abstract class WorkflowTypeForm
      * Append type-specific fields to the workflow edit form schema.
      */
     abstract public static function configureForm(Schema $schema): Schema;
-
-    /**
-     * Pre-fill form data from the workflow record before the edit form renders.
-     * Override in concrete forms to project trigger columns into the form state.
-     *
-     * @param  array<string, mixed>  $data
-     * @return array<string, mixed>
-     */
-    public static function fillFormData(array $data, Workflow $workflow): array
-    {
-        return $data;
-    }
 }
