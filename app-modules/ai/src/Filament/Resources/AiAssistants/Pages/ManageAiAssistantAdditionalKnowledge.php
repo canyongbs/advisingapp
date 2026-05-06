@@ -100,7 +100,7 @@ class ManageAiAssistantAdditionalKnowledge extends EditRecord
         return $schema
             ->components([
                 Section::make('Additional Knowledge')
-                    ->description('Add additional knowledge to this employee Advisor to improve its responses.')
+                    ->description('Add additional knowledge to this employee advisor to improve its responses.')
                     ->reactive()
                     ->columns([
                         'sm' => 1,
@@ -130,7 +130,7 @@ class ManageAiAssistantAdditionalKnowledge extends EditRecord
                             ->deleteAction(
                                 fn (Action $action) => $action->requiresConfirmation()
                                     ->modalHeading('Are you sure you want to delete this file?')
-                                    ->modalDescription('This file will be permanently removed from this employee Advisor, and cannot be restored.')
+                                    ->modalDescription('This file will be permanently removed from this employee advisor, and cannot be restored.')
                             ),
                         FileUpload::make('uploaded_files')
                             ->hiddenLabel()
@@ -145,7 +145,7 @@ class ManageAiAssistantAdditionalKnowledge extends EditRecord
                                     return 'You may upload a total of 25 files to this AI Assistant. Files must be less than ' . Number::fileSize(config('ai.file_size_limit_kb') * 1000) . '.';
                                 }
 
-                                return "You've reached the maximum file upload limit of 25 for this employee Advisor. Please delete a file if you wish to upload another.";
+                                return "You've reached the maximum file upload limit of 25 for this employee advisor. Please delete a file if you wish to upload another.";
                             })
                             ->maxSize(config('ai.file_size_limit_kb'))
                             ->columnSpan(function (Get $get) {

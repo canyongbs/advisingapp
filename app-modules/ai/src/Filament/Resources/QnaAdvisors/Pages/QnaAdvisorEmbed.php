@@ -91,7 +91,7 @@ class QnaAdvisorEmbed extends EditRecord
                             ->live(),
                         TagsInput::make('authorized_domains')
                             ->label('Authorized Domains')
-                            ->helperText('Only these domains will be allowed to embed this customer Advisor.')
+                            ->helperText('Only these domains will be allowed to embed this customer advisor.')
                             ->placeholder('example.com')
                             ->hidden(fn (Get $get) => ! $get('is_embed_enabled'))
                             ->disabled(fn (Get $get) => ! $get('is_embed_enabled'))
@@ -107,7 +107,7 @@ class QnaAdvisorEmbed extends EditRecord
                             ->hidden(fn (Get $get) => ! $get('is_embed_enabled')),
                         Toggle::make('is_generate_prospects_enabled')
                             ->label('Generate Prospects')
-                            ->helperText('If enabled, the customer Advisor will allow for the registration of an unrecognized prospect.')
+                            ->helperText('If enabled, the customer advisor will allow for the registration of an unrecognized prospect.')
                             ->hidden(fn (Get $get) => ! $get('is_embed_enabled') || ! $get('is_requires_authentication_enabled')),
                         Radio::make('default_theme')
                             ->label('Theme')
