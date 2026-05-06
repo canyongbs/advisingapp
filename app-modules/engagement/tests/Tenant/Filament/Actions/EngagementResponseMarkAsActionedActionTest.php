@@ -64,7 +64,7 @@ it('can send a success notification after marking an email as actioned', functio
 
     livewire(ViewEngagementResponse::class, ['record' => $record])
         ->callAction('markAsActioned', data: ['note' => 'Resolved via email.'])
-        ->assertNotified('An email marked as actioned');
+        ->assertNotified('Email marked as actioned');
 });
 
 it('can send a success notification after marking a text message as actioned', function () {
@@ -73,7 +73,7 @@ it('can send a success notification after marking a text message as actioned', f
 
     livewire(ViewEngagementResponse::class, ['record' => $record])
         ->callAction('markAsActioned', data: ['note' => 'Resolved via text.'])
-        ->assertNotified('A text marked as actioned');
+        ->assertNotified('Text marked as actioned');
 });
 
 it('can require the note field to be filled', function () {
