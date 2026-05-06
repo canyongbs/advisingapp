@@ -59,14 +59,17 @@ class EngagementResponseMarkAsActionedAction extends Action
         $this
             ->label('Mark as Actioned')
             ->modalHeading(function (?Model $record): string {
-                $engagementResponse = $this->resolveEngagementResponse($record);
+                $engagementResponse = $this->getEngagementResponse($record);
+                $type = match ($engagementResponse?->type) {
+                    EngagementResponseType::Email => 'Email',
+                    EngagementResponseType::Sms => 'Text',
+                    default => null,
+                };
 
-                return 'Mark ' . $this->resolveTypeLabel($engagementResponse) . ' as Actioned';
+                return 'Mark ' . $type . ' as Actioned';
             })
             ->modalDescription(function (?Model $record): string {
-                $engagementResponse = $this->resolveEngagementResponse($record);
-
-                return 'When you action ' . $this->resolveTypeLabel($engagementResponse) . ', you are indicating that you have taken all necessary steps to respond to this ' . $this->resolveSenderLabel($engagementResponse) . '. Please describe below what steps you have taken.';
+                return 'When you action ' . $this->resolveTypeLabel($record) . ', you are indicating that you have taken all necessary steps to respond to this ' . $this->resolveSenderLabel($record) . '. Please describe below what steps you have taken.';
             })
             ->schema([
                 Textarea::make('note')
@@ -98,7 +101,7 @@ class EngagementResponseMarkAsActionedAction extends Action
                 });
 
                 Notification::make()
-                    ->title(Str::ucfirst($this->resolveTypeLabel($engagementResponse)) . ' marked as actioned')
+                    ->title(Str::ucfirst($this->resolveTypeLabel($record)) . ' marked as actioned')
                     ->success()
                     ->send();
             });
@@ -115,14 +118,7 @@ class EngagementResponseMarkAsActionedAction extends Action
 
     public function resolveTypeLabel(?Model $record): ?string
     {
-        $engagementResponse = match (true) {
-            $record instanceof EngagementResponse => $record,
-            $record instanceof HolisticEngagement && $record->record instanceof EngagementResponse => $record->record,
-            $record instanceof Timeline && $record->timelineable instanceof EngagementResponse => $record->timelineable,
-            default => null,
-        };
-
-        return $this->getTypeLabel($engagementResponse);
+        return $this->getTypeLabel($this->getEngagementResponse($record));
     }
 
     public function getSenderLabel(?EngagementResponse $engagementResponse): ?string
@@ -136,28 +132,16 @@ class EngagementResponseMarkAsActionedAction extends Action
 
     public function resolveSenderLabel(?Model $record): ?string
     {
-        $engagementResponse = match (true) {
-            $record instanceof EngagementResponse => $record,
-            $record instanceof HolisticEngagement && $record->record instanceof EngagementResponse => $record->record,
-            $record instanceof Timeline && $record->timelineable instanceof EngagementResponse => $record->timelineable,
-            default => null,
-        };
-
-        return $this->getSenderLabel($engagementResponse);
+        return $this->getSenderLabel($this->getEngagementResponse($record));
     }
 
     public function getEngagementResponse(?Model $record): ?EngagementResponse
-    {
+    {Emai
         return match (true) {
             $record instanceof EngagementResponse => $record,
             $record instanceof HolisticEngagement && $record->record instanceof EngagementResponse => $record->record,
             $record instanceof Timeline && $record->timelineable instanceof EngagementResponse => $record->timelineable,
             default => null,
         };
-    }
-
-    public function resolveEngagementResponse(?Model $record): ?EngagementResponse
-    {
-        return $this->getEngagementResponse($record);
     }
 }
