@@ -71,7 +71,7 @@ class AiAssistantForm
                     ->columnSpanFull(),
                 Select::make('application')
                     ->options([
-                        AiAssistantApplication::PersonalAssistant->value => 'Custom Advisor',
+                        AiAssistantApplication::PersonalAssistant->value => 'Employee Advisor',
                     ])
                     ->dehydratedWhenHidden()
                     ->default(AiAssistantApplication::getDefault())

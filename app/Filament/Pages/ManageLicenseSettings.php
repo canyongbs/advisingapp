@@ -109,7 +109,7 @@ class ManageLicenseSettings extends SettingsPage
                                 ->required()
                                 ->disabled(fn (Get $get): bool => ! $get('data.addons.customAiAssistants')),
                             TextInput::make('data.limits.qnaAdvisorsCount')
-                                ->label('Customer Advisors')
+                                ->label('QnA Advisors')
                                 ->numeric()
                                 ->minValue(0)
                                 ->required()
@@ -175,7 +175,7 @@ class ManageLicenseSettings extends SettingsPage
                             Toggle::make('data.addons.researchAdvisor')
                                 ->label('Research Advisors'),
                             Toggle::make('data.addons.qnaAdvisor')
-                                ->label('Customer Advisors')
+                                ->label('QnA Advisors')
                                 ->live(),
                             Toggle::make('data.addons.dataAdvisor')
                                 ->label('Data Advisors')

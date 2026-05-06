@@ -62,6 +62,8 @@ class QnaAdvisorResource extends Resource
 
     protected static ?int $navigationSort = 10;
 
+    protected static ?string $slug = 'customer-advisors';
+
     public static function getPages(): array
     {
         return [
