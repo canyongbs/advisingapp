@@ -48,7 +48,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 
 class EngagementResponseMarkAsActionedAction extends Action
 {
@@ -58,16 +57,7 @@ class EngagementResponseMarkAsActionedAction extends Action
 
         $this
             ->label('Mark as Actioned')
-            ->modalHeading(function (?Model $record): string {
-                $engagementResponse = $this->getEngagementResponse($record);
-                $type = match ($engagementResponse?->type) {
-                    EngagementResponseType::Email => 'Email',
-                    EngagementResponseType::Sms => 'Text',
-                    default => null,
-                };
-
-                return 'Mark ' . $type . ' as Actioned';
-            })
+            ->modalHeading(fn (?Model $record): string => 'Mark ' . $this->resolveHeadingTypeLabel($record) . ' as Actioned')
             ->modalDescription(function (?Model $record): string {
                 return 'When you action ' . $this->resolveTypeLabel($record) . ', you are indicating that you have taken all necessary steps to respond to this ' . $this->resolveSenderLabel($record) . '. Please describe below what steps you have taken.';
             })
@@ -101,7 +91,7 @@ class EngagementResponseMarkAsActionedAction extends Action
                 });
 
                 Notification::make()
-                    ->title(Str::ucfirst($this->resolveTypeLabel($record)) . ' marked as actioned')
+                    ->title($this->resolveHeadingTypeLabel($record) . ' marked as actioned')
                     ->success()
                     ->send();
             });
@@ -143,5 +133,19 @@ class EngagementResponseMarkAsActionedAction extends Action
             $record instanceof Timeline && $record->timelineable instanceof EngagementResponse => $record->timelineable,
             default => null,
         };
+    }
+
+    public function getHeadingTypeLabel(?EngagementResponse $engagementResponse): ?string
+    {
+        return match ($engagementResponse?->type) {
+            EngagementResponseType::Email => 'Email',
+            EngagementResponseType::Sms => 'Text',
+            default => null,
+        };
+    }
+
+    public function resolveHeadingTypeLabel(?Model $record): ?string
+    {
+        return $this->getHeadingTypeLabel($this->getEngagementResponse($record));
     }
 }
