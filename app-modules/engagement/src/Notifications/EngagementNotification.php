@@ -108,6 +108,7 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
 
         return MailMessage::make()
             ->to($this->engagement->recipient_route)
+            ->hideFooter()
             ->when(
                 app(EngagementSettings::class)->are_dynamic_engagements_enabled && $this->engagement->user,
                 fn (MailMessage $message) => $message->from(name: $this->engagement->user->name),

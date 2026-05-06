@@ -132,7 +132,7 @@ class ViewForm extends ViewRecord
                     ->visible(fn (Form $record) => $record->is_wizard)
                     ->disabled()
                     ->relationship()
-                    ->reorderable()
+                    ->orderColumn('sort')
                     ->columnSpanFull(),
                 Section::make('Appearance')
                     ->schema([

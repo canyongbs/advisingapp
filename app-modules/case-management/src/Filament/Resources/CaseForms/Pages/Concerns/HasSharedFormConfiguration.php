@@ -133,7 +133,7 @@ trait HasSharedFormConfiguration
                 ->visible(fn (Get $get) => $get('is_wizard'))
                 ->disabled(fn (?CaseForm $record) => $record?->submissions()->submitted()->exists())
                 ->relationship()
-                ->reorderable()
+                ->orderColumn('sort')
                 ->columnSpanFull(),
             Section::make('Appearance')
                 ->schema([

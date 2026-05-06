@@ -31,7 +31,7 @@
     
     </COPYRIGHT>
 --}}
-@props(['settings' => null, 'unsubscribeUrl' => null])
+@props(['settings' => null, 'unsubscribeUrl' => null, 'hideFooter' => false])
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -42,6 +42,12 @@
     <meta name="color-scheme" content="light">
     <meta name="supported-color-schemes" content="light">
     <style>
+        body,
+        .panel-content,
+        .panel-content p {
+            color: #000000;
+        }
+
         @media only screen and (max-width: 600px) {
             .inner-body {
                 width: 100% !important;
@@ -96,8 +102,21 @@
                     </td>
                 </tr>
 
-                {{ $footer ?? '' }}
             </table>
+            {{-- Footer --}}
+            @unless($hideFooter)
+            <tr>
+                <td>
+                <table class="footer" align="center" width="570" cellpadding="0" cellspacing="0" role="presentation">
+                <tr>
+                <td class="content-cell" align="center">
+                    This email was sent using Advising App®. <br /> <br /> © 2016-{{ date('Y') }} Canyon GBS Inc. All Rights Reserved. Canyon GBS® and Advising App® are trademarks of Canyon GBS Inc.
+                </td>
+                </tr>
+                </table>
+                </td>
+            </tr>
+            @endunless
             {{-- Unsubscribe Link --}}
             @if (! empty($unsubscribeUrl))
             <p style="text-align: center; margin-top: 20px; font-size: 12px; color: #999999;">

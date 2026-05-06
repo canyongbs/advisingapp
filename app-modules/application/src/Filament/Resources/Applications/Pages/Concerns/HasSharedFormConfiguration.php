@@ -131,7 +131,7 @@ trait HasSharedFormConfiguration
                 ->visible(fn (Get $get) => $get('is_wizard'))
                 ->disabled(fn (?Application $record) => $record?->submissions()->exists())
                 ->relationship()
-                ->reorderable()
+                ->orderColumn('sort')
                 ->columnSpanFull(),
             Section::make('Appearance')
                 ->schema([
