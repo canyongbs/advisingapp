@@ -51,6 +51,8 @@ use App\Models\BaseModel;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -163,5 +165,21 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
             EngagementResponseType::Email => NotificationChannel::Email,
             EngagementResponseType::Sms => NotificationChannel::Sms,
         };
+    }
+
+    /**
+    * @return HasMany<EngagementResponseActionedNote, $this>
+    */
+    public function actionedNotes(): HasMany
+    {
+        return $this->hasMany(EngagementResponseActionedNote::class);
+    }
+
+    /**
+     * @return HasOne<EngagementResponseActionedNote, $this>
+     */
+    public function latestActionedNote(): HasOne
+    {
+        return $this->actionedNotes()->one()->latestOfMany();
     }
 }

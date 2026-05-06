@@ -39,6 +39,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManag
 use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
+use AdvisingApp\Engagement\Filament\Actions\EngagementResponseMarkAsActionedAction;
 use AdvisingApp\Engagement\Filament\Actions\RelationManagerSendEngagementAction;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Models\Engagement;
@@ -47,6 +48,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
 use AdvisingApp\Timeline\Models\Timeline;
+use App\Features\EngagementResponseMarkAsActionedFeature;
 use App\Infolists\Components\EngagementBody;
 use Exception;
 use Filament\Actions\Action;
@@ -196,10 +198,13 @@ class EngagementsRelationManager extends RelationManager
                         ...($canAccessEngagementResponses ? [EngagementResponse::class] : []),
                     ])
                     ->with([
-                        'timelineable' => function ($morphQuery) use ($canAccessEngagements) {
+                        'timelineable' => function ($morphQuery) use ($canAccessEngagements, $canAccessEngagementResponses) {
                             $morphQuery->when(
                                 $canAccessEngagements && $morphQuery->getModel() instanceof Engagement,
                                 fn (Builder $query) => $query->with(['latestEmailMessage.events', 'latestSmsMessage.events'])
+                            )->when(
+                                $canAccessEngagementResponses && $morphQuery->getModel() instanceof EngagementResponse,
+                                fn (Builder $query) => $query->with('latestActionedNote')
                             );
                         },
                     ])
@@ -222,7 +227,8 @@ class EngagementsRelationManager extends RelationManager
                         Engagement::class => EngagementDisplayStatus::getStatus($record->timelineable),
                         default => 'N/A',
                     })
-                    ->badge(),
+                    ->badge()
+                    ->tooltip(fn (Timeline $record): ?string => EngagementResponseMarkAsActionedFeature::active() && $record->timelineable::class === EngagementResponse::class && $record->timelineable->status === EngagementResponseStatus::Actioned ? $record->timelineable->latestActionedNote?->getActionedNoteTooltip() : null),
                 TextColumn::make('subject')
                     ->label('Preview')
                     ->description(
@@ -247,11 +253,11 @@ class EngagementsRelationManager extends RelationManager
                     )
                     ->state(fn (Timeline $record) => match ($record->timelineable::class) {
                         Engagement::class => $record->timelineable->channel === NotificationChannel::Sms
-                                ? Str::limit($record->timelineable->getBodyText(), 50)
-                                : Str::limit((string) $record->timelineable->getSubject(), 50),
+                            ? Str::limit($record->timelineable->getBodyText(), 50)
+                            : Str::limit((string) $record->timelineable->getSubject(), 50),
                         EngagementResponse::class => $record->timelineable->type === EngagementResponseType::Sms
-                                ? Str::limit(html_entity_decode(strip_tags($record->timelineable->getBody()), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50)
-                                : Str::limit(html_entity_decode(strip_tags($record->timelineable->subject), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50),
+                            ? Str::limit(html_entity_decode(strip_tags($record->timelineable->getBody()), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50)
+                            : Str::limit(html_entity_decode(strip_tags($record->timelineable->subject), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50),
 
                         default => '',
                     }),
@@ -272,43 +278,71 @@ class EngagementsRelationManager extends RelationManager
             ])
             ->recordActions([
                 ViewAction::make()
+                    ->slideOver()
                     ->modalHeading(function (Timeline $record): Htmlable {
                         $status = match ($record->timelineable::class) {
                             EngagementResponse::class => $record->timelineable->status->getLabel(),
                             default => ''
                         };
 
-                        return new HtmlString(view('student-data-model::components.filament.resources.educatables.view-educatable.engagement-modal-header', ['record' => $record, 'status' => $status]));
+                        $tooltip = null;
+
+                        if (EngagementResponseMarkAsActionedFeature::active() && $record->timelineable instanceof EngagementResponse && $record->timelineable->status === EngagementResponseStatus::Actioned) {
+                            $tooltip = $record->timelineable->latestActionedNote?->getActionedNoteTooltip();
+                        }
+
+                        return new HtmlString(view('student-data-model::components.filament.resources.educatables.view-educatable.engagement-modal-header', ['record' => $record, 'status' => $status, 'tooltip' => $tooltip]));
                     })
                     ->extraModalFooterActions([
-                        Action::make('updateStatus')
-                            ->label(
-                                function (Timeline $record) {
-                                    /** @var EngagementResponse $timelineable */
-                                    $timelineable = $record->timelineable;
+                        ...[
+                            EngagementResponseMarkAsActionedFeature::active() ?
+                                EngagementResponseMarkAsActionedAction::make('markAsActioned')
+                                    ->color('gray')
+                                    ->visible(fn (Timeline $record): bool => $record->timelineable instanceof EngagementResponse && $record->timelineable->status === EngagementResponseStatus::New) :
+                                Action::make('markAsActioned')
+                                    ->label(
+                                        function (Timeline $record) {
+                                            /** @var EngagementResponse $timelineable */
+                                            $timelineable = $record->timelineable;
 
-                                    return $timelineable->status === EngagementResponseStatus::New ? 'Mark as Actioned' : 'Mark as New';
-                                }
-                            )
+                                            return $timelineable->status === EngagementResponseStatus::New ? 'Mark as Actioned' : 'Mark as New';
+                                        }
+                                    )
+                                    ->color('gray')
+                                    ->action(
+                                        function (Timeline $record) {
+                                            /** @var EngagementResponse $timelineable */
+                                            $timelineable = $record->timelineable;
+
+                                            if ($timelineable->status === EngagementResponseStatus::New) {
+                                                $timelineable->update(['status' => EngagementResponseStatus::Actioned]);
+                                            } else {
+                                                $timelineable->update(['status' => EngagementResponseStatus::New]);
+                                            }
+
+                                            Notification::make()
+                                                ->success()
+                                                ->title('Status updated!')
+                                                ->send();
+                                        }
+                                    )
+                                    ->visible(fn (Timeline $record): bool => ! EngagementResponseMarkAsActionedFeature::active() && $record->timelineable instanceof EngagementResponse && $record->timelineable->status === EngagementResponseStatus::New),
+                        ],
+                        Action::make('markAsNew')
+                            ->label('Mark as New')
                             ->color('gray')
-                            ->action(
-                                function (Timeline $record) {
-                                    /** @var EngagementResponse $timelineable */
-                                    $timelineable = $record->timelineable;
+                            ->action(function (Timeline $record) {
+                                /** @var EngagementResponse $engagementResponse */
+                                $engagementResponse = $record->timelineable;
 
-                                    if ($timelineable->status === EngagementResponseStatus::New) {
-                                        $timelineable->update(['status' => EngagementResponseStatus::Actioned]);
-                                    } else {
-                                        $timelineable->update(['status' => EngagementResponseStatus::New]);
-                                    }
+                                $engagementResponse->update(['status' => EngagementResponseStatus::New]);
 
-                                    Notification::make()
-                                        ->success()
-                                        ->title('Status updated!')
-                                        ->send();
-                                }
-                            )
-                            ->visible(fn (Timeline $record): bool => $record->timelineable instanceof EngagementResponse),
+                                Notification::make()
+                                    ->success()
+                                    ->title('Status updated!')
+                                    ->send();
+                            })
+                            ->visible(fn (Timeline $record): bool => $record->timelineable instanceof EngagementResponse && $record->timelineable->status === EngagementResponseStatus::Actioned),
                     ]),
             ])
             ->filters([

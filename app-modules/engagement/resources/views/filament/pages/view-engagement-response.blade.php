@@ -35,6 +35,8 @@
 @use(AdvisingApp\Prospect\Models\Prospect)
 @use(AdvisingApp\StudentDataModel\Models\Student)
 @use(AdvisingApp\Engagement\Enums\EngagementResponseType)
+@use(AdvisingApp\Engagement\Enums\EngagementResponseStatus)
+@use(App\Features\EngagementResponseMarkAsActionedFeature)
 
 <x-filament-panels::page>
     <div>
@@ -57,9 +59,15 @@
                     Reply
                 </x-filament::button>
 
-                <x-filament::button wire:click="changeStatus()">
-                    Mark as {{ $this->getInvertedStatus()->name }}
-                </x-filament::button>
+                @if (EngagementResponseMarkAsActionedFeature::active() && $this->record->status === EngagementResponseStatus::New)
+                    <x-filament::button wire:click="mountAction('markAsActioned')">
+                        Mark as {{ $this->getInvertedStatus()->name }}
+                    </x-filament::button>
+                @else
+                    <x-filament::button wire:click="changeStatus()">
+                        Mark as {{ $this->getInvertedStatus()->name }}
+                    </x-filament::button>
+                @endif
             </div>
 
             <form class="grid gap-6" x-show="isReplying" wire:submit.prevent="reply">
@@ -84,9 +92,16 @@
                         : 'The email address this message was sent from does not match any known student or prospect record. You may only reply to messages that have an associated prospect or student record.'"
                     />
                 </div>
-                <x-filament::button wire:click="changeStatus()">
-                    Mark as {{ $this->getInvertedStatus()->name }}
-                </x-filament::button>
+
+                @if (EngagementResponseMarkAsActionedFeature::active() && $this->record->status === EngagementResponseStatus::New)
+                    <x-filament::button wire:click="mountAction('markAsActioned')">
+                        Mark as {{ $this->getInvertedStatus()->name }}
+                    </x-filament::button>
+                @else
+                    <x-filament::button wire:click="changeStatus()">
+                        Mark as {{ $this->getInvertedStatus()->name }}
+                    </x-filament::button>
+                @endif
             </div>
         </div>
     @endif

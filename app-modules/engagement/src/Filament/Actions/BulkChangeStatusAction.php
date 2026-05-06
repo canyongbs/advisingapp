@@ -38,9 +38,13 @@ namespace AdvisingApp\Engagement\Filament\Actions;
 
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use App\Features\EngagementResponseMarkAsActionedFeature;
 use Filament\Actions\BulkAction;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class BulkChangeStatusAction
@@ -56,14 +60,34 @@ class BulkChangeStatusAction
                 Select::make('status')
                     ->label('Which status should be applied?')
                     ->required()
-                    ->options(EngagementResponseStatus::class)
-                    ->required(),
+                    ->live(condition: EngagementResponseMarkAsActionedFeature::active())
+                    ->options(EngagementResponseStatus::class),
+                Textarea::make('note')
+                    ->label('Note')
+                    ->helperText('Please describe the steps you have taken.')
+                    ->rows(4)
+                    ->visible(fn (Get $get): bool => EngagementResponseMarkAsActionedFeature::active() && $get('status') === EngagementResponseStatus::Actioned)
+                    ->required(fn (Get $get): bool => EngagementResponseMarkAsActionedFeature::active() && $get('status') === EngagementResponseStatus::Actioned),
             ])
             ->action(function (Collection $records, array $data): void {
-                $records->each(function (EngagementResponse $record) use ($data) {
-                    $record->status = $data['status'];
+                $isActioned = $data['status'] === EngagementResponseStatus::Actioned;
 
-                    $record->save();
+                DB::transaction(static function () use ($records, $data, $isActioned): void {
+                    $records->each(static function (EngagementResponse $record) use ($data, $isActioned): void {
+                        if (EngagementResponseMarkAsActionedFeature::active()) {
+                            if ($isActioned) {
+                                $record->actionedNotes()->create([
+                                    'note' => $data['note'],
+                                ]);
+                                $record->update(['status' => EngagementResponseStatus::Actioned]);
+                            } else {
+                                $record->update(['status' => EngagementResponseStatus::New]);
+                            }
+                        } else {
+                            $record->status = $data['status'];
+                            $record->save();
+                        }
+                    });
                 });
             });
     }
