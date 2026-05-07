@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
+use AdvisingApp\Ai\Enums\AiAssistantResourceHubArticleAccess;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Exceptions\DefaultAssistantLockedPropertyException;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
@@ -44,6 +45,7 @@ use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\Ai\Models\Scopes\AiAssistantConfidentialScope;
 use AdvisingApp\Ai\Observers\AiAssistantObserver;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\Team\Models\Team;
 use App\Models\BaseModel;
 use App\Models\User;
@@ -86,6 +88,7 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
         'has_resource_hub_knowledge',
         'created_by_id',
         'last_updated_by_id',
+        'resource_hub_article_access',
     ];
 
     protected $casts = [
@@ -95,6 +98,7 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
         'model' => AiModel::class,
         'is_confidential' => 'bool',
         'has_resource_hub_knowledge' => 'bool',
+        'resource_hub_article_access' => AiAssistantResourceHubArticleAccess::class,
     ];
 
     protected ?bool $isUpvoted = null;
@@ -231,10 +235,30 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
             return [];
         }
 
+        $categoryIds = $this->resourceHubCategories()->pluck('resource_hub_categories.id');
+
         return ResourceHubArticle::query()
-            ->public()
+            ->when(
+                $this->resource_hub_article_access === AiAssistantResourceHubArticleAccess::Public,
+                fn ($query) => $query->where('public', true)
+            )
+            ->when(
+                $this->resource_hub_article_access === AiAssistantResourceHubArticleAccess::Internal,
+                fn ($query) => $query->where('public', false)
+            )
+            ->when($categoryIds->isNotEmpty(), fn ($query) => $query->whereIn('category_id', $categoryIds))
             ->whereNotNull('article_details')
             ->get(['id', 'updated_at'])
             ->all();
+    }
+
+    /**
+     * @return BelongsToMany<ResourceHubCategory, $this, covariant AiAssistantResourceHubCategory>
+     */
+    public function resourceHubCategories(): BelongsToMany
+    {
+        return $this->belongsToMany(ResourceHubCategory::class, 'ai_assistant_resource_hub_categories')
+            ->using(AiAssistantResourceHubCategory::class)
+            ->withTimestamps();
     }
 }
