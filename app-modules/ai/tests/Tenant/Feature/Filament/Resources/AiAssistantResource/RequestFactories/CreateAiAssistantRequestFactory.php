@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Tests\Tenant\Feature\Filament\Resources\AiAssistantResource\RequestFactories;
 
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
+use AdvisingApp\Ai\Enums\AiAssistantResourceHubArticleAccess;
 use AdvisingApp\Ai\Enums\AiModel;
 use Illuminate\Http\UploadedFile;
 use Worksome\RequestFactories\RequestFactory;
@@ -52,6 +53,14 @@ class CreateAiAssistantRequestFactory extends RequestFactory
             'model' => AiModel::Test,
             'description' => fake()->sentence(),
             'instructions' => fake()->sentence(),
+            'has_resource_hub_knowledge' => fake()->boolean(),
+            'resource_hub_article_access' => function (array $attributes) {
+                if (! $attributes['has_resource_hub_knowledge']) {
+                    return AiAssistantResourceHubArticleAccess::All->value;
+                }
+
+                return fake()->randomElement(AiAssistantResourceHubArticleAccess::cases())->value;
+            },
         ];
     }
 

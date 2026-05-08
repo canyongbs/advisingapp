@@ -45,11 +45,6 @@ class AiAssistantResourceHubCategory extends Pivot
 {
     use HasUuids;
 
-    protected array $fillable = [
-        'ai_assistant_id',
-        'resource_hub_category_id',
-    ];
-
     /**
      * @return BelongsTo<AiAssistant, $this>
      */

@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Enums\AiAssistantResourceHubArticleAccess;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
+use App\Features\AiAssistantResourceHubCategoryFeature;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use App\Models\User;
 use Filament\Forms\Components\Checkbox;
@@ -125,15 +126,13 @@ class AiAssistantForm
                         Select::make('resource_hub_article_access')
                             ->label('Resource Hub Article Access')
                             ->options(AiAssistantResourceHubArticleAccess::class)
-                            ->required(fn (Get $get): bool => $get('has_resource_hub_knowledge'))
-                            ->visible(fn (Get $get): bool => $get('has_resource_hub_knowledge')),
+                            ->visible(fn (Get $get): bool => AiAssistantResourceHubCategoryFeature::active() && $get('has_resource_hub_knowledge')),
                         Select::make('resource_hub_categories')
                             ->label('Resource Hub Categories')
                             ->relationship('resourceHubCategories', 'name')
                             ->multiple()
                             ->preload()
-                            ->required(fn (Get $get): bool => $get('has_resource_hub_knowledge'))
-                            ->visible(fn (Get $get): bool => $get('has_resource_hub_knowledge')),
+                            ->visible(fn (Get $get): bool => AiAssistantResourceHubCategoryFeature::active() && $get('has_resource_hub_knowledge')),
                     ]),
                 Section::make('Configure AI Advisor')
                     ->description('Design the capability of your advisor by including detailed instructions below.')
