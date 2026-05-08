@@ -56,7 +56,7 @@ class CreateAiAssistantRequestFactory extends RequestFactory
             'has_resource_hub_knowledge' => fake()->boolean(),
             'resource_hub_article_access' => function (array $attributes) {
                 if (! $attributes['has_resource_hub_knowledge']) {
-                    return AiAssistantResourceHubArticleAccess::All->value;
+                    return null;
                 }
 
                 return fake()->randomElement(AiAssistantResourceHubArticleAccess::cases())->value;

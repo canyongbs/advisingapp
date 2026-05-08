@@ -117,6 +117,10 @@ class EditAiAssistant extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
+        if (! ($data['has_resource_hub_knowledge'] ?? false)) {
+            $data['resource_hub_article_access'] = null;
+        }
+
         $record->fill($data);
 
         throw_if(
