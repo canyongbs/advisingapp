@@ -299,7 +299,7 @@ RUN apt-get update \
     \
     # ensure nginx/fpm directories are writable by www-data (non-root) \
     && mkdir -p /var/cache/nginx /var/log/nginx /var/lib/nginx /etc/ssl/web \
-    && chown -R www-data:www-data /etc/nginx /var/cache/nginx /var/log/nginx /var/lib/nginx /run /etc/ssl/web \
+    && chown -R www-data:www-data /var/cache/nginx /var/log/nginx /var/lib/nginx /run /etc/ssl/web \
     \
     # cleanup \
     && apt-get clean \
@@ -307,6 +307,9 @@ RUN apt-get update \
     && rm -f /etc/nginx/sites-enabled/default
 
 COPY docker/etc/nginx/ /etc/nginx/
+
+# Only grant www-data write access to the directory that needs runtime modification
+RUN chown -R www-data:www-data /etc/nginx/sites-enabled/
 
 COPY --chmod=755 ./docker/web/s6-overlay/ /etc/s6-overlay/
 
