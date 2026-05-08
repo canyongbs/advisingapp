@@ -43,6 +43,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
 use App\Models\Scopes\HasLicense;
 use App\Models\Scopes\WithoutAnyAdmin;
+use App\Filament\Forms\Components\UserSelect;
 use App\Models\User;
 use Filament\Actions\AttachAction;
 use Filament\Forms\Components\Repeater;
@@ -101,8 +102,7 @@ class AddCareTeamMemberToEducatableAttachAction extends AttachAction
                                 ->compact()
                                 ->schema(function () use ($careTeamRoleExists) {
                                     return [
-                                        Select::make('user_id')
-                                            ->searchable()
+                                        UserSelect::make('user_id')
                                             ->required()
                                             ->disableOptionsWhenSelectedInSiblingRepeaterItems()
                                             ->options(match (true) {

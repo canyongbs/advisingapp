@@ -45,6 +45,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
 use App\Models\Scopes\HasLicense;
+use App\Filament\Forms\Components\UserSelect;
 use App\Models\User;
 use Exception;
 use Filament\Forms\Components\Repeater;
@@ -70,7 +71,7 @@ class CareTeamBlock extends CampaignActionBlock
             Repeater::make('careTeam')
                 ->label('Who should be assigned to the care team?')
                 ->schema([
-                    Select::make('user_id')
+                    UserSelect::make('user_id')
                         ->label('User')
                         ->options(function (Get $get, $livewire, string $operation) {
                             if ($livewire instanceof CreateCampaign) {
@@ -86,7 +87,6 @@ class CareTeamBlock extends CampaignActionBlock
                                 default => null,
                             }))->pluck('name', 'id');
                         })
-                        ->searchable()
                         ->required()
                         ->exists('users', 'id'),
                     Select::make('care_team_role_id')

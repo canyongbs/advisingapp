@@ -53,6 +53,7 @@ use AdvisingApp\IntegrationTwilio\Actions\GetTwilioApiKey;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use App\Enums\Feature;
 use App\Enums\Integration;
+use App\Filament\Forms\Components\UserSelect;
 use App\Models\User;
 use Exception;
 use Filament\Actions\Action;
@@ -61,7 +62,6 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -192,7 +192,7 @@ class UserChat extends Page implements HasForms, HasActions
             ->modalWidth('sm')
             ->modalSubmitActionLabel('Start chat')
             ->schema([
-                Select::make('user')
+                UserSelect::make('user')
                     ->label('Pick a user to chat with')
                     ->options(
                         fn (): array => $usersQuery
@@ -209,8 +209,7 @@ class UserChat extends Page implements HasForms, HasActions
                     )
                     ->getOptionLabelUsing(
                         fn ($value) => $usersQuery->find($value)->getKey(),
-                    )
-                    ->searchable(),
+                    ),
             ])
             ->action(function (CreateTwilioConversation $createTwilioConversation, array $data) {
                 $conversation = $createTwilioConversation(
@@ -245,7 +244,7 @@ class UserChat extends Page implements HasForms, HasActions
                 TextInput::make('name')
                     ->label('Channel name')
                     ->required(),
-                Select::make('users')
+                UserSelect::make('users')
                     ->label('Pick users to invite')
                     ->multiple()
                     ->options(
@@ -266,8 +265,7 @@ class UserChat extends Page implements HasForms, HasActions
                             ->whereKey($values)
                             ->pluck('name', 'id')
                             ->all(),
-                    )
-                    ->searchable(),
+                    ),
                 Checkbox::make('is_private')
                     ->label('Invite only')
                     ->default(true)
@@ -314,7 +312,7 @@ class UserChat extends Page implements HasForms, HasActions
                     ->label('Invite only')
                     ->helperText('If not checked, the channel will be public and anyone can join.')
                     ->formatStateUsing(fn () => $this->conversation?->is_private_channel),
-                Select::make('managers')
+                UserSelect::make('managers')
                     ->label('Channel managers')
                     ->multiple()
                     ->options(
@@ -336,7 +334,6 @@ class UserChat extends Page implements HasForms, HasActions
                             ->pluck('name', 'id')
                             ->all(),
                     )
-                    ->searchable()
                     ->default(
                         fn () => $this->conversation
                             ->managers()
@@ -575,7 +572,7 @@ class UserChat extends Page implements HasForms, HasActions
             ->modalDescription('They will have access to the entire conversation history.')
             ->modalSubmitActionLabel('Invite')
             ->schema([
-                Select::make('users')
+                UserSelect::make('users')
                     ->label('Pick users to invite')
                     ->multiple()
                     ->options(
@@ -596,8 +593,7 @@ class UserChat extends Page implements HasForms, HasActions
                             ->whereKey($values)
                             ->pluck('name', 'id')
                             ->all(),
-                    )
-                    ->searchable(),
+                    ),
             ])
             ->action(function (AddUserToConversation $addUserToConversation, array $data) {
                 if ($this->conversation->type !== ConversationType::Channel) {

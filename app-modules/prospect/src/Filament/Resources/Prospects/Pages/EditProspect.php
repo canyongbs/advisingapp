@@ -46,6 +46,7 @@ use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\DataTransferObjects\AutocompletedAddress;
 use App\Filament\Forms\Components\AddressInput;
+use App\Filament\Forms\Components\UserSelect;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use DefStudio\SearchableInput\DTO\SearchResult;
@@ -311,10 +312,9 @@ class EditProspect extends EditRecord
                     ->columns(2),
                 Section::make('Record Details')
                     ->schema([
-                        Select::make('created_by_id')
+                        UserSelect::make('created_by_id')
                             ->label('Created By')
                             ->relationship('createdBy', 'name')
-                            ->searchable()
                             ->nullable()
                             ->exists(
                                 table: (new User())->getTable(),

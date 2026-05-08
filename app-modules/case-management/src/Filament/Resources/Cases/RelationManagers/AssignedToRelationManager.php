@@ -41,11 +41,11 @@ use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\CaseManagement\Models\CaseModel;
 use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
+use App\Filament\Forms\Components\UserSelect;
 use App\Models\Scopes\HasLicense;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
@@ -89,9 +89,8 @@ class AssignedToRelationManager extends RelationManager
                         'status' => CaseAssignmentStatus::Active,
                     ]))
                     ->schema([
-                        Select::make('userId')
+                        UserSelect::make('userId')
                             ->label('Reassign Case To')
-                            ->searchable()
                             ->getSearchResultsUsing(fn (string $search): array => User::query()
                                 ->tap(new HasLicense($this->getOwnerRecord()->respondent->getLicenseType()))
                                 ->where(new Expression('lower(name)'), 'like', '%' . str($search)->lower() . '%')

@@ -44,6 +44,7 @@ use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
 use AdvisingApp\Workflow\Models\WorkflowDetails;
+use App\Filament\Forms\Components\UserSelect;
 use App\Models\User;
 use Closure;
 use Filament\Forms\Components\Field;
@@ -147,7 +148,7 @@ class CaseBlock extends WorkflowActionBlock
                 ->exists((new CasePriority())->getTable(), 'id')
                 ->visible(fn (Get $get) => filled($get('type_id')) || filled($get('priority_id')))
                 ->live(),
-            Select::make('assigned_to_id')
+            UserSelect::make('assigned_to_id')
                 ->label('Assign Case to')
                 ->options(function (Get $get) {
                     $caseTypeId = $get('type_id');
@@ -181,7 +182,6 @@ class CaseBlock extends WorkflowActionBlock
 
                     return $managers;
                 })
-                ->searchable()
                 ->preload()
                 ->required(),
             Textarea::make('close_details')

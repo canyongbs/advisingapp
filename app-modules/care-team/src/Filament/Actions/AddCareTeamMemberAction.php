@@ -43,6 +43,7 @@ use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
 use App\Models\Scopes\HasLicense;
+use App\Filament\Forms\Components\UserSelect;
 use App\Models\User;
 use Exception;
 use Filament\Actions\BulkAction;
@@ -66,9 +67,8 @@ class AddCareTeamMemberAction
                 },
             ])
             ->form([
-                Select::make('recordId')
+                UserSelect::make('recordId')
                     ->label('User')
-                    ->searchable()
                     ->required()
                     ->options(User::query()->tap(new HasLicense(match ($context) {
                         CareTeamRoleType::Student => Student::getLicenseType(),

@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
+use App\Filament\Forms\Components\UserSelect;
 use App\Models\User;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
@@ -110,7 +111,7 @@ class AiAssistantForm
                 Textarea::make('description')
                     ->columnSpanFull()
                     ->required(),
-                Select::make('created_by_id')
+                UserSelect::make('created_by_id')
                     ->label('Created By')
                     ->relationship('createdBy', 'name')
                     ->visible(auth()->user()->isSuperAdmin()),
@@ -137,7 +138,7 @@ class AiAssistantForm
                             ->label('Confidential')
                             ->live()
                             ->columnSpanFull(),
-                        Select::make('ai_assistant_confidential_users')
+                        UserSelect::make('ai_assistant_confidential_users')
                             ->relationship('confidentialAccessUsers', 'name')
                             ->preload()
                             ->label('Users')

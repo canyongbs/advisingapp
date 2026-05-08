@@ -42,6 +42,7 @@ use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\Team\Models\Team;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
+use App\Filament\Forms\Components\UserSelect;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Closure;
@@ -105,11 +106,10 @@ class EditBookingGroup extends EditRecord
                         ->default(BookingGroupBookWith::All)
                         ->live()
                         ->required(),
-                    Select::make('users')
+                    UserSelect::make('users')
                         ->label('Users')
                         ->multiple()
                         ->relationship('users', 'name')
-                        ->searchable()
                         ->preload()
                         ->live(),
                     Select::make('teams')
@@ -119,14 +119,13 @@ class EditBookingGroup extends EditRecord
                         ->searchable()
                         ->preload()
                         ->live(),
-                    Select::make('meeting_owner_id')
+                    UserSelect::make('meeting_owner_id')
                         ->label('Meeting Owner')
                         ->options(fn (Get $get): array => User::query()
                             ->whereIn('id', $this->getEligibleMeetingOwnerIds($get))
                             ->orderBy('name')
                             ->pluck('name', 'id')
                             ->all())
-                        ->searchable()
                         ->preload()
                         ->visible(fn (Get $get): bool => $this->isBookWithAll($get))
                         ->required(fn (Get $get): bool => $this->isBookWithAll($get))

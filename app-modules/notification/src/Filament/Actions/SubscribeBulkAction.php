@@ -38,10 +38,10 @@ namespace AdvisingApp\Notification\Filament\Actions;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Filament\Forms\Components\UserSelect;
 use App\Models\User;
 use Exception;
 use Filament\Actions\BulkAction;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Collection;
@@ -59,11 +59,10 @@ class SubscribeBulkAction
                 fn (Collection $records) => "You have selected {$records->count()} " . Str::plural($context, $records->count()) . ' to subscribe.'
             )
             ->form([
-                Select::make('user_ids')
+                UserSelect::make('user_ids')
                     ->label('Who should be subscribed?')
                     ->options(User::all()->pluck('name', 'id'))
                     ->multiple()
-                    ->searchable()
                     ->default([auth()->id()])
                     ->required()
                     ->exists('users', 'id'),

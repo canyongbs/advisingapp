@@ -40,6 +40,7 @@ use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
 use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
+use App\Filament\Forms\Components\UserSelect;
 use App\Models\User;
 use Closure;
 use Filament\Forms\Components\Checkbox;
@@ -102,13 +103,12 @@ class TaskBlock extends CampaignActionBlock
                                 ->dehydrated(true)
                                 ->exists('projects', 'id')
                                 ->visible(fn (Get $get) => $get('is_confidential')),
-                            Select::make('confidential_task_users')
+                            UserSelect::make('confidential_task_users')
                                 ->options(fn () => User::query()
                                     ->orderBy('name')
                                     ->limit(50)
                                     ->pluck('name', 'id')
                                     ->all())
-                                ->searchable()
                                 ->getSearchResultsUsing(fn (string $search): array => User::query()
                                     ->orderBy('name')
                                     ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
@@ -161,12 +161,11 @@ class TaskBlock extends CampaignActionBlock
                         ->string(),
                     DateTimePicker::make('due')
                         ->label('Due Date'),
-                    Select::make('assigned_to')
+                    UserSelect::make('assigned_to')
                         ->label('Assigned To')
                         ->relationship('assignedTo', 'name')
                         ->model(Task::class)
                         ->nullable()
-                        ->searchable()
                         ->default(Auth::id()),
                 ]),
             CampaignDateTimeInput::make(),

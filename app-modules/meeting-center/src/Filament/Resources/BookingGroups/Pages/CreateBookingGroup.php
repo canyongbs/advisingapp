@@ -41,6 +41,7 @@ use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResou
 use AdvisingApp\Team\Models\Team;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
+use App\Filament\Forms\Components\UserSelect;
 use App\Models\User;
 use Closure;
 use Filament\Actions\Action;
@@ -95,11 +96,10 @@ class CreateBookingGroup extends CreateRecord
                         ->default(BookingGroupBookWith::All)
                         ->live()
                         ->required(),
-                    Select::make('users')
+                    UserSelect::make('users')
                         ->label('Users')
                         ->multiple()
                         ->relationship('users', 'name')
-                        ->searchable()
                         ->preload()
                         ->live(),
                     Select::make('teams')
@@ -109,14 +109,13 @@ class CreateBookingGroup extends CreateRecord
                         ->searchable()
                         ->preload()
                         ->live(),
-                    Select::make('meeting_owner_id')
+                    UserSelect::make('meeting_owner_id')
                         ->label('Meeting Owner')
                         ->options(fn (Get $get): array => User::query()
                             ->whereIn('id', $this->getEligibleMeetingOwnerIds($get))
                             ->orderBy('name')
                             ->pluck('name', 'id')
                             ->all())
-                        ->searchable()
                         ->preload()
                         ->visible(fn (Get $get): bool => $this->isBookWithAll($get))
                         ->required(fn (Get $get): bool => $this->isBookWithAll($get))
