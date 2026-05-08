@@ -98,7 +98,7 @@ class SwitchTenantDatabasesTask implements SwitchTenantTask
             'queue.batching.database' => $this->tenantConnectionName,
         ]);
 
-        // Octane will have an old `db` instance in the Model::$resolver.
+        // Refresh the db resolver so Model uses the updated connection.
         Model::setConnectionResolver(app('db'));
 
         app()->forgetInstance(DatabaseBatchRepository::class);
@@ -122,7 +122,7 @@ class SwitchTenantDatabasesTask implements SwitchTenantTask
             'queue.batching.database' => 'landlord',
         ]);
 
-        // Octane will have an old `db` instance in the Model::$resolver.
+        // Refresh the db resolver so Model uses the updated connection.
         Model::setConnectionResolver(app('db'));
 
         app()->forgetInstance(DatabaseBatchRepository::class);

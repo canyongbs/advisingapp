@@ -61,7 +61,7 @@ show_help() {
   echo "                   One or more names of the services, seperated by spaces, can be passed as arguments to filter the logs (e.g. ${BLUE}pls log apps${RESET} or ${BLUE}pls logs app worker${RESET})"
   echo "                   The -f option can be used to follow the logs (e.g. ${BLUE}pls logs app -f${RESET})"
   echo "  exec           Execute a command in a running container"
-  echo "  shell          Start a shell in a running container as webuser"
+  echo "  shell          Start a shell in a running container as www-data"
   echo "  rshell         Start a shell in a running container as root"
   echo "  install        Install pls to $HOME/bin"
   echo "  ih             (Install Helper) Runs the passed command in a CLI container with the same environment as the app container"

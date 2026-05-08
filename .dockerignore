@@ -6,7 +6,6 @@
 docs
 .env
 .env.example
-rr
 ./storage/logs/*
 stubs
 tests
