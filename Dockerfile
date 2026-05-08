@@ -248,12 +248,12 @@ COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 # Bring in the shared s6 overlay tasks
 COPY --chmod=755 docker/etc/s6-overlay/ /etc/s6-overlay/
 
-COPY --chmod=755 docker/etc/php/8.4/cli/php.ini /etc/php/8.4/cli/php.ini
+COPY --chmod=644 docker/etc/php/8.4/cli/php.ini /etc/php/8.4/cli/php.ini
 
 # Bring in FPM configuration
-COPY --chmod=755 docker/etc/php/8.4/fpm/php-fpm.conf /etc/php/8.4/fpm/php-fpm.conf
-COPY --chmod=755 docker/etc/php/8.4/fpm/pool.d/www.conf /etc/php/8.4/fpm/pool.d/www.conf
-COPY --chmod=755 docker/etc/php/8.4/fpm/php.ini /etc/php/8.4/fpm/php.ini
+COPY --chmod=644 docker/etc/php/8.4/fpm/php-fpm.conf /etc/php/8.4/fpm/php-fpm.conf
+COPY --chmod=644 docker/etc/php/8.4/fpm/pool.d/www.conf /etc/php/8.4/fpm/pool.d/www.conf
+COPY --chmod=644 docker/etc/php/8.4/fpm/php.ini /etc/php/8.4/fpm/php.ini
 
 # Ensure www-data owns necessary directories
 RUN mkdir -p /var/www/html /composer \
