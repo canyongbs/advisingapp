@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Filament\Resources\Prompts\Pages;
 use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
 use App\Models\Authenticatable;
 use Filament\Forms\Components\Checkbox;
+use App\Filament\Forms\Components\UserSelect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -92,7 +93,7 @@ class CreatePrompt extends CreateRecord
                                 ->label('Confidential')
                                 ->live()
                                 ->columnSpanFull(),
-                            Select::make('confidential_prompt_users')
+                            UserSelect::make('confidential_prompt_users')
                                 ->relationship('confidentialAccessUsers', 'name')
                                 ->preload()
                                 ->label('Users')

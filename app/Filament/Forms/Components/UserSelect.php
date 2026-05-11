@@ -89,7 +89,7 @@ class UserSelect extends Select
                         $query->tap(new WithoutAnyAdmin());
 
                         if (! empty($alreadySelected)) {
-                            $query->orWhereIn('users.id', $alreadySelected);
+                            $query->orWhereIn($query->getModel()->getQualifiedKeyName(), $alreadySelected);
                         }
                     });
                 }

@@ -102,7 +102,7 @@ class ManageTasks extends ManageRelatedRecords
                                     ->label('Confidential')
                                     ->live()
                                     ->columnSpanFull(),
-                                Select::make('confidential_task_users')
+                                UserSelect::make('confidential_task_users')
                                     ->relationship('confidentialAccessUsers', 'name')
                                     ->preload()
                                     ->label('Users')

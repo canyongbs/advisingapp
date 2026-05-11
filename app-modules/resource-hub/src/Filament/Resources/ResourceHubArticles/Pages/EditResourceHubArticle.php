@@ -43,6 +43,7 @@ use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubAr
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
+use App\Filament\Forms\Components\UserSelect;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action as BaseAction;
 use Filament\Forms\Components\RichEditor;
@@ -171,11 +172,10 @@ class EditResourceHubArticle extends EditRecord
                                     ->preload()
                                     ->visible(fn (): bool => Division::count() > 1)
                                     ->exists((new Division())->getTable(), (new Division())->getKeyName()),
-                                Select::make('manager_ids')
+                                UserSelect::make('manager_ids')
                                     ->label('Managers')
                                     ->relationship('managers', 'name')
                                     ->multiple()
-                                    ->searchable()
                                     ->preload()
                                     ->exists('users', 'id'),
                             ]),

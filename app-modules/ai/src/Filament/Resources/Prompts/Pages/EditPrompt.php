@@ -43,6 +43,7 @@ use App\Models\Authenticatable;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Checkbox;
+use App\Filament\Forms\Components\UserSelect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -97,7 +98,7 @@ class EditPrompt extends EditRecord
                                 ->label('Confidential')
                                 ->live()
                                 ->columnSpanFull(),
-                            Select::make('confidential_prompt_users')
+                            UserSelect::make('confidential_prompt_users')
                                 ->relationship('confidentialAccessUsers', 'name')
                                 ->preload()
                                 ->label('Users')
