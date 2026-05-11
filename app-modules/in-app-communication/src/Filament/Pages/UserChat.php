@@ -62,6 +62,7 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -192,7 +193,7 @@ class UserChat extends Page implements HasForms, HasActions
             ->modalWidth('sm')
             ->modalSubmitActionLabel('Start chat')
             ->schema([
-                UserSelect::make('user')
+                Select::make('user')
                     ->label('Pick a user to chat with')
                     ->options(
                         fn (): array => $usersQuery
@@ -209,7 +210,8 @@ class UserChat extends Page implements HasForms, HasActions
                     )
                     ->getOptionLabelUsing(
                         fn ($value) => $usersQuery->find($value)->getKey(),
-                    ),
+                    )
+                    ->searchable(),
             ])
             ->action(function (CreateTwilioConversation $createTwilioConversation, array $data) {
                 $conversation = $createTwilioConversation(
@@ -244,7 +246,7 @@ class UserChat extends Page implements HasForms, HasActions
                 TextInput::make('name')
                     ->label('Channel name')
                     ->required(),
-                UserSelect::make('users')
+                Select::make('users')
                     ->label('Pick users to invite')
                     ->multiple()
                     ->options(
@@ -265,7 +267,8 @@ class UserChat extends Page implements HasForms, HasActions
                             ->whereKey($values)
                             ->pluck('name', 'id')
                             ->all(),
-                    ),
+                    )
+                    ->searchable(),
                 Checkbox::make('is_private')
                     ->label('Invite only')
                     ->default(true)

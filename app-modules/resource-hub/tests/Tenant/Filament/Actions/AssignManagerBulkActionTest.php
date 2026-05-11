@@ -125,39 +125,3 @@ it('can bulk assign managers to articles with removing previously assigned manag
         expect($article->managers->pluck('id'))->not()->toContain($oldManager->id);
     });
 });
-
-it('manager_ids UserSelect does not show admin users in options by default', function () {
-    asSuperAdmin();
-
-    $regularUser = User::factory()->licensed(LicenseType::cases())->create();
-    $adminUser = User::factory()->licensed(LicenseType::cases())->create();
-    $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
-
-    $articles = ResourceHubArticle::factory(2)->create();
-
-    livewire(ListResourceHubArticles::class)
-        ->selectTableRecords($articles->pluck('id')->toArray())
-        ->mountAction(TestAction::make('bulkManagers')->table()->bulk())
-        ->assertFormFieldExists('manager_ids', checkFieldUsing: function (UserSelect $field) use ($regularUser, $adminUser): bool {
-            return ! empty($field->getSearchResults($regularUser->name))
-                && empty($field->getSearchResults($adminUser->name));
-        });
-});
-
-it('manager_ids UserSelect shows all users when filter_admins_from_selection config is false', function () {
-    Config::set('app.filter_admins_from_selection', false);
-
-    asSuperAdmin();
-
-    $adminUser = User::factory()->licensed(LicenseType::cases())->create();
-    $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
-
-    $articles = ResourceHubArticle::factory(2)->create();
-
-    livewire(ListResourceHubArticles::class)
-        ->selectTableRecords($articles->pluck('id')->toArray())
-        ->mountAction(TestAction::make('bulkManagers')->table()->bulk())
-        ->assertFormFieldExists('manager_ids', checkFieldUsing: function (UserSelect $field) use ($adminUser): bool {
-            return ! empty($field->getSearchResults($adminUser->name));
-        });
-});

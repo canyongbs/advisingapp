@@ -38,9 +38,11 @@ namespace AdvisingApp\ResourceHub\Filament\Actions;
 
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use App\Filament\Forms\Components\UserSelect;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Exception;
 use Filament\Actions\BulkAction;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Collection;
@@ -57,10 +59,11 @@ class AssignManagerBulkAction
             ->modalHeading('Bulk Assign Managers')
             ->modalDescription(fn (Collection $records) => "You have selected {$records->count()} " . Str::plural('article', $records->count()) . ' to assign manager(s).')
             ->schema([
-                UserSelect::make('manager_ids')
+                Select::make('manager_ids')
                     ->label('Managers')
-                    ->options(fn (): array => User::query()->limit(50)->pluck('name', 'id')->all())
+                    ->options(fn (): array => User::query()->tap(new WithoutAnyAdmin())->limit(50)->pluck('name', 'id')->all())
                     ->multiple()
+                    ->searchable()
                     ->preload()
                     ->exists('users', 'id'),
                 Toggle::make('remove_prior')
