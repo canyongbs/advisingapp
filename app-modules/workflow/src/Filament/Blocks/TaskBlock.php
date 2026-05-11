@@ -58,7 +58,7 @@ class TaskBlock extends WorkflowActionBlock
     }
 
     /**
-     * @return array<int, Section|Fieldset|Checkbox|Select|Textarea|TextInput|DateTimePicker>
+     * @return array<int, Section|Fieldset|Checkbox|UserSelect|Textarea|TextInput|DateTimePicker>
      */
     public function generateFields(): array
     {

@@ -72,11 +72,10 @@ class UserSelect extends Select
                     $relationshipName = $component->getRelationshipName();
 
                     if ($record && $record->exists && $relationshipName && ! str_contains($relationshipName, '.')) {
-                        $qualifiedKey = $component->getRelationship()->getRelated()->getQualifiedKeyName();
+                        $relationQuery = $record->{$relationshipName}()->getQuery();
 
-                        $alreadySelected = $record->{$relationshipName}()
-                            ->getQuery()
-                            ->pluck($qualifiedKey)
+                        $alreadySelected = $relationQuery
+                            ->pluck($relationQuery->getModel()->getQualifiedKeyName())
                             ->map(fn ($variable) => (string) $variable)
                             ->toArray();
                     }
