@@ -37,9 +37,9 @@
 namespace AdvisingApp\Ai\Filament\Resources\Prompts\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
+use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use Filament\Forms\Components\Checkbox;
-use App\Filament\Forms\Components\UserSelect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
