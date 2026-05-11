@@ -37,7 +37,6 @@
 namespace AdvisingApp\ResourceHub\Filament\Actions;
 
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use App\Filament\Forms\Components\UserSelect;
 use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Exception;
