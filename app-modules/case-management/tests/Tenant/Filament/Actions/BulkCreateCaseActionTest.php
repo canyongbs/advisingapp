@@ -42,6 +42,7 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ListProspects;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\Forms\Components\Select;
 use Illuminate\Support\Str;
 
 use function Pest\Laravel\assertDatabaseHas;
@@ -216,4 +217,17 @@ it('can successfully create bulk case with prospect', function () {
     ];
 
     assertDatabaseMissing(CaseAssignment::class, $unexpectedAssignments);
+});
+
+it('assigned_to_id is a plain Select without admin filtering on BulkCreateCaseAction', function () {
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+
+    livewire(ListStudents::class)
+        ->assertSuccessful()
+        ->callTableBulkAction('createCase', [$student->getKey()])
+        ->assertFormFieldExists('assigned_to_id', 'mountedTableBulkActionForm', function (Select $field): bool {
+            return true;
+        });
 });

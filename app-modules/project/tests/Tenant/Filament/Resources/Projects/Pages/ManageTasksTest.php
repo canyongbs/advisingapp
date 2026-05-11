@@ -38,10 +38,13 @@ use AdvisingApp\Project\Filament\Resources\Projects\Pages\ManageTasks;
 use AdvisingApp\Project\Models\Project;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
+use App\Filament\Forms\Components\UserSelect;
+use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Illuminate\Support\Facades\Config;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -142,4 +145,80 @@ it('can list tasks', function () {
         'record' => $project->getRouteKey(),
     ])
         ->assertCanSeeTableRecords($project->tasks);
+});
+
+it('confidential_task_users UserSelect does not show admin users in options by default on ManageTasks', function () {
+    asSuperAdmin();
+
+    $project = Project::factory()->create();
+
+    $regularUser = User::factory()->create();
+    $adminUser = User::factory()->create();
+    $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+    livewire(ManageTasks::class, [
+        'record' => $project->getRouteKey(),
+    ])
+        ->mountTableAction('create')
+        ->assertFormFieldExists('confidential_task_users', checkFieldUsing: function (UserSelect $field) use ($regularUser, $adminUser): bool {
+            return ! empty($field->getSearchResults($regularUser->name))
+                && empty($field->getSearchResults($adminUser->name));
+        });
+});
+
+it('confidential_task_users UserSelect shows all users when filter_admins_from_selection config is false on ManageTasks', function () {
+    Config::set('app.filter_admins_from_selection', false);
+
+    asSuperAdmin();
+
+    $project = Project::factory()->create();
+
+    $adminUser = User::factory()->create();
+    $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+    livewire(ManageTasks::class, [
+        'record' => $project->getRouteKey(),
+    ])
+        ->mountTableAction('create')
+        ->assertFormFieldExists('confidential_task_users', checkFieldUsing: function (UserSelect $field) use ($adminUser): bool {
+            return ! empty($field->getSearchResults($adminUser->name));
+        });
+});
+
+it('assigned_to UserSelect does not show admin users in options by default on ManageTasks', function () {
+    asSuperAdmin();
+
+    $project = Project::factory()->create();
+
+    $regularUser = User::factory()->create();
+    $adminUser = User::factory()->create();
+    $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+    livewire(ManageTasks::class, [
+        'record' => $project->getRouteKey(),
+    ])
+        ->mountTableAction('create')
+        ->assertFormFieldExists('assigned_to', checkFieldUsing: function (UserSelect $field) use ($regularUser, $adminUser): bool {
+            return ! empty($field->getSearchResults($regularUser->name))
+                && empty($field->getSearchResults($adminUser->name));
+        });
+});
+
+it('assigned_to UserSelect shows all users when filter_admins_from_selection config is false on ManageTasks', function () {
+    Config::set('app.filter_admins_from_selection', false);
+
+    asSuperAdmin();
+
+    $project = Project::factory()->create();
+
+    $adminUser = User::factory()->create();
+    $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+    livewire(ManageTasks::class, [
+        'record' => $project->getRouteKey(),
+    ])
+        ->mountTableAction('create')
+        ->assertFormFieldExists('assigned_to', checkFieldUsing: function (UserSelect $field) use ($adminUser): bool {
+            return ! empty($field->getSearchResults($adminUser->name));
+        });
 });

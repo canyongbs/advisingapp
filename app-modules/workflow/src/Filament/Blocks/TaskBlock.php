@@ -73,6 +73,7 @@ class TaskBlock extends WorkflowActionBlock
             DateTimePicker::make('due')
                 ->label('Due Date'),
             UserSelect::make('assigned_to')
+                ->withoutAdminFilter()
                 ->label('Assigned To')
                 ->relationship('assignedTo', 'name')
                 ->model(WorkflowTaskDetails::class)

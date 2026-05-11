@@ -38,6 +38,8 @@ use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\EditPrompt;
 use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\Role;
+use App\Models\User;
 use Filament\Actions\DeleteAction;
 
 use function Pest\Laravel\actingAs;
@@ -142,4 +144,52 @@ it('can delete a record', function () use ($licenses, $permissions) {
         ->callAction(DeleteAction::class);
 
     assertSoftDeleted($record);
+});
+
+it('confidential_prompt_users UserSelect loads pre-existing super admin as selected when editing', function () use ($licenses, $permissions) {
+    // The acting user creates the prompt so user_id matches, making the confidential section visible
+    $actingUser = user(licenses: $licenses, permissions: $permissions);
+    actingAs($actingUser);
+
+    $superAdmin = User::factory()->licensed(LicenseType::cases())->create();
+    $superAdmin->assignRole(Role::superAdmin()->get());
+
+    // Observer sets user_id to actingUser when creating
+    $prompt = Prompt::factory()->create(['is_confidential' => true]);
+    $prompt->confidentialAccessUsers()->attach($superAdmin->getKey());
+
+    livewire(EditPrompt::class, ['record' => $prompt->getRouteKey()])
+        ->assertSuccessful()
+        ->assertFormSet([
+            'confidential_prompt_users' => [$superAdmin->getKey()],
+        ]);
+});
+
+it('can save a confidential prompt retaining a super admin as a confidential access user', function () use ($licenses, $permissions) {
+    $actingUser = user(licenses: $licenses, permissions: $permissions);
+    actingAs($actingUser);
+
+    $superAdmin = User::factory()->licensed(LicenseType::cases())->create();
+    $superAdmin->assignRole(Role::superAdmin()->get());
+
+    $regularUser = User::factory()->create();
+
+    // Observer sets user_id to actingUser
+    $prompt = Prompt::factory()->create(['is_confidential' => true]);
+    $prompt->confidentialAccessUsers()->attach($superAdmin->getKey());
+
+    livewire(EditPrompt::class, ['record' => $prompt->getRouteKey()])
+        ->assertSuccessful()
+        ->fillForm([
+            'is_confidential' => true,
+            'confidential_prompt_users' => [$superAdmin->getKey(), $regularUser->getKey()],
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    $prompt->refresh();
+
+    expect($prompt->confidentialAccessUsers()->pluck('users.id')->toArray())
+        ->toContain($superAdmin->getKey())
+        ->toContain($regularUser->getKey());
 });

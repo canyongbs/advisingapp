@@ -43,7 +43,6 @@ use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\Division\Models\Division;
-use App\Filament\Forms\Components\UserSelect;
 use App\Models\User;
 use Closure;
 use Filament\Forms\Components\Select;
@@ -117,7 +116,7 @@ class CaseBlock extends CampaignActionBlock
                 ->required()
                 ->exists((new CasePriority())->getTable(), 'id')
                 ->visible(fn (Get $get): bool => filled($get('type_id'))),
-            UserSelect::make('assigned_to_id')
+            Select::make('assigned_to_id')
                 ->label('Assign Case to')
                 ->options(function (Get $get) {
                     $caseTypeId = $get('type_id');
@@ -143,6 +142,7 @@ class CaseBlock extends CampaignActionBlock
 
                     return $managers;
                 })
+                ->searchable()
                 ->preload()
                 ->required(),
             Textarea::make('close_details')

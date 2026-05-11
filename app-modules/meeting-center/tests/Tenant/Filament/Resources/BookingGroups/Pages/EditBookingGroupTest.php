@@ -39,7 +39,10 @@ use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory\EditBookingGroupRequestFactory;
 use AdvisingApp\Team\Models\Team;
+use App\Filament\Forms\Components\UserSelect;
+use App\Models\Authenticatable;
 use App\Models\User;
+use Illuminate\Support\Facades\Config;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseMissing;
@@ -251,4 +254,46 @@ it('validates meeting owner must have a connected calendar', function () {
         ->fillForm($request)
         ->call('save')
         ->assertHasFormErrors(['meeting_owner_id']);
+});
+
+it('users UserSelect does not show admin users in options by default on EditBookingGroup', function () {
+    asSuperAdmin();
+
+    $regularUser = User::factory()->create();
+    $adminUser = User::factory()->create();
+    $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+    $bookingGroup = BookingGroup::factory()
+        ->for(User::factory(), 'createdBy')
+        ->create();
+
+    livewire(EditBookingGroup::class, [
+        'record' => $bookingGroup->getRouteKey(),
+    ])
+        ->assertSuccessful()
+        ->assertFormFieldExists('users', checkFieldUsing: function (UserSelect $field) use ($regularUser, $adminUser): bool {
+            return ! empty($field->getSearchResults($regularUser->name))
+                && empty($field->getSearchResults($adminUser->name));
+        });
+});
+
+it('users UserSelect shows all users when filter_admins_from_selection config is false on EditBookingGroup', function () {
+    Config::set('app.filter_admins_from_selection', false);
+
+    asSuperAdmin();
+
+    $adminUser = User::factory()->create();
+    $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+    $bookingGroup = BookingGroup::factory()
+        ->for(User::factory(), 'createdBy')
+        ->create();
+
+    livewire(EditBookingGroup::class, [
+        'record' => $bookingGroup->getRouteKey(),
+    ])
+        ->assertSuccessful()
+        ->assertFormFieldExists('users', checkFieldUsing: function (UserSelect $field) use ($adminUser): bool {
+            return ! empty($field->getSearchResults($adminUser->name));
+        });
 });

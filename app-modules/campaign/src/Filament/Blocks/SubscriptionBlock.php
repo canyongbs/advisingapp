@@ -37,8 +37,8 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
-use App\Filament\Forms\Components\UserSelect;
 use App\Models\User;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 
 class SubscriptionBlock extends CampaignActionBlock
@@ -53,10 +53,11 @@ class SubscriptionBlock extends CampaignActionBlock
     public function generateFields(): array
     {
         return [
-            UserSelect::make('user_ids')
+            Select::make('user_ids')
                 ->label('Who should be subscribed?')
                 ->options(User::all()->pluck('name', 'id'))
                 ->multiple()
+                ->searchable()
                 ->default([auth()->id()])
                 ->required()
                 ->exists('users', 'id'),

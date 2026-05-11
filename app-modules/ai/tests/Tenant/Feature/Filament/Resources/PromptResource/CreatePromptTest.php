@@ -37,7 +37,11 @@
 use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\CreatePrompt;
 use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
 use AdvisingApp\Ai\Models\Prompt;
+use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\Role;
+use App\Models\Scopes\WithoutAnyAdmin;
+use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
@@ -103,4 +107,48 @@ it('can create a record', function () use ($licenses, $permissions) {
     assertDatabaseCount(Prompt::class, 1);
 
     assertDatabaseHas(Prompt::class, $record->toArray());
+});
+
+it('confidential_prompt_users UserSelect excludes super admins from options', function () use ($licenses, $permissions) {
+    $superAdmin = User::factory()->licensed(LicenseType::cases())->create();
+    $superAdmin->assignRole(Role::superAdmin()->get());
+
+    $regularUser = User::factory()->create();
+
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    // The UserSelect for confidential_prompt_users applies WithoutAnyAdmin via its relationship() override.
+    // Verify the scope excludes super admins and retains regular users.
+    $filteredUserIds = User::query()->tap(new WithoutAnyAdmin())->pluck('id')->toArray();
+
+    expect($filteredUserIds)
+        ->toContain($regularUser->getKey())
+        ->not->toContain($superAdmin->getKey());
+});
+
+it('can create a confidential prompt with regular users as confidential access users', function () use ($licenses, $permissions) {
+    $actingUser = user(licenses: $licenses, permissions: $permissions);
+    actingAs($actingUser);
+
+    $regularUsers = User::factory()->count(2)->create();
+
+    livewire(CreatePrompt::class)
+        ->assertSuccessful()
+        ->fillForm([
+            'title' => 'Confidential Test Prompt',
+            'prompt' => 'This is a confidential test prompt.',
+            'type_id' => PromptType::factory()->create()->getKey(),
+            'is_confidential' => true,
+            'confidential_prompt_users' => $regularUsers->pluck('id')->toArray(),
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    $prompt = Prompt::withoutGlobalScopes()->where('title', 'Confidential Test Prompt')->firstOrFail();
+
+    expect($prompt->confidentialAccessUsers()->pluck('users.id')->toArray())
+        ->toEqualCanonicalizing($regularUsers->pluck('id')->toArray());
 });

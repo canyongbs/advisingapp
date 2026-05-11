@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Workflow\Filament\Blocks;
 
-use App\Filament\Forms\Components\UserSelect;
 use App\Models\User;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
@@ -56,10 +56,11 @@ class SubscriptionBlock extends WorkflowActionBlock
     public function generateFields(): array
     {
         return [
-            UserSelect::make('user_ids')
+            Select::make('user_ids')
                 ->label('Who should be subscribed?')
                 ->options(User::all()->pluck('name', 'id'))
                 ->multiple()
+                ->searchable()
                 ->default([auth()->id()])
                 ->required()
                 ->exists('users', 'id'),

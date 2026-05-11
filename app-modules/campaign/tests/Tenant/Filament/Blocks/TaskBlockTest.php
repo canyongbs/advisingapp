@@ -42,7 +42,11 @@ use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Team\Models\Team;
+use App\Filament\Forms\Components\UserSelect;
+use App\Models\Authenticatable;
 use App\Models\User;
+use Filament\Forms\Components\Select;
+use Illuminate\Support\Facades\Config;
 
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
@@ -157,4 +161,78 @@ it('can edit a confidential task campaign journey step and persist confidential 
         ->and($action->data['confidential_task_projects'])->toEqual($projects->pluck('id')->toArray())
         ->and($action->data['confidential_task_users'])->toEqual($users->pluck('id')->toArray())
         ->and($action->data['confidential_task_teams'])->toEqual($teams->pluck('id')->toArray());
+});
+
+it('assigned_to UserSelect shows all users when filter_admins_from_selection config is false', function () {
+    Config::set('app.filter_admins_from_selection', false);
+
+    asSuperAdmin();
+
+    $campaign = Campaign::factory()
+        ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
+        ->create();
+
+    $adminUser = User::factory()->licensed(LicenseType::cases())->create();
+    $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+    /** @var CampaignAction $action */
+    $action = CampaignAction::factory()
+        ->for($campaign, 'campaign')
+        ->create([
+            'type' => CampaignActionType::Task,
+            'execute_at' => now()->addDay(),
+            'data' => [
+                'title' => 'Title',
+                'description' => 'This is a description.',
+                'due' => null,
+                'assigned_to' => null,
+                'is_confidential' => false,
+            ],
+        ]);
+
+    livewire(CampaignActionsRelationManager::class, [
+        'ownerRecord' => $campaign,
+        'pageClass' => ViewCampaign::class,
+    ])
+        ->mountTableAction('edit', record: $action->getKey())
+        ->assertFormFieldExists('data.assigned_to', checkFieldUsing: function (UserSelect $field) use ($adminUser): bool {
+            return ! empty($field->getSearchResults($adminUser->name));
+        });
+});
+
+it('confidential_task_users select does not show admin users in options by default', function () {
+    asSuperAdmin();
+
+    $campaign = Campaign::factory()
+        ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
+        ->create();
+
+    $regularUser = User::factory()->licensed(LicenseType::cases())->create();
+    $adminUser = User::factory()->licensed(LicenseType::cases())->create();
+    $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+    /** @var CampaignAction $action */
+    $action = CampaignAction::factory()
+        ->for($campaign, 'campaign')
+        ->create([
+            'type' => CampaignActionType::Task,
+            'execute_at' => now()->addDay(),
+            'data' => [
+                'title' => 'Title',
+                'description' => 'This is a description.',
+                'due' => null,
+                'assigned_to' => null,
+                'is_confidential' => true,
+            ],
+        ]);
+
+    livewire(CampaignActionsRelationManager::class, [
+        'ownerRecord' => $campaign,
+        'pageClass' => ViewCampaign::class,
+    ])
+        ->mountTableAction('edit', record: $action->getKey())
+        ->assertFormFieldExists('data.confidential_task_users', checkFieldUsing: function (Select $field) use ($regularUser, $adminUser): bool {
+            return ! empty($field->getSearchResults($regularUser->name))
+                && empty($field->getSearchResults($adminUser->name));
+        });
 });

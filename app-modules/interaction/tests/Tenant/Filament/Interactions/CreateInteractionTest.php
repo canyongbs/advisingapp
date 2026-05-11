@@ -36,9 +36,14 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\InteractionResource;
+use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\CreateInteraction;
+use App\Filament\Forms\Components\UserSelect;
+use App\Models\Authenticatable;
 use App\Models\User;
+use Illuminate\Support\Facades\Config;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
 test('CreateInteraction is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -55,4 +60,42 @@ test('CreateInteraction is gated with proper access control', function () {
         ->get(
             InteractionResource::getUrl('create')
         )->assertSuccessful();
+});
+
+it('interaction_confidential_users UserSelect does not show admin users in options by default on CreateInteraction', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('interaction.view-any');
+    $user->givePermissionTo('interaction.create');
+
+    actingAs($user);
+
+    $regularUser = User::factory()->create();
+    $adminUser = User::factory()->create();
+    $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+    livewire(CreateInteraction::class)
+        ->assertSuccessful()
+        ->assertFormFieldExists('interaction_confidential_users', checkFieldUsing: function (UserSelect $field) use ($regularUser, $adminUser): bool {
+            return ! empty($field->getSearchResults($regularUser->name))
+                && empty($field->getSearchResults($adminUser->name));
+        });
+});
+
+it('interaction_confidential_users UserSelect shows all users when filter_admins_from_selection config is false on CreateInteraction', function () {
+    Config::set('app.filter_admins_from_selection', false);
+
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('interaction.view-any');
+    $user->givePermissionTo('interaction.create');
+
+    actingAs($user);
+
+    $adminUser = User::factory()->create();
+    $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+    livewire(CreateInteraction::class)
+        ->assertSuccessful()
+        ->assertFormFieldExists('interaction_confidential_users', checkFieldUsing: function (UserSelect $field) use ($adminUser): bool {
+            return ! empty($field->getSearchResults($adminUser->name));
+        });
 });
