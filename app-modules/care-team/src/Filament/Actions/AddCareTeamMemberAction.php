@@ -42,8 +42,8 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
-use App\Filament\Forms\Components\UserSelect;
 use App\Models\Scopes\HasLicense;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Exception;
 use Filament\Actions\BulkAction;
@@ -67,13 +67,14 @@ class AddCareTeamMemberAction
                 },
             ])
             ->form([
-                UserSelect::make('recordId')
+                Select::make('recordId')
                     ->label('User')
+                    ->searchable()
                     ->required()
                     ->options(User::query()->tap(new HasLicense(match ($context) {
                         CareTeamRoleType::Student => Student::getLicenseType(),
                         CareTeamRoleType::Prospect => Prospect::getLicenseType(),
-                    }))->pluck('name', 'id')),
+                    }))->tap(new WithoutAnyAdmin())->pluck('name', 'id')),
                 Select::make('care_team_role_id')
                     ->label('Role')
                     ->relationship('careTeamRole', 'name', fn (Builder $query) => $query->where('type', match ($context) {

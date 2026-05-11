@@ -43,6 +43,7 @@ use App\Filament\Forms\Components\UserSelect;
 use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
@@ -93,6 +94,7 @@ class AssignedToRelationManager extends RelationManager
                             ->label('Reassign Case To')
                             ->getSearchResultsUsing(fn (string $search): array => User::query()
                                 ->tap(new HasLicense($this->getOwnerRecord()->respondent->getLicenseType()))
+                                ->tap(new WithoutAnyAdmin())
                                 ->where(new Expression('lower(name)'), 'like', '%' . str($search)->lower() . '%')
                                 ->pluck('name', 'id')
                                 ->all())

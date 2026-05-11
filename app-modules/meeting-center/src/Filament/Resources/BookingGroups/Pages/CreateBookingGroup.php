@@ -42,6 +42,7 @@ use AdvisingApp\Team\Models\Team;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
 use App\Filament\Forms\Components\UserSelect;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Closure;
 use Filament\Actions\Action;
@@ -303,7 +304,7 @@ class CreateBookingGroup extends CreateRecord
         ));
 
         $teamUserIds = ! empty($selectedTeamIds)
-            ? User::query()->whereIn('team_id', $selectedTeamIds)->pluck('id')->map(fn ($id): string => (string) $id)->all()
+            ? User::query()->whereIn('team_id', $selectedTeamIds)->tap(new WithoutAnyAdmin())->pluck('id')->map(fn ($id): string => (string) $id)->all()
             : [];
 
         return array_values(array_unique([...$selectedUserIds, ...$teamUserIds]));

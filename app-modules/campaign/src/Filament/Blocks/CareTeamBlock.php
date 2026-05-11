@@ -45,6 +45,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
 use App\Models\Scopes\HasLicense;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Exception;
 use Filament\Forms\Components\Repeater;
@@ -84,7 +85,7 @@ class CareTeamBlock extends CampaignActionBlock
                                 CareTeamRoleType::Student->getLabel() => Student::getLicenseType(),
                                 CareTeamRoleType::Prospect->getLabel() => Prospect::getLicenseType(),
                                 default => null,
-                            }))->pluck('name', 'id');
+                            }))->tap(new WithoutAnyAdmin())->pluck('name', 'id');
                         })
                         ->searchable()
                         ->required()
