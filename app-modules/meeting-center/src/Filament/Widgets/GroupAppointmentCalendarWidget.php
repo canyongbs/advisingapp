@@ -111,4 +111,9 @@ class GroupAppointmentCalendarWidget extends FullCalendarWidget
         $this->hidePast = $hidePast;
         $this->refreshRecords();
     }
+
+    protected function headerActions(): array
+    {
+        return [];
+    }
 }

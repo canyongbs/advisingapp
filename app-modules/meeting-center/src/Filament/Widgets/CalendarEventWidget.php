@@ -71,4 +71,9 @@ class CalendarEventWidget extends FullCalendarWidget
     {
         $this->refreshRecords();
     }
+
+    protected function headerActions(): array
+    {
+        return [];
+    }
 }
