@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+exec php /var/www/html/artisan schedule:work

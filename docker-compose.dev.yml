@@ -10,7 +10,6 @@ services:
         environment:
             SERVICE: 'web'
             SSL_MODE: 'mixed'
-            LARAVEL_OCTANE_WATCH: '${LARAVEL_OCTANE_WATCH:-false}'
             CACHE_MODULES: '${CACHE_MODULES:-false}'
             CACHE_CONFIG: '${CACHE_CONFIG:-false}'
             CACHE_ROUTES: '${CACHE_ROUTES:-false}'
@@ -27,7 +26,7 @@ services:
             - "traefik.http.routers.advisingapp-app.rule=Host(`advisingapp.local`) || HostRegexp(`^[a-z0-9]+\\.advisingapp\\.local$`)"
             - 'traefik.http.routers.advisingapp-app.entrypoints=websecure'
             - 'traefik.http.routers.advisingapp-app.tls=true'
-            - 'traefik.http.services.advisingapp-app.loadbalancer.server.port=443'
+            - 'traefik.http.services.advisingapp-app.loadbalancer.server.port=8443'
             - 'traefik.http.services.advisingapp-app.loadbalancer.server.scheme=https'
         extra_hosts:
             - 'host.docker.internal:host-gateway'
@@ -150,6 +149,7 @@ services:
 
     advisingapp-pgsql:
         image: 'postgres:15'
+        command: postgres -c max_locks_per_transaction=256
         ports:
             - '${FORWARD_DB_PORT:-5432}:5432'
         environment:

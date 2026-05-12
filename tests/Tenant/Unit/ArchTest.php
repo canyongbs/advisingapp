@@ -43,6 +43,7 @@ use Illuminate\Support\Collection;
 use InterNACHI\Modular\Support\ModuleConfig;
 use InterNACHI\Modular\Support\ModuleRegistry;
 use PHPUnit\Framework\Assert;
+use Symfony\Component\Finder\SplFileInfo;
 
 arch('All Core Settings classes should have defaults for all properties')
     ->expect('App\Settings')
@@ -61,10 +62,15 @@ arch('All Core Factories should not use the fake global function')
     ->not->toUse('fake');
 
 /** @var Collection<int, ModuleConfig> $modules */
-$modules = app(ModuleRegistry::class, [
-    'modules_path' => 'app-modules',
-    'cache_path' => 'cache/modules.php',
-])->modules();
+$modulesPath = dirname(__DIR__, 3) . '/app-modules';
+$modules = (new ModuleRegistry(
+    modules_path: $modulesPath,
+    modules_loader: fn () => collect(glob($modulesPath . '/*/composer.json'))
+        ->map(fn (string $path) => ModuleConfig::fromComposerFile(
+            new SplFileInfo($path, dirname($path), $path)
+        ))
+        ->keyBy(fn (ModuleConfig $module) => $module->name),
+))->modules();
 
 $modules->each(function (ModuleConfig $module) use ($legacyV4UuidModels) {
     arch("All {$module->name} Settings classes should have defaults for all properties")

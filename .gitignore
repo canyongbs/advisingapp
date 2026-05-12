@@ -35,7 +35,6 @@ app-modules/**/resources/js/dist/*
 **/.DS_Store
 /*tinkerwell.php
 .vault-password
-/rr
 /.bash_history
 **/psysh_history
 .pdepend/

@@ -3,8 +3,15 @@
 max_attempts=3
 attempt=1
 
+# Use HTTPS directly when SSL is enabled to avoid 301 redirects in full mode
+if [[ "$SSL_MODE" == "full" || "$SSL_MODE" == "mixed" ]]; then
+	check_url="https://localhost:8443/ping"
+else
+	check_url="http://localhost:8080/ping"
+fi
+
 while [ $attempt -le $max_attempts ]; do
-	response=$(curl -s -o /dev/null -w "%{http_code}" -L --insecure http://localhost/ping)
+	response=$(curl -s -o /dev/null -w "%{http_code}" --insecure "$check_url")
 	
 	if [[ $response == "200" ]]; then
         echo "✅ Web server is responding correctly."

@@ -40,11 +40,11 @@ use App\Overrides\Laravel\PermissionMigrationCreator;
 use Illuminate\Database\Console\Migrations\MigrateMakeCommand;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Composer;
-use InterNACHI\Modular\Console\Commands\Make\Modularize;
+use InterNACHI\Modularize\ModularizeGeneratorCommand;
 
 class CreatePermissionMigration extends MigrateMakeCommand
 {
-    use Modularize;
+    use ModularizeGeneratorCommand;
 
     protected $signature = 'make:permission-migration {name : The name of the migration}
         {--create= : The table to be created}

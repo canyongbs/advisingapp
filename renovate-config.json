@@ -26,14 +26,6 @@
         },
         {
             "customType": "regex",
-            "description": "RoadRunner Version Updates",
-            "managerFilePatterns": ["/^Dockerfile$/"],
-            "matchStrings": ["COPY --from=ghcr\\.io/roadrunner-server/roadrunner:(?<currentValue>[\\d.]+)"],
-            "datasourceTemplate": "github-releases",
-            "depNameTemplate": "roadrunner-server/roadrunner"
-        },
-        {
-            "customType": "regex",
             "description": "NVM Version Updates",
             "managerFilePatterns": ["/^Dockerfile$/"],
             "matchStrings": ["ENV NVM_VERSION=v(?<currentValue>[\\d.]+)"],

@@ -9,10 +9,8 @@ cd "$WEBUSER_HOME" || exit 0
 
 echo "Purging any unregistered Feature Flags..."
 
-USERNAME=$(id -nu "$PUID")
-
 # Run landlord pennant purge
-if s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" pennant:purge --except-registered; then
+if php "$WEBUSER_HOME/artisan" pennant:purge --except-registered; then
   echo "Landlord Feature Flags purged!"
 else
   echo "Landlord Feature Flag purge failed!"
@@ -20,7 +18,7 @@ else
 fi
 
 # Run tenant pennant purge
-output=$(s6-setuidgid "$USERNAME" php "$WEBUSER_HOME/artisan" tenants:artisan "pennant:purge --except-registered" 2>&1)
+output=$(php "$WEBUSER_HOME/artisan" tenants:artisan "pennant:purge --except-registered" 2>&1)
 exit_code=$?
 
 echo "$output"

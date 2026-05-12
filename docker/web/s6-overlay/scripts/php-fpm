@@ -1,0 +1,7 @@
+#!/command/with-contenv bash
+
+set -e
+
+echo "Starting PHP-FPM..."
+
+exec php-fpm8.4 --nodaemonize --fpm-config /etc/php/8.4/fpm/php-fpm.conf

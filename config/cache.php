@@ -58,7 +58,7 @@ return [
     | same cache driver to group types of items stored in your caches.
     |
     | Supported drivers: "apc", "array", "database", "file",
-    |         "memcached", "redis", "dynamodb", "octane", "null"
+    |         "memcached", "redis", "dynamodb", "null"
     |
     */
 
@@ -88,10 +88,6 @@ return [
             'driver' => 'redis',
             'connection' => 'cache',
             'lock_connection' => 'default',
-        ],
-
-        'octane' => [
-            'driver' => 'octane',
         ],
     ],
 
