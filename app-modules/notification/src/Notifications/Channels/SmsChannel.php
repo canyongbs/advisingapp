@@ -53,6 +53,7 @@ use AdvisingApp\Notification\Notifications\Contracts\OnDemandNotification;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
+use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -60,8 +61,10 @@ use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Talkroute\MessageSegmentCalculator\SegmentCalculator;
+use Telnyx\Exception\ApiErrorException;
 use Telnyx\Message;
 use Telnyx\Telnyx;
 use Throwable;
@@ -209,10 +212,29 @@ class SmsChannel
 
                     $smsMessage->save();
                 } else {
+                    if ($result->errorCode === '40300') {
+                        SmsOptOutPhoneNumber::firstOrCreate([
+                            'number' => $recipientNumber,
+                        ]);
+
+                        Log::warning('SMS opt-out recorded at send time via Telnyx error 40300. Pre-send opt-out check did not catch this number.', [
+                            'recipient_number' => $recipientNumber,
+                            'sms_message_id' => $smsMessage->getKey(),
+                        ]);
+                    }
+
+                    if ($result->errorCode === '40310') {
+                        BouncedPhoneNumber::firstOrCreate(
+                            ['number' => $recipientNumber],
+                            ['external_error_code' => $result->errorCode]
+                        );
+                    }
+
                     $smsMessage->events()->create([
                         'type' => SmsMessageEventType::FailedDispatch,
                         'payload' => [
                             'error' => $result->error,
+                            'error_code' => $result->errorCode,
                         ],
                         'occurred_at' => now(),
                     ]);
@@ -294,6 +316,10 @@ class SmsChannel
             $result->message = $message;
         } catch (Throwable $exception) {
             $result->error = $exception->getMessage();
+
+            if ($exception instanceof ApiErrorException) {
+                $result->errorCode = $exception->getTelnyxCode();
+            }
         }
 
         return $result;
