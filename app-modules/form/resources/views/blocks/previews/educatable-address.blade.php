@@ -33,16 +33,32 @@
 --}}
 <x-form::blocks.field-wrapper :$label :$isRequired :description="$description ?? null">
     <div class="space-y-2">
-        <x-form::blocks.previews.field />
-        <x-form::blocks.previews.field />
-        <x-form::blocks.previews.field />
-        <div class="grid grid-cols-2 gap-2">
+        <x-form::blocks.field-wrapper label="Address Line 1">
             <x-form::blocks.previews.field />
+        </x-form::blocks.field-wrapper>
+
+        <x-form::blocks.field-wrapper label="Address Line 2">
             <x-form::blocks.previews.field />
-        </div>
-        <div class="grid grid-cols-2 gap-2">
+        </x-form::blocks.field-wrapper>
+
+        <x-form::blocks.field-wrapper label="Address Line 3">
             <x-form::blocks.previews.field />
+        </x-form::blocks.field-wrapper>
+
+        <x-form::blocks.field-wrapper label="City">
             <x-form::blocks.previews.field />
-        </div>
+        </x-form::blocks.field-wrapper>
+
+        <x-form::blocks.field-wrapper label="State">
+            <x-form::blocks.previews.field />
+        </x-form::blocks.field-wrapper>
+
+        <x-form::blocks.field-wrapper label="Postal Code">
+            <x-form::blocks.previews.field />
+        </x-form::blocks.field-wrapper>
+
+        <x-form::blocks.field-wrapper label="Country">
+            <x-form::blocks.previews.field />
+        </x-form::blocks.field-wrapper>
     </div>
 </x-form::blocks.field-wrapper>
