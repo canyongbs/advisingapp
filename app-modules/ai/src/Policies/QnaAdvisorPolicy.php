@@ -54,7 +54,11 @@ class QnaAdvisorPolicy
             return $response;
         }
 
-        if ((! AiAssistantDtoRenameFeature::active() && ! Gate::check(Feature::QnAAdvisor->getGateName())) || (AiAssistantDtoRenameFeature::active() && ! Gate::check(Feature::CustomerAdvisor->getGateName()))) {
+        $featureGate = AiAssistantDtoRenameFeature::active()
+            ? Feature::CustomerAdvisor->getGateName()
+            : Feature::QnAAdvisor->getGateName();
+
+        if (! Gate::check($featureGate)) {
             return Response::deny('Customer Advisors are not enabled.');
         }
 

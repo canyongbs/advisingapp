@@ -61,7 +61,11 @@ class AiAssistantPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        if ((! AiAssistantDtoRenameFeature::active() && ! Gate::check(Feature::CustomAiAssistants->getGateName())) || (AiAssistantDtoRenameFeature::active() && ! Gate::check(Feature::EmployeeAdvisors->getGateName()))) {
+        $featureGate = AiAssistantDtoRenameFeature::active()
+            ? Feature::EmployeeAdvisors->getGateName()
+            : Feature::CustomAiAssistants->getGateName();
+
+        if (! Gate::check($featureGate)) {
             return Response::deny('AI Assistants are not enabled.');
         }
 

@@ -36,6 +36,7 @@
 
 namespace App\Http\Requests\Tenants;
 
+use App\Features\AiAssistantDtoRenameFeature;
 use App\Models\Tenant;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -47,17 +48,15 @@ class CreateTenantRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
+        $rules = [
             'domain' => ['required', 'string', 'max:255', Rule::unique(Tenant::class)],
             'database' => ['required', 'string', 'max:255'],
             'limits' => ['required', 'array'],
             'limits.conversationalAiSeats' => ['required', 'integer', 'min:0'],
-            'limits.employeeAdvisors' => ['required', 'integer', 'min:0'],
             'limits.retentionCrmSeats' => ['required', 'integer', 'min:0'],
             'limits.recruitmentCrmSeats' => ['required', 'integer', 'min:0'],
             'limits.emails' => ['required', 'integer', 'min:0'],
             'limits.sms' => ['required', 'integer', 'min:0'],
-            'limits.customerAdvisorsCount' => ['required', 'integer', 'min:0'],
             'limits.dataAdvisorsCount' => ['required', 'integer', 'min:0'],
             'limits.resetDate' => ['required', 'string', 'date_format:m-d'],
             'addons' => ['required', 'array'],
@@ -71,9 +70,7 @@ class CreateTenantRequest extends FormRequest
             'addons.realtimeChat' => ['required', 'boolean'],
             'addons.mobileApps' => ['required', 'boolean'],
             'addons.scheduleAndAppointments' => ['required', 'boolean'],
-            'addons.employeeAdvisors' => ['required', 'boolean'],
             'addons.researchAdvisor' => ['required', 'boolean'],
-            'addons.customerAdvisor' => ['required', 'boolean'],
             'addons.dataAdvisor' => ['required', 'boolean'],
             'addons.projectManagement' => ['required', 'boolean'],
             'addons.earlyAlert' => ['required', 'boolean'],
@@ -86,5 +83,19 @@ class CreateTenantRequest extends FormRequest
             'theme.has_dark_mode' => ['nullable', 'boolean'],
             'theme.url' => ['nullable', 'string', 'url'],
         ];
+
+        if (AiAssistantDtoRenameFeature::active()) {
+            $rules['limits.employeeAdvisors'] = ['required', 'integer', 'min:0'];
+            $rules['limits.customerAdvisorsCount'] = ['required', 'integer', 'min:0'];
+            $rules['addons.employeeAdvisors'] = ['required', 'boolean'];
+            $rules['addons.customerAdvisor'] = ['required', 'boolean'];
+        } else {
+            $rules['limits.conversationalAiAssistants'] = ['required', 'integer', 'min:0'];
+            $rules['limits.qnaAdvisorsCount'] = ['required', 'integer', 'min:0'];
+            $rules['addons.customAiAssistants'] = ['required', 'boolean'];
+            $rules['addons.qnaAdvisor'] = ['required', 'boolean'];
+        }
+
+        return $rules;
     }
 }

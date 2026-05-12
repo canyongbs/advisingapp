@@ -66,9 +66,11 @@ class CustomAdvisorReport extends AiReport
 
     public static function canAccess(): bool
     {
-        return (
-            ((! AiAssistantDtoRenameFeature::active() && Gate::check(Feature::CustomAiAssistants->getGateName())) || (AiAssistantDtoRenameFeature::active() && Gate::check(Feature::EmployeeAdvisors->getGateName()))) &&
-            parent::canAccess());
+        $featureGate = AiAssistantDtoRenameFeature::active()
+              ? Feature::EmployeeAdvisors->getGateName()
+              : Feature::CustomAiAssistants->getGateName();
+
+        return Gate::check($featureGate) && parent::canAccess();
     }
 
     public function getWidgets(): array
