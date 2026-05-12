@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Enums\AiAssistantResourceHubArticleAccess;
+use AdvisingApp\Ai\Enums\EmployeeAdvisorResourceHubArticleAccess;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
@@ -49,7 +49,7 @@ it('returns no articles when has_resource_hub_knowledge is false', function () {
 
     $assistant = AiAssistant::factory()->create([
         'has_resource_hub_knowledge' => false,
-        'resource_hub_article_access' => AiAssistantResourceHubArticleAccess::All,
+        'resource_hub_article_access' => EmployeeAdvisorResourceHubArticleAccess::All,
     ]);
 
     expect($assistant->getResourceHubArticles())->toBeEmpty();
@@ -68,7 +68,7 @@ it('returns all articles when access is All', function () {
 
     $assistant = AiAssistant::factory()->create([
         'has_resource_hub_knowledge' => true,
-        'resource_hub_article_access' => AiAssistantResourceHubArticleAccess::All,
+        'resource_hub_article_access' => EmployeeAdvisorResourceHubArticleAccess::All,
     ]);
 
     $articleIds = collect($assistant->getResourceHubArticles())->pluck('id');
@@ -92,7 +92,7 @@ it('returns only public articles when access is Public', function () {
 
     $assistant = AiAssistant::factory()->create([
         'has_resource_hub_knowledge' => true,
-        'resource_hub_article_access' => AiAssistantResourceHubArticleAccess::Public,
+        'resource_hub_article_access' => EmployeeAdvisorResourceHubArticleAccess::Public,
     ]);
 
     $articleIds = collect($assistant->getResourceHubArticles())->pluck('id');
@@ -115,7 +115,7 @@ it('returns only internal articles when access is Internal', function () {
 
     $assistant = AiAssistant::factory()->create([
         'has_resource_hub_knowledge' => true,
-        'resource_hub_article_access' => AiAssistantResourceHubArticleAccess::Internal,
+        'resource_hub_article_access' => EmployeeAdvisorResourceHubArticleAccess::Internal,
     ]);
 
     $articleIds = collect($assistant->getResourceHubArticles())->pluck('id');
@@ -139,7 +139,7 @@ it('excludes articles without article_details', function () {
 
     $assistant = AiAssistant::factory()->create([
         'has_resource_hub_knowledge' => true,
-        'resource_hub_article_access' => AiAssistantResourceHubArticleAccess::All,
+        'resource_hub_article_access' => EmployeeAdvisorResourceHubArticleAccess::All,
     ]);
 
     $articleIds = collect($assistant->getResourceHubArticles())->pluck('id');
@@ -166,7 +166,7 @@ it('filters articles by associated resource hub categories', function () {
 
     $assistant = AiAssistant::factory()->create([
         'has_resource_hub_knowledge' => true,
-        'resource_hub_article_access' => AiAssistantResourceHubArticleAccess::All,
+        'resource_hub_article_access' => EmployeeAdvisorResourceHubArticleAccess::All,
     ]);
 
     $assistant->resourceHubCategories()->attach($categoryA);
@@ -187,7 +187,7 @@ it('returns all matching articles when no categories are attached', function () 
 
     $assistant = AiAssistant::factory()->create([
         'has_resource_hub_knowledge' => true,
-        'resource_hub_article_access' => AiAssistantResourceHubArticleAccess::All,
+        'resource_hub_article_access' => EmployeeAdvisorResourceHubArticleAccess::All,
     ]);
 
     $articleIds = collect($assistant->getResourceHubArticles())->pluck('id');

@@ -37,8 +37,8 @@
 namespace AdvisingApp\Ai\Tests\Tenant\Feature\Filament\Resources\AiAssistantResource\RequestFactories;
 
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
-use AdvisingApp\Ai\Enums\AiAssistantResourceHubArticleAccess;
 use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Enums\EmployeeAdvisorResourceHubArticleAccess;
 use Illuminate\Http\UploadedFile;
 use Worksome\RequestFactories\RequestFactory;
 
@@ -59,7 +59,7 @@ class CreateAiAssistantRequestFactory extends RequestFactory
                     return null;
                 }
 
-                return fake()->randomElement(AiAssistantResourceHubArticleAccess::cases())->value;
+                return fake()->randomElement(EmployeeAdvisorResourceHubArticleAccess::cases())->value;
             },
         ];
     }

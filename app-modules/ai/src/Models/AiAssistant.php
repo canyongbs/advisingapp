@@ -37,8 +37,8 @@
 namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
-use AdvisingApp\Ai\Enums\AiAssistantResourceHubArticleAccess;
 use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Enums\EmployeeAdvisorResourceHubArticleAccess;
 use AdvisingApp\Ai\Exceptions\DefaultAssistantLockedPropertyException;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
@@ -99,7 +99,7 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
         'model' => AiModel::class,
         'is_confidential' => 'bool',
         'has_resource_hub_knowledge' => 'bool',
-        'resource_hub_article_access' => AiAssistantResourceHubArticleAccess::class,
+        'resource_hub_article_access' => EmployeeAdvisorResourceHubArticleAccess::class,
     ];
 
     protected ?bool $isUpvoted = null;
@@ -241,11 +241,11 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
 
             return ResourceHubArticle::query()
                 ->when(
-                    $this->resource_hub_article_access === AiAssistantResourceHubArticleAccess::Public,
+                    $this->resource_hub_article_access === EmployeeAdvisorResourceHubArticleAccess::Public,
                     fn ($query) => $query->where('public', true)
                 )
                 ->when(
-                    $this->resource_hub_article_access === AiAssistantResourceHubArticleAccess::Internal,
+                    $this->resource_hub_article_access === EmployeeAdvisorResourceHubArticleAccess::Internal,
                     fn ($query) => $query->where('public', false)
                 )
                 ->when($categoryIds->isNotEmpty(), fn ($query) => $query->whereIn('category_id', $categoryIds))
@@ -262,12 +262,12 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
     }
 
     /**
-     * @return BelongsToMany<ResourceHubCategory, $this, covariant AiAssistantResourceHubCategory>
+     * @return BelongsToMany<ResourceHubCategory, $this, covariant EmployeeAdvisorResourceHubCategory>
      */
     public function resourceHubCategories(): BelongsToMany
     {
-        return $this->belongsToMany(ResourceHubCategory::class, 'ai_assistant_resource_hub_categories')
-            ->using(AiAssistantResourceHubCategory::class)
+        return $this->belongsToMany(ResourceHubCategory::class, 'employee_advisor_resource_hub_categories', 'employee_advisor_id')
+            ->using(EmployeeAdvisorResourceHubCategory::class)
             ->withTimestamps();
     }
 }

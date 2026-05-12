@@ -37,9 +37,9 @@
 namespace AdvisingApp\Ai\Filament\Resources\AiAssistants\Forms;
 
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
-use AdvisingApp\Ai\Enums\AiAssistantResourceHubArticleAccess;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
+use AdvisingApp\Ai\Enums\EmployeeAdvisorResourceHubArticleAccess;
 use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
 use App\Features\AiAssistantResourceHubCategoryFeature;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
@@ -125,7 +125,7 @@ class AiAssistantForm
                             ->label('Resource Hub'),
                         Select::make('resource_hub_article_access')
                             ->label('Resource Hub Article Access')
-                            ->options(AiAssistantResourceHubArticleAccess::class)
+                            ->options(EmployeeAdvisorResourceHubArticleAccess::class)
                             ->visible(fn (Get $get): bool => AiAssistantResourceHubCategoryFeature::active() && $get('has_resource_hub_knowledge')),
                         Select::make('resource_hub_categories')
                             ->label('Resource Hub Categories')

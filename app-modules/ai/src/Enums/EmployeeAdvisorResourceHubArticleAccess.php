@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Enums;
 
 use Filament\Support\Contracts\HasLabel;
 
-enum AiAssistantResourceHubArticleAccess: string implements HasLabel
+enum EmployeeAdvisorResourceHubArticleAccess: string implements HasLabel
 {
     case All = 'all';
 
