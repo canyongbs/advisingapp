@@ -46,9 +46,9 @@ use AdvisingApp\Engagement\Models\UnmatchedInboundCommunication;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Tenant;
-use Aws\Crypto\KmsMaterialsProviderV2;
+use Aws\Crypto\KmsMaterialsProviderV3;
 use Aws\Kms\KmsClient;
-use Aws\S3\Crypto\S3EncryptionClientV2;
+use Aws\S3\Crypto\S3EncryptionClientV3;
 use Aws\S3\S3Client;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -81,7 +81,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
         DB::beginTransaction();
 
         try {
-            $encryptionClient = new S3EncryptionClientV2(
+            $encryptionClient = new S3EncryptionClientV3(
                 new S3Client([
                     'credentials' => [
                         'key' => config('filesystems.disks.s3.key'),
@@ -91,16 +91,16 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                 ])
             );
 
-            // Needed to suppress warnings from the SDK. SES encrypts using V1 so we need @SecurityProfile to be V2_AND_LEGACY
-            // But the SDK throws a warning when using V2_AND_LEGACY
+            // Needed to suppress warnings from the SDK. SES encrypts using V1 so we need @SecurityProfile to be V3_AND_LEGACY
+            // But the SDK throws a warning when using V3_AND_LEGACY
             $errorReportingLevel = error_reporting();
             error_reporting(E_ERROR & ~E_WARNING);
 
             try {
                 $result = $encryptionClient->getObject([
                     '@KmsAllowDecryptWithAnyCmk' => false,
-                    '@SecurityProfile' => 'V2_AND_LEGACY',
-                    '@MaterialsProvider' => new KmsMaterialsProviderV2(
+                    '@SecurityProfile' => 'V3_AND_LEGACY',
+                    '@MaterialsProvider' => new KmsMaterialsProviderV3(
                         new KmsClient([
                             'credentials' => [
                                 'key' => config('filesystems.disks.s3.key'),
