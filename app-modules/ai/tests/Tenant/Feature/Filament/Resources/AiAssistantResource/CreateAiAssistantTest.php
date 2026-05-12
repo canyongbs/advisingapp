@@ -101,7 +101,7 @@ it('can render', function () use ($licenses, $permissions) {
 
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->customAiAssistants = true;
+    $settings->data->addons->employeeAdvisors = true;
 
     $settings->save();
 
@@ -119,7 +119,7 @@ it('can create a record', function () use ($licenses, $permissions) {
 
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->customAiAssistants = true;
+    $settings->data->addons->employeeAdvisors = true;
 
     $settings->save();
 
@@ -162,7 +162,7 @@ it('validates the inputs', function ($data, $errors) use ($licenses, $permission
 
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->customAiAssistants = true;
+    $settings->data->addons->employeeAdvisors = true;
 
     $settings->save();
 

@@ -43,8 +43,8 @@ use Illuminate\Validation\Rule;
 class CreateTenantRequest extends FormRequest
 {
     /**
-      * @return array<string, array<int, string|Rule>>
-      */
+     * @return array<string, array<int, string|Rule>>
+     */
     public function rules(): array
     {
         return [
@@ -52,12 +52,12 @@ class CreateTenantRequest extends FormRequest
             'database' => ['required', 'string', 'max:255'],
             'limits' => ['required', 'array'],
             'limits.conversationalAiSeats' => ['required', 'integer', 'min:0'],
-            'limits.conversationalAiAssistants' => ['required', 'integer', 'min:0'],
+            'limits.employeeAdvisors' => ['required', 'integer', 'min:0'],
             'limits.retentionCrmSeats' => ['required', 'integer', 'min:0'],
             'limits.recruitmentCrmSeats' => ['required', 'integer', 'min:0'],
             'limits.emails' => ['required', 'integer', 'min:0'],
             'limits.sms' => ['required', 'integer', 'min:0'],
-            'limits.qnaAdvisorsCount' => ['required', 'integer', 'min:0'],
+            'limits.customerAdvisorsCount' => ['required', 'integer', 'min:0'],
             'limits.dataAdvisorsCount' => ['required', 'integer', 'min:0'],
             'limits.resetDate' => ['required', 'string', 'date_format:m-d'],
             'addons' => ['required', 'array'],
@@ -71,9 +71,9 @@ class CreateTenantRequest extends FormRequest
             'addons.realtimeChat' => ['required', 'boolean'],
             'addons.mobileApps' => ['required', 'boolean'],
             'addons.scheduleAndAppointments' => ['required', 'boolean'],
-            'addons.customAiAssistants' => ['required', 'boolean'],
+            'addons.employeeAdvisors' => ['required', 'boolean'],
             'addons.researchAdvisor' => ['required', 'boolean'],
-            'addons.qnaAdvisor' => ['required', 'boolean'],
+            'addons.customerAdvisor' => ['required', 'boolean'],
             'addons.dataAdvisor' => ['required', 'boolean'],
             'addons.projectManagement' => ['required', 'boolean'],
             'addons.earlyAlert' => ['required', 'boolean'],

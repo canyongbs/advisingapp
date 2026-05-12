@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Filament\Resources\AiAssistants\AiAssistantResource;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Forms\AiAssistantForm;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
+use App\Features\AiAssistantDtoRenameFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Settings\LicenseSettings;
 use Exception;
@@ -104,7 +105,9 @@ class EditAiAssistant extends EditRecord
                         return true;
                     }
 
-                    $assistantsLimit = app(LicenseSettings::class)->data->limits->conversationalAiAssistants;
+                    $assistantsLimit = AiAssistantDtoRenameFeature::active()
+                        ? app(LicenseSettings::class)->data->limits->employeeAdvisors
+                        : app(LicenseSettings::class)->data->limits->conversationalAiAssistants;
                     $assistantsCount = AiAssistant::query()
                         ->where('is_default', false)
                         ->whereNull('archived_at')

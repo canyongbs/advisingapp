@@ -53,7 +53,7 @@ use function PHPUnit\Framework\assertCount;
 test('Create QnA Advisor Question is gated with proper access control', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->qnaAdvisor = true;
+    $settings->data->addons->customerAdvisor = true;
 
     $settings->save();
 
@@ -89,7 +89,7 @@ test('Create QnA Advisor Question is gated with proper access control', function
 test('can create QnA Advisor Question', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->qnaAdvisor = true;
+    $settings->data->addons->customerAdvisor = true;
 
     $settings->save();
 
@@ -122,7 +122,7 @@ test('can create QnA Advisor Question', function () {
 test('Create QnA Advisor Question validates the inputs', function ($data, $errors) {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->qnaAdvisor = true;
+    $settings->data->addons->customerAdvisor = true;
 
     $settings->save();
 
@@ -180,7 +180,7 @@ test('Create QnA Advisor Question validates the inputs', function ($data, $error
 test('can edit QnA Advisor Question', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->qnaAdvisor = true;
+    $settings->data->addons->customerAdvisor = true;
 
     $settings->save();
 
@@ -217,7 +217,7 @@ test('can edit QnA Advisor Question', function () {
 test('Edit QnA Advisor Question validates the inputs', function ($data, $errors) {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->qnaAdvisor = true;
+    $settings->data->addons->customerAdvisor = true;
 
     $settings->save();
 

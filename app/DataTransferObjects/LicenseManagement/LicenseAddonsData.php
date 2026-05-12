@@ -54,9 +54,11 @@ class LicenseAddonsData extends Data
         public bool $realtimeChat = false,
         public bool $mobileApps = false,
         public bool $scheduleAndAppointments = false,
-        public bool $customAiAssistants = false,
+        public bool $customAiAssistants = false, //TODO: AiAssistantDtoRenameFeature cleanup: remove this when you remove the feature flag
+        public bool $employeeAdvisors = false,
         public bool $researchAdvisor = false,
-        public bool $qnaAdvisor = false,
+        public bool $qnaAdvisor = false, //TODO: QnAAdvisorDtoRenameFeature cleanup: remove this when you remove the feature flag
+        public bool $customerAdvisor = false,
         public bool $dataAdvisor = false,
         public bool $projectManagement = false,
         public bool $earlyAlert = false,

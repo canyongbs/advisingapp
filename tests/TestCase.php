@@ -119,7 +119,7 @@ abstract class TestCase extends BaseTestCase
                     ),
                     limits: new LicenseLimitsData(
                         conversationalAiSeats: 50,
-                        conversationalAiAssistants: 10,
+                        employeeAdvisors: 10,
                         retentionCrmSeats: 25,
                         recruitmentCrmSeats: 10,
                         emails: 1000,
@@ -219,7 +219,7 @@ abstract class TestCase extends BaseTestCase
                 ),
                 limits: new LicenseLimitsData(
                     conversationalAiSeats: 50,
-                    conversationalAiAssistants: 10,
+                    employeeAdvisors: 10,
                     retentionCrmSeats: 25,
                     recruitmentCrmSeats: 10,
                     emails: 1000,

@@ -58,7 +58,7 @@ use function Tests\asSuperAdmin;
 test('Create QnA Advisor is gated with proper access control', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->qnaAdvisor = true;
+    $settings->data->addons->customerAdvisor = true;
 
     $settings->save();
 
@@ -85,7 +85,7 @@ test('can create QnA Advisor', function () {
 
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->qnaAdvisor = true;
+    $settings->data->addons->customerAdvisor = true;
 
     $settings->save();
 
@@ -129,7 +129,7 @@ test('Create QnA Advisor validates the inputs', function ($data, $errors) {
 
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->qnaAdvisor = true;
+    $settings->data->addons->customerAdvisor = true;
 
     $settings->save();
 
