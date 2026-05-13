@@ -40,7 +40,7 @@ use AdvisingApp\Ai\Actions\FetchFileParsingResults;
 use AdvisingApp\Ai\Enums\FileParsingError;
 use AdvisingApp\Ai\Exceptions\FileParsingFailedException;
 use AdvisingApp\Ai\Exceptions\FileParsingTooManyPagesException;
-use AdvisingApp\Ai\Models\QnaAdvisorFile;
+use AdvisingApp\Ai\Models\CustomerAdvisorFile;
 use AdvisingApp\Ai\Notifications\FileParsingFailedNotification;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -51,7 +51,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Spatie\Multitenancy\Jobs\TenantAware;
 
-class FetchQnaAdvisorFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
+class FetchCustomerAdvisorFileParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
 {
     use Batchable;
     use Dispatchable;
@@ -60,7 +60,7 @@ class FetchQnaAdvisorFileParsingResults implements ShouldQueue, TenantAware, Sho
     use SerializesModels;
 
     public function __construct(
-        protected QnaAdvisorFile $file,
+        protected CustomerAdvisorFile $file,
     ) {}
 
     public function handle(FetchFileParsingResults $fetchFileParsingResults): void

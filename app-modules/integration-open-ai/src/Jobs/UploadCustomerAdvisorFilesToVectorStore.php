@@ -48,7 +48,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Spatie\Multitenancy\Jobs\TenantAware;
 
-class UploadQnaAdvisorFilesToVectorStore implements ShouldQueue, TenantAware, ShouldBeUnique
+class UploadCustomerAdvisorFilesToVectorStore implements ShouldQueue, TenantAware, ShouldBeUnique
 {
     use Batchable;
     use Dispatchable;

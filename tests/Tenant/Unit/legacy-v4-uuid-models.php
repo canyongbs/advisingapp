@@ -14,6 +14,7 @@ use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Models\ConfidentialPromptTeam;
 use AdvisingApp\Ai\Models\ConfidentialPromptUser;
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
+use AdvisingApp\Ai\Models\CustomerAdvisorFile;
 use AdvisingApp\Ai\Models\DataAdvisor;
 use AdvisingApp\Ai\Models\LegacyAiMessageLog;
 use AdvisingApp\Ai\Models\Prompt;
@@ -21,7 +22,6 @@ use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Ai\Models\PromptUpvote;
 use AdvisingApp\Ai\Models\PromptUse;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorFile;
 use AdvisingApp\Ai\Models\QnaAdvisorLink;
 use AdvisingApp\Ai\Models\QnaAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
@@ -291,7 +291,7 @@ return [
     PromptUse::class,
     QnaAdvisor::class,
     CustomerAdvisorCategory::class,
-    QnaAdvisorFile::class,
+    CustomerAdvisorFile::class,
     QnaAdvisorLink::class,
     QnaAdvisorMessage::class,
     QnaAdvisorQuestion::class,

@@ -48,9 +48,9 @@ use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 
 /**
- * @mixin IdeHelperQnaAdvisorFile
+ * @mixin IdeHelperCustomerAdvisorFile
  */
-class QnaAdvisorFile extends BaseModel implements AiFile, HasMedia
+class CustomerAdvisorFile extends BaseModel implements AiFile, HasMedia
 {
     use HasUserSaveTracking;
 
@@ -58,8 +58,6 @@ class QnaAdvisorFile extends BaseModel implements AiFile, HasMedia
     use InteractsWithMedia;
 
     use SoftDeletes;
-
-    protected $table = 'customer_advisor_files'; // Temporary measure for testing
 
     protected $fillable = [
         'file_id',

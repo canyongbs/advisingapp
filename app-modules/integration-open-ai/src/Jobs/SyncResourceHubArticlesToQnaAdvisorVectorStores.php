@@ -56,7 +56,7 @@ class SyncResourceHubArticlesToQnaAdvisorVectorStores implements ShouldQueue, Te
         QnaAdvisor::query()
             ->where('has_resource_hub_knowledge', true)
             ->eachById(function (QnaAdvisor $advisor) {
-                UploadQnaAdvisorFilesToVectorStore::dispatch($advisor);
+                UploadCustomerAdvisorFilesToVectorStore::dispatch($advisor);
             });
     }
 }

@@ -38,8 +38,8 @@ namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
 
 use AdvisingApp\Ai\Actions\UploadFileForParsing;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
+use AdvisingApp\Ai\Models\CustomerAdvisorFile;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorFile;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -181,7 +181,7 @@ class ManageQnaAdditionalKnowledge extends EditRecord
                     continue;
                 }
 
-                $file = new QnaAdvisorFile();
+                $file = new CustomerAdvisorFile();
                 $file->advisor()->associate($record);
                 $file->name = $attachment->getClientOriginalName();
                 $file->mime_type = $attachment->getMimeType();
