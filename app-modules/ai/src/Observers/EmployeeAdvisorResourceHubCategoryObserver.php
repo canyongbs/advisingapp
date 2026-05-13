@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,33 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+namespace AdvisingApp\Ai\Observers;
 
-use AdvisingApp\Ai\Observers\EmployeeAdvisorResourceHubCategoryObserver;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use AdvisingApp\Ai\Models\EmployeeAdvisorResourceHubCategory;
+use AdvisingApp\IntegrationOpenAi\Jobs\UploadAssistantFilesToVectorStore;
 
-#[ObservedBy([EmployeeAdvisorResourceHubCategoryObserver::class])]
-class EmployeeAdvisorResourceHubCategory extends Pivot
+class EmployeeAdvisorResourceHubCategoryObserver
 {
-    use HasUuids;
-
-    /**
-     * @return BelongsTo<AiAssistant, $this>
-     */
-    public function aiAssistant(): BelongsTo
+    public function created(EmployeeAdvisorResourceHubCategory $pivot): void
     {
-        return $this->belongsTo(AiAssistant::class, 'employee_advisor_id');
+        $assistant = $pivot->aiAssistant;
+
+        if ($assistant?->has_resource_hub_knowledge) {
+            UploadAssistantFilesToVectorStore::dispatch($assistant);
+        }
     }
 
-    /**
-     * @return BelongsTo<ResourceHubCategory, $this>
-     */
-    public function resourceHubCategory(): BelongsTo
+    public function deleted(EmployeeAdvisorResourceHubCategory $pivot): void
     {
-        return $this->belongsTo(ResourceHubCategory::class);
+        $assistant = $pivot->aiAssistant;
+
+        if ($assistant?->has_resource_hub_knowledge) {
+            UploadAssistantFilesToVectorStore::dispatch($assistant);
+        }
     }
 }
