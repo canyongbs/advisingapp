@@ -34,17 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Tests\RequestFactories;
+namespace AdvisingApp\Ai\Database\Factories;
 
-use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
+use AdvisingApp\Ai\Models\QnaAdvisor;
+use App\Features\RenameQnaAdvisorsFeature;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class QnaAdvisorCategoryRequestFactory extends RequestFactory
+/**
+ * @extends Factory<CustomerAdvisorCategory>
+ */
+class CustomerAdvisorCategoryFactory extends Factory
 {
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
     public function definition(): array
     {
-        return [
-            'name' => $this->faker->word(),
-            'description' => $this->faker->paragraph(),
+        return RenameQnaAdvisorsFeature::active() ? [
+            'name' => $this->faker->unique()->sentence(),
+            'description' => $this->faker->sentence(),
+            'customer_advisor_id' => QnaAdvisor::factory(),
+        ] :
+        [
+            'name' => $this->faker->unique()->sentence(),
+            'description' => $this->faker->sentence(),
+            'qna_advisor_id' => QnaAdvisor::factory(),
         ];
     }
 }

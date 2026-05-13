@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Ai\Actions;
 
+use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorCategory;
 use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
 use AdvisingApp\Ai\Settings\AiQnaAdvisorSettings;
 use Illuminate\Support\Facades\Cache;
@@ -93,8 +93,8 @@ class GetQnaAdvisorInstructions
 
         $qnaAdvisor
             ->categories
-            ->where(fn (QnaAdvisorCategory $category) => $category->questions->isNotEmpty())
-            ->each(function (QnaAdvisorCategory $category) use (&$qnaSection) {
+            ->where(fn (CustomerAdvisorCategory $category) => $category->questions->isNotEmpty())
+            ->each(function (CustomerAdvisorCategory $category) use (&$qnaSection) {
                 $questions = $category->questions->reduce(
                     function (string $carry, QnaAdvisorQuestion $question) {
                         return $carry . <<<END

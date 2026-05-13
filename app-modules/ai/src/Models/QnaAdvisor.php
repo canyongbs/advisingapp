@@ -105,21 +105,21 @@ class QnaAdvisor extends BaseModel implements HasMedia, Auditable
     ];
 
     /**
-     * @return HasMany<QnaAdvisorCategory, $this>
+     * @return HasMany<CustomerAdvisorCategory, $this>
      */
     public function categories(): HasMany
     {
-        return $this->hasMany(QnaAdvisorCategory::class, RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id');
+        return $this->hasMany(CustomerAdvisorCategory::class, RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id');
     }
 
     /**
-     * @return HasManyThrough<QnaAdvisorQuestion, QnaAdvisorCategory, $this>
+     * @return HasManyThrough<QnaAdvisorQuestion, CustomerAdvisorCategory, $this>
      */
     public function questions(): HasManyThrough
     {
         return $this->hasManyThrough(
             QnaAdvisorQuestion::class,
-            QnaAdvisorCategory::class,
+            CustomerAdvisorCategory::class,
             RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id',
             'category_id',
             'id',

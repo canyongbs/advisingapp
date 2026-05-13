@@ -34,49 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+namespace AdvisingApp\Ai\Tests\RequestFactories;
 
-use AdvisingApp\Ai\Observers\QnaAdvisorCategoryObserver;
-use App\Features\RenameQnaAdvisorsFeature;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Auditable as AuditableTrait;
-use OwenIt\Auditing\Contracts\Auditable;
+use Worksome\RequestFactories\RequestFactory;
 
-/**
- * @mixin IdeHelperQnaAdvisorCategory
- */
-#[ObservedBy(QnaAdvisorCategoryObserver::class)]
-class QnaAdvisorCategory extends BaseModel implements Auditable
+class CustomerAdvisorCategoryRequestFactory extends RequestFactory
 {
-    use SoftDeletes;
-    use AuditableTrait;
-
-    protected $table = 'customer_advisor_categories'; // Temporary measure for testing
-
-    protected $fillable = [
-        'name',
-        'description',
-        'qna_advisor_id', // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, this line can be removed; just customer_advisor_id should stay
-        'customer_advisor_id',
-    ];
-
-    /**
-     * @return BelongsTo<QnaAdvisor, $this>
-     */
-    public function qnaAdvisor(): BelongsTo
+    public function definition(): array
     {
-        return $this->belongsTo(QnaAdvisor::class, RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id');
-    }
-
-    /**
-     * @return HasMany<QnaAdvisorQuestion, $this>
-     */
-    public function questions(): HasMany
-    {
-        return $this->hasMany(QnaAdvisorQuestion::class, 'category_id');
+        return [
+            'name' => $this->faker->word(),
+            'description' => $this->faker->paragraph(),
+        ];
     }
 }

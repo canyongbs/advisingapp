@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Database\Factories;
 
-use AdvisingApp\Ai\Models\QnaAdvisorCategory;
+use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -55,7 +55,7 @@ class QnaAdvisorQuestionFactory extends Factory
         return [
             'question' => $this->faker->sentence(),
             'answer' => $this->faker->paragraph(),
-            'category_id' => QnaAdvisorCategory::factory(),
+            'category_id' => CustomerAdvisorCategory::factory(),
         ];
     }
 }

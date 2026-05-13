@@ -36,9 +36,9 @@
 
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ManageCategories;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
+use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorCategory;
-use AdvisingApp\Ai\Tests\RequestFactories\QnaAdvisorCategoryRequestFactory;
+use AdvisingApp\Ai\Tests\RequestFactories\CustomerAdvisorCategoryRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\User;
@@ -97,17 +97,17 @@ test('can create QnA Advisor Category', function () {
 
     actingAs($user);
 
-    $qnaAdvisorCategory = collect(QnaAdvisorCategoryRequestFactory::new()->create());
+    $customerAdvisorCategory = collect(CustomerAdvisorCategoryRequestFactory::new()->create());
 
     livewire(ManageCategories::class, ['record' => $qnaAdvisor->getKey()])
-        ->callTableAction('create', data: $qnaAdvisorCategory->toArray())
+        ->callTableAction('create', data: $customerAdvisorCategory->toArray())
         ->assertHasNoTableActionErrors();
 
-    assertCount(1, QnaAdvisorCategory::all());
+    assertCount(1, CustomerAdvisorCategory::all());
 
     assertDatabaseHas(
-        QnaAdvisorCategory::class,
-        $qnaAdvisorCategory->toArray()
+        CustomerAdvisorCategory::class,
+        $customerAdvisorCategory->toArray()
     );
 });
 
@@ -142,36 +142,36 @@ test('Create QnA Advisor Category validates the inputs', function ($data, $error
             ])
         )->assertSuccessful();
 
-    $qnaAdvisorCategory = collect(QnaAdvisorCategoryRequestFactory::new($data)->create());
+    $customerAdvisorCategory = collect(CustomerAdvisorCategoryRequestFactory::new($data)->create());
 
     livewire(ManageCategories::class, ['record' => $qnaAdvisor->getKey()])
-        ->callTableAction('create', data: $qnaAdvisorCategory->toArray())
+        ->callTableAction('create', data: $customerAdvisorCategory->toArray())
         ->assertHasTableActionErrors($errors);
 
     assertDatabaseMissing(
-        QnaAdvisorCategory::class,
-        $qnaAdvisorCategory->toArray()
+        CustomerAdvisorCategory::class,
+        $customerAdvisorCategory->toArray()
     );
 })->with(
     [
         'name required' => [
-            QnaAdvisorCategoryRequestFactory::new()->without('name'),
+            CustomerAdvisorCategoryRequestFactory::new()->without('name'),
             ['name' => 'required'],
         ],
         'name string' => [
-            QnaAdvisorCategoryRequestFactory::new()->state(['name' => 1]),
+            CustomerAdvisorCategoryRequestFactory::new()->state(['name' => 1]),
             ['name' => 'string'],
         ],
         'name max' => [
-            QnaAdvisorCategoryRequestFactory::new()->state(['name' => str()->random(257)]),
+            CustomerAdvisorCategoryRequestFactory::new()->state(['name' => str()->random(257)]),
             ['name' => 'max'],
         ],
         'description required' => [
-            QnaAdvisorCategoryRequestFactory::new()->without('description'),
+            CustomerAdvisorCategoryRequestFactory::new()->without('description'),
             ['description' => 'required'],
         ],
         'description max' => [
-            QnaAdvisorCategoryRequestFactory::new()->state(['description' => str()->random(65537)]),
+            CustomerAdvisorCategoryRequestFactory::new()->state(['description' => str()->random(65537)]),
             ['description' => 'max'],
         ],
     ]
@@ -191,18 +191,18 @@ test('can edit QnA Advisor Category', function () {
     $qnaAdvisor = QnaAdvisor::factory()->create();
     // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, the state can be defined inline again
     $state = RenameQnaAdvisorsFeature::active() ? ['customer_advisor_id' => $qnaAdvisor->getKey()] : ['qna_advisor_id' => $qnaAdvisor->getKey()];
-    $qnaAdvisorCategory = QnaAdvisorCategory::factory()->state($state)->create();
+    $customerAdvisorCategory = CustomerAdvisorCategory::factory()->state($state)->create();
 
-    $request = collect(QnaAdvisorCategoryRequestFactory::new()->create());
+    $request = collect(CustomerAdvisorCategoryRequestFactory::new()->create());
 
     actingAs($user);
 
     livewire(ManageCategories::class, ['record' => $qnaAdvisor->getKey()])
-        ->callTableAction('edit', record: $qnaAdvisorCategory->getKey(), data: $request->toArray())
+        ->callTableAction('edit', record: $customerAdvisorCategory->getKey(), data: $request->toArray())
         ->assertHasNoTableActionErrors();
 
     assertDatabaseHas(
-        QnaAdvisorCategory::class,
+        CustomerAdvisorCategory::class,
         $request->toArray()
     );
 });
@@ -230,44 +230,44 @@ test('Edit QnA Advisor Category validates the inputs', function ($data, $errors)
             'name' => 'Education',
             'qna_advisor_id' => $qnaAdvisor->getKey(),
         ];
-    QnaAdvisorCategory::factory()->state($state)->create();
+    CustomerAdvisorCategory::factory()->state($state)->create();
 
     // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, the state can be defined inline again
     $state = RenameQnaAdvisorsFeature::active() ? ['customer_advisor_id' => $qnaAdvisor->getKey()] : ['qna_advisor_id' => $qnaAdvisor->getKey()];
-    $qnaAdvisorCategory = QnaAdvisorCategory::factory()->state($state)->create();
+    $customerAdvisorCategory = CustomerAdvisorCategory::factory()->state($state)->create();
 
-    $request = QnaAdvisorCategoryRequestFactory::new($data)->create();
+    $request = CustomerAdvisorCategoryRequestFactory::new($data)->create();
 
     actingAs($user);
 
     livewire(ManageCategories::class, ['record' => $qnaAdvisor->getKey()])
-        ->callTableAction('edit', record: $qnaAdvisorCategory->getKey(), data: $request)
+        ->callTableAction('edit', record: $customerAdvisorCategory->getKey(), data: $request)
         ->assertHasTableActionErrors($errors);
 })
     ->with(
         [
             'name required' => [
-                QnaAdvisorCategoryRequestFactory::new()->state(['name' => null]),
+                CustomerAdvisorCategoryRequestFactory::new()->state(['name' => null]),
                 ['name' => 'required'],
             ],
             'name string' => [
-                QnaAdvisorCategoryRequestFactory::new()->state(['name' => 1]),
+                CustomerAdvisorCategoryRequestFactory::new()->state(['name' => 1]),
                 ['name' => 'string'],
             ],
             'name unique' => [
-                QnaAdvisorCategoryRequestFactory::new()->state(['name' => 'Education']),
+                CustomerAdvisorCategoryRequestFactory::new()->state(['name' => 'Education']),
                 ['name' => 'unique'],
             ],
             'name max' => [
-                QnaAdvisorCategoryRequestFactory::new()->state(['name' => str()->random(257)]),
+                CustomerAdvisorCategoryRequestFactory::new()->state(['name' => str()->random(257)]),
                 ['name' => 'max'],
             ],
             'description required' => [
-                QnaAdvisorCategoryRequestFactory::new()->state(['description' => null]),
+                CustomerAdvisorCategoryRequestFactory::new()->state(['description' => null]),
                 ['description' => 'required'],
             ],
             'description max' => [
-                QnaAdvisorCategoryRequestFactory::new()->state(['description' => str()->random(65537)]),
+                CustomerAdvisorCategoryRequestFactory::new()->state(['description' => str()->random(65537)]),
                 ['description' => 'max'],
             ],
         ]

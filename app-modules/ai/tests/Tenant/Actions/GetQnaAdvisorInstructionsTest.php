@@ -35,8 +35,8 @@
 */
 
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
+use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorCategory;
 use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
 use AdvisingApp\Ai\Settings\AiQnaAdvisorSettings;
 use Illuminate\Support\Facades\Cache;
@@ -57,14 +57,14 @@ it('returns the correct instructions for a QnaAdvisor', function () {
     // Create QnaAdvisor with two categories, each with two questions
     $qnaAdvisor = QnaAdvisor::factory()->create();
 
-    $categoryOne = QnaAdvisorCategory::factory()
+    $categoryOne = CustomerAdvisorCategory::factory()
         ->for($qnaAdvisor, 'qnaAdvisor')
         ->create([
             'name' => 'Academic Policies',
             'description' => 'Information about academic policies and procedures',
         ]);
 
-    $categoryTwo = QnaAdvisorCategory::factory()
+    $categoryTwo = CustomerAdvisorCategory::factory()
         ->for($qnaAdvisor, 'qnaAdvisor')
         ->create([
             'name' => 'Financial Aid',
@@ -152,14 +152,14 @@ it('does not contain details on a category that has no questions', function () {
     // Create QnaAdvisor with one category that has no questions
     $qnaAdvisor = QnaAdvisor::factory()->create();
 
-    $categoryWithQuestions = QnaAdvisorCategory::factory()
+    $categoryWithQuestions = CustomerAdvisorCategory::factory()
         ->for($qnaAdvisor, 'qnaAdvisor')
         ->create([
             'name' => 'Student Services',
             'description' => 'Information about student support services',
         ]);
 
-    $categoryWithoutQuestions = QnaAdvisorCategory::factory()
+    $categoryWithoutQuestions = CustomerAdvisorCategory::factory()
         ->for($qnaAdvisor, 'qnaAdvisor')
         ->create([
             'name' => 'Campus Recreation',
@@ -205,7 +205,7 @@ it('handles empty settings gracefully', function () {
     // Create QnaAdvisor with some data
     $qnaAdvisor = QnaAdvisor::factory()->create();
 
-    $category = QnaAdvisorCategory::factory()
+    $category = CustomerAdvisorCategory::factory()
         ->for($qnaAdvisor, 'qnaAdvisor')
         ->create([
             'name' => 'Library Resources',
@@ -276,7 +276,7 @@ it('uses cache correctly', function () {
     // Create QnaAdvisor
     $qnaAdvisor = QnaAdvisor::factory()->create();
 
-    $category = QnaAdvisorCategory::factory()
+    $category = CustomerAdvisorCategory::factory()
         ->for($qnaAdvisor, 'qnaAdvisor')
         ->create([
             'name' => 'Technology Support',

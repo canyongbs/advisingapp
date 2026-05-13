@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorCategory;
 use App\Features\RenameQnaAdvisorsFeature;
 use Illuminate\Database\UniqueConstraintViolationException;
 
@@ -51,7 +51,7 @@ it('does not allow duplicate category names for the same advisor', function () {
         'qna_advisor_id' => $qnaAdvisor->getKey(),
         'name' => 'Admissions',
     ];
-    QnaAdvisorCategory::factory()->state($state)->create();
+    CustomerAdvisorCategory::factory()->state($state)->create();
 
     // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, the state can be defined inline again
     $state = RenameQnaAdvisorsFeature::active() ? [
@@ -62,12 +62,12 @@ it('does not allow duplicate category names for the same advisor', function () {
         'qna_advisor_id' => $qnaAdvisor->getKey(),
         'name' => 'Admissions',
     ];
-    QnaAdvisorCategory::factory()->state($state)->create();
+    CustomerAdvisorCategory::factory()->state($state)->create();
 })->throws(UniqueConstraintViolationException::class);
 
 it('allow duplicate category names for the different advisor', function () {
-    $qnaAdvisor = QnaAdvisor::factory()->has(QnaAdvisorCategory::factory()->state(['name' => 'Admission']), 'categories')->create();
-    $qnaAdvisor2 = QnaAdvisor::factory()->has(QnaAdvisorCategory::factory()->state(['name' => 'Admission']), 'categories')->create();
+    $qnaAdvisor = QnaAdvisor::factory()->has(CustomerAdvisorCategory::factory()->state(['name' => 'Admission']), 'categories')->create();
+    $qnaAdvisor2 = QnaAdvisor::factory()->has(CustomerAdvisorCategory::factory()->state(['name' => 'Admission']), 'categories')->create();
 
     expect($qnaAdvisor->categories->first()->name)->toBe('Admission');
     expect($qnaAdvisor2->categories->first()->name)->toBe('Admission');

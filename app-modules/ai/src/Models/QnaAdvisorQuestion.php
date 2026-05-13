@@ -58,10 +58,10 @@ class QnaAdvisorQuestion extends BaseModel implements Auditable
     protected $fillable = ['question', 'answer', 'category_id'];
 
     /**
-     * @return BelongsTo<QnaAdvisorCategory, $this>
+     * @return BelongsTo<CustomerAdvisorCategory, $this>
      */
     public function category(): BelongsTo
     {
-        return $this->belongsTo(QnaAdvisorCategory::class, 'category_id');
+        return $this->belongsTo(CustomerAdvisorCategory::class, 'category_id');
     }
 }

@@ -34,20 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Observers;
+namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\Ai\Models\QnaAdvisorCategory;
-use Illuminate\Support\Facades\Cache;
+use AdvisingApp\Ai\Observers\CustomerAdvisorCategoryObserver;
+use App\Features\RenameQnaAdvisorsFeature;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class QnaAdvisorCategoryObserver
+#[ObservedBy(CustomerAdvisorCategoryObserver::class)]
+/**
+ * @mixin IdeHelperCustomerAdvisorCategory
+ */
+class CustomerAdvisorCategory extends BaseModel implements Auditable
 {
-    public function saved(QnaAdvisorCategory $category): void
+    use SoftDeletes;
+    use AuditableTrait;
+
+    protected $fillable = [
+        'name',
+        'description',
+        'qna_advisor_id', // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, this line can be removed; just customer_advisor_id should stay
+        'customer_advisor_id',
+    ];
+
+    /**
+     * @return BelongsTo<QnaAdvisor, $this>
+     */
+    public function qnaAdvisor(): BelongsTo
     {
-        Cache::tags(['{qna_advisor_instructions}'])->forget($category->qnaAdvisor->getInstructionsCacheKey());
+        return $this->belongsTo(QnaAdvisor::class, RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id');
     }
 
-    public function deleted(QnaAdvisorCategory $category): void
+    /**
+     * @return HasMany<QnaAdvisorQuestion, $this>
+     */
+    public function questions(): HasMany
     {
-        Cache::tags(['{qna_advisor_instructions}'])->forget($category->qnaAdvisor->getInstructionsCacheKey());
+        return $this->hasMany(QnaAdvisorQuestion::class, 'category_id');
     }
 }

@@ -36,8 +36,8 @@
 
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ManageQnaQuestions;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
+use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorCategory;
 use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
 use AdvisingApp\Ai\Tests\RequestFactories\QnaAdvisorQuestionRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -182,7 +182,7 @@ test('can edit QnA Advisor Question', function () {
     // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, the state can be defined inline again
     $state = RenameQnaAdvisorsFeature::active() ? ['customer_advisor_id' => $qnaAdvisor->getKey()] : ['qna_advisor_id' => $qnaAdvisor->getKey()];
     $qnaAdvisorQuestion = QnaAdvisorQuestion::factory()->state([
-        'category_id' => QnaAdvisorCategory::factory()->state($state),
+        'category_id' => CustomerAdvisorCategory::factory()->state($state),
     ])->create();
 
     $request = collect(QnaAdvisorQuestionRequestFactory::new()->create());
@@ -215,7 +215,7 @@ test('Edit QnA Advisor Question validates the inputs', function ($data, $errors)
     // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, the state can be defined inline again
     $state = RenameQnaAdvisorsFeature::active() ? ['customer_advisor_id' => $qnaAdvisor->getKey()] : ['qna_advisor_id' => $qnaAdvisor->getKey()];
     $qnaAdvisorQuestion = QnaAdvisorQuestion::factory()->state([
-        'category_id' => QnaAdvisorCategory::factory()->state($state),
+        'category_id' => CustomerAdvisorCategory::factory()->state($state),
     ])->create();
 
     $request = QnaAdvisorQuestionRequestFactory::new($data)->create();

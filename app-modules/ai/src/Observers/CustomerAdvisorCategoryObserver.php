@@ -34,34 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Database\Factories;
+namespace AdvisingApp\Ai\Observers;
 
-use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorCategory;
-use App\Features\RenameQnaAdvisorsFeature;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
+use Illuminate\Support\Facades\Cache;
 
-/**
- * @extends Factory<QnaAdvisorCategory>
- */
-class QnaAdvisorCategoryFactory extends Factory
+class CustomerAdvisorCategoryObserver
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    public function saved(CustomerAdvisorCategory $category): void
     {
-        return RenameQnaAdvisorsFeature::active() ? [
-            'name' => $this->faker->unique()->sentence(),
-            'description' => $this->faker->sentence(),
-            'customer_advisor_id' => QnaAdvisor::factory(),
-        ] :
-        [
-            'name' => $this->faker->unique()->sentence(),
-            'description' => $this->faker->sentence(),
-            'qna_advisor_id' => QnaAdvisor::factory(),
-        ];
+        Cache::tags(['{qna_advisor_instructions}'])->forget($category->qnaAdvisor->getInstructionsCacheKey());
+    }
+
+    public function deleted(CustomerAdvisorCategory $category): void
+    {
+        Cache::tags(['{qna_advisor_instructions}'])->forget($category->qnaAdvisor->getInstructionsCacheKey());
     }
 }
