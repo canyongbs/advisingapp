@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6b50b657e17d09cae64a8aaa4ca17d47",
+    "content-hash": "597eaf8a2feb91fee72509c1532f55d9",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -2798,16 +2798,16 @@
         },
         {
             "name": "composer/composer",
-            "version": "2.9.7",
+            "version": "2.9.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/composer/composer.git",
-                "reference": "82a2fbd1372a98d7915cfb092acf05207d9b4113"
+                "reference": "39ee8baff8e97a1b657bbfcd6a236ff93a5efbb2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/composer/composer/zipball/82a2fbd1372a98d7915cfb092acf05207d9b4113",
-                "reference": "82a2fbd1372a98d7915cfb092acf05207d9b4113",
+                "url": "https://api.github.com/repos/composer/composer/zipball/39ee8baff8e97a1b657bbfcd6a236ff93a5efbb2",
+                "reference": "39ee8baff8e97a1b657bbfcd6a236ff93a5efbb2",
                 "shasum": ""
             },
             "require": {
@@ -2895,7 +2895,7 @@
                 "irc": "ircs://irc.libera.chat:6697/composer",
                 "issues": "https://github.com/composer/composer/issues",
                 "security": "https://github.com/composer/composer/security/policy",
-                "source": "https://github.com/composer/composer/tree/2.9.7"
+                "source": "https://github.com/composer/composer/tree/2.9.8"
             },
             "funding": [
                 {
@@ -2907,7 +2907,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-14T11:31:52+00:00"
+            "time": "2026-05-13T07:28:38+00:00"
         },
         {
             "name": "composer/metadata-minifier",
@@ -5865,6 +5865,71 @@
                 "source": "https://github.com/InterNACHI/modular/tree/3.0.2"
             },
             "time": "2026-03-23T15:21:38+00:00"
+        },
+        {
+            "name": "internachi/modular-livewire",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/InterNACHI/modular-livewire.git",
+                "reference": "5014a6cc2ed90d47b06b52dca26c2e0de1fd4bef"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/InterNACHI/modular-livewire/zipball/5014a6cc2ed90d47b06b52dca26c2e0de1fd4bef",
+                "reference": "5014a6cc2ed90d47b06b52dca26c2e0de1fd4bef",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/support": "^11|^12|^13|dev-master|dev-main",
+                "internachi/modular": "^3.0",
+                "livewire/livewire": "^3.0",
+                "php": ">=8.3"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.34",
+                "orchestra/testbench": "^9.11|^10.0|^11.0|dev-master|dev-main",
+                "phpunit/phpunit": "^10.5|^11.5|^12.5|^13.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "InterNACHI\\ModularLivewire\\Support\\ModularLivewireServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "InterNACHI\\ModularLivewire\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Chris Morrell",
+                    "homepage": "http://www.cmorrell.com"
+                },
+                {
+                    "name": "Kevin Ullyott",
+                    "homepage": "https://kevinullyott.com"
+                }
+            ],
+            "description": "Livewire plugin for internachi/modular",
+            "keywords": [
+                "laravel",
+                "livewire",
+                "modular",
+                "modules"
+            ],
+            "support": {
+                "issues": "https://github.com/InterNACHI/modular-livewire/issues",
+                "source": "https://github.com/InterNACHI/modular-livewire/tree/1.0.0"
+            },
+            "time": "2026-05-12T17:32:42+00:00"
         },
         {
             "name": "internachi/modularize",
