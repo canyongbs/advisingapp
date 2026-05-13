@@ -59,6 +59,8 @@ class QnaAdvisorFile extends BaseModel implements AiFile, HasMedia
 
     use SoftDeletes;
 
+    protected $table = 'customer_advisor_files'; // Temporary measure for testing
+
     protected $fillable = [
         'file_id',
         'advisor_id',

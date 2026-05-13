@@ -40,6 +40,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Concerns\PerformsLicenseChecks;
 use App\Enums\Feature;
 use App\Features\AiAssistantDtoRenameFeature;
+use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
@@ -68,7 +69,7 @@ class QnaAdvisorPolicy
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'qna_advisor.view-any',
+            abilities: RenameQnaAdvisorsFeature::active() ? 'customer_advisor.view-any' : 'qna_advisor.view-any',
             denyResponse: 'You do not have permission to view Customer Advisors.'
         );
     }
@@ -76,7 +77,7 @@ class QnaAdvisorPolicy
     public function view(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['qna_advisor.*.view'],
+            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.view' : 'qna_advisor.*.view'],
             denyResponse: 'You do not have permission to view this Customer Advisor.'
         );
     }
@@ -84,7 +85,7 @@ class QnaAdvisorPolicy
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'qna_advisor.create',
+            abilities: RenameQnaAdvisorsFeature::active() ? 'customer_advisor.create' : 'qna_advisor.create',
             denyResponse: 'You do not have permission to create Customer Advisors.'
         );
     }
@@ -92,7 +93,7 @@ class QnaAdvisorPolicy
     public function update(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['qna_advisor.*.update'],
+            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.update' : 'qna_advisor.*.update'],
             denyResponse: 'You do not have permission to update this Customer Advisor.'
         );
     }

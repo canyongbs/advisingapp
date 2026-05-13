@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
+use App\Features\RenameQnaAdvisorsFeature;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
@@ -91,14 +92,14 @@ class ManageCategories extends ManageRelatedRecords
                     ->required()
                     ->string()
                     ->unique(
-                        table: 'qna_advisor_categories',
+                        table: RenameQnaAdvisorsFeature::active() ? 'customer_advisor_categories' : 'qna_advisor_categories',
                         column: 'name',
                         ignoreRecord: true,
                         modifyRuleUsing: function (Unique $rule) {
                             /** @var QnaAdvisor $qnaAdvisor */
                             $qnaAdvisor = $this->getOwnerRecord();
 
-                            $rule->where('qna_advisor_id', $qnaAdvisor->getKey());
+                            $rule->where(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id', $qnaAdvisor->getKey());
                         }
                     )
                     ->maxLength(255)

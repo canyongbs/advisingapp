@@ -49,6 +49,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class QnaAdvisorThread extends BaseModel
 {
+    protected $table = 'customer_advisor_threads'; // Temporary measure for testing
+
     public $fillable = [
         'advisor_id',
         'author_type',

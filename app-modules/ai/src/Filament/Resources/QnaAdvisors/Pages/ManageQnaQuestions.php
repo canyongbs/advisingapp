@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
+use App\Features\RenameQnaAdvisorsFeature;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -73,7 +74,7 @@ class ManageQnaQuestions extends ManageRelatedRecords
                     ->relationship('category', 'name', modifyQueryUsing: function ($query) {
                         /** @var QnaAdvisor $advisor */
                         $advisor = $this->getOwnerRecord();
-                        $query->where('qna_advisor_id', $advisor->getKey());
+                        $query->where(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id', $advisor->getKey());
                     })
                     ->required()
                     ->preload()
@@ -136,7 +137,7 @@ class ManageQnaQuestions extends ManageRelatedRecords
                     ->relationship('category', 'name', modifyQueryUsing: function ($query) {
                         /** @var QnaAdvisor $qnaAdvisor */
                         $qnaAdvisor = $this->getOwnerRecord();
-                        $query->where('qna_advisor_id', $qnaAdvisor->getKey());
+                        $query->where(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id', $qnaAdvisor->getKey());
                     })
                     ->multiple()
                     ->preload()

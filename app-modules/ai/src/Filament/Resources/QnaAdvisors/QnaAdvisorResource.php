@@ -48,8 +48,10 @@ use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\PreviewQnaAdvisor;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\QnaAdvisorEmbed;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ViewQnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisor;
+use App\Features\RenameQnaAdvisorsFeature;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
+use Override;
 use UnitEnum;
 
 class QnaAdvisorResource extends Resource
@@ -63,6 +65,12 @@ class QnaAdvisorResource extends Resource
     protected static ?int $navigationSort = 10;
 
     protected static ?string $slug = 'customer-advisors';
+
+    #[Override]
+    public static function canAccess(): bool
+    {
+      return RenameQnaAdvisorsFeature::active() ? (auth()->user()->can('customer_advisor.view-any') && parent::canAccess()) : parent::canAccess();
+    }
 
     public static function getPages(): array
     {

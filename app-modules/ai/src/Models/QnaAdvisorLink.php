@@ -59,6 +59,8 @@ class QnaAdvisorLink extends BaseModel implements AiFile, Auditable
     use SoftDeletes;
     use AuditableTrait;
 
+    protected $table = 'customer_advisor_links'; // Temporary measure for testing
+
     protected $fillable = [
         'url',
         'advisor_id',

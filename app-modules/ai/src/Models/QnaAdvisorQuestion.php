@@ -53,6 +53,8 @@ class QnaAdvisorQuestion extends BaseModel implements Auditable
     use SoftDeletes;
     use AuditableTrait;
 
+    protected $table = 'customer_advisor_questions'; // Temporary measure for testing
+
     protected $fillable = ['question', 'answer', 'category_id'];
 
     /**

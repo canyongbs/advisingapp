@@ -38,6 +38,7 @@ use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ViewQnaAdvisor;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
@@ -62,8 +63,8 @@ test('View QnA Advisor is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    $user->givePermissionTo('qna_advisor.view-any');
-    $user->givePermissionTo('qna_advisor.*.view');
+    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.view-any' : 'qna_advisor.view-any');
+    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.view' : 'qna_advisor.*.view');
 
     actingAs($user)
         ->get(
@@ -84,8 +85,8 @@ test('archive action visible when QnA Advisor is not archived', function () {
 
     $qnaAdvisor = QnaAdvisor::factory()->create();
 
-    $user->givePermissionTo('qna_advisor.view-any');
-    $user->givePermissionTo('qna_advisor.*.view');
+    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.view-any' : 'qna_advisor.view-any');
+    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.view' : 'qna_advisor.*.view');
 
     actingAs($user);
 
@@ -110,8 +111,8 @@ test('restore action visible when QnA Advisor is archived', function () {
         'archived_at' => now(),
     ])->create();
 
-    $user->givePermissionTo('qna_advisor.view-any');
-    $user->givePermissionTo('qna_advisor.*.view');
+    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.view-any' : 'qna_advisor.view-any');
+    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.view' : 'qna_advisor.*.view');
 
     actingAs($user);
 

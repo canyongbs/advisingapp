@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Tests\RequestFactories\QnaAdvisorRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Storage;
@@ -72,7 +73,7 @@ test('Create QnA Advisor is gated with proper access control', function () {
     livewire(CreateQnaAdvisor::class)
         ->assertForbidden();
 
-    $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.create']);
+    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.create'] : ['qna_advisor.view-any', 'qna_advisor.create']);
 
     actingAs($user)
         ->get(
@@ -93,7 +94,7 @@ test('can create QnA Advisor', function () {
 
     assertDatabaseCount(QnaAdvisor::class, 0);
 
-    $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.create']);
+    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.create'] : ['qna_advisor.view-any', 'qna_advisor.create']);
 
     actingAs($user);
 

@@ -46,6 +46,8 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  */
 class QnaAdvisorMessage extends BaseModel
 {
+    protected $table = 'customer_advisor_messages'; // Temporary measure for testing
+
     public $fillable = [
         'message_id',
         'content',

@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Observers\QnaAdvisorCategoryObserver;
+use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -54,10 +55,13 @@ class QnaAdvisorCategory extends BaseModel implements Auditable
     use SoftDeletes;
     use AuditableTrait;
 
+    protected $table = 'customer_advisor_categories'; // Temporary measure for testing
+
     protected $fillable = [
         'name',
         'description',
-        'qna_advisor_id',
+        'qna_advisor_id', // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, this line can be removed; just customer_advisor_id should stay
+        'customer_advisor_id',
     ];
 
     /**
@@ -65,7 +69,7 @@ class QnaAdvisorCategory extends BaseModel implements Auditable
      */
     public function qnaAdvisor(): BelongsTo
     {
-        return $this->belongsTo(QnaAdvisor::class, 'qna_advisor_id');
+        return $this->belongsTo(QnaAdvisor::class, RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id');
     }
 
     /**

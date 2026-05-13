@@ -38,6 +38,7 @@ use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ListQnaAdvisors;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
@@ -58,7 +59,7 @@ test('List QnA Advisors is gated with proper access control', function () {
             QnaAdvisorResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('qna_advisor.view-any');
+    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.view-any' : 'qna_advisor.view-any');
 
     actingAs($user)
         ->get(
@@ -75,7 +76,7 @@ it('render QnA Advisors default to without archived', function () {
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.*.view']);
+    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view'] : ['qna_advisor.view-any', 'qna_advisor.*.view']);
 
     actingAs($user);
 
@@ -101,7 +102,7 @@ it('filter QnA Advisors with archived', function () {
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $user->givePermissionTo(['qna_advisor.view-any', 'qna_advisor.*.view']);
+    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view'] : ['qna_advisor.view-any', 'qna_advisor.*.view']);
 
     actingAs($user);
 

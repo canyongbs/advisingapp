@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Database\Factories;
 
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisorCategory;
+use App\Features\RenameQnaAdvisorsFeature;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -52,7 +53,12 @@ class QnaAdvisorCategoryFactory extends Factory
      */
     public function definition(): array
     {
-        return [
+        return RenameQnaAdvisorsFeature::active() ? [
+            'name' => $this->faker->unique()->sentence(),
+            'description' => $this->faker->sentence(),
+            'customer_advisor_id' => QnaAdvisor::factory(),
+        ] :
+        [
             'name' => $this->faker->unique()->sentence(),
             'description' => $this->faker->sentence(),
             'qna_advisor_id' => QnaAdvisor::factory(),

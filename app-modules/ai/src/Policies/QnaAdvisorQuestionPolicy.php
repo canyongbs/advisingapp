@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Policies;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Concerns\PerformsLicenseChecks;
+use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -57,7 +58,7 @@ class QnaAdvisorQuestionPolicy
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'qna_advisor.view-any',
+            abilities: RenameQnaAdvisorsFeature::active() ? 'customer_advisor.view-any' : 'qna_advisor.view-any',
             denyResponse: 'You do not have permission to view Customer Advisor Questions.'
         );
     }
@@ -65,7 +66,7 @@ class QnaAdvisorQuestionPolicy
     public function view(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['qna_advisor.*.view'],
+            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.view' : 'qna_advisor.*.view'],
             denyResponse: 'You do not have permission to view this Customer Advisor Question.'
         );
     }
@@ -73,7 +74,7 @@ class QnaAdvisorQuestionPolicy
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'qna_advisor.create',
+            abilities: RenameQnaAdvisorsFeature::active() ? 'customer_advisor.create' : 'qna_advisor.create',
             denyResponse: 'You do not have permission to create Customer Advisor Questions.'
         );
     }
@@ -81,7 +82,7 @@ class QnaAdvisorQuestionPolicy
     public function update(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['qna_advisor.*.update'],
+            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.update' : 'qna_advisor.*.update'],
             denyResponse: 'You do not have permission to update this Customer Advisor Question.'
         );
     }
@@ -89,7 +90,7 @@ class QnaAdvisorQuestionPolicy
     public function delete(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['qna_advisor.*.delete'],
+            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.delete' : 'qna_advisor.*.delete'],
             denyResponse: 'You do not have permission to delete this Customer Advisor Question.'
         );
     }
@@ -97,7 +98,7 @@ class QnaAdvisorQuestionPolicy
     public function restore(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['qna_advisor.*.restore'],
+            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.restore' : 'qna_advisor.*.restore'],
             denyResponse: 'You do not have permission to restore this Customer Advisor Question.'
         );
     }
@@ -105,7 +106,7 @@ class QnaAdvisorQuestionPolicy
     public function forceDelete(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['qna_advisor.*.force-delete'],
+            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.force-delete' : 'qna_advisor.*.force-delete'],
             denyResponse: 'You do not have permission to force-delete this Customer Advisor Question.'
         );
     }
