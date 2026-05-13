@@ -58,4 +58,12 @@ class CalendarWidget extends FullCalendarWidget
                 ->extendedProps(['shouldOpenInNewTab' => true]))
             ->toArray();
     }
+
+    /**
+     * @return array<int, mixed>
+     */
+    protected function headerActions(): array
+    {
+        return [];
+    }
 }

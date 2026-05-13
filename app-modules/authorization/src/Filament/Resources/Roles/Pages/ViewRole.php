@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\Roles\Pages;
 
+use AdvisingApp\Authorization\Enums\PermissionDescription;
 use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
 use AdvisingApp\Authorization\Models\PermissionGroup;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
@@ -72,6 +73,7 @@ class ViewRole extends ViewRecord
                 PermissionsMatrix::make('permissions')
                     ->columnSpanFull()
                     ->guard(fn (Get $get): string => $get('guard_name'))
+                    ->descriptions(PermissionDescription::cases())
                     ->permissionGroupModel(PermissionGroup::class),
             ]);
     }

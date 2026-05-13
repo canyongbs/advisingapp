@@ -54,6 +54,7 @@ use App\Overrides\Filament\Actions\Imports\Jobs\ImportCsvOverride;
 use App\Overrides\Laravel\PermissionMigrationCreator;
 use App\Overrides\Laravel\StartSession as OverrideStartSession;
 use Aws\GeoPlaces\GeoPlacesClient;
+use CanyonGBS\Common\Support\ModularLivewirePlugin;
 use Exception;
 use Filament\Actions\Exports\Jobs\CreateXlsxFile;
 use Filament\Actions\Exports\Jobs\ExportCompletion;
@@ -71,7 +72,7 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
-use Laravel\Octane\Commands\ReloadCommand;
+use InterNACHI\Modular\PluginRegistry;
 use Laravel\Pennant\Feature;
 use Rector\Caching\CacheFactory;
 
@@ -87,20 +88,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        PluginRegistry::register(ModularLivewirePlugin::class);
+
         $this->app->bind(ImportCsv::class, ImportCsvOverride::class);
         $this->app->bind(PrepareCsvExport::class, PrepareCsvExportOverride::class);
         $this->app->bind(ExportCsv::class, ExportCsvOverride::class);
         $this->app->bind(ExportCompletion::class, ExportCompletionOverride::class);
         $this->app->bind(CreateXlsxFile::class, CreateXlsxFileOverride::class);
         $this->app->bind(ResetPassword::class, ResetPasswordNotification::class);
-
-        // Laravel Octane does not register the `ReloadCommand` when the application is not running in the console.
-        // We need to call this command from the `UpdateBrandSettingsController` during an HTTP request.
-        if (! $this->app->runningInConsole()) {
-            $this->commands([
-                ReloadCommand::class,
-            ]);
-        }
 
         $this->app->scoped(StartSession::class, function ($app) {
             return new OverrideStartSession($app->make(SessionManager::class), function () use ($app) {

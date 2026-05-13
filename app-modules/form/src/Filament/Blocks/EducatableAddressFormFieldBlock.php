@@ -105,6 +105,13 @@ class EducatableAddressFormFieldBlock extends FormFieldBlock
             ...($helpText ? ['help' => $helpText] : []),
             'children' => [
                 [
+                    '$el' => 'p',
+                    'children' => $field->label,
+                    'attrs' => [
+                        'class' => 'formkit-label font-bold text-sm' . ($disabled ? ' opacity-50' : ''),
+                    ],
+                ],
+                [
                     '$formkit' => 'text',
                     'name' => 'line_1',
                     'label' => 'Address Line 1',

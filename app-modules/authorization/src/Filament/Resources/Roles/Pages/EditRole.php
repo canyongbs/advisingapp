@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\Roles\Pages;
 
+use AdvisingApp\Authorization\Enums\PermissionDescription;
 use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
 use AdvisingApp\Authorization\Models\PermissionGroup;
 use AdvisingApp\Authorization\Models\Role;
@@ -89,6 +90,7 @@ class EditRole extends EditRecord
                 PermissionsMatrix::make('permissions')
                     ->columnSpanFull()
                     ->guard(fn (Get $get): string => $get('guard_name'))
+                    ->descriptions(PermissionDescription::cases())
                     ->permissionGroupModel(PermissionGroup::class),
             ]);
     }

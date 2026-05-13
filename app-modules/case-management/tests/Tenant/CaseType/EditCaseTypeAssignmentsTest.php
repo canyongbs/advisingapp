@@ -124,10 +124,10 @@ test('EditCaseTypeAssignments requires valid data', function (EditCaseTypeAssign
     assertDatabaseHas(CaseType::class, $caseType->toArray());
 })->with(
     [
-        'assignment_type is required' => [EditCaseTypeAssignmentsRequestFactory::new()->state(['assignment_type' => null]), ['assignment_type' => 'required']],
-        'assignment_type is not a valid enum value' => [EditCaseTypeAssignmentsRequestFactory::new()->state(['assignment_type' => 'blah']), ['assignment_type']],
-        'assignment_type_individual_id is required when assignment_type is Individual' => [EditCaseTypeAssignmentsRequestFactory::new()->withIndividualType()->state(['assignment_type_individual_id' => null]), ['assignment_type_individual_id' => 'required']],
-        'assignment_type_individual_id must be a User in the CaseTypes managers' => [EditCaseTypeAssignmentsRequestFactory::new()->withIndividualType()->state(['assignment_type_individual_id' => User::factory()]), ['assignment_type_individual_id' => CaseTypeAssignmentsIndividualUserMustBeAManager::class]],
+        'assignment_type is required' => [fn () => EditCaseTypeAssignmentsRequestFactory::new()->state(['assignment_type' => null]), ['assignment_type' => 'required']],
+        'assignment_type is not a valid enum value' => [fn () => EditCaseTypeAssignmentsRequestFactory::new()->state(['assignment_type' => 'blah']), ['assignment_type']],
+        'assignment_type_individual_id is required when assignment_type is Individual' => [fn () => EditCaseTypeAssignmentsRequestFactory::new()->withIndividualType()->state(['assignment_type_individual_id' => null]), ['assignment_type_individual_id' => 'required']],
+        'assignment_type_individual_id must be a User in the CaseTypes managers' => [fn () => EditCaseTypeAssignmentsRequestFactory::new()->withIndividualType()->state(['assignment_type_individual_id' => User::factory()]), ['assignment_type_individual_id' => CaseTypeAssignmentsIndividualUserMustBeAManager::class]],
     ]
 );
 

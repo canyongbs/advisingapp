@@ -61,7 +61,7 @@
         "canyon-gbs/research": "*",
         "canyon-gbs/stock-media": "*",
         "canyon-gbs/workflow": "*",
-        "canyongbs/common": "^2.13.0",
+        "canyongbs/common": "^2.14.0",
         "canyongbs/filament-tiptap-editor": "^2.3.8",
         "canyongbs/model-state-machine": "^2.0.6",
         "cknow/laravel-money": "^8.1",
@@ -77,11 +77,10 @@
         "giggsey/libphonenumber-for-php-lite": "^9.0",
         "google/apiclient": "^2.17",
         "guzzlehttp/guzzle": "^7.2",
-        "internachi/modular": "^2.2",
+        "internachi/modular": "^3.0",
         "itsgoingd/clockwork": "^5.2",
         "kirschbaum-development/eloquent-power-joins": "^4.0",
         "laravel/framework": "^12.11.1",
-        "laravel/octane": "^2.8.3",
         "laravel/pennant": "^1.10",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.24.0",
@@ -110,8 +109,6 @@
         "spatie/laravel-query-builder": "^6.3",
         "spatie/laravel-schedule-monitor": "^3.9",
         "spatie/laravel-settings": "^3.3",
-        "spiral/roadrunner-cli": "^2.6",
-        "spiral/roadrunner-http": "^3.5",
         "sqids/sqids": "^0.5.0",
         "squirephp/countries-en": "^3.9",
         "staudenmeir/eloquent-has-many-deep": "^1.19",
@@ -148,7 +145,6 @@
             "Database\\Seeders\\": "database/seeders/"
         },
         "exclude-from-classmap": [
-            "vendor/laravel/octane/src/RoadRunner/RoadRunnerClient.php",
             "vendor/openai-php/client/src/Responses/Threads/Runs/ThreadRunResponse.php"
         ],
         "files": [
