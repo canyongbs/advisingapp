@@ -53,7 +53,6 @@ use AdvisingApp\IntegrationTwilio\Actions\GetTwilioApiKey;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use App\Enums\Feature;
 use App\Enums\Integration;
-use App\Filament\Forms\Components\UserSelect;
 use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Exception;
@@ -318,7 +317,7 @@ class UserChat extends Page implements HasForms, HasActions
                     ->label('Invite only')
                     ->helperText('If not checked, the channel will be public and anyone can join.')
                     ->formatStateUsing(fn () => $this->conversation?->is_private_channel),
-                UserSelect::make('managers')
+                Select::make('managers')
                     ->label('Channel managers')
                     ->multiple()
                     ->options(
@@ -579,7 +578,7 @@ class UserChat extends Page implements HasForms, HasActions
             ->modalDescription('They will have access to the entire conversation history.')
             ->modalSubmitActionLabel('Invite')
             ->schema([
-                UserSelect::make('users')
+                Select::make('users')
                     ->label('Pick users to invite')
                     ->multiple()
                     ->options(

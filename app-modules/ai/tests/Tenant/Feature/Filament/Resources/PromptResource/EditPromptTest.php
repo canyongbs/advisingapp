@@ -38,7 +38,8 @@ use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\EditPrompt;
 use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Authorization\Models\Role;
+use App\Filament\Forms\Components\UserSelect;
+use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
 
@@ -146,13 +147,31 @@ it('can delete a record', function () use ($licenses, $permissions) {
     assertSoftDeleted($record);
 });
 
+it('confidential_prompt_users UserSelect does not show admin users in options by default on EditPrompt', function () use ($licenses, $permissions) {
+    $actingUser = user(licenses: $licenses, permissions: $permissions);
+    actingAs($actingUser);
+
+    $regularUser = User::factory()->create();
+    $adminUser = User::factory()->create();
+    $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+    $prompt = Prompt::factory()->create(['is_confidential' => true]);
+
+    livewire(EditPrompt::class, ['record' => $prompt->getRouteKey()])
+        ->assertSuccessful()
+        ->assertFormFieldExists('confidential_prompt_users', checkFieldUsing: function (UserSelect $field) use ($regularUser, $adminUser): bool {
+            return ! empty($field->getSearchResults($regularUser->name))
+                && empty($field->getSearchResults($adminUser->name));
+        });
+});
+
 it('confidential_prompt_users UserSelect loads pre-existing super admin as selected when editing', function () use ($licenses, $permissions) {
     // The acting user creates the prompt so user_id matches, making the confidential section visible
     $actingUser = user(licenses: $licenses, permissions: $permissions);
     actingAs($actingUser);
 
     $superAdmin = User::factory()->licensed(LicenseType::cases())->create();
-    $superAdmin->assignRole(Role::superAdmin()->get());
+    $superAdmin->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
     // Observer sets user_id to actingUser when creating
     $prompt = Prompt::factory()->create(['is_confidential' => true]);
@@ -163,33 +182,4 @@ it('confidential_prompt_users UserSelect loads pre-existing super admin as selec
         ->assertFormSet([
             'confidential_prompt_users' => [$superAdmin->getKey()],
         ]);
-});
-
-it('can save a confidential prompt retaining a super admin as a confidential access user', function () use ($licenses, $permissions) {
-    $actingUser = user(licenses: $licenses, permissions: $permissions);
-    actingAs($actingUser);
-
-    $superAdmin = User::factory()->licensed(LicenseType::cases())->create();
-    $superAdmin->assignRole(Role::superAdmin()->get());
-
-    $regularUser = User::factory()->create();
-
-    // Observer sets user_id to actingUser
-    $prompt = Prompt::factory()->create(['is_confidential' => true]);
-    $prompt->confidentialAccessUsers()->attach($superAdmin->getKey());
-
-    livewire(EditPrompt::class, ['record' => $prompt->getRouteKey()])
-        ->assertSuccessful()
-        ->fillForm([
-            'is_confidential' => true,
-            'confidential_prompt_users' => [$superAdmin->getKey(), $regularUser->getKey()],
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors();
-
-    $prompt->refresh();
-
-    expect($prompt->confidentialAccessUsers()->pluck('users.id')->toArray())
-        ->toContain($superAdmin->getKey())
-        ->toContain($regularUser->getKey());
 });

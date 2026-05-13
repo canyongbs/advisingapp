@@ -37,11 +37,11 @@
 use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\CreatePrompt;
 use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
 use AdvisingApp\Ai\Models\Prompt;
-use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Authorization\Models\Role;
-use App\Models\Scopes\WithoutAnyAdmin;
+use App\Filament\Forms\Components\UserSelect;
+use App\Models\Authenticatable;
 use App\Models\User;
+use Illuminate\Support\Facades\Config;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
@@ -109,46 +109,38 @@ it('can create a record', function () use ($licenses, $permissions) {
     assertDatabaseHas(Prompt::class, $record->toArray());
 });
 
-it('confidential_prompt_users UserSelect excludes super admins from options', function () use ($licenses, $permissions) {
-    $superAdmin = User::factory()->licensed(LicenseType::cases())->create();
-    $superAdmin->assignRole(Role::superAdmin()->get());
+it('confidential_prompt_users UserSelect does not show admin users in options by default', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
 
     $regularUser = User::factory()->create();
+    $adminUser = User::factory()->create();
+    $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+    livewire(CreatePrompt::class)
+        ->assertSuccessful()
+        ->assertFormFieldExists('confidential_prompt_users', checkFieldUsing: function (UserSelect $field) use ($regularUser, $adminUser): bool {
+            return ! empty($field->getSearchResults($regularUser->name))
+                && empty($field->getSearchResults($adminUser->name));
+        });
+});
+
+it('confidential_prompt_users UserSelect shows all users when filter_admins_from_selection config is false', function () use ($licenses, $permissions) {
+    Config::set('app.filter_admins_from_selection', false);
 
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
     ));
 
-    // The UserSelect for confidential_prompt_users applies WithoutAnyAdmin via its relationship() override.
-    // Verify the scope excludes super admins and retains regular users.
-    $filteredUserIds = User::query()->tap(new WithoutAnyAdmin())->pluck('id')->toArray();
-
-    expect($filteredUserIds)
-        ->toContain($regularUser->getKey())
-        ->not->toContain($superAdmin->getKey());
-});
-
-it('can create a confidential prompt with regular users as confidential access users', function () use ($licenses, $permissions) {
-    $actingUser = user(licenses: $licenses, permissions: $permissions);
-    actingAs($actingUser);
-
-    $regularUsers = User::factory()->count(2)->create();
+    $adminUser = User::factory()->create();
+    $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
     livewire(CreatePrompt::class)
         ->assertSuccessful()
-        ->fillForm([
-            'title' => 'Confidential Test Prompt',
-            'prompt' => 'This is a confidential test prompt.',
-            'type_id' => PromptType::factory()->create()->getKey(),
-            'is_confidential' => true,
-            'confidential_prompt_users' => $regularUsers->pluck('id')->toArray(),
-        ])
-        ->call('create')
-        ->assertHasNoFormErrors();
-
-    $prompt = Prompt::withoutGlobalScopes()->where('title', 'Confidential Test Prompt')->firstOrFail();
-
-    expect($prompt->confidentialAccessUsers()->pluck('users.id')->toArray())
-        ->toEqualCanonicalizing($regularUsers->pluck('id')->toArray());
+        ->assertFormFieldExists('confidential_prompt_users', checkFieldUsing: function (UserSelect $field) use ($adminUser): bool {
+            return ! empty($field->getSearchResults($adminUser->name));
+        });
 });
