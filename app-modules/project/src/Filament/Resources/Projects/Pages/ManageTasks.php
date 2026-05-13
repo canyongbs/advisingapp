@@ -43,6 +43,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
+use App\Filament\Forms\Components\UserSelect;
 use App\Filament\Resources\Users\UserResource;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -101,7 +102,7 @@ class ManageTasks extends ManageRelatedRecords
                                     ->label('Confidential')
                                     ->live()
                                     ->columnSpanFull(),
-                                Select::make('confidential_task_users')
+                                UserSelect::make('confidential_task_users')
                                     ->relationship('confidentialAccessUsers', 'name')
                                     ->preload()
                                     ->label('Users')
@@ -126,11 +127,10 @@ class ManageTasks extends ManageRelatedRecords
                         DateTimePicker::make('due')
                             ->label('Due Date')
                             ->native(false),
-                        Select::make('assigned_to')
+                        UserSelect::make('assigned_to')
                             ->label('Assigned To')
                             ->relationship('assignedTo', 'name')
                             ->nullable()
-                            ->searchable(['name', 'email'])
                             ->default(auth()->id()),
                         MorphToSelect::make('concern')
                             ->label('Related To')
@@ -236,7 +236,7 @@ class ManageTasks extends ManageRelatedRecords
                                     ->label('Confidential')
                                     ->live()
                                     ->columnSpanFull(),
-                                Select::make('confidential_task_users')
+                                UserSelect::make('confidential_task_users')
                                     ->relationship('confidentialAccessUsers', 'name')
                                     ->preload()
                                     ->label('Users')
@@ -261,11 +261,10 @@ class ManageTasks extends ManageRelatedRecords
                         DateTimePicker::make('due')
                             ->label('Due Date')
                             ->native(false),
-                        Select::make('assigned_to')
+                        UserSelect::make('assigned_to')
                             ->label('Assigned To')
                             ->relationship('assignedTo', 'name')
                             ->nullable()
-                            ->searchable(['name', 'email'])
                             ->default(auth()->id()),
                         MorphToSelect::make('concern')
                             ->label('Related To')

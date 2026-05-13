@@ -40,6 +40,8 @@ use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
 use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Team;
+use App\Filament\Forms\Components\UserSelect;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Closure;
 use Filament\Forms\Components\Checkbox;
@@ -49,6 +51,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Utilities\Get;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\Auth;
@@ -103,13 +106,29 @@ class TaskBlock extends CampaignActionBlock
                                 ->exists('projects', 'id')
                                 ->visible(fn (Get $get) => $get('is_confidential')),
                             Select::make('confidential_task_users')
-                                ->options(fn () => User::query()
+                                ->options(fn (Select $component) => User::query()
+                                    ->where(function (Builder $query) use ($component) {
+                                        $query->tap(new WithoutAnyAdmin());
+                                        $selected = array_filter((array) ($component->getState() ?? []));
+
+                                        if (! empty($selected)) {
+                                            $query->orWhereIn('id', $selected);
+                                        }
+                                    })
                                     ->orderBy('name')
                                     ->limit(50)
                                     ->pluck('name', 'id')
                                     ->all())
                                 ->searchable()
-                                ->getSearchResultsUsing(fn (string $search): array => User::query()
+                                ->getSearchResultsUsing(fn (string $search, Select $component): array => User::query()
+                                    ->where(function (Builder $query) use ($component) {
+                                        $query->tap(new WithoutAnyAdmin());
+                                        $selected = array_filter((array) ($component->getState() ?? []));
+
+                                        if (! empty($selected)) {
+                                            $query->orWhereIn('id', $selected);
+                                        }
+                                    })
                                     ->orderBy('name')
                                     ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
                                     ->limit(50)
@@ -161,12 +180,12 @@ class TaskBlock extends CampaignActionBlock
                         ->string(),
                     DateTimePicker::make('due')
                         ->label('Due Date'),
-                    Select::make('assigned_to')
+                    UserSelect::make('assigned_to')
+                        ->withoutAdminFilter()
                         ->label('Assigned To')
                         ->relationship('assignedTo', 'name')
                         ->model(Task::class)
                         ->nullable()
-                        ->searchable()
                         ->default(Auth::id()),
                 ]),
             CampaignDateTimeInput::make(),

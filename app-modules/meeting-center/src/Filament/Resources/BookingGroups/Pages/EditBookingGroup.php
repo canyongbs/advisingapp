@@ -42,7 +42,9 @@ use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\Team\Models\Team;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
+use App\Filament\Forms\Components\UserSelect;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Closure;
 use Filament\Actions\Action;
@@ -105,11 +107,10 @@ class EditBookingGroup extends EditRecord
                         ->default(BookingGroupBookWith::All)
                         ->live()
                         ->required(),
-                    Select::make('users')
+                    UserSelect::make('users')
                         ->label('Users')
                         ->multiple()
                         ->relationship('users', 'name')
-                        ->searchable()
                         ->preload()
                         ->live(),
                     Select::make('teams')
@@ -340,7 +341,7 @@ class EditBookingGroup extends EditRecord
         ));
 
         $teamUserIds = ! empty($selectedTeamIds)
-            ? User::query()->whereIn('team_id', $selectedTeamIds)->pluck('id')->map(fn ($id): string => (string) $id)->all()
+            ? User::query()->whereIn('team_id', $selectedTeamIds)->tap(new WithoutAnyAdmin())->pluck('id')->map(fn ($id): string => (string) $id)->all()
             : [];
 
         return array_values(array_unique([...$selectedUserIds, ...$teamUserIds]));

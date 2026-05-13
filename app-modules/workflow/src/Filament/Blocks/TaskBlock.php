@@ -37,9 +37,9 @@
 namespace AdvisingApp\Workflow\Filament\Blocks;
 
 use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
+use App\Filament\Forms\Components\UserSelect;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Fieldset;
@@ -58,7 +58,7 @@ class TaskBlock extends WorkflowActionBlock
     }
 
     /**
-     * @return array<int, Section|Fieldset|Checkbox|Select|Textarea|TextInput|DateTimePicker>
+     * @return array<int, Section|Fieldset|Checkbox|UserSelect|Textarea|TextInput|DateTimePicker>
      */
     public function generateFields(): array
     {
@@ -72,12 +72,12 @@ class TaskBlock extends WorkflowActionBlock
                 ->string(),
             DateTimePicker::make('due')
                 ->label('Due Date'),
-            Select::make('assigned_to')
+            UserSelect::make('assigned_to')
+                ->withoutAdminFilter()
                 ->label('Assigned To')
                 ->relationship('assignedTo', 'name')
                 ->model(WorkflowTaskDetails::class)
                 ->nullable()
-                ->searchable()
                 ->default(Auth::id()),
             Section::make('How long after the previous step should this occur?')
                 ->schema([

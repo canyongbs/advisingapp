@@ -43,6 +43,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Filament\Resources\Tasks\Components\TaskViewAction;
 use AdvisingApp\Task\Models\Task;
+use App\Filament\Forms\Components\UserSelect;
 use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\HasLicense;
@@ -85,7 +86,7 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                             ->multiple()
                             ->exists('projects', 'id')
                             ->visible(fn (Get $get) => $get('is_confidential')),
-                        Select::make('confidential_task_users')
+                        UserSelect::make('confidential_task_users')
                             ->relationship('confidentialAccessUsers', 'name')
                             ->preload()
                             ->label('Users')
@@ -111,7 +112,7 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                 DateTimePicker::make('due')
                     ->label('Due Date')
                     ->native(false),
-                Select::make('assigned_to')
+                UserSelect::make('assigned_to')
                     ->label('Assigned To')
                     ->relationship(
                         'assignedTo',
@@ -125,7 +126,6 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                         },
                     )
                     ->nullable()
-                    ->searchable(['name', 'email'])
                     ->default(auth()->id()),
             ]);
     }

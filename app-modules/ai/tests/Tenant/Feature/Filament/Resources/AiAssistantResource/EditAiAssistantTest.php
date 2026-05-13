@@ -39,7 +39,11 @@ use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\EditAiAssistant;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Tests\Tenant\Feature\Filament\Resources\AiAssistantResource\RequestFactories\EditAiAssistantRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Filament\Forms\Components\UserSelect;
+use App\Models\Authenticatable;
+use App\Models\User;
 use App\Settings\LicenseSettings;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;
@@ -222,3 +226,55 @@ it('validates the inputs', function ($data, $errors) use ($licenses, $permission
         ],
     ]
 );
+
+it('ai_assistant_confidential_users UserSelect does not show admin users in options by default on EditAiAssistant', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    $licenseSettings = app(LicenseSettings::class);
+    $licenseSettings->data->addons->customAiAssistants = true;
+    $licenseSettings->save();
+
+    $regularUser = User::factory()->create();
+    $adminUser = User::factory()->create();
+    $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+    $aiAssistant = AiAssistant::factory()->create(['is_confidential' => true]);
+
+    livewire(EditAiAssistant::class, [
+        'record' => $aiAssistant->getRouteKey(),
+    ])
+        ->assertSuccessful()
+        ->assertFormFieldExists('ai_assistant_confidential_users', checkFieldUsing: function (UserSelect $field) use ($regularUser, $adminUser): bool {
+            return ! empty($field->getSearchResults($regularUser->name))
+                && empty($field->getSearchResults($adminUser->name));
+        });
+});
+
+it('ai_assistant_confidential_users UserSelect shows all users when filter_admins_from_selection config is false on EditAiAssistant', function () use ($licenses, $permissions) {
+    Config::set('app.filter_admins_from_selection', false);
+
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    $licenseSettings = app(LicenseSettings::class);
+    $licenseSettings->data->addons->customAiAssistants = true;
+    $licenseSettings->save();
+
+    $adminUser = User::factory()->create();
+    $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+    $aiAssistant = AiAssistant::factory()->create(['is_confidential' => true]);
+
+    livewire(EditAiAssistant::class, [
+        'record' => $aiAssistant->getRouteKey(),
+    ])
+        ->assertSuccessful()
+        ->assertFormFieldExists('ai_assistant_confidential_users', checkFieldUsing: function (UserSelect $field) use ($adminUser): bool {
+            return ! empty($field->getSearchResults($adminUser->name));
+        });
+});

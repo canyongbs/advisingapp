@@ -38,6 +38,10 @@ use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\CreatePrompt;
 use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Filament\Forms\Components\UserSelect;
+use App\Models\Authenticatable;
+use App\Models\User;
+use Illuminate\Support\Facades\Config;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
@@ -103,4 +107,40 @@ it('can create a record', function () use ($licenses, $permissions) {
     assertDatabaseCount(Prompt::class, 1);
 
     assertDatabaseHas(Prompt::class, $record->toArray());
+});
+
+it('confidential_prompt_users UserSelect does not show admin users in options by default', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    $regularUser = User::factory()->create();
+    $adminUser = User::factory()->create();
+    $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+    livewire(CreatePrompt::class)
+        ->assertSuccessful()
+        ->assertFormFieldExists('confidential_prompt_users', checkFieldUsing: function (UserSelect $field) use ($regularUser, $adminUser): bool {
+            return ! empty($field->getSearchResults($regularUser->name))
+                && empty($field->getSearchResults($adminUser->name));
+        });
+});
+
+it('confidential_prompt_users UserSelect shows all users when filter_admins_from_selection config is false', function () use ($licenses, $permissions) {
+    Config::set('app.filter_admins_from_selection', false);
+
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    $adminUser = User::factory()->create();
+    $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
+
+    livewire(CreatePrompt::class)
+        ->assertSuccessful()
+        ->assertFormFieldExists('confidential_prompt_users', checkFieldUsing: function (UserSelect $field) use ($adminUser): bool {
+            return ! empty($field->getSearchResults($adminUser->name));
+        });
 });

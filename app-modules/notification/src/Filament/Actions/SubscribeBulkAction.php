@@ -38,6 +38,7 @@ namespace AdvisingApp\Notification\Filament\Actions;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Exception;
 use Filament\Actions\BulkAction;
@@ -61,7 +62,7 @@ class SubscribeBulkAction
             ->form([
                 Select::make('user_ids')
                     ->label('Who should be subscribed?')
-                    ->options(User::all()->pluck('name', 'id'))
+                    ->options(User::query()->tap(new WithoutAnyAdmin())->pluck('name', 'id'))
                     ->multiple()
                     ->searchable()
                     ->default([auth()->id()])

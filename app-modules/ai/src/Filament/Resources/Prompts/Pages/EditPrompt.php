@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Filament\Resources\Prompts\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
 use AdvisingApp\Ai\Models\Prompt;
+use App\Filament\Forms\Components\UserSelect;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\Authenticatable;
 use Filament\Actions\DeleteAction;
@@ -97,7 +98,7 @@ class EditPrompt extends EditRecord
                                 ->label('Confidential')
                                 ->live()
                                 ->columnSpanFull(),
-                            Select::make('confidential_prompt_users')
+                            UserSelect::make('confidential_prompt_users')
                                 ->relationship('confidentialAccessUsers', 'name')
                                 ->preload()
                                 ->label('Users')

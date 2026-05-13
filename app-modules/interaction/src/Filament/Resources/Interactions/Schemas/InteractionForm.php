@@ -49,6 +49,7 @@ use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Filament\Forms\Components\UserSelect;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
@@ -115,7 +116,7 @@ class InteractionForm
                                 ->label('Confidential')
                                 ->live()
                                 ->columnSpanFull(),
-                            Select::make('interaction_confidential_users')
+                            UserSelect::make('interaction_confidential_users')
                                 ->relationship('confidentialAccessUsers', 'name')
                                 ->preload()
                                 ->label('Users')

@@ -37,6 +37,7 @@
 namespace AdvisingApp\ResourceHub\Filament\Actions;
 
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Exception;
 use Filament\Actions\BulkAction;
@@ -59,7 +60,7 @@ class AssignManagerBulkAction
             ->schema([
                 Select::make('manager_ids')
                     ->label('Managers')
-                    ->options(fn (): array => User::query()->limit(50)->pluck('name', 'id')->all())
+                    ->options(fn (): array => User::query()->tap(new WithoutAnyAdmin())->limit(50)->pluck('name', 'id')->all())
                     ->multiple()
                     ->searchable()
                     ->preload()

@@ -285,5 +285,7 @@ return [
 
     'allow_license_settings_editing' => env('ALLOW_LICENSE_SETTINGS_EDITING', false),
 
+    'filter_admins_from_selection' => env('USER_SELECT_FILTER_ADMINS', true),
+
     'service' => env('SERVICE', null),
 ];

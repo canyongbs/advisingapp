@@ -53,6 +53,7 @@ use AdvisingApp\IntegrationTwilio\Actions\GetTwilioApiKey;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use App\Enums\Feature;
 use App\Enums\Integration;
+use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Exception;
 use Filament\Actions\Action;
@@ -177,6 +178,7 @@ class UserChat extends Page implements HasForms, HasActions
     {
         $usersQuery = User::query()
             ->where('id', '!=', auth()->id())
+            ->tap(new WithoutAnyAdmin())
             ->whereDoesntHave(
                 'conversations',
                 fn (Builder $query) => $query
@@ -235,7 +237,8 @@ class UserChat extends Page implements HasForms, HasActions
     public function newChannelAction(): Action
     {
         $usersQuery = User::query()
-            ->where('id', '!=', auth()->id());
+            ->where('id', '!=', auth()->id())
+            ->tap(new WithoutAnyAdmin());
 
         return Action::make('newChannel')
             ->label('New Channel')
@@ -336,7 +339,6 @@ class UserChat extends Page implements HasForms, HasActions
                             ->pluck('name', 'id')
                             ->all(),
                     )
-                    ->searchable()
                     ->default(
                         fn () => $this->conversation
                             ->managers()
@@ -565,6 +567,7 @@ class UserChat extends Page implements HasForms, HasActions
     {
         $usersQuery = User::query()
             ->where('id', '!=', auth()->id())
+            ->tap(new WithoutAnyAdmin())
             ->whereDoesntHave('conversations', fn (Builder $query) => $query->whereKey($this->conversation));
 
         return Action::make('addUserToChannel')
@@ -596,8 +599,7 @@ class UserChat extends Page implements HasForms, HasActions
                             ->whereKey($values)
                             ->pluck('name', 'id')
                             ->all(),
-                    )
-                    ->searchable(),
+                    ),
             ])
             ->action(function (AddUserToConversation $addUserToConversation, array $data) {
                 if ($this->conversation->type !== ConversationType::Channel) {
