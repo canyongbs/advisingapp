@@ -45,5 +45,6 @@ class SmsChannelResultData extends NotificationResultData
         public bool $success,
         public MessageInstance|ApiResource|null $message = null,
         public ?string $error = null,
+        public ?string $errorCode = null,
     ) {}
 }
