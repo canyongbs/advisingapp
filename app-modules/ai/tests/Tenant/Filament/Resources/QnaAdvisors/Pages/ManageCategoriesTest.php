@@ -225,7 +225,7 @@ test('Edit QnA Advisor Category validates the inputs', function ($data, $errors)
         [
             'name' => 'Education',
             'customer_advisor_id' => $qnaAdvisor->getKey(),
-        ] : 
+        ] :
         [
             'name' => 'Education',
             'qna_advisor_id' => $qnaAdvisor->getKey(),

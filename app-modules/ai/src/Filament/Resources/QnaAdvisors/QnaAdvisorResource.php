@@ -69,7 +69,7 @@ class QnaAdvisorResource extends Resource
     #[Override]
     public static function canAccess(): bool
     {
-      return RenameQnaAdvisorsFeature::active() ? (auth()->user()->can('customer_advisor.view-any') && parent::canAccess()) : parent::canAccess();
+        return RenameQnaAdvisorsFeature::active() ? (auth()->user()->can('customer_advisor.view-any') && parent::canAccess()) : parent::canAccess();
     }
 
     public static function getPages(): array
