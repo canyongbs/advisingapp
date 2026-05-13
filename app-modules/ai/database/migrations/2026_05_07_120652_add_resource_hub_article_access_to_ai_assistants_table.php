@@ -34,42 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Tests\Tenant\Feature\Filament\Resources\AiAssistantResource\RequestFactories;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Ai\Enums\AiAssistantApplication;
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Enums\EmployeeAdvisorResourceHubArticleAccess;
-use Illuminate\Http\UploadedFile;
-use Worksome\RequestFactories\RequestFactory;
-
-class CreateAiAssistantRequestFactory extends RequestFactory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'avatar' => UploadedFile::fake()->image(fake()->word . '.png'),
-            'name' => fake()->word(),
-            'application' => AiAssistantApplication::PersonalAssistant,
-            'model' => AiModel::Test,
-            'description' => fake()->sentence(),
-            'instructions' => fake()->sentence(),
-            'has_resource_hub_knowledge' => fake()->boolean(),
-            'resource_hub_article_access' => function (array $attributes) {
-                if (! $attributes['has_resource_hub_knowledge']) {
-                    return null;
-                }
-
-                return fake()->randomElement(EmployeeAdvisorResourceHubArticleAccess::cases())->value;
-            },
-        ];
+        Schema::table('ai_assistants', function (Blueprint $table) {
+            $table->string('resource_hub_article_access')->nullable()->default('all');
+        });
     }
 
-    public function withOverMaxInstructions(): static
+    public function down(): void
     {
-        return $this->state(['instructions' => function ($properties) {
-            $model = AiModel::parse($properties['model']) ?? AiModel::OpenAiGpt4o;
-
-            return str()->random($model->getService()->getMaxAssistantInstructionsLength() + 1);
-        }]);
+        Schema::table('ai_assistants', function (Blueprint $table) {
+            $table->dropColumn('resource_hub_article_access');
+        });
     }
-}
+};

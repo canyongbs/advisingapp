@@ -34,42 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Tests\Tenant\Feature\Filament\Resources\AiAssistantResource\RequestFactories;
+namespace AdvisingApp\Ai\Enums;
 
-use AdvisingApp\Ai\Enums\AiAssistantApplication;
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Enums\EmployeeAdvisorResourceHubArticleAccess;
-use Illuminate\Http\UploadedFile;
-use Worksome\RequestFactories\RequestFactory;
+use Filament\Support\Contracts\HasLabel;
 
-class CreateAiAssistantRequestFactory extends RequestFactory
+enum EmployeeAdvisorResourceHubArticleAccess: string implements HasLabel
 {
-    public function definition(): array
-    {
-        return [
-            'avatar' => UploadedFile::fake()->image(fake()->word . '.png'),
-            'name' => fake()->word(),
-            'application' => AiAssistantApplication::PersonalAssistant,
-            'model' => AiModel::Test,
-            'description' => fake()->sentence(),
-            'instructions' => fake()->sentence(),
-            'has_resource_hub_knowledge' => fake()->boolean(),
-            'resource_hub_article_access' => function (array $attributes) {
-                if (! $attributes['has_resource_hub_knowledge']) {
-                    return null;
-                }
+    case All = 'all';
 
-                return fake()->randomElement(EmployeeAdvisorResourceHubArticleAccess::cases())->value;
-            },
-        ];
+    case Public = 'public';
+
+    case Internal = 'internal';
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::All => 'All',
+            self::Public => 'Public',
+            self::Internal => 'Internal',
+        };
     }
 
-    public function withOverMaxInstructions(): static
+    public static function getDefault(): self
     {
-        return $this->state(['instructions' => function ($properties) {
-            $model = AiModel::parse($properties['model']) ?? AiModel::OpenAiGpt4o;
+        return self::All;
+    }
 
-            return str()->random($model->getService()->getMaxAssistantInstructionsLength() + 1);
-        }]);
+    public static function parse(string | self | null $value): ?self
+    {
+        if ($value instanceof self) {
+            return $value;
+        }
+
+        return self::tryFrom($value);
     }
 }

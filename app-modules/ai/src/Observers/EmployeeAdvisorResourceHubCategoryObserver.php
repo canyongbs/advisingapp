@@ -34,42 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Tests\Tenant\Feature\Filament\Resources\AiAssistantResource\RequestFactories;
+namespace AdvisingApp\Ai\Observers;
 
-use AdvisingApp\Ai\Enums\AiAssistantApplication;
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Enums\EmployeeAdvisorResourceHubArticleAccess;
-use Illuminate\Http\UploadedFile;
-use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\Ai\Models\EmployeeAdvisorResourceHubCategory;
+use AdvisingApp\IntegrationOpenAi\Jobs\UploadAssistantFilesToVectorStore;
 
-class CreateAiAssistantRequestFactory extends RequestFactory
+class EmployeeAdvisorResourceHubCategoryObserver
 {
-    public function definition(): array
+    public function created(EmployeeAdvisorResourceHubCategory $pivot): void
     {
-        return [
-            'avatar' => UploadedFile::fake()->image(fake()->word . '.png'),
-            'name' => fake()->word(),
-            'application' => AiAssistantApplication::PersonalAssistant,
-            'model' => AiModel::Test,
-            'description' => fake()->sentence(),
-            'instructions' => fake()->sentence(),
-            'has_resource_hub_knowledge' => fake()->boolean(),
-            'resource_hub_article_access' => function (array $attributes) {
-                if (! $attributes['has_resource_hub_knowledge']) {
-                    return null;
-                }
+        $assistant = $pivot->aiAssistant;
 
-                return fake()->randomElement(EmployeeAdvisorResourceHubArticleAccess::cases())->value;
-            },
-        ];
+        if ($assistant?->has_resource_hub_knowledge) {
+            UploadAssistantFilesToVectorStore::dispatch($assistant);
+        }
     }
 
-    public function withOverMaxInstructions(): static
+    public function deleted(EmployeeAdvisorResourceHubCategory $pivot): void
     {
-        return $this->state(['instructions' => function ($properties) {
-            $model = AiModel::parse($properties['model']) ?? AiModel::OpenAiGpt4o;
+        $assistant = $pivot->aiAssistant;
 
-            return str()->random($model->getService()->getMaxAssistantInstructionsLength() + 1);
-        }]);
+        if ($assistant?->has_resource_hub_knowledge) {
+            UploadAssistantFilesToVectorStore::dispatch($assistant);
+        }
     }
 }

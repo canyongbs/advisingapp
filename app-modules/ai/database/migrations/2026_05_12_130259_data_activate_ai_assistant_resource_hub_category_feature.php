@@ -34,42 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Tests\Tenant\Feature\Filament\Resources\AiAssistantResource\RequestFactories;
+use App\Features\AiAssistantResourceHubCategoryFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Ai\Enums\AiAssistantApplication;
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Enums\EmployeeAdvisorResourceHubArticleAccess;
-use Illuminate\Http\UploadedFile;
-use Worksome\RequestFactories\RequestFactory;
-
-class CreateAiAssistantRequestFactory extends RequestFactory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'avatar' => UploadedFile::fake()->image(fake()->word . '.png'),
-            'name' => fake()->word(),
-            'application' => AiAssistantApplication::PersonalAssistant,
-            'model' => AiModel::Test,
-            'description' => fake()->sentence(),
-            'instructions' => fake()->sentence(),
-            'has_resource_hub_knowledge' => fake()->boolean(),
-            'resource_hub_article_access' => function (array $attributes) {
-                if (! $attributes['has_resource_hub_knowledge']) {
-                    return null;
-                }
-
-                return fake()->randomElement(EmployeeAdvisorResourceHubArticleAccess::cases())->value;
-            },
-        ];
+        AiAssistantResourceHubCategoryFeature::activate();
     }
 
-    public function withOverMaxInstructions(): static
+    public function down(): void
     {
-        return $this->state(['instructions' => function ($properties) {
-            $model = AiModel::parse($properties['model']) ?? AiModel::OpenAiGpt4o;
-
-            return str()->random($model->getService()->getMaxAssistantInstructionsLength() + 1);
-        }]);
+        AiAssistantResourceHubCategoryFeature::deactivate();
     }
-}
+};

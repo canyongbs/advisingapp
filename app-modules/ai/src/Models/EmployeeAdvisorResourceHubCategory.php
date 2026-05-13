@@ -34,42 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Tests\Tenant\Feature\Filament\Resources\AiAssistantResource\RequestFactories;
+namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\Ai\Enums\AiAssistantApplication;
-use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Enums\EmployeeAdvisorResourceHubArticleAccess;
-use Illuminate\Http\UploadedFile;
-use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\Ai\Observers\EmployeeAdvisorResourceHubCategoryObserver;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class CreateAiAssistantRequestFactory extends RequestFactory
+#[ObservedBy([EmployeeAdvisorResourceHubCategoryObserver::class])]
+class EmployeeAdvisorResourceHubCategory extends Pivot
 {
-    public function definition(): array
-    {
-        return [
-            'avatar' => UploadedFile::fake()->image(fake()->word . '.png'),
-            'name' => fake()->word(),
-            'application' => AiAssistantApplication::PersonalAssistant,
-            'model' => AiModel::Test,
-            'description' => fake()->sentence(),
-            'instructions' => fake()->sentence(),
-            'has_resource_hub_knowledge' => fake()->boolean(),
-            'resource_hub_article_access' => function (array $attributes) {
-                if (! $attributes['has_resource_hub_knowledge']) {
-                    return null;
-                }
+    use HasUuids;
 
-                return fake()->randomElement(EmployeeAdvisorResourceHubArticleAccess::cases())->value;
-            },
-        ];
+    /**
+     * @return BelongsTo<AiAssistant, $this>
+     */
+    public function aiAssistant(): BelongsTo
+    {
+        return $this->belongsTo(AiAssistant::class, 'employee_advisor_id');
     }
 
-    public function withOverMaxInstructions(): static
+    /**
+     * @return BelongsTo<ResourceHubCategory, $this>
+     */
+    public function resourceHubCategory(): BelongsTo
     {
-        return $this->state(['instructions' => function ($properties) {
-            $model = AiModel::parse($properties['model']) ?? AiModel::OpenAiGpt4o;
-
-            return str()->random($model->getService()->getMaxAssistantInstructionsLength() + 1);
-        }]);
+        return $this->belongsTo(ResourceHubCategory::class);
     }
 }

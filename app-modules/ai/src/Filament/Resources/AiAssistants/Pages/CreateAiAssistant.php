@@ -56,6 +56,10 @@ class CreateAiAssistant extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
+        if (! ($data['has_resource_hub_knowledge'] ?? false)) {
+            $data['resource_hub_article_access'] = null;
+        }
+
         $record = new ($this->getModel())($data);
 
         throw_if(

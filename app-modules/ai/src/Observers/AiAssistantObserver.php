@@ -73,7 +73,7 @@ class AiAssistantObserver
             ]);
         }
 
-        if ($assistant->wasChanged('has_resource_hub_knowledge')) {
+        if ($assistant->wasChanged(['has_resource_hub_knowledge', 'resource_hub_article_access'])) {
             UploadAssistantFilesToVectorStore::dispatch($assistant);
         }
     }
