@@ -54,7 +54,6 @@ use App\Overrides\Filament\Actions\Imports\Jobs\ImportCsvOverride;
 use App\Overrides\Laravel\PermissionMigrationCreator;
 use App\Overrides\Laravel\StartSession as OverrideStartSession;
 use Aws\GeoPlaces\GeoPlacesClient;
-use CanyonGBS\Common\Support\ModularLivewirePlugin;
 use Exception;
 use Filament\Actions\Exports\Jobs\CreateXlsxFile;
 use Filament\Actions\Exports\Jobs\ExportCompletion;
@@ -73,6 +72,7 @@ use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use InterNACHI\Modular\PluginRegistry;
+use InterNACHI\ModularLivewire\ModularLivewirePlugin;
 use Laravel\Pennant\Feature;
 use Rector\Caching\CacheFactory;
 
