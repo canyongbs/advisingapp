@@ -37,8 +37,8 @@
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
 use AdvisingApp\Ai\Actions\GenerateQnaAdvisorIntroductoryMessage;
-use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
+use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
