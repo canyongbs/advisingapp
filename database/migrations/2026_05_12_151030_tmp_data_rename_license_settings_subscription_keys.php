@@ -39,7 +39,7 @@ use CanyonGBS\Common\Database\Migrations\Concerns\CanModifySettings;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
-return new class () extends Migration {
+return new class() extends Migration {
     use CanModifySettings;
 
     public function up(): void
@@ -62,7 +62,7 @@ return new class () extends Migration {
                 }
 
                 if (isset($data['addons']['qnaAdvisor'])) {
-                    $data['addons']['customerAdvisor'] = $data['addons']['qnaAdvisor'];
+                    $data['addons']['customerAdvisors'] = $data['addons']['qnaAdvisor'];
                     unset($data['addons']['qnaAdvisor']);
                 }
 
@@ -94,9 +94,9 @@ return new class () extends Migration {
                     unset($data['addons']['employeeAdvisors']);
                 }
 
-                if (isset($data['addons']['customerAdvisor'])) {
-                    $data['addons']['qnaAdvisor'] = $data['addons']['customerAdvisor'];
-                    unset($data['addons']['customerAdvisor']);
+                if (isset($data['addons']['customerAdvisors'])) {
+                    $data['addons']['qnaAdvisor'] = $data['addons']['customerAdvisors'];
+                    unset($data['addons']['customerAdvisors']);
                 }
 
                 return $data;

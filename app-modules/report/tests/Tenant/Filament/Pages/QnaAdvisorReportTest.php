@@ -46,7 +46,7 @@ it('is gated with proper access control', function () {
     $settings = app(LicenseSettings::class);
     $user = User::factory()->create();
 
-    $settings->data->addons->customerAdvisor = false;
+    $settings->data->addons->customerAdvisors = false;
     $settings->save();
 
     actingAs($user);
@@ -63,7 +63,7 @@ it('is gated with proper access control', function () {
 
     get(QnaAdvisorReport::getUrl())->assertForbidden();
 
-    $settings->data->addons->customerAdvisor = true;
+    $settings->data->addons->customerAdvisors = true;
     $settings->save();
 
     get(QnaAdvisorReport::getUrl())->assertSuccessful();

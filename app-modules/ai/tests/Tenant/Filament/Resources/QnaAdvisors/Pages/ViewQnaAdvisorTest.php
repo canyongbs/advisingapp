@@ -47,7 +47,7 @@ use function Pest\Livewire\livewire;
 test('View QnA Advisor is gated with proper access control', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->customerAdvisor = true;
+    $settings->data->addons->customerAdvisors = true;
 
     $settings->save();
 
@@ -76,7 +76,7 @@ test('View QnA Advisor is gated with proper access control', function () {
 test('archive action visible when QnA Advisor is not archived', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->customerAdvisor = true;
+    $settings->data->addons->customerAdvisors = true;
 
     $settings->save();
 
@@ -100,7 +100,7 @@ test('archive action visible when QnA Advisor is not archived', function () {
 test('restore action visible when QnA Advisor is archived', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->customerAdvisor = true;
+    $settings->data->addons->customerAdvisors = true;
 
     $settings->save();
 

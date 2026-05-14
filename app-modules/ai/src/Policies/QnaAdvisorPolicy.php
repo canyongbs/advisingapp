@@ -55,7 +55,7 @@ class QnaAdvisorPolicy
         }
 
         $featureGate = AiAssistantDtoRenameFeature::active()
-            ? Feature::CustomerAdvisor->getGateName()
+            ? Feature::CustomerAdvisors->getGateName()
             : Feature::QnAAdvisor->getGateName();
 
         if (! Gate::check($featureGate)) {

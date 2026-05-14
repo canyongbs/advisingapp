@@ -52,7 +52,7 @@ use function PHPUnit\Framework\assertCount;
 test('Create QnA Advisor Category is gated with proper access control', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->customerAdvisor = true;
+    $settings->data->addons->customerAdvisors = true;
 
     $settings->save();
 
@@ -84,7 +84,7 @@ test('Create QnA Advisor Category is gated with proper access control', function
 test('can create QnA Advisor Category', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->customerAdvisor = true;
+    $settings->data->addons->customerAdvisors = true;
 
     $settings->save();
 
@@ -113,7 +113,7 @@ test('can create QnA Advisor Category', function () {
 test('Create QnA Advisor Category validates the inputs', function ($data, $errors) {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->customerAdvisor = true;
+    $settings->data->addons->customerAdvisors = true;
 
     $settings->save();
 
@@ -179,7 +179,7 @@ test('Create QnA Advisor Category validates the inputs', function ($data, $error
 test('can edit QnA Advisor Category', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->customerAdvisor = true;
+    $settings->data->addons->customerAdvisors = true;
 
     $settings->save();
 
@@ -213,7 +213,7 @@ test('can edit QnA Advisor Category', function () {
 test('Edit QnA Advisor Category validates the inputs', function ($data, $errors) {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->customerAdvisor = true;
+    $settings->data->addons->customerAdvisors = true;
 
     $settings->save();
 
