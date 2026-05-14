@@ -60,12 +60,12 @@ it('is gated with proper access control', function () {
 
     $settings = app(LicenseSettings::class);
     $settings->data->addons->scheduleAndAppointments = false;
-    $settings->save();    
+    $settings->save();
 
     get(ManagePersonalBookingPage::getUrl())->assertForbidden();
-    
+
     $settings->data->addons->scheduleAndAppointments = true;
-    $settings->save();    
+    $settings->save();
 
     get(ManagePersonalBookingPage::getUrl())->assertSuccessful();
 });

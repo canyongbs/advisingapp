@@ -60,7 +60,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
-use Override;
 
 class ManagePersonalBookingPage extends ProfilePage
 {
@@ -69,9 +68,9 @@ class ManagePersonalBookingPage extends ProfilePage
     protected static ?string $title = 'Personal Booking Page';
 
     protected static ?int $navigationSort = 20;
-    
+
     public static function canAccess(): bool
-    {        
+    {
         return Gate::check(Feature::ScheduleAndAppointments->getGateName()) && parent::canAccess();
     }
 
