@@ -37,12 +37,10 @@
 namespace App\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Enums\Feature;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Gate;
 
 /**
  * @property Schema $form
