@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
-use AdvisingApp\Ai\Jobs\QnaAdvisors\CreateQnaAdvisorThreadInteraction;
+use AdvisingApp\Ai\Jobs\QnaAdvisors\CreateCustomerAdvisorThreadInteraction;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use Illuminate\Http\JsonResponse;
 
 class FinishAdvisorThreadController
 {
-    public function __invoke(QnaAdvisor $advisor, QnaAdvisorThread $thread): JsonResponse
+    public function __invoke(QnaAdvisor $advisor, CustomerAdvisorThread $thread): JsonResponse
     {
         if ($thread->finished_at) {
             abort(403, 'This thread is already finished.');
@@ -58,7 +58,7 @@ class FinishAdvisorThreadController
         $thread->touch('finished_at');
 
         if ($thread->author) {
-            dispatch(new CreateQnaAdvisorThreadInteraction($thread));
+            dispatch(new CreateCustomerAdvisorThreadInteraction($thread));
         }
 
         return response()->json([

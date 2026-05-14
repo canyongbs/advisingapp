@@ -37,7 +37,7 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Ai\Enums\QnaAdvisorReportTableTab;
-use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ViewProspect;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
@@ -86,16 +86,16 @@ class QnaAdvisorReportTable extends TableWidget
 
                     $tab = QnaAdvisorReportTableTab::tryFrom($this->activeTab) ?? QnaAdvisorReportTableTab::Student;
 
-                    $qnaAdvisorThreadQuery = fn (Builder $query): Builder => match ($tab) {
-                        QnaAdvisorReportTableTab::Student => QnaAdvisorThread::query()
+                    $customerAdvisorThreadQuery = fn (Builder $query): Builder => match ($tab) {
+                        QnaAdvisorReportTableTab::Student => CustomerAdvisorThread::query()
                             ->whereMorphedTo('author', Student::class),
-                        QnaAdvisorReportTableTab::Prospect => QnaAdvisorThread::query()
+                        QnaAdvisorReportTableTab::Prospect => CustomerAdvisorThread::query()
                             ->whereMorphedTo('author', Prospect::class),
-                        QnaAdvisorReportTableTab::Unauthenticated => QnaAdvisorThread::query()
+                        QnaAdvisorReportTableTab::Unauthenticated => CustomerAdvisorThread::query()
                             ->whereNull('author_id'),
                     };
 
-                    return $qnaAdvisorThreadQuery(QnaAdvisorThread::query())
+                    return $customerAdvisorThreadQuery(CustomerAdvisorThread::query())
                         ->when(
                             $startDate && $endDate,
                             function (Builder $query) use ($startDate, $endDate): Builder {
@@ -112,12 +112,12 @@ class QnaAdvisorReportTable extends TableWidget
                     ->label('Name'),
                 TextColumn::make('author')
                     ->label('With')
-                    ->url(fn (QnaAdvisorThread $record): ?string => match (true) {
+                    ->url(fn (CustomerAdvisorThread $record): ?string => match (true) {
                         $record->author instanceof Student => ViewStudent::getUrl(['record' => $record->author]),
                         $record->author instanceof Prospect => ViewProspect::getUrl(['record' => $record->author]),
                         default => null,
                     }, shouldOpenInNewTab: true)
-                    ->getStateUsing(function (QnaAdvisorThread $record): string {
+                    ->getStateUsing(function (CustomerAdvisorThread $record): string {
                         $author = $record->author;
 
                         if ($author instanceof Prospect || $author instanceof Student) {
@@ -127,17 +127,17 @@ class QnaAdvisorReportTable extends TableWidget
                         return 'N/A';
                     }),
                 TextColumn::make('exchanges')
-                    ->getStateUsing(fn (QnaAdvisorThread $record) => $record->messages()->where('is_advisor', false)->count()),
+                    ->getStateUsing(fn (CustomerAdvisorThread $record) => $record->messages()->where('is_advisor', false)->count()),
                 TextColumn::make('finished_at')
                     ->badge()
                     ->color(
-                        fn (QnaAdvisorThread $record): string => filled($record->finished_at)
+                        fn (CustomerAdvisorThread $record): string => filled($record->finished_at)
                         && in_array($record->author?->getMorphClass(), ['prospect', 'student']) && filled($record->interaction_id)
                             ? 'info'
                             : 'warning'
                     )
                     ->getStateUsing(
-                        fn (QnaAdvisorThread $record) => filled($record->finished_at)
+                        fn (CustomerAdvisorThread $record) => filled($record->finished_at)
                         && in_array($record->author?->getMorphClass(), ['prospect', 'student']) && filled($record->interaction_id)
                             ? 'Yes'
                             : 'No'
@@ -147,8 +147,8 @@ class QnaAdvisorReportTable extends TableWidget
                 TextColumn::make('interaction_id')
                     ->label('Subscribed Updated')
                     ->badge()
-                    ->color(fn (QnaAdvisorThread $record): string => filled($record->interaction_id) ? 'info' : 'warning')
-                    ->getStateUsing(fn (QnaAdvisorThread $record) => filled($record->interaction_id) ? 'Yes' : 'No'),
+                    ->color(fn (CustomerAdvisorThread $record): string => filled($record->interaction_id) ? 'info' : 'warning')
+                    ->getStateUsing(fn (CustomerAdvisorThread $record) => filled($record->interaction_id) ? 'Yes' : 'No'),
                 TextColumn::make('created_at')
                     ->label('Initiated'),
             ])
@@ -156,9 +156,9 @@ class QnaAdvisorReportTable extends TableWidget
                 Action::make('view_transcript')
                     ->label('View Transcript')
                     ->icon('heroicon-o-chat-bubble-left-right')
-                    ->modalHeading(fn (QnaAdvisorThread $record): string => 'Chat Transcript - ' . $record->advisor->name)
+                    ->modalHeading(fn (CustomerAdvisorThread $record): string => 'Chat Transcript - ' . $record->advisor->name)
                     ->modalWidth('6xl')
-                    ->modalContent(function (QnaAdvisorThread $record) {
+                    ->modalContent(function (CustomerAdvisorThread $record) {
                         $messages = $record->messages()
                             ->orderBy('created_at', 'asc')
                             ->get();

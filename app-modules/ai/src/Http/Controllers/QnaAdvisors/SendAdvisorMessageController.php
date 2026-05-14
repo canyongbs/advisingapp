@@ -39,7 +39,7 @@ namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Jobs\QnaAdvisors\SendCustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -95,7 +95,7 @@ class SendAdvisorMessageController
 
         $author = auth('student')->user() ?? auth('prospect')->user();
 
-        $thread = QnaAdvisorThread::query()
+        $thread = CustomerAdvisorThread::query()
             ->whereKey($data['thread_id'])
             ->whereBelongsTo($advisor, 'advisor')
             ->whereMorphedTo('author', $author)

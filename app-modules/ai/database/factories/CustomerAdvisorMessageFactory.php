@@ -37,7 +37,7 @@
 namespace AdvisingApp\Ai\Database\Factories;
 
 use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
-use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -62,7 +62,7 @@ class CustomerAdvisorMessageFactory extends Factory
 
         return [
             'content' => $this->faker->sentence(12),
-            'thread_id' => QnaAdvisorThread::factory(),
+            'thread_id' => CustomerAdvisorThread::factory(),
             'author_type' => $this->faker->randomElement($morphTypes),
             'author_id' => fn (array $attributes) => (new (Relation::getMorphedModel($attributes['author_type'])))->factory(),
             'is_advisor' => $this->faker->boolean(),

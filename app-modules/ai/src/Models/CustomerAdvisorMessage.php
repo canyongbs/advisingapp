@@ -65,11 +65,11 @@ class CustomerAdvisorMessage extends BaseModel
     ];
 
     /**
-     * @return BelongsTo<QnaAdvisorThread, $this>
+     * @return BelongsTo<CustomerAdvisorThread, $this>
      */
     public function thread(): BelongsTo
     {
-        return $this->belongsTo(QnaAdvisorThread::class, 'thread_id');
+        return $this->belongsTo(CustomerAdvisorThread::class, 'thread_id');
     }
 
     /**

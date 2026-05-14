@@ -34,26 +34,69 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Database\Factories;
+namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorThread;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\Interaction\Models\Interaction;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
- * @extends Factory<QnaAdvisorThread>
+ * @mixin IdeHelperCustomerAdvisorThread
  */
-class QnaAdvisorThreadFactory extends Factory
+class CustomerAdvisorThread extends BaseModel
 {
+    public $fillable = [
+        'advisor_id',
+        'author_type',
+        'author_id',
+        'finished_at',
+    ];
+
+    protected $casts = [
+        'finished_at' => 'datetime',
+    ];
+
     /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
+     * @return HasMany<CustomerAdvisorMessage, $this>
      */
-    public function definition(): array
+    public function messages(): HasMany
     {
-        return [
-            'advisor_id' => QnaAdvisor::factory(),
-        ];
+        return $this->hasMany(CustomerAdvisorMessage::class, 'thread_id');
+    }
+
+    /**
+     * @return HasOne<CustomerAdvisorMessage, $this>
+     */
+    public function latestMessage(): HasOne
+    {
+        return $this->messages()->one()->latestOfMany();
+    }
+
+    /**
+     * @return BelongsTo<QnaAdvisor, $this>
+     */
+    public function advisor(): BelongsTo
+    {
+        return $this->belongsTo(QnaAdvisor::class, 'advisor_id');
+    }
+
+    /**
+     * @return MorphTo<Model, $this>
+     */
+    public function author(): MorphTo
+    {
+        return $this->morphTo('author');
+    }
+
+    /**
+     * @return BelongsTo<Interaction, $this>
+     */
+    public function interaction(): BelongsTo
+    {
+        return $this->belongsTo(Interaction::class);
     }
 }

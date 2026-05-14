@@ -35,33 +35,33 @@
 */
 
 use AdvisingApp\Ai\Enums\QnaAdvisorReportTableTab;
-use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportTable;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 use function Pest\Livewire\livewire;
 
-it('displays only QnaAdvisorThreads added within the selected date range based on tabs', function () {
+it('displays only CustomerAdvisorThreads added within the selected date range based on tabs', function () {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
-    $qnaAdvisorThreadWithinRange1ForStudent = QnaAdvisorThread::factory()->for(Student::factory(), 'author')->state([
+    $customerAdvisorThreadWithinRange1ForStudent = CustomerAdvisorThread::factory()->for(Student::factory(), 'author')->state([
         'created_at' => $startDate,
     ])->create();
 
-    $qnaAdvisorThreadWithinRange1ForProspect = QnaAdvisorThread::factory()->for(Prospect::factory(), 'author')->state([
+    $customerAdvisorThreadWithinRange1ForProspect = CustomerAdvisorThread::factory()->for(Prospect::factory(), 'author')->state([
         'created_at' => $startDate,
     ])->create();
 
-    $qnaAdvisorThreadWithinRange2ForStudent = QnaAdvisorThread::factory()->for(Student::factory(), 'author')->state([
+    $customerAdvisorThreadWithinRange2ForStudent = CustomerAdvisorThread::factory()->for(Student::factory(), 'author')->state([
         'created_at' => $endDate,
     ])->create();
-    $qnaAdvisorThreadWithinRange2ForProspect = QnaAdvisorThread::factory()->for(Prospect::factory(), 'author')->state([
+    $customerAdvisorThreadWithinRange2ForProspect = CustomerAdvisorThread::factory()->for(Prospect::factory(), 'author')->state([
         'created_at' => $endDate,
     ])->create();
 
-    $qnaAdvisorThreadUnauthorized = QnaAdvisorThread::factory()->state([
+    $customerAdvisorThreadUnauthorized = CustomerAdvisorThread::factory()->state([
         'created_at' => now()->subDays(5),
     ])->create();
 
@@ -78,10 +78,10 @@ it('displays only QnaAdvisorThreads added within the selected date range based o
     ]);
 
     $component->assertCanSeeTableRecords(collect([
-        $qnaAdvisorThreadWithinRange1ForStudent,
-        $qnaAdvisorThreadWithinRange2ForStudent,
+        $customerAdvisorThreadWithinRange1ForStudent,
+        $customerAdvisorThreadWithinRange2ForStudent,
     ]))
-        ->assertCanNotSeeTableRecords(collect([$qnaAdvisorThreadWithinRange1ForProspect, $qnaAdvisorThreadWithinRange2ForProspect, $qnaAdvisorThreadUnauthorized]));
+        ->assertCanNotSeeTableRecords(collect([$customerAdvisorThreadWithinRange1ForProspect, $customerAdvisorThreadWithinRange2ForProspect, $customerAdvisorThreadUnauthorized]));
 
     // for prospect tab
     $component = livewire(QnaAdvisorReportTable::class, [
@@ -91,10 +91,10 @@ it('displays only QnaAdvisorThreads added within the selected date range based o
     ]);
 
     $component->assertCanSeeTableRecords(collect([
-        $qnaAdvisorThreadWithinRange1ForProspect,
-        $qnaAdvisorThreadWithinRange2ForProspect,
+        $customerAdvisorThreadWithinRange1ForProspect,
+        $customerAdvisorThreadWithinRange2ForProspect,
     ]))
-        ->assertCanNotSeeTableRecords(collect([$qnaAdvisorThreadWithinRange1ForStudent, $qnaAdvisorThreadWithinRange2ForStudent, $qnaAdvisorThreadUnauthorized]));
+        ->assertCanNotSeeTableRecords(collect([$customerAdvisorThreadWithinRange1ForStudent, $customerAdvisorThreadWithinRange2ForStudent, $customerAdvisorThreadUnauthorized]));
 
     // for unauthorized tab
     $component = livewire(QnaAdvisorReportTable::class, [
@@ -104,7 +104,7 @@ it('displays only QnaAdvisorThreads added within the selected date range based o
     ]);
 
     $component->assertCanSeeTableRecords(collect([
-        $qnaAdvisorThreadUnauthorized,
+        $customerAdvisorThreadUnauthorized,
     ]))
-        ->assertCanNotSeeTableRecords(collect([$qnaAdvisorThreadWithinRange1ForStudent, $qnaAdvisorThreadWithinRange2ForStudent, $qnaAdvisorThreadWithinRange1ForProspect, $qnaAdvisorThreadWithinRange2ForProspect]));
+        ->assertCanNotSeeTableRecords(collect([$customerAdvisorThreadWithinRange1ForStudent, $customerAdvisorThreadWithinRange2ForStudent, $customerAdvisorThreadWithinRange1ForProspect, $customerAdvisorThreadWithinRange2ForProspect]));
 });

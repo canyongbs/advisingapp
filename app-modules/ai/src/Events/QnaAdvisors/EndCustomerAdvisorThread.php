@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\Ai\Events\QnaAdvisors;
 
-use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 
-class EndQnaAdvisorThread implements ShouldBroadcastNow
+class EndCustomerAdvisorThread implements ShouldBroadcastNow
 {
     use Dispatchable;
     use InteractsWithSockets;
 
-    public function __construct(public QnaAdvisorThread $thread) {}
+    public function __construct(public CustomerAdvisorThread $thread) {}
 
     public function broadcastAs(): string
     {

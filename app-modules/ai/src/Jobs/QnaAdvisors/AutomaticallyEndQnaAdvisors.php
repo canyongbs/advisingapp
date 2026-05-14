@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Ai\Jobs\QnaAdvisors;
 
-use AdvisingApp\Ai\Events\QnaAdvisors\EndQnaAdvisorThread;
-use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use AdvisingApp\Ai\Events\QnaAdvisors\EndCustomerAdvisorThread;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -54,7 +54,7 @@ class AutomaticallyEndQnaAdvisors implements ShouldQueue
 
     public function handle(): void
     {
-        QnaAdvisorThread::query()
+        CustomerAdvisorThread::query()
             ->whereNull('finished_at')
             ->whereHas(
                 'latestMessage',
@@ -66,7 +66,7 @@ class AutomaticallyEndQnaAdvisors implements ShouldQueue
                         $thread->finished_at = now();
                         $thread->save();
 
-                        event(new EndQnaAdvisorThread($thread));
+                        event(new EndCustomerAdvisorThread($thread));
                     } catch (Throwable $error) {
                         report($error);
                     }

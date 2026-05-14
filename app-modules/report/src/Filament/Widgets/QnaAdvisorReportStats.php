@@ -37,7 +37,7 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -74,7 +74,7 @@ class QnaAdvisorReportStats extends StatsOverviewReportWidget
             );
 
         $studentsCount = $shouldBypassCache
-            ? QnaAdvisorThread::query()
+            ? CustomerAdvisorThread::query()
                 ->whereMorphedTo('author', Student::class)
                 ->when(
                     $startDate && $endDate,
@@ -84,11 +84,11 @@ class QnaAdvisorReportStats extends StatsOverviewReportWidget
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'qna-advisor-students-count',
                 now()->addHours(24),
-                fn (): int => QnaAdvisorThread::query()->whereMorphedTo('author', Student::class)->count()
+                fn (): int => CustomerAdvisorThread::query()->whereMorphedTo('author', Student::class)->count()
             );
 
         $prospectsCount = $shouldBypassCache
-            ? QnaAdvisorThread::query()
+            ? CustomerAdvisorThread::query()
                 ->whereMorphedTo('author', Prospect::class)
                 ->when(
                     $startDate && $endDate,
@@ -98,11 +98,11 @@ class QnaAdvisorReportStats extends StatsOverviewReportWidget
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'qna-advisor-prospects-count',
                 now()->addHours(24),
-                fn (): int => QnaAdvisorThread::query()->whereMorphedTo('author', Prospect::class)->count()
+                fn (): int => CustomerAdvisorThread::query()->whereMorphedTo('author', Prospect::class)->count()
             );
 
         $unauthenticatedCount = $shouldBypassCache
-            ? QnaAdvisorThread::query()
+            ? CustomerAdvisorThread::query()
                 ->whereNull('author_id')
                 ->when(
                     $startDate && $endDate,
@@ -112,7 +112,7 @@ class QnaAdvisorReportStats extends StatsOverviewReportWidget
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'qna-advisor-unauthenticated-count',
                 now()->addHours(24),
-                fn (): int => QnaAdvisorThread::query()->whereNull('author_id')
+                fn (): int => CustomerAdvisorThread::query()->whereNull('author_id')
                     ->count()
             );
 

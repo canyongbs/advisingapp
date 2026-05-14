@@ -39,7 +39,7 @@ namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 use AdvisingApp\Ai\Actions\GenerateQnaAdvisorIntroductoryMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
 
@@ -49,7 +49,7 @@ class StartAdvisorThreadController
     {
         $author = auth('student')->user() ?? auth('prospect')->user();
 
-        $thread = new QnaAdvisorThread();
+        $thread = new CustomerAdvisorThread();
         $thread->advisor()->associate($advisor);
         $thread->author()->associate($author);
         $thread->save();

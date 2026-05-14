@@ -34,71 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+namespace AdvisingApp\Ai\Database\Factories;
 
-use AdvisingApp\Interaction\Models\Interaction;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperQnaAdvisorThread
+ * @extends Factory<CustomerAdvisorThread>
  */
-class QnaAdvisorThread extends BaseModel
+class CustomerAdvisorThreadFactory extends Factory
 {
-    protected $table = 'customer_advisor_threads'; // Temporary measure for testing
-
-    public $fillable = [
-        'advisor_id',
-        'author_type',
-        'author_id',
-        'finished_at',
-    ];
-
-    protected $casts = [
-        'finished_at' => 'datetime',
-    ];
-
     /**
-     * @return HasMany<CustomerAdvisorMessage, $this>
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
      */
-    public function messages(): HasMany
+    public function definition(): array
     {
-        return $this->hasMany(CustomerAdvisorMessage::class, 'thread_id');
-    }
-
-    /**
-     * @return HasOne<CustomerAdvisorMessage, $this>
-     */
-    public function latestMessage(): HasOne
-    {
-        return $this->messages()->one()->latestOfMany();
-    }
-
-    /**
-     * @return BelongsTo<QnaAdvisor, $this>
-     */
-    public function advisor(): BelongsTo
-    {
-        return $this->belongsTo(QnaAdvisor::class, 'advisor_id');
-    }
-
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function author(): MorphTo
-    {
-        return $this->morphTo('author');
-    }
-
-    /**
-     * @return BelongsTo<Interaction, $this>
-     */
-    public function interaction(): BelongsTo
-    {
-        return $this->belongsTo(Interaction::class);
+        return [
+            'advisor_id' => QnaAdvisor::factory(),
+        ];
     }
 }

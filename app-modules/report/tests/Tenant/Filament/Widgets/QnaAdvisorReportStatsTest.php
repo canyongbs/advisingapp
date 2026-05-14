@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportStats;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -58,7 +58,7 @@ it('returns correct total QnaAdvisor stats of QnaAdvisors, students, prospects a
         'created_at' => $endDate,
     ])->create();
 
-    QnaAdvisorThread::factory()
+    CustomerAdvisorThread::factory()
         ->count($studentsCount)
         ->for(QnaAdvisor::factory(), 'advisor')
         ->for(Student::factory(), 'author')
@@ -67,7 +67,7 @@ it('returns correct total QnaAdvisor stats of QnaAdvisors, students, prospects a
         ])
         ->create();
 
-    QnaAdvisorThread::factory()
+    CustomerAdvisorThread::factory()
         ->count($prospectsCount)
         ->for(QnaAdvisor::factory(), 'advisor')
         ->for(Prospect::factory(), 'author')
@@ -76,7 +76,7 @@ it('returns correct total QnaAdvisor stats of QnaAdvisors, students, prospects a
         ])
         ->create();
 
-    QnaAdvisorThread::factory()
+    CustomerAdvisorThread::factory()
         ->count($unauthenticatedCount)
         ->for(QnaAdvisor::factory(), 'advisor')
         ->state([

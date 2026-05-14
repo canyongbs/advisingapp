@@ -25,7 +25,7 @@ use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Ai\Models\PromptUpvote;
 use AdvisingApp\Ai\Models\PromptUse;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Alert\Models\StudentAlert;
 use AdvisingApp\Application\Models\Application;
@@ -295,7 +295,7 @@ return [
     CustomerAdvisorLink::class,
     CustomerAdvisorMessage::class,
     CustomerAdvisorQuestion::class,
-    QnaAdvisorThread::class,
+    CustomerAdvisorThread::class,
     AlertConfiguration::class,
     StudentAlert::class,
     Application::class,

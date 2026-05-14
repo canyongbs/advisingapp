@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -70,7 +70,7 @@ Broadcast::channel('advisor-thread-{threadId}', function (User $user, string $th
 });
 
 Broadcast::channel('qna-advisor-thread-{threadId}', function (Student | Prospect $user, string $threadId): bool {
-    $thread = QnaAdvisorThread::find($threadId);
+    $thread = CustomerAdvisorThread::find($threadId);
 
     if (! $thread) {
         return false;

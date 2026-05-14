@@ -37,7 +37,7 @@
 namespace AdvisingApp\Ai\Events\QnaAdvisors;
 
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -51,7 +51,7 @@ class CustomerAdvisorMessageChunk implements ShouldBroadcastNow
 
     public function __construct(
         public QnaAdvisor $advisor,
-        public QnaAdvisorThread $thread,
+        public CustomerAdvisorThread $thread,
         public string $content,
         public bool $isComplete = false,
         public ?string $error = null,

@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Jobs\QnaAdvisors;
 
 use AdvisingApp\Ai\Actions\CompletePrompt;
 use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
-use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -46,14 +46,14 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\DB;
 
-class CreateQnaAdvisorThreadInteraction implements ShouldQueue
+class CreateCustomerAdvisorThreadInteraction implements ShouldQueue
 {
     use Queueable;
 
     public int $tries = 3;
 
     public function __construct(
-        protected QnaAdvisorThread $thread,
+        protected CustomerAdvisorThread $thread,
     ) {}
 
     public function handle(): void
