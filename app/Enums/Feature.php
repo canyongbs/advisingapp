@@ -69,7 +69,7 @@ enum Feature: string
 
     case QnAAdvisor = 'qna-advisor'; //TODO: AiAssistantDtoRenameFeature clean up: remove this when you clean up AiAssistantDtoRenameFeature
 
-    case CustomerAdvisors = 'customer-advisor';
+    case CustomerAdvisors = 'customer-advisors';
 
     case DataAdvisor = 'data-advisor';
 
