@@ -34,20 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Observers;
+namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
-use Illuminate\Support\Facades\Cache;
+use AdvisingApp\Ai\Observers\CustomerAdvisorQuestionObserver;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class QnaAdvisorQuestionObserver
+/**
+ * @mixin IdeHelperCustomerAdvisorQuestion
+ */
+#[ObservedBy(CustomerAdvisorQuestionObserver::class)]
+class CustomerAdvisorQuestion extends BaseModel implements Auditable
 {
-    public function saved(QnaAdvisorQuestion $question): void
-    {
-        Cache::tags(['{qna_advisor_instructions}'])->forget($question->category->qnaAdvisor->getInstructionsCacheKey());
-    }
+    use SoftDeletes;
+    use AuditableTrait;
 
-    public function deleted(QnaAdvisorQuestion $question): void
+    protected $table = 'customer_advisor_questions'; // Temporary measure for testing
+
+    protected $fillable = ['question', 'answer', 'category_id'];
+
+    /**
+     * @return BelongsTo<CustomerAdvisorCategory, $this>
+     */
+    public function category(): BelongsTo
     {
-        Cache::tags(['{qna_advisor_instructions}'])->forget($question->category->qnaAdvisor->getInstructionsCacheKey());
+        return $this->belongsTo(CustomerAdvisorCategory::class, 'category_id');
     }
 }

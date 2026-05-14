@@ -42,7 +42,7 @@ use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
-class QnaAdvisorQuestionPolicy
+class CustomerAdvisorQuestionPolicy
 {
     use PerformsLicenseChecks;
 

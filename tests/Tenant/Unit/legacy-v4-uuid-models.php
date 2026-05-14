@@ -17,6 +17,7 @@ use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Models\CustomerAdvisorFile;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
+use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
 use AdvisingApp\Ai\Models\DataAdvisor;
 use AdvisingApp\Ai\Models\LegacyAiMessageLog;
 use AdvisingApp\Ai\Models\Prompt;
@@ -24,7 +25,6 @@ use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Ai\Models\PromptUpvote;
 use AdvisingApp\Ai\Models\PromptUse;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Alert\Models\StudentAlert;
@@ -294,7 +294,7 @@ return [
     CustomerAdvisorFile::class,
     CustomerAdvisorLink::class,
     CustomerAdvisorMessage::class,
-    QnaAdvisorQuestion::class,
+    CustomerAdvisorQuestion::class,
     QnaAdvisorThread::class,
     AlertConfiguration::class,
     StudentAlert::class,

@@ -36,8 +36,8 @@
 
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
+use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
 use AdvisingApp\Ai\Settings\AiQnaAdvisorSettings;
 use Illuminate\Support\Facades\Cache;
 
@@ -72,28 +72,28 @@ it('returns the correct instructions for a QnaAdvisor', function () {
         ]);
 
     // Create two questions for each category
-    $questionOne = QnaAdvisorQuestion::factory()
+    $questionOne = CustomerAdvisorQuestion::factory()
         ->for($categoryOne, 'category')
         ->create([
             'question' => 'What is the minimum GPA requirement?',
             'answer' => 'The minimum GPA requirement is 2.0 for undergraduate students.',
         ]);
 
-    $questionTwo = QnaAdvisorQuestion::factory()
+    $questionTwo = CustomerAdvisorQuestion::factory()
         ->for($categoryOne, 'category')
         ->create([
             'question' => 'How do I appeal a grade?',
             'answer' => 'You can appeal a grade by submitting a formal appeal form to the registrar.',
         ]);
 
-    $questionThree = QnaAdvisorQuestion::factory()
+    $questionThree = CustomerAdvisorQuestion::factory()
         ->for($categoryTwo, 'category')
         ->create([
             'question' => 'When is the FAFSA deadline?',
             'answer' => 'The FAFSA deadline is typically March 1st for the following academic year.',
         ]);
 
-    $questionFour = QnaAdvisorQuestion::factory()
+    $questionFour = CustomerAdvisorQuestion::factory()
         ->for($categoryTwo, 'category')
         ->create([
             'question' => 'What scholarships are available?',
@@ -167,7 +167,7 @@ it('does not contain details on a category that has no questions', function () {
         ]);
 
     // Create questions only for the first category
-    $question = QnaAdvisorQuestion::factory()
+    $question = CustomerAdvisorQuestion::factory()
         ->for($categoryWithQuestions, 'category')
         ->create([
             'question' => 'Where is the student counseling center located?',
@@ -212,7 +212,7 @@ it('handles empty settings gracefully', function () {
             'description' => 'Information about library services and resources',
         ]);
 
-    $question = QnaAdvisorQuestion::factory()
+    $question = CustomerAdvisorQuestion::factory()
         ->for($category, 'category')
         ->create([
             'question' => 'What are the library hours?',
@@ -283,7 +283,7 @@ it('uses cache correctly', function () {
             'description' => 'Information about IT help and computer resources',
         ]);
 
-    $question = QnaAdvisorQuestion::factory()
+    $question = CustomerAdvisorQuestion::factory()
         ->for($category, 'category')
         ->create([
             'question' => 'How do I reset my password?',

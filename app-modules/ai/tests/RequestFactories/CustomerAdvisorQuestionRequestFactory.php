@@ -34,34 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+namespace AdvisingApp\Ai\Tests\RequestFactories;
 
-use AdvisingApp\Ai\Observers\QnaAdvisorQuestionObserver;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Auditable as AuditableTrait;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
+use AdvisingApp\Ai\Models\QnaAdvisor;
+use Worksome\RequestFactories\RequestFactory;
 
-/**
- * @mixin IdeHelperQnaAdvisorQuestion
- */
-#[ObservedBy(QnaAdvisorQuestionObserver::class)]
-class QnaAdvisorQuestion extends BaseModel implements Auditable
+class CustomerAdvisorQuestionRequestFactory extends RequestFactory
 {
-    use SoftDeletes;
-    use AuditableTrait;
-
-    protected $table = 'customer_advisor_questions'; // Temporary measure for testing
-
-    protected $fillable = ['question', 'answer', 'category_id'];
-
-    /**
-     * @return BelongsTo<CustomerAdvisorCategory, $this>
-     */
-    public function category(): BelongsTo
+    public function definition(): array
     {
-        return $this->belongsTo(CustomerAdvisorCategory::class, 'category_id');
+        return [
+            'question' => $this->faker->sentence(),
+            'answer' => $this->faker->paragraph(),
+            'category_id' => CustomerAdvisorCategory::factory()->for(QnaAdvisor::first()),
+        ];
     }
 }

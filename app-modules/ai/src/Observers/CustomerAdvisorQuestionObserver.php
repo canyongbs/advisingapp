@@ -34,20 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Tests\RequestFactories;
+namespace AdvisingApp\Ai\Observers;
 
-use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
-use AdvisingApp\Ai\Models\QnaAdvisor;
-use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
+use Illuminate\Support\Facades\Cache;
 
-class QnaAdvisorQuestionRequestFactory extends RequestFactory
+class CustomerAdvisorQuestionObserver
 {
-    public function definition(): array
+    public function saved(CustomerAdvisorQuestion $question): void
     {
-        return [
-            'question' => $this->faker->sentence(),
-            'answer' => $this->faker->paragraph(),
-            'category_id' => CustomerAdvisorCategory::factory()->for(QnaAdvisor::first()),
-        ];
+        Cache::tags(['{qna_advisor_instructions}'])->forget($question->category->qnaAdvisor->getInstructionsCacheKey());
+    }
+
+    public function deleted(CustomerAdvisorQuestion $question): void
+    {
+        Cache::tags(['{qna_advisor_instructions}'])->forget($question->category->qnaAdvisor->getInstructionsCacheKey());
     }
 }

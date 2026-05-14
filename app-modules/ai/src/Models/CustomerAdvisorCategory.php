@@ -71,10 +71,10 @@ class CustomerAdvisorCategory extends BaseModel implements Auditable
     }
 
     /**
-     * @return HasMany<QnaAdvisorQuestion, $this>
+     * @return HasMany<CustomerAdvisorQuestion, $this>
      */
     public function questions(): HasMany
     {
-        return $this->hasMany(QnaAdvisorQuestion::class, 'category_id');
+        return $this->hasMany(CustomerAdvisorQuestion::class, 'category_id');
     }
 }

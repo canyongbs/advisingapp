@@ -37,9 +37,9 @@
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ManageQnaQuestions;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
+use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
-use AdvisingApp\Ai\Tests\RequestFactories\QnaAdvisorQuestionRequestFactory;
+use AdvisingApp\Ai\Tests\RequestFactories\CustomerAdvisorQuestionRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\User;
@@ -96,19 +96,19 @@ test('can create QnA Advisor Question', function () {
 
     $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.create']);
 
-    $qnaAdvisorQuestion = collect(QnaAdvisorQuestionRequestFactory::new()->create());
+    $customerAdvisorQuestion = collect(CustomerAdvisorQuestionRequestFactory::new()->create());
 
     actingAs($user);
 
     livewire(ManageQnaQuestions::class, ['record' => $qnaAdvisor->getKey()])
-        ->callTableAction('create', data: $qnaAdvisorQuestion->toArray())
+        ->callTableAction('create', data: $customerAdvisorQuestion->toArray())
         ->assertHasNoTableActionErrors();
 
-    assertCount(1, QnaAdvisorQuestion::all());
+    assertCount(1, CustomerAdvisorQuestion::all());
 
     assertDatabaseHas(
-        QnaAdvisorQuestion::class,
-        $qnaAdvisorQuestion->toArray()
+        CustomerAdvisorQuestion::class,
+        $customerAdvisorQuestion->toArray()
     );
 });
 
@@ -125,42 +125,42 @@ test('Create QnA Advisor Question validates the inputs', function ($data, $error
 
     $qnaAdvisor = QnaAdvisor::factory()->create();
 
-    $qnaAdvisorQuestion = collect(QnaAdvisorQuestionRequestFactory::new($data)->create());
+    $customerAdvisorQuestion = collect(CustomerAdvisorQuestionRequestFactory::new($data)->create());
 
     actingAs($user);
 
     livewire(ManageQnaQuestions::class, ['record' => $qnaAdvisor->getKey()])
-        ->callTableAction('create', data: $qnaAdvisorQuestion->toArray())
+        ->callTableAction('create', data: $customerAdvisorQuestion->toArray())
         ->assertHasTableActionErrors($errors);
 
     assertDatabaseMissing(
-        QnaAdvisorQuestion::class,
-        $qnaAdvisorQuestion->toArray()
+        CustomerAdvisorQuestion::class,
+        $customerAdvisorQuestion->toArray()
     );
 })->with(
     [
         'category_id required' => [
-            QnaAdvisorQuestionRequestFactory::new()->state(['category_id' => null]),
+            CustomerAdvisorQuestionRequestFactory::new()->state(['category_id' => null]),
             ['category_id' => 'required'],
         ],
         'question required' => [
-            QnaAdvisorQuestionRequestFactory::new()->state(['question' => null]),
+            CustomerAdvisorQuestionRequestFactory::new()->state(['question' => null]),
             ['question' => 'required'],
         ],
         'question string' => [
-            QnaAdvisorQuestionRequestFactory::new()->state(['question' => 1]),
+            CustomerAdvisorQuestionRequestFactory::new()->state(['question' => 1]),
             ['question' => 'string'],
         ],
         'question max' => [
-            QnaAdvisorQuestionRequestFactory::new()->state(['question' => str()->random(257)]),
+            CustomerAdvisorQuestionRequestFactory::new()->state(['question' => str()->random(257)]),
             ['question' => 'max'],
         ],
         'answer required' => [
-            QnaAdvisorQuestionRequestFactory::new()->state(['answer' => null]),
+            CustomerAdvisorQuestionRequestFactory::new()->state(['answer' => null]),
             ['answer' => 'required'],
         ],
         'answer max' => [
-            QnaAdvisorQuestionRequestFactory::new()->state(['answer' => str()->random(65537)]),
+            CustomerAdvisorQuestionRequestFactory::new()->state(['answer' => str()->random(65537)]),
             ['answer' => 'max'],
         ],
     ]
@@ -181,20 +181,20 @@ test('can edit QnA Advisor Question', function () {
 
     // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, the state can be defined inline again
     $state = RenameQnaAdvisorsFeature::active() ? ['customer_advisor_id' => $qnaAdvisor->getKey()] : ['qna_advisor_id' => $qnaAdvisor->getKey()];
-    $qnaAdvisorQuestion = QnaAdvisorQuestion::factory()->state([
+    $customerAdvisorQuestion = CustomerAdvisorQuestion::factory()->state([
         'category_id' => CustomerAdvisorCategory::factory()->state($state),
     ])->create();
 
-    $request = collect(QnaAdvisorQuestionRequestFactory::new()->create());
+    $request = collect(CustomerAdvisorQuestionRequestFactory::new()->create());
 
     actingAs($user);
 
     livewire(ManageQnaQuestions::class, ['record' => $qnaAdvisor->getKey()])
-        ->callTableAction('edit', record: $qnaAdvisorQuestion->getKey(), data: $request->toArray())
+        ->callTableAction('edit', record: $customerAdvisorQuestion->getKey(), data: $request->toArray())
         ->assertHasNoTableActionErrors();
 
     assertDatabaseHas(
-        QnaAdvisorQuestion::class,
+        CustomerAdvisorQuestion::class,
         $request->toArray()
     );
 });
@@ -214,42 +214,42 @@ test('Edit QnA Advisor Question validates the inputs', function ($data, $errors)
 
     // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, the state can be defined inline again
     $state = RenameQnaAdvisorsFeature::active() ? ['customer_advisor_id' => $qnaAdvisor->getKey()] : ['qna_advisor_id' => $qnaAdvisor->getKey()];
-    $qnaAdvisorQuestion = QnaAdvisorQuestion::factory()->state([
+    $customerAdvisorQuestion = CustomerAdvisorQuestion::factory()->state([
         'category_id' => CustomerAdvisorCategory::factory()->state($state),
     ])->create();
 
-    $request = QnaAdvisorQuestionRequestFactory::new($data)->create();
+    $request = CustomerAdvisorQuestionRequestFactory::new($data)->create();
 
     actingAs($user);
 
     livewire(ManageQnaQuestions::class, ['record' => $qnaAdvisor->getKey()])
-        ->callTableAction('edit', record: $qnaAdvisorQuestion->getKey(), data: $request)
+        ->callTableAction('edit', record: $customerAdvisorQuestion->getKey(), data: $request)
         ->assertHasTableActionErrors($errors);
 })
     ->with(
         [
             'category_id required' => [
-                QnaAdvisorQuestionRequestFactory::new()->state(['category_id' => null]),
+                CustomerAdvisorQuestionRequestFactory::new()->state(['category_id' => null]),
                 ['category_id' => 'required'],
             ],
             'question required' => [
-                QnaAdvisorQuestionRequestFactory::new()->state(['question' => null]),
+                CustomerAdvisorQuestionRequestFactory::new()->state(['question' => null]),
                 ['question' => 'required'],
             ],
             'question string' => [
-                QnaAdvisorQuestionRequestFactory::new()->state(['question' => 1]),
+                CustomerAdvisorQuestionRequestFactory::new()->state(['question' => 1]),
                 ['question' => 'string'],
             ],
             'question max' => [
-                QnaAdvisorQuestionRequestFactory::new()->state(['question' => str()->random(257)]),
+                CustomerAdvisorQuestionRequestFactory::new()->state(['question' => str()->random(257)]),
                 ['question' => 'max'],
             ],
             'answer required' => [
-                QnaAdvisorQuestionRequestFactory::new()->state(['answer' => null]),
+                CustomerAdvisorQuestionRequestFactory::new()->state(['answer' => null]),
                 ['answer' => 'required'],
             ],
             'answer max' => [
-                QnaAdvisorQuestionRequestFactory::new()->state(['answer' => str()->random(65537)]),
+                CustomerAdvisorQuestionRequestFactory::new()->state(['answer' => str()->random(65537)]),
                 ['answer' => 'max'],
             ],
         ]
