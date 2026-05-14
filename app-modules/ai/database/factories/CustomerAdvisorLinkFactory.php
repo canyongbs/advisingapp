@@ -37,7 +37,7 @@
 namespace AdvisingApp\Ai\Database\Factories;
 
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -54,7 +54,7 @@ class CustomerAdvisorLinkFactory extends Factory
     {
         return [
             'url' => $this->faker->url(),
-            'advisor_id' => QnaAdvisor::factory(),
+            'advisor_id' => CustomerAdvisor::factory(),
             'parsing_results' => null,
             'is_keep_current_enabled' => true,
         ];

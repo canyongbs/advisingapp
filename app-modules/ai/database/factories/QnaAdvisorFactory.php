@@ -37,11 +37,11 @@
 namespace AdvisingApp\Ai\Database\Factories;
 
 use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<QnaAdvisor>
+ * @extends Factory<CustomerAdvisor>
  */
 class QnaAdvisorFactory extends Factory
 {

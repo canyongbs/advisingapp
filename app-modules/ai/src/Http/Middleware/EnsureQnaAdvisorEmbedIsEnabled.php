@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Http\Middleware;
 
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -52,7 +52,7 @@ class EnsureQnaAdvisorEmbedIsEnabled
     {
         $advisor = $request->route('advisor');
 
-        if (! $advisor instanceof QnaAdvisor) {
+        if (! $advisor instanceof CustomerAdvisor) {
             return response()->json(status: Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 

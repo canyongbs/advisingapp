@@ -36,7 +36,7 @@
 
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\EditQnaAdvisor;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Tests\RequestFactories\QnaAdvisorRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Features\RenameQnaAdvisorsFeature;
@@ -59,17 +59,17 @@ test('Edit QnA Advisor is gated with proper access control', function () {
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $qnaAdvisor = QnaAdvisor::factory()->create();
+    $customerAdvisor = CustomerAdvisor::factory()->create();
 
     actingAs($user)
         ->get(
             QnaAdvisorResource::getUrl('edit', [
-                'record' => $qnaAdvisor,
+                'record' => $customerAdvisor,
             ])
         )->assertForbidden();
 
     livewire(EditQnaAdvisor::class, [
-        'record' => $qnaAdvisor->getRouteKey(),
+        'record' => $customerAdvisor->getRouteKey(),
     ])
         ->assertForbidden();
 
@@ -78,7 +78,7 @@ test('Edit QnA Advisor is gated with proper access control', function () {
     actingAs($user)
         ->get(
             QnaAdvisorResource::getUrl('edit', [
-                'record' => $qnaAdvisor,
+                'record' => $customerAdvisor,
             ])
         )->assertSuccessful();
 });
@@ -94,7 +94,7 @@ test('can edit QnA Advisor', function () {
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $qnaAdvisor = QnaAdvisor::factory()->create();
+    $customerAdvisor = CustomerAdvisor::factory()->create();
 
     $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.*.update']);
 
@@ -103,14 +103,14 @@ test('can edit QnA Advisor', function () {
     $request = collect(QnaAdvisorRequestFactory::new()->create());
 
     livewire(EditQnaAdvisor::class, [
-        'record' => $qnaAdvisor->getRouteKey(),
+        'record' => $customerAdvisor->getRouteKey(),
     ])
         ->fillForm($request->toArray())
         ->call('save')
         ->assertHasNoFormErrors();
 
     assertDatabaseHas(
-        QnaAdvisor::class,
+        CustomerAdvisor::class,
         $request->except([
             'avatar',
             'instructions',
@@ -121,8 +121,8 @@ test('can edit QnA Advisor', function () {
     assertDatabaseHas(
         Media::class,
         [
-            'model_type' => (new (QnaAdvisor::class))->getMorphClass(),
-            'model_id' => QnaAdvisor::query()->first()->getKey(),
+            'model_type' => (new (CustomerAdvisor::class))->getMorphClass(),
+            'model_id' => CustomerAdvisor::query()->first()->getKey(),
             'collection_name' => 'avatar',
         ]
     );
@@ -143,12 +143,12 @@ test('Edit QnA Advisor validates the inputs', function ($data, $errors) {
 
     $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.*.update']);
 
-    $qnaAdvisor = QnaAdvisor::factory()->create();
+    $customerAdvisor = CustomerAdvisor::factory()->create();
 
     $request = QnaAdvisorRequestFactory::new($data)->create();
 
     livewire(EditQnaAdvisor::class, [
-        'record' => $qnaAdvisor->getRouteKey(),
+        'record' => $customerAdvisor->getRouteKey(),
     ])
         ->fillForm($request)
         ->call('save')
@@ -187,7 +187,7 @@ test('archive action visible when QnA Advisor is not archived', function () {
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $qnaAdvisor = QnaAdvisor::factory()->create();
+    $customerAdvisor = CustomerAdvisor::factory()->create();
 
     $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.view-any' : 'qna_advisor.view-any');
     $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.view' : 'qna_advisor.*.view');
@@ -196,7 +196,7 @@ test('archive action visible when QnA Advisor is not archived', function () {
     actingAs($user);
 
     livewire(EditQnaAdvisor::class, [
-        'record' => $qnaAdvisor->getRouteKey(),
+        'record' => $customerAdvisor->getRouteKey(),
     ])
         ->assertSuccessful()
         ->assertActionVisible('archive')
@@ -212,7 +212,7 @@ test('restore action visible when QnA Advisor is archived', function () {
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $qnaAdvisor = QnaAdvisor::factory()->state([
+    $customerAdvisor = CustomerAdvisor::factory()->state([
         'archived_at' => now(),
     ])->create();
 
@@ -223,7 +223,7 @@ test('restore action visible when QnA Advisor is archived', function () {
     actingAs($user);
 
     livewire(EditQnaAdvisor::class, [
-        'record' => $qnaAdvisor->getRouteKey(),
+        'record' => $customerAdvisor->getRouteKey(),
     ])
         ->assertSuccessful()
         ->assertActionVisible('restore')

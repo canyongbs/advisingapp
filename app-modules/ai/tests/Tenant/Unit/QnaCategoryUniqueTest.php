@@ -35,40 +35,40 @@
 */
 
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use App\Features\RenameQnaAdvisorsFeature;
 use Illuminate\Database\UniqueConstraintViolationException;
 
 it('does not allow duplicate category names for the same advisor', function () {
-    $qnaAdvisor = QnaAdvisor::factory()->create();
+    $customerAdvisor = CustomerAdvisor::factory()->create();
 
     // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, the state can be defined inline again
     $state = RenameQnaAdvisorsFeature::active() ? [
-        'customer_advisor_id' => $qnaAdvisor->getKey(),
+        'customer_advisor_id' => $customerAdvisor->getKey(),
         'name' => 'Admissions',
     ] :
     [
-        'qna_advisor_id' => $qnaAdvisor->getKey(),
+        'qna_advisor_id' => $customerAdvisor->getKey(),
         'name' => 'Admissions',
     ];
     CustomerAdvisorCategory::factory()->state($state)->create();
 
     // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, the state can be defined inline again
     $state = RenameQnaAdvisorsFeature::active() ? [
-        'customer_advisor_id' => $qnaAdvisor->getKey(),
+        'customer_advisor_id' => $customerAdvisor->getKey(),
         'name' => 'Admissions',
     ] :
     [
-        'qna_advisor_id' => $qnaAdvisor->getKey(),
+        'qna_advisor_id' => $customerAdvisor->getKey(),
         'name' => 'Admissions',
     ];
     CustomerAdvisorCategory::factory()->state($state)->create();
 })->throws(UniqueConstraintViolationException::class);
 
 it('allow duplicate category names for the different advisor', function () {
-    $qnaAdvisor = QnaAdvisor::factory()->has(CustomerAdvisorCategory::factory()->state(['name' => 'Admission']), 'categories')->create();
-    $qnaAdvisor2 = QnaAdvisor::factory()->has(CustomerAdvisorCategory::factory()->state(['name' => 'Admission']), 'categories')->create();
+    $customerAdvisor = CustomerAdvisor::factory()->has(CustomerAdvisorCategory::factory()->state(['name' => 'Admission']), 'categories')->create();
+    $customerAdvisor2 = CustomerAdvisor::factory()->has(CustomerAdvisorCategory::factory()->state(['name' => 'Admission']), 'categories')->create();
 
-    expect($qnaAdvisor->categories->first()->name)->toBe('Admission');
-    expect($qnaAdvisor2->categories->first()->name)->toBe('Admission');
+    expect($customerAdvisor->categories->first()->name)->toBe('Admission');
+    expect($customerAdvisor2->categories->first()->name)->toBe('Admission');
 });

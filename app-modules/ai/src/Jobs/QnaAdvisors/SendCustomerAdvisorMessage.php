@@ -41,7 +41,7 @@ use AdvisingApp\Ai\Enums\AiReasoningEffort;
 use AdvisingApp\Ai\Events\QnaAdvisors\CustomerAdvisorMessageChunk;
 use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use Illuminate\Bus\Queueable;
@@ -67,7 +67,7 @@ class SendCustomerAdvisorMessage implements ShouldQueue
      * @param array<string, mixed> $request
      */
     public function __construct(
-        protected QnaAdvisor $advisor,
+        protected CustomerAdvisor $advisor,
         protected CustomerAdvisorThread $thread,
         protected string $content,
         protected array $request = [],

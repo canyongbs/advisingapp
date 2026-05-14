@@ -57,7 +57,7 @@ use AdvisingApp\Ai\Models\EmployeeAdvisorCategory;
 use AdvisingApp\Ai\Models\EmployeeAdvisorQuestion;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptType;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
@@ -98,7 +98,7 @@ class AiServiceProvider extends ServiceProvider
             'ai_thread' => AiThread::class,
             'prompt_type' => PromptType::class,
             'prompt' => Prompt::class,
-            'qna_advisor' => QnaAdvisor::class,
+            'customer_advisor' => CustomerAdvisor::class,
             'customer_advisor_category' => CustomerAdvisorCategory::class,
             'customer_advisor_file' => CustomerAdvisorFile::class,
             'customer_advisor_link' => CustomerAdvisorLink::class,

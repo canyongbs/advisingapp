@@ -37,7 +37,7 @@
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\Concerns\CanRefreshQnaAdvisorTokens;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cookie;
@@ -47,7 +47,7 @@ class ShowAdvisorController
 {
     use CanRefreshQnaAdvisorTokens;
 
-    public function __invoke(Request $request, QnaAdvisor $advisor): JsonResponse
+    public function __invoke(Request $request, CustomerAdvisor $advisor): JsonResponse
     {
         $data = [
             'requires_authentication' => $advisor->is_requires_authentication_enabled ?? false,

@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
 
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
@@ -77,10 +77,10 @@ class ViewQnaAdvisor extends ViewRecord
                 IconEntry::make('is_introductory_message_dynamic')
                     ->label('Dynamic Introductory Message')
                     ->boolean()
-                    ->visible(fn (QnaAdvisor $record): bool => $record->is_introductory_message_enabled),
+                    ->visible(fn (CustomerAdvisor $record): bool => $record->is_introductory_message_enabled),
                 TextEntry::make('introductory_message')
                     ->label('Custom Introductory Message')
-                    ->visible(fn (QnaAdvisor $record): bool => $record->is_introductory_message_enabled && ! $record->is_introductory_message_dynamic),
+                    ->visible(fn (CustomerAdvisor $record): bool => $record->is_introductory_message_enabled && ! $record->is_introductory_message_dynamic),
                 Tabs::make('Generated Instructions')
                     ->tabs([
                         Tab::make('Generated Instructions Markdown')
@@ -91,7 +91,7 @@ class ViewQnaAdvisor extends ViewRecord
                                     ->columnSpanFull()
                                     ->html()
                                     ->extraAttributes(['class' => 'overflow-auto'])
-                                    ->state(fn (QnaAdvisor $record): string => new HtmlString(
+                                    ->state(fn (CustomerAdvisor $record): string => new HtmlString(
                                         '<pre>' . app(GetQnaAdvisorInstructions::class)->execute($record) . '</pre>'
                                     )),
                             ]),
@@ -103,7 +103,7 @@ class ViewQnaAdvisor extends ViewRecord
                                     ->hiddenLabel()
                                     ->columnSpanFull()
                                     ->markdown()
-                                    ->state(fn (QnaAdvisor $record): string => app(GetQnaAdvisorInstructions::class)->execute($record)),
+                                    ->state(fn (CustomerAdvisor $record): string => app(GetQnaAdvisorInstructions::class)->execute($record)),
                             ]),
                     ])->visible(fn () => auth()->guard('web')->user()?->isSuperAdmin()),
             ]),
@@ -116,7 +116,7 @@ class ViewQnaAdvisor extends ViewRecord
     public function getBreadcrumbs(): array
     {
         $resource = static::getResource();
-        /** @var QnaAdvisor $record */
+        /** @var CustomerAdvisor $record */
         $record = $this->getRecord();
 
         /** @var array<string, string> $breadcrumbs */
@@ -139,7 +139,7 @@ class ViewQnaAdvisor extends ViewRecord
             Action::make('archive')
                 ->color('danger')
                 ->action(function () {
-                    /** @var QnaAdvisor $record */
+                    /** @var CustomerAdvisor $record */
                     $record = $this->getRecord();
                     $record->archived_at = now();
                     $record->save();
@@ -149,10 +149,10 @@ class ViewQnaAdvisor extends ViewRecord
                         ->success()
                         ->send();
                 })
-                ->hidden(fn (QnaAdvisor $record): bool => (bool) $record->archived_at),
+                ->hidden(fn (CustomerAdvisor $record): bool => (bool) $record->archived_at),
             Action::make('restore')
                 ->action(function () {
-                    /** @var QnaAdvisor $record */
+                    /** @var CustomerAdvisor $record */
                     $record = $this->getRecord();
                     $record->archived_at = null;
                     $record->save();
@@ -162,7 +162,7 @@ class ViewQnaAdvisor extends ViewRecord
                         ->success()
                         ->send();
                 })
-                ->hidden(function (QnaAdvisor $record): bool {
+                ->hidden(function (CustomerAdvisor $record): bool {
                     if (! $record->archived_at) {
                         return true;
                     }

@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -62,7 +62,7 @@ class UploadCustomerAdvisorFilesToVectorStore implements ShouldQueue, TenantAwar
     public $tries = 15;
 
     public function __construct(
-        protected QnaAdvisor $advisor,
+        protected CustomerAdvisor $advisor,
     ) {}
 
     public function handle(): void

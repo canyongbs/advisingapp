@@ -55,10 +55,10 @@ use Spatie\MediaLibrary\MediaCollections\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 
 /**
- * @mixin IdeHelperQnaAdvisor
+ * @mixin IdeHelperCustomerAdvisor
  */
 #[ObservedBy([QnaAdvisorObserver::class])]
-class QnaAdvisor extends BaseModel implements HasMedia, Auditable
+class CustomerAdvisor extends BaseModel implements HasMedia, Auditable
 {
     use CanAddAssistantLicenseGlobalScope;
 

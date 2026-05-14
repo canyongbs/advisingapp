@@ -37,7 +37,7 @@
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use App\Features\RenameQnaAdvisorsFeature;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
@@ -67,7 +67,7 @@ class ManageCategories extends ManageRelatedRecords
     public function getBreadcrumbs(): array
     {
         $resource = static::getResource();
-        /** @var QnaAdvisor $record */
+        /** @var CustomerAdvisor $record */
         $record = $this->getRecord();
 
         /** @var array<string, string> $breadcrumbs */
@@ -96,10 +96,10 @@ class ManageCategories extends ManageRelatedRecords
                         column: 'name',
                         ignoreRecord: true,
                         modifyRuleUsing: function (Unique $rule) {
-                            /** @var QnaAdvisor $qnaAdvisor */
-                            $qnaAdvisor = $this->getOwnerRecord();
+                            /** @var CustomerAdvisor $customerAdvisor */
+                            $customerAdvisor = $this->getOwnerRecord();
 
-                            $rule->where(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id', $qnaAdvisor->getKey());
+                            $rule->where(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id', $customerAdvisor->getKey());
                         }
                     )
                     ->maxLength(255)

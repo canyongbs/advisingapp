@@ -37,7 +37,7 @@
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Settings\AiQnaAdvisorSettings;
 use Illuminate\Support\Facades\Cache;
 
@@ -46,7 +46,7 @@ beforeEach(function () {
     Cache::tags(['{qna_advisor_instructions}'])->flush();
 });
 
-it('returns the correct instructions for a QnaAdvisor', function () {
+it('returns the correct instructions for a CustomerAdvisor', function () {
     // Setup settings
     $settings = app(AiQnaAdvisorSettings::class);
     $settings->instructions = 'Test instructions content';
@@ -54,18 +54,18 @@ it('returns the correct instructions for a QnaAdvisor', function () {
     $settings->restrictions = 'Test restrictions content';
     $settings->save();
 
-    // Create QnaAdvisor with two categories, each with two questions
-    $qnaAdvisor = QnaAdvisor::factory()->create();
+    // Create CustomerAdvisor with two categories, each with two questions
+    $customerAdvisor = CustomerAdvisor::factory()->create();
 
     $categoryOne = CustomerAdvisorCategory::factory()
-        ->for($qnaAdvisor, 'qnaAdvisor')
+        ->for($customerAdvisor, 'customerAdvisor')
         ->create([
             'name' => 'Academic Policies',
             'description' => 'Information about academic policies and procedures',
         ]);
 
     $categoryTwo = CustomerAdvisorCategory::factory()
-        ->for($qnaAdvisor, 'qnaAdvisor')
+        ->for($customerAdvisor, 'customerAdvisor')
         ->create([
             'name' => 'Financial Aid',
             'description' => 'Questions related to financial aid and scholarships',
@@ -102,7 +102,7 @@ it('returns the correct instructions for a QnaAdvisor', function () {
 
     // Execute the action
     $action = new GetQnaAdvisorInstructions();
-    $result = $action->execute($qnaAdvisor);
+    $result = $action->execute($customerAdvisor);
 
     // Verify the structure and content
     expect($result)->toContain('# Instructions');
@@ -149,18 +149,18 @@ it('does not contain details on a category that has no questions', function () {
     $settings->restrictions = 'Test restrictions';
     $settings->save();
 
-    // Create QnaAdvisor with one category that has no questions
-    $qnaAdvisor = QnaAdvisor::factory()->create();
+    // Create CustomerAdvisor with one category that has no questions
+    $customerAdvisor = CustomerAdvisor::factory()->create();
 
     $categoryWithQuestions = CustomerAdvisorCategory::factory()
-        ->for($qnaAdvisor, 'qnaAdvisor')
+        ->for($customerAdvisor, 'customerAdvisor')
         ->create([
             'name' => 'Student Services',
             'description' => 'Information about student support services',
         ]);
 
     $categoryWithoutQuestions = CustomerAdvisorCategory::factory()
-        ->for($qnaAdvisor, 'qnaAdvisor')
+        ->for($customerAdvisor, 'customerAdvisor')
         ->create([
             'name' => 'Campus Recreation',
             'description' => 'Details about recreational activities on campus',
@@ -176,7 +176,7 @@ it('does not contain details on a category that has no questions', function () {
 
     // Execute the action
     $action = new GetQnaAdvisorInstructions();
-    $result = $action->execute($qnaAdvisor);
+    $result = $action->execute($customerAdvisor);
 
     // Verify the category with questions is included
     expect($result)->toContain('Student Services');
@@ -202,11 +202,11 @@ it('handles empty settings gracefully', function () {
     $settings->restrictions = null;
     $settings->save();
 
-    // Create QnaAdvisor with some data
-    $qnaAdvisor = QnaAdvisor::factory()->create();
+    // Create CustomerAdvisor with some data
+    $customerAdvisor = CustomerAdvisor::factory()->create();
 
     $category = CustomerAdvisorCategory::factory()
-        ->for($qnaAdvisor, 'qnaAdvisor')
+        ->for($customerAdvisor, 'customerAdvisor')
         ->create([
             'name' => 'Library Resources',
             'description' => 'Information about library services and resources',
@@ -221,7 +221,7 @@ it('handles empty settings gracefully', function () {
 
     // Execute the action
     $action = new GetQnaAdvisorInstructions();
-    $result = $action->execute($qnaAdvisor);
+    $result = $action->execute($customerAdvisor);
 
     // Verify the structure is maintained even with empty settings
     expect($result)->toContain('# Instructions');
@@ -235,7 +235,7 @@ it('handles empty settings gracefully', function () {
     expect($result)->toContain('The library is open Monday through Friday from 8am to 10pm.');
 });
 
-it('handles QnaAdvisor with no categories', function () {
+it('handles CustomerAdvisor with no categories', function () {
     // Setup settings
     $settings = app(AiQnaAdvisorSettings::class);
     $settings->instructions = 'Test instructions';
@@ -243,12 +243,12 @@ it('handles QnaAdvisor with no categories', function () {
     $settings->restrictions = 'Test restrictions';
     $settings->save();
 
-    // Create QnaAdvisor with no categories
-    $qnaAdvisor = QnaAdvisor::factory()->create();
+    // Create CustomerAdvisor with no categories
+    $customerAdvisor = CustomerAdvisor::factory()->create();
 
     // Execute the action
     $action = new GetQnaAdvisorInstructions();
-    $result = $action->execute($qnaAdvisor);
+    $result = $action->execute($customerAdvisor);
 
     // Verify the basic structure is maintained
     expect($result)->toContain('# Instructions');
@@ -273,11 +273,11 @@ it('uses cache correctly', function () {
     $settings->restrictions = 'Cached restrictions';
     $settings->save();
 
-    // Create QnaAdvisor
-    $qnaAdvisor = QnaAdvisor::factory()->create();
+    // Create CustomerAdvisor
+    $customerAdvisor = CustomerAdvisor::factory()->create();
 
     $category = CustomerAdvisorCategory::factory()
-        ->for($qnaAdvisor, 'qnaAdvisor')
+        ->for($customerAdvisor, 'customerAdvisor')
         ->create([
             'name' => 'Technology Support',
             'description' => 'Information about IT help and computer resources',
@@ -292,17 +292,17 @@ it('uses cache correctly', function () {
 
     // Execute the action first time
     $action = new GetQnaAdvisorInstructions();
-    $resultOne = $action->execute($qnaAdvisor);
+    $resultOne = $action->execute($customerAdvisor);
 
     // Verify the cache key is used
-    $cacheKey = $qnaAdvisor->getInstructionsCacheKey();
-    expect($cacheKey)->toBe('qna-advisor-' . $qnaAdvisor->getKey() . '-instructions');
+    $cacheKey = $customerAdvisor->getInstructionsCacheKey();
+    expect($cacheKey)->toBe('qna-advisor-' . $customerAdvisor->getKey() . '-instructions');
 
     // Verify the result is cached
     expect(Cache::tags(['{qna_advisor_instructions}'])->has($cacheKey))->toBeTrue();
 
     // Execute again and verify same result (from cache)
-    $resultTwo = $action->execute($qnaAdvisor);
+    $resultTwo = $action->execute($customerAdvisor);
     expect($resultOne)->toBe($resultTwo);
 
     // Clear cache and modify settings
@@ -311,7 +311,7 @@ it('uses cache correctly', function () {
     $settings->save();
 
     // Execute again and verify new result
-    $resultThree = $action->execute($qnaAdvisor);
+    $resultThree = $action->execute($customerAdvisor);
     expect($resultThree)->toContain('New instructions');
     expect($resultThree)->not->toBe($resultOne);
 });

@@ -36,19 +36,19 @@
 
 namespace AdvisingApp\Ai\Observers;
 
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\IntegrationOpenAi\Jobs\UploadCustomerAdvisorFilesToVectorStore;
 
 class QnaAdvisorObserver
 {
-    public function created(QnaAdvisor $advisor): void
+    public function created(CustomerAdvisor $advisor): void
     {
         if ($advisor->has_resource_hub_knowledge) {
             UploadCustomerAdvisorFilesToVectorStore::dispatch($advisor);
         }
     }
 
-    public function updated(QnaAdvisor $advisor): void
+    public function updated(CustomerAdvisor $advisor): void
     {
         if ($advisor->wasChanged('has_resource_hub_knowledge')) {
             UploadCustomerAdvisorFilesToVectorStore::dispatch($advisor);

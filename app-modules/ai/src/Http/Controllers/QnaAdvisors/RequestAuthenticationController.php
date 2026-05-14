@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\Concerns\CanGenerateAndDispatchQnaAdvisorWidgetAuthentications;
 use AdvisingApp\Ai\Http\Requests\QnaAdvisors\RequestAuthenticationRequest;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\StudentDataModel\Actions\ResolveEducatableFromEmail;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
@@ -48,7 +48,7 @@ class RequestAuthenticationController
 {
     use CanGenerateAndDispatchQnaAdvisorWidgetAuthentications;
 
-    public function __invoke(RequestAuthenticationRequest $request, QnaAdvisor $advisor, ResolveEducatableFromEmail $resolveEducatableFromEmail): JsonResponse
+    public function __invoke(RequestAuthenticationRequest $request, CustomerAdvisor $advisor, ResolveEducatableFromEmail $resolveEducatableFromEmail): JsonResponse
     {
         $email = $request->safe()['email'];
 

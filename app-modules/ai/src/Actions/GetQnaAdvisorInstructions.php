@@ -38,25 +38,25 @@ namespace AdvisingApp\Ai\Actions;
 
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Settings\AiQnaAdvisorSettings;
 use Illuminate\Support\Facades\Cache;
 
 class GetQnaAdvisorInstructions
 {
-    public function execute(QnaAdvisor $qnaAdvisor): string
+    public function execute(CustomerAdvisor $customerAdvisor): string
     {
         return Cache::tags(['{qna_advisor_instructions}'])
             ->remember(
-                $qnaAdvisor->getInstructionsCacheKey(),
+                $customerAdvisor->getInstructionsCacheKey(),
                 now()->addHour(),
-                function () use ($qnaAdvisor) {
+                function () use ($customerAdvisor) {
                     $settings = app(AiQnaAdvisorSettings::class);
 
                     $instructions = $settings->instructions ?? '';
                     $backgroundInformation = $settings->background_information ?? '';
 
-                    $qnaSection = $this->generateQnaSection($qnaAdvisor);
+                    $qnaSection = $this->generateQnaSection($customerAdvisor);
 
                     $restrictions = $settings->restrictions ?? '';
 
@@ -77,9 +77,9 @@ class GetQnaAdvisorInstructions
             );
     }
 
-    protected function generateQnaSection(QnaAdvisor $qnaAdvisor): string
+    protected function generateQnaSection(CustomerAdvisor $customerAdvisor): string
     {
-        $qnaAdvisor->loadMissing('categories.questions');
+        $customerAdvisor->loadMissing('categories.questions');
 
         /**
          * Note: Please be careful in adjusting tabing / spacing within the HEREDOCs as even a minor change can cause the markdown to render incorrectly.
@@ -91,7 +91,7 @@ class GetQnaAdvisorInstructions
 
         END;
 
-        $qnaAdvisor
+        $customerAdvisor
             ->categories
             ->where(fn (CustomerAdvisorCategory $category) => $category->questions->isNotEmpty())
             ->each(function (CustomerAdvisorCategory $category) use (&$qnaSection) {

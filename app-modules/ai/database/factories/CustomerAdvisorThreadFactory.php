@@ -37,7 +37,7 @@
 namespace AdvisingApp\Ai\Database\Factories;
 
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -53,7 +53,7 @@ class CustomerAdvisorThreadFactory extends Factory
     public function definition(): array
     {
         return [
-            'advisor_id' => QnaAdvisor::factory(),
+            'advisor_id' => CustomerAdvisor::factory(),
         ];
     }
 }

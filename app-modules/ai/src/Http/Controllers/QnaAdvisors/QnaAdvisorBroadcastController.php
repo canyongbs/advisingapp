@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use Illuminate\Broadcasting\BroadcastController;
 use Illuminate\Http\Request;
 
 class QnaAdvisorBroadcastController extends BroadcastController
 {
-    public function auth(Request $request, QnaAdvisor $advisor): mixed
+    public function auth(Request $request, CustomerAdvisor $advisor): mixed
     {
         return parent::authenticate($request);
     }

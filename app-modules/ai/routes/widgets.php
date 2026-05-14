@@ -49,7 +49,7 @@ use AdvisingApp\Ai\Http\Middleware\EnsureQnaAdvisorEmbedIsEnabled;
 use AdvisingApp\Ai\Http\Middleware\EnsureQnaAdvisorRequestComingFromAuthorizedDomain;
 use AdvisingApp\Ai\Http\Middleware\QnaAdvisorAuthorization;
 use AdvisingApp\Ai\Http\Middleware\QnaAdvisorWidgetCors;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use App\Http\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -122,7 +122,7 @@ Route::middleware([
 
                 // Handle preflight CORS requests for all routes in this group
                 // MUST remain the last route in this group
-                Route::options('/{any}', function (Request $request, QnaAdvisor $advisor) {
+                Route::options('/{any}', function (Request $request, CustomerAdvisor $advisor) {
                     return response()->noContent();
                 })
                     ->where('any', '.*')

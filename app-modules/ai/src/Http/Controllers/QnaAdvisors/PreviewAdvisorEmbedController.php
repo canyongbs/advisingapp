@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use Illuminate\Contracts\View\View;
 
 class PreviewAdvisorEmbedController
 {
-    public function __invoke(QnaAdvisor $advisor): View
+    public function __invoke(CustomerAdvisor $advisor): View
     {
         return view('ai::qna-advisor-preview', [
             'advisor' => $advisor,

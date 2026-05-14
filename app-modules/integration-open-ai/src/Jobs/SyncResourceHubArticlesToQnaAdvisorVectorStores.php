@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -53,9 +53,9 @@ class SyncResourceHubArticlesToQnaAdvisorVectorStores implements ShouldQueue, Te
 
     public function handle(): void
     {
-        QnaAdvisor::query()
+        CustomerAdvisor::query()
             ->where('has_resource_hub_knowledge', true)
-            ->eachById(function (QnaAdvisor $advisor) {
+            ->eachById(function (CustomerAdvisor $advisor) {
                 UploadCustomerAdvisorFilesToVectorStore::dispatch($advisor);
             });
     }

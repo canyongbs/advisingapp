@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Ai\Actions;
 
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Model;
 
 class GenerateQnaAdvisorIntroductoryMessage
 {
-    public function execute(QnaAdvisor $advisor, ?Model $author = null): ?string
+    public function execute(CustomerAdvisor $advisor, ?Model $author = null): ?string
     {
         if (! $advisor->is_introductory_message_dynamic) {
             return $advisor->introductory_message ?? null;
@@ -57,7 +57,7 @@ class GenerateQnaAdvisorIntroductoryMessage
         );
     }
 
-    protected function buildContext(QnaAdvisor $advisor, ?Model $author): string
+    protected function buildContext(CustomerAdvisor $advisor, ?Model $author): string
     {
         $systemPrompt = "You are {$advisor->name}, a helpful assistant. ";
         $systemPrompt .= "Your role is to provide information about: {$advisor->description}. ";

@@ -38,7 +38,7 @@ use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ManageQnaQuestions;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Tests\RequestFactories\CustomerAdvisorQuestionRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Features\RenameQnaAdvisorsFeature;
@@ -60,17 +60,17 @@ test('Create QnA Advisor Question is gated with proper access control', function
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $qnaAdvisor = QnaAdvisor::factory()->create();
+    $customerAdvisor = CustomerAdvisor::factory()->create();
 
     actingAs($user)
         ->get(
             QnaAdvisorResource::getUrl('manage-questions', [
-                'record' => $qnaAdvisor,
+                'record' => $customerAdvisor,
             ])
         )
         ->assertForbidden();
 
-    livewire(ManageQnaQuestions::class, ['record' => $qnaAdvisor->getKey()])
+    livewire(ManageQnaQuestions::class, ['record' => $customerAdvisor->getKey()])
         ->assertForbidden();
 
     $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.create']);
@@ -78,7 +78,7 @@ test('Create QnA Advisor Question is gated with proper access control', function
     actingAs($user)
         ->get(
             QnaAdvisorResource::getUrl('manage-questions', [
-                'record' => $qnaAdvisor,
+                'record' => $customerAdvisor,
             ])
         )->assertSuccessful();
 });
@@ -92,7 +92,7 @@ test('can create QnA Advisor Question', function () {
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $qnaAdvisor = QnaAdvisor::factory()->create();
+    $customerAdvisor = CustomerAdvisor::factory()->create();
 
     $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.create']);
 
@@ -100,7 +100,7 @@ test('can create QnA Advisor Question', function () {
 
     actingAs($user);
 
-    livewire(ManageQnaQuestions::class, ['record' => $qnaAdvisor->getKey()])
+    livewire(ManageQnaQuestions::class, ['record' => $customerAdvisor->getKey()])
         ->callTableAction('create', data: $customerAdvisorQuestion->toArray())
         ->assertHasNoTableActionErrors();
 
@@ -123,13 +123,13 @@ test('Create QnA Advisor Question validates the inputs', function ($data, $error
 
     $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.create']);
 
-    $qnaAdvisor = QnaAdvisor::factory()->create();
+    $customerAdvisor = CustomerAdvisor::factory()->create();
 
     $customerAdvisorQuestion = collect(CustomerAdvisorQuestionRequestFactory::new($data)->create());
 
     actingAs($user);
 
-    livewire(ManageQnaQuestions::class, ['record' => $qnaAdvisor->getKey()])
+    livewire(ManageQnaQuestions::class, ['record' => $customerAdvisor->getKey()])
         ->callTableAction('create', data: $customerAdvisorQuestion->toArray())
         ->assertHasTableActionErrors($errors);
 
@@ -177,10 +177,10 @@ test('can edit QnA Advisor Question', function () {
 
     $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.*.update']);
 
-    $qnaAdvisor = QnaAdvisor::factory()->create();
+    $customerAdvisor = CustomerAdvisor::factory()->create();
 
     // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, the state can be defined inline again
-    $state = RenameQnaAdvisorsFeature::active() ? ['customer_advisor_id' => $qnaAdvisor->getKey()] : ['qna_advisor_id' => $qnaAdvisor->getKey()];
+    $state = RenameQnaAdvisorsFeature::active() ? ['customer_advisor_id' => $customerAdvisor->getKey()] : ['qna_advisor_id' => $customerAdvisor->getKey()];
     $customerAdvisorQuestion = CustomerAdvisorQuestion::factory()->state([
         'category_id' => CustomerAdvisorCategory::factory()->state($state),
     ])->create();
@@ -189,7 +189,7 @@ test('can edit QnA Advisor Question', function () {
 
     actingAs($user);
 
-    livewire(ManageQnaQuestions::class, ['record' => $qnaAdvisor->getKey()])
+    livewire(ManageQnaQuestions::class, ['record' => $customerAdvisor->getKey()])
         ->callTableAction('edit', record: $customerAdvisorQuestion->getKey(), data: $request->toArray())
         ->assertHasNoTableActionErrors();
 
@@ -210,10 +210,10 @@ test('Edit QnA Advisor Question validates the inputs', function ($data, $errors)
 
     $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.*.update']);
 
-    $qnaAdvisor = QnaAdvisor::factory()->create();
+    $customerAdvisor = CustomerAdvisor::factory()->create();
 
     // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, the state can be defined inline again
-    $state = RenameQnaAdvisorsFeature::active() ? ['customer_advisor_id' => $qnaAdvisor->getKey()] : ['qna_advisor_id' => $qnaAdvisor->getKey()];
+    $state = RenameQnaAdvisorsFeature::active() ? ['customer_advisor_id' => $customerAdvisor->getKey()] : ['qna_advisor_id' => $customerAdvisor->getKey()];
     $customerAdvisorQuestion = CustomerAdvisorQuestion::factory()->state([
         'category_id' => CustomerAdvisorCategory::factory()->state($state),
     ])->create();
@@ -222,7 +222,7 @@ test('Edit QnA Advisor Question validates the inputs', function ($data, $errors)
 
     actingAs($user);
 
-    livewire(ManageQnaQuestions::class, ['record' => $qnaAdvisor->getKey()])
+    livewire(ManageQnaQuestions::class, ['record' => $customerAdvisor->getKey()])
         ->callTableAction('edit', record: $customerAdvisorQuestion->getKey(), data: $request)
         ->assertHasTableActionErrors($errors);
 })

@@ -37,7 +37,7 @@
 namespace AdvisingApp\IntegrationOpenAi\Console\Commands;
 
 use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\IntegrationOpenAi\Jobs\UploadAssistantFilesToVectorStore;
 use AdvisingApp\IntegrationOpenAi\Jobs\UploadCustomerAdvisorFilesToVectorStore;
 use Illuminate\Console\Command;
@@ -68,12 +68,12 @@ class UploadFilesToVectorStores extends Command
                 }
             });
 
-        QnaAdvisor::query()
+        CustomerAdvisor::query()
             ->where(fn (Builder $query) => $query
                 ->whereHas('files')
                 ->orWhereHas('links')
                 ->orWhere('has_resource_hub_knowledge', true))
-            ->eachById(function (QnaAdvisor $advisor) {
+            ->eachById(function (CustomerAdvisor $advisor) {
                 try {
                     dispatch(new UploadCustomerAdvisorFilesToVectorStore($advisor));
                 } catch (Throwable $exception) {

@@ -36,7 +36,7 @@
 
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ListQnaAdvisors;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\User;
@@ -80,17 +80,17 @@ it('render QnA Advisors default to without archived', function () {
 
     actingAs($user);
 
-    $qnaAdvisors = QnaAdvisor::factory()->count(3)->state([
+    $customerAdvisors = CustomerAdvisor::factory()->count(3)->state([
         'archived_at' => null,
     ])->create();
 
-    $archivedQnaAdvisors = QnaAdvisor::factory()->count(3)->state([
+    $archivedCustomerAdvisors = CustomerAdvisor::factory()->count(3)->state([
         'archived_at' => now(),
     ])->create();
 
     livewire(ListQnaAdvisors::class)
-        ->assertCanSeeTableRecords($qnaAdvisors)
-        ->assertCanNotSeeTableRecords($archivedQnaAdvisors);
+        ->assertCanSeeTableRecords($customerAdvisors)
+        ->assertCanNotSeeTableRecords($archivedCustomerAdvisors);
 });
 
 it('filter QnA Advisors with archived', function () {
@@ -106,17 +106,17 @@ it('filter QnA Advisors with archived', function () {
 
     actingAs($user);
 
-    $qnaAdvisors = QnaAdvisor::factory()->count(2)->state([
+    $customerAdvisors = CustomerAdvisor::factory()->count(2)->state([
         'archived_at' => null,
     ])->create();
 
-    $archivedQnaAdvisors = QnaAdvisor::factory()->count(2)->state([
+    $archivedCustomerAdvisors = CustomerAdvisor::factory()->count(2)->state([
         'archived_at' => now(),
     ])->create();
 
     livewire(ListQnaAdvisors::class)
-        ->assertCanSeeTableRecords($qnaAdvisors)
-        ->assertCanNotSeeTableRecords($archivedQnaAdvisors)
+        ->assertCanSeeTableRecords($customerAdvisors)
+        ->assertCanNotSeeTableRecords($archivedCustomerAdvisors)
         ->removeTableFilter('withoutArchived')
-        ->assertCanSeeTableRecords($qnaAdvisors->merge($archivedQnaAdvisors));
+        ->assertCanSeeTableRecords($customerAdvisors->merge($archivedCustomerAdvisors));
 });

@@ -37,7 +37,7 @@
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use App\Models\User;
 use Filament\Resources\Pages\ViewRecord;
 use Livewire\Attributes\Computed;
@@ -62,7 +62,7 @@ class PreviewQnaAdvisor extends ViewRecord
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can('viewAny', QnaAdvisor::class) && ($user->can('create', QnaAdvisor::class) || $user->can('update', $parameters['record'])) && parent::canAccess($parameters);
+        return $user->can('viewAny', CustomerAdvisor::class) && ($user->can('create', CustomerAdvisor::class) || $user->can('update', $parameters['record'])) && parent::canAccess($parameters);
     }
 
     #[Computed]
@@ -70,7 +70,7 @@ class PreviewQnaAdvisor extends ViewRecord
     {
         $advisor = $this->getRecord();
 
-        assert($advisor instanceof QnaAdvisor);
+        assert($advisor instanceof CustomerAdvisor);
 
         return $advisor->files()->whereNull('parsing_results')->where('updated_at', '<', now()->subHour())->exists()
             || $advisor->links()->whereNull('parsing_results')->where('updated_at', '<', now()->subHour())->exists();
@@ -81,7 +81,7 @@ class PreviewQnaAdvisor extends ViewRecord
     {
         $advisor = $this->getRecord();
 
-        assert($advisor instanceof QnaAdvisor);
+        assert($advisor instanceof CustomerAdvisor);
 
         return $advisor->files()->whereNull('parsing_results')->where('updated_at', '>=', now()->subHour())->exists()
             || $advisor->links()->whereNull('parsing_results')->where('updated_at', '>=', now()->subHour())->exists();

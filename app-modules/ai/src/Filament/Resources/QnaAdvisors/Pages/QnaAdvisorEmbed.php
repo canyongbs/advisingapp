@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
 
 use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Form\Rules\IsDomain;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
@@ -168,10 +168,10 @@ class QnaAdvisorEmbed extends EditRecord
             ]);
     }
 
-    public function getRecord(): QnaAdvisor
+    public function getRecord(): CustomerAdvisor
     {
         $record = parent::getRecord();
-        assert($record instanceof QnaAdvisor, 'Record must be an instance of QnaAdvisor');
+        assert($record instanceof CustomerAdvisor, 'Record must be an instance of CustomerAdvisor');
 
         return $record;
     }

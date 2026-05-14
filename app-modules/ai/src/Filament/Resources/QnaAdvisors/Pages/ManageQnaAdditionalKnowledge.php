@@ -39,7 +39,7 @@ namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
 use AdvisingApp\Ai\Actions\UploadFileForParsing;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisorFile;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -76,7 +76,7 @@ class ManageQnaAdditionalKnowledge extends EditRecord
     public function getBreadcrumbs(): array
     {
         $resource = static::getResource();
-        /** @var QnaAdvisor $record */
+        /** @var CustomerAdvisor $record */
         $record = $this->getRecord();
 
         /** @var array<string, string> $breadcrumbs */
@@ -128,7 +128,7 @@ class ManageQnaAdditionalKnowledge extends EditRecord
                                 ),
                             )
                             ->addable(false)
-                            ->visible(fn (QnaAdvisor $record): bool => $record->files->isNotEmpty())
+                            ->visible(fn (CustomerAdvisor $record): bool => $record->files->isNotEmpty())
                             ->deleteAction(
                                 fn (Action $action) => $action->requiresConfirmation()
                                     ->modalHeading('Are you sure you want to delete this file?')
@@ -138,11 +138,11 @@ class ManageQnaAdditionalKnowledge extends EditRecord
                             ->hiddenLabel()
                             ->multiple()
                             ->reactive()
-                            ->maxFiles(fn (QnaAdvisor $record): int => 25 - $record->files->count())
-                            ->disabled(fn (QnaAdvisor $record): bool => $record->files->count() >= 25)
+                            ->maxFiles(fn (CustomerAdvisor $record): int => 25 - $record->files->count())
+                            ->disabled(fn (CustomerAdvisor $record): bool => $record->files->count() >= 25)
                             ->acceptedFileTypes(config('ai.supported_file_types'))
                             ->storeFiles(false)
-                            ->helperText(function (QnaAdvisor $record): string {
+                            ->helperText(function (CustomerAdvisor $record): string {
                                 if ($record->files->count() < 25) {
                                     return 'You may upload a total of 25 files to this Customer Advisor. Files must be less than ' . Number::fileSize(config('ai.file_size_limit_kb') * 1000) . '.';
                                 }
@@ -173,7 +173,7 @@ class ManageQnaAdditionalKnowledge extends EditRecord
     {
         $record->fill($data);
 
-        assert($record instanceof QnaAdvisor);
+        assert($record instanceof CustomerAdvisor);
 
         if (filled($data['uploaded_files'] ?? null)) {
             foreach ($data['uploaded_files'] as $attachment) {

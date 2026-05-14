@@ -37,7 +37,7 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -60,8 +60,8 @@ class QnaAdvisorReportStats extends StatsOverviewReportWidget
 
         $shouldBypassCache = filled($startDate) || filled($endDate);
 
-        $qnaAdvisors = $shouldBypassCache
-            ? QnaAdvisor::query()
+        $customerAdvisors = $shouldBypassCache
+            ? CustomerAdvisor::query()
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
@@ -70,7 +70,7 @@ class QnaAdvisorReportStats extends StatsOverviewReportWidget
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'qna-advisor-report',
                 now()->addHours(24),
-                fn (): int => QnaAdvisor::query()->count()
+                fn (): int => CustomerAdvisor::query()->count()
             );
 
         $studentsCount = $shouldBypassCache
@@ -117,7 +117,7 @@ class QnaAdvisorReportStats extends StatsOverviewReportWidget
             );
 
         return [
-            Stat::make('Customer Advisors', Number::abbreviate($qnaAdvisors, maxPrecision: 2)),
+            Stat::make('Customer Advisors', Number::abbreviate($customerAdvisors, maxPrecision: 2)),
             Stat::make('Students', Number::abbreviate($studentsCount, maxPrecision: 2)),
             Stat::make('Prospects', Number::abbreviate($prospectsCount, maxPrecision: 2)),
             Stat::make('Unauthenticated', Number::abbreviate($unauthenticatedCount, maxPrecision: 2)),

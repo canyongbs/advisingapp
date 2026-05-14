@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\Concerns\CanGenerateAndDispatchQnaAdvisorWidgetAuthentications;
 use AdvisingApp\Ai\Http\Requests\QnaAdvisors\RegisterProspectRequest;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
@@ -51,7 +51,7 @@ class RegisterProspectController
 {
     use CanGenerateAndDispatchQnaAdvisorWidgetAuthentications;
 
-    public function __invoke(RegisterProspectRequest $request, QnaAdvisor $advisor): JsonResponse
+    public function __invoke(RegisterProspectRequest $request, CustomerAdvisor $advisor): JsonResponse
     {
         $data = $request->validated();
 

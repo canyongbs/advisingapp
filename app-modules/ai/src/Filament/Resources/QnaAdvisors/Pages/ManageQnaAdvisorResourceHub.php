@@ -37,7 +37,7 @@
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
@@ -64,7 +64,7 @@ class ManageQnaAdvisorResourceHub extends EditRecord
     public function getBreadcrumbs(): array
     {
         $resource = static::getResource();
-        /** @var QnaAdvisor $record */
+        /** @var CustomerAdvisor $record */
         $record = $this->getRecord();
 
         /** @var array<string, string> $breadcrumbs */

@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 
 class QnaAdvisorResourcesController
 {
-    public function __invoke(Request $request, QnaAdvisor $advisor): JsonResponse
+    public function __invoke(Request $request, CustomerAdvisor $advisor): JsonResponse
     {
         // Read the Vite manifest to determine the correct asset paths
         $manifestPath = public_path('storage/widgets/ai/qna-advisors/.vite/manifest.json');

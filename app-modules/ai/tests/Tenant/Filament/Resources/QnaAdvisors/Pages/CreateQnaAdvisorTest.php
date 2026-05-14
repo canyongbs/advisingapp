@@ -37,7 +37,7 @@
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\CreateQnaAdvisor;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Tests\RequestFactories\QnaAdvisorRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Features\RenameQnaAdvisorsFeature;
@@ -92,24 +92,24 @@ test('can create QnA Advisor', function () {
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    assertDatabaseCount(QnaAdvisor::class, 0);
+    assertDatabaseCount(CustomerAdvisor::class, 0);
 
     $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.create'] : ['qna_advisor.view-any', 'qna_advisor.create']);
 
     actingAs($user);
 
-    $qnaAdvisor = collect(QnaAdvisorRequestFactory::new()->create());
+    $customerAdvisor = collect(QnaAdvisorRequestFactory::new()->create());
 
     livewire(CreateQnaAdvisor::class)
-        ->fillForm($qnaAdvisor->except(['model'])->toArray())
+        ->fillForm($customerAdvisor->except(['model'])->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, QnaAdvisor::all());
+    assertCount(1, CustomerAdvisor::all());
 
     assertDatabaseHas(
-        QnaAdvisor::class,
-        $qnaAdvisor->except([
+        CustomerAdvisor::class,
+        $customerAdvisor->except([
             'avatar',
             'model',
         ])->toArray()
@@ -118,8 +118,8 @@ test('can create QnA Advisor', function () {
     assertDatabaseHas(
         Media::class,
         [
-            'model_type' => (new (QnaAdvisor::class))->getMorphClass(),
-            'model_id' => QnaAdvisor::query()->first()->getKey(),
+            'model_type' => (new (CustomerAdvisor::class))->getMorphClass(),
+            'model_id' => CustomerAdvisor::query()->first()->getKey(),
             'collection_name' => 'avatar',
         ]
     );
@@ -144,7 +144,7 @@ test('Create QnA Advisor validates the inputs', function ($data, $errors) {
         ->assertHasFormErrors($errors);
 
     assertDatabaseMissing(
-        QnaAdvisor::class,
+        CustomerAdvisor::class,
         $request->except([
             'avatar',
         ])->toArray()

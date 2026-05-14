@@ -37,7 +37,7 @@
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use App\Features\RenameQnaAdvisorsFeature;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -72,7 +72,7 @@ class ManageQnaQuestions extends ManageRelatedRecords
                 Select::make('category_id')
                     ->label('Category')
                     ->relationship('category', 'name', modifyQueryUsing: function ($query) {
-                        /** @var QnaAdvisor $advisor */
+                        /** @var CustomerAdvisor $advisor */
                         $advisor = $this->getOwnerRecord();
                         $query->where(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id', $advisor->getKey());
                     })
@@ -99,7 +99,7 @@ class ManageQnaQuestions extends ManageRelatedRecords
     public function getBreadcrumbs(): array
     {
         $resource = static::getResource();
-        /** @var QnaAdvisor $record */
+        /** @var CustomerAdvisor $record */
         $record = $this->getRecord();
 
         /** @var array<string, string> $breadcrumbs */
@@ -135,9 +135,9 @@ class ManageQnaQuestions extends ManageRelatedRecords
                 SelectFilter::make('category_id')
                     ->label('Category')
                     ->relationship('category', 'name', modifyQueryUsing: function ($query) {
-                        /** @var QnaAdvisor $qnaAdvisor */
-                        $qnaAdvisor = $this->getOwnerRecord();
-                        $query->where(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id', $qnaAdvisor->getKey());
+                        /** @var CustomerAdvisor $customerAdvisor */
+                        $customerAdvisor = $this->getOwnerRecord();
+                        $query->where(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id', $customerAdvisor->getKey());
                     })
                     ->multiple()
                     ->preload()

@@ -37,7 +37,7 @@
 namespace AdvisingApp\Ai\Database\Factories;
 
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use App\Features\RenameQnaAdvisorsFeature;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -56,12 +56,12 @@ class CustomerAdvisorCategoryFactory extends Factory
         return RenameQnaAdvisorsFeature::active() ? [
             'name' => $this->faker->unique()->sentence(),
             'description' => $this->faker->sentence(),
-            'customer_advisor_id' => QnaAdvisor::factory(),
+            'customer_advisor_id' => CustomerAdvisor::factory(),
         ] :
         [
             'name' => $this->faker->unique()->sentence(),
             'description' => $this->faker->sentence(),
-            'qna_advisor_id' => QnaAdvisor::factory(),
+            'qna_advisor_id' => CustomerAdvisor::factory(),
         ];
     }
 }

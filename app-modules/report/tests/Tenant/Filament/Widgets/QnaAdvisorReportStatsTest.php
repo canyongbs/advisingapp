@@ -35,32 +35,32 @@
 */
 
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportStats;
 use AdvisingApp\StudentDataModel\Models\Student;
 
-it('returns correct total QnaAdvisor stats of QnaAdvisors, students, prospects and unauthenticated within the given date range', function () {
+it('returns correct total CustomerAdvisor stats of CustomerAdvisors, students, prospects and unauthenticated within the given date range', function () {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
-    $qnaAdvisorCountStart = random_int(1, 5);
-    $qnaAdvisorCountEnd = random_int(1, 5);
+    $customerAdvisorCountStart = random_int(1, 5);
+    $customerAdvisorCountEnd = random_int(1, 5);
     $studentsCount = random_int(1, 5);
     $prospectsCount = random_int(1, 5);
     $unauthenticatedCount = random_int(1, 5);
 
-    QnaAdvisor::factory()->count($qnaAdvisorCountStart)->state([
+    CustomerAdvisor::factory()->count($customerAdvisorCountStart)->state([
         'created_at' => $startDate,
     ])->create();
 
-    QnaAdvisor::factory()->count($qnaAdvisorCountEnd)->state([
+    CustomerAdvisor::factory()->count($customerAdvisorCountEnd)->state([
         'created_at' => $endDate,
     ])->create();
 
     CustomerAdvisorThread::factory()
         ->count($studentsCount)
-        ->for(QnaAdvisor::factory(), 'advisor')
+        ->for(CustomerAdvisor::factory(), 'advisor')
         ->for(Student::factory(), 'author')
         ->state([
             'created_at' => $startDate,
@@ -69,7 +69,7 @@ it('returns correct total QnaAdvisor stats of QnaAdvisors, students, prospects a
 
     CustomerAdvisorThread::factory()
         ->count($prospectsCount)
-        ->for(QnaAdvisor::factory(), 'advisor')
+        ->for(CustomerAdvisor::factory(), 'advisor')
         ->for(Prospect::factory(), 'author')
         ->state([
             'created_at' => $startDate,
@@ -78,7 +78,7 @@ it('returns correct total QnaAdvisor stats of QnaAdvisors, students, prospects a
 
     CustomerAdvisorThread::factory()
         ->count($unauthenticatedCount)
-        ->for(QnaAdvisor::factory(), 'advisor')
+        ->for(CustomerAdvisor::factory(), 'advisor')
         ->state([
             'created_at' => $startDate,
         ])
@@ -93,7 +93,7 @@ it('returns correct total QnaAdvisor stats of QnaAdvisors, students, prospects a
 
     $stats = $widget->getStats();
 
-    expect($stats[0]->getValue())->toEqual($qnaAdvisorCountStart + $qnaAdvisorCountEnd)
+    expect($stats[0]->getValue())->toEqual($customerAdvisorCountStart + $customerAdvisorCountEnd)
         ->and($stats[1]->getValue())->toEqual($studentsCount)
         ->and($stats[2]->getValue())->toEqual($prospectsCount)
         ->and($stats[3]->getValue())->toEqual($unauthenticatedCount);

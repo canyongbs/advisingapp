@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Actions;
 
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use Exception;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
@@ -44,7 +44,7 @@ use Illuminate\Support\Facades\URL;
 
 class GenerateQnaAdvisorWidgetEmbedCode
 {
-    public function handle(QnaAdvisor $qnaAdvisor): string
+    public function handle(CustomerAdvisor $customerAdvisor): string
     {
         $manifestPath = Storage::disk('public')->get('widgets/ai/qna-advisors/.vite/manifest.json');
 
@@ -57,7 +57,7 @@ class GenerateQnaAdvisorWidgetEmbedCode
 
         $loaderScriptUrl = url("widgets/ai/qna-advisors/{$manifest['src/loader.js']['file']}");
 
-        $resourcesUrl = URL::route(name: 'widgets.ai.qna-advisors.api.assets', parameters: ['advisor' => $qnaAdvisor]);
+        $resourcesUrl = URL::route(name: 'widgets.ai.qna-advisors.api.assets', parameters: ['advisor' => $customerAdvisor]);
 
         return <<<EOD
         <qna-advisor-embed url="{$resourcesUrl}"></qna-advisor-embed>

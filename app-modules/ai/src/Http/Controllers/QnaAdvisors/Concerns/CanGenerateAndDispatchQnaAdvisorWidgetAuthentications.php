@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors\Concerns;
 
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Portal\Enums\PortalType;
 use AdvisingApp\Portal\Models\PortalAuthentication;
 use AdvisingApp\Portal\Notifications\AuthenticatePortalNotification;
@@ -47,7 +47,7 @@ use Illuminate\Support\Facades\URL;
 
 trait CanGenerateAndDispatchQnaAdvisorWidgetAuthentications
 {
-    protected function createPortalAuthentication(Prospect|Student $educatable, QnaAdvisor $advisor): string
+    protected function createPortalAuthentication(Prospect|Student $educatable, CustomerAdvisor $advisor): string
     {
         $code = random_int(100000, 999999);
 

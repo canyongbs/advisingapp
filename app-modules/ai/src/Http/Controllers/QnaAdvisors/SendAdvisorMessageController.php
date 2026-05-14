@@ -39,7 +39,7 @@ namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Jobs\QnaAdvisors\SendCustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -48,7 +48,7 @@ use Throwable;
 
 class SendAdvisorMessageController
 {
-    public function __invoke(Request $request, GetQnaAdvisorInstructions $getQnaAdvisorInstructions, QnaAdvisor $advisor): StreamedResponse | JsonResponse
+    public function __invoke(Request $request, GetQnaAdvisorInstructions $getQnaAdvisorInstructions, CustomerAdvisor $advisor): StreamedResponse | JsonResponse
     {
         $data = $request->validate([
             'content' => ['required', 'string', 'max:25000'],

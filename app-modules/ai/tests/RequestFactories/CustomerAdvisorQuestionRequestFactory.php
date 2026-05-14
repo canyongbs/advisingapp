@@ -37,7 +37,7 @@
 namespace AdvisingApp\Ai\Tests\RequestFactories;
 
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use Worksome\RequestFactories\RequestFactory;
 
 class CustomerAdvisorQuestionRequestFactory extends RequestFactory
@@ -47,7 +47,7 @@ class CustomerAdvisorQuestionRequestFactory extends RequestFactory
         return [
             'question' => $this->faker->sentence(),
             'answer' => $this->faker->paragraph(),
-            'category_id' => CustomerAdvisorCategory::factory()->for(QnaAdvisor::first()),
+            'category_id' => CustomerAdvisorCategory::factory()->for(CustomerAdvisor::first()),
         ];
     }
 }

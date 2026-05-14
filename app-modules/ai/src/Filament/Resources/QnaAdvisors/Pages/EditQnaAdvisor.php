@@ -39,7 +39,7 @@ namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Settings\AiQnaAdvisorSettings;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
@@ -74,7 +74,7 @@ class EditQnaAdvisor extends EditRecord
     public function getBreadcrumbs(): array
     {
         $resource = static::getResource();
-        /** @var QnaAdvisor $record */
+        /** @var CustomerAdvisor $record */
         $record = $this->getRecord();
 
         /** @var array<string, string> $breadcrumbs */
@@ -159,30 +159,30 @@ class EditQnaAdvisor extends EditRecord
             Action::make('archive')
                 ->color('danger')
                 ->action(function () {
-                    /** @var QnaAdvisor $qnaAdvisor */
-                    $qnaAdvisor = $this->getRecord();
-                    $qnaAdvisor->archived_at = now();
-                    $qnaAdvisor->save();
+                    /** @var CustomerAdvisor $customerAdvisor */
+                    $customerAdvisor = $this->getRecord();
+                    $customerAdvisor->archived_at = now();
+                    $customerAdvisor->save();
 
                     Notification::make()
                         ->title('Customer Advisor archived')
                         ->success()
                         ->send();
                 })
-                ->hidden(fn (QnaAdvisor $record): bool => (bool) $record->archived_at),
+                ->hidden(fn (CustomerAdvisor $record): bool => (bool) $record->archived_at),
             Action::make('restore')
                 ->action(function () {
-                    /** @var QnaAdvisor $qnaAdvisor */
-                    $qnaAdvisor = $this->getRecord();
-                    $qnaAdvisor->archived_at = null;
-                    $qnaAdvisor->save();
+                    /** @var CustomerAdvisor $customerAdvisor */
+                    $customerAdvisor = $this->getRecord();
+                    $customerAdvisor->archived_at = null;
+                    $customerAdvisor->save();
 
                     Notification::make()
                         ->title('Customer Advisor restored')
                         ->success()
                         ->send();
                 })
-                ->hidden(function (QnaAdvisor $record): bool {
+                ->hidden(function (CustomerAdvisor $record): bool {
                     if (! $record->archived_at) {
                         return true;
                     }

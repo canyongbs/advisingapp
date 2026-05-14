@@ -39,13 +39,13 @@ namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 use AdvisingApp\Ai\Actions\GenerateQnaAdvisorIntroductoryMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
 
 class StartAdvisorThreadController
 {
-    public function __invoke(QnaAdvisor $advisor, GenerateQnaAdvisorIntroductoryMessage $generateIntroductoryMessage): JsonResponse
+    public function __invoke(CustomerAdvisor $advisor, GenerateQnaAdvisorIntroductoryMessage $generateIntroductoryMessage): JsonResponse
     {
         $author = auth('student')->user() ?? auth('prospect')->user();
 
