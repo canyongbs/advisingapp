@@ -36,10 +36,13 @@
 
 namespace App\Filament\Pages;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Enums\Feature;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Gate;
 
 /**
  * @property Schema $form
@@ -51,6 +54,11 @@ class ArtificialIntelligence extends ProfilePage
     protected static ?string $title = 'Artifical Intelligence';
 
     protected static ?int $navigationSort = 50;
+
+    public static function canAccess(): bool
+    {
+        return auth()->user()->hasLicense(LicenseType::ConversationalAi) && parent::canAccess();
+    }
 
     public function form(Schema $schema): Schema
     {
