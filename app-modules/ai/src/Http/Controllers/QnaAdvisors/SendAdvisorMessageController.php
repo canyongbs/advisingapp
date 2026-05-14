@@ -37,8 +37,7 @@
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
-use AdvisingApp\Ai\Enums\AiReasoningEffort;
-use AdvisingApp\Ai\Jobs\QnaAdvisors\SendQnaAdvisorMessage;
+use AdvisingApp\Ai\Jobs\QnaAdvisors\SendCustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use Illuminate\Http\JsonResponse;
@@ -103,7 +102,7 @@ class SendAdvisorMessageController
             ->whereNull('finished_at')
             ->firstOrFail();
 
-        dispatch(new SendQnaAdvisorMessage(
+        dispatch(new SendCustomerAdvisorMessage(
             $advisor,
             $thread,
             $data['content'],

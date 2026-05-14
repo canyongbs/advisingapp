@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Ai\Models\QnaAdvisorMessage;
+use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
@@ -106,7 +106,7 @@ class QnaAdvisorReportLineChart extends LineChartReportWidget
 
         $months = $this->getMonthRange($startDate, $endDate);
 
-        $monthlyData = QnaAdvisorMessage::query()
+        $monthlyData = CustomerAdvisorMessage::query()
             ->whereBetween('created_at', [$startDate, $endDate])
             ->where('is_advisor', false)
             ->selectRaw('date_trunc(\'month\', created_at) as month')

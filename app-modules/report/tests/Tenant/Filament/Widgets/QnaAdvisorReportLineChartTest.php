@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Models\QnaAdvisorMessage;
+use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportLineChart;
 use Illuminate\Support\Carbon;
 
@@ -43,7 +43,7 @@ use function Pest\Laravel\travelTo;
 
 beforeEach()->skip('Skipping these tests as there are currently issues with these tests or the underlying functionality having to do with overflow dates that needs to be resolved');
 
-it('returns correct QnaAdvisorMessage counts grouped by month within the given date range', function () {
+it('returns correct CustomerAdvisorMessage counts grouped by month within the given date range', function () {
     // Freeze now to a fixed date so the snapshot is deterministic and not flaky.
     $fixedNow = Carbon::parse('2025-10-15 12:00:00');
     travelTo($fixedNow);
@@ -52,12 +52,12 @@ it('returns correct QnaAdvisorMessage counts grouped by month within the given d
         $startDate = now()->subMonths(3);
         $endDate = now()->subDays(5);
 
-        QnaAdvisorMessage::factory()->count(5)->state([
+        CustomerAdvisorMessage::factory()->count(5)->state([
             'created_at' => $startDate,
             'is_advisor' => false,
         ])->create();
 
-        QnaAdvisorMessage::factory()->count(5)->state([
+        CustomerAdvisorMessage::factory()->count(5)->state([
             'created_at' => $endDate,
             'is_advisor' => false,
         ])->create();

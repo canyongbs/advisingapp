@@ -37,7 +37,7 @@
 namespace AdvisingApp\Ai\Jobs\QnaAdvisors;
 
 use AdvisingApp\Ai\Actions\CompletePrompt;
-use AdvisingApp\Ai\Models\QnaAdvisorMessage;
+use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use AdvisingApp\Ai\Settings\AiIntegratedAssistantSettings;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -61,7 +61,7 @@ class CreateQnaAdvisorThreadInteraction implements ShouldQueue
         $transcript = $this->thread->messages()
             ->oldest()
             ->get()
-            ->map(fn (QnaAdvisorMessage $message): string => ($message->is_advisor ? "**{$this->thread->advisor->name}:** " : "**{$message->author->getAttribute('full_name')}:** ") . $message->content)
+            ->map(fn (CustomerAdvisorMessage $message): string => ($message->is_advisor ? "**{$this->thread->advisor->name}:** " : "**{$message->author->getAttribute('full_name')}:** ") . $message->content)
             ->implode(PHP_EOL . PHP_EOL);
 
         $model = app(AiIntegratedAssistantSettings::class)->getDefaultModel();

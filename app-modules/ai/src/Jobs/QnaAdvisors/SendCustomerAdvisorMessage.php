@@ -38,9 +38,9 @@ namespace AdvisingApp\Ai\Jobs\QnaAdvisors;
 
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Enums\AiReasoningEffort;
-use AdvisingApp\Ai\Events\QnaAdvisors\QnaAdvisorMessageChunk;
+use AdvisingApp\Ai\Events\QnaAdvisors\CustomerAdvisorMessageChunk;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorMessage;
+use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
@@ -54,7 +54,7 @@ use Prism\Prism\ValueObjects\Messages\AssistantMessage;
 use Prism\Prism\ValueObjects\Messages\UserMessage;
 use Throwable;
 
-class SendQnaAdvisorMessage implements ShouldQueue
+class SendCustomerAdvisorMessage implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -77,7 +77,7 @@ class SendQnaAdvisorMessage implements ShouldQueue
     {
         $isStartOfConversation = ! $this->thread->messages()->where('is_advisor', false)->exists();
 
-        $message = new QnaAdvisorMessage();
+        $message = new CustomerAdvisorMessage();
         $message->thread()->associate($this->thread);
         $message->author()->associate($this->thread->author);
         $message->content = $this->content;
@@ -98,7 +98,7 @@ class SendQnaAdvisorMessage implements ShouldQueue
                 ? $this->thread->messages()
                     ->orderBy('created_at')
                     ->get()
-                    ->map(fn (QnaAdvisorMessage $message): Message => $message->is_advisor
+                    ->map(fn (CustomerAdvisorMessage $message): Message => $message->is_advisor
                         ? new AssistantMessage($message->content)
                         : new UserMessage($message->content))
                     ->all()
@@ -114,7 +114,7 @@ class SendQnaAdvisorMessage implements ShouldQueue
                 reasoningEffort: AiReasoningEffort::Minimal,
             );
 
-            $response = new QnaAdvisorMessage();
+            $response = new CustomerAdvisorMessage();
             $response->thread()->associate($this->thread);
             $response->content = '';
             $response->context = $context;
@@ -136,7 +136,7 @@ class SendQnaAdvisorMessage implements ShouldQueue
                     $chunkCount++;
 
                     if ($chunkCount >= 10) {
-                        event(new QnaAdvisorMessageChunk(
+                        event(new CustomerAdvisorMessageChunk(
                             $this->advisor,
                             $this->thread,
                             content: implode('', $chunkBuffer),
@@ -150,7 +150,7 @@ class SendQnaAdvisorMessage implements ShouldQueue
             }
 
             if (! empty($chunkBuffer)) {
-                event(new QnaAdvisorMessageChunk(
+                event(new CustomerAdvisorMessageChunk(
                     $this->advisor,
                     $this->thread,
                     content: implode('', $chunkBuffer),
@@ -158,7 +158,7 @@ class SendQnaAdvisorMessage implements ShouldQueue
                 $response->content .= implode('', $chunkBuffer);
             }
 
-            event(new QnaAdvisorMessageChunk(
+            event(new CustomerAdvisorMessageChunk(
                 $this->advisor,
                 $this->thread,
                 content: '',
@@ -170,7 +170,7 @@ class SendQnaAdvisorMessage implements ShouldQueue
         } catch (Throwable $exception) {
             report($exception);
 
-            event(new QnaAdvisorMessageChunk(
+            event(new CustomerAdvisorMessageChunk(
                 $this->advisor,
                 $this->thread,
                 content: '',

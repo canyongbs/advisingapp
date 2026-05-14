@@ -23,7 +23,7 @@ use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Ai\Models\PromptUpvote;
 use AdvisingApp\Ai\Models\PromptUse;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorMessage;
+use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use AdvisingApp\Alert\Models\AlertConfiguration;
@@ -293,7 +293,7 @@ return [
     CustomerAdvisorCategory::class,
     CustomerAdvisorFile::class,
     CustomerAdvisorLink::class,
-    QnaAdvisorMessage::class,
+    CustomerAdvisorMessage::class,
     QnaAdvisorQuestion::class,
     QnaAdvisorThread::class,
     AlertConfiguration::class,

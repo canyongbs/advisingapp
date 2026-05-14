@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Database\Factories;
 
-use AdvisingApp\Ai\Models\QnaAdvisorMessage;
+use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -44,9 +44,9 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
- * @extends Factory<QnaAdvisorMessage>
+ * @extends Factory<CustomerAdvisorMessage>
  */
-class QnaAdvisorMessageFactory extends Factory
+class CustomerAdvisorMessageFactory extends Factory
 {
     /**
      * Define the model's default state.

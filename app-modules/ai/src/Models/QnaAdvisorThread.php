@@ -63,15 +63,15 @@ class QnaAdvisorThread extends BaseModel
     ];
 
     /**
-     * @return HasMany<QnaAdvisorMessage, $this>
+     * @return HasMany<CustomerAdvisorMessage, $this>
      */
     public function messages(): HasMany
     {
-        return $this->hasMany(QnaAdvisorMessage::class, 'thread_id');
+        return $this->hasMany(CustomerAdvisorMessage::class, 'thread_id');
     }
 
     /**
-     * @return HasOne<QnaAdvisorMessage, $this>
+     * @return HasOne<CustomerAdvisorMessage, $this>
      */
     public function latestMessage(): HasOne
     {

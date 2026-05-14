@@ -34,51 +34,57 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+namespace AdvisingApp\Ai\Events\QnaAdvisors;
 
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\QnaAdvisorThread;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Foundation\Events\Dispatchable;
 
-/**
- * @mixin IdeHelperQnaAdvisorMessage
- */
-class QnaAdvisorMessage extends BaseModel
+class CustomerAdvisorMessageChunk implements ShouldBroadcastNow
 {
-    protected $table = 'customer_advisor_messages'; // Temporary measure for testing
+    use Dispatchable;
+    use InteractsWithSockets;
 
-    public $fillable = [
-        'message_id',
-        'content',
-        'context',
-        'request',
-        'next_request_options',
-        'thread_id',
-        'author_type',
-        'author_id',
-        'is_advisor',
-    ];
+    public function __construct(
+        public QnaAdvisor $advisor,
+        public QnaAdvisorThread $thread,
+        public string $content,
+        public bool $isComplete = false,
+        public ?string $error = null,
+    ) {}
 
-    protected $casts = [
-        'next_request_options' => 'array',
-        'request' => 'encrypted:array',
-        'is_advisor' => 'boolean',
-    ];
-
-    /**
-     * @return BelongsTo<QnaAdvisorThread, $this>
-     */
-    public function thread(): BelongsTo
+    public function broadcastAs(): string
     {
-        return $this->belongsTo(QnaAdvisorThread::class, 'thread_id');
+        return 'qna-advisor-message.chunk';
     }
 
     /**
-     * @return MorphTo<Model, $this>
+     * @return array<string, mixed>
      */
-    public function author(): MorphTo
+    public function broadcastWith(): array
     {
-        return $this->morphTo('author');
+        return [
+            'content' => $this->content,
+            'is_complete' => $this->isComplete,
+            'error' => $this->error,
+        ];
+    }
+
+    /**
+     * @return array<int, Channel>
+     */
+    public function broadcastOn(): array
+    {
+        $channelName = "qna-advisor-thread-{$this->thread->getKey()}";
+
+        return [
+            $this->advisor->is_requires_authentication_enabled
+                ? new PrivateChannel($channelName)
+                : new Channel($channelName),
+        ];
     }
 }

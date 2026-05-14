@@ -36,14 +36,14 @@
 
 use AdvisingApp\Ai\Events\QnaAdvisors\EndQnaAdvisorThread;
 use AdvisingApp\Ai\Jobs\QnaAdvisors\AutomaticallyEndQnaAdvisors;
-use AdvisingApp\Ai\Models\QnaAdvisorMessage;
+use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use Illuminate\Support\Facades\Event;
 
 it('will only run for advisors that have had no activity in over an hour', function () {
     $thread = QnaAdvisorThread::factory()
         ->has(
-            QnaAdvisorMessage::factory()->state([
+            CustomerAdvisorMessage::factory()->state([
                 'created_at' => now()->subHours(2),
             ]),
             'messages'
@@ -62,7 +62,7 @@ it('will only run for advisors that have had no activity in over an hour', funct
 it('will not run for advisors that have had activity within the last hour', function () {
     $thread = QnaAdvisorThread::factory()
         ->has(
-            QnaAdvisorMessage::factory()->state([
+            CustomerAdvisorMessage::factory()->state([
                 'created_at' => now()->subMinutes(30),
             ]),
             'messages'
@@ -83,7 +83,7 @@ it('dispatches websocket event when it automatically finishes a thread', functio
 
     QnaAdvisorThread::factory()
         ->has(
-            QnaAdvisorMessage::factory()->state([
+            CustomerAdvisorMessage::factory()->state([
                 'created_at' => now()->subHours(2),
             ]),
             'messages'

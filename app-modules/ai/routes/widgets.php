@@ -42,7 +42,7 @@ use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\QnaAdvisorResourceController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\QnaAdvisorResourcesController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\RegisterProspectController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\RequestAuthenticationController;
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\SendAdvisorMessageController as SendQnaAdvisorMessageController;
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\SendAdvisorMessageController as SendCustomerAdvisorMessageController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\ShowAdvisorController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\StartAdvisorThreadController;
 use AdvisingApp\Ai\Http\Middleware\EnsureQnaAdvisorEmbedIsEnabled;
@@ -106,7 +106,7 @@ Route::middleware([
                     ])
                     ->name('threads.start');
 
-                Route::post('/messages', SendQnaAdvisorMessageController::class)
+                Route::post('/messages', SendCustomerAdvisorMessageController::class)
                     ->middleware([
                         'signed',
                         QnaAdvisorAuthorization::class,

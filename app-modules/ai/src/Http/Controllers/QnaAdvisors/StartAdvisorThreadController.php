@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
 use AdvisingApp\Ai\Actions\GenerateQnaAdvisorIntroductoryMessage;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorMessage;
+use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
@@ -60,7 +60,7 @@ class StartAdvisorThreadController
             $advisor->is_introductory_message_enabled
             && filled($content = $generateIntroductoryMessage->execute($advisor, $author))
         ) {
-            $message = new QnaAdvisorMessage();
+            $message = new CustomerAdvisorMessage();
             $message->thread()->associate($thread);
             $message->content = $content;
             $message->is_advisor = true;
