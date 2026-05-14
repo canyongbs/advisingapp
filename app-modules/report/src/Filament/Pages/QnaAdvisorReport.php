@@ -49,41 +49,41 @@ use UnitEnum;
 
 class QnaAdvisorReport extends AiReport
 {
-  protected static ?string $cluster = ReportLibrary::class;
+    protected static ?string $cluster = ReportLibrary::class;
 
-  protected static string | UnitEnum | null $navigationGroup = 'Enterprise AI';
+    protected static string | UnitEnum | null $navigationGroup = 'Enterprise AI';
 
-  protected static ?string $title = 'Customer Advisor';
+    protected static ?string $title = 'Customer Advisor';
 
-  protected static string $routePath = 'customer-advisor-report';
+    protected static string $routePath = 'customer-advisor-report';
 
-  protected static ?int $navigationSort = 180;
+    protected static ?int $navigationSort = 180;
 
-  protected string $cacheTag = 'customer-advisor-report';
+    protected string $cacheTag = 'customer-advisor-report';
 
-  public static function canAccess(): bool
-  {
-    $featureGate = AiAssistantDtoRenameFeature::active() ? Feature::CustomerAdvisors->getGateName() : Feature::QnAAdvisor->getGateName();
+    public static function canAccess(): bool
+    {
+        $featureGate = AiAssistantDtoRenameFeature::active() ? Feature::CustomerAdvisors->getGateName() : Feature::QnAAdvisor->getGateName();
 
-    return Gate::check($featureGate) && parent::canAccess();
-  }
+        return Gate::check($featureGate) && parent::canAccess();
+    }
 
-  public function getWidgets(): array
-  {
-    return [
-      RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-      QnaAdvisorReportStats::make(['cacheTag' => $this->cacheTag]),
-      QnaAdvisorReportLineChart::make(['cacheTag' => $this->cacheTag]),
-      QnaAdvisorReportTable::make(['cacheTag' => $this->cacheTag]),
-    ];
-  }
+    public function getWidgets(): array
+    {
+        return [
+            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
+            QnaAdvisorReportStats::make(['cacheTag' => $this->cacheTag]),
+            QnaAdvisorReportLineChart::make(['cacheTag' => $this->cacheTag]),
+            QnaAdvisorReportTable::make(['cacheTag' => $this->cacheTag]),
+        ];
+    }
 
-  public function getColumns(): int | array
-  {
-    return [
-      'sm' => 2,
-      'md' => 4,
-      'lg' => 4,
-    ];
-  }
+    public function getColumns(): int | array
+    {
+        return [
+            'sm' => 2,
+            'md' => 4,
+            'lg' => 4,
+        ];
+    }
 }

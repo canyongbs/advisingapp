@@ -42,52 +42,52 @@ use Illuminate\Support\Facades\Gate;
 
 enum Feature: string
 {
-  case OnlineForms = 'online-forms';
+    case OnlineForms = 'online-forms';
 
-  case OnlineSurveys = 'online-surveys';
+    case OnlineSurveys = 'online-surveys';
 
-  case OnlineAdmissions = 'online-admissions';
+    case OnlineAdmissions = 'online-admissions';
 
-  case CaseManagement = 'case-management';
+    case CaseManagement = 'case-management';
 
-  case ResourceHub = 'resource-hub';
+    case ResourceHub = 'resource-hub';
 
-  case SupportPrograms = 'support-programs';
+    case SupportPrograms = 'support-programs';
 
-  case EventManagement = 'event-management';
-  case RealtimeChat = 'realtime-chat';
+    case EventManagement = 'event-management';
+    case RealtimeChat = 'realtime-chat';
 
-  case MobileApps = 'mobile-apps';
+    case MobileApps = 'mobile-apps';
 
-  case ScheduleAndAppointments = 'schedule-and-appointments';
+    case ScheduleAndAppointments = 'schedule-and-appointments';
 
-  case CustomAiAssistants = 'custom-ai-assistants'; //TODO: AiAssistantDtoRenameFeature clean up: remove this when you clean up AiAssistantDtoRenameFeature
+    case CustomAiAssistants = 'custom-ai-assistants'; //TODO: AiAssistantDtoRenameFeature clean up: remove this when you clean up AiAssistantDtoRenameFeature
 
-  case EmployeeAdvisors = 'employee-advisors';
+    case EmployeeAdvisors = 'employee-advisors';
 
-  case ResearchAdvisor = 'research-advisor';
+    case ResearchAdvisor = 'research-advisor';
 
-  case QnAAdvisor = 'qna-advisor'; //TODO: AiAssistantDtoRenameFeature clean up: remove this when you clean up AiAssistantDtoRenameFeature
+    case QnAAdvisor = 'qna-advisor'; //TODO: AiAssistantDtoRenameFeature clean up: remove this when you clean up AiAssistantDtoRenameFeature
 
-  case CustomerAdvisors = 'customer-advisor';
+    case CustomerAdvisors = 'customer-advisor';
 
-  case DataAdvisor = 'data-advisor';
+    case DataAdvisor = 'data-advisor';
 
-  case ProjectManagement = 'project-management';
+    case ProjectManagement = 'project-management';
 
-  case EarlyAlert = 'early-alert';
+    case EarlyAlert = 'early-alert';
 
-  public function generateGate(): void
-  {
-    // If features are added that are not based on a License Addon we will need to update this
-    Gate::define(
-      $this->getGateName(),
-      fn(?Authenticatable $authenticatable) => app(LicenseSettings::class)->data->addons->{str($this->value)->camel()}
-    );
-  }
+    public function generateGate(): void
+    {
+        // If features are added that are not based on a License Addon we will need to update this
+        Gate::define(
+            $this->getGateName(),
+            fn (?Authenticatable $authenticatable) => app(LicenseSettings::class)->data->addons->{str($this->value)->camel()}
+        );
+    }
 
-  public function getGateName(): string
-  {
-    return "feature-{$this->value}";
-  }
+    public function getGateName(): string
+    {
+        return "feature-{$this->value}";
+    }
 }

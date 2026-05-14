@@ -43,24 +43,24 @@ use Spatie\LaravelData\Mappers\SnakeCaseMapper;
 #[MapInputName(SnakeCaseMapper::class)]
 class LicenseAddonsData extends Data
 {
-  public function __construct(
-    public bool $onlineForms = false,
-    public bool $onlineSurveys = false,
-    public bool $onlineAdmissions = false,
-    public bool $caseManagement = false,
-    public bool $resourceHub = false,
-    public bool $supportPrograms = false,
-    public bool $eventManagement = false,
-    public bool $realtimeChat = false,
-    public bool $mobileApps = false,
-    public bool $scheduleAndAppointments = false,
-    public bool $customAiAssistants = false, //TODO: AiAssistantDtoRenameFeature cleanup: remove this when you remove the feature flag
-    public bool $employeeAdvisors = false,
-    public bool $researchAdvisor = false,
-    public bool $qnaAdvisor = false, //TODO: AiAssistantDtoRenameFeature cleanup: remove this when you remove the feature flag
-    public bool $customerAdvisors = false,
-    public bool $dataAdvisor = false,
-    public bool $projectManagement = false,
-    public bool $earlyAlert = false,
-  ) {}
+    public function __construct(
+        public bool $onlineForms = false,
+        public bool $onlineSurveys = false,
+        public bool $onlineAdmissions = false,
+        public bool $caseManagement = false,
+        public bool $resourceHub = false,
+        public bool $supportPrograms = false,
+        public bool $eventManagement = false,
+        public bool $realtimeChat = false,
+        public bool $mobileApps = false,
+        public bool $scheduleAndAppointments = false,
+        public bool $customAiAssistants = false, //TODO: AiAssistantDtoRenameFeature cleanup: remove this when you remove the feature flag
+        public bool $employeeAdvisors = false,
+        public bool $researchAdvisor = false,
+        public bool $qnaAdvisor = false, //TODO: AiAssistantDtoRenameFeature cleanup: remove this when you remove the feature flag
+        public bool $customerAdvisors = false,
+        public bool $dataAdvisor = false,
+        public bool $projectManagement = false,
+        public bool $earlyAlert = false,
+    ) {}
 }

@@ -39,7 +39,7 @@ use CanyonGBS\Common\Database\Migrations\Concerns\CanModifySettings;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
-return new class() extends Migration {
+return new class () extends Migration {
     use CanModifySettings;
 
     public function up(): void

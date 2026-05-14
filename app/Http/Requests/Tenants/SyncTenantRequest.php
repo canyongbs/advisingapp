@@ -41,61 +41,61 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class SyncTenantRequest extends FormRequest
 {
-  /**
-   * @return array<string, array<int, string>>
-   */
-  public function rules(): array
-  {
-    $rules = [
-      'limits' => ['required', 'array'],
-      'limits.conversationalAiSeats' => ['required', 'integer', 'min:0'],
-      'limits.retentionCrmSeats' => ['required', 'integer', 'min:0'],
-      'limits.recruitmentCrmSeats' => ['required', 'integer', 'min:0'],
-      'limits.emails' => ['required', 'integer', 'min:0'],
-      'limits.sms' => ['required', 'integer', 'min:0'],
-      'limits.dataAdvisorsCount' => ['required', 'integer', 'min:0'],
-      'limits.resetDate' => ['required', 'string', 'date_format:m-d'],
-      'addons' => ['required', 'array'],
-      'addons.onlineForms' => ['required', 'boolean'],
-      'addons.onlineSurveys' => ['required', 'boolean'],
-      'addons.onlineAdmissions' => ['required', 'boolean'],
-      'addons.caseManagement' => ['required', 'boolean'],
-      'addons.resourceHub' => ['required', 'boolean'],
-      'addons.supportPrograms' => ['required', 'boolean'],
-      'addons.eventManagement' => ['required', 'boolean'],
-      'addons.realtimeChat' => ['required', 'boolean'],
-      'addons.mobileApps' => ['required', 'boolean'],
-      'addons.scheduleAndAppointments' => ['required', 'boolean'],
-      'addons.researchAdvisor' => ['required', 'boolean'],
-      'addons.dataAdvisor' => ['required', 'boolean'],
-      'addons.projectManagement' => ['required', 'boolean'],
-      'addons.earlyAlert' => ['required', 'boolean'],
-      'smartPrompts' => ['nullable', 'array'],
-      'smartPrompts.*.title' => ['required', 'string'],
-      'smartPrompts.*.description' => ['nullable', 'string'],
-      'smartPrompts.*.smart_prompts.*.id' => ['required', 'string'],
-      'smartPrompts.*.smart_prompts.*.title' => ['required', 'string'],
-      'smartPrompts.*.smart_prompts.*.description' => ['nullable', 'string'],
-      'smartPrompts.*.smart_prompts.*.prompt' => ['required', 'string'],
-      'subscription' => ['required', 'array'],
-      'subscription.clientName' => ['required', 'string'],
-      'subscription.partnerName' => ['required', 'string'],
-      'subscription.startDate' => ['required', 'string'],
-      'subscription.endDate' => ['required', 'string'],
-    ];
+    /**
+     * @return array<string, array<int, string>>
+     */
+    public function rules(): array
+    {
+        $rules = [
+            'limits' => ['required', 'array'],
+            'limits.conversationalAiSeats' => ['required', 'integer', 'min:0'],
+            'limits.retentionCrmSeats' => ['required', 'integer', 'min:0'],
+            'limits.recruitmentCrmSeats' => ['required', 'integer', 'min:0'],
+            'limits.emails' => ['required', 'integer', 'min:0'],
+            'limits.sms' => ['required', 'integer', 'min:0'],
+            'limits.dataAdvisorsCount' => ['required', 'integer', 'min:0'],
+            'limits.resetDate' => ['required', 'string', 'date_format:m-d'],
+            'addons' => ['required', 'array'],
+            'addons.onlineForms' => ['required', 'boolean'],
+            'addons.onlineSurveys' => ['required', 'boolean'],
+            'addons.onlineAdmissions' => ['required', 'boolean'],
+            'addons.caseManagement' => ['required', 'boolean'],
+            'addons.resourceHub' => ['required', 'boolean'],
+            'addons.supportPrograms' => ['required', 'boolean'],
+            'addons.eventManagement' => ['required', 'boolean'],
+            'addons.realtimeChat' => ['required', 'boolean'],
+            'addons.mobileApps' => ['required', 'boolean'],
+            'addons.scheduleAndAppointments' => ['required', 'boolean'],
+            'addons.researchAdvisor' => ['required', 'boolean'],
+            'addons.dataAdvisor' => ['required', 'boolean'],
+            'addons.projectManagement' => ['required', 'boolean'],
+            'addons.earlyAlert' => ['required', 'boolean'],
+            'smartPrompts' => ['nullable', 'array'],
+            'smartPrompts.*.title' => ['required', 'string'],
+            'smartPrompts.*.description' => ['nullable', 'string'],
+            'smartPrompts.*.smart_prompts.*.id' => ['required', 'string'],
+            'smartPrompts.*.smart_prompts.*.title' => ['required', 'string'],
+            'smartPrompts.*.smart_prompts.*.description' => ['nullable', 'string'],
+            'smartPrompts.*.smart_prompts.*.prompt' => ['required', 'string'],
+            'subscription' => ['required', 'array'],
+            'subscription.clientName' => ['required', 'string'],
+            'subscription.partnerName' => ['required', 'string'],
+            'subscription.startDate' => ['required', 'string'],
+            'subscription.endDate' => ['required', 'string'],
+        ];
 
-    if (AiAssistantDtoRenameFeature::active()) {
-      $rules['limits.employeeAdvisors'] = ['required', 'integer', 'min:0'];
-      $rules['limits.customerAdvisorsCount'] = ['required', 'integer', 'min:0'];
-      $rules['addons.employeeAdvisors'] = ['required', 'boolean'];
-      $rules['addons.customerAdvisors'] = ['required', 'boolean'];
-    } else {
-      $rules['limits.conversationalAiAssistants'] = ['required', 'integer', 'min:0'];
-      $rules['limits.qnaAdvisorsCount'] = ['required', 'integer', 'min:0'];
-      $rules['addons.customAiAssistants'] = ['required', 'boolean'];
-      $rules['addons.qnaAdvisor'] = ['required', 'boolean'];
+        if (AiAssistantDtoRenameFeature::active()) {
+            $rules['limits.employeeAdvisors'] = ['required', 'integer', 'min:0'];
+            $rules['limits.customerAdvisorsCount'] = ['required', 'integer', 'min:0'];
+            $rules['addons.employeeAdvisors'] = ['required', 'boolean'];
+            $rules['addons.customerAdvisors'] = ['required', 'boolean'];
+        } else {
+            $rules['limits.conversationalAiAssistants'] = ['required', 'integer', 'min:0'];
+            $rules['limits.qnaAdvisorsCount'] = ['required', 'integer', 'min:0'];
+            $rules['addons.customAiAssistants'] = ['required', 'boolean'];
+            $rules['addons.qnaAdvisor'] = ['required', 'boolean'];
+        }
+
+        return $rules;
     }
-
-    return $rules;
-  }
 }
