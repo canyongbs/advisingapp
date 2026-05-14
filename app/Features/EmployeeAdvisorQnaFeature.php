@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,36 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+namespace App\Features;
 
-use AdvisingApp\Ai\Observers\EmployeeAdvisorResourceHubCategoryObserver;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use App\Support\AbstractFeatureFlag;
 
-#[ObservedBy([EmployeeAdvisorResourceHubCategoryObserver::class])]
-/**
- * @mixin IdeHelperEmployeeAdvisorResourceHubCategory
- */
-class EmployeeAdvisorResourceHubCategory extends Pivot
+class EmployeeAdvisorQnaFeature extends AbstractFeatureFlag
 {
-    use HasUuids;
-
-    /**
-     * @return BelongsTo<AiAssistant, $this>
-     */
-    public function aiAssistant(): BelongsTo
+    public function resolve(mixed $scope): mixed
     {
-        return $this->belongsTo(AiAssistant::class, 'employee_advisor_id');
-    }
-
-    /**
-     * @return BelongsTo<ResourceHubCategory, $this>
-     */
-    public function resourceHubCategory(): BelongsTo
-    {
-        return $this->belongsTo(ResourceHubCategory::class);
+        return false;
     }
 }
