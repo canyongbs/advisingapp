@@ -50,13 +50,13 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Models\CustomerAdvisorFile;
+use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use AdvisingApp\Ai\Models\DataAdvisor;
 use AdvisingApp\Ai\Models\EmployeeAdvisorCategory;
 use AdvisingApp\Ai\Models\EmployeeAdvisorQuestion;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorLink;
 use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -101,7 +101,7 @@ class AiServiceProvider extends ServiceProvider
             'qna_advisor' => QnaAdvisor::class,
             'customer_advisor_category' => CustomerAdvisorCategory::class,
             'customer_advisor_file' => CustomerAdvisorFile::class,
-            'qna_advisor_link' => QnaAdvisorLink::class,
+            'customer_advisor_link' => CustomerAdvisorLink::class,
             'qna_advisor_question' => QnaAdvisorQuestion::class,
             'data_advisor' => DataAdvisor::class,
             'employee_advisor_category' => EmployeeAdvisorCategory::class,

@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Jobs\QnaAdvisors\FetchQnaAdvisorLinkParsingResults;
-use AdvisingApp\Ai\Models\QnaAdvisorLink;
+use AdvisingApp\Ai\Jobs\QnaAdvisors\FetchCustomerAdvisorLinkParsingResults;
+use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use Illuminate\Support\Facades\Http;
 
@@ -47,11 +47,11 @@ it('refreshes existing parsing results when explicitly requested', function () {
     $settings = app(AiIntegrationsSettings::class);
     $settings->jina_deepsearch_v1_api_key = 'test-api-key';
 
-    $link = QnaAdvisorLink::factory()->create([
+    $link = CustomerAdvisorLink::factory()->create([
         'parsing_results' => 'stale parsing results',
     ]);
 
-    (new FetchQnaAdvisorLinkParsingResults($link, refreshExistingParsingResults: true))->handle();
+    (new FetchCustomerAdvisorLinkParsingResults($link, refreshExistingParsingResults: true))->handle();
 
     $link->refresh();
 
@@ -66,11 +66,11 @@ it('does not refresh existing parsing results when not explicitly requested', fu
     $settings = app(AiIntegrationsSettings::class);
     $settings->jina_deepsearch_v1_api_key = 'test-api-key';
 
-    $link = QnaAdvisorLink::factory()->create([
+    $link = CustomerAdvisorLink::factory()->create([
         'parsing_results' => 'stale parsing results',
     ]);
 
-    (new FetchQnaAdvisorLinkParsingResults($link, refreshExistingParsingResults: false))->handle();
+    (new FetchCustomerAdvisorLinkParsingResults($link, refreshExistingParsingResults: false))->handle();
 
     $link->refresh();
 

@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Ai\Jobs\QnaAdvisors;
 
-use AdvisingApp\Ai\Models\QnaAdvisorLink;
+use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\InteractsWithQueue;
 use Spatie\Multitenancy\Jobs\TenantAware;
 
-class UpdateCurrentQnaAdvisorLinks implements ShouldQueue, TenantAware
+class UpdateCurrentCustomerAdvisorLinks implements ShouldQueue, TenantAware
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -51,10 +51,10 @@ class UpdateCurrentQnaAdvisorLinks implements ShouldQueue, TenantAware
 
     public function handle(): void
     {
-        QnaAdvisorLink::query()
+        CustomerAdvisorLink::query()
             ->where('is_keep_current_enabled', true)
-            ->each(function (QnaAdvisorLink $link) {
-                dispatch(new FetchQnaAdvisorLinkParsingResults($link, refreshExistingParsingResults: true));
+            ->each(function (CustomerAdvisorLink $link) {
+                dispatch(new FetchCustomerAdvisorLinkParsingResults($link, refreshExistingParsingResults: true));
             });
     }
 }

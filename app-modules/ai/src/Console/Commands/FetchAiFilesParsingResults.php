@@ -39,11 +39,11 @@ namespace AdvisingApp\Ai\Console\Commands;
 use AdvisingApp\Ai\Jobs\Advisors\FetchAiAssistantFileParsingResults;
 use AdvisingApp\Ai\Jobs\AiAssistants\FetchAiAssistantLinkParsingResults;
 use AdvisingApp\Ai\Jobs\QnaAdvisors\FetchCustomerAdvisorFileParsingResults;
-use AdvisingApp\Ai\Jobs\QnaAdvisors\FetchQnaAdvisorLinkParsingResults;
+use AdvisingApp\Ai\Jobs\QnaAdvisors\FetchCustomerAdvisorLinkParsingResults;
 use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Models\AiAssistantLink;
 use AdvisingApp\Ai\Models\CustomerAdvisorFile;
-use AdvisingApp\Ai\Models\QnaAdvisorLink;
+use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use Illuminate\Console\Command;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
@@ -67,10 +67,10 @@ class FetchAiFilesParsingResults extends Command
             ->where('created_at', '>=', now()->subHour())
             ->eachById(fn (CustomerAdvisorFile $file) => dispatch(new FetchCustomerAdvisorFileParsingResults($file)));
 
-        QnaAdvisorLink::query()
+        CustomerAdvisorLink::query()
             ->whereNull('parsing_results')
             ->where('created_at', '>=', now()->subHour())
-            ->eachById(fn (QnaAdvisorLink $link) => dispatch(new FetchQnaAdvisorLinkParsingResults($link)));
+            ->eachById(fn (CustomerAdvisorLink $link) => dispatch(new FetchCustomerAdvisorLinkParsingResults($link)));
 
         AiAssistantLink::query()
             ->whereNull('parsing_results')

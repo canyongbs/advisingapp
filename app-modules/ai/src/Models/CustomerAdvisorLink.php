@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\Ai\Database\Factories\QnaAdvisorLinkFactory;
+use AdvisingApp\Ai\Database\Factories\CustomerAdvisorLinkFactory;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use App\Models\BaseModel;
@@ -49,17 +49,15 @@ use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
- * @mixin IdeHelperQnaAdvisorLink
+ * @mixin IdeHelperCustomerAdvisorLink
  */
-class QnaAdvisorLink extends BaseModel implements AiFile, Auditable
+class CustomerAdvisorLink extends BaseModel implements AiFile, Auditable
 {
-    /** @use HasFactory<QnaAdvisorLinkFactory>*/
+    /** @use HasFactory<CustomerAdvisorLinkFactory>*/
     use HasFactory;
 
     use SoftDeletes;
     use AuditableTrait;
-
-    protected $table = 'customer_advisor_links'; // Temporary measure for testing
 
     protected $fillable = [
         'url',

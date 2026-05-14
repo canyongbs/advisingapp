@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\Ai\Database\Factories;
 
+use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorLink;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<QnaAdvisorLink>
+ * @extends Factory<CustomerAdvisorLink>
  */
-class QnaAdvisorLinkFactory extends Factory
+class CustomerAdvisorLinkFactory extends Factory
 {
     /**
      * Define the model's default state.

@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Jobs\QnaAdvisors;
 
-use AdvisingApp\Ai\Models\QnaAdvisorLink;
+use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
@@ -49,7 +49,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use Spatie\Multitenancy\Jobs\TenantAware;
 
-class FetchQnaAdvisorLinkParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
+class FetchCustomerAdvisorLinkParsingResults implements ShouldQueue, TenantAware, ShouldBeUnique
 {
     use Batchable;
     use Dispatchable;
@@ -60,7 +60,7 @@ class FetchQnaAdvisorLinkParsingResults implements ShouldQueue, TenantAware, Sho
     public int $timeout = 600;
 
     public function __construct(
-        protected QnaAdvisorLink $link,
+        protected CustomerAdvisorLink $link,
         protected bool $refreshExistingParsingResults = false,
     ) {}
 
