@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Ai\Events\QnaAdvisors;
 
-use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
+use AdvisingApp\Ai\Models\QnaAdvisor;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;

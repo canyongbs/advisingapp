@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Ai\Database\Factories;
 
-use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
+use AdvisingApp\Ai\Models\QnaAdvisor;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

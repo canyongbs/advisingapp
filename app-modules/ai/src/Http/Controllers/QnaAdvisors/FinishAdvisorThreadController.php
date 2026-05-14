@@ -37,8 +37,8 @@
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
 use AdvisingApp\Ai\Jobs\QnaAdvisors\CreateCustomerAdvisorThreadInteraction;
-use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
+use AdvisingApp\Ai\Models\QnaAdvisor;
 use Illuminate\Http\JsonResponse;
 
 class FinishAdvisorThreadController

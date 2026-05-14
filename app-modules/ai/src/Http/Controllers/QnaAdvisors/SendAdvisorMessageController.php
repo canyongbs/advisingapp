@@ -38,8 +38,8 @@ namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
 use AdvisingApp\Ai\Jobs\QnaAdvisors\SendCustomerAdvisorMessage;
-use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
+use AdvisingApp\Ai\Models\QnaAdvisor;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;

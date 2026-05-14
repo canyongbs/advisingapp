@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
+use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportStats;
 use AdvisingApp\StudentDataModel\Models\Student;
