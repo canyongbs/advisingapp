@@ -44,20 +44,12 @@ class ResourceHubArticleObserver
 {
     public function created(ResourceHubArticle $article): void
     {
-        if (! $article->public) {
-            return;
-        }
-
         SyncResourceHubArticlesToAssistantVectorStores::dispatch();
         SyncResourceHubArticlesToQnaAdvisorVectorStores::dispatch();
     }
 
     public function updated(ResourceHubArticle $article): void
     {
-        if (! $article->isDirty(['public', 'article_details', 'title'])) {
-            return;
-        }
-
         SyncResourceHubArticlesToAssistantVectorStores::dispatch();
         SyncResourceHubArticlesToQnaAdvisorVectorStores::dispatch();
     }
