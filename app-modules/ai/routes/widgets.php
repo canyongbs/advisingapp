@@ -36,19 +36,19 @@
 
 use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\AuthenticationConfirmController;
 use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\AuthenticationRefreshController;
-use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\FinishAdvisorThreadController;
 use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\CustomerAdvisorBroadcastController;
 use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\CustomerAdvisorResourceController;
 use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\CustomerAdvisorResourcesController;
+use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\FinishAdvisorThreadController;
 use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\RegisterProspectController;
 use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\RequestAuthenticationController;
 use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\SendAdvisorMessageController as SendCustomerAdvisorMessageController;
 use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\ShowAdvisorController;
 use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\StartAdvisorThreadController;
-use AdvisingApp\Ai\Http\Middleware\EnsureCustomerAdvisorEmbedIsEnabled;
-use AdvisingApp\Ai\Http\Middleware\EnsureCustomerAdvisorRequestComingFromAuthorizedDomain;
 use AdvisingApp\Ai\Http\Middleware\CustomerAdvisorAuthorization;
 use AdvisingApp\Ai\Http\Middleware\CustomerAdvisorWidgetCors;
+use AdvisingApp\Ai\Http\Middleware\EnsureCustomerAdvisorEmbedIsEnabled;
+use AdvisingApp\Ai\Http\Middleware\EnsureCustomerAdvisorRequestComingFromAuthorizedDomain;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use App\Http\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
