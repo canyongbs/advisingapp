@@ -39,12 +39,36 @@ use AdvisingApp\MeetingCenter\Filament\Pages\ManagePersonalBookingPage;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use App\Models\User;
+use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
+
+beforeEach(function () {
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->scheduleAndAppointments = true;
+    $settings->save();
+});
+
+it('is gated with proper access control', function () {
+    $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
+
+    actingAs($user);
+
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->scheduleAndAppointments = false;
+    $settings->save();    
+
+    get(ManagePersonalBookingPage::getUrl())->assertForbidden();
+    
+    $settings->data->addons->scheduleAndAppointments = true;
+    $settings->save();    
+
+    get(ManagePersonalBookingPage::getUrl())->assertSuccessful();
+});
 
 it('can render the page', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
