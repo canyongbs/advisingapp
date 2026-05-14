@@ -234,7 +234,7 @@ it('ai_assistant_confidential_users UserSelect does not show admin users in opti
     ));
 
     $licenseSettings = app(LicenseSettings::class);
-    $licenseSettings->data->addons->customAiAssistants = true;
+    $licenseSettings->data->addons->employeeAdvisors = true;
     $licenseSettings->save();
 
     $regularUser = User::factory()->create();
@@ -262,7 +262,7 @@ it('ai_assistant_confidential_users UserSelect shows all users when filter_admin
     ));
 
     $licenseSettings = app(LicenseSettings::class);
-    $licenseSettings->data->addons->customAiAssistants = true;
+    $licenseSettings->data->addons->employeeAdvisors = true;
     $licenseSettings->save();
 
     $adminUser = User::factory()->create();
