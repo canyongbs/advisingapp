@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,36 +33,26 @@
 
 </COPYRIGHT>
 */
-import laravel, { refreshPaths } from 'laravel-vite-plugin';
-import { defineConfig } from 'vite';
 
-export default defineConfig({
-    plugins: [
-        laravel({
-            input: [
-                'resources/css/app.css',
-                'resources/js/app.js',
-                'resources/js/admin.js',
-                'resources/css/filament/admin/theme.css',
-                'app-modules/ai/resources/js/chat.js',
-                'app-modules/ai/resources/js/chats.js',
-                'app-modules/ai/resources/js/customer-advisor-preview.js',
-                'app-modules/research/resources/js/results.js',
-                'app-modules/research/resources/js/requests.js',
-                'app-modules/in-app-communication/resources/js/userToUserChat.js',
-                'app-modules/task/resources/js/kanban.js',
-                'app-modules/pipeline/resources/js/kanban.js',
-            ],
-            refresh: [
-                ...refreshPaths,
-                'app/Filament/**',
-                'app/Forms/Components/**',
-                'app/Livewire/**',
-                'app/Infolists/Components/**',
-                'app/Providers/Filament/**',
-                'app/Tables/Columns/**',
-                'portals/**',
-            ],
-        }),
-    ],
-});
+namespace AdvisingApp\Ai\Settings;
+
+use AdvisingApp\Ai\Enums\AiModel;
+use Spatie\LaravelSettings\Settings;
+
+class AiCustomerAdvisorSettings extends Settings
+{
+    public bool $allow_selection_of_model = true;
+
+    public ?AiModel $preselected_model = null;
+
+    public ?string $instructions = null;
+
+    public ?string $background_information = null;
+
+    public ?string $restrictions = null;
+
+    public static function group(): string
+    {
+        return 'ai-qna-advisor';
+    }
+}

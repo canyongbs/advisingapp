@@ -40,7 +40,7 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
-use AdvisingApp\Ai\Settings\AiQnaAdvisorSettings;
+use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
@@ -116,9 +116,9 @@ class EditQnaAdvisor extends EditRecord
                             ->required()
                             ->visible(auth()->user()->isSuperAdmin())
                             ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModels()))
-                            ->disabled(fn (): bool => ! app(AiQnaAdvisorSettings::class)->allow_selection_of_model)
+                            ->disabled(fn (): bool => ! app(AiCustomerAdvisorSettings::class)->allow_selection_of_model)
                             ->default(function () {
-                                $settings = app(AiQnaAdvisorSettings::class);
+                                $settings = app(AiCustomerAdvisorSettings::class);
 
                                 if ($settings->allow_selection_of_model) {
                                     return null;

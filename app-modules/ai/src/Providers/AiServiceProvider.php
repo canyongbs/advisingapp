@@ -40,7 +40,7 @@ use AdvisingApp\Ai\AiPlugin;
 use AdvisingApp\Ai\Events\AiMessageCreated;
 use AdvisingApp\Ai\Events\AiMessageTrashed;
 use AdvisingApp\Ai\Events\AiThreadTrashed;
-use AdvisingApp\Ai\Listeners\ClearQnaAdvisorInstructionsCacheOnGlobalSettingsUpdate;
+use AdvisingApp\Ai\Listeners\ClearCustomerAdvisorInstructionsCacheOnGlobalSettingsUpdate;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Models\AiAssistantLink;
@@ -70,7 +70,7 @@ class AiServiceProvider extends ServiceProvider
         AiThreadTrashed::class => AiThreadTrashed::LISTENERS,
         AiMessageCreated::class => AiMessageCreated::LISTENERS,
         AiMessageTrashed::class => AiMessageTrashed::LISTENERS,
-        SettingsSaved::class => [ClearQnaAdvisorInstructionsCacheOnGlobalSettingsUpdate::class],
+        SettingsSaved::class => [ClearCustomerAdvisorInstructionsCacheOnGlobalSettingsUpdate::class],
     ];
 
     public function register(): void

@@ -34,37 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
+namespace AdvisingApp\Ai\Filament\Pages;
 
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
-use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
+use App\Filament\Clusters\GlobalArtificialIntelligence;
+use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rule;
 
-class CreateQnaAdvisor extends CreateRecord
+class ManageAiCustomerAdvisorSettings extends ManageAiEmployeeAdvisorSettings
 {
-    protected static string $resource = QnaAdvisorResource::class;
+    protected static string $settings = AiCustomerAdvisorSettings::class;
+
+    protected static ?string $title = 'Customer Advisor';
+
+    protected static ?int $navigationSort = 40;
+
+    protected static ?string $cluster = GlobalArtificialIntelligence::class;
+
+    protected static ?string $slug = 'manage-ai-customer-advisor-settings';
+
+    public static function canAccess(): bool
+    {
+        $user = auth()->user();
+
+        assert($user instanceof User);
+
+        return $user->canAccessAiSettings();
+    }
 
     public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                AvatarUploadOrAiGenerator::make(),
-                TextInput::make('name')
-                    ->required()
-                    ->string()
-                    ->maxLength(255),
-                Select::make('model')
-                    ->live()
+                Toggle::make('allow_selection_of_model')
+                    ->label('Allow selection of model?')
+                    ->helperText('If enabled, admin can select a model when creating or editing customer advisors.')
+                    ->columnSpanFull()
+                    ->live(),
+                Select::make('preselected_model')
+                    ->label('Select Model')
                     ->options(fn (AiModel|string|null $state) => array_unique([
                         ...AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModelsAsSelectOptions(),
                         ...match (true) {
@@ -74,52 +89,30 @@ class CreateQnaAdvisor extends CreateRecord
                         },
                     ]))
                     ->searchable()
+                    ->helperText('This model will be the model used for customer advisors.')
+                    ->columnSpanFull()
                     ->required()
-                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModels()))
-                    ->disabled(fn (): bool => ! app(AiCustomerAdvisorSettings::class)->allow_selection_of_model)
-                    ->visible(auth()->user()->isSuperAdmin())
-                    ->default(function () {
-                        $settings = app(AiCustomerAdvisorSettings::class);
-
-                        if ($settings->allow_selection_of_model) {
-                            return null;
-                        }
-
-                        return $settings->preselected_model;
-                    }),
-                Textarea::make('description')
+                    ->visible(fn (Get $get): bool => ! $get('allow_selection_of_model'))
+                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModels())),
+                Textarea::make('instructions')
+                    ->label('Instructions')
+                    ->columnSpanFull()
+                    ->rows(10)
                     ->maxLength(65535)
                     ->required(),
-                Toggle::make('is_introductory_message_enabled')
-                    ->label('Enable Introductory Message')
-                    ->live()
-                    ->default(false),
-                Toggle::make('is_introductory_message_dynamic')
-                    ->label('Dynamic')
-                    ->helperText(fn (Get $get): string => $get('is_introductory_message_dynamic')
-                        ? 'AI will greet the student or prospect.'
-                        : 'Specify a custom introductory message below.')
-                    ->live()
-                    ->default(true)
-                    ->visible(fn (Get $get): bool => $get('is_introductory_message_enabled')),
-                Textarea::make('introductory_message')
-                    ->label('Introductory Message')
-                    ->helperText('Specify the plain text introductory message.')
+                Textarea::make('background_information')
+                    ->label('Background Information')
+                    ->columnSpanFull()
+                    ->rows(10)
                     ->maxLength(65535)
-                    ->rows(4)
-                    ->visible(fn (Get $get): bool => $get('is_introductory_message_enabled') && ! $get('is_introductory_message_dynamic')),
+                    ->required(),
+                Textarea::make('restrictions')
+                    ->label('Restrictions')
+                    ->columnSpanFull()
+                    ->rows(10)
+                    ->maxLength(65535)
+                    ->helperText('These restrictions will be applied to the customer advisor. Use this field to specify any limitations or guidelines for the AI model.')
+                    ->required(),
             ]);
-    }
-
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        $settings = app(AiCustomerAdvisorSettings::class);
-
-        if (! $settings->allow_selection_of_model) {
-            $data['model'] = $settings->preselected_model ?? $data['model'];
-            $data['instructions'] = $settings->instructions ?? $data['instructions'];
-        }
-
-        return $data;
     }
 }

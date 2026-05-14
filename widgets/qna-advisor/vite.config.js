@@ -68,7 +68,7 @@ export default defineConfig({
                 chunkFileNames: '[name]-[hash].js',
             },
         },
-        outDir: resolve(__dirname, '../../storage/app/public/widgets/ai/qna-advisors'),
+        outDir: resolve(__dirname, '../../storage/app/public/widgets/ai/customer-advisors'),
         emptyOutDir: true,
         sourcemap: true,
     },

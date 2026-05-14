@@ -64,7 +64,7 @@ class QnaAdvisorReportTable extends TableWidget
     #[Url]
     public string $activeTab = QnaAdvisorReportTableTab::Student->value;
 
-    protected string $view = 'ai::filament.resources.qna-advisors.pages.qna-advisor-table-report';
+    protected string $view = 'ai::filament.resources.customer-advisors.pages.customer-advisor-table-report';
 
     protected static ?string $pollingInterval = null;
 
@@ -163,7 +163,7 @@ class QnaAdvisorReportTable extends TableWidget
                             ->orderBy('created_at', 'asc')
                             ->get();
 
-                        return view('ai::filament.widgets.qna-advisor-transcript-modal', [
+                        return view('ai::filament.widgets.customer-advisor-transcript-modal', [
                             'messages' => $messages,
                             'advisor' => $record->advisor,
                         ]);

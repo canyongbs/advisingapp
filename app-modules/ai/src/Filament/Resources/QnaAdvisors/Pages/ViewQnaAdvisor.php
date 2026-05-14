@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
 
-use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
+use AdvisingApp\Ai\Actions\GetCustomerAdvisorInstructions;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use Filament\Actions\Action;
@@ -92,7 +92,7 @@ class ViewQnaAdvisor extends ViewRecord
                                     ->html()
                                     ->extraAttributes(['class' => 'overflow-auto'])
                                     ->state(fn (CustomerAdvisor $record): string => new HtmlString(
-                                        '<pre>' . app(GetQnaAdvisorInstructions::class)->execute($record) . '</pre>'
+                                        '<pre>' . app(GetCustomerAdvisorInstructions::class)->execute($record) . '</pre>'
                                     )),
                             ]),
                         Tab::make('Rendered')
@@ -103,7 +103,7 @@ class ViewQnaAdvisor extends ViewRecord
                                     ->hiddenLabel()
                                     ->columnSpanFull()
                                     ->markdown()
-                                    ->state(fn (CustomerAdvisor $record): string => app(GetQnaAdvisorInstructions::class)->execute($record)),
+                                    ->state(fn (CustomerAdvisor $record): string => app(GetCustomerAdvisorInstructions::class)->execute($record)),
                             ]),
                     ])->visible(fn () => auth()->guard('web')->user()?->isSuperAdmin()),
             ]),

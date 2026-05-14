@@ -38,8 +38,8 @@ namespace AdvisingApp\Ai\Console\Commands;
 
 use AdvisingApp\Ai\Jobs\Advisors\FetchAiAssistantFileParsingResults;
 use AdvisingApp\Ai\Jobs\AiAssistants\FetchAiAssistantLinkParsingResults;
-use AdvisingApp\Ai\Jobs\QnaAdvisors\FetchCustomerAdvisorFileParsingResults;
-use AdvisingApp\Ai\Jobs\QnaAdvisors\FetchCustomerAdvisorLinkParsingResults;
+use AdvisingApp\Ai\Jobs\CustomerAdvisors\FetchCustomerAdvisorFileParsingResults;
+use AdvisingApp\Ai\Jobs\CustomerAdvisors\FetchCustomerAdvisorLinkParsingResults;
 use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Models\AiAssistantLink;
 use AdvisingApp\Ai\Models\CustomerAdvisorFile;

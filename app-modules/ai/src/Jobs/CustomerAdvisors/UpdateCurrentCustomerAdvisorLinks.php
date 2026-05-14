@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,36 +33,28 @@
 
 </COPYRIGHT>
 */
-import laravel, { refreshPaths } from 'laravel-vite-plugin';
-import { defineConfig } from 'vite';
 
-export default defineConfig({
-    plugins: [
-        laravel({
-            input: [
-                'resources/css/app.css',
-                'resources/js/app.js',
-                'resources/js/admin.js',
-                'resources/css/filament/admin/theme.css',
-                'app-modules/ai/resources/js/chat.js',
-                'app-modules/ai/resources/js/chats.js',
-                'app-modules/ai/resources/js/customer-advisor-preview.js',
-                'app-modules/research/resources/js/results.js',
-                'app-modules/research/resources/js/requests.js',
-                'app-modules/in-app-communication/resources/js/userToUserChat.js',
-                'app-modules/task/resources/js/kanban.js',
-                'app-modules/pipeline/resources/js/kanban.js',
-            ],
-            refresh: [
-                ...refreshPaths,
-                'app/Filament/**',
-                'app/Forms/Components/**',
-                'app/Livewire/**',
-                'app/Infolists/Components/**',
-                'app/Providers/Filament/**',
-                'app/Tables/Columns/**',
-                'portals/**',
-            ],
-        }),
-    ],
-});
+namespace AdvisingApp\Ai\Jobs\CustomerAdvisors;
+
+use AdvisingApp\Ai\Models\CustomerAdvisorLink;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
+use Spatie\Multitenancy\Jobs\TenantAware;
+
+class UpdateCurrentCustomerAdvisorLinks implements ShouldQueue, TenantAware
+{
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+
+    public function handle(): void
+    {
+        CustomerAdvisorLink::query()
+            ->where('is_keep_current_enabled', true)
+            ->each(function (CustomerAdvisorLink $link) {
+                dispatch(new FetchCustomerAdvisorLinkParsingResults($link, refreshExistingParsingResults: true));
+            });
+    }
+}

@@ -34,24 +34,51 @@
 </COPYRIGHT>
 */
 
-namespace App\Http\Middleware;
+namespace AdvisingApp\Ai\Http\Middleware;
 
-use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken as Middleware;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
+use Closure;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-class VerifyCsrfToken extends Middleware
+class EnsureCustomerAdvisorRequestComingFromAuthorizedDomain
 {
-    /**
-     * The URIs that should be excluded from CSRF verification.
-     *
-     * @var array<int, string>
-     */
-    protected $except = [
-        '/api/forms/*',
-        '/api/applications/*',
-        '/api/surveys/*',
-        '/api/ai/customer-advisors/*',
-        '/api/event-registration/*',
-        '/api/cases/*',
-        '/api/v1/*',
-    ];
+    public function handle(Request $request, Closure $next): Response
+    {
+        $advisor = $request->route('advisor');
+
+        if (! $advisor instanceof CustomerAdvisor) {
+            return response()->json(status: Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        if ($request->hasValidSignature() && $request->query('preview')) {
+            return $next($request);
+        }
+
+        $requestingUrlHeader = $request->headers->get('origin') ?? $request->headers->get('referer');
+
+        if (! $requestingUrlHeader) {
+            return response()->json(['error' => 'Missing origin/referer header.'], 400);
+        }
+
+        $appRootDomain = parse_url(config('app.url'))['host'];
+
+        $allowedDomains = [$appRootDomain];
+
+        $authorizedDomains = $advisor->authorized_domains;
+
+        if (is_array($authorizedDomains)) {
+            $flatAuthorized = [];
+            array_walk_recursive($authorizedDomains, function (string $domain) use (&$flatAuthorized) {
+                $flatAuthorized[] = $domain;
+            });
+            $allowedDomains = array_merge($allowedDomains, $flatAuthorized);
+        }
+
+        if (! in_array(parse_url($requestingUrlHeader)['host'], $allowedDomains)) {
+            return response()->json(['error' => 'Origin/Referer not allowed'], 403);
+        }
+
+        return $next($request);
+    }
 }

@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,36 +33,46 @@
 
 </COPYRIGHT>
 */
-import laravel, { refreshPaths } from 'laravel-vite-plugin';
-import { defineConfig } from 'vite';
 
-export default defineConfig({
-    plugins: [
-        laravel({
-            input: [
-                'resources/css/app.css',
-                'resources/js/app.js',
-                'resources/js/admin.js',
-                'resources/css/filament/admin/theme.css',
-                'app-modules/ai/resources/js/chat.js',
-                'app-modules/ai/resources/js/chats.js',
-                'app-modules/ai/resources/js/customer-advisor-preview.js',
-                'app-modules/research/resources/js/results.js',
-                'app-modules/research/resources/js/requests.js',
-                'app-modules/in-app-communication/resources/js/userToUserChat.js',
-                'app-modules/task/resources/js/kanban.js',
-                'app-modules/pipeline/resources/js/kanban.js',
-            ],
-            refresh: [
-                ...refreshPaths,
-                'app/Filament/**',
-                'app/Forms/Components/**',
-                'app/Livewire/**',
-                'app/Infolists/Components/**',
-                'app/Providers/Filament/**',
-                'app/Tables/Columns/**',
-                'portals/**',
-            ],
-        }),
-    ],
+use AdvisingApp\Ai\Jobs\CustomerAdvisors\FetchCustomerAdvisorLinkParsingResults;
+use AdvisingApp\Ai\Models\CustomerAdvisorLink;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Illuminate\Support\Facades\Http;
+
+it('refreshes existing parsing results when explicitly requested', function () {
+    Http::fake([
+        'https://r.jina.ai/*' => Http::response('fresh parsing results', 200),
+    ]);
+
+    $settings = app(AiIntegrationsSettings::class);
+    $settings->jina_deepsearch_v1_api_key = 'test-api-key';
+
+    $link = CustomerAdvisorLink::factory()->create([
+        'parsing_results' => 'stale parsing results',
+    ]);
+
+    (new FetchCustomerAdvisorLinkParsingResults($link, refreshExistingParsingResults: true))->handle();
+
+    $link->refresh();
+
+    expect($link->parsing_results)->toBe('fresh parsing results');
+});
+
+it('does not refresh existing parsing results when not explicitly requested', function () {
+    Http::fake([
+        'https://r.jina.ai/*' => Http::response('fresh parsing results', 200),
+    ]);
+
+    $settings = app(AiIntegrationsSettings::class);
+    $settings->jina_deepsearch_v1_api_key = 'test-api-key';
+
+    $link = CustomerAdvisorLink::factory()->create([
+        'parsing_results' => 'stale parsing results',
+    ]);
+
+    (new FetchCustomerAdvisorLinkParsingResults($link, refreshExistingParsingResults: false))->handle();
+
+    $link->refresh();
+
+    expect($link->parsing_results)->toBe('stale parsing results');
 });

@@ -34,34 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Actions;
+namespace AdvisingApp\Ai\Http\Controllers\CustomerAdvisors;
 
+use AdvisingApp\Ai\Actions\GenerateQnaAdvisorIntroductoryMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
-use Exception;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
+use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
 
-class GenerateQnaAdvisorWidgetEmbedCode
+class StartAdvisorThreadController
 {
-    public function handle(CustomerAdvisor $customerAdvisor): string
+    public function __invoke(CustomerAdvisor $advisor, GenerateQnaAdvisorIntroductoryMessage $generateIntroductoryMessage): JsonResponse
     {
-        $manifestPath = Storage::disk('public')->get('widgets/ai/customer-advisors/.vite/manifest.json');
+        $author = auth('student')->user() ?? auth('prospect')->user();
 
-        if (is_null($manifestPath)) {
-            throw new Exception('Vite manifest file not found.');
+        $thread = new CustomerAdvisorThread();
+        $thread->advisor()->associate($advisor);
+        $thread->author()->associate($author);
+        $thread->save();
+
+        $introductoryMessage = null;
+
+        if (
+            $advisor->is_introductory_message_enabled
+            && filled($content = $generateIntroductoryMessage->execute($advisor, $author))
+        ) {
+            $message = new CustomerAdvisorMessage();
+            $message->thread()->associate($thread);
+            $message->content = $content;
+            $message->is_advisor = true;
+            $message->save();
+
+            $introductoryMessage = [
+                'content' => $content,
+                'created_at' => $message->created_at,
+            ];
         }
 
-        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
-        $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
-
-        $loaderScriptUrl = url("widgets/ai/customer-advisors/{$manifest['src/loader.js']['file']}");
-
-        $resourcesUrl = URL::route(name: 'widgets.ai.customer-advisors.api.assets', parameters: ['advisor' => $customerAdvisor]);
-
-        return <<<EOD
-        <customer-advisor-embed url="{$resourcesUrl}"></customer-advisor-embed>
-        <script src="{$loaderScriptUrl}"></script>
-        EOD;
+        return response()->json([
+            'thread_id' => $thread->getKey(),
+            'introductory_message' => $introductoryMessage,
+            'finish_thread_url' => URL::temporarySignedRoute(
+                name: 'widgets.ai.customer-advisors.api.threads.finish',
+                expiration: now()->addDays(3),
+                parameters: ['advisor' => $advisor, 'thread' => $thread],
+            ),
+        ]);
     }
 }

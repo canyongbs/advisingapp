@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,36 +33,40 @@
 
 </COPYRIGHT>
 */
-import laravel, { refreshPaths } from 'laravel-vite-plugin';
-import { defineConfig } from 'vite';
 
-export default defineConfig({
-    plugins: [
-        laravel({
-            input: [
-                'resources/css/app.css',
-                'resources/js/app.js',
-                'resources/js/admin.js',
-                'resources/css/filament/admin/theme.css',
-                'app-modules/ai/resources/js/chat.js',
-                'app-modules/ai/resources/js/chats.js',
-                'app-modules/ai/resources/js/customer-advisor-preview.js',
-                'app-modules/research/resources/js/results.js',
-                'app-modules/research/resources/js/requests.js',
-                'app-modules/in-app-communication/resources/js/userToUserChat.js',
-                'app-modules/task/resources/js/kanban.js',
-                'app-modules/pipeline/resources/js/kanban.js',
+namespace AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\Concerns;
+
+use AdvisingApp\Ai\Models\CustomerAdvisor;
+use AdvisingApp\Portal\Enums\PortalType;
+use AdvisingApp\Portal\Models\PortalAuthentication;
+use AdvisingApp\Portal\Notifications\AuthenticatePortalNotification;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\URL;
+
+trait CanGenerateAndDispatchCustomerAdvisorWidgetAuthentications
+{
+    protected function createPortalAuthentication(Prospect|Student $educatable, CustomerAdvisor $advisor): string
+    {
+        $code = random_int(100000, 999999);
+
+        $authentication = new PortalAuthentication();
+        $authentication->portal_type = PortalType::QnaAdvisorWidget;
+        $authentication->code = Hash::make((string) $code);
+
+        $authentication->educatable()->associate($educatable);
+
+        $authentication->save();
+
+        $educatable->notify(new AuthenticatePortalNotification($authentication, $code));
+
+        return URL::signedRoute(
+            name: 'widgets.ai.customer-advisors.api.authentication.confirm',
+            parameters: [
+                'advisor' => $advisor,
+                'authentication' => $authentication,
             ],
-            refresh: [
-                ...refreshPaths,
-                'app/Filament/**',
-                'app/Forms/Components/**',
-                'app/Livewire/**',
-                'app/Infolists/Components/**',
-                'app/Providers/Filament/**',
-                'app/Tables/Columns/**',
-                'portals/**',
-            ],
-        }),
-    ],
-});
+        );
+    }
+}

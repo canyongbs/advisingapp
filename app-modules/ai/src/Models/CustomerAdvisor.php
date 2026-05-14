@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
-use AdvisingApp\Ai\Observers\QnaAdvisorObserver;
+use AdvisingApp\Ai\Observers\CustomerAdvisorObserver;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\BaseModel;
@@ -57,7 +57,7 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 /**
  * @mixin IdeHelperCustomerAdvisor
  */
-#[ObservedBy([QnaAdvisorObserver::class])]
+#[ObservedBy([CustomerAdvisorObserver::class])]
 class CustomerAdvisor extends BaseModel implements HasMedia, Auditable
 {
     use CanAddAssistantLicenseGlobalScope;
