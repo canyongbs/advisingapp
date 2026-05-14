@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Ai\Tests\RequestFactories;
 
-use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use Worksome\RequestFactories\RequestFactory;
 
 class CustomerAdvisorQuestionRequestFactory extends RequestFactory
