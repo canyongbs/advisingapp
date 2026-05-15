@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Jobs\QnaAdvisors;
 
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
+use AdvisingApp\Ai\Enums\AiReasoningEffort;
 use AdvisingApp\Ai\Events\QnaAdvisors\QnaAdvisorMessageChunk;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisorMessage;
@@ -110,6 +111,7 @@ class SendQnaAdvisorMessage implements ShouldQueue
                 options: $this->thread->messages()->where('is_advisor', true)->latest()->value('next_request_options') ?? [],
                 messages: $messages,
                 filesContext: $this->advisor,
+                reasoningEffort: AiReasoningEffort::Minimal,
             );
 
             $response = new QnaAdvisorMessage();

@@ -317,9 +317,13 @@ abstract class BaseOpenAiService implements AiService
      * @param array<string, mixed> $options
      * @param ?array<Message> $messages
      */
-    public function streamRaw(?string $prompt = null, ?string $content = null, array $files = [], bool $shouldTrack = true, array $options = [], ?array $messages = null, bool $hasImageGeneration = false, ?Model $filesContext = null): Closure
+    public function streamRaw(?string $prompt = null, ?string $content = null, array $files = [], bool $shouldTrack = true, array $options = [], ?array $messages = null, bool $hasImageGeneration = false, ?Model $filesContext = null, ?AiReasoningEffort $reasoningEffort = null): Closure
     {
         $aiSettings = app(AiSettings::class);
+
+        if ($reasoningEffort) {
+            $options['reasoning']['effort'] = $this->resolveReasoningEffortValue($reasoningEffort);
+        }
 
         try {
             $vectorStoreId = $this->getReadyVectorStoreId($files, $filesContext);
@@ -847,7 +851,7 @@ abstract class BaseOpenAiService implements AiService
                     'previous_response_id' => $previousResponseId,
                     ...($this->hasReasoning() ? [
                         'reasoning' => [
-                            'effort' => $aiSettings->reasoning_effort->value,
+                            'effort' => $this->resolveReasoningEffortValue($aiSettings->reasoning_effort),
                             'summary' => 'auto',
                         ],
                     ] : []),
@@ -965,5 +969,14 @@ abstract class BaseOpenAiService implements AiService
         }
 
         return "{$assistantInstructions}.\n\n{$formattingInstructions}";
+    }
+
+    protected function resolveReasoningEffortValue(AiReasoningEffort $effort): string
+    {
+        if ($effort === AiReasoningEffort::Minimal) {
+            return 'none';
+        }
+
+        return $effort->value;
     }
 }

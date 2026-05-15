@@ -33,7 +33,9 @@
 -->
 <script setup>
     import axios from 'axios';
+    import DOMPurify from 'dompurify';
     import Echo from 'laravel-echo';
+    import { marked } from 'marked';
     import Pusher from 'pusher-js/dist/web/pusher';
     import { defineProps, onMounted, onUnmounted, ref } from 'vue';
     import advisorDefaultAvatarUrl from '../../../resources/images/canyon-ai-headshot.jpg?url';
@@ -78,6 +80,7 @@
     const message = ref('');
     const messages = ref([]);
     const currentResponse = ref('');
+    const currentResponseHtml = ref('');
     const isLoading = ref(false);
     const isStartingThread = ref(false);
     const isThreadFinished = ref(false);
@@ -89,6 +92,69 @@
         default_theme: 'light',
     });
     let websocketChannel = null;
+    let renderInterval = null;
+    let pendingResponse = '';
+    let pendingComplete = false;
+    let messageSentAt = null;
+    let hasLoggedFirstChunk = false;
+
+    function renderMarkdown(raw) {
+        return DOMPurify.sanitize(marked.parse(raw), {
+            ADD_TAGS: ['a'],
+            ADD_ATTR: ['href', 'title', 'class', 'src', 'alt'],
+        });
+    }
+
+    function enqueueWords(content) {
+        pendingResponse += content;
+    }
+
+    function startRenderInterval() {
+        if (renderInterval) return;
+        renderInterval = setInterval(() => {
+            if (/^\s*$/.test(pendingResponse)) {
+                if (pendingComplete) {
+                    finalizePendingResponse();
+                }
+                return;
+            }
+            const maxChunks = 2;
+            const chunks = [];
+            let remaining = pendingResponse;
+            const regex = /^(\s*\S+)/;
+            while (chunks.length < maxChunks) {
+                const match = remaining.match(regex);
+                if (!match) break;
+                chunks.push(match[0]);
+                remaining = remaining.slice(match[0].length);
+            }
+            if (chunks.length > 0) {
+                const combined = chunks.join('');
+                currentResponse.value += combined;
+                pendingResponse = pendingResponse.slice(combined.length);
+                currentResponseHtml.value = renderMarkdown(currentResponse.value);
+            }
+        }, 50);
+    }
+
+    function finalizePendingResponse() {
+        pendingComplete = false;
+        if (currentResponse.value) {
+            messages.value.push({
+                from: 'advisor',
+                content: renderMarkdown(currentResponse.value),
+            });
+        }
+        currentResponse.value = '';
+        currentResponseHtml.value = '';
+        isLoading.value = false;
+    }
+
+    function resetWordQueue() {
+        pendingResponse = '';
+        pendingComplete = false;
+        currentResponseHtml.value = '';
+    }
 
     onMounted(async () => {
         axios
@@ -142,6 +208,9 @@
     });
 
     onUnmounted(() => {
+        if (renderInterval) {
+            clearInterval(renderInterval);
+        }
         if (websocketChannel) {
             websocketChannel.stopListening('advisor-message.chunk');
         }
@@ -193,6 +262,10 @@
     async function sendMessage() {
         if (!sendMessageUrl.value || !message.value.trim() || !threadId.value) return;
 
+        console.log('Message sent at:', new Date().toISOString());
+        messageSentAt = new Date();
+        hasLoggedFirstChunk = false;
+
         const userMessage = message.value;
         message.value = '';
 
@@ -203,6 +276,7 @@
 
         isLoading.value = true;
         currentResponse.value = '';
+        resetWordQueue();
 
         try {
             const requestBody = {
@@ -368,26 +442,31 @@
                 ? window.Echo.private(channelName)
                 : window.Echo.channel(channelName);
 
+            startRenderInterval();
+
             websocketChannel.listen('.qna-advisor-message.chunk', (data) => {
                 if (data.error) {
                     console.error('Advisor message error:', data.error);
+                    resetWordQueue();
                     isLoading.value = false;
                     return;
                 }
 
                 if (data.content) {
-                    currentResponse.value += data.content;
+                    if (!hasLoggedFirstChunk) {
+                        console.log('First chunk of AI response received at:', new Date().toISOString());
+                        console.log('That response time was: ', (new Date() - messageSentAt) / 1000, 'seconds');
+                        hasLoggedFirstChunk = true;
+                    }
+                    enqueueWords(data.content);
                 }
 
                 if (data.is_complete) {
-                    if (currentResponse.value) {
-                        messages.value.push({
-                            from: 'advisor',
-                            content: currentResponse.value,
-                        });
+                    if (pendingResponse.length > 0) {
+                        pendingComplete = true;
+                    } else {
+                        finalizePendingResponse();
                     }
-                    currentResponse.value = '';
-                    isLoading.value = false;
                 }
             });
 
@@ -716,7 +795,36 @@
                                 />
                             </div>
                             <div class="relative flex w-full flex-col gap-1 md:gap-3 text-gray-900 dark:text-white">
-                                {{ message.content }}
+                                <div
+                                    v-if="message.from === 'advisor'"
+                                    class="prose prose-sm dark:prose-invert max-w-none"
+                                    v-html="message.content"
+                                ></div>
+                                <div v-else class="prose prose-sm dark:prose-invert max-w-none">{{ message.content }}</div>
+                            </div>
+                        </div>
+                        <div
+                            v-if="isLoading"
+                            class="mx-auto flex gap-4 text-base w-full items-start bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 px-10 py-3"
+                        >
+                            <div class="relative flex shrink-0 flex-col items-end">
+                                <img
+                                    class="h-8 w-8 object-cover object-center"
+                                    style="border-radius: 40px"
+                                    :src="advisor.avatar_url || advisorDefaultAvatarUrl"
+                                    :alt="advisor.name"
+                                    :title="advisor.name"
+                                />
+                            </div>
+                            <div class="relative flex w-full flex-col gap-1 md:gap-3 text-gray-900 dark:text-white">
+                                <div
+                                    v-if="currentResponseHtml"
+                                    class="prose prose-sm dark:prose-invert max-w-none"
+                                    v-html="currentResponseHtml"
+                                ></div>
+                                <div v-else class="prose prose-sm dark:prose-invert max-w-none">
+                                    <span class="italic text-gray-400">AI is typing...</span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -725,12 +833,6 @@
                     v-if="!isThreadFinished"
                     class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-xs dark:border-white/10 dark:bg-gray-700"
                 >
-                    <div
-                        v-if="isLoading"
-                        class="justify-center px-4 py-4 text-base md:gap-6 md:py-6 text-gray-900 dark:text-white"
-                    >
-                        <p>AI is typing...</p>
-                    </div>
                     <div class="bg-white dark:bg-gray-800">
                         <label class="sr-only" for="message_input">Type here</label>
                         <textarea
