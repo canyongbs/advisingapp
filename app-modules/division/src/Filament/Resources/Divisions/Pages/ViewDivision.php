@@ -76,14 +76,14 @@ class ViewDivision extends ViewRecord
                                     ->color(fn (Division $record) => $record->createdBy ? 'primary' : null)
                                     ->url(fn (Division $record) => $record->createdBy ? UserResource::getUrl('view', ['record' => $record->createdBy]) : null),
                                 TextEntry::make('created_at')
-                                    ->datetime(config('project.datetime_format') ?? 'Y-m-d H:i:s'),
+                                    ->datetime(),
                                 TextEntry::make('lastUpdatedBy.name')
                                     ->default('N/A')
                                     ->label('Last Updated By')
                                     ->color(fn (Division $record) => $record->lastUpdatedBy ? 'primary' : null)
                                     ->url(fn (Division $record) => $record->lastUpdatedBy ? UserResource::getUrl('view', ['record' => $record->lastUpdatedBy]) : null),
                                 TextEntry::make('updated_at')
-                                    ->datetime(config('project.datetime_format') ?? 'Y-m-d H:i:s'),
+                                    ->datetime(),
                             ])
                             ->columns(),
                         TextEntry::make('notificationSetting.setting.name')

@@ -362,8 +362,7 @@ class EditStudent extends EditRecord
                             ->label('Last LMS login')
                             ->native(false)
                             ->closeOnDateSelection()
-                            ->format('Y-m-d H:i:s')
-                            ->displayFormat('Y-m-d H:i:s'),
+                            ->format('Y-m-d H:i:s'),
                         TextInput::make('athletics_status')
                             ->label('Athletics Status')
                             ->maxLength(255),

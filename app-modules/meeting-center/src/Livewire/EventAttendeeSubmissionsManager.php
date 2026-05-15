@@ -82,7 +82,7 @@ class EventAttendeeSubmissionsManager extends Component implements HasForms, Has
             ->defaultSort('submitted_at', 'desc')
             ->recordActions([
                 ViewAction::make()
-                    ->modalHeading(fn (EventRegistrationFormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
+                    ->modalHeading(fn (EventRegistrationFormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y g:ia (T)'))
                     ->schema(fn (EventRegistrationFormSubmission $record): array => [
                         Section::make('Metadata')
                             ->schema([

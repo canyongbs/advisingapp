@@ -101,7 +101,7 @@
 
             @if ($hasSisSystem ?? false)
                 <p class="text-xs text-gray-600 dark:text-gray-400">
-                    Last Updated {{ $educatable->updated_at->setTimezone($timezone)->format('m/d/Y \a\t g:i A') }}
+                    Last Updated {{ $educatable->updated_at->setTimezone($timezone)->format('M j, Y g:ia (T)') }}
                 </p>
             @endif
         </div>

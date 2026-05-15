@@ -60,7 +60,7 @@ class EngagementResponsesRelationManager extends RelationManager
             ->components([
                 TextEntry::make('content'),
                 TextEntry::make('sent_at')
-                    ->dateTime('Y-m-d H:i:s'),
+                    ->dateTime(),
             ]);
     }
 
@@ -73,7 +73,7 @@ class EngagementResponsesRelationManager extends RelationManager
                 IdColumn::make(),
                 TextColumn::make('content'),
                 TextColumn::make('sent_at')
-                    ->dateTime('Y-m-d H:i:s'),
+                    ->dateTime(),
             ])
             ->headerActions([
             ])

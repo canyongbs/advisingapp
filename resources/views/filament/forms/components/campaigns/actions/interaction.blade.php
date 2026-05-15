@@ -111,12 +111,12 @@
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Start Time</dt>
             <dd class="text-sm font-semibold">
-                {{ Carbon::parse($action['start_datetime'])->format('M j, Y H:i:s') }}
+                {{ Carbon::parse($action['start_datetime'])->format('M j, Y g:ia (T)') }}
             </dd>
         </div>
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">End Time</dt>
-            <dd class="text-sm font-semibold">{{ Carbon::parse($action['end_datetime'])->format('M j, Y H:i:s') }}</dd>
+            <dd class="text-sm font-semibold">{{ Carbon::parse($action['end_datetime'])->format('M j, Y g:ia (T)') }}</dd>
         </div>
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Subject</dt>
@@ -129,7 +129,7 @@
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Execute At</dt>
             <dd class="text-sm font-semibold">
-                {{ Carbon::parse($action['execute_at'])->format('M j, Y H:i:s') }}
+                {{ Carbon::parse($action['execute_at'])->format('M j, Y g:ia (T)') }}
                 {{ app(CampaignSettings::class)->getActionExecutionTimezoneLabel() }}
             </dd>
         </div>

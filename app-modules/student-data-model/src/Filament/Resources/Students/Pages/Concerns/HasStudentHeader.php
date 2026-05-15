@@ -75,7 +75,7 @@ trait HasStudentHeader
                 ...($student->firstgen ? ['First Gen'] : []),
                 ...($student->dual ? ['Dual'] : []),
                 ...($student->sap ? ['SAP'] : []),
-                ...(filled($student->dfw) ? ["DFW {$student->dfw->format('m/d/Y')}"] : []),
+                ...(filled($student->dfw) ? ["DFW {$student->dfw->format('M j, Y')}"] : []),
             ],
             'breadcrumbs' => $this->getBreadcrumbs(),
             'details' => [

@@ -75,7 +75,7 @@ class EngagementResponseActionedNote extends Model
     {
         /** @var User|null $user */
         $user = $this->createdBy;
-        $date = $this->created_at?->format('m-d-Y - g:i A');
+        $date = $this->created_at?->format('M j, Y g:ia (T)');
         $name = $user->name ?? 'Unknown User';
 
         return "{$date} - {$name} marked this message as actioned with the following note: {$this->note}";

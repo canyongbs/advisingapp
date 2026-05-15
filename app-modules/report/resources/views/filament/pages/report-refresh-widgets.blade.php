@@ -40,7 +40,7 @@
 <x-filament-widgets::widget>
     <div class="flex flex-col items-center md:flex-row">
         <div class="flex-1">
-            <p class="text-xs">This report was last updated at {{ $lastRefreshTime->format('l, F j, Y g:i A') }}.</p>
+            <p class="text-xs">This report was last updated at {{ $lastRefreshTime->format('M j, Y g:ia (T)') }}.</p>
         </div>
 
         <div class="flex-shrink-0">

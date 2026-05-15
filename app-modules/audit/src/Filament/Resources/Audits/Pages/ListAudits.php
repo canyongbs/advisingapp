@@ -81,7 +81,7 @@ class ListAudits extends ListRecords
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('Occurred At')
-                    ->formatStateUsing(fn (string $state) => Carbon::parse($state)->format('m-d-Y h:i A')),
+                    ->formatStateUsing(fn (string $state) => Carbon::parse($state)->format('M j, Y g:ia (T)')),
             ])
             ->defaultSort('id', 'desc')
             ->filters([
@@ -115,12 +115,12 @@ class ListAudits extends ListRecords
                         $indicators = [];
 
                         if ($data['created_from'] ?? null) {
-                            $indicators[] = Indicator::make('Start Date: ' . Carbon::parse($data['created_from'])->format('m-d-Y'))
+                            $indicators[] = Indicator::make('Start Date: ' . Carbon::parse($data['created_from'])->format('M j, Y'))
                                 ->removeField('created_from');
                         }
 
                         if ($data['created_until'] ?? null) {
-                            $indicators[] = Indicator::make('End Date: ' . Carbon::parse($data['created_until'])->format('m-d-Y'))
+                            $indicators[] = Indicator::make('End Date: ' . Carbon::parse($data['created_until'])->format('M j, Y'))
                                 ->removeField('created_until');
                         }
 

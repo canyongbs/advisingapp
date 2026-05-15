@@ -69,7 +69,7 @@ class ListDivisions extends ListRecords
                     ->sortable(),
                 TextColumn::make('updated_at')
                     ->label('Updated At')
-                    ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
+                    ->dateTime()
                     ->sortable(),
                 IconColumn::make('is_default')
                     ->label('Default')

@@ -117,7 +117,7 @@ class ManageFormSubmissions extends ManageRelatedRecords
             ])
             ->recordActions([
                 ViewAction::make()
-                    ->modalHeading(fn (FormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
+                    ->modalHeading(fn (FormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y g:ia (T)'))
                     ->schema(fn (FormSubmission $record): ?array => ($record->author && $record->submissible->is_authenticated) ? [
                         Section::make('Authenticated Submitter')
                             ->schema([
