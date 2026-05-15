@@ -116,7 +116,9 @@
         </div>
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">End Time</dt>
-            <dd class="text-sm font-semibold">{{ Carbon::parse($action['end_datetime'])->format('M j, Y g:ia (T)') }}</dd>
+            <dd class="text-sm font-semibold">
+                {{ Carbon::parse($action['end_datetime'])->format('M j, Y g:ia (T)') }}
+            </dd>
         </div>
         <div class="flex flex-col pt-3">
             <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Subject</dt>
