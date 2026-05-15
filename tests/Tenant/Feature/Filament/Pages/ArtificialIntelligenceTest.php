@@ -34,29 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Observers;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Filament\Pages\ArtificialIntelligence;
+use App\Models\User;
 
-use AdvisingApp\IntegrationOpenAi\Jobs\SyncResourceHubArticlesToAssistantVectorStores;
-use AdvisingApp\IntegrationOpenAi\Jobs\SyncResourceHubArticlesToQnaAdvisorVectorStores;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 
-class ResourceHubArticleObserver
-{
-    public function created(ResourceHubArticle $article): void
-    {
-        SyncResourceHubArticlesToAssistantVectorStores::dispatch();
-        SyncResourceHubArticlesToQnaAdvisorVectorStores::dispatch();
-    }
+it('is gated with proper access control', function () {
+    $user = User::factory()->create();
 
-    public function updated(ResourceHubArticle $article): void
-    {
-        SyncResourceHubArticlesToAssistantVectorStores::dispatch();
-        SyncResourceHubArticlesToQnaAdvisorVectorStores::dispatch();
-    }
+    actingAs($user);
 
-    public function deleted(ResourceHubArticle $article): void
-    {
-        SyncResourceHubArticlesToAssistantVectorStores::dispatch();
-        SyncResourceHubArticlesToQnaAdvisorVectorStores::dispatch();
-    }
-}
+    get(ArtificialIntelligence::getUrl())->assertForbidden();
+
+    $user->grantLicense(LicenseType::ConversationalAi);
+    $user->refresh();
+
+    get(ArtificialIntelligence::getUrl())->assertSuccessful();
+});

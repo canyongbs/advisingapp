@@ -40,6 +40,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\CalendarEventResource;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
+use App\Enums\Feature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Pages\ProfilePage;
 use App\Models\User;
@@ -56,6 +57,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
@@ -66,6 +68,11 @@ class ManagePersonalBookingPage extends ProfilePage
     protected static ?string $title = 'Personal Booking Page';
 
     protected static ?int $navigationSort = 20;
+
+    public static function canAccess(): bool
+    {
+        return Gate::check(Feature::ScheduleAndAppointments->getGateName()) && parent::canAccess();
+    }
 
     public function getHeaderActions(): array
     {
