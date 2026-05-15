@@ -4,5 +4,5 @@ services:
             context: .
             target: base
             args:
-                USER_ID: ${SPIN_USER_ID:-9999}
-                GROUP_ID: ${SPIN_GROUP_ID:-9999}
+                USER_ID: ${SPIN_USER_ID:-33}
+                GROUP_ID: ${SPIN_GROUP_ID:-33}
