@@ -134,7 +134,7 @@ class RetryAdvisorMessage implements ShouldQueue
                 $reasoningBuffer[] = $chunk->content;
                 $reasoningChunkCount++;
 
-                if ($reasoningChunkCount >= 30) {
+                if ($reasoningChunkCount >= 10) {
                     event(new AdvisorReasoningChunk(
                         $this->thread,
                         content: implode('', $reasoningBuffer),
@@ -175,7 +175,7 @@ class RetryAdvisorMessage implements ShouldQueue
                 $chunkBuffer[] = $chunk->content;
                 $chunkCount++;
 
-                if ($chunkCount >= 30) {
+                if ($chunkCount >= 10) {
                     event(new AdvisorMessageChunk(
                         $this->thread,
                         content: implode('', $chunkBuffer),

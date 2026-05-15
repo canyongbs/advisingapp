@@ -135,7 +135,7 @@ class SendQnaAdvisorMessage implements ShouldQueue
                     $chunkBuffer[] = $chunk->content;
                     $chunkCount++;
 
-                    if ($chunkCount >= 30) {
+                    if ($chunkCount >= 10) {
                         event(new QnaAdvisorMessageChunk(
                             $this->advisor,
                             $this->thread,
