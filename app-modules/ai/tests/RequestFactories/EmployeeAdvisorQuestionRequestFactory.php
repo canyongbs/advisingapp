@@ -34,36 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+namespace AdvisingApp\Ai\Tests\RequestFactories;
 
-use AdvisingApp\Ai\Observers\EmployeeAdvisorResourceHubCategoryObserver;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\EmployeeAdvisorCategory;
+use Worksome\RequestFactories\RequestFactory;
 
-#[ObservedBy([EmployeeAdvisorResourceHubCategoryObserver::class])]
-/**
- * @mixin IdeHelperEmployeeAdvisorResourceHubCategory
- */
-class EmployeeAdvisorResourceHubCategory extends Pivot
+class EmployeeAdvisorQuestionRequestFactory extends RequestFactory
 {
-    use HasUuids;
-
-    /**
-     * @return BelongsTo<AiAssistant, $this>
-     */
-    public function aiAssistant(): BelongsTo
+    public function definition(): array
     {
-        return $this->belongsTo(AiAssistant::class, 'employee_advisor_id');
-    }
-
-    /**
-     * @return BelongsTo<ResourceHubCategory, $this>
-     */
-    public function resourceHubCategory(): BelongsTo
-    {
-        return $this->belongsTo(ResourceHubCategory::class);
+        return [
+            'question' => $this->faker->sentence(),
+            'answer' => $this->faker->paragraph(),
+            'category_id' => EmployeeAdvisorCategory::factory()->for(AiAssistant::first(), 'employeeAdvisor'),
+        ];
     }
 }

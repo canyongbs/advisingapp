@@ -41,6 +41,8 @@ use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\EditAiAssistant;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\EditAiAssistantLinks;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ListAiAssistants;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ManageAiAssistantAdditionalKnowledge;
+use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ManageEmployeeAdvisorCategories;
+use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ManageEmployeeAdvisorQuestions;
 use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
@@ -68,6 +70,8 @@ class AiAssistantResource extends Resource
             'edit' => EditAiAssistant::route('/{record}/edit'),
             'manage-additional-knowledge' => ManageAiAssistantAdditionalKnowledge::route('/{record}/additional-knowledge'),
             'edit-websites' => EditAiAssistantLinks::route('/{record}/websites'),
+            'manage-categories' => ManageEmployeeAdvisorCategories::route('/{record}/categories'),
+            'manage-questions' => ManageEmployeeAdvisorQuestions::route('/{record}/questions'),
         ];
     }
 
@@ -75,6 +79,8 @@ class AiAssistantResource extends Resource
     {
         return $page->generateNavigationItems([
             EditAiAssistant::class,
+            ManageEmployeeAdvisorCategories::class,
+            ManageEmployeeAdvisorQuestions::class,
             ManageAiAssistantAdditionalKnowledge::class,
             EditAiAssistantLinks::class,
         ]);
