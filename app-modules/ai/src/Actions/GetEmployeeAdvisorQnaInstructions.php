@@ -46,9 +46,13 @@ class GetEmployeeAdvisorQnaInstructions
     {
         $assistant->loadMissing('categories.questions');
 
-        $instructions = $assistant->instructions ?? '';
-
         $qnaSection = $this->generateQnaSection($assistant);
+
+        if (blank($qnaSection)) {
+            return $assistant->instructions ?? '';
+        }
+
+        $instructions = $assistant->instructions ?? '';
 
         return <<<END
 
