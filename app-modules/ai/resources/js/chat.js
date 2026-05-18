@@ -261,7 +261,11 @@ document.addEventListener('alpine:init', () => {
 
                         if (!this.hasSetUpNewMessageForResponse) {
                             console.log('First chunk of AI response received at:', new Date().toISOString());
-                            console.log('That response time was: ', (new Date() - this.messageSentAt) / 1000, 'seconds');
+                            console.log(
+                                'That response time was: ',
+                                (new Date() - this.messageSentAt) / 1000,
+                                'seconds',
+                            );
 
                             if (!this.isCompletingPreviousResponse) {
                                 this.messages.push({

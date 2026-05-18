@@ -800,7 +800,9 @@
                                     class="prose prose-sm dark:prose-invert max-w-none"
                                     v-html="message.content"
                                 ></div>
-                                <div v-else class="prose prose-sm dark:prose-invert max-w-none">{{ message.content }}</div>
+                                <div v-else class="prose prose-sm dark:prose-invert max-w-none">
+                                    {{ message.content }}
+                                </div>
                             </div>
                         </div>
                         <div
