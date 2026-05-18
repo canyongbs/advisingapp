@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Filament\Resources\DataAdvisors\Pages\CreateDataAdvisor;
 use AdvisingApp\Ai\Filament\Resources\DataAdvisors\Pages\EditDataAdvisor;
 use AdvisingApp\Ai\Filament\Resources\DataAdvisors\Pages\ListDataAdvisors;
 use AdvisingApp\Ai\Models\DataAdvisor;
-
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;

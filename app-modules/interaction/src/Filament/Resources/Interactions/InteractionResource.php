@@ -40,7 +40,6 @@ use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\CreateInteract
 use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\EditInteraction;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\ListInteractions;
 use AdvisingApp\Interaction\Models\Interaction;
-
 use Filament\Resources\Resource;
 use UnitEnum;
 
