@@ -44,7 +44,6 @@ use Spatie\Health\ResultStores\ResultStore;
 
 class ProductHealth extends HealthCheckResults
 {
-
     public static function getNavigationIcon(): string
     {
         return '';

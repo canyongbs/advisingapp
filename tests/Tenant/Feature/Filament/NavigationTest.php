@@ -70,7 +70,7 @@ test('navigation groups with a label must have an icon, and the unlabeled home g
         } else {
             expect($group->getIcon())
                 ->toBeEmpty(
-                    "The unlabeled (Home) navigation group should not have a group-level icon."
+                    'The unlabeled (Home) navigation group should not have a group-level icon.'
                 );
         }
     }
