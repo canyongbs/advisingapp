@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\ResourceHub\Enums\ConcernStatus;
 use AdvisingApp\ResourceHub\Filament\Widgets\ResourceHubArticleConcernsTable;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
 use App\Models\User;
@@ -45,7 +46,7 @@ use function Pest\Livewire\livewire;
 it('renders the change concern status action based on proper access', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $concern = ResourceHubArticleConcern::factory()->create();
+    $concern = ResourceHubArticleConcern::factory()->create(['status' => ConcernStatus::New]);
 
     $user->givePermissionTo('resource_hub_article.view-any');
     $user->givePermissionTo('resource_hub_article.*.view');
@@ -54,7 +55,7 @@ it('renders the change concern status action based on proper access', function (
 
     livewire(ResourceHubArticleConcernsTable::class, ['record' => $concern->resourceHubArticle])
         ->assertOk()
-        ->assertTableRecordActionHidden('changeConcernStatus', $concern->getKey());
+        ->assertTableActionHidden('changeConcernStatus', $concern);
 
     $user->givePermissionTo('resource_hub_article.*.update');
 
@@ -62,5 +63,5 @@ it('renders the change concern status action based on proper access', function (
 
     livewire(ResourceHubArticleConcernsTable::class, ['record' => $concern->resourceHubArticle])
         ->assertOk()
-        ->assertTableRecordActionVisible('changeConcernStatus', $concern->getKey());
+        ->assertTableActionVisible('changeConcernStatus', $concern);
 });

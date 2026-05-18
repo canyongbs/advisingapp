@@ -72,8 +72,7 @@ it('renders the raise concern action based on proper access', function () {
     actingAs($user);
 
     livewire(ViewResourceHubArticle::class, ['record' => $resourceHubArticle->getKey()])
-        ->assertOk()
-        ->assertActionHidden('raiseConcern');
+        ->assertForbidden();
 
     $user->givePermissionTo('resource_hub_article.view-any');
 
