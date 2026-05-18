@@ -1,0 +1,91 @@
+#!/bin/sh
+set -e
+
+###################################################
+# Usage: set-file-permissions --owner USER_ID:GROUP_ID --service SERVICE
+###################################################
+# This script is intended to be called at build time after set-id to update
+# file permissions of service directories to match the new UID/GID.
+script_name="set-file-permissions"
+
+usage() {
+    echo "Usage: $script_name --owner USER_ID:GROUP_ID --service SERVICE"
+    echo ""
+    echo "Options:"
+    echo "  --owner USER_ID:GROUP_ID   Set the owner (required)"
+    echo "  --service SERVICE          Service type: web, worker, scheduler, cli (required)"
+}
+
+# Check for root privileges
+if [ "$(id -u)" -ne 0 ]; then
+    echo "$script_name: This script must be run as root within the container."
+    exit 1
+fi
+
+OWNER=""
+SERVICE=""
+
+while [ "$#" -gt 0 ]; do
+    case "$1" in
+        --owner)
+            OWNER="$2"
+            shift 2
+            ;;
+        --owner=*)
+            OWNER="${1#--owner=}"
+            shift 1
+            ;;
+        --service)
+            SERVICE="$2"
+            shift 2
+            ;;
+        --service=*)
+            SERVICE="${1#--service=}"
+            shift 1
+            ;;
+        *)
+            usage
+            exit 1
+            ;;
+    esac
+done
+
+if [ -z "$OWNER" ]; then
+    echo "$script_name: --owner is required."
+    usage
+    exit 1
+fi
+
+if [ -z "$SERVICE" ]; then
+    echo "$script_name: --service is required."
+    usage
+    exit 1
+fi
+
+# Common directories shared by all services
+DIRS="/composer /run /var/www/html"
+
+case "$SERVICE" in
+    web)
+        DIRS="$DIRS /var/cache/nginx /var/log/nginx /var/lib/nginx /etc/nginx/sites-enabled /etc/ssl/web"
+        ;;
+    worker)
+        ;;
+    scheduler)
+        ;;
+    cli)
+        ;;
+    *)
+        echo "$script_name: Unsupported service: $SERVICE"
+        exit 1
+        ;;
+esac
+
+for path in $DIRS; do
+    if [ -e "$path" ]; then
+        chown -R "$OWNER" "$path"
+        echo "$script_name: Ownership of $path changed to $OWNER."
+    fi
+done
+
+echo "$script_name: ✅ File permissions updated for service '$SERVICE'."

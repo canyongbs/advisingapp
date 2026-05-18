@@ -117,15 +117,15 @@ main() {
       exec "${COMPOSE_CMD[@]}" exec -it "$service" /bin/bash
       ;;
     ih)
-      exec docker compose -f docker-compose.local-cli.yml run -e PUID="${PLS_USER_ID}" -e PGID="${PLS_GROUP_ID}" --rm --build local-cli "$@"
+      exec docker compose -f docker-compose.local-cli.yml run --rm --build local-cli "$@"
       ;;
     npmsetup)
-      exec docker compose -f docker-compose.local-cli.yml run -e PUID="${PLS_USER_ID}" -e PGID="${PLS_GROUP_ID}" --rm --build local-cli \
-        /bin/bash -c "npm ci && chown -R "$PLS_USER_ID":"$PLS_GROUP_ID" /var/www/html/node_modules && npm run build"
+      exec docker compose -f docker-compose.local-cli.yml run --rm --build local-cli \
+        /bin/bash -c "npm ci && npm run build"
       ;;
     composersetup)
-      exec docker compose -f docker-compose.local-cli.yml run -e PUID="${PLS_USER_ID}" -e PGID="${PLS_GROUP_ID}" --rm --build local-cli \
-        /bin/bash -c "composer install && chown -R "$PLS_USER_ID":"$PLS_GROUP_ID" /var/www/html/vendor"
+      exec docker compose -f docker-compose.local-cli.yml run --rm --build local-cli \
+        /bin/bash -c "composer install"
       ;;
     -h|--help)
       show_help
