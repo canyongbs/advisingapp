@@ -63,7 +63,7 @@ interface AiService
      * @param array<AiFile> $files
      * @param array<string, mixed> $options
      */
-    public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?Model $filesContext = null): Closure;
+    public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?Model $filesContext = null, ?AiReasoningEffort $reasoningEffort = null): Closure;
 
     /**
      * This method is passed a prompt and message and should return a stream of plain text chunks.

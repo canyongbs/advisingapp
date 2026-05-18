@@ -111,6 +111,9 @@ abstract class BaseOpenAiService implements AiService
                 ])
                 ->withProviderOptions([
                     'truncation' => 'auto',
+                    'reasoning' => [
+                        'effort' => $this->resolveReasoningEffortValue(AiReasoningEffort::Minimal),
+                    ],
                 ])
                 ->withSystemPrompt($prompt)
                 ->withPrompt($content)
@@ -183,9 +186,13 @@ abstract class BaseOpenAiService implements AiService
      * @param array<AiFile> $files
      * @param array<string, mixed> $options
      */
-    public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?Model $filesContext = null): Closure
+    public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?Model $filesContext = null, ?AiReasoningEffort $reasoningEffort = null): Closure
     {
         $aiSettings = app(AiSettings::class);
+
+        if ($reasoningEffort) {
+            $options['reasoning']['effort'] = $this->resolveReasoningEffortValue($reasoningEffort);
+        }
 
         try {
             $vectorStoreId = $this->getReadyVectorStoreId($files, $filesContext);

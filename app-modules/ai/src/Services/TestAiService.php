@@ -74,7 +74,7 @@ class TestAiService implements AiService
      * @param array<AiFile> $files
      * @param array<string, mixed> $options
      */
-    public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?Model $filesContext = null): Closure
+    public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?Model $filesContext = null, ?AiReasoningEffort $reasoningEffort = null): Closure
     {
         throw new Exception('Plain text streaming is not supported by this service.');
     }
