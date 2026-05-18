@@ -1,4 +1,3 @@
-fix-permissions
 php-fpm
 configure-ssl
 debug-nginx

@@ -323,15 +323,16 @@ FROM web-base AS web-development
 
 # Fix permission issues in development by setting the "www-data"
 # user to the same UID/GID as the host user running docker.
-COPY ./docker/set-id /set-id
+COPY --chmod=755 ./docker/set-id /set-id
+COPY --chmod=755 ./docker/set-file-permissions /set-file-permissions
 
-ARG PUID
-ARG PGID
-RUN set-id www-data ${PUID} ${PGID} ; \
-    rm /set-id
+ARG USER_ID=33
+ARG GROUP_ID=33
+RUN /set-id www-data ${USER_ID}:${GROUP_ID} && \
+    /set-file-permissions --owner ${USER_ID}:${GROUP_ID} --service web && \
+    rm /set-id /set-file-permissions
 
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod g+s -R /var/www/html
+RUN chmod g+s -R /var/www/html
 
 USER www-data
 
@@ -363,12 +364,14 @@ FROM worker-base AS worker-development
 
 # Fix permission issues in development by setting the "www-data"
 # user to the same UID/GID as the host user running docker.
-COPY ./docker/set-id /set-id
+COPY --chmod=755 ./docker/set-id /set-id
+COPY --chmod=755 ./docker/set-file-permissions /set-file-permissions
 
-ARG PUID
-ARG PGID
-RUN set-id www-data ${PUID} ${PGID} ; \
-    rm /set-id
+ARG USER_ID=33
+ARG GROUP_ID=33
+RUN /set-id www-data ${USER_ID}:${GROUP_ID} && \
+    /set-file-permissions --owner ${USER_ID}:${GROUP_ID} --service worker && \
+    rm /set-id /set-file-permissions
 
 ARG MULTIPLE_DEVELOPMENT_QUEUES=false
 
@@ -385,8 +388,7 @@ RUN if [[ -z "$MULTIPLE_DEVELOPMENT_QUEUES" ]] ; then \
 
 RUN rm /generate-queues.sh
 
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod g+s -R /var/www/html
+RUN chmod g+s -R /var/www/html
 
 USER www-data
 
@@ -423,15 +425,16 @@ FROM scheduler-base AS scheduler-development
 
 # Fix permission issues in development by setting the "www-data"
 # user to the same UID/GID as the host user running docker.
-COPY ./docker/set-id /set-id
+COPY --chmod=755 ./docker/set-id /set-id
+COPY --chmod=755 ./docker/set-file-permissions /set-file-permissions
 
-ARG PUID
-ARG PGID
-RUN set-id www-data ${PUID} ${PGID} ; \
-    rm /set-id
+ARG USER_ID=33
+ARG GROUP_ID=33
+RUN /set-id www-data ${USER_ID}:${GROUP_ID} && \
+    /set-file-permissions --owner ${USER_ID}:${GROUP_ID} --service scheduler && \
+    rm /set-id /set-file-permissions
 
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod g+s -R /var/www/html
+RUN chmod g+s -R /var/www/html
 
 USER www-data
 
@@ -470,11 +473,13 @@ FROM base AS cli-local-tooling
 
 # Fix permission issues in development by setting the "www-data"
 # user to the same UID/GID as the host user running docker.
-COPY ./docker/set-id /set-id
+COPY --chmod=755 ./docker/set-id /set-id
+COPY --chmod=755 ./docker/set-file-permissions /set-file-permissions
 
-ARG PUID
-ARG PGID
-RUN set-id www-data ${PUID} ${PGID} ; \
-    rm /set-id
+ARG USER_ID=33
+ARG GROUP_ID=33
+RUN /set-id www-data ${USER_ID}:${GROUP_ID} && \
+    /set-file-permissions --owner ${USER_ID}:${GROUP_ID} --service cli && \
+    rm /set-id /set-file-permissions
 
 USER www-data

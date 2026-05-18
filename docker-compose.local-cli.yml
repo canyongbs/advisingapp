@@ -3,6 +3,9 @@ services:
         build:
             context: .
             target: cli-local-tooling
+            args:
+                USER_ID: '${PLS_USER_ID:-33}'
+                GROUP_ID: '${PLS_GROUP_ID:-33}'
         environment:
             CREATE_STORAGE_SYMLINK: false
         extra_hosts:
