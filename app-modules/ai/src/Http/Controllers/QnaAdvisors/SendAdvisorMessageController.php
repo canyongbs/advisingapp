@@ -112,7 +112,7 @@ class SendAdvisorMessageController
                 ),
                 'ip' => request()->ip(),
             ],
-        ));
+        ))->onConnection('background');
 
         return response()->json([
             'message' => 'Message dispatched for processing via websockets.',

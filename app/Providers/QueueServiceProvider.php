@@ -37,6 +37,7 @@
 namespace App\Providers;
 
 use App\Overrides\LaravelSqsExtended\SqsDiskConnector;
+use App\Queue\Connectors\TenantAwareBackgroundConnector;
 use Illuminate\Support\ServiceProvider;
 
 class QueueServiceProvider extends ServiceProvider
@@ -45,5 +46,6 @@ class QueueServiceProvider extends ServiceProvider
     {
         $manager = $this->app->make('queue');
         $manager->addConnector('canyongbs-sqs-disk', fn () => new SqsDiskConnector());
+        $manager->addConnector('tenant-aware-background', fn () => new TenantAwareBackgroundConnector());
     }
 }

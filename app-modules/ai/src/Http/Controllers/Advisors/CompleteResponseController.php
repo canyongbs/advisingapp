@@ -63,7 +63,7 @@ class CompleteResponseController
 
             dispatch(new CompleteAdvisorResponse(
                 $thread,
-            ));
+            ))->onConnection('background');
 
             return response()->json([]);
         } catch (Throwable $exception) {
