@@ -372,7 +372,7 @@ jobs:
               run: php artisan route:list
 
             - name: Execute tests (Unit and Feature tests) via Pest
-              run: ./vendor/bin/pest --configuration phpunit-ci.xml --parallel --testsuite=Tenant --shard=${{ matrix.shard }}/5
+              run: ./vendor/bin/pest --configuration phpunit-ci.xml --testsuite=Tenant --shard=${{ matrix.shard }}/5
 
     lint:
         runs-on: ubuntu-22.04
