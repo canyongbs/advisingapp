@@ -117,10 +117,137 @@ jobs:
               with:
                   fail-if-changed: 'true'
 
-    test:
+    test-landlord:
+        runs-on: ubuntu-22.04
+
+        needs: [prep-and-code-consistency]
+
+        env:
+            DB_PORT: 5432
+            DB_HOST: 127.0.0.1
+            DB_USERNAME: root
+            DB_PASSWORD: root
+            DB_DATABASE: testing_landlord
+            REDIS_HOST: 127.0.0.1
+
+        timeout-minutes: 15
+
+        services:
+            redis:
+                image: redis
+                ports:
+                    - 6379:6379
+                options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+        steps:
+            - name: Start PostgreSQL
+              run: |
+                  docker run -d \
+                    --name postgres \
+                    -p 5432:5432 \
+                    -e POSTGRES_DB=${{ env.DB_DATABASE }} \
+                    -e POSTGRES_USER=${{ env.DB_USERNAME }} \
+                    -e POSTGRES_PASSWORD=${{ env.DB_PASSWORD }} \
+                    --health-cmd pg_isready \
+                    --health-interval 10s \
+                    --health-timeout 5s \
+                    --health-retries 5 \
+                    postgres:15 \
+                    -c max_locks_per_transaction=256
+
+            - name: Wait for PostgreSQL
+              run: |
+                  until docker inspect --format='{{.State.Health.Status}}' postgres | grep -q healthy; do
+                    sleep 2
+                  done
+
+            - name: Create tenant database
+              run: psql -h 127.0.0.1 -d ${{ env.DB_DATABASE }} -U ${{ env.DB_USERNAME }} -c 'CREATE DATABASE testing_tenant;'
+              env:
+                  PGPASSWORD: ${{ env.DB_PASSWORD }}
+
+            - name: Setup cache environment
+              id: extcache
+              uses: shivammathur/cache-extensions@256729b5fef535345e27904657f78048c0990f81 #1.14.5
+              with:
+                  php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
+                  extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
+                  key: ${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
+
+            - name: Cache extensions
+              uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae #5.0.5
+              with:
+                  path: ${{ steps.extcache.outputs.dir }}
+                  key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
+                  restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
+
+            - uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc #2.37.1
+              with:
+                  php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
+                  coverage: none
+                  extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
+
+            - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #6.0.2
+              with:
+                  fetch-depth: 0
+                  fetch-tags: true
+
+            - name: Copy .env
+              run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+            - name: Cache dependencies
+              id: cache-composer
+              uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae #5.0.5
+              with:
+                  path: vendor
+                  key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
+
+            - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
+              name: Install Dependencies
+              run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+              shell: bash
+
+            - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e #6.4.0
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: 'npm'
+            - run: npm install
+
+            - name: Build Assets
+              run: npm run build
+
+            - name: Generate key
+              run: php artisan key:generate
+
+            - name: Cache Modular Modules
+              run: php artisan modules:cache --env=testing
+
+            - name: Cache Routes
+              run: php artisan route:cache --env=testing
+
+            - name: Cache Views
+              run: php artisan view:cache --env=testing
+
+            - name: Cache Events
+              run: php artisan event:cache --env=testing
+
+            - name: Cache Icons
+              run: php artisan icons:cache --env=testing
+
+            - name: Cache Filament Components
+              run: php artisan filament:cache-components --env=testing
+
+            - name: Check route integrity
+              run: php artisan route:list
+
+            - name: Execute tests (Unit and Feature tests) via PHPUnit
+              run: php artisan test --configuration phpunit-ci.xml --parallel --testsuite=Landlord
+
+    test-tenant:
         strategy:
+            fail-fast: false
             matrix:
-                testsuite: [Landlord, Tenant]
+                shard: [1, 2, 3, 4, 5]
 
         runs-on: ubuntu-22.04
 
@@ -245,7 +372,7 @@ jobs:
               run: php artisan route:list
 
             - name: Execute tests (Unit and Feature tests) via PHPUnit
-              run: php artisan test --configuration phpunit-ci.xml --parallel --testsuite=${{ matrix.testsuite }}
+              run: php artisan test --configuration phpunit-ci.xml --parallel --testsuite=Tenant --shard=${{ matrix.shard }}/5
 
     lint:
         runs-on: ubuntu-22.04
