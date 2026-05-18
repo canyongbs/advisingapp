@@ -416,3 +416,7 @@
 span[data-type='mergeTag'] {
     @apply my-0 inline-block whitespace-nowrap bg-transparent dark:bg-transparent px-0 py-0 mx-0 rounded-none;
 }
+
+.fi-datetime-description {
+    @apply text-gray-500 dark:text-gray-400;
+}
