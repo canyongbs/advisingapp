@@ -34,36 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+use App\Features\EmployeeAdvisorQnaFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Ai\Observers\EmployeeAdvisorResourceHubCategoryObserver;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-
-#[ObservedBy([EmployeeAdvisorResourceHubCategoryObserver::class])]
-/**
- * @mixin IdeHelperEmployeeAdvisorResourceHubCategory
- */
-class EmployeeAdvisorResourceHubCategory extends Pivot
-{
-    use HasUuids;
-
-    /**
-     * @return BelongsTo<AiAssistant, $this>
-     */
-    public function aiAssistant(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this->belongsTo(AiAssistant::class, 'employee_advisor_id');
+        DB::transaction(function () {
+            Schema::create('employee_advisor_categories', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->string('name');
+                $table->text('description');
+                $table->foreignUuid('employee_advisor_id')->constrained('ai_assistants')->cascadeOnDelete();
+                $table->timestamps();
+                $table->softDeletes();
+
+                $table->unique(['employee_advisor_id', 'name']);
+            });
+
+            Schema::create('employee_advisor_questions', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->string('question');
+                $table->text('answer');
+                $table->foreignUuid('category_id')->constrained('employee_advisor_categories')->cascadeOnDelete();
+                $table->timestamps();
+                $table->softDeletes();
+            });
+
+            EmployeeAdvisorQnaFeature::activate();
+        });
     }
 
-    /**
-     * @return BelongsTo<ResourceHubCategory, $this>
-     */
-    public function resourceHubCategory(): BelongsTo
+    public function down(): void
     {
-        return $this->belongsTo(ResourceHubCategory::class);
+        DB::transaction(function () {
+            EmployeeAdvisorQnaFeature::deactivate();
+
+            Schema::dropIfExists('employee_advisor_questions');
+            Schema::dropIfExists('employee_advisor_categories');
+        });
     }
-}
+};

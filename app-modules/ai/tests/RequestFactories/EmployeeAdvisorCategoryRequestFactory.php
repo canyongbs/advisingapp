@@ -34,36 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+namespace AdvisingApp\Ai\Tests\RequestFactories;
 
-use AdvisingApp\Ai\Observers\EmployeeAdvisorResourceHubCategoryObserver;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use Worksome\RequestFactories\RequestFactory;
 
-#[ObservedBy([EmployeeAdvisorResourceHubCategoryObserver::class])]
-/**
- * @mixin IdeHelperEmployeeAdvisorResourceHubCategory
- */
-class EmployeeAdvisorResourceHubCategory extends Pivot
+class EmployeeAdvisorCategoryRequestFactory extends RequestFactory
 {
-    use HasUuids;
-
-    /**
-     * @return BelongsTo<AiAssistant, $this>
-     */
-    public function aiAssistant(): BelongsTo
+    public function definition(): array
     {
-        return $this->belongsTo(AiAssistant::class, 'employee_advisor_id');
-    }
-
-    /**
-     * @return BelongsTo<ResourceHubCategory, $this>
-     */
-    public function resourceHubCategory(): BelongsTo
-    {
-        return $this->belongsTo(ResourceHubCategory::class);
+        return [
+            'name' => $this->faker->word(),
+            'description' => $this->faker->paragraph(),
+        ];
     }
 }
