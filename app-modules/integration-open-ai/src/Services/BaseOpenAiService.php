@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
+use AdvisingApp\Ai\Actions\GetEmployeeAdvisorQnaInstructions;
 use AdvisingApp\Ai\Enums\AiReasoningEffort;
 use AdvisingApp\Ai\Exceptions\MessageResponseException;
 use AdvisingApp\Ai\Models\AiAssistant;
@@ -56,6 +57,7 @@ use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns\InteractsW
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns\InteractsWithVectorStores;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use App\Features\EmployeeAdvisorQnaFeature;
 use App\Models\User;
 use Closure;
 use Exception;
@@ -945,7 +947,9 @@ abstract class BaseOpenAiService implements AiService
 
     protected function generateAssistantInstructions(AiAssistant $assistant, User $user, bool $withDynamicContext = false): string
     {
-        $assistantInstructions = rtrim($assistant->instructions, '. ');
+        $assistantInstructions = rtrim(EmployeeAdvisorQnaFeature::active()
+            ? app(GetEmployeeAdvisorQnaInstructions::class)->execute($assistant)
+            : $assistant->instructions, '. ');
 
         $maxAssistantInstructionsLength = $this->getMaxAssistantInstructionsLength();
 

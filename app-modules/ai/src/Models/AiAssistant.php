@@ -55,6 +55,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
@@ -259,6 +260,29 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
             ->whereNotNull('article_details')
             ->get(['id', 'updated_at'])
             ->all();
+    }
+
+    /**
+     * @return HasMany<EmployeeAdvisorCategory, $this>
+     */
+    public function categories(): HasMany
+    {
+        return $this->hasMany(EmployeeAdvisorCategory::class, 'employee_advisor_id');
+    }
+
+    /**
+     * @return HasManyThrough<EmployeeAdvisorQuestion, EmployeeAdvisorCategory, $this>
+     */
+    public function questions(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            EmployeeAdvisorQuestion::class,
+            EmployeeAdvisorCategory::class,
+            'employee_advisor_id',
+            'category_id',
+            'id',
+            'id'
+        );
     }
 
     /**
