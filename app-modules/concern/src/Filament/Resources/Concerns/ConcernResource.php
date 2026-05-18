@@ -38,14 +38,12 @@ namespace AdvisingApp\Concern\Filament\Resources\Concerns;
 
 use AdvisingApp\Concern\Filament\Resources\Concerns\Pages\ListConcerns;
 use AdvisingApp\Concern\Models\Concern;
-use BackedEnum;
+
 use Filament\Resources\Resource;
 use UnitEnum;
 
 class ConcernResource extends Resource
 {
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-document-text';
-
     protected static string | UnitEnum | null $navigationGroup = 'CRM';
 
     protected static ?int $navigationSort = 5;

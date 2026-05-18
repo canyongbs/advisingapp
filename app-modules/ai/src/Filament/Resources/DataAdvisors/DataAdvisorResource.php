@@ -40,7 +40,7 @@ use AdvisingApp\Ai\Filament\Resources\DataAdvisors\Pages\CreateDataAdvisor;
 use AdvisingApp\Ai\Filament\Resources\DataAdvisors\Pages\EditDataAdvisor;
 use AdvisingApp\Ai\Filament\Resources\DataAdvisors\Pages\ListDataAdvisors;
 use AdvisingApp\Ai\Models\DataAdvisor;
-use BackedEnum;
+
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -52,8 +52,6 @@ use UnitEnum;
 class DataAdvisorResource extends Resource
 {
     protected static ?string $model = DataAdvisor::class;
-
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static string | UnitEnum | null $navigationGroup = 'Enterprise AI';
 

@@ -41,7 +41,7 @@ use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\Pages\EditEngageme
 use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\Pages\ListEngagementFiles;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\Pages\ViewEngagementFile;
 use AdvisingApp\Engagement\Models\EngagementFile;
-use BackedEnum;
+
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\TextInput;
@@ -52,8 +52,6 @@ use UnitEnum;
 class EngagementFileResource extends Resource
 {
     protected static ?string $model = EngagementFile::class;
-
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-document-duplicate';
 
     protected static string | UnitEnum | null $navigationGroup = 'CRM';
 
