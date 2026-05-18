@@ -124,15 +124,13 @@ class EditStudent extends EditRecord
                             ->native(false)
                             ->closeOnDateSelection()
                             ->format('Y-m-d')
-                            ->displayFormat('Y-m-d')
                             ->maxDate(now()),
                         DatePicker::make('hsgrad')
                             ->label('High School Graduation Year')
                             ->nullable()
                             ->native(false)
                             ->closeOnDateSelection()
-                            ->format('Y-m-d')
-                            ->displayFormat('Y-m-d'),
+                            ->format('Y-m-d'),
                         TextInput::make('gender')
                             ->nullable()
                             ->maxLength(255),
@@ -353,8 +351,7 @@ class EditStudent extends EditRecord
                             ->label('DFW')
                             ->native(false)
                             ->closeOnDateSelection()
-                            ->format('Y-m-d')
-                            ->displayFormat('Y-m-d'),
+                            ->format('Y-m-d'),
                         TextInput::make('ethnicity')
                             ->label('Ethnicity')
                             ->maxLength(255),

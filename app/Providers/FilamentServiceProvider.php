@@ -282,6 +282,9 @@ class FilamentServiceProvider extends ServiceProvider
                     }
 
                     return null;
+                })
+                ->html(function (TextEntry $entry): bool {
+                    return $entry->isDateTime();
                 });
         });
 
