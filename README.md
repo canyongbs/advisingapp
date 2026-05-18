@@ -1,3 +1,7 @@
+[简体中文](README_zh-CN.md) | [English](README.md)
+
+---
+
 <div id="top"></div>
 
 <!-- PROJECT SHIELDS -->
