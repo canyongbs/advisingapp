@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,40 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Actions;
-
-use AdvisingApp\ResourceHub\Enums\ConcernStatus;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\ResourceHub\Filament\Widgets\ResourceHubArticleConcernsTable;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
-use Filament\Actions\Action;
-use Filament\Forms\Components\Select;
+use App\Models\User;
 
-class ChangeConcernStatusAction extends Action
-{
-    protected function setUp(): void
-    {
-        parent::setUp();
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
-        $this
-            ->authorize(fn (): bool => auth()->user()->can('resource_hub_article.view-any') && auth()->user()->can('resource_hub_article.*.update'))
-            ->label('Change Status')
-            ->button()
-            ->outlined()
-            ->modalDescription('Select what status this concern should have.')
-            ->schema([
-                Select::make('status')
-                    ->options(ConcernStatus::class)
-                    ->enum(ConcernStatus::class)
-                    ->default(fn (ResourceHubArticleConcern $record) => $record->status->value),
-            ])
-            ->action(function (array $data, ResourceHubArticleConcern $record): void {
-                $record->status = $data['status'];
+it('renders the change concern status action based on proper access', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
 
-                $record->save();
-            });
-    }
+    $concern = ResourceHubArticleConcern::factory()->create();
 
-    public static function getDefaultName(): ?string
-    {
-        return 'changeConcernStatus';
-    }
-}
+    $user->givePermissionTo('resource_hub_article.view-any');
+    $user->givePermissionTo('resource_hub_article.*.view');
+
+    actingAs($user);
+
+    livewire(ResourceHubArticleConcernsTable::class, ['record' => $concern->resourceHubArticle])
+        ->assertOk()
+        ->assertTableRecordActionHidden('changeConcernStatus', $concern->getKey());
+
+    $user->givePermissionTo('resource_hub_article.*.update');
+
+    $user->refresh();
+
+    livewire(ResourceHubArticleConcernsTable::class, ['record' => $concern->resourceHubArticle])
+        ->assertOk()
+        ->assertTableRecordActionVisible('changeConcernStatus', $concern->getKey());
+});
