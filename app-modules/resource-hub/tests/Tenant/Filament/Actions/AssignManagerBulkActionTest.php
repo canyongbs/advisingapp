@@ -34,11 +34,13 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\ListResourceHubArticles;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
@@ -120,4 +122,24 @@ it('can bulk assign managers to articles with removing previously assigned manag
         expect($article->refresh()->managers->pluck('id'))->toContain($newManager->id);
         expect($article->managers->pluck('id'))->not()->toContain($oldManager->id);
     });
+});
+
+it('renders the bulk assign managers action based on proper access', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $user->givePermissionTo('resource_hub_article.view-any');
+
+    actingAs($user);
+
+    livewire(ListResourceHubArticles::class)
+        ->assertOk()
+        ->assertTableBulkActionHidden('bulkManagers');
+
+    $user->givePermissionTo('resource_hub_article.*.update');
+
+    $user->refresh();
+
+    livewire(ListResourceHubArticles::class)
+        ->assertOk()
+        ->assertTableBulkActionVisible('bulkManagers');
 });
