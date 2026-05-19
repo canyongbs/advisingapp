@@ -44,6 +44,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 #[ObservedBy([EmployeeAdvisorResourceHubCategoryObserver::class])]
+/**
+ * @mixin IdeHelperEmployeeAdvisorResourceHubCategory
+ */
 class EmployeeAdvisorResourceHubCategory extends Pivot
 {
     use HasUuids;

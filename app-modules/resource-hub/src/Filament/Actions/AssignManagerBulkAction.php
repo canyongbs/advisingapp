@@ -53,6 +53,7 @@ class AssignManagerBulkAction
     public static function make(): BulkAction
     {
         return BulkAction::make('bulkManagers')
+            ->authorize(fn (): bool => auth()->user()->can('resource_hub_article.view-any') && auth()->user()->can('resource_hub_article.*.update'))
             ->label('Assign Managers')
             ->icon('heroicon-s-user-group')
             ->modalHeading('Bulk Assign Managers')

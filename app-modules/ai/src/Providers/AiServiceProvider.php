@@ -49,6 +49,8 @@ use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Models\DataAdvisor;
+use AdvisingApp\Ai\Models\EmployeeAdvisorCategory;
+use AdvisingApp\Ai\Models\EmployeeAdvisorQuestion;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Ai\Models\QnaAdvisor;
@@ -102,6 +104,8 @@ class AiServiceProvider extends ServiceProvider
             'qna_advisor_link' => QnaAdvisorLink::class,
             'qna_advisor_question' => QnaAdvisorQuestion::class,
             'data_advisor' => DataAdvisor::class,
+            'employee_advisor_category' => EmployeeAdvisorCategory::class,
+            'employee_advisor_question' => EmployeeAdvisorQuestion::class,
         ]);
 
         $this->mergeConfigFrom(__DIR__ . '/../../config/ai.php', 'ai');

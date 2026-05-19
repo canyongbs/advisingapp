@@ -34,10 +34,13 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\ViewResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Tests\Tenant\Filament\Actions\RequestFactories\CreateConcernActionRequestFactory;
+use App\Models\User;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
@@ -57,4 +60,25 @@ it('can create a concern properly', function () {
 
     expect($resourceHubArticle->concerns()->count())->toBe(1);
     expect($resourceHubArticle->concerns()->first()->description)->toBe($data['description']);
+});
+
+it('renders the raise concern action based on proper access', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $resourceHubArticle = ResourceHubArticle::factory()->create();
+
+    $user->givePermissionTo('resource_hub_article.*.view');
+
+    actingAs($user);
+
+    livewire(ViewResourceHubArticle::class, ['record' => $resourceHubArticle->getKey()])
+        ->assertForbidden();
+
+    $user->givePermissionTo('resource_hub_article.view-any');
+
+    $user->refresh();
+
+    livewire(ViewResourceHubArticle::class, ['record' => $resourceHubArticle->getKey()])
+        ->assertOk()
+        ->assertActionVisible('raiseConcern');
 });

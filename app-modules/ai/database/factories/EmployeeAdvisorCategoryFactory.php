@@ -34,40 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Actions;
+namespace AdvisingApp\Ai\Database\Factories;
 
-use AdvisingApp\ResourceHub\Enums\ConcernStatus;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
-use Filament\Actions\Action;
-use Filament\Forms\Components\Select;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\EmployeeAdvisorCategory;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ChangeConcernStatusAction extends Action
+/**
+ * @extends Factory<EmployeeAdvisorCategory>
+ */
+class EmployeeAdvisorCategoryFactory extends Factory
 {
-    protected function setUp(): void
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        parent::setUp();
-
-        $this
-            ->authorize(fn (): bool => auth()->user()->can('resource_hub_article.view-any') && auth()->user()->can('resource_hub_article.*.update'))
-            ->label('Change Status')
-            ->button()
-            ->outlined()
-            ->modalDescription('Select what status this concern should have.')
-            ->schema([
-                Select::make('status')
-                    ->options(ConcernStatus::class)
-                    ->enum(ConcernStatus::class)
-                    ->default(fn (ResourceHubArticleConcern $record) => $record->status->value),
-            ])
-            ->action(function (array $data, ResourceHubArticleConcern $record): void {
-                $record->status = $data['status'];
-
-                $record->save();
-            });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'changeConcernStatus';
+        return [
+            'name' => $this->faker->unique()->sentence(),
+            'description' => $this->faker->sentence(),
+            'employee_advisor_id' => AiAssistant::factory(),
+        ];
     }
 }

@@ -34,40 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Actions;
+namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\ResourceHub\Enums\ConcernStatus;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
-use Filament\Actions\Action;
-use Filament\Forms\Components\Select;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ChangeConcernStatusAction extends Action
+/**
+ * @mixin IdeHelperEmployeeAdvisorCategory
+ */
+class EmployeeAdvisorCategory extends BaseModel implements Auditable
 {
-    protected function setUp(): void
+    use SoftDeletes;
+    use AuditableTrait;
+
+    protected $fillable = [
+        'name',
+        'description',
+        'employee_advisor_id',
+    ];
+
+    /**
+     * @return BelongsTo<AiAssistant, $this>
+     */
+    public function employeeAdvisor(): BelongsTo
     {
-        parent::setUp();
-
-        $this
-            ->authorize(fn (): bool => auth()->user()->can('resource_hub_article.view-any') && auth()->user()->can('resource_hub_article.*.update'))
-            ->label('Change Status')
-            ->button()
-            ->outlined()
-            ->modalDescription('Select what status this concern should have.')
-            ->schema([
-                Select::make('status')
-                    ->options(ConcernStatus::class)
-                    ->enum(ConcernStatus::class)
-                    ->default(fn (ResourceHubArticleConcern $record) => $record->status->value),
-            ])
-            ->action(function (array $data, ResourceHubArticleConcern $record): void {
-                $record->status = $data['status'];
-
-                $record->save();
-            });
+        return $this->belongsTo(AiAssistant::class, 'employee_advisor_id');
     }
 
-    public static function getDefaultName(): ?string
+    /**
+     * @return HasMany<EmployeeAdvisorQuestion, $this>
+     */
+    public function questions(): HasMany
     {
-        return 'changeConcernStatus';
+        return $this->hasMany(EmployeeAdvisorQuestion::class, 'category_id');
     }
 }

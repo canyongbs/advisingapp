@@ -34,40 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Actions;
+namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\ResourceHub\Enums\ConcernStatus;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
-use Filament\Actions\Action;
-use Filament\Forms\Components\Select;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ChangeConcernStatusAction extends Action
+/**
+ * @mixin IdeHelperEmployeeAdvisorQuestion
+ */
+class EmployeeAdvisorQuestion extends BaseModel implements Auditable
 {
-    protected function setUp(): void
+    use SoftDeletes;
+    use AuditableTrait;
+
+    protected $fillable = ['question', 'answer', 'category_id'];
+
+    /**
+     * @return BelongsTo<EmployeeAdvisorCategory, $this>
+     */
+    public function category(): BelongsTo
     {
-        parent::setUp();
-
-        $this
-            ->authorize(fn (): bool => auth()->user()->can('resource_hub_article.view-any') && auth()->user()->can('resource_hub_article.*.update'))
-            ->label('Change Status')
-            ->button()
-            ->outlined()
-            ->modalDescription('Select what status this concern should have.')
-            ->schema([
-                Select::make('status')
-                    ->options(ConcernStatus::class)
-                    ->enum(ConcernStatus::class)
-                    ->default(fn (ResourceHubArticleConcern $record) => $record->status->value),
-            ])
-            ->action(function (array $data, ResourceHubArticleConcern $record): void {
-                $record->status = $data['status'];
-
-                $record->save();
-            });
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'changeConcernStatus';
+        return $this->belongsTo(EmployeeAdvisorCategory::class, 'category_id');
     }
 }

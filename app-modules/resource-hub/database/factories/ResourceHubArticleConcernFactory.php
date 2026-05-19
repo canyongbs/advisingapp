@@ -55,6 +55,7 @@ class ResourceHubArticleConcernFactory extends Factory
         return [
             'description' => $this->faker->words(3, true),
             'created_by_id' => User::factory(),
+            'last_updated_by_id' => User::factory(),
             'status' => $this->faker->randomElement(ConcernStatus::cases()),
             'resource_hub_article_id' => ResourceHubArticle::factory(),
         ];

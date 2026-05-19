@@ -34,40 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Filament\Actions;
+use App\Features\EmployeeAdvisorQnaFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\ResourceHub\Enums\ConcernStatus;
-use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
-use Filament\Actions\Action;
-use Filament\Forms\Components\Select;
-
-class ChangeConcernStatusAction extends Action
-{
-    protected function setUp(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        parent::setUp();
+        DB::transaction(function () {
+            Schema::create('employee_advisor_categories', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->string('name');
+                $table->text('description');
+                $table->foreignUuid('employee_advisor_id')->constrained('ai_assistants')->cascadeOnDelete();
+                $table->timestamps();
+                $table->softDeletes();
 
-        $this
-            ->authorize(fn (): bool => auth()->user()->can('resource_hub_article.view-any') && auth()->user()->can('resource_hub_article.*.update'))
-            ->label('Change Status')
-            ->button()
-            ->outlined()
-            ->modalDescription('Select what status this concern should have.')
-            ->schema([
-                Select::make('status')
-                    ->options(ConcernStatus::class)
-                    ->enum(ConcernStatus::class)
-                    ->default(fn (ResourceHubArticleConcern $record) => $record->status->value),
-            ])
-            ->action(function (array $data, ResourceHubArticleConcern $record): void {
-                $record->status = $data['status'];
-
-                $record->save();
+                $table->unique(['employee_advisor_id', 'name']);
             });
+
+            Schema::create('employee_advisor_questions', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->string('question');
+                $table->text('answer');
+                $table->foreignUuid('category_id')->constrained('employee_advisor_categories')->cascadeOnDelete();
+                $table->timestamps();
+                $table->softDeletes();
+            });
+
+            EmployeeAdvisorQnaFeature::activate();
+        });
     }
 
-    public static function getDefaultName(): ?string
+    public function down(): void
     {
-        return 'changeConcernStatus';
+        DB::transaction(function () {
+            EmployeeAdvisorQnaFeature::deactivate();
+
+            Schema::dropIfExists('employee_advisor_questions');
+            Schema::dropIfExists('employee_advisor_categories');
+        });
     }
-}
+};
