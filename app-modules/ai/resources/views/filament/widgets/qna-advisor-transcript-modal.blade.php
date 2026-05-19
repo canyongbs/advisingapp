@@ -47,7 +47,7 @@
                     >
                         <span class="text-sm font-semibold">{{ $author }}</span>
                         <span class="ml-2 text-xs opacity-75">
-                            {{ $message->created_at->format('M j, Y g:ia (T)') }}
+                            {{ $message->created_at->format('M j, Y g:i a (T)') }}
                         </span>
                     </div>
 

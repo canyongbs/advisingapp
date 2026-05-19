@@ -195,12 +195,12 @@ class FilamentServiceProvider extends ServiceProvider
             ],
         ]);
 
-        $defaultDateTimeDisplayFormat = 'M j, Y <\b\r /> <\s\p\a\n \c\l\a\s\s="\f\i-\d\a\t\e\t\i\m\e-\d\e\s\c\r\i\p\t\i\o\n">g:ia (T)</\s\p\a\n>';
+        $defaultDateTimeDisplayFormat = 'M j, Y <\b\r /> <\s\p\a\n \c\l\a\s\s="\f\i-\d\a\t\e\t\i\m\e-\d\e\s\c\r\i\p\t\i\o\n">g:i a (T)</\s\p\a\n>';
 
-        Table::configureUsing(fn (Table $table) => $table->defaultDateTimeDisplayFormat('M j, Y g:ia'));
+        Table::configureUsing(fn (Table $table) => $table->defaultDateTimeDisplayFormat('M j, Y g:i a'));
         Schema::configureUsing(fn (Schema $infolist) => $infolist
             ->defaultDateTimeDisplayFormat($defaultDateTimeDisplayFormat)
-            ->defaultTimeDisplayFormat('g:ia'));
+            ->defaultTimeDisplayFormat('g:i a'));
 
         FilamentView::registerRenderHook(
             'panels::footer',
@@ -224,10 +224,10 @@ class FilamentServiceProvider extends ServiceProvider
             $timezoneLabel = app(DisplaySettings::class)->getTimezoneLabel();
 
             $component
-                ->defaultDateTimeDisplayFormat('M j, Y g:ia')
-                ->defaultDateTimeWithSecondsDisplayFormat('M j, Y g:i:sa')
-                ->defaultTimeDisplayFormat('g:ia')
-                ->defaultTimeWithSecondsDisplayFormat('g:i:sa')
+                ->defaultDateTimeDisplayFormat('M j, Y g:i a')
+                ->defaultDateTimeWithSecondsDisplayFormat('M j, Y g:i:s a')
+                ->defaultTimeDisplayFormat('g:i a')
+                ->defaultTimeWithSecondsDisplayFormat('g:i:s a')
                 ->timezone($timezone)
                 ->hintIcon('heroicon-m-clock')
                 ->hintIconTooltip("This time is set in {$timezoneLabel}.");
@@ -320,7 +320,7 @@ class FilamentServiceProvider extends ServiceProvider
             $table
                 ->deferFilters(false)
                 ->defaultDateTimeDisplayFormat($defaultDateTimeDisplayFormat)
-                ->defaultTimeDisplayFormat('g:ia')
+                ->defaultTimeDisplayFormat('g:i a')
                 ->paginationPageOptions([5, 10, 20])
                 ->defaultPaginationPageOption(fn (Component $livewire) => $livewire instanceof TableWidget ? 5 : 10);
         });

@@ -80,9 +80,9 @@
                             <p>
                                 {{ $event->starts_at->setTimezone($displaySettings->timezone ?: config('app.timezone', 'UTC'))->format('M j, Y') }}
                                 from
-                                {{ $event->starts_at->setTimezone($displaySettings->timezone ?: config('app.timezone', 'UTC'))->format('g:ia') }}
+                                {{ $event->starts_at->setTimezone($displaySettings->timezone ?: config('app.timezone', 'UTC'))->format('g:i a') }}
                                 to
-                                {{ $event->ends_at->setTimezone($displaySettings->timezone ?: config('app.timezone', 'UTC'))->format('g:ia T') }}
+                                {{ $event->ends_at->setTimezone($displaySettings->timezone ?: config('app.timezone', 'UTC'))->format('g:i a T') }}
                             </p>
                         @endif
                     </div>

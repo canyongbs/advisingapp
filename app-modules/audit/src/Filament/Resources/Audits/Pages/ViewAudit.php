@@ -73,7 +73,7 @@ class ViewAudit extends ViewRecord
                             ->label('User Agent'),
                         TextEntry::make('created_at')
                             ->label('Occurred At')
-                            ->formatStateUsing(fn (string $state) => Carbon::parse($state)->format('M j, Y g:ia (T)')),
+                            ->formatStateUsing(fn (string $state) => Carbon::parse($state)->format('M j, Y g:i a (T)')),
                         TextEntry::make('getModified')
                             ->label('Changes')
                             ->columnSpanFull()

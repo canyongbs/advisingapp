@@ -72,7 +72,7 @@ abstract class CampaignActionBlock extends Block
 
         return $dateTime
             ->shiftTimezone($actionExecutionTimezone)
-            ->setTimezone(auth()->user()->timezone)->format('M j, Y g:ia (T)') . ' in your timezone';
+            ->setTimezone(auth()->user()->timezone)->format('M j, Y g:i a (T)') . ' in your timezone';
     }
 
     public function afterCreated(CampaignAction $action, Schema $schema): void {}

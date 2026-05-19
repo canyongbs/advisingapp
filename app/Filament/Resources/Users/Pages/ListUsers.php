@@ -316,7 +316,7 @@ class ListUsers extends ListRecords
                             return null;
                         }
 
-                        return 'Created After ' . Carbon::parse($data['created_at'], app(DisplaySettings::class)->getTimezone())->setTimezone('UTC')->format('M j, Y g:ia (T)');
+                        return 'Created After ' . Carbon::parse($data['created_at'], app(DisplaySettings::class)->getTimezone())->setTimezone('UTC')->format('M j, Y g:i a (T)');
                     }),
             ])
             ->defaultSort('name', 'asc');

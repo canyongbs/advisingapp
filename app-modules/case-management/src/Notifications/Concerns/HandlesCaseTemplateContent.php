@@ -83,8 +83,8 @@ trait HandlesCaseTemplateContent
         return [
             'contact name' => $this->case->respondent->{$this->case->respondent::displayNameKey()},
             'case number' => $this->case->case_number,
-            'created date' => $this->case->created_at->format('M j, Y g:ia (T)'),
-            'updated date' => $this->case->updated_at->format('M j, Y g:ia (T)'),
+            'created date' => $this->case->created_at->format('M j, Y g:i a (T)'),
+            'updated date' => $this->case->updated_at->format('M j, Y g:i a (T)'),
             'assigned staff name' => $this->case->assignedTo->user->name ?? 'Unassigned',
             'status' => $this->case->status->name,
             'type' => $this->case->priority->type->name,
