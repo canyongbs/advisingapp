@@ -117,7 +117,7 @@ class ManageLicenseSettings extends SettingsPage
                                 ->required()
                                 ->visible(fn (): bool => ! AiAssistantDtoRenameFeature::active())
                                 ->disabled(fn (Get $get): bool => ! $get('data.addons.qnaAdvisor')),
-                            TextInput::make('data.limits.employeeAdvisors')
+                            TextInput::make('data.limits.employeeAdvisorsCount')
                                 ->label('Employee Advisors')
                                 ->numeric()
                                 ->minValue(0)
