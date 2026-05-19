@@ -49,6 +49,7 @@ class CreateConcernAction extends Action
         parent::setUp();
 
         $this
+            ->authorize(fn (): bool => auth()->user()->can('resource_hub_article.view-any'))
             ->label('Raise Concern')
             ->button()
             ->modalDescription('Please articulate the concern you have with this resource hub article. You may enter up to 100 characters in the box below.')
