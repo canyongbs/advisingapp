@@ -55,7 +55,7 @@ class SyncTenantRequest extends FormRequest
             'limits.dataAdvisorsCount' => ['required', 'integer', 'min:0'],
             'limits.resetDate' => ['required', 'string', 'date_format:m-d'],
             //TODO: AiAssistantDtoRenameFeature cleanup: Please uncomment the following rules when you remove the feature flag from line 59 to 62 lines below
-            // 'limits.employeeAdvisors' => ['required', 'integer', 'min:0'],
+            // 'limits.employeeAdvisorsCount' => ['required', 'integer', 'min:0'],
             // 'limits.customerAdvisorsCount' => ['required', 'integer', 'min:0'],
             // 'addons.employeeAdvisors' => ['required', 'boolean'],
             // 'addons.customerAdvisors' => ['required', 'boolean'],
@@ -89,7 +89,7 @@ class SyncTenantRequest extends FormRequest
         ];
 
         //TODO: AiAssistantDtoRenameFeature cleanup: remove the following rules when you remove the feature flag from line 92 to 100 lines below
-        $rules['limits.employeeAdvisors'] = ['sometimes', 'integer', 'min:0'];
+        $rules['limits.employeeAdvisorsCount'] = ['sometimes', 'integer', 'min:0'];
         $rules['limits.customerAdvisorsCount'] = ['sometimes', 'integer', 'min:0'];
         $rules['addons.employeeAdvisors'] = ['sometimes', 'boolean'];
         $rules['addons.customerAdvisors'] = ['sometimes', 'boolean'];

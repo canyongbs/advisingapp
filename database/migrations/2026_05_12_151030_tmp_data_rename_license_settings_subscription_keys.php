@@ -47,7 +47,7 @@ return new class () extends Migration {
         DB::transaction(function () {
             $this->updateSettings('license', 'data', function (array $data): array {
                 if (isset($data['limits']['conversationalAiAssistants'])) {
-                    $data['limits']['employeeAdvisors'] = $data['limits']['conversationalAiAssistants'];
+                    $data['limits']['employeeAdvisorsCount'] = $data['limits']['conversationalAiAssistants'];
                     unset($data['limits']['conversationalAiAssistants']);
                 }
 
@@ -79,9 +79,9 @@ return new class () extends Migration {
             AiAssistantDtoRenameFeature::deactivate();
 
             $this->updateSettings('license', 'data', function (array $data): array {
-                if (isset($data['limits']['employeeAdvisors'])) {
-                    $data['limits']['conversationalAiAssistants'] = $data['limits']['employeeAdvisors'];
-                    unset($data['limits']['employeeAdvisors']);
+                if (isset($data['limits']['employeeAdvisorsCount'])) {
+                    $data['limits']['conversationalAiAssistants'] = $data['limits']['employeeAdvisorsCount'];
+                    unset($data['limits']['employeeAdvisorsCount']);
                 }
 
                 if (isset($data['limits']['customerAdvisorsCount'])) {

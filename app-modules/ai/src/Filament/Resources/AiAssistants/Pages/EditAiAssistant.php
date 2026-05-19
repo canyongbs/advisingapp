@@ -106,7 +106,7 @@ class EditAiAssistant extends EditRecord
                     }
 
                     $assistantsLimit = AiAssistantDtoRenameFeature::active()
-                        ? app(LicenseSettings::class)->data->limits->employeeAdvisors
+                        ? app(LicenseSettings::class)->data->limits->employeeAdvisorsCount
                         : app(LicenseSettings::class)->data->limits->conversationalAiAssistants;
                     $assistantsCount = AiAssistant::query()
                         ->where('is_default', false)
