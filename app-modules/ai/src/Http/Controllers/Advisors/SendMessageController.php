@@ -75,7 +75,7 @@ class SendMessageController
                 ],
                 files: AiMessageFile::query()->whereKey($request->validated('files'))->get()->all(),
                 hasImageGeneration: $request->validated('has_image_generation') ?? false,
-            ));
+            ))->onConnection('background');
 
             return response()->json([]);
         } catch (Throwable $exception) {

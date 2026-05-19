@@ -34,44 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Controllers\Advisors;
+namespace App\Queue;
 
-use AdvisingApp\Ai\Http\Requests\Advisors\CompleteResponseRequest;
-use AdvisingApp\Ai\Jobs\Advisors\CompleteAdvisorResponse;
-use AdvisingApp\Ai\Models\AiThread;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use Throwable;
+use App\Models\Tenant;
+use Illuminate\Queue\BackgroundQueue;
+use Illuminate\Support\Facades\Concurrency;
+use Illuminate\Support\Facades\Queue;
 
-class CompleteResponseController
+class TenantAwareBackgroundQueue extends BackgroundQueue
 {
-    public function __invoke(CompleteResponseRequest $request, AiThread $thread): StreamedResponse | JsonResponse
+    /**
+     * @param string|object $job
+     * @param mixed $data
+     * @param string|null $queue
+     */
+    public function push($job, $data = '', $queue = null): void
     {
-        try {
-            if ($thread->locked_at) {
-                return response()->json([
-                    'isThreadLocked' => true,
-                    'message' => $thread->locked_reason?->getMessage() ?? 'The advisor is currently undergoing maintenance.',
-                ], 503);
+        $tenantId = Tenant::current()?->getKey();
+        $serializedJob = serialize($job);
+
+        Concurrency::driver('process')->defer(
+            function () use ($tenantId, $serializedJob, $data, $queue) {
+                if ($tenantId) {
+                    Tenant::find($tenantId)->makeCurrent();
+                }
+
+                $job = unserialize($serializedJob);
+
+                Queue::connection('sync')->push($job, $data, $queue);
             }
-
-            if ($thread->assistant->archived_at) {
-                return response()->json([
-                    'message' => 'This advisor has been archived and is no longer available to use.',
-                ], 404);
-            }
-
-            dispatch(new CompleteAdvisorResponse(
-                $thread,
-            ))->onConnection('background');
-
-            return response()->json([]);
-        } catch (Throwable $exception) {
-            report($exception);
-
-            return response()->json([
-                'message' => 'An error happened when completing the last advisor response.',
-            ], 503);
-        }
+        );
     }
 }

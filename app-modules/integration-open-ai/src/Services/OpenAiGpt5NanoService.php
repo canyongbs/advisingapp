@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\IntegrationOpenAi\Services;
 
+use AdvisingApp\Ai\Enums\AiReasoningEffort;
+
 class OpenAiGpt5NanoService extends BaseOpenAiService
 {
     public function getApiKey(): string
@@ -56,5 +58,14 @@ class OpenAiGpt5NanoService extends BaseOpenAiService
     public function getImageGenerationDeployment(): ?string
     {
         return $this->settings->open_ai_gpt_5_nano_image_generation_deployment;
+    }
+
+    protected function resolveReasoningEffortValue(AiReasoningEffort $effort): string
+    {
+        if ($effort === AiReasoningEffort::Minimal) {
+            return 'minimal';
+        }
+
+        return parent::resolveReasoningEffortValue($effort);
     }
 }

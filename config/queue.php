@@ -123,6 +123,14 @@ return [
             'block_for' => null,
             'after_commit' => false,
         ],
+
+        'deferred' => [
+            'driver' => 'deferred',
+        ],
+
+        'background' => [
+            'driver' => 'tenant-aware-background',
+        ],
     ],
 
     /*

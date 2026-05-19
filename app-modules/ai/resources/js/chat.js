@@ -112,6 +112,7 @@ document.addEventListener('alpine:init', () => {
             csrfToken,
             lockedMessage: null,
             clickHandler: null,
+            pendingFinishedEvent: null,
 
             init: async function () {
                 this.clickHandler = async (event) => {
@@ -170,6 +171,10 @@ document.addEventListener('alpine:init', () => {
 
                 setInterval(() => {
                     if (/^\s*$/.test(this.pendingResponse)) {
+                        if (this.pendingFinishedEvent) {
+                            this.finalizeResponse(this.pendingFinishedEvent);
+                            this.pendingFinishedEvent = null;
+                        }
                         return;
                     }
 
@@ -260,6 +265,8 @@ document.addEventListener('alpine:init', () => {
                         this.startResponseTimeout();
 
                         if (!this.hasSetUpNewMessageForResponse) {
+                            console.log((new Date() - this.messageSentAt) / 1000);
+
                             if (!this.isCompletingPreviousResponse) {
                                 this.messages.push({
                                     content: '',
@@ -287,85 +294,11 @@ document.addEventListener('alpine:init', () => {
                         this.reasoningText = '';
                         this.reasoningHtml = '';
 
-                        if (this.pendingResponse) {
-                            this.rawIncomingResponse += this.pendingResponse;
-                            this.pendingResponse = '';
-
-                            if (this.messages.length > 0) {
-                                const parsedMarkdown = marked.parse(this.rawIncomingResponse);
-                                const htmlWithDownloadButtons = addImageDownloadButtons(parsedMarkdown);
-                                this.messages[this.messages.length - 1].content = DOMPurify.sanitize(
-                                    htmlWithDownloadButtons,
-                                    {
-                                        ADD_TAGS: ['a'],
-                                        ADD_ATTR: [
-                                            'href',
-                                            'aria-label',
-                                            'title',
-                                            'data-media-uuid',
-                                            'data-id',
-                                            'class',
-                                            'src',
-                                            'alt',
-                                        ],
-                                    },
-                                );
-                            }
+                        if (/^\s*$/.test(this.pendingResponse)) {
+                            this.finalizeResponse(event);
+                        } else {
+                            this.pendingFinishedEvent = event;
                         }
-
-                        this.isSendingMessage = !!event.rate_limit_resets_after_seconds;
-
-                        if (event.is_incomplete) {
-                            this.isIncomplete = true;
-
-                            return;
-                        }
-
-                        if (event.error) {
-                            this.error = event.error;
-                            this.isRetryable = true;
-                            this.isRateLimited = false;
-
-                            return;
-                        }
-
-                        if (event.rate_limit_resets_after_seconds) {
-                            this.error = 'Heavy traffic, just a few more moments...';
-                            this.isRateLimited = true;
-
-                            this.$nextTick(async () => {
-                                await new Promise((resolve) =>
-                                    setTimeout(resolve, event.rate_limit_resets_after_seconds * 1000),
-                                );
-
-                                this.startResponseTimeout();
-
-                                await this.handleResponse({
-                                    response: await fetch(
-                                        this.isCompletingPreviousResponse ? completeResponseUrl : retryMessageUrl,
-                                        {
-                                            method: 'POST',
-                                            headers: {
-                                                Accept: 'application/json',
-                                                'Content-Type': 'application/json',
-                                                'X-CSRF-TOKEN': csrfToken,
-                                            },
-                                            body: JSON.stringify(
-                                                !this.isCompletingPreviousResponse
-                                                    ? {
-                                                          content: this.latestMessage,
-                                                          files: this.$wire.files,
-                                                          has_image_generation: this.hasImageGeneration,
-                                                      }
-                                                    : {},
-                                            ),
-                                        },
-                                    ),
-                                });
-                            });
-                        }
-
-                        this.$wire.refreshThreads();
                     })
                     .listen('.advisor-message.reasoning', (event) => {
                         this.reasoningText += event.content;
@@ -411,6 +344,62 @@ document.addEventListener('alpine:init', () => {
                 }
             },
 
+            finalizeResponse: function (event) {
+                this.isSendingMessage = !!event.rate_limit_resets_after_seconds;
+
+                if (event.is_incomplete) {
+                    this.isIncomplete = true;
+
+                    return;
+                }
+
+                if (event.error) {
+                    this.error = event.error;
+                    this.isRetryable = true;
+                    this.isRateLimited = false;
+
+                    return;
+                }
+
+                if (event.rate_limit_resets_after_seconds) {
+                    this.error = 'Heavy traffic, just a few more moments...';
+                    this.isRateLimited = true;
+
+                    this.$nextTick(async () => {
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, event.rate_limit_resets_after_seconds * 1000),
+                        );
+
+                        this.startResponseTimeout();
+
+                        await this.handleResponse({
+                            response: await fetch(
+                                this.isCompletingPreviousResponse ? completeResponseUrl : retryMessageUrl,
+                                {
+                                    method: 'POST',
+                                    headers: {
+                                        Accept: 'application/json',
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': csrfToken,
+                                    },
+                                    body: JSON.stringify(
+                                        !this.isCompletingPreviousResponse
+                                            ? {
+                                                  content: this.latestMessage,
+                                                  files: this.$wire.files,
+                                                  has_image_generation: this.hasImageGeneration,
+                                              }
+                                            : {},
+                                    ),
+                                },
+                            ),
+                        });
+                    });
+                }
+
+                this.$wire.refreshThreads();
+            },
+
             handleResponse: async function ({ response }) {
                 if (!response.ok) {
                     this.clearResponseTimeout();
@@ -446,6 +435,8 @@ document.addEventListener('alpine:init', () => {
             },
 
             sendMessage: async function (prompt = null) {
+                this.messageSentAt = new Date();
+
                 if (!this.message.replace(/\s/g, '').length && prompt === null) {
                     // The message is empty / whitespace only.
 

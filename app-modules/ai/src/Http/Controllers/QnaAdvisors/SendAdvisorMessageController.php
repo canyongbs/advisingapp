@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
 use AdvisingApp\Ai\Actions\GetQnaAdvisorInstructions;
+use AdvisingApp\Ai\Enums\AiReasoningEffort;
 use AdvisingApp\Ai\Jobs\QnaAdvisors\SendQnaAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
@@ -59,7 +60,7 @@ class SendAdvisorMessageController
             $aiService = $advisor->model->getService();
 
             try {
-                return new StreamedResponse(
+                return response()->stream(
                     $aiService->stream(
                         prompt: $getQnaAdvisorInstructions->execute($advisor),
                         content: $data['content'],
@@ -71,6 +72,7 @@ class SendAdvisorMessageController
                         shouldTrack: false,
                         options: $data['options'] ?? [],
                         filesContext: $advisor,
+                        reasoningEffort: AiReasoningEffort::Minimal,
                     ),
                     headers: [
                         'Content-Type' => 'text/html; charset=utf-8;',
@@ -112,7 +114,7 @@ class SendAdvisorMessageController
                 ),
                 'ip' => request()->ip(),
             ],
-        ));
+        ))->onConnection('background');
 
         return response()->json([
             'message' => 'Message dispatched for processing via websockets.',

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Services\Contracts;
 
+use AdvisingApp\Ai\Enums\AiReasoningEffort;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\Research\Models\ResearchRequest;
@@ -62,7 +63,7 @@ interface AiService
      * @param array<AiFile> $files
      * @param array<string, mixed> $options
      */
-    public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?Model $filesContext = null): Closure;
+    public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?Model $filesContext = null, ?AiReasoningEffort $reasoningEffort = null): Closure;
 
     /**
      * This method is passed a prompt and message and should return a stream of plain text chunks.
@@ -71,7 +72,7 @@ interface AiService
      * @param array<string, mixed> $options
      * @param ?array<Message> $messages
      */
-    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?array $messages = null, bool $hasImageGeneration = false, ?Model $filesContext = null): Closure;
+    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?array $messages = null, bool $hasImageGeneration = false, ?Model $filesContext = null, ?AiReasoningEffort $reasoningEffort = null): Closure;
 
     /**
      * This method is passed an unsaved `AiMessage` model and should send the

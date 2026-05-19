@@ -34,44 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Controllers\Advisors;
+namespace App\Queue\Connectors;
 
-use AdvisingApp\Ai\Http\Requests\Advisors\CompleteResponseRequest;
-use AdvisingApp\Ai\Jobs\Advisors\CompleteAdvisorResponse;
-use AdvisingApp\Ai\Models\AiThread;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\StreamedResponse;
-use Throwable;
+use App\Queue\TenantAwareBackgroundQueue;
+use Illuminate\Queue\Connectors\ConnectorInterface;
 
-class CompleteResponseController
+class TenantAwareBackgroundConnector implements ConnectorInterface
 {
-    public function __invoke(CompleteResponseRequest $request, AiThread $thread): StreamedResponse | JsonResponse
+    /**
+     * @param array<mixed> $config
+     */
+    public function connect(array $config): TenantAwareBackgroundQueue
     {
-        try {
-            if ($thread->locked_at) {
-                return response()->json([
-                    'isThreadLocked' => true,
-                    'message' => $thread->locked_reason?->getMessage() ?? 'The advisor is currently undergoing maintenance.',
-                ], 503);
-            }
-
-            if ($thread->assistant->archived_at) {
-                return response()->json([
-                    'message' => 'This advisor has been archived and is no longer available to use.',
-                ], 404);
-            }
-
-            dispatch(new CompleteAdvisorResponse(
-                $thread,
-            ))->onConnection('background');
-
-            return response()->json([]);
-        } catch (Throwable $exception) {
-            report($exception);
-
-            return response()->json([
-                'message' => 'An error happened when completing the last advisor response.',
-            ], 503);
-        }
+        return new TenantAwareBackgroundQueue($config['after_commit'] ?? null);
     }
 }

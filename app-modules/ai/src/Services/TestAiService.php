@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Services;
 
+use AdvisingApp\Ai\Enums\AiReasoningEffort;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\Ai\Services\Contracts\AiService;
@@ -73,7 +74,7 @@ class TestAiService implements AiService
      * @param array<AiFile> $files
      * @param array<string, mixed> $options
      */
-    public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?Model $filesContext = null): Closure
+    public function stream(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?Model $filesContext = null, ?AiReasoningEffort $reasoningEffort = null): Closure
     {
         throw new Exception('Plain text streaming is not supported by this service.');
     }
@@ -83,7 +84,7 @@ class TestAiService implements AiService
      * @param array<string, mixed> $options
      * @param ?array<Message> $messages
      */
-    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?array $messages = null, bool $hasImageGeneration = false, ?Model $filesContext = null): Closure
+    public function streamRaw(string $prompt, string $content, array $files = [], bool $shouldTrack = true, array $options = [], ?array $messages = null, bool $hasImageGeneration = false, ?Model $filesContext = null, ?AiReasoningEffort $reasoningEffort = null): Closure
     {
         throw new Exception('Plain text streaming is not supported by this service.');
     }
