@@ -36,15 +36,77 @@
 
 namespace AdvisingApp\Workflow\Filament\Blocks;
 
+use App\Enums\TagType;
+use App\Models\Tag;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 
 class TagsBlock extends WorkflowActionBlock
 {
-    //TODO: implement
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->label('Tags');
+
+        $this->schema($this->generateFields());
+    }
+
+    /**
+     * @return array<Component>
+     */
     public function generateFields(): array
     {
         return [
-            Select::make('temp'),
+            Select::make('student_tag_ids')
+                ->label('Which Student tags should be applied?')
+                ->helperText('If the respondee matches to a student within the system, these tags will be applied.')
+                ->options(fn () => Tag::where('type', TagType::Student)->orderBy('name', 'ASC')->pluck('name', 'id'))
+                ->multiple()
+                ->searchable()
+                ->required()
+                ->exists('tags', 'id'),
+            Select::make('prospect_tag_ids')
+                ->label('Which Prospect tags should be applied?')
+                ->helperText('If the respondee matches to a prospect within the system or is generated as one, these tags will be applied.')
+                ->options(fn () => Tag::where('type', TagType::Prospect)->orderBy('name', 'ASC')->pluck('name', 'id'))
+                ->multiple()
+                ->searchable()
+                ->required()
+                ->exists('tags', 'id'),
+            Toggle::make('remove_prior')
+                ->label('Remove all previously assigned tags?')
+                ->default(false)
+                ->hintIconTooltip('If checked, all prior tags assignments will be removed.'),
+            Section::make('How long after the previous step should this occur?')
+                ->schema([
+                    TextInput::make('days')
+                        ->translateLabel()
+                        ->numeric()
+                        ->step(1)
+                        ->minValue(0)
+                        ->default(0)
+                        ->inlineLabel(),
+                    TextInput::make('hours')
+                        ->translateLabel()
+                        ->numeric()
+                        ->step(1)
+                        ->minValue(0)
+                        ->default(0)
+                        ->inlineLabel(),
+                    TextInput::make('minutes')
+                        ->translateLabel()
+                        ->numeric()
+                        ->step(1)
+                        ->minValue(0)
+                        ->default(0)
+                        ->inlineLabel(),
+                ])
+                ->columns(3),
         ];
     }
 
