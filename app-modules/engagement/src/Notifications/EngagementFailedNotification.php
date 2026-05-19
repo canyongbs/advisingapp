@@ -87,7 +87,7 @@ class EngagementFailedNotification extends Notification implements ShouldQueue
             ->subject("Delivery Failed: {$this->engagement->getSubject()}")
             ->markdown('engagement::mail.engagement-failed-notification', [
                 'from' => "{$fromName} <{$fromEmail}>",
-                'date' => $this->engagement->created_at?->format('l, F j, Y \a\t g:i A') ?? 'N/A',
+                'date' => $this->engagement->created_at?->format('M j, Y g:i a (T)') ?? 'N/A',
                 'to' => $to,
                 'subject' => $this->engagement->getSubject(),
             ]);

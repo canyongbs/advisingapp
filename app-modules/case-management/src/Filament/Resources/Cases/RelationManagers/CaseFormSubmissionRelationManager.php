@@ -68,7 +68,7 @@ class CaseFormSubmissionRelationManager extends RelationManager
             ])
             ->recordActions([
                 ViewAction::make()
-                    ->modalHeading(fn (CaseFormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
+                    ->modalHeading(fn (CaseFormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y g:i a (T)'))
                     ->schema(fn (CaseFormSubmission $record): ?array => ($record->author && $record->submissible->is_authenticated) ? [
                         Section::make('Submitted By')
                             ->schema([

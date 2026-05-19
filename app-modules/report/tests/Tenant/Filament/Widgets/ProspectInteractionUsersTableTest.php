@@ -71,16 +71,16 @@ it('can see prospect interaction users table', function () {
         ]);
 
     $firstUserInteractionAt = $user1->interactions->sortBy('created_at')->first();
-    $firstUserInteractionAtDate = $firstUserInteractionAt ? $firstUserInteractionAt->created_at->format('M d, Y') : null;
+    $firstUserInteractionAtDate = $firstUserInteractionAt ? $firstUserInteractionAt->created_at->format('M j, Y') : null;
 
     $secondUserInteractionAt = $user2->interactions->sortBy('created_at')->first();
-    $secondUserInteractionAtDate = $secondUserInteractionAt ? $secondUserInteractionAt->created_at->format('M d, Y') : null;
+    $secondUserInteractionAtDate = $secondUserInteractionAt ? $secondUserInteractionAt->created_at->format('M j, Y') : null;
 
     $firstUserMostRecentInteractionAt = $user1->interactions->sortByDesc('created_at')->first();
-    $firstUserMostRecentInteractionAtDate = $firstUserMostRecentInteractionAt ? $firstUserMostRecentInteractionAt->created_at->format('M d, Y') : null;
+    $firstUserMostRecentInteractionAtDate = $firstUserMostRecentInteractionAt ? $firstUserMostRecentInteractionAt->created_at->format('M j, Y') : null;
 
     $secondUserMostRecentInteractionAt = $user2->interactions->sortByDesc('created_at')->first();
-    $secondUserMostRecentInteractionAtDate = $secondUserMostRecentInteractionAt ? $secondUserMostRecentInteractionAt->created_at->format('M d, Y') : null;
+    $secondUserMostRecentInteractionAtDate = $secondUserMostRecentInteractionAt ? $secondUserMostRecentInteractionAt->created_at->format('M j, Y') : null;
 
     $totalInteractionUser1 = $user1->interactions->count();
     $totalInteractionUser2 = $user2->interactions->count();

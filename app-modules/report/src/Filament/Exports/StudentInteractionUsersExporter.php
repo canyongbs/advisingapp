@@ -63,7 +63,7 @@ class StudentInteractionUsersExporter extends Exporter
                         ->orderBy('created_at')
                         ->first();
 
-                    return $first ? $first->created_at->format('M d, Y') : null;
+                    return $first ? $first->created_at->format('M j, Y') : null;
                 }),
             ExportColumn::make('most_recent_interaction_at')
                 ->label('Most Recent')
@@ -74,7 +74,7 @@ class StudentInteractionUsersExporter extends Exporter
                         ->orderByDesc('created_at')
                         ->first();
 
-                    return $last ? $last->created_at->format('M d, Y') : null;
+                    return $last ? $last->created_at->format('M j, Y') : null;
                 }),
             ExportColumn::make('total_interactions')
                 ->label('Total')

@@ -340,15 +340,13 @@ class ProgramsRelationManager extends RelationManager
                     ->label('Change Date')
                     ->native(false)
                     ->closeOnDateSelection()
-                    ->format('Y-m-d H:i:s')
-                    ->displayFormat('Y-m-d H:i:s'),
+                    ->format('Y-m-d H:i:s'),
                 DateTimePicker::make('declare_dt')
                     ->label('Declare Date')
                     ->required()
                     ->native(false)
                     ->closeOnDateSelection()
-                    ->format('Y-m-d H:i:s')
-                    ->displayFormat('Y-m-d H:i:s'),
+                    ->format('Y-m-d H:i:s'),
                 DateTimePicker::make('graduation_dt')
                     ->label('Graduation Date')
                     ->closeOnDateSelection(),

@@ -112,12 +112,12 @@ class ListUsers extends ListRecords
                     ->toggleable(),
                 TextColumn::make('created_at')
                     ->label('Created At')
-                    ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
                     ->label('Updated At')
-                    ->dateTime(config('project.datetime_format') ?? 'Y-m-d H:i:s')
+                    ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('deleted_at')
@@ -302,7 +302,6 @@ class ListUsers extends ListRecords
                         DateTimePicker::make('created_at')
                             ->label('Created After')
                             ->format('m/d/Y H:i:s')
-                            ->displayFormat('m/d/Y H:i:s')
                             ->native(false),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
@@ -317,7 +316,7 @@ class ListUsers extends ListRecords
                             return null;
                         }
 
-                        return 'Created After ' . Carbon::parse($data['created_at'], app(DisplaySettings::class)->getTimezone())->setTimezone('UTC')->format('m/d/Y H:i:s');
+                        return 'Created After ' . Carbon::parse($data['created_at'], app(DisplaySettings::class)->getTimezone())->setTimezone('UTC')->format('M j, Y g:i a (T)');
                     }),
             ])
             ->defaultSort('name', 'asc');

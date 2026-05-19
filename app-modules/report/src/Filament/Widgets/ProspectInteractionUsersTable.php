@@ -153,7 +153,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                             ->orderBy('created_at')
                             ->first();
 
-                        return $first ? $first->created_at->format('M d, Y') : null;
+                        return $first ? $first->created_at->format('M j, Y') : null;
                     }),
                 TextColumn::make('most_recent_interaction_at')
                     ->label('Most Recent')
@@ -171,7 +171,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                             ->orderByDesc('created_at')
                             ->first();
 
-                        return $last ? $last->created_at->format('M d, Y') : null;
+                        return $last ? $last->created_at->format('M j, Y') : null;
                     }),
                 TextColumn::make('total_interactions')
                     ->label('Total')

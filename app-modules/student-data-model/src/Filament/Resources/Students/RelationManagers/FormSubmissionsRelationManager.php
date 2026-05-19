@@ -94,7 +94,7 @@ class FormSubmissionsRelationManager extends RelationManager
             ])
             ->recordActions([
                 ViewAction::make()
-                    ->modalHeading(fn (FormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
+                    ->modalHeading(fn (FormSubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y g:i a (T)'))
                     ->modalContent(fn (FormSubmission $record) => view('form::submission', ['submission' => $record]))
                     ->visible(fn (FormSubmission $record) => $record->submitted_at),
                 DeleteAction::make(),

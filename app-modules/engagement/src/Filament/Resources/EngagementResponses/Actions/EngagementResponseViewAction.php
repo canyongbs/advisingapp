@@ -59,7 +59,7 @@ class EngagementResponseViewAction
                     ]),
                     Section::make([
                         TextEntry::make('sent_at')
-                            ->dateTime('Y-m-d H:i:s'),
+                            ->dateTime(),
                     ])->grow(false),
                 ]),
             ]);

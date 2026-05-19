@@ -142,15 +142,13 @@ class CreateStudent extends CreateRecord
                             ->native(false)
                             ->closeOnDateSelection()
                             ->format('Y-m-d')
-                            ->displayFormat('Y-m-d')
                             ->maxDate(now()),
                         DatePicker::make('hsgrad')
                             ->label('High School Graduation Year')
                             ->nullable()
                             ->native(false)
                             ->closeOnDateSelection()
-                            ->format('Y-m-d')
-                            ->displayFormat('Y-m-d'),
+                            ->format('Y-m-d'),
                         TextInput::make('gender')
                             ->nullable()
                             ->maxLength(255),
@@ -340,8 +338,7 @@ class CreateStudent extends CreateRecord
                             ->label('DFW')
                             ->native(false)
                             ->closeOnDateSelection()
-                            ->format('Y-m-d')
-                            ->displayFormat('Y-m-d'),
+                            ->format('Y-m-d'),
                         TextInput::make('ethnicity')
                             ->label('Ethnicity')
                             ->maxLength(255),
@@ -349,8 +346,7 @@ class CreateStudent extends CreateRecord
                             ->label('Last LMS login')
                             ->native(false)
                             ->closeOnDateSelection()
-                            ->format('Y-m-d H:i:s')
-                            ->displayFormat('Y-m-d H:i:s'),
+                            ->format('Y-m-d H:i:s'),
                         TextInput::make('athletics_status')
                             ->label('Athletics Status')
                             ->maxLength(255),
