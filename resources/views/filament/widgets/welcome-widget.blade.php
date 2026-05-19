@@ -37,7 +37,7 @@
             <h1 class="font-medium">Welcome, {{ auth()->user()->name }}</h1>
 
             <p class="text-xs">
-                Today is {{ now(auth()->user()->timezone)->format('M j, Y') }} and the current time is
+                Today is {{ now(auth()->user()->timezone)->format('l, F j, Y') }} and the current time is
                 {{ now(auth()->user()->timezone)->format('g:i A') }}.
             </p>
         </div>
