@@ -42,12 +42,9 @@ use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
-use Filament\Forms\Components\ModalTableSelect;
 use Filament\Forms\Components\TableSelect;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRecords;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -68,7 +65,7 @@ class ManageEnrollmentSemesters extends ManageRecords
             Action::make('syncAll')
                 ->label('Sync')
                 ->disabled($unsyncedEnrollments->count() === 0)
-                ->tooltip(fn() => $unsyncedEnrollments->count() === 0 ? 'No additional semesters to sync.' : '')
+                ->tooltip(fn () => $unsyncedEnrollments->count() === 0 ? 'No additional semesters to sync.' : '')
                 ->slideOver()
                 ->schema([
                     TableSelect::make('enrollments')
