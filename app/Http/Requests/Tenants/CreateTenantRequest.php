@@ -36,7 +36,6 @@
 
 namespace App\Http\Requests\Tenants;
 
-use App\Features\AiAssistantDtoRenameFeature;
 use App\Models\Tenant;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -59,6 +58,11 @@ class CreateTenantRequest extends FormRequest
             'limits.sms' => ['required', 'integer', 'min:0'],
             'limits.dataAdvisorsCount' => ['required', 'integer', 'min:0'],
             'limits.resetDate' => ['required', 'string', 'date_format:m-d'],
+            //TODO: AiAssistantDtoRenameFeature cleanup: Please uncomment the following rules when you remove the feature flag from line 63 to 67 lines below
+            // 'limits.employeeAdvisors' => ['required', 'integer', 'min:0'],
+            // 'limits.customerAdvisorsCount' => ['required', 'integer', 'min:0'],
+            // 'addons.employeeAdvisors' => ['required', 'boolean'],
+            // 'addons.customerAdvisors' => ['required', 'boolean'],
             'addons' => ['required', 'array'],
             'addons.onlineForms' => ['required', 'boolean'],
             'addons.onlineSurveys' => ['required', 'boolean'],
@@ -84,17 +88,16 @@ class CreateTenantRequest extends FormRequest
             'theme.url' => ['nullable', 'string', 'url'],
         ];
 
-        if (AiAssistantDtoRenameFeature::active()) {
-            $rules['limits.employeeAdvisors'] = ['required', 'integer', 'min:0'];
-            $rules['limits.customerAdvisorsCount'] = ['required', 'integer', 'min:0'];
-            $rules['addons.employeeAdvisors'] = ['required', 'boolean'];
-            $rules['addons.customerAdvisors'] = ['required', 'boolean'];
-        } else {
-            $rules['limits.conversationalAiAssistants'] = ['required', 'integer', 'min:0'];
-            $rules['limits.qnaAdvisorsCount'] = ['required', 'integer', 'min:0'];
-            $rules['addons.customAiAssistants'] = ['required', 'boolean'];
-            $rules['addons.qnaAdvisor'] = ['required', 'boolean'];
-        }
+        //TODO: AiAssistantDtoRenameFeature cleanup: remove the following rules when you remove the feature flag from line 92 to 100 lines below
+        $rules['limits.employeeAdvisors'] = ['sometimes', 'integer', 'min:0'];
+        $rules['limits.customerAdvisorsCount'] = ['sometimes', 'integer', 'min:0'];
+        $rules['addons.employeeAdvisors'] = ['sometimes', 'boolean'];
+        $rules['addons.customerAdvisors'] = ['sometimes', 'boolean'];
+        $rules['limits.conversationalAiAssistants'] = ['sometimes', 'integer', 'min:0'];
+        $rules['limits.qnaAdvisorsCount'] = ['sometimes', 'integer', 'min:0'];
+        $rules['addons.customAiAssistants'] = ['sometimes', 'boolean'];
+        $rules['addons.qnaAdvisor'] = ['sometimes', 'boolean'];
+        // }
 
         return $rules;
     }
