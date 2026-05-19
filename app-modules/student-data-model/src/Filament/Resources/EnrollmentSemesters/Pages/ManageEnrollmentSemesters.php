@@ -37,12 +37,17 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters\Pages;
 
 use AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters\EnrollmentSemesterResource;
+use AdvisingApp\StudentDataModel\Filament\Tables\UnsyncedEnrollmentsTable;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
+use Filament\Forms\Components\ModalTableSelect;
+use Filament\Forms\Components\TableSelect;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRecords;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -61,13 +66,25 @@ class ManageEnrollmentSemesters extends ManageRecords
 
         return [
             Action::make('syncAll')
-                ->label(fn () => 'Sync All (' . $unsyncedEnrollments->count() . ')')
-                ->visible(fn () => $unsyncedEnrollments->count() > 0)
-                ->action(function () use ($unsyncedEnrollments) {
+                ->label('Sync')
+                ->disabled($unsyncedEnrollments->count() === 0)
+                ->tooltip(fn() => $unsyncedEnrollments->count() === 0 ? 'No additional semesters to sync.' : '')
+                ->slideOver()
+                ->schema([
+                    TableSelect::make('enrollments')
+                        ->hiddenLabel()
+                        ->multiple()
+                        ->required()
+                        ->default(fn () => Enrollment::query()->pluck('id'))
+                        ->tableConfiguration(UnsyncedEnrollmentsTable::class),
+                ])
+                ->action(function (array $data) {
                     try {
                         DB::beginTransaction();
 
-                        $unsyncedEnrollments->lazy()->each(fn (Enrollment $enrollment) => is_null($enrollment->semester_name) ?: EnrollmentSemester::create(['name' => $enrollment->semester_name]));
+                        $enrollments = Enrollment::whereIn('id', $data['enrollments'])->get();
+
+                        $enrollments->lazy()->each(fn (Enrollment $enrollment) => is_null($enrollment->semester_name) ?: EnrollmentSemester::create(['name' => $enrollment->semester_name]));
 
                         DB::commit();
 
@@ -88,10 +105,11 @@ class ManageEnrollmentSemesters extends ManageRecords
                     }
                 }),
             CreateAction::make()
-                ->label('Sync Select')
-                ->modalHeading('Sync Enrollment Semester')
-                ->modalSubmitActionLabel('Sync')
-                ->createAnotherAction(fn (Action $action) => $action->label('Sync & Sync Another')),
+                ->label('New')
+                ->modalHeading('Add Semester Manually')
+                ->modalDescription('Use this feature to add a semester to your semester list manually.')
+                ->modalSubmitActionLabel('Add')
+                ->createAnotherAction(fn (Action $action) => $action->label('Add & Add Another')),
         ];
     }
 }
