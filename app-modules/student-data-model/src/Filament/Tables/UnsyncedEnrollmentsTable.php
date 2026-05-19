@@ -47,12 +47,25 @@ class UnsyncedEnrollmentsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->query(fn (): Builder => Enrollment::query()
-                ->whereNotIn('semester_name', EnrollmentSemester::query()->select('name'))
-                ->distinct('semester_name')
-                ->orderBy('semester_name'))
+            ->query(self::getUnsyncedEnrollments())
             ->columns([
                 TextColumn::make('semester_name'),
             ]);
     }
+
+    /**
+     * @return Builder<Enrollment>
+     */
+    public static function getUnsyncedEnrollments(): Builder
+    {
+        return Enrollment::query()
+            ->whereNotNull('semester_name')
+            ->whereNotIn(
+                'semester_name',
+                EnrollmentSemester::query()->select('name')
+            )
+            ->distinct('semester_name')
+            ->orderBy('semester_name')
+            ->orderBy('id');
+    } 
 }

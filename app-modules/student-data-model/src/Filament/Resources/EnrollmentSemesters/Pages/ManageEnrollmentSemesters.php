@@ -72,7 +72,7 @@ class ManageEnrollmentSemesters extends ManageRecords
                         ->hiddenLabel()
                         ->multiple()
                         ->required()
-                        ->default(fn () => Enrollment::query()->pluck('id'))
+                        ->default(fn () => UnsyncedEnrollmentsTable::getUnsyncedEnrollments()->pluck('id'))
                         ->tableConfiguration(UnsyncedEnrollmentsTable::class),
                 ])
                 ->action(function (array $data) {
