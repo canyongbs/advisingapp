@@ -56,10 +56,7 @@ class ManageEnrollmentSemesters extends ManageRecords
 
     protected function getHeaderActions(): array
     {
-        $unsyncedEnrollments = Enrollment::query()
-            ->whereNotIn('semester_name', EnrollmentSemester::query()->select('name'))
-            ->distinct('semester_name')
-            ->orderBy('semester_name');
+        $unsyncedEnrollments = UnsyncedEnrollmentsTable::getUnsyncedEnrollments();
 
         return [
             Action::make('syncAll')
@@ -72,7 +69,7 @@ class ManageEnrollmentSemesters extends ManageRecords
                         ->hiddenLabel()
                         ->multiple()
                         ->required()
-                        ->default(fn () => UnsyncedEnrollmentsTable::getUnsyncedEnrollments()->pluck('id'))
+                        ->default(fn () => $unsyncedEnrollments->pluck('id'))
                         ->tableConfiguration(UnsyncedEnrollmentsTable::class),
                 ])
                 ->action(function (array $data) {
