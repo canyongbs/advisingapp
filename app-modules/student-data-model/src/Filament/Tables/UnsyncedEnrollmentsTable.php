@@ -67,5 +67,5 @@ class UnsyncedEnrollmentsTable
             ->distinct('semester_name')
             ->orderBy('semester_name')
             ->orderBy('id');
-    } 
+    }
 }
