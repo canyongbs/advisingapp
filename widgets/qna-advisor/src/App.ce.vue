@@ -262,7 +262,6 @@
     async function sendMessage() {
         if (!sendMessageUrl.value || !message.value.trim() || !threadId.value) return;
 
-        console.log('Message sent at:', new Date().toISOString());
         messageSentAt = new Date();
         hasLoggedFirstChunk = false;
 
@@ -454,8 +453,7 @@
 
                 if (data.content) {
                     if (!hasLoggedFirstChunk) {
-                        console.log('First chunk of AI response received at:', new Date().toISOString());
-                        console.log('That response time was: ', (new Date() - messageSentAt) / 1000, 'seconds');
+                        console.log((new Date() - messageSentAt) / 1000);
                         hasLoggedFirstChunk = true;
                     }
                     enqueueWords(data.content);

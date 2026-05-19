@@ -265,12 +265,7 @@ document.addEventListener('alpine:init', () => {
                         this.startResponseTimeout();
 
                         if (!this.hasSetUpNewMessageForResponse) {
-                            console.log('First chunk of AI response received at:', new Date().toISOString());
-                            console.log(
-                                'That response time was: ',
-                                (new Date() - this.messageSentAt) / 1000,
-                                'seconds',
-                            );
+                            console.log((new Date() - this.messageSentAt) / 1000);
 
                             if (!this.isCompletingPreviousResponse) {
                                 this.messages.push({
@@ -440,7 +435,6 @@ document.addEventListener('alpine:init', () => {
             },
 
             sendMessage: async function (prompt = null) {
-                console.log('Message sent at:', new Date().toISOString());
                 this.messageSentAt = new Date();
 
                 if (!this.message.replace(/\s/g, '').length && prompt === null) {
