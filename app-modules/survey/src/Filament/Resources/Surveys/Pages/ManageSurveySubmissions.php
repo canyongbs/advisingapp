@@ -110,7 +110,7 @@ class ManageSurveySubmissions extends ManageRelatedRecords
             ])
             ->recordActions([
                 ViewAction::make()
-                    ->modalHeading(fn (SurveySubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y H:i:s'))
+                    ->modalHeading(fn (SurveySubmission $record) => 'Submission Details: ' . $record->submitted_at->format('M j, Y g:i a (T)'))
                     ->schema(function (SurveySubmission $record): ?array {
                         assert($record->submissible instanceof Survey);
 

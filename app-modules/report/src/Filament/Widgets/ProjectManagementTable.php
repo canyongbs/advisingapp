@@ -89,7 +89,7 @@ class ProjectManagementTable extends BaseWidget
                     ->searchable(),
                 TextColumn::make('created_at')
                     ->label('Created At')
-                    ->dateTime('M d, Y h:i A'),
+                    ->dateTime(),
                 TextColumn::make('managerUsers.name')
                     ->label('Managers')
                     ->formatStateUsing(fn ($record) => $record->managerUsers->count())

@@ -276,8 +276,7 @@ class EnrollmentsRelationManager extends RelationManager
                     ->label('Last UPD date STMP')
                     ->native(false)
                     ->closeOnDateSelection()
-                    ->format('Y-m-d H:i:s')
-                    ->displayFormat('Y-m-d H:i:s'),
+                    ->format('Y-m-d H:i:s'),
                 TextInput::make('section')
                     ->label('Section')
                     ->string()
@@ -309,14 +308,12 @@ class EnrollmentsRelationManager extends RelationManager
                     ->label('Start date')
                     ->native(false)
                     ->closeOnDateSelection()
-                    ->format('Y-m-d H:i:s')
-                    ->displayFormat('Y-m-d H:i:s'),
+                    ->format('Y-m-d H:i:s'),
                 DateTimePicker::make('end_date')
                     ->label('End date')
                     ->native(false)
                     ->closeOnDateSelection()
-                    ->format('Y-m-d H:i:s')
-                    ->displayFormat('Y-m-d H:i:s'),
+                    ->format('Y-m-d H:i:s'),
             ]);
     }
 }

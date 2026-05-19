@@ -85,10 +85,10 @@ class TaskHistory extends History implements ProvidesATimeline
             'due' => [
                 'key' => 'Due',
                 'old' => data_get($this->old, $key)
-                    ? Carbon::parse($this->old[$key])->format('m-d-Y')
+                    ? Carbon::parse($this->old[$key])->format('M j, Y')
                     : '(Not set)',
                 'new' => $this->new[$key]
-                    ? Carbon::parse($this->new[$key])->format('m-d-Y')
+                    ? Carbon::parse($this->new[$key])->format('M j, Y')
                     : '(Not set)',
             ],
             'assigned_to' => [

@@ -133,7 +133,6 @@ class CreateProspect extends CreateRecord
                             ->native(false)
                             ->closeOnDateSelection()
                             ->format('Y-m-d')
-                            ->displayFormat('Y-m-d')
                             ->maxDate(now()),
                         TextInput::make('hsgrad')
                             ->label('High School Graduation Year')

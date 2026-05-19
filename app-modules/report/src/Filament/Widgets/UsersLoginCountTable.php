@@ -95,10 +95,10 @@ class UsersLoginCountTable extends BaseWidget
                     ->label('Logged In'),
                 TextColumn::make('first_login_at')
                     ->label('First Login')
-                    ->date('m-d-Y'),
+                    ->date(),
                 TextColumn::make('last_logged_in_at')
                     ->label('Last Login')
-                    ->date('m-d-Y'),
+                    ->date(),
                 TextColumn::make('loginsCount.count')
                     ->label('Total Logins')
                     ->default(0),

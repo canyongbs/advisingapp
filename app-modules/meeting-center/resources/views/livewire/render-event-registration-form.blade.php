@@ -78,7 +78,7 @@
 
                         @if ($event->starts_at && $event->ends_at)
                             <p>
-                                {{ $event->starts_at->setTimezone($displaySettings->timezone ?: config('app.timezone', 'UTC'))->format('M d, Y') }}
+                                {{ $event->starts_at->setTimezone($displaySettings->timezone ?: config('app.timezone', 'UTC'))->format('M j, Y') }}
                                 from
                                 {{ $event->starts_at->setTimezone($displaySettings->timezone ?: config('app.timezone', 'UTC'))->format('g:i a') }}
                                 to

@@ -46,7 +46,9 @@
                         class="{{ $message->is_advisor ? 'text-gray-600 dark:text-gray-300' : 'text-primary-100' }} mb-3"
                     >
                         <span class="text-sm font-semibold">{{ $author }}</span>
-                        <span class="ml-2 text-xs opacity-75">{{ $message->created_at->format('M j, Y g:i A') }}</span>
+                        <span class="ml-2 text-xs opacity-75">
+                            {{ $message->created_at->format('M j, Y g:i a (T)') }}
+                        </span>
                     </div>
 
                     <div
