@@ -59,7 +59,7 @@
     --radius: var(--rounding);
     --radius-md: var(--rounding-md);
     --radius-lg: var(--rounding-lg);
-    --radius-full: var(--rounding-sm);
+    --radius-full: var(--rounding-full, 9999px);
 
     --font-signature: 'Satisfy', cursive;
 }
