@@ -98,7 +98,7 @@ class EnrollmentSemesterResource extends Resource
                 $query
                     ->addSelect('enrollment_semesters.*')
                     ->addSelect(DB::raw(
-                        "EXISTS(SELECT 1 FROM enrollments WHERE LOWER(enrollments.semester_name) = LOWER(enrollment_semesters.name) AND enrollments.deleted_at IS NULL) AS is_mapped"
+                        'EXISTS(SELECT 1 FROM enrollments WHERE LOWER(enrollments.semester_name) = LOWER(enrollment_semesters.name) AND enrollments.deleted_at IS NULL) AS is_mapped'
                     ));
             })
             ->columns([
