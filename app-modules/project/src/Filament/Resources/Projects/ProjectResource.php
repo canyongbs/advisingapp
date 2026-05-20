@@ -48,7 +48,6 @@ use AdvisingApp\Project\Filament\Resources\Projects\Pages\ManageProjectPipelines
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\ManageTasks;
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\ViewProject;
 use AdvisingApp\Project\Models\Project;
-use BackedEnum;
 use Filament\Navigation\NavigationItem;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
@@ -57,8 +56,6 @@ use UnitEnum;
 class ProjectResource extends Resource
 {
     protected static ?string $model = Project::class;
-
-    protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static string | UnitEnum | null $navigationGroup = 'CRM';
 

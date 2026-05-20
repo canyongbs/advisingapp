@@ -34,6 +34,9 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Authorization\Models\Role;
+use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Support\Arr;
@@ -48,4 +51,54 @@ test('there is only the Dashboard item for unlicensed users', function () {
 
     assertCount(1, $navigation);
     assertCount(1, Arr::first($navigation)->getItems());
+});
+
+test('navigation groups with a label must have an icon, and the unlabeled home group must not', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->assignRole(Role::query()->where('name', Authenticatable::SUPER_ADMIN_ROLE)->firstOrFail());
+
+    actingAs($user);
+
+    $navigation = Filament::getNavigation();
+
+    foreach ($navigation as $group) {
+        if (filled($group->getLabel())) {
+            expect($group->getIcon())
+                ->not()->toBeEmpty(
+                    "Navigation group '{$group->getLabel()}' has a label but is missing an icon. Labeled groups must have a sidebar icon."
+                );
+        } else {
+            expect($group->getIcon())
+                ->toBeEmpty(
+                    'The unlabeled (Home) navigation group should not have a group-level icon.'
+                );
+        }
+    }
+});
+
+test('navigation items in labeled groups must not have an icon, while items in the home group must have one', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->assignRole(Role::query()->where('name', Authenticatable::SUPER_ADMIN_ROLE)->firstOrFail());
+
+    actingAs($user);
+
+    $navigation = Filament::getNavigation();
+
+    foreach ($navigation as $group) {
+        $groupIsLabeled = filled($group->getLabel());
+
+        foreach ($group->getItems() as $item) {
+            if ($groupIsLabeled) {
+                expect($item->getIcon())
+                    ->toBeEmpty(
+                        "Navigation item '{$item->getLabel()}' in group '{$group->getLabel()}' must not have an icon. Icons belong on the group, not its items."
+                    );
+            } else {
+                expect($item->getIcon())
+                    ->not()->toBeEmpty(
+                        "Navigation item '{$item->getLabel()}' in the unlabeled (Home) group must have an icon, as it appears directly in the sidebar."
+                    );
+            }
+        }
+    }
 });

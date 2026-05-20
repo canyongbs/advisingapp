@@ -37,7 +37,6 @@
 namespace App\Filament\Pages;
 
 use App\Models\User;
-use BackedEnum;
 use Illuminate\Contracts\Support\Htmlable;
 use ShuvroRoy\FilamentSpatieLaravelHealth\Pages\HealthCheckResults;
 use Spatie\Health\Enums\Status;
@@ -45,7 +44,10 @@ use Spatie\Health\ResultStores\ResultStore;
 
 class ProductHealth extends HealthCheckResults
 {
-    protected static string | BackedEnum | null $navigationIcon = null;
+    public static function getNavigationIcon(): string
+    {
+        return '';
+    }
 
     public static function getNavigationLabel(): string
     {
