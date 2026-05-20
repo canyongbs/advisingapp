@@ -47,7 +47,6 @@ use AdvisingApp\Workflow\Models\WorkflowRun;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use AdvisingApp\Workflow\Models\WorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
-use App\Features\AdmissionsStageWorkflowTriggersFeature;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Support\Facades\DB;
@@ -57,10 +56,6 @@ class TriggerApplicationSubmissionStageWorkflows implements ShouldQueueAfterComm
 {
     public function handleEntered(ApplicationSubmissionStateEntered $event): void
     {
-        if (! AdmissionsStageWorkflowTriggersFeature::active()) {
-            return;
-        }
-
         $this->dispatchMatchingWorkflows(
             submission: $event->submission,
             state: $event->state,
@@ -70,10 +65,6 @@ class TriggerApplicationSubmissionStageWorkflows implements ShouldQueueAfterComm
 
     public function handleExited(ApplicationSubmissionStateExited $event): void
     {
-        if (! AdmissionsStageWorkflowTriggersFeature::active()) {
-            return;
-        }
-
         $this->dispatchMatchingWorkflows(
             submission: $event->submission,
             state: $event->state,
