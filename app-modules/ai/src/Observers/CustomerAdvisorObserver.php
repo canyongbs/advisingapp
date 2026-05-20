@@ -39,7 +39,7 @@ namespace AdvisingApp\Ai\Observers;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\IntegrationOpenAi\Jobs\UploadCustomerAdvisorFilesToVectorStore;
 
-class QnaAdvisorObserver
+class CustomerAdvisorObserver
 {
     public function created(CustomerAdvisor $advisor): void
     {

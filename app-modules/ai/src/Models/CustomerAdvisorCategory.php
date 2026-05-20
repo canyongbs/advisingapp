@@ -63,11 +63,11 @@ class CustomerAdvisorCategory extends BaseModel implements Auditable
     ];
 
     /**
-     * @return BelongsTo<QnaAdvisor, $this>
+     * @return BelongsTo<CustomerAdvisor, $this>
      */
-    public function qnaAdvisor(): BelongsTo
+    public function customerAdvisor(): BelongsTo
     {
-        return $this->belongsTo(QnaAdvisor::class, RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id');
+        return $this->belongsTo(CustomerAdvisor::class, RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id');
     }
 
     /**

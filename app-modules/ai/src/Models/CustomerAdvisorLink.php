@@ -67,11 +67,11 @@ class CustomerAdvisorLink extends BaseModel implements AiFile, Auditable
     ];
 
     /**
-     * @return BelongsTo<QnaAdvisor, $this>
+     * @return BelongsTo<CustomerAdvisor, $this>
      */
     public function advisor(): BelongsTo
     {
-        return $this->belongsTo(QnaAdvisor::class, 'advisor_id');
+        return $this->belongsTo(CustomerAdvisor::class, 'advisor_id');
     }
 
     public function getKey(): string
