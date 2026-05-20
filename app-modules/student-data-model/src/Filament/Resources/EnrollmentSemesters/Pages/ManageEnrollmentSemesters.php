@@ -61,8 +61,8 @@ class ManageEnrollmentSemesters extends ManageRecords
         return [
             Action::make('syncAll')
                 ->label('Sync')
-                ->disabled(fn () => $unsyncedEnrollments->count() === 0)
-                ->tooltip(fn () => $unsyncedEnrollments->count() === 0 ? 'No additional semesters to sync.' : '')
+                ->disabled(fn () => ! $unsyncedEnrollments->exists())
+                ->tooltip(fn () => $unsyncedEnrollments->exists() ? '' : 'No additional semesters to sync.')
                 ->slideOver()
                 ->schema([
                     TableSelect::make('enrollments')
