@@ -255,7 +255,7 @@ class WorkflowStepsRelationManager extends RelationManager
                 'status_id' => $transformedData['status_id'],
             ]),
             'workflow_tags_block' => WorkflowTagsDetails::create([
-                'tag_ids' => array_merge($transformedData['student_tag_ids'], $transformedData['prospect_tag_ids']),
+                'tag_ids' => $transformedData['tag_ids'],
                 'remove_prior' => $transformedData['remove_prior'],
             ]),
             'workflow_task_details' => WorkflowTaskDetails::create([
