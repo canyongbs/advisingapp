@@ -66,6 +66,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -272,7 +273,7 @@ class EngagementsRelationManager extends RelationManager
 
                         return null;
                     }),
-                TextColumn::make('type')
+                IconColumn::make('type')
                     ->state(function (Timeline $record) {
                         /** @var HasDeliveryMethod $timelineable */
                         $timelineable = $record->timelineable;
@@ -280,8 +281,7 @@ class EngagementsRelationManager extends RelationManager
                         return $timelineable->getDeliveryMethod();
                     })
                     ->icon(fn (NotificationChannel $state) => $state->getIcon())
-                    ->tooltip(fn (NotificationChannel $state): string => $state->getLabel())
-                    ->formatStateUsing(fn (): string => ''),
+                    ->tooltip(fn (NotificationChannel $state): string => $state->getLabel()),
                 TextColumn::make('subject')
                     ->label('Preview')
                     ->description(
