@@ -44,7 +44,6 @@ use AdvisingApp\Application\Filament\Forms\ApplicationWorkflowForm;
 use AdvisingApp\Application\Listeners\ClearApplicationSubmissionCountCache;
 use AdvisingApp\Application\Listeners\NotifySubscribersOfApplicationSubmission;
 use AdvisingApp\Application\Listeners\TriggerApplicationSubmissionStageWorkflows;
-use AdvisingApp\Application\Listeners\TriggerApplicationSubmissionWorkflows;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
 use AdvisingApp\Application\Models\ApplicationField;
@@ -95,15 +94,6 @@ class ApplicationServiceProvider extends ServiceProvider
         Event::listen(
             events: ApplicationSubmissionCreated::class,
             listener: ClearApplicationSubmissionCountCache::class
-        );
-
-        // TODO: Cleanup Task - Once AdmissionsStageWorkflowTriggersFeature is removed,
-        // delete this Event::listen() block. It wires up the old listener that only
-        // runs when the feature flag is OFF; once the flag is gone, the listener and
-        // this registration are both dead code.
-        Event::listen(
-            events: ApplicationSubmissionCreated::class,
-            listener: TriggerApplicationSubmissionWorkflows::class
         );
 
         Event::listen(

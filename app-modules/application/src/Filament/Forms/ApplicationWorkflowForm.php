@@ -40,7 +40,6 @@ use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerEvent;
 use AdvisingApp\Workflow\Filament\Forms\WorkflowTypeForm;
-use App\Features\AdmissionsStageWorkflowTriggersFeature;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
@@ -55,10 +54,6 @@ class ApplicationWorkflowForm extends WorkflowTypeForm
 
     public static function configureForm(Schema $schema): Schema
     {
-        // TODO: Cleanup Task - Once AdmissionsStageWorkflowTriggersFeature is removed,
-        // drop the AdmissionsStageWorkflowTriggersFeature::active() check from both visible()
-        // callbacks below — keep only the related_type check (which is what gates these fields
-        // to application workflows specifically).
         return $schema
             ->components([
                 ...$schema->getComponents(),
@@ -74,15 +69,13 @@ class ApplicationWorkflowForm extends WorkflowTypeForm
                             ->pluck('name', 'id')
                             ->all(),
                     )
-                    ->required()
-                    ->visible(fn (): bool => AdmissionsStageWorkflowTriggersFeature::active()),
+                    ->required(),
                 Radio::make('workflowTrigger.event')
                     ->label('Trigger')
                     ->options(WorkflowTriggerEvent::class)
                     ->required()
                     ->inline()
-                    ->inlineLabel(false)
-                    ->visible(fn (): bool => AdmissionsStageWorkflowTriggersFeature::active()),
+                    ->inlineLabel(false),
             ]);
     }
 }
