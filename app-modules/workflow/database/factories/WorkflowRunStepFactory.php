@@ -42,6 +42,7 @@ use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
 use AdvisingApp\Workflow\Models\WorkflowProactiveConcernDetails;
 use AdvisingApp\Workflow\Models\WorkflowRun;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
+use AdvisingApp\Workflow\Models\WorkflowTagsDetails;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -58,6 +59,7 @@ class WorkflowRunStepFactory extends Factory
             WorkflowProactiveConcernDetails::factory(),
             // WorkflowCareTeamDetails::factory(),
             WorkflowCaseDetails::factory(),
+            WorkflowTagsDetails::factory(),
             // WorkflowTaskDetails::factory(),
             // Add more as factories are created
         ];
