@@ -109,7 +109,8 @@ class TagsBlock extends WorkflowActionBlock
         ];
     }
 
-    public function prepareForEdit(WorkflowDetails $details): void {
+    public function prepareForEdit(WorkflowDetails $details): void
+    {
         assert($details instanceof WorkflowTagsDetails);
         $tags = Tag::find($details['tag_ids']);
         $details['student_tag_ids'] = $tags->where('type', TagType::Student)->pluck('id');
