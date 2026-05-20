@@ -34,37 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Observers;
+namespace AdvisingApp\StudentDataModel\Http\Controllers;
 
-use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
-use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
-use Illuminate\Support\Facades\DB;
+use AdvisingApp\StudentDataModel\Events\SisSyncCompleted;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
 
-class ProspectPhoneNumberObserver
+class TriggerPhoneNumberLookupsController extends Controller
 {
-    public function creating(ProspectPhoneNumber $prospectPhoneNumber): void
+    /**
+     * Olympus-protected endpoint, intended to be called after a nightly SIS
+     * sync. It only fires the SisSyncCompleted event and returns immediately;
+     * a queued listener performs the scan and dispatches the lookups, so this
+     * request never blocks SIS sync completion.
+     */
+    public function __invoke(): JsonResponse
     {
-        if (blank($prospectPhoneNumber->order)) {
-            $prospectPhoneNumber->order = DB::raw("(SELECT COALESCE(MAX(\"{$prospectPhoneNumber->getTable()}\".order), 0) + 1 FROM \"{$prospectPhoneNumber->getTable()}\" WHERE prospect_id = '{$prospectPhoneNumber->prospect_id}')");
-        }
-    }
+        SisSyncCompleted::dispatch();
 
-    public function saved(ProspectPhoneNumber $prospectPhoneNumber): void
-    {
-        if (! $prospectPhoneNumber->wasRecentlyCreated && ! $prospectPhoneNumber->wasChanged('number')) {
-            return;
-        }
-
-        if (blank($prospectPhoneNumber->number)) {
-            return;
-        }
-
-        // Reuse an existing lookup result rather than paying for another.
-        if (PhoneNumberLookup::query()->where('number', $prospectPhoneNumber->number)->exists()) {
-            return;
-        }
-
-        LookupPhoneNumber::dispatch($prospectPhoneNumber->number)->afterCommit();
+        return response()->json([
+            'message' => 'Phone number lookups have been queued.',
+        ], Response::HTTP_ACCEPTED);
     }
 }

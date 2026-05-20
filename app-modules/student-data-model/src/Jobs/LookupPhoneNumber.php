@@ -34,37 +34,73 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Observers;
+namespace AdvisingApp\StudentDataModel\Jobs;
 
-use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
-use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
+use AdvisingApp\StudentDataModel\Contracts\PhoneNumberLookupService;
+use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
-use Illuminate\Support\Facades\DB;
+use DateTimeInterface;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\Middleware\RateLimitedWithRedis;
+use Throwable;
 
-class ProspectPhoneNumberObserver
+class LookupPhoneNumber implements ShouldBeUnique, ShouldQueue
 {
-    public function creating(ProspectPhoneNumber $prospectPhoneNumber): void
+    use Queueable;
+
+    public int $timeout = 60;
+
+    public int $maxExceptions = 3;
+
+    public int $backoff = 30;
+
+    public int $uniqueFor = 90000;
+
+    public function __construct(
+        public readonly string $phoneNumber,
+    ) {}
+
+    public function handle(PhoneNumberLookupService $phoneNumberLookupService): void
     {
-        if (blank($prospectPhoneNumber->order)) {
-            $prospectPhoneNumber->order = DB::raw("(SELECT COALESCE(MAX(\"{$prospectPhoneNumber->getTable()}\".order), 0) + 1 FROM \"{$prospectPhoneNumber->getTable()}\" WHERE prospect_id = '{$prospectPhoneNumber->prospect_id}')");
-        }
+        $phoneNumberLookupService->lookup($this->phoneNumber);
     }
 
-    public function saved(ProspectPhoneNumber $prospectPhoneNumber): void
+    /**
+     * @return array<object>
+     */
+    public function middleware(): array
     {
-        if (! $prospectPhoneNumber->wasRecentlyCreated && ! $prospectPhoneNumber->wasChanged('number')) {
+        return [new RateLimitedWithRedis('telnyx-number-lookup')];
+    }
+
+    public function retryUntil(): DateTimeInterface
+    {
+        return now()->addHours(24);
+    }
+
+    public function uniqueId(): string
+    {
+        return $this->phoneNumber;
+    }
+
+    public function failed(?Throwable $exception): void
+    {
+        if ($exception instanceof Throwable) {
+            report($exception);
+        }
+
+        if (PhoneNumberLookup::query()->where('number', $this->phoneNumber)->exists()) {
             return;
         }
 
-        if (blank($prospectPhoneNumber->number)) {
-            return;
-        }
-
-        // Reuse an existing lookup result rather than paying for another.
-        if (PhoneNumberLookup::query()->where('number', $prospectPhoneNumber->number)->exists()) {
-            return;
-        }
-
-        LookupPhoneNumber::dispatch($prospectPhoneNumber->number)->afterCommit();
+        PhoneNumberLookup::query()->create([
+            'number' => $this->phoneNumber,
+            'status' => PhoneNumberLookupStatus::LookupFailed,
+            'raw_response' => [
+                'error' => $exception?->getMessage(),
+            ],
+        ]);
     }
 }

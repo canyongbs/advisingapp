@@ -34,37 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Observers;
+namespace AdvisingApp\StudentDataModel\Contracts;
 
-use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
-use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
+use Throwable;
 
-class ProspectPhoneNumberObserver
+interface PhoneNumberLookupService
 {
-    public function creating(ProspectPhoneNumber $prospectPhoneNumber): void
-    {
-        if (blank($prospectPhoneNumber->order)) {
-            $prospectPhoneNumber->order = DB::raw("(SELECT COALESCE(MAX(\"{$prospectPhoneNumber->getTable()}\".order), 0) + 1 FROM \"{$prospectPhoneNumber->getTable()}\" WHERE prospect_id = '{$prospectPhoneNumber->prospect_id}')");
-        }
-    }
-
-    public function saved(ProspectPhoneNumber $prospectPhoneNumber): void
-    {
-        if (! $prospectPhoneNumber->wasRecentlyCreated && ! $prospectPhoneNumber->wasChanged('number')) {
-            return;
-        }
-
-        if (blank($prospectPhoneNumber->number)) {
-            return;
-        }
-
-        // Reuse an existing lookup result rather than paying for another.
-        if (PhoneNumberLookup::query()->where('number', $prospectPhoneNumber->number)->exists()) {
-            return;
-        }
-
-        LookupPhoneNumber::dispatch($prospectPhoneNumber->number)->afterCommit();
-    }
+    /**
+     * Look up a phone number and return its persisted lookup record.
+     *
+     * Implementations must:
+     *  - Validate that $phoneNumber is in E.164 format, throwing an
+     *    {@see InvalidArgumentException} when it is not.
+     *  - Return the existing {@see PhoneNumberLookup} when one already exists
+     *    for the number, without calling the provider again (cost control).
+     *  - Otherwise perform the provider lookup, persist the result, and
+     *    return it.
+     *
+     * Definitive outcomes (a successful lookup, or a number the provider
+     * cannot recognize) are persisted and returned. Operational errors that
+     * may be transient (auth, rate limiting, server/connection failures) are
+     * thrown so the caller (the queued {@see LookupPhoneNumber}
+     * job) can retry them.
+     *
+     * @throws InvalidArgumentException when $phoneNumber is not a valid E.164 number.
+     * @throws Throwable on a transient provider/API failure.
+     */
+    public function lookup(string $phoneNumber): PhoneNumberLookup;
 }

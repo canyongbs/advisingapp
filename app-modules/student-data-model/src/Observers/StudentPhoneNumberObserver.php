@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel\Observers;
 
+use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
+use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use Illuminate\Support\Facades\DB;
 
@@ -46,5 +48,23 @@ class StudentPhoneNumberObserver
         if (blank($studentPhoneNumber->order)) {
             $studentPhoneNumber->order = DB::raw("(SELECT COALESCE(MAX(\"{$studentPhoneNumber->getTable()}\".order), 0) + 1 FROM \"{$studentPhoneNumber->getTable()}\" WHERE sisid = '{$studentPhoneNumber->sisid}')");
         }
+    }
+
+    public function saved(StudentPhoneNumber $studentPhoneNumber): void
+    {
+        if (! $studentPhoneNumber->wasRecentlyCreated && ! $studentPhoneNumber->wasChanged('number')) {
+            return;
+        }
+
+        if (blank($studentPhoneNumber->number)) {
+            return;
+        }
+
+        // Reuse an existing lookup result rather than paying for another.
+        if (PhoneNumberLookup::query()->where('number', $studentPhoneNumber->number)->exists()) {
+            return;
+        }
+
+        LookupPhoneNumber::dispatch($studentPhoneNumber->number)->afterCommit();
     }
 }

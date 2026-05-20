@@ -34,37 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Observers;
+namespace AdvisingApp\StudentDataModel\Listeners;
 
-use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
+use AdvisingApp\StudentDataModel\Events\SisSyncCompleted;
 use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
-use Illuminate\Support\Facades\DB;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Collection;
 
-class ProspectPhoneNumberObserver
+class QueuePhoneNumberLookups implements ShouldQueue
 {
-    public function creating(ProspectPhoneNumber $prospectPhoneNumber): void
+    public int $timeout = 1800;
+
+    public int $tries = 1;
+
+    /**
+     * Queue a lookup for every Student phone number that has never been
+     * checked. Runs queued so it never blocks the SIS sync request.
+     *
+     * The scan is chunked to keep memory flat on large datasets. The same
+     * number may appear on multiple rows; LookupPhoneNumber is a unique job,
+     * so duplicate dispatches collapse to a single lookup.
+     */
+    public function handle(SisSyncCompleted $event): void
     {
-        if (blank($prospectPhoneNumber->order)) {
-            $prospectPhoneNumber->order = DB::raw("(SELECT COALESCE(MAX(\"{$prospectPhoneNumber->getTable()}\".order), 0) + 1 FROM \"{$prospectPhoneNumber->getTable()}\" WHERE prospect_id = '{$prospectPhoneNumber->prospect_id}')");
-        }
-    }
-
-    public function saved(ProspectPhoneNumber $prospectPhoneNumber): void
-    {
-        if (! $prospectPhoneNumber->wasRecentlyCreated && ! $prospectPhoneNumber->wasChanged('number')) {
-            return;
-        }
-
-        if (blank($prospectPhoneNumber->number)) {
-            return;
-        }
-
-        // Reuse an existing lookup result rather than paying for another.
-        if (PhoneNumberLookup::query()->where('number', $prospectPhoneNumber->number)->exists()) {
-            return;
-        }
-
-        LookupPhoneNumber::dispatch($prospectPhoneNumber->number)->afterCommit();
+        StudentPhoneNumber::query()
+            ->whereNotNull('number')
+            ->where('number', '!=', '')
+            ->whereNotIn('number', PhoneNumberLookup::query()->select('number'))
+            ->chunkById(1000, function (Collection $studentPhoneNumbers): void {
+                foreach ($studentPhoneNumbers as $studentPhoneNumber) {
+                    LookupPhoneNumber::dispatch($studentPhoneNumber->number);
+                }
+            });
     }
 }

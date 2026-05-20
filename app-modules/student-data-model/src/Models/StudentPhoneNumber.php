@@ -92,6 +92,14 @@ class StudentPhoneNumber extends BaseModel implements Auditable
         return $this->hasOne(BouncedPhoneNumber::class, 'number', 'number');
     }
 
+    /**
+     * @return HasOne<PhoneNumberLookup, $this>
+     */
+    public function phoneNumberLookup(): HasOne
+    {
+        return $this->hasOne(PhoneNumberLookup::class, 'number', 'number');
+    }
+
     public function getHealthStatus(): PhoneHealthStatus
     {
         if ($this->bounced()->exists()) {

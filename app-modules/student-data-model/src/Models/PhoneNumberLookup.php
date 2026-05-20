@@ -34,37 +34,55 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Observers;
+namespace AdvisingApp\StudentDataModel\Models;
 
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
-use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
-use Illuminate\Support\Facades\DB;
+use AdvisingApp\StudentDataModel\Database\Factories\PhoneNumberLookupFactory;
+use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ProspectPhoneNumberObserver
+/**
+ * @mixin IdeHelperPhoneNumberLookup
+ */
+class PhoneNumberLookup extends BaseModel implements Auditable
 {
-    public function creating(ProspectPhoneNumber $prospectPhoneNumber): void
+    use HasUuids;
+    use AuditableTrait;
+
+    /** @use HasFactory<PhoneNumberLookupFactory> */
+    use HasFactory;
+
+    protected $fillable = [
+        'number',
+        'status',
+        'carrier_name',
+        'carrier_type',
+        'raw_response',
+    ];
+
+    protected $casts = [
+        'status' => PhoneNumberLookupStatus::class,
+        'raw_response' => 'array',
+    ];
+
+    /**
+     * @return BelongsTo<StudentPhoneNumber, $this>
+     */
+    public function studentPhoneNumber(): BelongsTo
     {
-        if (blank($prospectPhoneNumber->order)) {
-            $prospectPhoneNumber->order = DB::raw("(SELECT COALESCE(MAX(\"{$prospectPhoneNumber->getTable()}\".order), 0) + 1 FROM \"{$prospectPhoneNumber->getTable()}\" WHERE prospect_id = '{$prospectPhoneNumber->prospect_id}')");
-        }
+        return $this->belongsTo(StudentPhoneNumber::class, 'number', 'number');
     }
 
-    public function saved(ProspectPhoneNumber $prospectPhoneNumber): void
+    /**
+     * @return BelongsTo<ProspectPhoneNumber, $this>
+     */
+    public function prospectPhoneNumber(): BelongsTo
     {
-        if (! $prospectPhoneNumber->wasRecentlyCreated && ! $prospectPhoneNumber->wasChanged('number')) {
-            return;
-        }
-
-        if (blank($prospectPhoneNumber->number)) {
-            return;
-        }
-
-        // Reuse an existing lookup result rather than paying for another.
-        if (PhoneNumberLookup::query()->where('number', $prospectPhoneNumber->number)->exists()) {
-            return;
-        }
-
-        LookupPhoneNumber::dispatch($prospectPhoneNumber->number)->afterCommit();
+        return $this->belongsTo(ProspectPhoneNumber::class, 'number', 'number');
     }
 }

@@ -34,37 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Observers;
+namespace AdvisingApp\StudentDataModel\Actions;
 
-use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
-use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
-use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
+use libphonenumber\NumberParseException;
+use libphonenumber\PhoneNumberFormat;
+use libphonenumber\PhoneNumberUtil;
 
-class ProspectPhoneNumberObserver
+class NormalizePhoneNumberToE164
 {
-    public function creating(ProspectPhoneNumber $prospectPhoneNumber): void
+    /**
+     * Normalize a phone number to E.164 format.
+     *
+     * Numbers entering the system (SIS sync, manual entry, imports) should
+     * already be E.164. This acts as a defense-in-depth check so any current
+     * or future caller can re-validate the format before it is used.
+     *
+     * @throws InvalidArgumentException when the value cannot be parsed as a valid phone number.
+     */
+    public function __invoke(string $phoneNumber): string
     {
-        if (blank($prospectPhoneNumber->order)) {
-            $prospectPhoneNumber->order = DB::raw("(SELECT COALESCE(MAX(\"{$prospectPhoneNumber->getTable()}\".order), 0) + 1 FROM \"{$prospectPhoneNumber->getTable()}\" WHERE prospect_id = '{$prospectPhoneNumber->prospect_id}')");
-        }
-    }
+        $phoneNumberUtil = PhoneNumberUtil::getInstance();
 
-    public function saved(ProspectPhoneNumber $prospectPhoneNumber): void
-    {
-        if (! $prospectPhoneNumber->wasRecentlyCreated && ! $prospectPhoneNumber->wasChanged('number')) {
-            return;
-        }
-
-        if (blank($prospectPhoneNumber->number)) {
-            return;
+        try {
+            // Parse without a region: this only succeeds when the number is
+            // already in E.164 format (i.e. it carries its own country code).
+            $parsed = $phoneNumberUtil->parse($phoneNumber);
+        } catch (NumberParseException $exception) {
+            throw new InvalidArgumentException(
+                "The phone number [{$phoneNumber}] could not be parsed as a valid E.164 number.",
+                previous: $exception,
+            );
         }
 
-        // Reuse an existing lookup result rather than paying for another.
-        if (PhoneNumberLookup::query()->where('number', $prospectPhoneNumber->number)->exists()) {
-            return;
+        if (! $phoneNumberUtil->isValidNumber($parsed)) {
+            throw new InvalidArgumentException(
+                "The phone number [{$phoneNumber}] is not a valid phone number.",
+            );
         }
 
-        LookupPhoneNumber::dispatch($prospectPhoneNumber->number)->afterCommit();
+        return $phoneNumberUtil->format($parsed, PhoneNumberFormat::E164);
     }
 }

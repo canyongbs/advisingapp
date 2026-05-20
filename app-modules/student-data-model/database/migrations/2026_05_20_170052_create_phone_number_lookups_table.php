@@ -34,37 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Observers;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
-use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
-use Illuminate\Support\Facades\DB;
-
-class ProspectPhoneNumberObserver
-{
-    public function creating(ProspectPhoneNumber $prospectPhoneNumber): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if (blank($prospectPhoneNumber->order)) {
-            $prospectPhoneNumber->order = DB::raw("(SELECT COALESCE(MAX(\"{$prospectPhoneNumber->getTable()}\".order), 0) + 1 FROM \"{$prospectPhoneNumber->getTable()}\" WHERE prospect_id = '{$prospectPhoneNumber->prospect_id}')");
-        }
+        Schema::create('phone_number_lookups', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('number')->unique();
+            $table->string('status');
+            $table->string('carrier_name')->nullable();
+            $table->string('carrier_type')->nullable();
+            $table->jsonb('raw_response')->nullable();
+            $table->timestamps();
+
+            $table->index('number');
+        });
     }
 
-    public function saved(ProspectPhoneNumber $prospectPhoneNumber): void
+    public function down(): void
     {
-        if (! $prospectPhoneNumber->wasRecentlyCreated && ! $prospectPhoneNumber->wasChanged('number')) {
-            return;
-        }
-
-        if (blank($prospectPhoneNumber->number)) {
-            return;
-        }
-
-        // Reuse an existing lookup result rather than paying for another.
-        if (PhoneNumberLookup::query()->where('number', $prospectPhoneNumber->number)->exists()) {
-            return;
-        }
-
-        LookupPhoneNumber::dispatch($prospectPhoneNumber->number)->afterCommit();
+        Schema::dropIfExists('phone_number_lookups');
     }
-}
+};

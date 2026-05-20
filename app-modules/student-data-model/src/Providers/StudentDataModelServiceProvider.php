@@ -37,12 +37,15 @@
 namespace AdvisingApp\StudentDataModel\Providers;
 
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
+use AdvisingApp\StudentDataModel\Events\SisSyncCompleted;
+use AdvisingApp\StudentDataModel\Listeners\QueuePhoneNumberLookups;
 use AdvisingApp\StudentDataModel\Listeners\SaveBouncedEmailAddress;
 use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
 use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\EmailAddressOptInOptOut;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
+use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
 use AdvisingApp\StudentDataModel\Models\Program;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -50,9 +53,12 @@ use AdvisingApp\StudentDataModel\Models\StudentAddress;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use AdvisingApp\StudentDataModel\StudentDataModelPlugin;
+use App\Models\Tenant;
 use Filament\Panel;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class StudentDataModelServiceProvider extends ServiceProvider
@@ -76,11 +82,27 @@ class StudentDataModelServiceProvider extends ServiceProvider
             'bounced_email_address' => BouncedEmailAddress::class,
             'bounced_phone_number' => BouncedPhoneNumber::class,
             'email_address_opt_in_opt_out' => EmailAddressOptInOptOut::class,
+            'phone_number_lookup' => PhoneNumberLookup::class,
         ]);
 
         Event::listen(
             SesBounceEvent::class,
             SaveBouncedEmailAddress::class
         );
+
+        Event::listen(
+            SisSyncCompleted::class,
+            QueuePhoneNumberLookups::class
+        );
+
+        // Telnyx applies rate limits per account, and each tenant uses its own
+        // Telnyx account/API key, so the limit must be keyed per tenant. The
+        // conservative 2 requests/second default can be raised once real
+        // throughput is observed. Consumed by the LookupPhoneNumber job.
+        RateLimiter::for('telnyx-number-lookup', function (): Limit {
+            $tenantKey = Tenant::current()?->getKey() ?? 'landlord';
+
+            return Limit::perSecond(2)->by("telnyx-number-lookup:{$tenantKey}");
+        });
     }
 }
