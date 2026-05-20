@@ -45,7 +45,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
-use Override;
 
 class TagsBlock extends WorkflowActionBlock
 {
@@ -113,6 +112,7 @@ class TagsBlock extends WorkflowActionBlock
     public function beforeCreate(array $data): array
     {
         $data['tag_ids'] = array_merge($data['student_tag_ids'], $data['prospect_tag_ids']);
+
         return parent::beforeCreate($data);
     }
 
@@ -127,6 +127,7 @@ class TagsBlock extends WorkflowActionBlock
     public function beforeUpdate(array $data): array
     {
         $data['tag_ids'] = array_merge($data['student_tag_ids'], $data['prospect_tag_ids']);
+
         return parent::beforeUpdate($data);
     }
 
