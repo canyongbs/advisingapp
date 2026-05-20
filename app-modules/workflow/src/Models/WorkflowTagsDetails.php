@@ -37,11 +37,13 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\Workflow\Database\Factories\WorkflowTagsDetailsFactory;
 use AdvisingApp\Workflow\Filament\Blocks\TagsBlock;
 use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\TagsWorkflowActionJob;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -54,10 +56,12 @@ class WorkflowTagsDetails extends WorkflowDetails implements Auditable
     use AuditableTrait;
     use HasUuids;
 
+    /** @use HasFactory<WorkflowTagsDetailsFactory> */
+    use HasFactory;
+
     protected $fillable = [
         'tag_ids',
         'remove_prior',
-        'workflow_step_id',
     ];
 
     protected $casts = [

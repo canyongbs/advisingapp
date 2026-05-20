@@ -67,7 +67,6 @@ class TagsBlock extends WorkflowActionBlock
                 ->options(fn () => Tag::where('type', TagType::Student)->orderBy('name', 'ASC')->pluck('name', 'id'))
                 ->multiple()
                 ->searchable()
-                ->required()
                 ->exists('tags', 'id'),
             Select::make('prospect_tag_ids')
                 ->label('Which Prospect tags should be applied?')
@@ -75,7 +74,6 @@ class TagsBlock extends WorkflowActionBlock
                 ->options(fn () => Tag::where('type', TagType::Prospect)->orderBy('name', 'ASC')->pluck('name', 'id'))
                 ->multiple()
                 ->searchable()
-                ->required()
                 ->exists('tags', 'id'),
             Toggle::make('remove_prior')
                 ->label('Remove all previously assigned tags?')
