@@ -74,6 +74,7 @@ class WorkflowRunStepFactory extends Factory
                     WorkflowProactiveConcernDetails::class,
                     // WorkflowCareTeamDetails::class,
                     WorkflowCaseDetails::class,
+                    WorkflowTagsDetails::class,
                     // WorkflowTaskDetails::class,
                 ];
 

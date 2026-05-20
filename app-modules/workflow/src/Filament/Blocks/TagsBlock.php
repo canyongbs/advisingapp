@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Workflow\Filament\Blocks;
 
+use AdvisingApp\Workflow\Models\WorkflowDetails;
+use AdvisingApp\Workflow\Models\WorkflowTagsDetails;
 use App\Enums\TagType;
 use App\Models\Tag;
 use Filament\Forms\Components\Select;
@@ -105,6 +107,13 @@ class TagsBlock extends WorkflowActionBlock
                 ])
                 ->columns(3),
         ];
+    }
+
+    public function prepareForEdit(WorkflowDetails $details): void {
+        assert($details instanceof WorkflowTagsDetails);
+        $tags = Tag::find($details['tag_ids']);
+        $details['student_tag_ids'] = $tags->where('type', TagType::Student)->pluck('id');
+        $details['prospect_tag_ids'] = $tags->where('type', TagType::Prospect)->pluck('id');
     }
 
     public static function type(): string
