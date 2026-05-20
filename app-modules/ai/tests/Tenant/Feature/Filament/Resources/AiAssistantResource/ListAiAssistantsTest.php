@@ -89,7 +89,7 @@ it('can render', function () use ($licenses, $permissions) {
 
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->customAiAssistants = true;
+    $settings->data->addons->employeeAdvisors = true;
 
     $settings->save();
 
@@ -105,7 +105,7 @@ it('can list records', function () use ($licenses, $permissions) {
 
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->customAiAssistants = true;
+    $settings->data->addons->employeeAdvisors = true;
 
     $settings->save();
 

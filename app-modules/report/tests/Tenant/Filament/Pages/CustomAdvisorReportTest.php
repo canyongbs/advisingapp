@@ -46,7 +46,7 @@ it('is gated with proper access control', function () {
     $settings = app(LicenseSettings::class);
     $user = User::factory()->create();
 
-    $settings->data->addons->customAiAssistants = false;
+    $settings->data->addons->employeeAdvisors = false;
     $settings->save();
 
     actingAs($user);
@@ -63,7 +63,7 @@ it('is gated with proper access control', function () {
 
     get(CustomAdvisorReport::getUrl())->assertForbidden();
 
-    $settings->data->addons->customAiAssistants = true;
+    $settings->data->addons->employeeAdvisors = true;
     $settings->save();
 
     get(CustomAdvisorReport::getUrl())->assertSuccessful();

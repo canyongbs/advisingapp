@@ -42,6 +42,7 @@ use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportStats;
 use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Enums\Feature;
+use App\Features\AiAssistantDtoRenameFeature;
 use App\Filament\Clusters\ReportLibrary;
 use Illuminate\Support\Facades\Gate;
 use UnitEnum;
@@ -62,7 +63,9 @@ class QnaAdvisorReport extends AiReport
 
     public static function canAccess(): bool
     {
-        return Gate::check(Feature::QnAAdvisor->getGateName()) && parent::canAccess();
+        $featureGate = AiAssistantDtoRenameFeature::active() ? Feature::CustomerAdvisors->getGateName() : Feature::QnAAdvisor->getGateName();
+
+        return Gate::check($featureGate) && parent::canAccess();
     }
 
     public function getWidgets(): array

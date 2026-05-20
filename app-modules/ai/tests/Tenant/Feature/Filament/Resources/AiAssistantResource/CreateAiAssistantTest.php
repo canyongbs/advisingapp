@@ -101,7 +101,7 @@ it('can render', function () use ($licenses, $permissions) {
 
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->customAiAssistants = true;
+    $settings->data->addons->employeeAdvisors = true;
 
     $settings->save();
 
@@ -119,7 +119,7 @@ it('can create a record', function () use ($licenses, $permissions) {
 
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->customAiAssistants = true;
+    $settings->data->addons->employeeAdvisors = true;
 
     $settings->save();
 
@@ -162,7 +162,7 @@ it('validates the inputs', function ($data, $errors) use ($licenses, $permission
 
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->customAiAssistants = true;
+    $settings->data->addons->employeeAdvisors = true;
 
     $settings->save();
 
@@ -231,7 +231,7 @@ it('ai_assistant_confidential_users UserSelect does not show admin users in opti
     ));
 
     $licenseSettings = app(LicenseSettings::class);
-    $licenseSettings->data->addons->customAiAssistants = true;
+    $licenseSettings->data->addons->employeeAdvisors = true;
     $licenseSettings->save();
 
     $regularUser = User::factory()->create();
@@ -255,7 +255,7 @@ it('ai_assistant_confidential_users UserSelect shows all users when filter_admin
     ));
 
     $licenseSettings = app(LicenseSettings::class);
-    $licenseSettings->data->addons->customAiAssistants = true;
+    $licenseSettings->data->addons->employeeAdvisors = true;
     $licenseSettings->save();
 
     $adminUser = User::factory()->create();

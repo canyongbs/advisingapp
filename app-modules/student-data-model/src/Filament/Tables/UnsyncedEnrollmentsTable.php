@@ -34,37 +34,38 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Report\Filament\Pages\QnaAdvisorReport;
-use App\Models\User;
-use App\Settings\LicenseSettings;
+namespace AdvisingApp\StudentDataModel\Filament\Tables;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Laravel\get;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
+use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
-it('is gated with proper access control', function () {
-    $settings = app(LicenseSettings::class);
-    $user = User::factory()->create();
+class UnsyncedEnrollmentsTable
+{
+    public static function configure(Table $table): Table
+    {
+        return $table
+            ->query(self::getUnsyncedEnrollments())
+            ->columns([
+                TextColumn::make('semester_name'),
+            ]);
+    }
 
-    $settings->data->addons->customerAdvisors = false;
-    $settings->save();
-
-    actingAs($user);
-
-    get(QnaAdvisorReport::getUrl())->assertForbidden();
-
-    $user->grantLicense(LicenseType::ConversationalAi);
-
-    $user->refresh();
-
-    get(QnaAdvisorReport::getUrl())->assertForbidden();
-
-    $user->givePermissionTo('report-library.view-any');
-
-    get(QnaAdvisorReport::getUrl())->assertForbidden();
-
-    $settings->data->addons->customerAdvisors = true;
-    $settings->save();
-
-    get(QnaAdvisorReport::getUrl())->assertSuccessful();
-});
+    /**
+     * @return Builder<Enrollment>
+     */
+    public static function getUnsyncedEnrollments(): Builder
+    {
+        return Enrollment::query()
+            ->whereNotNull('semester_name')
+            ->whereNotIn(
+                'semester_name',
+                EnrollmentSemester::query()->select('name')
+            )
+            ->distinct('semester_name')
+            ->orderBy('semester_name')
+            ->orderBy('id');
+    }
+}

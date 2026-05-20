@@ -41,21 +41,24 @@ use Illuminate\Foundation\Http\FormRequest;
 class SyncTenantRequest extends FormRequest
 {
     /**
-      * @return array<string, array<int, string>>
-      */
+     * @return array<string, array<int, string>>
+     */
     public function rules(): array
     {
-        return [
+        $rules = [
             'limits' => ['required', 'array'],
             'limits.conversationalAiSeats' => ['required', 'integer', 'min:0'],
-            'limits.conversationalAiAssistants' => ['required', 'integer', 'min:0'],
             'limits.retentionCrmSeats' => ['required', 'integer', 'min:0'],
             'limits.recruitmentCrmSeats' => ['required', 'integer', 'min:0'],
             'limits.emails' => ['required', 'integer', 'min:0'],
             'limits.sms' => ['required', 'integer', 'min:0'],
-            'limits.qnaAdvisorsCount' => ['required', 'integer', 'min:0'],
             'limits.dataAdvisorsCount' => ['required', 'integer', 'min:0'],
             'limits.resetDate' => ['required', 'string', 'date_format:m-d'],
+            //TODO: AiAssistantDtoRenameFeature cleanup: Please uncomment the following rules when you remove the feature flag from line 59 to 62 lines below
+            // 'limits.employeeAdvisorsCount' => ['required', 'integer', 'min:0'],
+            // 'limits.customerAdvisorsCount' => ['required', 'integer', 'min:0'],
+            // 'addons.employeeAdvisors' => ['required', 'boolean'],
+            // 'addons.customerAdvisors' => ['required', 'boolean'],
             'addons' => ['required', 'array'],
             'addons.onlineForms' => ['required', 'boolean'],
             'addons.onlineSurveys' => ['required', 'boolean'],
@@ -67,9 +70,7 @@ class SyncTenantRequest extends FormRequest
             'addons.realtimeChat' => ['required', 'boolean'],
             'addons.mobileApps' => ['required', 'boolean'],
             'addons.scheduleAndAppointments' => ['required', 'boolean'],
-            'addons.customAiAssistants' => ['required', 'boolean'],
             'addons.researchAdvisor' => ['required', 'boolean'],
-            'addons.qnaAdvisor' => ['required', 'boolean'],
             'addons.dataAdvisor' => ['required', 'boolean'],
             'addons.projectManagement' => ['required', 'boolean'],
             'addons.earlyAlert' => ['required', 'boolean'],
@@ -86,5 +87,17 @@ class SyncTenantRequest extends FormRequest
             'subscription.startDate' => ['required', 'string'],
             'subscription.endDate' => ['required', 'string'],
         ];
+
+        //TODO: AiAssistantDtoRenameFeature cleanup: remove the following rules when you remove the feature flag from line 92 to 100 lines below
+        $rules['limits.employeeAdvisorsCount'] = ['sometimes', 'integer', 'min:0'];
+        $rules['limits.customerAdvisorsCount'] = ['sometimes', 'integer', 'min:0'];
+        $rules['addons.employeeAdvisors'] = ['sometimes', 'boolean'];
+        $rules['addons.customerAdvisors'] = ['sometimes', 'boolean'];
+        $rules['limits.conversationalAiAssistants'] = ['sometimes', 'integer', 'min:0'];
+        $rules['limits.qnaAdvisorsCount'] = ['sometimes', 'integer', 'min:0'];
+        $rules['addons.customAiAssistants'] = ['sometimes', 'boolean'];
+        $rules['addons.qnaAdvisor'] = ['sometimes', 'boolean'];
+
+        return $rules;
     }
 }
