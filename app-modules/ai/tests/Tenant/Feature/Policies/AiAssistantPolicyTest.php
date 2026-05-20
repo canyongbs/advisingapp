@@ -55,7 +55,7 @@ test('viewAny', function () {
 
     $settings = app(LicenseSettings::class);
 
-    $settings->data->addons->customAiAssistants = true;
+    $settings->data->addons->employeeAdvisors = true;
 
     $settings->save();
 
@@ -89,7 +89,7 @@ test('view', function () {
 test('create', function () {
     $settings = app(LicenseSettings::class);
 
-    $settings->data->limits->conversationalAiAssistants = 0;
+    $settings->data->limits->employeeAdvisorsCount = 0;
 
     $settings->save();
 
@@ -108,7 +108,7 @@ test('create', function () {
 
     expect($user->can('create', AiAssistant::class))->toBeFalse();
 
-    $settings->data->limits->conversationalAiAssistants = 1;
+    $settings->data->limits->employeeAdvisorsCount = 1;
 
     $settings->save();
 

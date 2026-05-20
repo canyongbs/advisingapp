@@ -43,6 +43,7 @@ use AdvisingApp\Report\Filament\Widgets\CustomAdvisorStats;
 use AdvisingApp\Report\Filament\Widgets\CustomAdvisorTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Enums\Feature;
+use App\Features\AiAssistantDtoRenameFeature;
 use App\Filament\Clusters\ReportLibrary;
 use Illuminate\Support\Facades\Gate;
 use UnitEnum;
@@ -65,7 +66,11 @@ class CustomAdvisorReport extends AiReport
 
     public static function canAccess(): bool
     {
-        return Gate::check(Feature::CustomAiAssistants->getGateName()) && parent::canAccess();
+        $featureGate = AiAssistantDtoRenameFeature::active()
+              ? Feature::EmployeeAdvisors->getGateName()
+              : Feature::CustomAiAssistants->getGateName();
+
+        return Gate::check($featureGate) && parent::canAccess();
     }
 
     public function getWidgets(): array

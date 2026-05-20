@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Policies;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Concerns\PerformsLicenseChecks;
 use App\Enums\Feature;
+use App\Features\AiAssistantDtoRenameFeature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
@@ -53,7 +54,11 @@ class QnaAdvisorPolicy
             return $response;
         }
 
-        if (! Gate::check(Feature::QnAAdvisor->getGateName())) {
+        $featureGate = AiAssistantDtoRenameFeature::active()
+            ? Feature::CustomerAdvisors->getGateName()
+            : Feature::QnAAdvisor->getGateName();
+
+        if (! Gate::check($featureGate)) {
             return Response::deny('Customer Advisors are not enabled.');
         }
 

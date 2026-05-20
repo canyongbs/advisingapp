@@ -66,7 +66,7 @@ it('does not load if you do not have any permissions to access', function () {
 it('cannot access the page if assistant is default', function () {
     $aiSettings = app(LicenseSettings::class);
 
-    $aiSettings->data->addons->customAiAssistants = true;
+    $aiSettings->data->addons->employeeAdvisors = true;
 
     $aiSettings->save();
 
@@ -90,7 +90,7 @@ it('cannot access the page if assistant is default', function () {
 it('can access the page if assistant is not default', function () {
     $aiSettings = app(LicenseSettings::class);
 
-    $aiSettings->data->addons->customAiAssistants = true;
+    $aiSettings->data->addons->employeeAdvisors = true;
 
     $aiSettings->save();
 

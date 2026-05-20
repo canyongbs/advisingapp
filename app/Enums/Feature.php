@@ -61,11 +61,15 @@ enum Feature: string
 
     case ScheduleAndAppointments = 'schedule-and-appointments';
 
-    case CustomAiAssistants = 'custom-ai-assistants';
+    case CustomAiAssistants = 'custom-ai-assistants'; //TODO: AiAssistantDtoRenameFeature clean up: remove this when you clean up AiAssistantDtoRenameFeature
+
+    case EmployeeAdvisors = 'employee-advisors';
 
     case ResearchAdvisor = 'research-advisor';
 
-    case QnAAdvisor = 'qna-advisor';
+    case QnAAdvisor = 'qna-advisor'; //TODO: AiAssistantDtoRenameFeature clean up: remove this when you clean up AiAssistantDtoRenameFeature
+
+    case CustomerAdvisors = 'customer-advisors';
 
     case DataAdvisor = 'data-advisor';
 
