@@ -45,7 +45,7 @@ use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
 
-class QnaAdvisorPolicy
+class CustomerAdvisorPolicy
 {
     use PerformsLicenseChecks;
 
