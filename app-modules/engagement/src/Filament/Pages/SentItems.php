@@ -57,6 +57,7 @@ use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Filter;
@@ -99,7 +100,9 @@ class SentItems extends Page implements HasTable
     {
         return $table
             ->query(
-                Engagement::query()->whereHas('recipient')
+                Engagement::query()
+                    ->whereHas('recipient')
+                    ->with(['latestEmailMessage', 'latestSmsMessage'])
             )
             ->columns([
                 TextColumn::make('direction')
@@ -120,10 +123,9 @@ class SentItems extends Page implements HasTable
                         default => null,
                     })
                     ->openUrlInNewTab(),
-                TextColumn::make('channel')
+                ViewColumn::make('channel')
                     ->label('Type')
-                    ->state(fn (Engagement $record): string => $record->channel->getLabel())
-                    ->icon(fn (Engagement $record): string => $record->channel->getIcon()),
+                    ->view('engagement::filament.columns.channel-detail'),
                 TextColumn::make('subject')
                     ->description(
                         fn (Engagement $record): ?string => filled($body = $record->getBodyText())

@@ -47,9 +47,16 @@ use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\SmsMessage;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
+use AdvisingApp\StudentDataModel\Enums\EmailHealthStatus;
+use AdvisingApp\StudentDataModel\Enums\PhoneHealthStatus;
+use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
+use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\EmailAddressOptInOptOut;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
+use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
@@ -181,6 +188,30 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function latestSmsMessage(): MorphOne
     {
         return $this->morphOne(SmsMessage::class, 'related')->latestOfMany();
+    }
+
+    public function getRecipientRoute(): ?string
+    {
+        return match ($this->channel) {
+            NotificationChannel::Email => $this->latestEmailMessage->recipient_address ?? $this->recipient_route,
+            NotificationChannel::Sms => $this->latestSmsMessage->recipient_number ?? $this->recipient_route,
+            default => $this->recipient_route,
+        };
+    }
+
+    public function getRecipientRouteHealthStatus(): EmailHealthStatus|PhoneHealthStatus|null
+    {
+        $route = $this->getRecipientRoute();
+
+        if (blank($route)) {
+            return null;
+        }
+
+        return match ($this->channel) {
+            NotificationChannel::Email => $this->resolveEmailHealthStatus($route),
+            NotificationChannel::Sms => $this->resolvePhoneHealthStatus($route),
+            default => null,
+        };
     }
 
     /**
@@ -329,6 +360,32 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
             ->fileAttachmentProvider(EngagementFileAttachmentProvider::make())
             ->fileAttachmentsVisibility('public')
             ->mergeTags($this->getMergeData());
+    }
+
+    protected function resolveEmailHealthStatus(string $address): EmailHealthStatus
+    {
+        if (BouncedEmailAddress::where('address', $address)->exists()) {
+            return EmailHealthStatus::Bounced;
+        }
+
+        if (EmailAddressOptInOptOut::where('address', $address)->where('status', EmailAddressOptInOptOutStatus::OptedOut)->exists()) {
+            return EmailHealthStatus::OptedOut;
+        }
+
+        return EmailHealthStatus::Healthy;
+    }
+
+    protected function resolvePhoneHealthStatus(string $number): PhoneHealthStatus
+    {
+        if (BouncedPhoneNumber::where('number', $number)->exists()) {
+            return PhoneHealthStatus::Bounced;
+        }
+
+        if (SmsOptOutPhoneNumber::where('number', $number)->exists()) {
+            return PhoneHealthStatus::OptedOut;
+        }
+
+        return PhoneHealthStatus::Healthy;
     }
 
     protected static function booted(): void
