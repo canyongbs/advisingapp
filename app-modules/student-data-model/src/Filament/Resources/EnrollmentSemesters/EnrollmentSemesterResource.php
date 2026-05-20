@@ -44,13 +44,14 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 use UnitEnum;
 
 class EnrollmentSemesterResource extends Resource
@@ -93,13 +94,24 @@ class EnrollmentSemesterResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                $query
+                    ->addSelect('enrollment_semesters.*')
+                    ->addSelect(DB::raw(
+                        "EXISTS(SELECT 1 FROM enrollments WHERE LOWER(enrollments.semester_name) = LOWER(enrollment_semesters.name) AND enrollments.deleted_at IS NULL) AS is_mapped"
+                    ));
+            })
             ->columns([
                 TextColumn::make('name'),
+                TextColumn::make('is_mapped')
+                    ->label('Mapping')
+                    ->badge()
+                    ->formatStateUsing(fn (mixed $state): string => $state ? 'Mapped' : 'Unmapped')
+                    ->color(fn (mixed $state): string => $state ? 'success' : 'gray'),
             ])
             ->defaultSort('order', 'desc')
             ->reorderable('order', condition: auth()->user()->can('settings.*.update'))
             ->recordActions([
-                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make(),
             ])
