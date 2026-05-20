@@ -63,19 +63,18 @@ test('the page is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-test('it displays the sync button with a correct count when appropriate', function () {
+test('it enables the sync button when appropriate', function () {
     asSuperAdmin();
 
     livewire(ManageEnrollmentSemesters::class)
-        ->assertActionHidden('syncAll');
+        ->assertActionDisabled('syncAll');
 
     $count = random_int(1, 10);
 
     Enrollment::factory($count)->sequence(fn (Sequence $seq) => ['semester_name' => "Name {$seq->index}"])->create();
 
     livewire(ManageEnrollmentSemesters::class)
-        ->assertActionVisible('syncAll')
-        ->assertActionHasLabel('syncAll', 'Sync All (' . $count . ')');
+        ->assertActionEnabled('syncAll');
 });
 
 test('it can successfully sync all semesters', function () {
