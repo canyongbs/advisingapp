@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Providers;
 
+use AdvisingApp\Prospect\Imports\ProspectImporter;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectAddress;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
@@ -43,8 +44,11 @@ use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\ProspectPlugin;
+use AdvisingApp\StudentDataModel\Jobs\QueuePhoneNumberLookups;
+use Filament\Actions\Imports\Events\ImportCompleted;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class ProspectServiceProvider extends ServiceProvider
@@ -64,5 +68,15 @@ class ProspectServiceProvider extends ServiceProvider
             'prospect_address' => ProspectAddress::class,
             'prospect_phone_number' => ProspectPhoneNumber::class,
         ]);
+
+        // A prospect import can introduce new phone numbers, so once one
+        // completes, scan for any numbers that have not yet been looked up.
+        Event::listen(ImportCompleted::class, function (ImportCompleted $event): void {
+            if ($event->getImport()->importer !== ProspectImporter::class) {
+                return;
+            }
+
+            QueuePhoneNumberLookups::dispatch();
+        });
     }
 }

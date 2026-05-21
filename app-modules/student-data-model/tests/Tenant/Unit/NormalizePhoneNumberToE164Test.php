@@ -34,41 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Contracts;
+use AdvisingApp\StudentDataModel\Actions\NormalizePhoneNumberToE164;
 
-use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
-use InvalidArgumentException;
-use Throwable;
+it('returns an already-E.164 number unchanged', function () {
+    expect((new NormalizePhoneNumberToE164())('+16502530000'))->toBe('+16502530000');
+});
 
-interface PhoneNumberLookupService
-{
-    /**
-     * Look up a phone number and return its persisted lookup record.
-     *
-     * Implementations must:
-     *  - Validate that $phoneNumber is in E.164 format, throwing an
-     *    {@see InvalidArgumentException} when it is not.
-     *  - Return the existing {@see PhoneNumberLookup} when one already exists
-     *    for the number, without calling the provider again (cost control).
-     *  - Otherwise perform the provider lookup, persist the result, and
-     *    return it.
-     *
-     * Definitive outcomes (a successful lookup, or a number the provider
-     * cannot recognize) are persisted and returned. Operational errors that
-     * may be transient (auth, rate limiting, server/connection failures) are
-     * thrown so the caller (the queued {@see LookupPhoneNumber}
-     * job) can retry them.
-     *
-     * @throws InvalidArgumentException when $phoneNumber is not a valid E.164 number.
-     * @throws Throwable on a transient provider/API failure.
-     */
-    public function lookup(string $phoneNumber): PhoneNumberLookup;
+it('strips formatting characters from an E.164 number', function () {
+    expect((new NormalizePhoneNumberToE164())('+1 (650) 253-0000'))->toBe('+16502530000');
+});
 
-    /**
-     * Determine whether the underlying provider is configured and able to
-     * perform lookups. When this returns false, callers should skip the
-     * lookup entirely rather than treating it as a failure.
-     */
-    public function isConfigured(): bool;
-}
+it('throws when the number has no country code', function () {
+    (new NormalizePhoneNumberToE164())('6502530000');
+})->throws(InvalidArgumentException::class);
+
+it('throws when the number is not a valid phone number', function () {
+    (new NormalizePhoneNumberToE164())('+1123');
+})->throws(InvalidArgumentException::class);
+
+it('throws when the value is not a phone number at all', function () {
+    (new NormalizePhoneNumberToE164())('not a phone number');
+})->throws(InvalidArgumentException::class);

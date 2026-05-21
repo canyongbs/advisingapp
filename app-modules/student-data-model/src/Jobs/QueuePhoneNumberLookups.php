@@ -36,77 +36,64 @@
 
 namespace AdvisingApp\StudentDataModel\Jobs;
 
+use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Contracts\PhoneNumberLookupService;
-use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
-use DateTimeInterface;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Queue\Middleware\RateLimitedWithRedis;
-use Throwable;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 
-class LookupPhoneNumber implements ShouldBeUnique, ShouldQueue
+/**
+ * Aggregate scan job: finds the distinct set of Student and Prospect phone
+ * numbers that have never been looked up and dispatches an individual
+ * {@see LookupPhoneNumber} job for each. Triggered after a SIS sync, after a
+ * relevant import, and once from the deploy data migration that backfills the
+ * feature.
+ */
+class QueuePhoneNumberLookups implements ShouldBeUnique, ShouldQueue
 {
     use Queueable;
 
-    public int $timeout = 60;
+    public int $timeout = 1800;
 
-    public int $maxExceptions = 3;
+    public int $tries = 1;
 
-    public int $backoff = 30;
-
-    public int $uniqueFor = 90000;
-
-    public function __construct(
-        public readonly string $phoneNumber,
-    ) {}
+    /**
+     * Only one aggregate scan needs to run at a time; the cache is
+     * tenant-prefixed, so this is effectively one scan per tenant.
+     */
+    public int $uniqueFor = 3600;
 
     public function handle(PhoneNumberLookupService $phoneNumberLookupService): void
     {
-        // Skip silently when no lookup provider is configured for this tenant;
-        // the number simply stays unchecked and can be picked up later.
+        // Nothing to scan for when no lookup provider is configured.
         if (! $phoneNumberLookupService->isConfigured()) {
             return;
         }
 
-        $phoneNumberLookupService->lookup($this->phoneNumber);
-    }
+        $studentNumbers = StudentPhoneNumber::query()
+            ->select('number')
+            ->whereNotNull('number')
+            ->where('number', '!=', '');
 
-    /**
-     * @return array<object>
-     */
-    public function middleware(): array
-    {
-        return [new RateLimitedWithRedis('telnyx-number-lookup')];
-    }
+        $prospectNumbers = ProspectPhoneNumber::query()
+            ->select('number')
+            ->whereNotNull('number')
+            ->where('number', '!=', '');
 
-    public function retryUntil(): DateTimeInterface
-    {
-        return now()->addHours(24);
-    }
-
-    public function uniqueId(): string
-    {
-        return $this->phoneNumber;
-    }
-
-    public function failed(?Throwable $exception): void
-    {
-        if ($exception instanceof Throwable) {
-            report($exception);
-        }
-
-        if (PhoneNumberLookup::query()->where('number', $this->phoneNumber)->exists()) {
-            return;
-        }
-
-        PhoneNumberLookup::query()->create([
-            'number' => $this->phoneNumber,
-            'status' => PhoneNumberLookupStatus::LookupFailed,
-            'raw_response' => [
-                'error' => $exception?->getMessage(),
-            ],
-        ]);
+        // A UNION yields the distinct set of numbers across both tables, so
+        // each number is dispatched exactly once. Chunking by the number
+        // column keeps memory flat on large datasets.
+        DB::query()
+            ->fromSub($studentNumbers->union($prospectNumbers), 'phone_numbers')
+            ->whereNotIn('number', PhoneNumberLookup::query()->select('number'))
+            ->chunkById(1000, function (Collection $phoneNumbers): void {
+                foreach ($phoneNumbers as $phoneNumber) {
+                    LookupPhoneNumber::dispatch($phoneNumber->number);
+                }
+            }, 'number');
     }
 }

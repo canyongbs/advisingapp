@@ -34,41 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Contracts;
+use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 
-use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
-use InvalidArgumentException;
-use Throwable;
+it('maps Telnyx carrier types to the correct internal status', function (?string $carrierType, PhoneNumberLookupStatus $expected) {
+    expect(PhoneNumberLookupStatus::fromTelnyxCarrierType($carrierType))->toBe($expected);
+})->with([
+    'mobile' => ['mobile', PhoneNumberLookupStatus::ValidMobile],
+    'fixed line or mobile' => ['fixed line or mobile', PhoneNumberLookupStatus::ValidMobile],
+    'fixed line' => ['fixed line', PhoneNumberLookupStatus::ValidLandline],
+    'voip' => ['voip', PhoneNumberLookupStatus::ValidVoip],
+    'toll free' => ['toll free', PhoneNumberLookupStatus::ValidTollFree],
+    'premium rate' => ['premium rate', PhoneNumberLookupStatus::Unknown],
+    'voicemail' => ['voicemail', PhoneNumberLookupStatus::Unknown],
+    'unrecognized type' => ['something else', PhoneNumberLookupStatus::Unknown],
+    'literal unknown' => ['unknown', PhoneNumberLookupStatus::Unknown],
+    'null' => [null, PhoneNumberLookupStatus::Unknown],
+    'empty string' => ['', PhoneNumberLookupStatus::Unknown],
+]);
 
-interface PhoneNumberLookupService
-{
-    /**
-     * Look up a phone number and return its persisted lookup record.
-     *
-     * Implementations must:
-     *  - Validate that $phoneNumber is in E.164 format, throwing an
-     *    {@see InvalidArgumentException} when it is not.
-     *  - Return the existing {@see PhoneNumberLookup} when one already exists
-     *    for the number, without calling the provider again (cost control).
-     *  - Otherwise perform the provider lookup, persist the result, and
-     *    return it.
-     *
-     * Definitive outcomes (a successful lookup, or a number the provider
-     * cannot recognize) are persisted and returned. Operational errors that
-     * may be transient (auth, rate limiting, server/connection failures) are
-     * thrown so the caller (the queued {@see LookupPhoneNumber}
-     * job) can retry them.
-     *
-     * @throws InvalidArgumentException when $phoneNumber is not a valid E.164 number.
-     * @throws Throwable on a transient provider/API failure.
-     */
-    public function lookup(string $phoneNumber): PhoneNumberLookup;
+it('matches carrier types case-insensitively', function () {
+    expect(PhoneNumberLookupStatus::fromTelnyxCarrierType('MOBILE'))->toBe(PhoneNumberLookupStatus::ValidMobile);
+});
 
-    /**
-     * Determine whether the underlying provider is configured and able to
-     * perform lookups. When this returns false, callers should skip the
-     * lookup entirely rather than treating it as a failure.
-     */
-    public function isConfigured(): bool;
-}
+it('prefers voip over landline for a "fixed voip" carrier type', function () {
+    expect(PhoneNumberLookupStatus::fromTelnyxCarrierType('fixed voip'))->toBe(PhoneNumberLookupStatus::ValidVoip);
+});

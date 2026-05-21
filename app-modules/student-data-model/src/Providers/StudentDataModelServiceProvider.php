@@ -38,7 +38,7 @@ namespace AdvisingApp\StudentDataModel\Providers;
 
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
 use AdvisingApp\StudentDataModel\Events\SisSyncCompleted;
-use AdvisingApp\StudentDataModel\Listeners\QueuePhoneNumberLookups;
+use AdvisingApp\StudentDataModel\Jobs\QueuePhoneNumberLookups;
 use AdvisingApp\StudentDataModel\Listeners\SaveBouncedEmailAddress;
 use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
 use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
@@ -90,10 +90,11 @@ class StudentDataModelServiceProvider extends ServiceProvider
             SaveBouncedEmailAddress::class
         );
 
-        Event::listen(
-            SisSyncCompleted::class,
-            QueuePhoneNumberLookups::class
-        );
+        // After a SIS sync completes, scan for any phone numbers that have not
+        // yet been looked up and queue the lookups.
+        Event::listen(SisSyncCompleted::class, function (): void {
+            QueuePhoneNumberLookups::dispatch();
+        });
 
         // Telnyx applies rate limits per account, and each tenant uses its own
         // Telnyx account/API key, so the limit must be keyed per tenant. The

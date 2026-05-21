@@ -34,39 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Listeners;
+namespace AdvisingApp\IntegrationTwilio\Tests\Fixtures;
 
-use AdvisingApp\StudentDataModel\Events\SisSyncCompleted;
-use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
-use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\Eloquent\Collection;
+use Telnyx\HttpClient\ClientInterface;
 
-class QueuePhoneNumberLookups implements ShouldQueue
+/**
+ * A stub Telnyx HTTP client that returns a canned response, used to exercise
+ * the Telnyx SDK in tests without making real network calls. Inject it via
+ * \Telnyx\ApiRequestor::setHttpClient().
+ */
+class FakeTelnyxHttpClient implements ClientInterface
 {
-    public int $timeout = 1800;
-
-    public int $tries = 1;
+    public function __construct(
+        private readonly string $body,
+        private readonly int $statusCode = 200,
+    ) {}
 
     /**
-     * Queue a lookup for every Student phone number that has never been
-     * checked. Runs queued so it never blocks the SIS sync request.
+     * @param mixed $method
+     * @param mixed $absUrl
+     * @param mixed $headers
+     * @param mixed $params
+     * @param mixed $hasFile
      *
-     * The scan is chunked to keep memory flat on large datasets. The same
-     * number may appear on multiple rows; LookupPhoneNumber is a unique job,
-     * so duplicate dispatches collapse to a single lookup.
+     * @return array{0: string, 1: int, 2: array<mixed>}
      */
-    public function handle(SisSyncCompleted $event): void
+    public function request($method, $absUrl, $headers, $params, $hasFile): array
     {
-        StudentPhoneNumber::query()
-            ->whereNotNull('number')
-            ->where('number', '!=', '')
-            ->whereNotIn('number', PhoneNumberLookup::query()->select('number'))
-            ->chunkById(1000, function (Collection $studentPhoneNumbers): void {
-                foreach ($studentPhoneNumbers as $studentPhoneNumber) {
-                    LookupPhoneNumber::dispatch($studentPhoneNumber->number);
-                }
-            });
+        return [$this->body, $this->statusCode, []];
     }
 }

@@ -41,7 +41,7 @@ use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Database\Factories\PhoneNumberLookupFactory;
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use OwenIt\Auditing\Contracts\Auditable;

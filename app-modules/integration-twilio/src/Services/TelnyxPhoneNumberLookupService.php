@@ -45,12 +45,18 @@ use RuntimeException;
 use Telnyx\Exception\ApiErrorException;
 use Telnyx\NumberLookup;
 use Telnyx\Telnyx;
+use Telnyx\TelnyxObject;
 
 class TelnyxPhoneNumberLookupService implements PhoneNumberLookupService
 {
     public function __construct(
         protected NormalizePhoneNumberToE164 $normalizePhoneNumberToE164,
     ) {}
+
+    public function isConfigured(): bool
+    {
+        return filled(app(TwilioSettings::class)->telnyx_api_key);
+    }
 
     public function lookup(string $phoneNumber): PhoneNumberLookup
     {
@@ -108,10 +114,27 @@ class TelnyxPhoneNumberLookupService implements PhoneNumberLookupService
         }
 
         $data = $result->toArray();
-        $carrier = $data['carrier'] ?? [];
 
-        $carrierName = $carrier['name'] ?? null;
-        $carrierType = $carrier['type'] ?? null;
+        // Telnyx reports overall validity directly. An explicit false means
+        // the number is not real, regardless of any carrier/line-type data.
+        if (($data['valid_number'] ?? null) === false) {
+            return $this->store(
+                number: $normalizedNumber,
+                status: PhoneNumberLookupStatus::Invalid,
+                carrierName: null,
+                carrierType: null,
+                rawResponse: $this->rawResponse($result),
+            );
+        }
+
+        // Carrier/line-type data can arrive in either the `carrier` object or
+        // the `portability` (LRN) object. For US, VoIP, and ported numbers
+        // `carrier` is frequently null and `portability` holds the real data.
+        $carrier = $data['carrier'] ?? [];
+        $portability = $data['portability'] ?? [];
+
+        $carrierType = $this->firstFilled($carrier['type'] ?? null, $portability['line_type'] ?? null);
+        $carrierName = $this->firstFilled($carrier['name'] ?? null, $portability['spid_carrier_name'] ?? null);
 
         return $this->store(
             number: $normalizedNumber,
@@ -120,6 +143,20 @@ class TelnyxPhoneNumberLookupService implements PhoneNumberLookupService
             carrierType: $carrierType,
             rawResponse: $this->rawResponse($result),
         );
+    }
+
+    /**
+     * Return the first non-empty string value, or null when none are filled.
+     */
+    protected function firstFilled(mixed ...$values): ?string
+    {
+        foreach ($values as $value) {
+            if (is_string($value) && filled($value)) {
+                return $value;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -146,11 +183,11 @@ class TelnyxPhoneNumberLookupService implements PhoneNumberLookupService
     /**
      * @return array<mixed>
      */
-    protected function rawResponse(NumberLookup $result): array
+    protected function rawResponse(TelnyxObject $result): array
     {
         $lastResponse = $result->getLastResponse();
 
-        if ($lastResponse && filled($lastResponse->body)) {
+        if (filled($lastResponse->body)) {
             $decoded = json_decode($lastResponse->body, true);
 
             if (is_array($decoded)) {

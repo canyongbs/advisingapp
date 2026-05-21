@@ -34,41 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Contracts;
+use AdvisingApp\StudentDataModel\Events\SisSyncCompleted;
+use App\Http\Middleware\CheckOlympusKey;
+use Illuminate\Support\Facades\Event;
 
-use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
-use InvalidArgumentException;
-use Throwable;
+use function Pest\Laravel\postJson;
+use function Pest\Laravel\withoutMiddleware;
 
-interface PhoneNumberLookupService
-{
-    /**
-     * Look up a phone number and return its persisted lookup record.
-     *
-     * Implementations must:
-     *  - Validate that $phoneNumber is in E.164 format, throwing an
-     *    {@see InvalidArgumentException} when it is not.
-     *  - Return the existing {@see PhoneNumberLookup} when one already exists
-     *    for the number, without calling the provider again (cost control).
-     *  - Otherwise perform the provider lookup, persist the result, and
-     *    return it.
-     *
-     * Definitive outcomes (a successful lookup, or a number the provider
-     * cannot recognize) are persisted and returned. Operational errors that
-     * may be transient (auth, rate limiting, server/connection failures) are
-     * thrown so the caller (the queued {@see LookupPhoneNumber}
-     * job) can retry them.
-     *
-     * @throws InvalidArgumentException when $phoneNumber is not a valid E.164 number.
-     * @throws Throwable on a transient provider/API failure.
-     */
-    public function lookup(string $phoneNumber): PhoneNumberLookup;
+it('rejects requests without a valid Olympus key', function () {
+    postJson(route('trigger-phone-number-lookups'))
+        ->assertForbidden();
+});
 
-    /**
-     * Determine whether the underlying provider is configured and able to
-     * perform lookups. When this returns false, callers should skip the
-     * lookup entirely rather than treating it as a failure.
-     */
-    public function isConfigured(): bool;
-}
+it('dispatches the SisSyncCompleted event and returns 202', function () {
+    Event::fake([SisSyncCompleted::class]);
+
+    withoutMiddleware(CheckOlympusKey::class)
+        ->postJson(route('trigger-phone-number-lookups'))
+        ->assertAccepted();
+
+    Event::assertDispatched(SisSyncCompleted::class);
+});
