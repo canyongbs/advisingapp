@@ -43,7 +43,7 @@ use Illuminate\Support\Facades\Cache;
 
 beforeEach(function () {
     // Clear the cache before each test
-    Cache::tags(['{qna_advisor_instructions}'])->flush();
+    Cache::tags(['{customer_advisor_instructions}'])->flush();
 });
 
 it('returns the correct instructions for a CustomerAdvisor', function () {
@@ -296,17 +296,17 @@ it('uses cache correctly', function () {
 
     // Verify the cache key is used
     $cacheKey = $customerAdvisor->getInstructionsCacheKey();
-    expect($cacheKey)->toBe('qna-advisor-' . $customerAdvisor->getKey() . '-instructions');
+    expect($cacheKey)->toBe('customer-advisor-' . $customerAdvisor->getKey() . '-instructions');
 
     // Verify the result is cached
-    expect(Cache::tags(['{qna_advisor_instructions}'])->has($cacheKey))->toBeTrue();
+    expect(Cache::tags(['{customer_advisor_instructions}'])->has($cacheKey))->toBeTrue();
 
     // Execute again and verify same result (from cache)
     $resultTwo = $action->execute($customerAdvisor);
     expect($resultOne)->toBe($resultTwo);
 
     // Clear cache and modify settings
-    Cache::tags(['{qna_advisor_instructions}'])->flush();
+    Cache::tags(['{customer_advisor_instructions}'])->flush();
     $settings->instructions = 'New instructions';
     $settings->save();
 
