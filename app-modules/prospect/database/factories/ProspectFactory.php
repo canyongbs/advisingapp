@@ -57,8 +57,8 @@ class ProspectFactory extends Factory
         $address3 = $this->faker->optional()->words(asText: true);
 
         return [
-            'status_id' => ProspectStatus::inRandomOrder()->first() ?? ProspectStatus::factory(),
-            'source_id' => ProspectSource::inRandomOrder()->first() ?? ProspectSource::factory(),
+            'status_id' => ProspectStatus::factory(),
+            'source_id' => ProspectSource::factory(),
             'first_name' => $firstName,
             'last_name' => $lastName,
             'full_name' => "{$firstName} {$lastName}",

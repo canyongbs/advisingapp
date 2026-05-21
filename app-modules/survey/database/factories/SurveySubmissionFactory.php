@@ -62,11 +62,7 @@ class SurveySubmissionFactory extends Factory
                 /** @var Student|Prospect $authorModel */
                 $authorModel = new $authorClass();
 
-                $author = $authorClass === Student::class
-                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                    : $authorModel::factory()->create();
-
-                return $author->getKey();
+                return $authorModel::factory()->create()->getKey();
             },
             'submitted_at' => now(),
         ];
