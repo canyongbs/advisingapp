@@ -45,7 +45,7 @@ use App\Enums\TagType;
 use App\Models\Tag;
 use Illuminate\Support\Facades\Bus;
 
-it('will execute appropriateonly on each educatable in the group', function (Educatable $educatable, bool $removePrior) {
+it('will execute appropriately on each educatable in the group', function (Educatable $educatable, bool $removePrior) {
     Bus::fake();
 
     $workflowRun = WorkflowRun::factory()->create([
@@ -142,3 +142,61 @@ it('will execute appropriateonly on each educatable in the group', function (Edu
         true,
     ],
 ]);
+
+it('will only apply the correct tags to an educatable', function () {
+    Bus::fake();
+
+    $student = Student::factory()->create();
+    $prospect = Prospect::factory()->create();
+
+    $studentWorkflowRun = WorkflowRun::factory()->create([
+        'related_type' => $student->getMorphClass(),
+        'related_id' => $student->getKey(),
+    ]);
+
+    $prospectWorkflowRun = WorkflowRun::factory()->create([
+        'related_type' => $prospect->getMorphClass(),
+        'related_id' => $prospect->getKey(),
+    ]);
+
+    $studentTag = Tag::factory()->create(['type' => TagType::Student]);
+    $prospectTag = Tag::factory()->create(['type' => TagType::Prospect]);
+
+    $tagsDetails = WorkflowTagsDetails::factory()->create(['tag_ids' => [$studentTag->id, $prospectTag->id]]);
+
+    $studentWorkflowRunStep = WorkflowRunStep::factory()->withDetails($tagsDetails)->create([
+        'workflow_run_id' => $studentWorkflowRun->id,
+        'execute_at' => now(),
+    ]);
+    $prospectWorkflowRunStep = WorkflowRunStep::factory()->withDetails($tagsDetails)->create([
+        'workflow_run_id' => $prospectWorkflowRun->id,
+        'execute_at' => now(),
+    ]);
+
+    expect($studentWorkflowRunStep->succeeded_at)->toBeNull()
+        ->and($studentWorkflowRunStep->last_failed_at)->toBeNull()
+        ->and($prospectWorkflowRunStep->succeeded_at)->toBeNull()
+        ->and($prospectWorkflowRunStep->last_failed_at)->toBeNull();
+
+    [$studentJob] = (new TagsWorkflowActionJob($studentWorkflowRunStep))->withFakeBatch();
+    [$prospectJob] = (new TagsWorkflowActionJob($prospectWorkflowRunStep))->withFakeBatch();
+
+    $studentJob->handle();
+    $prospectJob->handle();
+
+    expect($student->tags()->pluck('tag_id')->toArray())->toEqual([$studentTag->id]);
+    expect($prospect->tags()->pluck('tag_id')->toArray())->toEqual([$prospectTag->id]);
+
+    expect($studentWorkflowRunStep->succeeded_at)->not()->toBeNull()
+        ->and($studentWorkflowRunStep->last_failed_at)->toBeNull()
+        ->and($prospectWorkflowRunStep->succeeded_at)->not()->toBeNull()
+        ->and($prospectWorkflowRunStep->last_failed_at)->toBeNull();
+
+    $relatedStudent = $studentWorkflowRunStep->workflowRun->related;
+    assert($relatedStudent instanceof Student);
+    expect($relatedStudent->tags)->toHaveCount(1);
+    
+    $relatedProspect = $prospectWorkflowRunStep->workflowRun->related;
+    assert($relatedProspect instanceof Prospect);
+    expect($relatedProspect->tags)->toHaveCount(1);
+});
