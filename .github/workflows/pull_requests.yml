@@ -161,9 +161,9 @@ jobs:
                   docker run -d \
                     --name postgres \
                     -p 5432:5432 \
-                    -e POSTGRES_DB=${{ env.DB_DATABASE }} \
-                    -e POSTGRES_USER=${{ env.DB_USERNAME }} \
-                    -e POSTGRES_PASSWORD=${{ env.DB_PASSWORD }} \
+                    -e POSTGRES_DB=${DB_DATABASE} \
+                    -e POSTGRES_USER=${DB_USERNAME} \
+                    -e POSTGRES_PASSWORD=${DB_PASSWORD} \
                     --health-cmd pg_isready \
                     --health-interval 10s \
                     --health-timeout 5s \
@@ -178,7 +178,7 @@ jobs:
                   done
 
             - name: Create tenant database
-              run: psql -h 127.0.0.1 -d ${{ env.DB_DATABASE }} -U ${{ env.DB_USERNAME }} -c 'CREATE DATABASE testing_tenant;'
+              run: psql -h 127.0.0.1 -d ${DB_DATABASE} -U ${DB_USERNAME} -c 'CREATE DATABASE testing_tenant;'
               env:
                   PGPASSWORD: ${{ env.DB_PASSWORD }}
 

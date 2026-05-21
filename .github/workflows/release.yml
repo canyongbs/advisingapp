@@ -4,6 +4,8 @@ on:
     release:
         types: [released]
 
+permissions: {}
+
 env:
     AWS_REGION: 'us-west-2'
 
