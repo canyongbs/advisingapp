@@ -39,13 +39,12 @@ namespace AdvisingApp\Engagement\Filament\Actions;
 use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
+use AdvisingApp\Engagement\Filament\Schemas\Components\EngagementScheduledAtDateTimePicker;
+use AdvisingApp\Engagement\Filament\Schemas\Components\EngagementSendLaterToggle;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use Filament\Actions\BulkAction;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Carbon;
@@ -71,12 +70,8 @@ class BulkTextAction
                 Step::make('Schedule')
                     ->description('Choose when you would like to send this engagement.')
                     ->schema([
-                        Toggle::make('send_later')
-                            ->reactive()
-                            ->helperText('By default, this text will send as soon as it is created unless you schedule it to send later.'),
-                        DateTimePicker::make('scheduled_at')
-                            ->required()
-                            ->visible(fn (Get $get) => $get('send_later')),
+                        EngagementSendLaterToggle::make(),
+                        EngagementScheduledAtDateTimePicker::make(),
                     ]),
             ])
             ->action(function (Collection $records, array $data, Schema $schema) {
