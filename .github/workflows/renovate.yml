@@ -11,10 +11,12 @@ jobs:
         runs-on: ubuntu-latest
         timeout-minutes: 15
         steps:
-            - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #6.0.2
+            - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+              with:
+                persist-credentials: false
 
             - name: Run Renovate
-              uses: renovatebot/github-action@693b9ef15eec82123529a37c782242f091365961 #46.1.14
+              uses: renovatebot/github-action@693b9ef15eec82123529a37c782242f091365961 # v46.1.14
               with:
                   configurationFile: renovate-config.json
                   token: ${{ secrets.PAT }}
