@@ -106,7 +106,7 @@ jobs:
                     exit 1
                   fi
               env:
-                STEPS_TASK_DEPLOY_OUTPUTS_TASK_DEFINITION_ARN: ${{ steps.task-deploy.outputs.task-definition-arn }}
+                  STEPS_TASK_DEPLOY_OUTPUTS_TASK_DEFINITION_ARN: ${{ steps.task-deploy.outputs.task-definition-arn }}
 
     build-worker:
         name: Build Worker Image
@@ -206,7 +206,7 @@ jobs:
                     exit 1
                   fi
               env:
-                STEPS_TASK_DEPLOY_OUTPUTS_TASK_DEFINITION_ARN: ${{ steps.task-deploy.outputs.task-definition-arn }}
+                  STEPS_TASK_DEPLOY_OUTPUTS_TASK_DEFINITION_ARN: ${{ steps.task-deploy.outputs.task-definition-arn }}
 
     build-scheduler:
         name: Build Scheduler Image
@@ -306,7 +306,7 @@ jobs:
                     exit 1
                   fi
               env:
-                STEPS_TASK_DEPLOY_OUTPUTS_TASK_DEFINITION_ARN: ${{ steps.task-deploy.outputs.task-definition-arn }}
+                  STEPS_TASK_DEPLOY_OUTPUTS_TASK_DEFINITION_ARN: ${{ steps.task-deploy.outputs.task-definition-arn }}
 
     build-release-automation:
         name: Build Release Automation Image

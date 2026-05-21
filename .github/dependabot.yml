@@ -13,4 +13,4 @@ updates:
                   - 'minor'
                   - 'patch' # Only groups minor and patch updates
       cooldown:
-        default-days: 7
+          default-days: 7

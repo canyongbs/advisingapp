@@ -60,7 +60,9 @@
             "customType": "regex",
             "description": "Docker images in GitHub Actions workflows",
             "managerFilePatterns": ["/^\\.github/workflows/.+\\.yml$/"],
-            "matchStrings": ["image:\\s*(?<depName>[^:\\s]+):(?<currentValue>[^@\\s]+)@(?<currentDigest>sha256:[a-f0-9]+)"],
+            "matchStrings": [
+                "image:\\s*(?<depName>[^:\\s]+):(?<currentValue>[^@\\s]+)@(?<currentDigest>sha256:[a-f0-9]+)"
+            ],
             "datasourceTemplate": "docker",
             "versioningTemplate": "docker"
         }
