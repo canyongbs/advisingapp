@@ -49,8 +49,8 @@ class CreateProspectRequestFactory extends RequestFactory
         $lastName = $this->faker->lastName();
 
         return [
-            'status_id' => ProspectStatus::inRandomOrder()->first() ?? ProspectStatus::factory()->create()->id,
-            'source_id' => ProspectSource::inRandomOrder()->first() ?? ProspectSource::factory()->create()->id,
+            'status_id' => ProspectStatus::factory()->create()->id,
+            'source_id' => ProspectSource::factory()->create()->id,
             'first_name' => $firstName,
             'last_name' => $lastName,
             'full_name' => "{$firstName} {$lastName}",

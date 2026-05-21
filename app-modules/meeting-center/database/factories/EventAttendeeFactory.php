@@ -54,7 +54,7 @@ class EventAttendeeFactory extends Factory
         return [
             'status' => $this->faker->randomElement(EventAttendeeStatus::class),
             'email' => $this->faker->unique()->email(),
-            'event_id' => Event::inRandomOrder()->first() ?? Event::factory()->create(),
+            'event_id' => Event::factory(),
         ];
     }
 }

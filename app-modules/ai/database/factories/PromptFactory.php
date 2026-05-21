@@ -54,7 +54,7 @@ class PromptFactory extends Factory
             'title' => str($this->faker->unique()->words(asText: true))->ucfirst()->toString(),
             'description' => $this->faker->optional()->sentences(asText: true),
             'prompt' => $this->faker->sentences(asText: true),
-            'type_id' => PromptType::query()->inRandomOrder()->first() ?? PromptType::factory()->create(),
+            'type_id' => PromptType::factory(),
         ];
     }
 }

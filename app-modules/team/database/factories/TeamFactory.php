@@ -56,7 +56,7 @@ class TeamFactory extends Factory
     public function configure(): TeamFactory|Factory
     {
         return $this->afterMaking(function (Team $team) {
-            $team->division()->associate($this->faker->randomElement([Division::inRandomOrder()->first(), null]));
+            $team->division()->associate($this->faker->randomElement([Division::factory()->create(), null]));
         });
     }
 }
