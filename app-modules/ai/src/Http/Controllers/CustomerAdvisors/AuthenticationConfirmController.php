@@ -66,8 +66,8 @@ class AuthenticationConfirmController
 
         // If we reached this point, the authentication was successful
 
-        $accessToken = $educatable->createToken('qna_advisor_access_token', [TokenAbility::AccessQnaAdvisorApi], now()->addMinutes(15));
-        $refreshToken = $educatable->createToken('qna_advisor_refresh_token', [TokenAbility::IssueQnaAdvisorAccessToken], now()->addDays(3));
+        $accessToken = $educatable->createToken('customer_advisor_access_token', [TokenAbility::AccessQnaAdvisorApi], now()->addMinutes(15));
+        $refreshToken = $educatable->createToken('customer_advisor_refresh_token', [TokenAbility::IssueQnaAdvisorAccessToken], now()->addDays(3));
 
         return response()->json([
             'access_token' => $accessToken->plainTextToken,
@@ -78,7 +78,7 @@ class AuthenticationConfirmController
         ])
             ->withCookie(
                 Cookie::make(
-                    name: 'advising_app_qna_advisor_refresh_token',
+                    name: 'advising_app_customer_advisor_refresh_token',
                     value: $refreshToken->plainTextToken,
                     minutes: 60 * 24 * 3, // 3 days
                     secure: true,

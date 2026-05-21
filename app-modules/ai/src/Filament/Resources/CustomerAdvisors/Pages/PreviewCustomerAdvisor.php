@@ -34,18 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
+namespace AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages;
 
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use App\Models\User;
 use Filament\Resources\Pages\ViewRecord;
 use Livewire\Attributes\Computed;
 use UnitEnum;
 
-class PreviewQnaAdvisor extends ViewRecord
+class PreviewCustomerAdvisor extends ViewRecord
 {
-    protected static string $resource = QnaAdvisorResource::class;
+    protected static string $resource = CustomerAdvisorResource::class;
 
     protected static string | UnitEnum | null $navigationGroup = 'Configuration';
 

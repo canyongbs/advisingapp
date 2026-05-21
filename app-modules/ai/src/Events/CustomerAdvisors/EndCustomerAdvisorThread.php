@@ -34,46 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Actions;
+namespace AdvisingApp\Ai\Events\CustomerAdvisors;
 
-use AdvisingApp\Ai\Models\CustomerAdvisor;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Foundation\Events\Dispatchable;
 
-class GenerateQnaAdvisorIntroductoryMessage
+class EndCustomerAdvisorThread implements ShouldBroadcastNow
 {
-    public function execute(CustomerAdvisor $advisor, ?Model $author = null): ?string
+    use Dispatchable;
+    use InteractsWithSockets;
+
+    public function __construct(public CustomerAdvisorThread $thread) {}
+
+    public function broadcastAs(): string
     {
-        if (! $advisor->is_introductory_message_dynamic) {
-            return $advisor->introductory_message ?? null;
-        }
-
-        $aiService = $advisor->model->getService();
-
-        return $aiService->complete(
-            prompt: $this->buildContext($advisor, $author),
-            content: 'Generate an introductory greeting message.',
-        );
+        return 'qna-advisor.automatic-end';
     }
 
-    protected function buildContext(CustomerAdvisor $advisor, ?Model $author): string
+    /**
+     * @return array<int, Channel>
+     */
+    public function broadcastOn(): array
     {
-        $systemPrompt = "You are {$advisor->name}, a helpful assistant. ";
-        $systemPrompt .= "Your role is to provide information about: {$advisor->description}. ";
+        $channelName = "qna-advisor-thread-{$this->thread->getKey()}";
 
-        if (($author instanceof Student) || ($author instanceof Prospect)) {
-            $authorName = $author->full_name;
-
-            if ($authorName) {
-                $systemPrompt .= "You are greeting {$authorName}. ";
-            }
-        }
-
-        $systemPrompt .= 'Generate a brief, friendly greeting that introduces yourself and offers to help. ';
-        $systemPrompt .= 'Keep it concise (2-3 sentences maximum). ';
-        $systemPrompt .= 'Be warm and welcoming but professional.';
-
-        return $systemPrompt;
+        return [
+            $this->thread->advisor->is_requires_authentication_enabled
+                ? new PrivateChannel($channelName)
+                : new Channel($channelName),
+        ];
     }
 }

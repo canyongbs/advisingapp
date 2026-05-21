@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ListQnaAdvisors;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\ListCustomerAdvisors;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Features\RenameQnaAdvisorsFeature;
@@ -56,14 +56,14 @@ test('List QnA Advisors is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            QnaAdvisorResource::getUrl('index')
+            CustomerAdvisorResource::getUrl('index')
         )->assertForbidden();
 
     $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.view-any' : 'qna_advisor.view-any');
 
     actingAs($user)
         ->get(
-            QnaAdvisorResource::getUrl('index')
+            CustomerAdvisorResource::getUrl('index')
         )->assertSuccessful();
 });
 
@@ -88,7 +88,7 @@ it('render QnA Advisors default to without archived', function () {
         'archived_at' => now(),
     ])->create();
 
-    livewire(ListQnaAdvisors::class)
+    livewire(ListCustomerAdvisors::class)
         ->assertCanSeeTableRecords($customerAdvisors)
         ->assertCanNotSeeTableRecords($archivedCustomerAdvisors);
 });
@@ -114,7 +114,7 @@ it('filter QnA Advisors with archived', function () {
         'archived_at' => now(),
     ])->create();
 
-    livewire(ListQnaAdvisors::class)
+    livewire(ListCustomerAdvisors::class)
         ->assertCanSeeTableRecords($customerAdvisors)
         ->assertCanNotSeeTableRecords($archivedCustomerAdvisors)
         ->removeTableFilter('withoutArchived')

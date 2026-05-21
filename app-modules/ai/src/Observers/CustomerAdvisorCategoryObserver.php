@@ -43,11 +43,11 @@ class CustomerAdvisorCategoryObserver
 {
     public function saved(CustomerAdvisorCategory $category): void
     {
-        Cache::tags(['{qna_advisor_instructions}'])->forget($category->customerAdvisor->getInstructionsCacheKey());
+        Cache::tags(['{customer_advisor_instructions}'])->forget($category->customerAdvisor->getInstructionsCacheKey());
     }
 
     public function deleted(CustomerAdvisorCategory $category): void
     {
-        Cache::tags(['{qna_advisor_instructions}'])->forget($category->customerAdvisor->getInstructionsCacheKey());
+        Cache::tags(['{customer_advisor_instructions}'])->forget($category->customerAdvisor->getInstructionsCacheKey());
     }
 }

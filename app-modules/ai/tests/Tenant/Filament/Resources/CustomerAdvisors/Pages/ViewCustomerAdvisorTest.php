@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ViewQnaAdvisor;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\ViewCustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Features\RenameQnaAdvisorsFeature;
@@ -58,7 +58,7 @@ test('View QnA Advisor is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            QnaAdvisorResource::getUrl('view', [
+            CustomerAdvisorResource::getUrl('view', [
                 'record' => $customerAdvisor,
             ])
         )->assertForbidden();
@@ -68,7 +68,7 @@ test('View QnA Advisor is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            QnaAdvisorResource::getUrl('view', [
+            CustomerAdvisorResource::getUrl('view', [
                 'record' => $customerAdvisor,
             ])
         )->assertSuccessful();
@@ -90,7 +90,7 @@ test('archive action visible when QnA Advisor is not archived', function () {
 
     actingAs($user);
 
-    livewire(ViewQnaAdvisor::class, [
+    livewire(ViewCustomerAdvisor::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -116,7 +116,7 @@ test('restore action visible when QnA Advisor is archived', function () {
 
     actingAs($user);
 
-    livewire(ViewQnaAdvisor::class, [
+    livewire(ViewCustomerAdvisor::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->assertSuccessful()

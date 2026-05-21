@@ -50,7 +50,7 @@ trait CanRefreshCustomerAdvisorTokens
      */
     protected function refreshFromRequest(Request $request): ?array
     {
-        $refreshTokenValue = $request->cookie('advising_app_qna_advisor_refresh_token');
+        $refreshTokenValue = $request->cookie('advising_app_customer_advisor_refresh_token');
 
         if (! $refreshTokenValue) {
             return null;
@@ -78,13 +78,13 @@ trait CanRefreshCustomerAdvisorTokens
         // Invalidate any existing access tokens
         PersonalAccessToken::where('tokenable_type', $educatable->getMorphClass())
             ->where('tokenable_id', $educatable->getKey())
-            ->where('name', 'qna_advisor_access_token')
+            ->where('name', 'customer_advisor_access_token')
             ->delete();
 
         // Generate new tokens
         return [
-            'access_token' => $educatable->createToken('qna_advisor_access_token', [TokenAbility::AccessQnaAdvisorApi], now()->addMinutes(15)),
-            'refresh_token' => $educatable->createToken('qna_advisor_refresh_token', [TokenAbility::IssueQnaAdvisorAccessToken], now()->addDays(3)),
+            'access_token' => $educatable->createToken('customer_advisor_access_token', [TokenAbility::AccessQnaAdvisorApi], now()->addMinutes(15)),
+            'refresh_token' => $educatable->createToken('customer_advisor_refresh_token', [TokenAbility::IssueQnaAdvisorAccessToken], now()->addDays(3)),
         ];
     }
 }

@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
+namespace AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages;
 
 use AdvisingApp\Ai\Actions\GetCustomerAdvisorInstructions;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\IconEntry;
@@ -53,9 +53,9 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use UnitEnum;
 
-class ViewQnaAdvisor extends ViewRecord
+class ViewCustomerAdvisor extends ViewRecord
 {
-    protected static string $resource = QnaAdvisorResource::class;
+    protected static string $resource = CustomerAdvisorResource::class;
 
     protected static ?string $navigationLabel = 'View';
 

@@ -33,7 +33,7 @@
 --}}
 
 @php
-    use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
+    use AdvisingApp\Ai\Actions\GenerateCustomerAdvisorWidgetEmbedCode;
 @endphp
 
-{!! resolve(GenerateQnaAdvisorWidgetEmbedCode::class)->handle($advisor) !!}
+{!! resolve(GenerateCustomerAdvisorWidgetEmbedCode::class)->handle($advisor) !!}

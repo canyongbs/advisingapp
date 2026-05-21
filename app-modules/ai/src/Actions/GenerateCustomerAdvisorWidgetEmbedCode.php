@@ -34,22 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Enums;
+namespace AdvisingApp\Ai\Actions;
 
-use Filament\Support\Contracts\HasLabel;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
+use Exception;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
-enum QnaAdvisorReportTableTab: string implements HasLabel
+class GenerateCustomerAdvisorWidgetEmbedCode
 {
-    case Student = 'student';
-    case Prospect = 'prospect';
-    case Unauthenticated = 'unauthenticated';
-
-    public function getLabel(): string
+    public function handle(CustomerAdvisor $customerAdvisor): string
     {
-        return match ($this) {
-            self::Student => 'Students',
-            self::Prospect => 'Prospects',
-            self::Unauthenticated => 'Unauthenticated',
-        };
+        $manifestPath = Storage::disk('public')->get('widgets/ai/customer-advisors/.vite/manifest.json');
+
+        if (is_null($manifestPath)) {
+            throw new Exception('Vite manifest file not found.');
+        }
+
+        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+        $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
+
+        $loaderScriptUrl = url("widgets/ai/customer-advisors/{$manifest['src/loader.js']['file']}");
+
+        $resourcesUrl = URL::route(name: 'widgets.ai.customer-advisors.api.assets', parameters: ['advisor' => $customerAdvisor]);
+
+        return <<<EOD
+        <customer-advisor-embed url="{$resourcesUrl}"></customer-advisor-embed>
+        <script src="{$loaderScriptUrl}"></script>
+        EOD;
     }
 }

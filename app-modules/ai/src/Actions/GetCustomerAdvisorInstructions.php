@@ -46,7 +46,7 @@ class GetCustomerAdvisorInstructions
 {
     public function execute(CustomerAdvisor $customerAdvisor): string
     {
-        return Cache::tags(['{qna_advisor_instructions}'])
+        return Cache::tags(['{customer_advisor_instructions}'])
             ->remember(
                 $customerAdvisor->getInstructionsCacheKey(),
                 now()->addHour(),

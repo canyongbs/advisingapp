@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
+namespace AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages;
 
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
@@ -58,11 +58,11 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use UnitEnum;
 
-class EditQnaAdvisor extends EditRecord
+class EditCustomerAdvisor extends EditRecord
 {
     use EditPageRedirection;
 
-    protected static string $resource = QnaAdvisorResource::class;
+    protected static string $resource = CustomerAdvisorResource::class;
 
     protected static ?string $navigationLabel = 'Edit';
 
@@ -105,7 +105,7 @@ class EditQnaAdvisor extends EditRecord
                         Select::make('model')
                             ->live()
                             ->options(fn (AiModel|string|null $state) => array_unique([
-                                ...AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModelsAsSelectOptions(),
+                                ...AiModelApplicabilityFeature::CustomerAdvisor->getModelsAsSelectOptions(),
                                 ...match (true) {
                                     $state instanceof AiModel => [$state->value => $state->getLabel()],
                                     is_string($state) => [$state => AiModel::parse($state)->getLabel()],
@@ -115,7 +115,7 @@ class EditQnaAdvisor extends EditRecord
                             ->searchable()
                             ->required()
                             ->visible(auth()->user()->isSuperAdmin())
-                            ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModels()))
+                            ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomerAdvisor->getModels()))
                             ->disabled(fn (): bool => ! app(AiCustomerAdvisorSettings::class)->allow_selection_of_model)
                             ->default(function () {
                                 $settings = app(AiCustomerAdvisorSettings::class);

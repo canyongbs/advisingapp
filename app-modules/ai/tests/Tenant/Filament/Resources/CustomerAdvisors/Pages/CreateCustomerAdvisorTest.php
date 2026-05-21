@@ -35,8 +35,8 @@
 */
 
 use AdvisingApp\Ai\Enums\AiModel;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\CreateQnaAdvisor;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\CreateCustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Tests\RequestFactories\CustomerAdvisorRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -67,17 +67,17 @@ test('Create QnA Advisor is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            QnaAdvisorResource::getUrl('create')
+            CustomerAdvisorResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateQnaAdvisor::class)
+    livewire(CreateCustomerAdvisor::class)
         ->assertForbidden();
 
     $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.create'] : ['qna_advisor.view-any', 'qna_advisor.create']);
 
     actingAs($user)
         ->get(
-            QnaAdvisorResource::getUrl('create')
+            CustomerAdvisorResource::getUrl('create')
         )->assertSuccessful();
 });
 
@@ -100,7 +100,7 @@ test('can create QnA Advisor', function () {
 
     $customerAdvisor = collect(CustomerAdvisorRequestFactory::new()->create());
 
-    livewire(CreateQnaAdvisor::class)
+    livewire(CreateCustomerAdvisor::class)
         ->fillForm($customerAdvisor->except(['model'])->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
@@ -138,7 +138,7 @@ test('Create QnA Advisor validates the inputs', function ($data, $errors) {
 
     $request = collect(CustomerAdvisorRequestFactory::new($data)->create());
 
-    livewire(CreateQnaAdvisor::class)
+    livewire(CreateCustomerAdvisor::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasFormErrors($errors);

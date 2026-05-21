@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
+namespace AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages;
 
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use Filament\Forms\Components\Select;
@@ -50,9 +50,9 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rule;
 
-class CreateQnaAdvisor extends CreateRecord
+class CreateCustomerAdvisor extends CreateRecord
 {
-    protected static string $resource = QnaAdvisorResource::class;
+    protected static string $resource = CustomerAdvisorResource::class;
 
     public function form(Schema $schema): Schema
     {
@@ -66,7 +66,7 @@ class CreateQnaAdvisor extends CreateRecord
                 Select::make('model')
                     ->live()
                     ->options(fn (AiModel|string|null $state) => array_unique([
-                        ...AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModelsAsSelectOptions(),
+                        ...AiModelApplicabilityFeature::CustomerAdvisor->getModelsAsSelectOptions(),
                         ...match (true) {
                             $state instanceof AiModel => [$state->value => $state->getLabel()],
                             is_string($state) => [$state => AiModel::parse($state)->getLabel()],
@@ -75,7 +75,7 @@ class CreateQnaAdvisor extends CreateRecord
                     ]))
                     ->searchable()
                     ->required()
-                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModels()))
+                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomerAdvisor->getModels()))
                     ->disabled(fn (): bool => ! app(AiCustomerAdvisorSettings::class)->allow_selection_of_model)
                     ->visible(auth()->user()->isSuperAdmin())
                     ->default(function () {

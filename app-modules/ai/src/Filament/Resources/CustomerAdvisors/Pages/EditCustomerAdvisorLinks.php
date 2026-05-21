@@ -34,29 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
+namespace AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages;
 
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Alignment;
 use Illuminate\Support\Str;
 use UnitEnum;
 
-class ManageQnaAdvisorResourceHub extends EditRecord
+class EditCustomerAdvisorLinks extends EditRecord
 {
     use EditPageRedirection;
 
-    protected static string $resource = QnaAdvisorResource::class;
+    protected static string $resource = CustomerAdvisorResource::class;
 
-    protected static ?string $navigationLabel = 'Resource Hub';
+    protected static ?string $title = 'Websites';
+
+    protected static ?string $navigationLabel = 'Websites';
 
     protected static string | UnitEnum | null $navigationGroup = 'Configuration';
-
-    protected static ?string $breadcrumb = 'Resource Hub';
 
     /**
      * @return array<int|string, string|null>
@@ -85,16 +88,28 @@ class ManageQnaAdvisorResourceHub extends EditRecord
     {
         return $schema
             ->components([
-                Section::make('Resource Hub')
+                Repeater::make('links')
                     ->schema([
-                        Toggle::make('has_resource_hub_knowledge')
-                            ->label('Articles'),
-                    ]),
+                        TextInput::make('url')
+                            ->label('URL')
+                            ->required()
+                            ->disabled(fn (?CustomerAdvisorLink $record): bool => $record !== null)
+                            ->url(),
+                        Toggle::make('is_keep_current_enabled')
+                            ->label('Keep Current')
+                            ->helperText('Select this option if you would like this AI advisor to check for updates on a monthly basis.'),
+                    ])
+                    ->relationship()
+                    ->hiddenLabel()
+                    ->addActionLabel('Add website')
+                    ->addActionAlignment(Alignment::Start)
+                    ->maxItems(25)
+                    ->columnSpanFull(),
             ]);
     }
 
     public function getRedirectUrl(): ?string
     {
-        return $this->getUrl(['record' => $this->getRecord()]);
+        return null;
     }
 }

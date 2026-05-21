@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Enums\QnaAdvisorReportTableTab;
+use AdvisingApp\Ai\Enums\CustomerAdvisorReportTableTab;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportTable;
@@ -74,7 +74,7 @@ it('displays only CustomerAdvisorThreads added within the selected date range ba
     $component = livewire(QnaAdvisorReportTable::class, [
         'cacheTag' => 'customer-advisor-thread-report-cache',
         'pageFilters' => $filters,
-        'activeTab' => QnaAdvisorReportTableTab::Student->value,
+        'activeTab' => CustomerAdvisorReportTableTab::Student->value,
     ]);
 
     $component->assertCanSeeTableRecords(collect([
@@ -87,7 +87,7 @@ it('displays only CustomerAdvisorThreads added within the selected date range ba
     $component = livewire(QnaAdvisorReportTable::class, [
         'cacheTag' => 'customer-advisor-thread-report-cache',
         'pageFilters' => $filters,
-        'activeTab' => QnaAdvisorReportTableTab::Prospect->value,
+        'activeTab' => CustomerAdvisorReportTableTab::Prospect->value,
     ]);
 
     $component->assertCanSeeTableRecords(collect([
@@ -100,7 +100,7 @@ it('displays only CustomerAdvisorThreads added within the selected date range ba
     $component = livewire(QnaAdvisorReportTable::class, [
         'cacheTag' => 'customer-advisor-thread-report-cache',
         'pageFilters' => $filters,
-        'activeTab' => QnaAdvisorReportTableTab::Unauthenticated->value,
+        'activeTab' => CustomerAdvisorReportTableTab::Unauthenticated->value,
     ]);
 
     $component->assertCanSeeTableRecords(collect([

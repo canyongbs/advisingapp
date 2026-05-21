@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\Ai\Enums\QnaAdvisorReportTableTab;
+use AdvisingApp\Ai\Enums\CustomerAdvisorReportTableTab;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ViewProspect;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -62,7 +62,7 @@ class QnaAdvisorReportTable extends TableWidget
     protected static ?string $heading = 'Most Recent Customer Advisor Chats';
 
     #[Url]
-    public string $activeTab = QnaAdvisorReportTableTab::Student->value;
+    public string $activeTab = CustomerAdvisorReportTableTab::Student->value;
 
     protected string $view = 'ai::filament.resources.customer-advisors.pages.customer-advisor-table-report';
 
@@ -84,14 +84,14 @@ class QnaAdvisorReportTable extends TableWidget
                     $startDate = $this->getStartDate();
                     $endDate = $this->getEndDate();
 
-                    $tab = QnaAdvisorReportTableTab::tryFrom($this->activeTab) ?? QnaAdvisorReportTableTab::Student;
+                    $tab = CustomerAdvisorReportTableTab::tryFrom($this->activeTab) ?? CustomerAdvisorReportTableTab::Student;
 
                     $customerAdvisorThreadQuery = fn (Builder $query): Builder => match ($tab) {
-                        QnaAdvisorReportTableTab::Student => CustomerAdvisorThread::query()
+                        CustomerAdvisorReportTableTab::Student => CustomerAdvisorThread::query()
                             ->whereMorphedTo('author', Student::class),
-                        QnaAdvisorReportTableTab::Prospect => CustomerAdvisorThread::query()
+                        CustomerAdvisorReportTableTab::Prospect => CustomerAdvisorThread::query()
                             ->whereMorphedTo('author', Prospect::class),
-                        QnaAdvisorReportTableTab::Unauthenticated => CustomerAdvisorThread::query()
+                        CustomerAdvisorReportTableTab::Unauthenticated => CustomerAdvisorThread::query()
                             ->whereNull('author_id'),
                     };
 

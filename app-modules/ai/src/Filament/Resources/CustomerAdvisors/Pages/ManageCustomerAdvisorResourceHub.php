@@ -34,32 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
+namespace AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages;
 
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
-use App\Features\RenameQnaAdvisorsFeature;
-use Filament\Actions\CreateAction;
-use Filament\Actions\EditAction;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\ManageRelatedRecords;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Forms\Components\Toggle;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\Unique;
 use UnitEnum;
 
-class ManageCategories extends ManageRelatedRecords
+class ManageCustomerAdvisorResourceHub extends EditRecord
 {
-    protected static string $resource = QnaAdvisorResource::class;
+    use EditPageRedirection;
 
-    protected static ?string $title = 'Categories';
+    protected static string $resource = CustomerAdvisorResource::class;
 
-    protected static string $relationship = 'categories';
+    protected static ?string $navigationLabel = 'Resource Hub';
 
     protected static string | UnitEnum | null $navigationGroup = 'Configuration';
+
+    protected static ?string $breadcrumb = 'Resource Hub';
 
     /**
      * @return array<int|string, string|null>
@@ -88,48 +85,16 @@ class ManageCategories extends ManageRelatedRecords
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->string()
-                    ->unique(
-                        table: RenameQnaAdvisorsFeature::active() ? 'customer_advisor_categories' : 'qna_advisor_categories',
-                        column: 'name',
-                        ignoreRecord: true,
-                        modifyRuleUsing: function (Unique $rule) {
-                            /** @var CustomerAdvisor $customerAdvisor */
-                            $customerAdvisor = $this->getOwnerRecord();
-
-                            $rule->where(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id', $customerAdvisor->getKey());
-                        }
-                    )
-                    ->maxLength(255)
-                    ->columnSpanFull(),
-                Textarea::make('description')
-                    ->required()
-                    ->string()
-                    ->maxLength(65535)
-                    ->columnSpanFull(),
+                Section::make('Resource Hub')
+                    ->schema([
+                        Toggle::make('has_resource_hub_knowledge')
+                            ->label('Articles'),
+                    ]),
             ]);
     }
 
-    public function table(Table $table): Table
+    public function getRedirectUrl(): ?string
     {
-        return $table
-            ->recordTitleAttribute('name')
-            ->columns([
-                TextColumn::make('name'),
-                TextColumn::make('description')
-                    ->limit(50)
-                    ->wrap(),
-            ])
-            ->headerActions([
-                CreateAction::make()
-                    ->modalHeading('Create Customer Advisor Category'),
-            ])
-            ->recordActions([
-                EditAction::make(),
-            ])
-            ->emptyStateHeading('No Customer Advisor Categories Found')
-            ->emptyStateDescription('');
+        return $this->getUrl(['record' => $this->getRecord()]);
     }
 }

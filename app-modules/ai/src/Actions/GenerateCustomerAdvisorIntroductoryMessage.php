@@ -34,38 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Events\QnaAdvisors;
+namespace AdvisingApp\Ai\Actions;
 
-use AdvisingApp\Ai\Models\CustomerAdvisorThread;
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
-use Illuminate\Foundation\Events\Dispatchable;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Model;
 
-class EndCustomerAdvisorThread implements ShouldBroadcastNow
+class GenerateCustomerAdvisorIntroductoryMessage
 {
-    use Dispatchable;
-    use InteractsWithSockets;
-
-    public function __construct(public CustomerAdvisorThread $thread) {}
-
-    public function broadcastAs(): string
+    public function execute(CustomerAdvisor $advisor, ?Model $author = null): ?string
     {
-        return 'qna-advisor.automatic-end';
+        if (! $advisor->is_introductory_message_dynamic) {
+            return $advisor->introductory_message ?? null;
+        }
+
+        $aiService = $advisor->model->getService();
+
+        return $aiService->complete(
+            prompt: $this->buildContext($advisor, $author),
+            content: 'Generate an introductory greeting message.',
+        );
     }
 
-    /**
-     * @return array<int, Channel>
-     */
-    public function broadcastOn(): array
+    protected function buildContext(CustomerAdvisor $advisor, ?Model $author): string
     {
-        $channelName = "qna-advisor-thread-{$this->thread->getKey()}";
+        $systemPrompt = "You are {$advisor->name}, a helpful assistant. ";
+        $systemPrompt .= "Your role is to provide information about: {$advisor->description}. ";
 
-        return [
-            $this->thread->advisor->is_requires_authentication_enabled
-                ? new PrivateChannel($channelName)
-                : new Channel($channelName),
-        ];
+        if (($author instanceof Student) || ($author instanceof Prospect)) {
+            $authorName = $author->full_name;
+
+            if ($authorName) {
+                $systemPrompt .= "You are greeting {$authorName}. ";
+            }
+        }
+
+        $systemPrompt .= 'Generate a brief, friendly greeting that introduces yourself and offers to help. ';
+        $systemPrompt .= 'Keep it concise (2-3 sentences maximum). ';
+        $systemPrompt .= 'Be warm and welcoming but professional.';
+
+        return $systemPrompt;
     }
 }

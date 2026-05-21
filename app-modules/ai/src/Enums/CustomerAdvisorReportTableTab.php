@@ -34,57 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Events\QnaAdvisors;
+namespace AdvisingApp\Ai\Enums;
 
-use AdvisingApp\Ai\Models\CustomerAdvisor;
-use AdvisingApp\Ai\Models\CustomerAdvisorThread;
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
-use Illuminate\Foundation\Events\Dispatchable;
+use Filament\Support\Contracts\HasLabel;
 
-class CustomerAdvisorMessageChunk implements ShouldBroadcastNow
+enum CustomerAdvisorReportTableTab: string implements HasLabel
 {
-    use Dispatchable;
-    use InteractsWithSockets;
+    case Student = 'student';
+    case Prospect = 'prospect';
+    case Unauthenticated = 'unauthenticated';
 
-    public function __construct(
-        public CustomerAdvisor $advisor,
-        public CustomerAdvisorThread $thread,
-        public string $content,
-        public bool $isComplete = false,
-        public ?string $error = null,
-    ) {}
-
-    public function broadcastAs(): string
+    public function getLabel(): string
     {
-        return 'qna-advisor-message.chunk';
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    public function broadcastWith(): array
-    {
-        return [
-            'content' => $this->content,
-            'is_complete' => $this->isComplete,
-            'error' => $this->error,
-        ];
-    }
-
-    /**
-     * @return array<int, Channel>
-     */
-    public function broadcastOn(): array
-    {
-        $channelName = "qna-advisor-thread-{$this->thread->getKey()}";
-
-        return [
-            $this->advisor->is_requires_authentication_enabled
-                ? new PrivateChannel($channelName)
-                : new Channel($channelName),
-        ];
+        return match ($this) {
+            self::Student => 'Students',
+            self::Prospect => 'Prospects',
+            self::Unauthenticated => 'Unauthenticated',
+        };
     }
 }

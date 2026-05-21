@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
+namespace AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages;
 
 use AdvisingApp\Ai\Actions\UploadFileForParsing;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorFile;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
@@ -58,11 +58,11 @@ use Illuminate\Support\Str;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use UnitEnum;
 
-class ManageQnaAdditionalKnowledge extends EditRecord
+class ManageCustomerAdditionalKnowledge extends EditRecord
 {
     use EditPageRedirection;
 
-    protected static string $resource = QnaAdvisorResource::class;
+    protected static string $resource = CustomerAdvisorResource::class;
 
     protected static ?string $navigationLabel = 'Additional Knowledge';
 

@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ManageQnaQuestions;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\ManageCustomerQuestions;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
@@ -64,20 +64,20 @@ test('Create QnA Advisor Question is gated with proper access control', function
 
     actingAs($user)
         ->get(
-            QnaAdvisorResource::getUrl('manage-questions', [
+            CustomerAdvisorResource::getUrl('manage-questions', [
                 'record' => $customerAdvisor,
             ])
         )
         ->assertForbidden();
 
-    livewire(ManageQnaQuestions::class, ['record' => $customerAdvisor->getKey()])
+    livewire(ManageCustomerQuestions::class, ['record' => $customerAdvisor->getKey()])
         ->assertForbidden();
 
     $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.create']);
 
     actingAs($user)
         ->get(
-            QnaAdvisorResource::getUrl('manage-questions', [
+            CustomerAdvisorResource::getUrl('manage-questions', [
                 'record' => $customerAdvisor,
             ])
         )->assertSuccessful();
@@ -100,7 +100,7 @@ test('can create QnA Advisor Question', function () {
 
     actingAs($user);
 
-    livewire(ManageQnaQuestions::class, ['record' => $customerAdvisor->getKey()])
+    livewire(ManageCustomerQuestions::class, ['record' => $customerAdvisor->getKey()])
         ->callTableAction('create', data: $customerAdvisorQuestion->toArray())
         ->assertHasNoTableActionErrors();
 
@@ -129,7 +129,7 @@ test('Create QnA Advisor Question validates the inputs', function ($data, $error
 
     actingAs($user);
 
-    livewire(ManageQnaQuestions::class, ['record' => $customerAdvisor->getKey()])
+    livewire(ManageCustomerQuestions::class, ['record' => $customerAdvisor->getKey()])
         ->callTableAction('create', data: $customerAdvisorQuestion->toArray())
         ->assertHasTableActionErrors($errors);
 
@@ -189,7 +189,7 @@ test('can edit QnA Advisor Question', function () {
 
     actingAs($user);
 
-    livewire(ManageQnaQuestions::class, ['record' => $customerAdvisor->getKey()])
+    livewire(ManageCustomerQuestions::class, ['record' => $customerAdvisor->getKey()])
         ->callTableAction('edit', record: $customerAdvisorQuestion->getKey(), data: $request->toArray())
         ->assertHasNoTableActionErrors();
 
@@ -222,7 +222,7 @@ test('Edit QnA Advisor Question validates the inputs', function ($data, $errors)
 
     actingAs($user);
 
-    livewire(ManageQnaQuestions::class, ['record' => $customerAdvisor->getKey()])
+    livewire(ManageCustomerQuestions::class, ['record' => $customerAdvisor->getKey()])
         ->callTableAction('edit', record: $customerAdvisorQuestion->getKey(), data: $request)
         ->assertHasTableActionErrors($errors);
 })

@@ -32,12 +32,12 @@
     </COPYRIGHT>
 --}}
 
-@use('AdvisingApp\Ai\Enums\QnaAdvisorReportTableTab')
+@use('AdvisingApp\Ai\Enums\CustomerAdvisorReportTableTab')
 
 <x-filament-widgets::widget class="fi-wi-table flex flex-col gap-y-6">
     <div class="flex justify-center">
         <x-filament::tabs>
-            @foreach (QnaAdvisorReportTableTab::cases() as $tab)
+            @foreach (CustomerAdvisorReportTableTab::cases() as $tab)
                 <x-filament::tabs.item
                     wire:click="$set('activeTab', '{{ $tab->value }}')"
                     :active="$activeTab === $tab->value"

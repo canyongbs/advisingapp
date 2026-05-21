@@ -34,34 +34,57 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Actions;
+namespace AdvisingApp\Ai\Events\CustomerAdvisors;
 
 use AdvisingApp\Ai\Models\CustomerAdvisor;
-use Exception;
-use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
+use Illuminate\Broadcasting\Channel;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Foundation\Events\Dispatchable;
 
-class GenerateQnaAdvisorWidgetEmbedCode
+class CustomerAdvisorMessageChunk implements ShouldBroadcastNow
 {
-    public function handle(CustomerAdvisor $customerAdvisor): string
+    use Dispatchable;
+    use InteractsWithSockets;
+
+    public function __construct(
+        public CustomerAdvisor $advisor,
+        public CustomerAdvisorThread $thread,
+        public string $content,
+        public bool $isComplete = false,
+        public ?string $error = null,
+    ) {}
+
+    public function broadcastAs(): string
     {
-        $manifestPath = Storage::disk('public')->get('widgets/ai/customer-advisors/.vite/manifest.json');
+        return 'qna-advisor-message.chunk';
+    }
 
-        if (is_null($manifestPath)) {
-            throw new Exception('Vite manifest file not found.');
-        }
+    /**
+     * @return array<string, mixed>
+     */
+    public function broadcastWith(): array
+    {
+        return [
+            'content' => $this->content,
+            'is_complete' => $this->isComplete,
+            'error' => $this->error,
+        ];
+    }
 
-        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
-        $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
+    /**
+     * @return array<int, Channel>
+     */
+    public function broadcastOn(): array
+    {
+        $channelName = "qna-advisor-thread-{$this->thread->getKey()}";
 
-        $loaderScriptUrl = url("widgets/ai/customer-advisors/{$manifest['src/loader.js']['file']}");
-
-        $resourcesUrl = URL::route(name: 'widgets.ai.customer-advisors.api.assets', parameters: ['advisor' => $customerAdvisor]);
-
-        return <<<EOD
-        <customer-advisor-embed url="{$resourcesUrl}"></customer-advisor-embed>
-        <script src="{$loaderScriptUrl}"></script>
-        EOD;
+        return [
+            $this->advisor->is_requires_authentication_enabled
+                ? new PrivateChannel($channelName)
+                : new Channel($channelName),
+        ];
     }
 }

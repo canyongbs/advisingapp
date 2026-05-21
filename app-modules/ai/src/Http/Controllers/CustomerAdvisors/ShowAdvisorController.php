@@ -90,7 +90,7 @@ class ShowAdvisorController
 
             $response->withCookie(
                 Cookie::make(
-                    name: 'advising_app_qna_advisor_refresh_token',
+                    name: 'advising_app_customer_advisor_refresh_token',
                     value: $tokens['refresh_token']->plainTextToken,
                     minutes: 60 * 24 * 3, // 3 days
                     secure: true,

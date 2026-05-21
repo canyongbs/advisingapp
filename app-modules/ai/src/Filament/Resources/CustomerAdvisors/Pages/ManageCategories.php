@@ -34,68 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
+namespace AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages;
 
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use App\Features\RenameQnaAdvisorsFeature;
-use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Unique;
 use UnitEnum;
 
-class ManageQnaQuestions extends ManageRelatedRecords
+class ManageCategories extends ManageRelatedRecords
 {
-    protected static string $resource = QnaAdvisorResource::class;
+    protected static string $resource = CustomerAdvisorResource::class;
 
-    protected static string $relationship = 'questions';
+    protected static ?string $title = 'Categories';
 
-    protected static ?string $title = 'Questions';
+    protected static string $relationship = 'categories';
 
     protected static string | UnitEnum | null $navigationGroup = 'Configuration';
 
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                Select::make('category_id')
-                    ->label('Category')
-                    ->relationship('category', 'name', modifyQueryUsing: function ($query) {
-                        /** @var CustomerAdvisor $advisor */
-                        $advisor = $this->getOwnerRecord();
-                        $query->where(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id', $advisor->getKey());
-                    })
-                    ->required()
-                    ->preload()
-                    ->searchable()
-                    ->columnSpanFull(),
-                TextInput::make('question')
-                    ->required()
-                    ->string()
-                    ->maxLength(255)
-                    ->columnSpanFull(),
-                Textarea::make('answer')
-                    ->required()
-                    ->string()
-                    ->maxLength(65535)
-                    ->columnSpanFull(),
-            ]);
-    }
-
     /**
-    * @return array<int|string, string|null>
-    */
+     * @return array<int|string, string|null>
+     */
     public function getBreadcrumbs(): array
     {
         $resource = static::getResource();
@@ -116,47 +84,52 @@ class ManageQnaQuestions extends ManageRelatedRecords
         return $breadcrumbs;
     }
 
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                TextInput::make('name')
+                    ->required()
+                    ->string()
+                    ->unique(
+                        table: RenameQnaAdvisorsFeature::active() ? 'customer_advisor_categories' : 'qna_advisor_categories',
+                        column: 'name',
+                        ignoreRecord: true,
+                        modifyRuleUsing: function (Unique $rule) {
+                            /** @var CustomerAdvisor $customerAdvisor */
+                            $customerAdvisor = $this->getOwnerRecord();
+
+                            $rule->where(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id', $customerAdvisor->getKey());
+                        }
+                    )
+                    ->maxLength(255)
+                    ->columnSpanFull(),
+                Textarea::make('description')
+                    ->required()
+                    ->string()
+                    ->maxLength(65535)
+                    ->columnSpanFull(),
+            ]);
+    }
+
     public function table(Table $table): Table
     {
         return $table
-            ->recordTitleAttribute('question')
+            ->recordTitleAttribute('name')
             ->columns([
-                TextColumn::make('question')
-                    ->wrap()
-                    ->searchable(),
-                TextColumn::make('answer')
+                TextColumn::make('name'),
+                TextColumn::make('description')
                     ->limit(50)
-                    ->wrap()
-                    ->searchable(),
-                TextColumn::make('category.name')
-                    ->searchable(),
-            ])
-            ->filters([
-                SelectFilter::make('category_id')
-                    ->label('Category')
-                    ->relationship('category', 'name', modifyQueryUsing: function ($query) {
-                        /** @var CustomerAdvisor $customerAdvisor */
-                        $customerAdvisor = $this->getOwnerRecord();
-                        $query->where(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id', $customerAdvisor->getKey());
-                    })
-                    ->multiple()
-                    ->preload()
-                    ->searchable(),
+                    ->wrap(),
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->modalHeading('Create Customer Advisor Question'),
+                    ->modalHeading('Create Customer Advisor Category'),
             ])
             ->recordActions([
                 EditAction::make(),
-                DeleteAction::make(),
             ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                ]),
-            ])
-            ->emptyStateHeading('No Customer Advisor Questions Found')
+            ->emptyStateHeading('No Customer Advisor Categories Found')
             ->emptyStateDescription('');
     }
 }

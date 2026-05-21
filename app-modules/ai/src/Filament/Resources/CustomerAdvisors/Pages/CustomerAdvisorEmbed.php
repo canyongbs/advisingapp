@@ -34,12 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages;
+namespace AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages;
 
-use AdvisingApp\Ai\Actions\GenerateQnaAdvisorWidgetEmbedCode;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
+use AdvisingApp\Ai\Actions\GenerateCustomerAdvisorWidgetEmbedCode;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Form\Rules\IsDomain;
+use App\Features\RenameQnaAdvisorsFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -57,11 +58,11 @@ use Filament\Schemas\Schema;
 use Illuminate\Support\HtmlString;
 use UnitEnum;
 
-class QnaAdvisorEmbed extends EditRecord
+class CustomerAdvisorEmbed extends EditRecord
 {
     use EditPageRedirection;
 
-    protected static string $resource = QnaAdvisorResource::class;
+    protected static string $resource = CustomerAdvisorResource::class;
 
     protected static string | UnitEnum | null $navigationGroup = 'Configuration';
 
@@ -77,7 +78,9 @@ class QnaAdvisorEmbed extends EditRecord
 
         assert($user instanceof User);
 
-        return $user->can('qna_advisor_embed.view-any') && $user->can('qna_advisor_embed.*.view') && parent::canAccess($parameters);
+        return $user->can(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_embed.view-any' : 'qna_advisor_embed.view-any') 
+            && $user->can(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_embed.*.view' : 'qna_advisor_embed.*.view') 
+            && parent::canAccess($parameters);
     }
 
     public function form(Schema $schema): Schema
@@ -142,7 +145,7 @@ class QnaAdvisorEmbed extends EditRecord
                                         TextEntry::make('snippet')
                                             ->label('Click to Copy')
                                             ->state(function (): HtmlString {
-                                                $code = resolve(GenerateQnaAdvisorWidgetEmbedCode::class)->handle($this->getRecord());
+                                                $code = resolve(GenerateCustomerAdvisorWidgetEmbedCode::class)->handle($this->getRecord());
 
                                                 $state = <<<EOD
                                                 ```
@@ -153,7 +156,7 @@ class QnaAdvisorEmbed extends EditRecord
                                                 return str($state)->markdown()->toHtmlString();
                                             })
                                             ->copyable()
-                                            ->copyableState(fn () => resolve(GenerateQnaAdvisorWidgetEmbedCode::class)->handle($this->getRecord()))
+                                            ->copyableState(fn () => resolve(GenerateCustomerAdvisorWidgetEmbedCode::class)->handle($this->getRecord()))
                                             ->copyMessage('Copied!')
                                             ->copyMessageDuration(1500)
                                             ->extraAttributes(['class' => 'embed-code-snippet'])

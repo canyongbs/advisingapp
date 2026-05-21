@@ -34,8 +34,9 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\EditQnaAdvisor;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\EditCustomerAdvisor;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\EditQnaAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Tests\RequestFactories\CustomerAdvisorRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -63,12 +64,12 @@ test('Edit QnA Advisor is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            QnaAdvisorResource::getUrl('edit', [
+            CustomerAdvisorResource::getUrl('edit', [
                 'record' => $customerAdvisor,
             ])
         )->assertForbidden();
 
-    livewire(EditQnaAdvisor::class, [
+    livewire(EditCustomerAdvisor::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->assertForbidden();
@@ -77,7 +78,7 @@ test('Edit QnA Advisor is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            QnaAdvisorResource::getUrl('edit', [
+            CustomerAdvisorResource::getUrl('edit', [
                 'record' => $customerAdvisor,
             ])
         )->assertSuccessful();
@@ -102,7 +103,7 @@ test('can edit QnA Advisor', function () {
 
     $request = collect(CustomerAdvisorRequestFactory::new()->create());
 
-    livewire(EditQnaAdvisor::class, [
+    livewire(EditCustomerAdvisor::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -147,7 +148,7 @@ test('Edit QnA Advisor validates the inputs', function ($data, $errors) {
 
     $request = CustomerAdvisorRequestFactory::new($data)->create();
 
-    livewire(EditQnaAdvisor::class, [
+    livewire(EditCustomerAdvisor::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->fillForm($request)
@@ -195,7 +196,7 @@ test('archive action visible when QnA Advisor is not archived', function () {
 
     actingAs($user);
 
-    livewire(EditQnaAdvisor::class, [
+    livewire(EditCustomerAdvisor::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -222,7 +223,7 @@ test('restore action visible when QnA Advisor is archived', function () {
 
     actingAs($user);
 
-    livewire(EditQnaAdvisor::class, [
+    livewire(EditCustomerAdvisor::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->assertSuccessful()

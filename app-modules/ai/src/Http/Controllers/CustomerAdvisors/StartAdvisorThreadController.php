@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Http\Controllers\CustomerAdvisors;
 
-use AdvisingApp\Ai\Actions\GenerateQnaAdvisorIntroductoryMessage;
+use AdvisingApp\Ai\Actions\GenerateCustomerAdvisorIntroductoryMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
@@ -45,7 +45,7 @@ use Illuminate\Support\Facades\URL;
 
 class StartAdvisorThreadController
 {
-    public function __invoke(CustomerAdvisor $advisor, GenerateQnaAdvisorIntroductoryMessage $generateIntroductoryMessage): JsonResponse
+    public function __invoke(CustomerAdvisor $advisor, GenerateCustomerAdvisorIntroductoryMessage $generateIntroductoryMessage): JsonResponse
     {
         $author = auth('student')->user() ?? auth('prospect')->user();
 

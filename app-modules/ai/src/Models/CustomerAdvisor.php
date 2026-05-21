@@ -169,7 +169,7 @@ class CustomerAdvisor extends BaseModel implements HasMedia, Auditable
 
     public function getInstructionsCacheKey(): string
     {
-        return 'qna-advisor-' . $this->getKey() . '-instructions';
+        return 'customer-advisor-' . $this->getKey() . '-instructions';
     }
 
     /**

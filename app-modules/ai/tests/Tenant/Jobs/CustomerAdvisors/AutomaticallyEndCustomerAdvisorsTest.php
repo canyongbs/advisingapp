@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Events\QnaAdvisors\EndCustomerAdvisorThread;
+use AdvisingApp\Ai\Events\CustomerAdvisors\EndCustomerAdvisorThread;
 use AdvisingApp\Ai\Jobs\CustomerAdvisors\AutomaticallyEndCustomerAdvisors;
 use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;

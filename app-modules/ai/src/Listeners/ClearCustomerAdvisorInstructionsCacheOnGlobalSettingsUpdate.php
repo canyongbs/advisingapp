@@ -45,7 +45,7 @@ class ClearCustomerAdvisorInstructionsCacheOnGlobalSettingsUpdate
     public function handle(SettingsSaved $event): void
     {
         if ($event->settings instanceof AiCustomerAdvisorSettings) {
-            Cache::tags(['qna_advisor_instructions'])->flush();
+            Cache::tags(['customer_advisor_instructions'])->flush();
         }
     }
 }

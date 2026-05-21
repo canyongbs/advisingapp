@@ -81,7 +81,7 @@ class ManageAiCustomerAdvisorSettings extends ManageAiEmployeeAdvisorSettings
                 Select::make('preselected_model')
                     ->label('Select Model')
                     ->options(fn (AiModel|string|null $state) => array_unique([
-                        ...AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModelsAsSelectOptions(),
+                        ...AiModelApplicabilityFeature::CustomerAdvisor->getModelsAsSelectOptions(),
                         ...match (true) {
                             $state instanceof AiModel => [$state->value => $state->getLabel()],
                             is_string($state) => [$state => AiModel::parse($state)->getLabel()],
@@ -93,7 +93,7 @@ class ManageAiCustomerAdvisorSettings extends ManageAiEmployeeAdvisorSettings
                     ->columnSpanFull()
                     ->required()
                     ->visible(fn (Get $get): bool => ! $get('allow_selection_of_model'))
-                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::QuestionAndAnswerAdvisor->getModels())),
+                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomerAdvisor->getModels())),
                 Textarea::make('instructions')
                     ->label('Instructions')
                     ->columnSpanFull()

@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Jobs\CustomerAdvisors;
 
-use AdvisingApp\Ai\Events\QnaAdvisors\EndCustomerAdvisorThread;
+use AdvisingApp\Ai\Events\CustomerAdvisors\EndCustomerAdvisorThread;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;

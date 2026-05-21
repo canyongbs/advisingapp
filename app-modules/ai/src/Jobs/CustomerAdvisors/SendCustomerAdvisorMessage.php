@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Jobs\CustomerAdvisors;
 
 use AdvisingApp\Ai\Actions\GetCustomerAdvisorInstructions;
 use AdvisingApp\Ai\Enums\AiReasoningEffort;
-use AdvisingApp\Ai\Events\QnaAdvisors\CustomerAdvisorMessageChunk;
+use AdvisingApp\Ai\Events\CustomerAdvisors\CustomerAdvisorMessageChunk;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;

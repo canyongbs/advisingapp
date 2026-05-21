@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ManageCategories;
-use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\QnaAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\ManageCategories;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Tests\RequestFactories\CustomerAdvisorCategoryRequestFactory;
@@ -63,7 +63,7 @@ test('Create QnA Advisor Category is gated with proper access control', function
 
     actingAs($user)
         ->get(
-            QnaAdvisorResource::getUrl('manage-categories', [
+            CustomerAdvisorResource::getUrl('manage-categories', [
                 'record' => $customerAdvisor,
             ])
         )
@@ -76,7 +76,7 @@ test('Create QnA Advisor Category is gated with proper access control', function
 
     actingAs($user)
         ->get(
-            QnaAdvisorResource::getUrl('manage-categories', [
+            CustomerAdvisorResource::getUrl('manage-categories', [
                 'record' => $customerAdvisor,
             ])
         )->assertSuccessful();
@@ -124,7 +124,7 @@ test('Create QnA Advisor Category validates the inputs', function ($data, $error
 
     actingAs($user)
         ->get(
-            QnaAdvisorResource::getUrl('manage-categories', [
+            CustomerAdvisorResource::getUrl('manage-categories', [
                 'record' => $customerAdvisor,
             ])
         )
@@ -137,7 +137,7 @@ test('Create QnA Advisor Category validates the inputs', function ($data, $error
 
     actingAs($user)
         ->get(
-            QnaAdvisorResource::getUrl('manage-categories', [
+            CustomerAdvisorResource::getUrl('manage-categories', [
                 'record' => $customerAdvisor,
             ])
         )->assertSuccessful();
