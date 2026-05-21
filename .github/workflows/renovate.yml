@@ -24,5 +24,5 @@ jobs:
             - name: Run Renovate
               uses: renovatebot/github-action@693b9ef15eec82123529a37c782242f091365961 # v46.1.14
               with:
-                configurationFile: renovate-config.json
-                token: ${{ secrets.PAT }} # zizmor: ignore[secrets-outside-env]
+                  configurationFile: renovate-config.json
+                  token: ${{ secrets.PAT }} # zizmor: ignore[secrets-outside-env]
