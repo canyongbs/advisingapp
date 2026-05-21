@@ -6,6 +6,10 @@ on:
 
 permissions: {}
 
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.release.tag_name }}
+    cancel-in-progress: false
+
 env:
     AWS_REGION: 'us-west-2'
 

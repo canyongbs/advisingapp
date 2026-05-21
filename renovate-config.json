@@ -84,6 +84,11 @@
             "allowedVersions": ">=7.4.0 <7.5.0"
         },
         {
+            "description": "Pin PostgreSQL to 15.x",
+            "matchDepNames": ["postgres"],
+            "allowedVersions": ">=15.0 <16.0"
+        },
+        {
             "description": "7-day cooldown for non-security Docker image updates",
             "matchDatasources": ["docker"],
             "matchUpdateTypes": ["major", "minor", "patch", "digest"],

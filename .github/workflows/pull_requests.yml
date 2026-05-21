@@ -13,6 +13,7 @@ concurrency:
 
 jobs:
     prep-and-code-consistency:
+        name: Prep and Code Consistency
         runs-on: ubuntu-22.04
 
         permissions:
@@ -36,7 +37,7 @@ jobs:
               uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
               with:
                   ref: ${{ github.head_ref }}
-                  token: ${{ secrets.PAT }}
+                  token: ${{ secrets.PAT }} # zizmor: ignore[secrets-outside-env]
                   persist-credentials: true # zizmor: ignore[artipacked] -- credentials needed for git-auto-commit-action to push
 
             - name: Checkout code | External
@@ -115,10 +116,11 @@ jobs:
 
             - name: Commit changes
               if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'dependabot[bot]' }}
-              uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
-              with:
-                  commit_message: >
-                      Update code formatting and copyright headers
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git add -A
+                  git diff --cached --quiet || (git commit -m "Update code formatting and copyright headers" && git push)
 
             - name: Check for changes
               if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name != github.repository || github.event.pull_request.user.login == 'dependabot[bot]' }}
@@ -127,6 +129,7 @@ jobs:
                   fail-if-changed: 'true'
 
     test:
+        name: Test
         strategy:
             matrix:
                 testsuite: [Landlord, Tenant]
@@ -168,7 +171,7 @@ jobs:
                     --health-interval 10s \
                     --health-timeout 5s \
                     --health-retries 5 \
-                    postgres:15 \
+                    postgres:15@sha256:1b92e7a80c021647bf70f5d3eb66066a998e4f5cf43c07bb9dc9f729782cf88e \
                     -c max_locks_per_transaction=256
 
             - name: Wait for PostgreSQL
@@ -258,9 +261,12 @@ jobs:
               run: php artisan route:list
 
             - name: Execute tests (Unit and Feature tests) via PHPUnit
-              run: php artisan test --configuration phpunit-ci.xml --parallel --testsuite=${{ matrix.testsuite }}
+              env:
+                  TESTSUITE: ${{ matrix.testsuite }}
+              run: php artisan test --configuration phpunit-ci.xml --parallel --testsuite=${TESTSUITE}
 
     lint:
+        name: Lint
         runs-on: ubuntu-22.04
 
         permissions:
@@ -284,7 +290,7 @@ jobs:
         services:
             postgres:
                 # Docker Hub image
-                image: postgres:15
+                image: postgres:15@sha256:1b92e7a80c021647bf70f5d3eb66066a998e4f5cf43c07bb9dc9f729782cf88e
                 ports:
                     - 5432:5432
                 # Provide the password for postgres
@@ -374,6 +380,7 @@ jobs:
                   key: 'linting-result-cache-${{ github.run_id }}'
 
     renovate-config-validator:
+        name: Renovate Config Validator
         runs-on: ubuntu-latest
 
         permissions:
