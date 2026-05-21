@@ -41,7 +41,7 @@ export default defineConfig({
     experimental: {
         renderBuiltUrl(filename) {
             return {
-                runtime: `window.__VITE_QNA_ADVISOR_RESOURCE_URL__.replace(/\\/$/, '') + '/' + ${JSON.stringify(filename)}`,
+                runtime: `window.__VITE_CUSTOMER_ADVISOR_RESOURCE_URL__.replace(/\\/$/, '') + '/' + ${JSON.stringify(filename)}`,
             };
         },
     },
@@ -55,12 +55,12 @@ export default defineConfig({
             output: {
                 entryFileNames: (chunkInfo) => {
                     return chunkInfo.name === 'loader'
-                        ? 'advising-app-qna-advisor-widget.js'
-                        : 'advising-app-qna-advisor-widget-app-[hash].js';
+                        ? 'advising-app-customer-advisor-widget.js'
+                        : 'advising-app-customer-advisor-widget-app-[hash].js';
                 },
                 assetFileNames: (assetInfo) => {
                     if (assetInfo.names?.[0]?.endsWith('.css')) {
-                        return 'advising-app-qna-advisor-widget-[hash].css';
+                        return 'advising-app-customer-advisor-widget-[hash].css';
                     }
                     return '[name]-[hash][extname]';
                 },

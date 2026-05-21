@@ -45,7 +45,7 @@ use App\Settings\LicenseSettings;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-test('List QnA Advisors is gated with proper access control', function () {
+test('List Customer Advisors is gated with proper access control', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -67,7 +67,7 @@ test('List QnA Advisors is gated with proper access control', function () {
         )->assertSuccessful();
 });
 
-it('render QnA Advisors default to without archived', function () {
+it('render Customer Advisors default to without archived', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -93,7 +93,7 @@ it('render QnA Advisors default to without archived', function () {
         ->assertCanNotSeeTableRecords($archivedCustomerAdvisors);
 });
 
-it('filter QnA Advisors with archived', function () {
+it('filter Customer Advisors with archived', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;

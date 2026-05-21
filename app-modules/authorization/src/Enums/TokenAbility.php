@@ -38,7 +38,7 @@ namespace AdvisingApp\Authorization\Enums;
 
 enum TokenAbility: string
 {
-    case AccessQnaAdvisorApi = 'access_qna_advisor_api';
+    case AccessCustomerAdvisorApi = 'access_customer_advisor_api';
 
-    case IssueQnaAdvisorAccessToken = 'issue_qna_advisor_access_token';
+    case IssueCustomerAdvisorAccessToken = 'issue_customer_advisor_access_token';
 }

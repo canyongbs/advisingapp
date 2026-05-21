@@ -52,7 +52,7 @@ class EndCustomerAdvisorThread implements ShouldBroadcastNow
 
     public function broadcastAs(): string
     {
-        return 'qna-advisor.automatic-end';
+        return 'customer-advisor.automatic-end';
     }
 
     /**
@@ -60,7 +60,7 @@ class EndCustomerAdvisorThread implements ShouldBroadcastNow
      */
     public function broadcastOn(): array
     {
-        $channelName = "qna-advisor-thread-{$this->thread->getKey()}";
+        $channelName = "customer-advisor-thread-{$this->thread->getKey()}";
 
         return [
             $this->thread->advisor->is_requires_authentication_enabled

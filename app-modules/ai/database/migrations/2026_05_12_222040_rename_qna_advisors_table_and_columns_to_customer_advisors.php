@@ -82,6 +82,10 @@ return new class () extends Migration {
                 $table->renameColumn('qna_advisor_id', 'customer_advisor_id');
             });
 
+            DB::table('settings')
+                ->where('group', 'ai-qna-advisor')
+                ->update(['group' => 'ai-customer-advisor']);
+
             collect($this->guards)->each(function (string $guard) {
                 $this->renamePermissions($this->permissions, $guard);
             });
@@ -111,6 +115,10 @@ return new class () extends Migration {
             Schema::table('qna_advisor_categories', function (Blueprint $table) {
                 $table->renameColumn('customer_advisor_id', 'qna_advisor_id');
             });
+
+            DB::table('settings')
+                ->where('group', 'ai-customer-advisor')
+                ->update(['group' => 'ai-qna-advisor']);
 
             collect($this->guards)->each(function (string $guard) {
                 $this->renamePermissions(array_flip($this->permissions), $guard);

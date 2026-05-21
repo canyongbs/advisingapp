@@ -59,7 +59,7 @@ class CustomerAdvisorMessageChunk implements ShouldBroadcastNow
 
     public function broadcastAs(): string
     {
-        return 'qna-advisor-message.chunk';
+        return 'customer-advisor-message.chunk';
     }
 
     /**
@@ -79,7 +79,7 @@ class CustomerAdvisorMessageChunk implements ShouldBroadcastNow
      */
     public function broadcastOn(): array
     {
-        $channelName = "qna-advisor-thread-{$this->thread->getKey()}";
+        $channelName = "customer-advisor-thread-{$this->thread->getKey()}";
 
         return [
             $this->advisor->is_requires_authentication_enabled

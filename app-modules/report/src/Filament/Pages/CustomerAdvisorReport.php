@@ -37,9 +37,9 @@
 namespace AdvisingApp\Report\Filament\Pages;
 
 use AdvisingApp\Report\Abstract\AiReport;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportLineChart;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportStats;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportTable;
+use AdvisingApp\Report\Filament\Widgets\CustomerAdvisorReportLineChart;
+use AdvisingApp\Report\Filament\Widgets\CustomerAdvisorReportStats;
+use AdvisingApp\Report\Filament\Widgets\CustomerAdvisorReportTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Enums\Feature;
 use App\Features\AiAssistantDtoRenameFeature;
@@ -47,7 +47,7 @@ use App\Filament\Clusters\ReportLibrary;
 use Illuminate\Support\Facades\Gate;
 use UnitEnum;
 
-class QnaAdvisorReport extends AiReport
+class CustomerAdvisorReport extends AiReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
@@ -72,9 +72,9 @@ class QnaAdvisorReport extends AiReport
     {
         return [
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportStats::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportLineChart::make(['cacheTag' => $this->cacheTag]),
-            QnaAdvisorReportTable::make(['cacheTag' => $this->cacheTag]),
+            CustomerAdvisorReportStats::make(['cacheTag' => $this->cacheTag]),
+            CustomerAdvisorReportLineChart::make(['cacheTag' => $this->cacheTag]),
+            CustomerAdvisorReportTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
 

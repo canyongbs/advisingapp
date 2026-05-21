@@ -69,7 +69,7 @@ Broadcast::channel('advisor-thread-{threadId}', function (User $user, string $th
     return AiThread::find($threadId)?->user()->is($user) ?? false;
 });
 
-Broadcast::channel('qna-advisor-thread-{threadId}', function (Student | Prospect $user, string $threadId): bool {
+Broadcast::channel('customer-advisor-thread-{threadId}', function (Student | Prospect $user, string $threadId): bool {
     $thread = CustomerAdvisorThread::find($threadId);
 
     if (! $thread) {

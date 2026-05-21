@@ -45,7 +45,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Number;
 
-class QnaAdvisorReportStats extends StatsOverviewReportWidget
+class CustomerAdvisorReportStats extends StatsOverviewReportWidget
 {
     protected int | string | array $columnSpan = [
         'sm' => 2,
@@ -68,7 +68,7 @@ class QnaAdvisorReportStats extends StatsOverviewReportWidget
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
-                'qna-advisor-report',
+                'customer-advisor-report',
                 now()->addHours(24),
                 fn (): int => CustomerAdvisor::query()->count()
             );
@@ -82,7 +82,7 @@ class QnaAdvisorReportStats extends StatsOverviewReportWidget
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
-                'qna-advisor-students-count',
+                'customer-advisor-students-count',
                 now()->addHours(24),
                 fn (): int => CustomerAdvisorThread::query()->whereMorphedTo('author', Student::class)->count()
             );
@@ -96,7 +96,7 @@ class QnaAdvisorReportStats extends StatsOverviewReportWidget
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
-                'qna-advisor-prospects-count',
+                'customer-advisor-prospects-count',
                 now()->addHours(24),
                 fn (): int => CustomerAdvisorThread::query()->whereMorphedTo('author', Prospect::class)->count()
             );
@@ -110,7 +110,7 @@ class QnaAdvisorReportStats extends StatsOverviewReportWidget
                 )
                 ->count()
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
-                'qna-advisor-unauthenticated-count',
+                'customer-advisor-unauthenticated-count',
                 now()->addHours(24),
                 fn (): int => CustomerAdvisorThread::query()->whereNull('author_id')
                     ->count()

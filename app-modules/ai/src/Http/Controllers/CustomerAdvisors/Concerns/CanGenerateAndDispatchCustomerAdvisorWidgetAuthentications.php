@@ -52,7 +52,7 @@ trait CanGenerateAndDispatchCustomerAdvisorWidgetAuthentications
         $code = random_int(100000, 999999);
 
         $authentication = new PortalAuthentication();
-        $authentication->portal_type = PortalType::QnaAdvisorWidget;
+        $authentication->portal_type = PortalType::CustomerAdvisorWidget;
         $authentication->code = Hash::make((string) $code);
 
         $authentication->educatable()->associate($educatable);

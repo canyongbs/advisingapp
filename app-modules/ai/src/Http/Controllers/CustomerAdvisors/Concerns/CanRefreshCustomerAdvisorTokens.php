@@ -58,7 +58,7 @@ trait CanRefreshCustomerAdvisorTokens
 
         $refreshToken = PersonalAccessToken::findToken($refreshTokenValue);
 
-        if (! $refreshToken || ! $refreshToken->can(TokenAbility::IssueQnaAdvisorAccessToken->value)) {
+        if (! $refreshToken || ! $refreshToken->can(TokenAbility::IssueCustomerAdvisorAccessToken->value)) {
             return null;
         }
 
@@ -83,8 +83,8 @@ trait CanRefreshCustomerAdvisorTokens
 
         // Generate new tokens
         return [
-            'access_token' => $educatable->createToken('customer_advisor_access_token', [TokenAbility::AccessQnaAdvisorApi], now()->addMinutes(15)),
-            'refresh_token' => $educatable->createToken('customer_advisor_refresh_token', [TokenAbility::IssueQnaAdvisorAccessToken], now()->addDays(3)),
+            'access_token' => $educatable->createToken('customer_advisor_access_token', [TokenAbility::AccessCustomerAdvisorApi], now()->addMinutes(15)),
+            'refresh_token' => $educatable->createToken('customer_advisor_refresh_token', [TokenAbility::IssueCustomerAdvisorAccessToken], now()->addDays(3)),
         ];
     }
 }

@@ -40,7 +40,7 @@ use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
-class QnaAdvisorReportLineChart extends LineChartReportWidget
+class CustomerAdvisorReportLineChart extends LineChartReportWidget
 {
     protected ?string $heading = 'Exchanges by Month';
 
@@ -61,10 +61,10 @@ class QnaAdvisorReportLineChart extends LineChartReportWidget
         $shouldBypassCache = filled($startDate) || filled($endDate);
 
         $totals = $shouldBypassCache
-            ? $this->getQnaAdvisorTotalData($startDate, $endDate)
+            ? $this->getCustomerAdvisorTotalData($startDate, $endDate)
             : Cache::tags(["{{$this->cacheTag}}"])
-                ->remember('total-qna-advisor-line-chart', now()->addHours(24), function (): array {
-                    return $this->getQnaAdvisorTotalData();
+                ->remember('total-customer-advisor-line-chart', now()->addHours(24), function (): array {
+                    return $this->getCustomerAdvisorTotalData();
                 });
 
         return [
@@ -99,7 +99,7 @@ class QnaAdvisorReportLineChart extends LineChartReportWidget
     /**
      * @return array<string, int>
      */
-    protected function getQnaAdvisorTotalData(?Carbon $startDate = null, ?Carbon $endDate = null): array
+    protected function getCustomerAdvisorTotalData(?Carbon $startDate = null, ?Carbon $endDate = null): array
     {
         $startDate = $startDate ?? Carbon::now()->startOfMonth()->subMonths(11);
         $endDate = $endDate ?? Carbon::now()->endOfMonth();

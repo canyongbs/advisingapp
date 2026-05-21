@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Report\Filament\Pages\QnaAdvisorReport;
+use AdvisingApp\Report\Filament\Pages\CustomerAdvisorReport;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
@@ -51,20 +51,20 @@ it('is gated with proper access control', function () {
 
     actingAs($user);
 
-    get(QnaAdvisorReport::getUrl())->assertForbidden();
+    get(CustomerAdvisorReport::getUrl())->assertForbidden();
 
     $user->grantLicense(LicenseType::ConversationalAi);
 
     $user->refresh();
 
-    get(QnaAdvisorReport::getUrl())->assertForbidden();
+    get(CustomerAdvisorReport::getUrl())->assertForbidden();
 
     $user->givePermissionTo('report-library.view-any');
 
-    get(QnaAdvisorReport::getUrl())->assertForbidden();
+    get(CustomerAdvisorReport::getUrl())->assertForbidden();
 
     $settings->data->addons->customerAdvisors = true;
     $settings->save();
 
-    get(QnaAdvisorReport::getUrl())->assertSuccessful();
+    get(CustomerAdvisorReport::getUrl())->assertSuccessful();
 });

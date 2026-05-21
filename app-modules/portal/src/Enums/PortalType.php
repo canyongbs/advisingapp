@@ -42,13 +42,13 @@ enum PortalType: string implements HasLabel
 {
     case ResourceHub = 'resource_hub';
 
-    case QnaAdvisorWidget = 'qna_advisor_widget';
+    case CustomerAdvisorWidget = 'customer_advisor_widget';
 
     public function getLabel(): ?string
     {
         return match ($this) {
             PortalType::ResourceHub => 'Resource Hub',
-            PortalType::QnaAdvisorWidget => 'Q&A Advisor Widget',
+            PortalType::CustomerAdvisorWidget => 'Customer Advisor Widget',
         };
     }
 }

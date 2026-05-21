@@ -1,5 +1,3 @@
-<?php
-
 /*
 <COPYRIGHT>
 
@@ -33,30 +31,34 @@
 
 </COPYRIGHT>
 */
+(function () {
+    // Get the embed element
+    const embedElement = document.querySelector('customer-advisor-embed');
+    if (!embedElement) throw new Error('Embed not found');
 
-namespace AdvisingApp\IntegrationOpenAi\Jobs;
+    // Get the assets URL from the element
+    const assetsUrl = embedElement.getAttribute('url');
+    if (!assetsUrl) throw new Error('Assets URL not found');
 
-use AdvisingApp\Ai\Models\CustomerAdvisor;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
-use Spatie\Multitenancy\Jobs\TenantAware;
+    // Fetch the latest assets URLs
+    fetch(assetsUrl)
+        .then((response) => response.json())
+        .then((assets) => {
+            if (!assets || !assets.asset_url || !assets.entry || !assets.js) {
+                throw Error('Assets are missing or incomplete.');
+            }
 
-class SyncResourceHubArticlesToQnaAdvisorVectorStores implements ShouldQueue, TenantAware
-{
-    use Dispatchable;
-    use InteractsWithQueue;
-    use Queueable;
-    use SerializesModels;
+            embedElement.setAttribute('entry-url', assets.entry);
 
-    public function handle(): void
-    {
-        CustomerAdvisor::query()
-            ->where('has_resource_hub_knowledge', true)
-            ->eachById(function (CustomerAdvisor $advisor) {
-                UploadCustomerAdvisorFilesToVectorStore::dispatch($advisor);
-            });
-    }
-}
+            // Set up the global variable for Vite's dynamic imports using the asset endpoint
+            window.__VITE_CUSTOMER_ADVISOR_RESOURCE_URL__ = assets.asset_url;
+
+            const scriptElement = document.createElement('script');
+            scriptElement.src = assets.js;
+            scriptElement.type = 'module';
+            document.body.appendChild(scriptElement);
+        })
+        .catch((error) => {
+            console.error('Failed to load widget assets:', error);
+        });
+})();

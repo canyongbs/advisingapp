@@ -194,7 +194,7 @@
                     ? window.Echo.private(channelName)
                     : window.Echo.channel(channelName);
 
-                websocketChannel.listen('.qna-advisor.automatic-end', () => {
+                websocketChannel.listen('.customer-advisor.automatic-end', () => {
                     finishThread();
                 });
             })
@@ -435,7 +435,7 @@
             threadId.value = data.thread_id;
             finishThreadUrl.value = data.finish_thread_url;
 
-            let channelName = `qna-advisor-thread-${threadId.value}`;
+            let channelName = `customer-advisor-thread-${threadId.value}`;
 
             websocketChannel = requiresAuthentication.value
                 ? window.Echo.private(channelName)
@@ -443,7 +443,7 @@
 
             startRenderInterval();
 
-            websocketChannel.listen('.qna-advisor-message.chunk', (data) => {
+            websocketChannel.listen('.customer-advisor-message.chunk', (data) => {
                 if (data.error) {
                     console.error('Advisor message error:', data.error);
                     resetWordQueue();

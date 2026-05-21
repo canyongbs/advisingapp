@@ -53,6 +53,6 @@ class AiCustomerAdvisorSettings extends Settings
 
     public static function group(): string
     {
-        return 'ai-qna-advisor';
+        return 'ai-custom-advisor';
     }
 }

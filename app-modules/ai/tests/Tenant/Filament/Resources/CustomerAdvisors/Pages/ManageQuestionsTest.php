@@ -51,7 +51,7 @@ use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 
-test('Create QnA Advisor Question is gated with proper access control', function () {
+test('Create Customer Advisor Question is gated with proper access control', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -83,7 +83,7 @@ test('Create QnA Advisor Question is gated with proper access control', function
         )->assertSuccessful();
 });
 
-test('can create QnA Advisor Question', function () {
+test('can create Customer Advisor Question', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -112,7 +112,7 @@ test('can create QnA Advisor Question', function () {
     );
 });
 
-test('Create QnA Advisor Question validates the inputs', function ($data, $errors) {
+test('Create Customer Advisor Question validates the inputs', function ($data, $errors) {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -166,7 +166,7 @@ test('Create QnA Advisor Question validates the inputs', function ($data, $error
     ]
 );
 
-test('can edit QnA Advisor Question', function () {
+test('can edit Customer Advisor Question', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -199,7 +199,7 @@ test('can edit QnA Advisor Question', function () {
     );
 });
 
-test('Edit QnA Advisor Question validates the inputs', function ($data, $errors) {
+test('Edit Customer Advisor Question validates the inputs', function ($data, $errors) {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;

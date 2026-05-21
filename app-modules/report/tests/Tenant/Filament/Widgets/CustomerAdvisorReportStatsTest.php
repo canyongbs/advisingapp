@@ -37,7 +37,7 @@
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportStats;
+use AdvisingApp\Report\Filament\Widgets\CustomerAdvisorReportStats;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 it('returns correct total CustomerAdvisor stats of CustomerAdvisors, students, prospects and unauthenticated within the given date range', function () {
@@ -84,7 +84,7 @@ it('returns correct total CustomerAdvisor stats of CustomerAdvisors, students, p
         ])
         ->create();
 
-    $widget = new QnaAdvisorReportStats();
+    $widget = new CustomerAdvisorReportStats();
     $widget->cacheTag = 'customer-advisor-report-cache';
     $widget->pageFilters = [
         'startDate' => $startDate->toDateString(),

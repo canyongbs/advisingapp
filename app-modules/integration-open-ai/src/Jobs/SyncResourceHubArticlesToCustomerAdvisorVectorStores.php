@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,34 +33,30 @@
 
 </COPYRIGHT>
 */
-(function () {
-    // Get the embed element
-    const embedElement = document.querySelector('qna-advisor-embed');
-    if (!embedElement) throw new Error('Embed not found');
 
-    // Get the assets URL from the element
-    const assetsUrl = embedElement.getAttribute('url');
-    if (!assetsUrl) throw new Error('Assets URL not found');
+namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
-    // Fetch the latest assets URLs
-    fetch(assetsUrl)
-        .then((response) => response.json())
-        .then((assets) => {
-            if (!assets || !assets.asset_url || !assets.entry || !assets.js) {
-                throw Error('Assets are missing or incomplete.');
-            }
+use AdvisingApp\Ai\Models\CustomerAdvisor;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Spatie\Multitenancy\Jobs\TenantAware;
 
-            embedElement.setAttribute('entry-url', assets.entry);
+class SyncResourceHubArticlesToCustomerAdvisorVectorStores implements ShouldQueue, TenantAware
+{
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-            // Set up the global variable for Vite's dynamic imports using the asset endpoint
-            window.__VITE_QNA_ADVISOR_RESOURCE_URL__ = assets.asset_url;
-
-            const scriptElement = document.createElement('script');
-            scriptElement.src = assets.js;
-            scriptElement.type = 'module';
-            document.body.appendChild(scriptElement);
-        })
-        .catch((error) => {
-            console.error('Failed to load widget assets:', error);
-        });
-})();
+    public function handle(): void
+    {
+        CustomerAdvisor::query()
+            ->where('has_resource_hub_knowledge', true)
+            ->eachById(function (CustomerAdvisor $advisor) {
+                UploadCustomerAdvisorFilesToVectorStore::dispatch($advisor);
+            });
+    }
+}

@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,32 +33,44 @@
 
 </COPYRIGHT>
 */
-import { defaultConfig, plugin } from '@formkit/vue';
-import { createPinia } from 'pinia';
-import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
-import App from './App.ce.vue';
-import config from './formkit.config.js';
-import styles from './widget.css?inline';
 
-customElements.define(
-    'qna-advisor-embed',
-    defineCustomElement({
-        styles: [styles],
-        setup(props) {
-            const app = createApp();
-            const pinia = createPinia();
+use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
+use AdvisingApp\Report\Filament\Widgets\CustomerAdvisorReportLineChart;
+use Illuminate\Support\Carbon;
 
-            app.use(pinia);
-            app.use(plugin, defaultConfig(config));
+use function Pest\Laravel\travelBack;
+use function Pest\Laravel\travelTo;
 
-            app.config.devtools = true;
+beforeEach()->skip('Skipping these tests as there are currently issues with these tests or the underlying functionality having to do with overflow dates that needs to be resolved');
 
-            const inst = getCurrentInstance();
-            Object.assign(inst.appContext, app._context);
-            Object.assign(inst.provides, app._context.provides);
+it('returns correct CustomerAdvisorMessage counts grouped by month within the given date range', function () {
+    // Freeze now to a fixed date so the snapshot is deterministic and not flaky.
+    $fixedNow = Carbon::parse('2025-10-15 12:00:00');
+    travelTo($fixedNow);
 
-            return () => h(App, props);
-        },
-        props: ['url'],
-    }),
-);
+    try {
+        $startDate = now()->subMonths(3);
+        $endDate = now()->subDays(5);
+
+        CustomerAdvisorMessage::factory()->count(5)->state([
+            'created_at' => $startDate,
+            'is_advisor' => false,
+        ])->create();
+
+        CustomerAdvisorMessage::factory()->count(5)->state([
+            'created_at' => $endDate,
+            'is_advisor' => false,
+        ])->create();
+
+        $widgetInstance = new CustomerAdvisorReportLineChart();
+        $widgetInstance->cacheTag = 'customer-advisor-report-cache';
+        $widgetInstance->pageFilters = [
+            'startDate' => $startDate->toDateString(),
+            'endDate' => $endDate->toDateString(),
+        ];
+
+        expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
+    } finally {
+        travelBack();
+    }
+});
