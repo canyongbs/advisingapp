@@ -24,13 +24,13 @@ jobs:
             php-version: ${{ env.php-version }}
 
         steps:
-            # zizmor: ignore[artipacked] -- credentials needed for git-auto-commit-action to push
             - name: Checkout code | Internal
               if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
               uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
               with:
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.pat-token }}
+                  persist-credentials: true # zizmor: ignore[artipacked] -- credentials needed for git-auto-commit-action to push
 
             - name: Checkout code | External
               if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name != github.repository || github.actor == 'dependabot[bot]' }}
