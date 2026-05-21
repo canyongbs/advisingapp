@@ -41,6 +41,7 @@ use AdvisingApp\Form\Models\SubmissibleStep;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class GenerateFormKitSchema
@@ -89,7 +90,7 @@ class GenerateFormKitSchema
     /**
      * @param array<string, mixed> $blocks
      * @param array<string, mixed> $content
-     * @param Collection<int, \Illuminate\Database\Eloquent\Model>|null $fields
+     * @param Collection<int, Model>|null $fields
      *
      * @return array<int, array<string, mixed>|string>
      */
@@ -121,7 +122,7 @@ class GenerateFormKitSchema
     /**
      * @param array<string, mixed> $blocks
      * @param array<string, mixed> $component
-     * @param Collection<int, \Illuminate\Database\Eloquent\Model>|null $fields
+     * @param Collection<int, Model>|null $fields
      *
      * @return array<string, mixed>
      */

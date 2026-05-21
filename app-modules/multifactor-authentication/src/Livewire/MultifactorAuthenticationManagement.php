@@ -48,6 +48,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Collection;
 use Livewire\Component;
 
@@ -63,7 +64,7 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
 
     public int $code;
 
-    public function render(): \Illuminate\Contracts\View\View
+    public function render(): View
     {
         return view('multifactor-authentication::livewire.multifactor-authentication-management');
     }

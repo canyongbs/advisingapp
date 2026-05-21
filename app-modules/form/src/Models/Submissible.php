@@ -63,17 +63,17 @@ abstract class Submissible extends Model
     use UsesTenantConnection;
 
     /**
-     * @return HasMany<\Illuminate\Database\Eloquent\Model, static>
+     * @return HasMany<Model, static>
      */
     abstract public function fields(): HasMany;
 
     /**
-     * @return HasMany<\Illuminate\Database\Eloquent\Model, static>
+     * @return HasMany<Model, static>
      */
     abstract public function steps(): HasMany;
 
     /**
-     * @return HasMany<\Illuminate\Database\Eloquent\Model, static>
+     * @return HasMany<Model, static>
      */
     abstract public function submissions(): HasMany;
 

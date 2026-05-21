@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor's trademarks is subject
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -38,6 +38,7 @@ namespace AdvisingApp\Notification\Models\Contracts;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Notifications\DatabaseNotification;
 
 /**
  * @phpstan-require-extends Model
@@ -69,17 +70,17 @@ interface CanBeNotified
     public function routeNotificationFor(string $driver, $notification = null);
 
     /**
-     * @return MorphMany<\Illuminate\Notifications\DatabaseNotification, static>
+     * @return MorphMany<DatabaseNotification, static>
      */
     public function notifications();
 
     /**
-     * @return MorphMany<\Illuminate\Notifications\DatabaseNotification, static>
+     * @return MorphMany<DatabaseNotification, static>
      */
     public function readNotifications();
 
     /**
-     * @return MorphMany<\Illuminate\Notifications\DatabaseNotification, static>
+     * @return MorphMany<DatabaseNotification, static>
      */
     public function unreadNotifications();
 
