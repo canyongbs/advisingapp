@@ -97,7 +97,7 @@ it('displays the bounced status icon for a bounced email address', function () {
     $email = 'bounced@example.com';
     BouncedEmailAddress::factory()->create(['address' => $email]);
 
-    $engagement = Engagement::factory()
+    Engagement::factory()
         ->has(
             EmailMessage::factory()->state(['recipient_address' => $email]),
             'latestEmailMessage'
@@ -121,7 +121,7 @@ it('displays the opted out status icon for an opted-out email address', function
     $email = 'optedout@example.com';
     EmailAddressOptInOptOut::factory()->optedOut()->create(['address' => $email]);
 
-    $engagement = Engagement::factory()
+    Engagement::factory()
         ->has(
             EmailMessage::factory()->state(['recipient_address' => $email]),
             'latestEmailMessage'
@@ -145,7 +145,7 @@ it('displays the bounced status icon for a bounced phone number', function () {
     $phone = '+15552220000';
     BouncedPhoneNumber::factory()->create(['number' => $phone]);
 
-    $engagement = Engagement::factory()
+    Engagement::factory()
         ->has(
             SmsMessage::factory()->state(['recipient_number' => $phone]),
             'latestSmsMessage'
@@ -169,7 +169,7 @@ it('displays the opted out status icon for an opted-out phone number', function 
     $phone = '+15553330000';
     SmsOptOutPhoneNumber::factory()->create(['number' => $phone]);
 
-    $engagement = Engagement::factory()
+    Engagement::factory()
         ->has(
             SmsMessage::factory()->state(['recipient_number' => $phone]),
             'latestSmsMessage'
@@ -187,8 +187,10 @@ it('displays the opted out status icon for an opted-out phone number', function 
         ->assertSeeHtml(PhoneHealthStatus::OptedOut->getTooltipText());
 });
 
-it('resolves recipient route from latest message or falls back to recipient_route', function () {
-    $emailEngagement = Engagement::factory()
+it('resolves email recipient route from latest email message', function () {
+    asSuperAdmin();
+
+    $engagement = Engagement::factory()
         ->has(
             EmailMessage::factory()->state(['recipient_address' => 'test@example.com']),
             'latestEmailMessage'
@@ -197,9 +199,13 @@ it('resolves recipient route from latest message or falls back to recipient_rout
         ->deliverNow()
         ->create();
 
-    expect($emailEngagement->getRecipientRoute())->toBe('test@example.com');
+    expect($engagement->getRecipientRoute())->toBe('test@example.com');
+});
 
-    $smsEngagement = Engagement::factory()
+it('resolves sms recipient route from latest sms message', function () {
+    asSuperAdmin();
+
+    $engagement = Engagement::factory()
         ->has(
             SmsMessage::factory()->state(['recipient_number' => '+15551234567']),
             'latestSmsMessage'
@@ -208,7 +214,11 @@ it('resolves recipient route from latest message or falls back to recipient_rout
         ->deliverNow()
         ->create();
 
-    expect($smsEngagement->getRecipientRoute())->toBe('+15551234567');
+    expect($engagement->getRecipientRoute())->toBe('+15551234567');
+});
+
+it('falls back to recipient_route attribute when no message relationship exists', function () {
+    asSuperAdmin();
 
     $emailFallback = Engagement::factory()
         ->email()
@@ -223,17 +233,23 @@ it('resolves recipient route from latest message or falls back to recipient_rout
         ->create(['recipient_route' => '+15559876543']);
 
     expect($smsFallback->getRecipientRoute())->toBe('+15559876543');
+});
 
-    $nullRoute = Engagement::factory()
+it('returns null recipient route when no message and recipient_route is null', function () {
+    asSuperAdmin();
+
+    $engagement = Engagement::factory()
         ->email()
         ->deliverNow()
         ->create(['recipient_route' => null]);
 
-    expect($nullRoute->getRecipientRoute())->toBeNull();
+    expect($engagement->getRecipientRoute())->toBeNull();
 });
 
-it('resolves recipient route health status correctly', function () {
-    $healthyEmail = Engagement::factory()
+it('returns healthy email health status when address is not bounced or opted out', function () {
+    asSuperAdmin();
+
+    $engagement = Engagement::factory()
         ->has(
             EmailMessage::factory()->state(['recipient_address' => 'healthy@example.com']),
             'latestEmailMessage'
@@ -242,37 +258,49 @@ it('resolves recipient route health status correctly', function () {
         ->deliverNow()
         ->create();
 
-    expect($healthyEmail->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::Healthy);
+    expect($engagement->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::Healthy);
+});
 
-    $bouncedAddress = 'bounced@example.com';
-    BouncedEmailAddress::factory()->create(['address' => $bouncedAddress]);
+it('returns bounced email health status for a bounced email address', function () {
+    asSuperAdmin();
 
-    $bouncedEmail = Engagement::factory()
+    $email = 'bounced@example.com';
+    BouncedEmailAddress::factory()->create(['address' => $email]);
+
+    $engagement = Engagement::factory()
         ->has(
-            EmailMessage::factory()->state(['recipient_address' => $bouncedAddress]),
+            EmailMessage::factory()->state(['recipient_address' => $email]),
             'latestEmailMessage'
         )
         ->email()
         ->deliverNow()
         ->create();
 
-    expect($bouncedEmail->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::Bounced);
+    expect($engagement->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::Bounced);
+});
 
-    $optedOutAddress = 'optedout@example.com';
-    EmailAddressOptInOptOut::factory()->optedOut()->create(['address' => $optedOutAddress]);
+it('returns opted out email health status for an opted-out email address', function () {
+    asSuperAdmin();
 
-    $optedOutEmail = Engagement::factory()
+    $email = 'optedout@example.com';
+    EmailAddressOptInOptOut::factory()->optedOut()->create(['address' => $email]);
+
+    $engagement = Engagement::factory()
         ->has(
-            EmailMessage::factory()->state(['recipient_address' => $optedOutAddress]),
+            EmailMessage::factory()->state(['recipient_address' => $email]),
             'latestEmailMessage'
         )
         ->email()
         ->deliverNow()
         ->create();
 
-    expect($optedOutEmail->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::OptedOut);
+    expect($engagement->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::OptedOut);
+});
 
-    $healthyPhone = Engagement::factory()
+it('returns healthy phone health status when number is not bounced or opted out', function () {
+    asSuperAdmin();
+
+    $engagement = Engagement::factory()
         ->has(
             SmsMessage::factory()->state(['recipient_number' => '+15551110000']),
             'latestSmsMessage'
@@ -281,40 +309,52 @@ it('resolves recipient route health status correctly', function () {
         ->deliverNow()
         ->create();
 
-    expect($healthyPhone->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::Healthy);
+    expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::Healthy);
+});
 
-    $bouncedNumber = '+15552220000';
-    BouncedPhoneNumber::factory()->create(['number' => $bouncedNumber]);
+it('returns bounced phone health status for a bounced phone number', function () {
+    asSuperAdmin();
 
-    $bouncedPhone = Engagement::factory()
+    $phone = '+15552220000';
+    BouncedPhoneNumber::factory()->create(['number' => $phone]);
+
+    $engagement = Engagement::factory()
         ->has(
-            SmsMessage::factory()->state(['recipient_number' => $bouncedNumber]),
+            SmsMessage::factory()->state(['recipient_number' => $phone]),
             'latestSmsMessage'
         )
         ->sms()
         ->deliverNow()
         ->create();
 
-    expect($bouncedPhone->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::Bounced);
+    expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::Bounced);
+});
 
-    $optedOutNumber = '+15553330000';
-    SmsOptOutPhoneNumber::factory()->create(['number' => $optedOutNumber]);
+it('returns opted out phone health status for an opted-out phone number', function () {
+    asSuperAdmin();
 
-    $optedOutPhone = Engagement::factory()
+    $phone = '+15553330000';
+    SmsOptOutPhoneNumber::factory()->create(['number' => $phone]);
+
+    $engagement = Engagement::factory()
         ->has(
-            SmsMessage::factory()->state(['recipient_number' => $optedOutNumber]),
+            SmsMessage::factory()->state(['recipient_number' => $phone]),
             'latestSmsMessage'
         )
         ->sms()
         ->deliverNow()
         ->create();
 
-    expect($optedOutPhone->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::OptedOut);
+    expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::OptedOut);
+});
 
-    $nullRoute = Engagement::factory()
+it('returns null health status when recipient route is null', function () {
+    asSuperAdmin();
+
+    $engagement = Engagement::factory()
         ->email()
         ->deliverNow()
         ->create(['recipient_route' => null]);
 
-    expect($nullRoute->getRecipientRouteHealthStatus())->toBeNull();
+    expect($engagement->getRecipientRouteHealthStatus())->toBeNull();
 });
