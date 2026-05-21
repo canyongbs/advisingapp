@@ -8,7 +8,7 @@
     "requireConfig": "ignored",
     "platform": "github",
     "repositories": ["canyongbs/advisingapp"],
-    "enabledManagers": ["custom.regex"],
+    "enabledManagers": ["custom.regex", "docker-compose"],
     "reviewers": ["orrison"],
     "vulnerabilityAlerts": {
         "enabled": false
@@ -55,6 +55,14 @@
             "matchStrings": ["ENV NPM_VERSION=\\^(?<currentValue>[\\d.]+)"],
             "datasourceTemplate": "npm",
             "depNameTemplate": "npm"
+        },
+        {
+            "customType": "regex",
+            "description": "Docker images in GitHub Actions workflows",
+            "managerFilePatterns": ["/^\\.github/workflows/.+\\.yml$/"],
+            "matchStrings": ["image:\\s*(?<depName>[^:\\s]+):(?<currentValue>[^@\\s]+)@(?<currentDigest>sha256:[a-f0-9]+)"],
+            "datasourceTemplate": "docker",
+            "versioningTemplate": "docker"
         }
     ],
     "packageRules": [
@@ -67,6 +75,24 @@
             "matchDepNames": ["nvm-sh/nvm", "node", "npm"],
             "groupName": "Node.js toolchain",
             "groupSlug": "node-toolchain"
+        },
+        {
+            "description": "Pin Redis to 7.4.x",
+            "matchDepNames": ["redis"],
+            "allowedVersions": ">=7.4.0 <7.5.0"
+        },
+        {
+            "description": "7-day cooldown for non-security Docker image updates",
+            "matchDatasources": ["docker"],
+            "matchUpdateTypes": ["major", "minor", "patch", "digest"],
+            "minimumReleaseAge": "7 days"
+        },
+        {
+            "description": "No cooldown for security-related Docker updates",
+            "matchDatasources": ["docker"],
+            "matchUpdateTypes": ["patch"],
+            "isVulnerabilityAlert": true,
+            "minimumReleaseAge": "0 days"
         }
     ]
 }

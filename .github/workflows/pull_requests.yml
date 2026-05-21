@@ -5,14 +5,392 @@ on:
     merge_group:
         types: [checks_requested]
 
+permissions: {}
+
 concurrency:
     group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
     cancel-in-progress: true
 
 jobs:
-    code-checks:
-        name: Code Checks
+    prep-and-code-consistency:
+        runs-on: ubuntu-22.04
 
-        uses: ./.github/workflows/ci.yml
-        secrets:
-            pat-token: ${{ secrets.PAT }}
+        permissions:
+            contents: read
+
+        timeout-minutes: 15
+
+        env:
+            php-extensions: gd, gmp, redis, mailparse
+            php-extensions-key: ext-cache-20250820
+            php-version: '8.4'
+
+        outputs:
+            php-extensions: ${{ env.php-extensions }}
+            php-extensions-key: ${{ env.php-extensions-key }}
+            php-version: ${{ env.php-version }}
+
+        steps:
+            - name: Checkout code | Internal
+              if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'dependabot[bot]' }}
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+              with:
+                  ref: ${{ github.head_ref }}
+                  token: ${{ secrets.PAT }}
+                  persist-credentials: true # zizmor: ignore[artipacked] -- credentials needed for git-auto-commit-action to push
+
+            - name: Checkout code | External
+              if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name != github.repository || github.event.pull_request.user.login == 'dependabot[bot]' }}
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+              with:
+                  ref: ${{ github.head_ref }}
+                  persist-credentials: false
+
+            - name: Setup cache environment
+              id: extcache
+              uses: shivammathur/cache-extensions@256729b5fef535345e27904657f78048c0990f81 #1.14.5
+              with:
+                  php-version: ${{ env.php-version }}
+                  extensions: ${{ env.php-extensions }}
+                  key: ${{ env.php-extensions-key }}
+
+            - name: Cache extensions
+              uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+              with:
+                  path: ${{ steps.extcache.outputs.dir }}
+                  key: ${{ runner.os }}-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
+                  restore-keys: ${{ runner.os }}-phpext-${{ env.php-version }}
+
+            - uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc #2.37.1
+              with:
+                  php-version: ${{ env.php-version }}
+                  coverage: none
+                  extensions: ${{ env.php-extensions }}
+
+            - name: Validate Composer JSON
+              run: composer validate --strict --no-check-all
+
+            - name: Cache dependencies
+              id: cache-composer
+              uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+              with:
+                  path: vendor
+                  key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
+
+            - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
+              name: Install Dependencies
+              run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+              shell: bash
+
+            - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: 'npm'
+            - run: npm install
+
+            - name: Set up Ruby
+              uses: ruby/setup-ruby@97ecb7b512899eb71ab1bf2310a624c6f1589ac6 # v1.308.0
+
+            - name: Run Ruby Script
+              run: ruby ./copyright.rb
+
+            - name: Cache PHP CS Fixer
+              uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+              with:
+                  path: .cache/php-cs-fixer/.php-cs-fixer.cache
+                  key: ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-${{ github.run_id }}
+                  restore-keys: |
+                      ${{ runner.OS }}-${{ github.repository }}-phpcsfixer-
+
+            - name: Cache Prettier
+              uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+              with:
+                  path: .cache/prettier
+                  key: ${{ runner.OS }}-${{ github.repository }}-prettier-${{ github.run_id }}
+                  restore-keys: |
+                      ${{ runner.OS }}-${{ github.repository }}-prettier-
+
+            - name: Run Formatters
+              run: composer format
+
+            - name: Commit changes
+              if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'dependabot[bot]' }}
+              uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
+              with:
+                  commit_message: >
+                      Update code formatting and copyright headers
+
+            - name: Check for changes
+              if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name != github.repository || github.event.pull_request.user.login == 'dependabot[bot]' }}
+              uses: tj-actions/verify-changed-files@a1c6acee9df209257a246f2cc6ae8cb6581c1edf # v20.0.4
+              with:
+                  fail-if-changed: 'true'
+
+    test:
+        strategy:
+            matrix:
+                testsuite: [Landlord, Tenant]
+
+        runs-on: ubuntu-22.04
+
+        permissions:
+            contents: read
+
+        needs: [prep-and-code-consistency]
+
+        env:
+            DB_PORT: 5432
+            DB_HOST: 127.0.0.1
+            DB_USERNAME: root
+            DB_PASSWORD: root
+            DB_DATABASE: testing_landlord
+            REDIS_HOST: 127.0.0.1
+
+        timeout-minutes: 15
+
+        services:
+            redis:
+                image: redis:7.4.9@sha256:d3be87a1060455213a204d2b0a7f04d45d19a16a98e85b3c37b7c33b5f0c489e
+                ports:
+                    - 6379:6379
+                options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+        steps:
+            - name: Start PostgreSQL
+              run: |
+                  docker run -d \
+                    --name postgres \
+                    -p 5432:5432 \
+                    -e POSTGRES_DB=${{ env.DB_DATABASE }} \
+                    -e POSTGRES_USER=${{ env.DB_USERNAME }} \
+                    -e POSTGRES_PASSWORD=${{ env.DB_PASSWORD }} \
+                    --health-cmd pg_isready \
+                    --health-interval 10s \
+                    --health-timeout 5s \
+                    --health-retries 5 \
+                    postgres:15 \
+                    -c max_locks_per_transaction=256
+
+            - name: Wait for PostgreSQL
+              run: |
+                  until docker inspect --format='{{.State.Health.Status}}' postgres | grep -q healthy; do
+                    sleep 2
+                  done
+
+            - name: Create tenant database
+              run: psql -h 127.0.0.1 -d ${{ env.DB_DATABASE }} -U ${{ env.DB_USERNAME }} -c 'CREATE DATABASE testing_tenant;'
+              env:
+                  PGPASSWORD: ${{ env.DB_PASSWORD }}
+
+            - name: Setup cache environment
+              id: extcache
+              uses: shivammathur/cache-extensions@256729b5fef535345e27904657f78048c0990f81 #1.14.5
+              with:
+                  php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
+                  extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
+                  key: ${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
+
+            - name: Cache extensions
+              uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+              with:
+                  path: ${{ steps.extcache.outputs.dir }}
+                  key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
+                  restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
+
+            - uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc #2.37.1
+              with:
+                  php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
+                  coverage: none
+                  extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
+
+            - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+              with:
+                  fetch-depth: 0
+                  fetch-tags: true
+                  persist-credentials: false
+
+            - name: Copy .env
+              run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+            - name: Cache dependencies
+              id: cache-composer
+              uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+              with:
+                  path: vendor
+                  key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
+
+            - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
+              name: Install Dependencies
+              run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+              shell: bash
+
+            - uses: actions/setup-node@48b55a011bda9f5d6aeb4c2d9c7362e8dae4041e # v6.4.0
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: 'npm'
+            - run: npm install
+
+            - name: Build Assets
+              run: npm run build
+
+            - name: Generate key
+              run: php artisan key:generate
+
+            - name: Cache Modular Modules
+              run: php artisan modules:cache --env=testing
+
+            - name: Cache Routes
+              run: php artisan route:cache --env=testing
+
+            - name: Cache Views
+              run: php artisan view:cache --env=testing
+
+            - name: Cache Events
+              run: php artisan event:cache --env=testing
+
+            - name: Cache Icons
+              run: php artisan icons:cache --env=testing
+
+            - name: Cache Filament Components
+              run: php artisan filament:cache-components --env=testing
+
+            - name: Check route integrity
+              run: php artisan route:list
+
+            - name: Execute tests (Unit and Feature tests) via PHPUnit
+              run: php artisan test --configuration phpunit-ci.xml --parallel --testsuite=${{ matrix.testsuite }}
+
+    lint:
+        runs-on: ubuntu-22.04
+
+        permissions:
+            contents: read
+
+        needs: [prep-and-code-consistency]
+
+        env:
+            DB_PORT: 5432
+            DB_HOST: 127.0.0.1
+            DB_USERNAME: root
+            DB_PASSWORD: root
+            DB_DATABASE: testing_landlord
+            CACHE_DRIVER: array
+            QUEUE_CONNECTION: sync
+            AUDIT_QUEUE_CONNECTION: sync
+            SESSION_DRIVER: array
+
+        timeout-minutes: 15
+
+        services:
+            postgres:
+                # Docker Hub image
+                image: postgres:15
+                ports:
+                    - 5432:5432
+                # Provide the password for postgres
+                env:
+                    PGPASSWORD: ${{ env.DB_PASSWORD }}
+                    POSTGRES_DB: ${{ env.DB_DATABASE }}
+                    POSTGRES_USER: ${{ env.DB_USERNAME }}
+                    POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
+                # Set health checks to wait until postgres has started
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+
+        steps:
+            - name: Setup cache environment
+              id: extcache
+              uses: shivammathur/cache-extensions@256729b5fef535345e27904657f78048c0990f81 #1.14.5
+              with:
+                  php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
+                  extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
+                  key: ${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
+
+            - name: Cache extensions
+              uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+              with:
+                  path: ${{ steps.extcache.outputs.dir }}
+                  key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
+                  restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
+
+            - uses: shivammathur/setup-php@7c071dfe9dc99bdf297fa79cb49ea005b9fcadbc #2.37.1
+              with:
+                  php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
+                  coverage: none
+                  extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
+
+            - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+              with:
+                  fetch-depth: 0
+                  fetch-tags: true
+                  persist-credentials: false
+
+            - name: Copy .env
+              run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+            - name: Cache dependencies
+              id: cache-composer
+              uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+              with:
+                  path: vendor
+                  key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
+
+            - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
+              name: Install Dependencies
+              run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+              shell: bash
+
+            - name: Generate key
+              run: php artisan key:generate
+
+            - name: Migrate Landlord Database
+              run: php artisan migrate --database=landlord --path=database/landlord --force
+
+            - name: Set up Tenant
+              run: php artisan tenants:create test test.advisingapp.local -y
+
+            - name: Generate Helper Files
+              run: php artisan app:generate-helper-files
+
+            - name: 'Restore result cache'
+              uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+              with:
+                  path: .cache/phpstan
+                  key: 'linting-result-cache-${{ github.run_id }}'
+                  restore-keys: |
+                      linting-result-cache-
+
+            - name: Run PHPStan
+              run: ./vendor/bin/phpstan analyse --configuration phpstan-ci.neon --no-progress
+
+            - name: 'Save result cache'
+              uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+              if: ${{ !cancelled() }}
+              with:
+                  path: .cache/phpstan
+                  key: 'linting-result-cache-${{ github.run_id }}'
+
+    renovate-config-validator:
+        runs-on: ubuntu-latest
+
+        permissions:
+            contents: read
+
+        timeout-minutes: 15
+        container:
+            image: ghcr.io/renovatebot/renovate:43.191.2@sha256:539b0ce5f22bcd4b0a42681c0c984afd1c293e2ce5bb12bcb4c01e0f608d60c9
+            # github hosted runners are running as `1001:127` (ubuntu:docker)
+            options: -u 1001:0 --group-add 1000 --group-add 12021 --group-add 127
+
+        steps:
+            - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+              with:
+                  show-progress: false
+                  persist-credentials: false
+
+            - name: Validate Renovate configuration
+              run: |
+                  renovate-config-validator renovate-config.json
