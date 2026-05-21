@@ -34,14 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use App\Support\AbstractFeatureFlag;
-
-class AiAssistantResourceHubCategoryFeature extends AbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
+return new class () extends Migration {
+    public function up(): void
     {
-        return false;
+        Schema::table('workflow_tags_details', function (Blueprint $table) {
+            $table->dropColumn('workflow_step_id');
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('workflow_tags_details', function (Blueprint $table) {
+            $table->foreignUuid('workflow_step_id')->constrained('workflow_steps');
+        });
+    }
+};

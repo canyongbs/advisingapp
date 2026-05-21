@@ -40,7 +40,10 @@ use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\Workflow\Concerns\SchedulesNextWorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowRunStepRelated;
 use AdvisingApp\Workflow\Models\WorkflowTagsDetails;
+use App\Enums\TagType;
+use App\Models\Tag;
 use App\Models\Taggable;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -63,10 +66,16 @@ class TagsWorkflowActionJob extends ExecuteWorkflowActionJob
 
             $addedOrUpdatedPivotModels = [];
 
+            $tags = Tag::find($details->tag_ids)->where('type', match ($educatable->getMorphClass()) {
+                'student' => TagType::Student,
+                'prospect' => TagType::Prospect,
+                default => throw new Exception('Invalid tag type'),
+            });
+
             $sync = $educatable
                 ->tags()
                 ->sync(
-                    ids: $details->tag_ids,
+                    ids: $tags,
                     detaching: $details->remove_prior,
                 );
 

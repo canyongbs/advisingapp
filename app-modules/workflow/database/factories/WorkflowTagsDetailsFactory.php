@@ -34,17 +34,25 @@
 </COPYRIGHT>
 */
 
-use App\Features\AiAssistantResourceHubCategoryFeature;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\Workflow\Database\Factories;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        AiAssistantResourceHubCategoryFeature::activate();
-    }
+use AdvisingApp\Workflow\Models\WorkflowTagsDetails;
+use App\Models\Tag;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-    public function down(): void
+/**
+ * @extends Factory<WorkflowTagsDetails>
+ */
+class WorkflowTagsDetailsFactory extends Factory
+{
+    /**
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        AiAssistantResourceHubCategoryFeature::deactivate();
+        return [
+            'tag_ids' => fn () => Tag::factory()->count(3)->create()->pluck('id')->toArray(),
+            'remove_prior' => $this->faker->boolean,
+        ];
     }
-};
+}

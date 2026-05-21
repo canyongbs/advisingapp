@@ -47,7 +47,6 @@ use AdvisingApp\Ai\Observers\AiAssistantObserver;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\Team\Models\Team;
-use App\Features\AiAssistantResourceHubCategoryFeature;
 use App\Models\BaseModel;
 use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
@@ -237,26 +236,18 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
             return [];
         }
 
-        if (AiAssistantResourceHubCategoryFeature::active()) {
-            $categoryIds = $this->resourceHubCategories()->pluck('resource_hub_categories.id');
-
-            return ResourceHubArticle::query()
-                ->when(
-                    $this->resource_hub_article_access === EmployeeAdvisorResourceHubArticleAccess::Public,
-                    fn ($query) => $query->where('public', true)
-                )
-                ->when(
-                    $this->resource_hub_article_access === EmployeeAdvisorResourceHubArticleAccess::Internal,
-                    fn ($query) => $query->where('public', false)
-                )
-                ->when($categoryIds->isNotEmpty(), fn ($query) => $query->whereIn('category_id', $categoryIds))
-                ->whereNotNull('article_details')
-                ->get(['id', 'updated_at'])
-                ->all();
-        }
+        $categoryIds = $this->resourceHubCategories()->pluck('resource_hub_categories.id');
 
         return ResourceHubArticle::query()
-            ->public()
+            ->when(
+                $this->resource_hub_article_access === EmployeeAdvisorResourceHubArticleAccess::Public,
+                fn ($query) => $query->where('public', true)
+            )
+            ->when(
+                $this->resource_hub_article_access === EmployeeAdvisorResourceHubArticleAccess::Internal,
+                fn ($query) => $query->where('public', false)
+            )
+            ->when($categoryIds->isNotEmpty(), fn ($query) => $query->whereIn('category_id', $categoryIds))
             ->whereNotNull('article_details')
             ->get(['id', 'updated_at'])
             ->all();
