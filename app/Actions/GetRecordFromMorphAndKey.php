@@ -36,9 +36,9 @@
 
 namespace App\Actions;
 
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class GetRecordFromMorphAndKey
 {
