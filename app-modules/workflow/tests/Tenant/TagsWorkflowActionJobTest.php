@@ -195,7 +195,7 @@ it('will only apply the correct tags to an educatable', function () {
     $relatedStudent = $studentWorkflowRunStep->workflowRun->related;
     assert($relatedStudent instanceof Student);
     expect($relatedStudent->tags)->toHaveCount(1);
-    
+
     $relatedProspect = $prospectWorkflowRunStep->workflowRun->related;
     assert($relatedProspect instanceof Prospect);
     expect($relatedProspect->tags)->toHaveCount(1);
