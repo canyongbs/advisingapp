@@ -49,7 +49,6 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\EngagementResponseMarkAsActionedFeature;
 use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
 use Filament\Actions\BulkActionGroup;
@@ -110,7 +109,7 @@ class Inbox extends Page implements HasTable
                     ->badge(),
                 TextColumn::make('status')
                     ->badge()
-                    ->tooltip(fn (EngagementResponse $record): ?string => EngagementResponseMarkAsActionedFeature::active() && $record->status === EngagementResponseStatus::Actioned ? $record->latestActionedNote?->getActionedNoteTooltip() : null),
+                    ->tooltip(fn (EngagementResponse $record): ?string => $record->status === EngagementResponseStatus::Actioned ? $record->latestActionedNote?->getActionedNoteTooltip() : null),
                 TextColumn::make('sender_type')
                     ->label('Relation')
                     ->formatStateUsing(fn (EngagementResponse $record) => ucwords($record->sender_type))
