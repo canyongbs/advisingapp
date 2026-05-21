@@ -53,7 +53,7 @@ class CareTeamPolicy
     public function view(Authenticatable $authenticatable, CareTeam $careTeam): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["care_team.{$careTeam->getKey()}.view"],
+            abilities: ["care_team.*.view"],
             denyResponse: 'You do not have permission to view this care team.'
         );
     }
@@ -69,7 +69,7 @@ class CareTeamPolicy
     public function update(Authenticatable $authenticatable, CareTeam $careTeam): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["care_team.{$careTeam->getKey()}.update"],
+            abilities: ["care_team.*.update"],
             denyResponse: 'You do not have permission to update this care team.'
         );
     }
@@ -77,7 +77,7 @@ class CareTeamPolicy
     public function delete(Authenticatable $authenticatable, CareTeam $careTeam): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["care_team.{$careTeam->getKey()}.delete"],
+            abilities: ["care_team.*.delete"],
             denyResponse: 'You do not have permission to delete this care team.'
         );
     }
@@ -85,7 +85,7 @@ class CareTeamPolicy
     public function restore(Authenticatable $authenticatable, CareTeam $careTeam): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["care_team.{$careTeam->getKey()}.restore"],
+            abilities: ["care_team.*.restore"],
             denyResponse: 'You do not have permission to restore this care team.'
         );
     }
@@ -93,7 +93,7 @@ class CareTeamPolicy
     public function forceDelete(Authenticatable $authenticatable, CareTeam $careTeam): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["care_team.{$careTeam->getKey()}.force-delete"],
+            abilities: ["care_team.*.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this care team.'
         );
     }

@@ -64,7 +64,7 @@ class ProgramPolicy
     public function view(Authenticatable $authenticatable, Program $program): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "program.{$program->getKey()}.view",
+            abilities: "program.*.view",
             denyResponse: 'You do not have permission to view this program.'
         );
     }
@@ -88,7 +88,7 @@ class ProgramPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: "program.{$program->getKey()}.update",
+            abilities: "program.*.update",
             denyResponse: 'You do not have permission to update this program.'
         );
     }
@@ -100,7 +100,7 @@ class ProgramPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: "program.{$program->getKey()}.delete",
+            abilities: "program.*.delete",
             denyResponse: 'You do not have permission to delete this program.'
         );
     }
@@ -112,7 +112,7 @@ class ProgramPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: "program.{$program->getKey()}.restore",
+            abilities: "program.*.restore",
             denyResponse: 'You do not have permission to restore this program.'
         );
     }
@@ -124,7 +124,7 @@ class ProgramPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: "program.{$program->getKey()}.force-delete",
+            abilities: "program.*.force-delete",
             denyResponse: 'You do not have permission to force delete this student.'
         );
     }

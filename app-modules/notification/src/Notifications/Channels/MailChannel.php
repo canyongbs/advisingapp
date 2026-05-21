@@ -174,7 +174,7 @@ class MailChannel extends BaseMailChannel
                     $message->getHeaders()->addTextHeader(
                         'X-SES-MESSAGE-TAGS',
                         implode(', ', [
-                            "app_message_id={$emailMessage->getKey()}",
+                            "app_message_id=*",
                             ...($tenant ? ['tenant_id=' . $tenant->getKey()] : []),
                         ]),
                     );

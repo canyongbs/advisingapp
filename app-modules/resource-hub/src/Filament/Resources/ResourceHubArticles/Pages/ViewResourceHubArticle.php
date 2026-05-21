@@ -70,7 +70,7 @@ class ViewResourceHubArticle extends ViewRecord
         $resourceHubArticle = $this->getRecord();
 
         RateLimiter::attempt(
-            "view-resource-hub-article-{$resourceHubArticle->getKey()}-user-" . auth()->id(),
+            "view-resource-hub-article-*-user-" . auth()->id(),
             1,
             fn () => $resourceHubArticle->views()->create(['user_id' => auth()->id()]),
         );

@@ -224,7 +224,7 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
 
         $applicationSubmissionsCount = Cache::tags('{application-submission-count}')
             ->remember(
-                "application-submission-count-{$ownerRecord->getKey()}",
+                "application-submission-count-*",
                 now()->addMinutes(5),
                 fn (): int => $ownerRecord->submissions()->count(),
             );

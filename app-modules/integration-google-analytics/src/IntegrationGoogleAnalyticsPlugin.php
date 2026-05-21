@@ -69,13 +69,13 @@ class IntegrationGoogleAnalyticsPlugin implements Plugin
                 }
 
                 $script = "
-                    <script async src='https://www.googletagmanager.com/gtag/js?id={$settings->id}'></script>
+                    <script async src='https://www.googletagmanager.com/gtag/js?id=*'></script>
                     <script>
                         window.dataLayer = window.dataLayer || [];
                         function gtag(){window.dataLayer.push(arguments);}
                         gtag('js', new Date());
 
-                        gtag('config', '{$settings->id}');
+                        gtag('config', '*');
                     </script>
                 ";
 

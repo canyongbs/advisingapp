@@ -73,7 +73,7 @@ class CaseUpdatePolicy
     public function view(Authenticatable $authenticatable, CaseUpdate $caseUpdate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["case_update.{$caseUpdate->getKey()}.view"],
+            abilities: ["case_update.*.view"],
             denyResponse: 'You do not have permissions to view this case update.'
         );
     }
@@ -89,7 +89,7 @@ class CaseUpdatePolicy
     public function update(Authenticatable $authenticatable, CaseUpdate $caseUpdate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["case_update.{$caseUpdate->getKey()}.update"],
+            abilities: ["case_update.*.update"],
             denyResponse: 'You do not have permissions to update this case update.'
         );
     }
@@ -97,7 +97,7 @@ class CaseUpdatePolicy
     public function delete(Authenticatable $authenticatable, CaseUpdate $caseUpdate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["case_update.{$caseUpdate->getKey()}.delete"],
+            abilities: ["case_update.*.delete"],
             denyResponse: 'You do not have permissions to delete this case update.'
         );
     }
@@ -105,7 +105,7 @@ class CaseUpdatePolicy
     public function restore(Authenticatable $authenticatable, CaseUpdate $caseUpdate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["case_update.{$caseUpdate->getKey()}.restore"],
+            abilities: ["case_update.*.restore"],
             denyResponse: 'You do not have permissions to restore this case update.'
         );
     }
@@ -113,7 +113,7 @@ class CaseUpdatePolicy
     public function forceDelete(Authenticatable $authenticatable, CaseUpdate $caseUpdate): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["case_update.{$caseUpdate->getKey()}.force-delete"],
+            abilities: ["case_update.*.force-delete"],
             denyResponse: 'You do not have permissions to force delete this case update.'
         );
     }

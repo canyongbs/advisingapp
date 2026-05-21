@@ -72,7 +72,7 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["interaction.{$interaction->getKey()}.view"],
+            abilities: ["interaction.*.view"],
             denyResponse: 'You do not have permission to view this interaction.'
         );
     }
@@ -100,7 +100,7 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["interaction.{$interaction->getKey()}.update"],
+            abilities: ["interaction.*.update"],
             denyResponse: 'You do not have permission to update this interaction.'
         );
     }
@@ -112,7 +112,7 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["interaction.{$interaction->getKey()}.delete"],
+            abilities: ["interaction.*.delete"],
             denyResponse: 'You do not have permission to delete this interaction.'
         );
     }
@@ -124,7 +124,7 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["interaction.{$interaction->getKey()}.restore"],
+            abilities: ["interaction.*.restore"],
             denyResponse: 'You do not have permission to restore this interaction.'
         );
     }
@@ -136,7 +136,7 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["interaction.{$interaction->getKey()}.force-delete"],
+            abilities: ["interaction.*.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this interaction.'
         );
     }

@@ -166,21 +166,21 @@ class CreateTenant extends Command
 
         if ($this->option('yes') || $this->option('seed') || $this->confirm('Seed students in the tenant database?')) {
             Artisan::call(
-                command: "tenants:artisan \"db:seed --database={$database} --class=StudentSeeder\" --tenant={$tenant->id}",
+                command: "tenants:artisan \"db:seed --database={$database} --class=StudentSeeder\" --tenant=*",
                 outputBuffer: $this->output,
             );
         }
 
         if ($this->option('yes') || $this->option('admin') || $this->confirm('Would you like to seed sample super admin?')) {
             Artisan::call(
-                command: "tenants:artisan \"db:seed --database={$database} --class=SampleSuperAdminUserSeeder\" --tenant={$tenant->id}",
+                command: "tenants:artisan \"db:seed --database={$database} --class=SampleSuperAdminUserSeeder\" --tenant=*",
                 outputBuffer: $this->output,
             );
         }
 
         if ($this->option('yes') || $this->option('local') || $this->confirm('Would you like to seed local development data?')) {
             Artisan::call(
-                command: "tenants:artisan \"db:seed --database={$database} --class=LocalDevelopmentSeeder\" --tenant={$tenant->id}",
+                command: "tenants:artisan \"db:seed --database={$database} --class=LocalDevelopmentSeeder\" --tenant=*",
                 outputBuffer: $this->output,
             );
         }

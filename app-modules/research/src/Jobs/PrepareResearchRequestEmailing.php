@@ -91,7 +91,7 @@ class PrepareResearchRequestEmailing implements ShouldQueue
                             ->map(fn (User $recipient) => new EmailResearchRequest($this->researchRequest, $this->note, $this->sender, $recipient, false))
                             ->all(),
                     )
-                        ->name("PrepareResearchReportEmailing for team {$team->getKey()}")
+                        ->name("PrepareResearchReportEmailing for team *")
                         ->finally(function (Batch $batch) use ($sender, $team) {
                             Notification::make()
                                 ->success()

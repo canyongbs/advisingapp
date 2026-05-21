@@ -74,7 +74,7 @@ class FormPolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, Form $form): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["form.{$form->getKey()}.view"],
+            abilities: ["form.*.view"],
             denyResponse: 'You do not have permission to view this form.'
         );
     }
@@ -90,7 +90,7 @@ class FormPolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, Form $form): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["form.{$form->getKey()}.update"],
+            abilities: ["form.*.update"],
             denyResponse: 'You do not have permission to update this form.'
         );
     }
@@ -98,7 +98,7 @@ class FormPolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, Form $form): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["form.{$form->getKey()}.delete"],
+            abilities: ["form.*.delete"],
             denyResponse: 'You do not have permission to delete this form.'
         );
     }
@@ -106,7 +106,7 @@ class FormPolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, Form $form): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["form.{$form->getKey()}.restore"],
+            abilities: ["form.*.restore"],
             denyResponse: 'You do not have permission to restore this form.'
         );
     }
@@ -114,7 +114,7 @@ class FormPolicy implements PerformsChecksBeforeAuthorization
     public function forceDelete(Authenticatable $authenticatable, Form $form): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["form.{$form->getKey()}.force-delete"],
+            abilities: ["form.*.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this form.'
         );
     }

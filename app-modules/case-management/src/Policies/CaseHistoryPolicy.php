@@ -73,7 +73,7 @@ class CaseHistoryPolicy
     public function view(Authenticatable $authenticatable, CaseHistory $caseHistory): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["case_history.{$caseHistory->getKey()}.view"],
+            abilities: ["case_history.*.view"],
             denyResponse: 'You do not have permissions to view this case history.'
         );
     }
@@ -89,7 +89,7 @@ class CaseHistoryPolicy
     public function update(Authenticatable $authenticatable, CaseHistory $caseHistory): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["case_history.{$caseHistory->getKey()}.update"],
+            abilities: ["case_history.*.update"],
             denyResponse: 'You do not have permissions to update this case history.'
         );
     }
@@ -97,7 +97,7 @@ class CaseHistoryPolicy
     public function delete(Authenticatable $authenticatable, CaseHistory $caseHistory): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["case_history.{$caseHistory->getKey()}.delete"],
+            abilities: ["case_history.*.delete"],
             denyResponse: 'You do not have permissions to delete this case history.'
         );
     }
@@ -105,7 +105,7 @@ class CaseHistoryPolicy
     public function restore(Authenticatable $authenticatable, CaseHistory $caseHistory): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["case_history.{$caseHistory->getKey()}.restore"],
+            abilities: ["case_history.*.restore"],
             denyResponse: 'You do not have permissions to restore this case history.'
         );
     }
@@ -113,7 +113,7 @@ class CaseHistoryPolicy
     public function forceDelete(Authenticatable $authenticatable, CaseHistory $caseHistory): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["case_history.{$caseHistory->getKey()}.force-delete"],
+            abilities: ["case_history.*.force-delete"],
             denyResponse: 'You do not have permissions to force delete this case history.'
         );
     }

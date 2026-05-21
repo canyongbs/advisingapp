@@ -94,10 +94,10 @@ class StudentExporter extends Exporter
             static::notDefault($type::make('engagement_files_count')
                 ->label('Count of Files')
                 ->counts('engagementFiles')),
-            ...ConcernStatus::all()->map(fn (ConcernStatus $status): TextColumn | ExportColumn => static::notDefault($type::make("concerns_{$status->getKey()}_count")
+            ...ConcernStatus::all()->map(fn (ConcernStatus $status): TextColumn | ExportColumn => static::notDefault($type::make("concerns_*_count")
                 ->label("Count of {$status->name} Concerns")
                 ->counts([
-                    "Concerns as concerns_{$status->getKey()}_count" => fn (Builder $query) => $query->whereBelongsTo($status, 'status'),
+                    "Concerns as concerns_*_count" => fn (Builder $query) => $query->whereBelongsTo($status, 'status'),
                 ]))),
             static::notDefault($type::make('tasks_count')
                 ->label('Count of Tasks')
@@ -116,15 +116,15 @@ class StudentExporter extends Exporter
             static::notDefault($type::make('interactions_count')
                 ->label('Count of Interactions')
                 ->counts('interactions')),
-            ...InteractionType::all()->map(fn (InteractionType $interactionType): TextColumn | ExportColumn => static::notDefault($type::make("interactions_{$interactionType->getKey()}_count")
+            ...InteractionType::all()->map(fn (InteractionType $interactionType): TextColumn | ExportColumn => static::notDefault($type::make("interactions_*_count")
                 ->label("Count of {$interactionType->name} Interactions")
                 ->counts([
-                    "interactions as interactions_{$interactionType->getKey()}_count" => fn (Builder $query) => $query->whereBelongsTo($interactionType, 'type'),
+                    "interactions as interactions_*_count" => fn (Builder $query) => $query->whereBelongsTo($interactionType, 'type'),
                 ]))),
-            ...InteractionStatus::all()->map(fn (InteractionStatus $status): TextColumn | ExportColumn => static::notDefault($type::make("interactions_{$status->getKey()}_count")
+            ...InteractionStatus::all()->map(fn (InteractionStatus $status): TextColumn | ExportColumn => static::notDefault($type::make("interactions_*_count")
                 ->label("Count of {$status->name} Interactions")
                 ->counts([
-                    "interactions as interactions_{$status->getKey()}_count" => fn (Builder $query) => $query->whereBelongsTo($status, 'status'),
+                    "interactions as interactions_*_count" => fn (Builder $query) => $query->whereBelongsTo($status, 'status'),
                 ]))),
             static::notDefault($type::make('care_team_count')
                 ->label('Count of Care Team Members')
@@ -135,10 +135,10 @@ class StudentExporter extends Exporter
             static::notDefault($type::make('cases_count')
                 ->label('Count of Cases')
                 ->counts('cases')),
-            ...CaseStatus::all()->map(fn (CaseStatus $status): TextColumn | ExportColumn => static::notDefault($type::make("cases_{$status->getKey()}_count")
+            ...CaseStatus::all()->map(fn (CaseStatus $status): TextColumn | ExportColumn => static::notDefault($type::make("cases_*_count")
                 ->label("Count of {$status->name} Cases")
                 ->counts([
-                    "cases as cases_{$status->getKey()}_count" => fn (Builder $query) => $query->whereBelongsTo($status, 'status'),
+                    "cases as cases_*_count" => fn (Builder $query) => $query->whereBelongsTo($status, 'status'),
                 ]))),
             static::notDefault($type::make('event_attendee_records_count')
                 ->label('Count of Events')

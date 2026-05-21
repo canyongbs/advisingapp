@@ -77,7 +77,7 @@ class CreateEngagementBatch
                     ->map(fn (CanBeNotified $recipient): CreateBatchedEngagement => new CreateBatchedEngagement($engagementBatch, $recipient))
                     ->all(),
             ])
-                ->name("Bulk Engagement {$engagementBatch->getKey()}")
+                ->name("Bulk Engagement *")
                 ->finally(function () use ($engagementBatch) {
                     if ($engagementBatch->scheduled_at) {
                         return;

@@ -53,7 +53,7 @@ class LicensePolicy
     public function view(Authenticatable $authenticatable, License $license): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["license.{$license->getKey()}.view"],
+            abilities: ["license.*.view"],
             denyResponse: 'You do not have permission to view this license.'
         );
     }
@@ -69,7 +69,7 @@ class LicensePolicy
     public function update(Authenticatable $authenticatable, License $license): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["license.{$license->getKey()}.update"],
+            abilities: ["license.*.update"],
             denyResponse: 'You do not have permission to update this license.'
         );
     }
@@ -77,7 +77,7 @@ class LicensePolicy
     public function delete(Authenticatable $authenticatable, License $license): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["license.{$license->getKey()}.delete"],
+            abilities: ["license.*.delete"],
             denyResponse: 'You do not have permission to delete this license.'
         );
     }
@@ -85,7 +85,7 @@ class LicensePolicy
     public function restore(Authenticatable $authenticatable, License $license): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["license.{$license->getKey()}.restore"],
+            abilities: ["license.*.restore"],
             denyResponse: 'You do not have permission to restore this license.'
         );
     }
@@ -93,7 +93,7 @@ class LicensePolicy
     public function forceDelete(Authenticatable $authenticatable, License $license): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["license.{$license->getKey()}.force-delete"],
+            abilities: ["license.*.force-delete"],
             denyResponse: 'You do not have permission to permanently delete this license.'
         );
     }
