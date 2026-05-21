@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Filament\Resources\CustomerAdvisors;
 
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\CreateCustomerAdvisor;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\CustomerAdvisorEmbed;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\EditCustomerAdvisor;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\EditCustomerAdvisorLinks;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\ListCustomerAdvisors;
@@ -45,7 +46,6 @@ use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\ManageCustomerAddit
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\ManageCustomerAdvisorResourceHub;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\ManageCustomerQuestions;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\PreviewCustomerAdvisor;
-use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\CustomerAdvisorEmbed;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\ViewCustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use App\Features\RenameQnaAdvisorsFeature;

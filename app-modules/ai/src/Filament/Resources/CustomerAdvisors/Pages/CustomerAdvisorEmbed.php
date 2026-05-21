@@ -78,8 +78,8 @@ class CustomerAdvisorEmbed extends EditRecord
 
         assert($user instanceof User);
 
-        return $user->can(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_embed.view-any' : 'qna_advisor_embed.view-any') 
-            && $user->can(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_embed.*.view' : 'qna_advisor_embed.*.view') 
+        return $user->can(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_embed.view-any' : 'qna_advisor_embed.view-any')
+            && $user->can(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_embed.*.view' : 'qna_advisor_embed.*.view')
             && parent::canAccess($parameters);
     }
 

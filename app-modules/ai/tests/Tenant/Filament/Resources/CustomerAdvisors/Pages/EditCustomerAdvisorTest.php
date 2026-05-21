@@ -36,7 +36,6 @@
 
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\EditCustomerAdvisor;
-use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\EditQnaAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Tests\RequestFactories\CustomerAdvisorRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
