@@ -39,6 +39,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters\Pages\Ma
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 
 use function Pest\Laravel\actingAs;
@@ -142,4 +143,44 @@ test('it will not add semesters that are already ordered', function () {
 
     assertDatabaseHas(EnrollmentSemester::class, ['name' => 'test semester']);
     assertDatabaseHas(EnrollmentSemester::class, ['name' => 'test semester 2']);
+});
+
+test('the view action is not present on the table', function () {
+    asSuperAdmin();
+
+    $semester = EnrollmentSemester::factory()->create();
+
+    livewire(ManageEnrollmentSemesters::class)
+        ->assertActionDoesNotExist(TestAction::make('view')->table($semester));
+});
+
+test('the mapping column shows mapped when an enrollment with a matching semester name exists', function () {
+    asSuperAdmin();
+
+    $semester = EnrollmentSemester::factory(['name' => 'Fall 2024'])->create();
+
+    Enrollment::factory(['semester_name' => 'Fall 2024'])->create();
+
+    livewire(ManageEnrollmentSemesters::class)
+        ->assertTableColumnStateSet('is_mapped', true, record: $semester);
+});
+
+test('the mapping column shows unmapped when no enrollment with a matching semester name exists', function () {
+    asSuperAdmin();
+
+    $semester = EnrollmentSemester::factory(['name' => 'Fall 2024'])->create();
+
+    livewire(ManageEnrollmentSemesters::class)
+        ->assertTableColumnStateSet('is_mapped', false, record: $semester);
+});
+
+test('the mapping column shows unmapped when only soft-deleted enrollments with a matching semester name exist', function () {
+    asSuperAdmin();
+
+    $semester = EnrollmentSemester::factory(['name' => 'Fall 2024'])->create();
+
+    Enrollment::factory(['semester_name' => 'Fall 2024', 'deleted_at' => now()])->create();
+
+    livewire(ManageEnrollmentSemesters::class)
+        ->assertTableColumnStateSet('is_mapped', false, record: $semester);
 });

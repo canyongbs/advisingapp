@@ -42,6 +42,7 @@ use AdvisingApp\StudentDataModel\Observers\EnrollmentSemesterObserver;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -65,4 +66,10 @@ class EnrollmentSemester extends BaseModel implements Auditable
     protected $casts = [
         'order' => 'integer',
     ];
+
+    /** @return HasMany<Enrollment, $this> */
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(Enrollment::class, 'semester_name', 'name');
+    }
 }

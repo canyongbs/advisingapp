@@ -51,7 +51,6 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 use UnitEnum;
 
 class EnrollmentSemesterResource extends Resource
@@ -94,13 +93,11 @@ class EnrollmentSemesterResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query) {
-                $query
-                    ->addSelect('enrollment_semesters.*')
-                    ->addSelect(DB::raw(
-                        'EXISTS(SELECT 1 FROM enrollments WHERE LOWER(enrollments.semester_name) = LOWER(enrollment_semesters.name) AND enrollments.deleted_at IS NULL) AS is_mapped'
-                    ));
-            })
+            ->modifyQueryUsing(fn (Builder $query) => $query->withExists([
+                'enrollments as is_mapped' => fn (Builder $query) => $query->whereRaw(
+                    'LOWER(enrollments.semester_name) = LOWER(enrollment_semesters.name)'
+                ),
+            ]))
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('is_mapped')
