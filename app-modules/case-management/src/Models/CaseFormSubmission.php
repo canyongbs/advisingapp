@@ -129,26 +129,51 @@ class CaseFormSubmission extends Submission
         $this->request_method->deliver($this);
     }
 
+    /**
+     * @param Builder<CaseFormSubmission> $query
+     *
+     * @return Builder<CaseFormSubmission>
+     */
     public function scopeRequested(Builder $query): Builder
     {
         return $query->whereNull('submitted_at')->whereNull('canceled_at');
     }
 
+    /**
+     * @param Builder<CaseFormSubmission> $query
+     *
+     * @return Builder<CaseFormSubmission>
+     */
     public function scopeSubmitted(Builder $query): Builder
     {
         return $query->whereNotNull('submitted_at');
     }
 
+    /**
+     * @param Builder<CaseFormSubmission> $query
+     *
+     * @return Builder<CaseFormSubmission>
+     */
     public function scopeCanceled(Builder $query): Builder
     {
         return $query->whereNull('submitted_at')->whereNotNull('canceled_at');
     }
 
+    /**
+     * @param Builder<CaseFormSubmission> $query
+     *
+     * @return Builder<CaseFormSubmission>
+     */
     public function scopeNotSubmitted(Builder $query): Builder
     {
         return $query->whereNull('submitted_at');
     }
 
+    /**
+     * @param Builder<CaseFormSubmission> $query
+     *
+     * @return Builder<CaseFormSubmission>
+     */
     public function scopeNotCanceled(Builder $query): Builder
     {
         return $query->whereNull('canceled_at');
