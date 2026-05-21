@@ -45,6 +45,7 @@ use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
 use AdvisingApp\Workflow\Models\WorkflowProactiveConcernDetails;
 use AdvisingApp\Workflow\Models\WorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowSubscriptionDetails;
+use AdvisingApp\Workflow\Models\WorkflowTagsDetails;
 use AdvisingApp\Workflow\Models\WorkflowTaskDetails;
 use Carbon\CarbonInterval;
 use Filament\Actions\Action;
@@ -252,6 +253,10 @@ class WorkflowStepsRelationManager extends RelationManager
                 'severity' => $transformedData['severity'],
                 'suggested_intervention' => $transformedData['suggested_intervention'],
                 'status_id' => $transformedData['status_id'],
+            ]),
+            'workflow_tags_block' => WorkflowTagsDetails::create([
+                'tag_ids' => $transformedData['tag_ids'],
+                'remove_prior' => $transformedData['remove_prior'],
             ]),
             'workflow_task_details' => WorkflowTaskDetails::create([
                 'title' => $transformedData['title'],

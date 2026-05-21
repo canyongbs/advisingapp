@@ -34,53 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Models;
+namespace AdvisingApp\Workflow\Database\Factories;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Workflow\Database\Factories\WorkflowTagsDetailsFactory;
-use AdvisingApp\Workflow\Filament\Blocks\TagsBlock;
-use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
-use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
-use AdvisingApp\Workflow\Jobs\TagsWorkflowActionJob;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Contracts\Auditable;
+use AdvisingApp\Workflow\Models\WorkflowTagsDetails;
+use App\Models\Tag;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperWorkflowTagsDetails
+ * @extends Factory<WorkflowTagsDetails>
  */
-class WorkflowTagsDetails extends WorkflowDetails implements Auditable
+class WorkflowTagsDetailsFactory extends Factory
 {
-    use SoftDeletes;
-    use AuditableTrait;
-    use HasUuids;
-
-    /** @use HasFactory<WorkflowTagsDetailsFactory> */
-    use HasFactory;
-
-    protected $fillable = [
-        'tag_ids',
-        'remove_prior',
-    ];
-
-    protected $casts = [
-        'tag_ids' => 'array',
-        'remove_prior' => 'boolean',
-    ];
-
-    public function getLabel(): string
+    /**
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        return 'Tags';
-    }
-
-    public function getBlock(): WorkflowActionBlock
-    {
-        return TagsBlock::make();
-    }
-
-    public function getActionExecutableJob(WorkflowRunStep $workflowRunStep): ExecuteWorkflowActionJob
-    {
-        return new TagsWorkflowActionJob($workflowRunStep);
+        return [
+            'tag_ids' => fn () => Tag::factory()->count(3)->create()->pluck('id')->toArray(),
+            'remove_prior' => $this->faker->boolean,
+        ];
     }
 }
