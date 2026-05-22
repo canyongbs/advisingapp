@@ -5,34 +5,45 @@ on:
     schedule: # Run every year on January 1st
         - cron: '0 0 1 1 *' # UTC time
 
+permissions: {}
+
+concurrency:
+    group: ${{ github.workflow }}
+    cancel-in-progress: true
+
 jobs:
     update-copyright:
+        name: Update Copyright
         runs-on: ubuntu-22.04
 
         timeout-minutes: 10
 
         steps:
             - name: Checkout `main` Branch
-              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #6.0.2
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
               with:
-                  token: ${{ secrets.PAT }}
+                  token: ${{ secrets.PAT }} # zizmor: ignore[secrets-outside-env]
+                  persist-credentials: true # zizmor: ignore[artipacked] -- credentials needed for git push
 
             - name: Set up Ruby
-              uses: ruby/setup-ruby@97ecb7b512899eb71ab1bf2310a624c6f1589ac6 #1.308.0
+              uses: ruby/setup-ruby@97ecb7b512899eb71ab1bf2310a624c6f1589ac6 # v1.308.0
 
             - name: Run copyright script
               run: ruby ./copyright.rb
 
             - name: Create Pull Request
-              # SHA of release v6.1.0
-              uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 #8.1.1
-              with:
-                  token: ${{ secrets.PAT }}
-                  commit-message: >
-                      chore: update yearly copyright
-                  title: Update yearly copyright
-                  body: >
-                      This is an automated pull request to update the yearly copyright.
-                  branch: update-yearly-copyright-
-                  branch-suffix: timestamp
-                  team-reviewers: canyon-gbs-lead-developers
+              env:
+                  GH_TOKEN: ${{ secrets.PAT }} # zizmor: ignore[secrets-outside-env]
+              run: |
+                  BRANCH="update-yearly-copyright-$(date +%s)"
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git checkout -b "${BRANCH}"
+                  git add -A
+                  git diff --cached --quiet && echo "No changes" && exit 0
+                  git commit -m "chore: update yearly copyright"
+                  git push origin "${BRANCH}"
+                  gh pr create \
+                    --title "Update yearly copyright" \
+                    --body "This is an automated pull request to update the yearly copyright." \
+                    --head "${BRANCH}"
