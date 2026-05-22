@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters;
 
+use AdvisingApp\StudentDataModel\Filament\Actions\AiSortEnrollmentSemestersAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters\Pages\ManageEnrollmentSemesters;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
@@ -105,6 +106,7 @@ class EnrollmentSemesterResource extends Resource
             ])
             ->paginated([50, 100, 500, 1000])
             ->toolbarActions([
+                AiSortEnrollmentSemestersAction::make(),
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
