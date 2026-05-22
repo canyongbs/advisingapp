@@ -61,7 +61,6 @@ class StudentPhoneNumberObserver
             return;
         }
 
-        // Skip when no lookup provider is configured for this tenant.
         if (! app(PhoneNumberLookupService::class)->isConfigured()) {
             return;
         }

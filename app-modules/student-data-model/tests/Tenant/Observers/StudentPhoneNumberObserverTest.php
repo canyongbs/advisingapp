@@ -42,7 +42,6 @@ use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use Illuminate\Support\Facades\Bus;
 
 beforeEach(function () {
-    // The observer only queues lookups when a provider is configured.
     $settings = app(TwilioSettings::class);
     $settings->telnyx_api_key = 'test-telnyx-api-key';
     $settings->save();

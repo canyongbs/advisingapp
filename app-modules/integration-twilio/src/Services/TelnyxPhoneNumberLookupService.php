@@ -145,9 +145,6 @@ class TelnyxPhoneNumberLookupService implements PhoneNumberLookupService
         );
     }
 
-    /**
-     * Return the first non-empty string value, or null when none are filled.
-     */
     protected function firstFilled(mixed ...$values): ?string
     {
         foreach ($values as $value) {

@@ -69,7 +69,6 @@ class QueuePhoneNumberLookups implements ShouldBeUnique, ShouldQueue
 
     public function handle(PhoneNumberLookupService $phoneNumberLookupService): void
     {
-        // Nothing to scan for when no lookup provider is configured.
         if (! $phoneNumberLookupService->isConfigured()) {
             return;
         }

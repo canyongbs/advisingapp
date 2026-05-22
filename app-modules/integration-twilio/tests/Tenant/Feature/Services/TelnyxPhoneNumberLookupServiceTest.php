@@ -58,7 +58,6 @@ beforeEach(function () {
 });
 
 afterEach(function () {
-    // Restore the SDK's default HTTP client so the stub does not leak into other tests.
     ApiRequestor::setHttpClient(CurlClient::instance());
 });
 

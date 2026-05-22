@@ -38,11 +38,6 @@ namespace AdvisingApp\IntegrationTwilio\Tests\Fixtures;
 
 use Telnyx\HttpClient\ClientInterface;
 
-/**
- * A stub Telnyx HTTP client that returns a canned response, used to exercise
- * the Telnyx SDK in tests without making real network calls. Inject it via
- * \Telnyx\ApiRequestor::setHttpClient().
- */
 class FakeTelnyxHttpClient implements ClientInterface
 {
     public function __construct(

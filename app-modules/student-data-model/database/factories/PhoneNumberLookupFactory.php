@@ -46,11 +46,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class PhoneNumberLookupFactory extends Factory
 {
     /**
-     * Define the model's default state.
-     *
-     * Produces an internally consistent successful carrier lookup: a random
-     * Telnyx `carrier.type`, with `status` and `raw_response` derived from it.
-     *
      * @return array<string, mixed>
      */
     public function definition(): array
