@@ -50,29 +50,15 @@ class PhoneNumberLookupFactory extends Factory
      */
     public function definition(): array
     {
-        $number = $this->faker->unique()->e164PhoneNumber();
         $carrierName = $this->faker->company();
         $carrierType = $this->faker->randomElement(['mobile', 'fixed line', 'voip', 'toll free']);
 
         return [
-            'number' => $number,
+            'number' => $this->faker->unique()->e164PhoneNumber(),
             'status' => PhoneNumberLookupStatus::fromTelnyxCarrierType($carrierType),
             'carrier_name' => $carrierName,
             'carrier_type' => $carrierType,
-            'raw_response' => [
-                'data' => [
-                    'record_type' => 'number_lookup',
-                    'phone_number' => $number,
-                    'country_code' => 'US',
-                    'carrier' => [
-                        'name' => $carrierName,
-                        'type' => $carrierType,
-                        'error_code' => null,
-                        'mobile_country_code' => 'US',
-                        'mobile_network_code' => $this->faker->numerify('###'),
-                    ],
-                ],
-            ],
+            'raw_response' => $this->carrierLookupResponse($carrierName, $carrierType),
         ];
     }
 
@@ -115,7 +101,7 @@ class PhoneNumberLookupFactory extends Factory
      */
     public function unknown(): Factory
     {
-        return $this->withCarrierType($this->faker->randomElement(['voicemail', 'pager', 'unknown']));
+        return $this->withCarrierType($this->faker->randomElement(['other', 'voicemail']));
     }
 
     /**
@@ -162,23 +148,35 @@ class PhoneNumberLookupFactory extends Factory
      */
     protected function withCarrierType(string $carrierType): Factory
     {
-        return $this->state(fn (array $attributes): array => [
+        $carrierName = $this->faker->company();
+
+        return $this->state([
             'status' => PhoneNumberLookupStatus::fromTelnyxCarrierType($carrierType),
+            'carrier_name' => $carrierName,
             'carrier_type' => $carrierType,
-            'raw_response' => [
-                'data' => [
-                    'record_type' => 'number_lookup',
-                    'phone_number' => $attributes['number'],
-                    'country_code' => 'US',
-                    'carrier' => [
-                        'name' => $attributes['carrier_name'],
-                        'type' => $carrierType,
-                        'error_code' => null,
-                        'mobile_country_code' => 'US',
-                        'mobile_network_code' => $this->faker->numerify('###'),
-                    ],
+            'raw_response' => $this->carrierLookupResponse($carrierName, $carrierType),
+        ]);
+    }
+
+    /**
+     * A representative Telnyx number-lookup payload for a successful carrier result.
+     *
+     * @return array<string, mixed>
+     */
+    protected function carrierLookupResponse(string $carrierName, string $carrierType): array
+    {
+        return [
+            'data' => [
+                'record_type' => 'number_lookup',
+                'country_code' => 'US',
+                'carrier' => [
+                    'name' => $carrierName,
+                    'type' => $carrierType,
+                    'error_code' => null,
+                    'mobile_country_code' => 'US',
+                    'mobile_network_code' => $this->faker->numerify('###'),
                 ],
             ],
-        ]);
+        ];
     }
 }
