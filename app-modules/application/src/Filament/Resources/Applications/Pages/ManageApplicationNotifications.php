@@ -76,7 +76,7 @@ class ManageApplicationNotifications extends EditRecord
                             ->preload(),
                         Toggle::make('notify_to_care_team')
                             ->label('Notify to Care Team'),
-                        Toggle::make('notify_to_subscibers')
+                        Toggle::make('notify_to_subscribers')
                             ->label('Notify to Subscribers'),
                         Toggle::make('notify_via_app')
                             ->label('Notify via App'),

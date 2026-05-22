@@ -113,17 +113,17 @@ test('can enable notify_to_care_team and it persists', function () {
     expect($application->fresh()->notify_to_care_team)->toBeTrue();
 });
 
-test('can enable notify_to_subscibers and it persists', function () {
+test('can enable notify_to_subscribers and it persists', function () {
     asSuperAdmin();
 
-    $application = Application::factory()->create(['notify_to_subscibers' => false]);
+    $application = Application::factory()->create(['notify_to_subscribers' => false]);
 
     livewire(ManageApplicationNotifications::class, ['record' => $application->getKey()])
-        ->fillForm(['notify_to_subscibers' => true])
+        ->fillForm(['notify_to_subscribers' => true])
         ->call('save')
         ->assertHasNoFormErrors();
 
-    expect($application->fresh()->notify_to_subscibers)->toBeTrue();
+    expect($application->fresh()->notify_to_subscribers)->toBeTrue();
 });
 
 test('can save all notification settings together', function () {
@@ -136,7 +136,7 @@ test('can save all notification settings together', function () {
         ->fillForm([
             'notification_users' => [$userToNotify->getKey()],
             'notify_to_care_team' => true,
-            'notify_to_subscibers' => true,
+            'notify_to_subscribers' => true,
             'notify_via_app' => true,
             'notify_via_email' => true,
         ])
@@ -146,7 +146,7 @@ test('can save all notification settings together', function () {
     $fresh = $application->fresh();
 
     expect($fresh->notify_to_care_team)->toBeTrue();
-    expect($fresh->notify_to_subscibers)->toBeTrue();
+    expect($fresh->notify_to_subscribers)->toBeTrue();
     expect($fresh->notify_via_app)->toBeTrue();
     expect($fresh->notify_via_email)->toBeTrue();
     expect($fresh->notificationUsers)->toHaveCount(1);

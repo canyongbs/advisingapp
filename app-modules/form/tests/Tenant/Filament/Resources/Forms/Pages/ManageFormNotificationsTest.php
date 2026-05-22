@@ -99,18 +99,18 @@ test('notify_to_care_team toggle is only visible when form is authenticated', fu
         ->assertFormFieldIsVisible('notify_to_care_team');
 });
 
-test('notify_to_subscibers toggle is only visible when form is authenticated', function () {
+test('notify_to_subscribers toggle is only visible when form is authenticated', function () {
     asSuperAdmin();
 
     $form = Form::factory()->create(['is_authenticated' => false]);
 
     livewire(ManageFormNotifications::class, ['record' => $form->getKey()])
-        ->assertFormFieldIsHidden('notify_to_subscibers');
+        ->assertFormFieldIsHidden('notify_to_subscribers');
 
     $form->update(['is_authenticated' => true]);
 
     livewire(ManageFormNotifications::class, ['record' => $form->getKey()])
-        ->assertFormFieldIsVisible('notify_to_subscibers');
+        ->assertFormFieldIsVisible('notify_to_subscribers');
 });
 
 test('can enable notify_to_care_team on an authenticated form', function () {
@@ -129,20 +129,20 @@ test('can enable notify_to_care_team on an authenticated form', function () {
     expect($form->fresh()->notify_to_care_team)->toBeTrue();
 });
 
-test('can enable notify_to_subscibers on an authenticated form', function () {
+test('can enable notify_to_subscribers on an authenticated form', function () {
     asSuperAdmin();
 
     $form = Form::factory()->create([
         'is_authenticated' => true,
-        'notify_to_subscibers' => false,
+        'notify_to_subscribers' => false,
     ]);
 
     livewire(ManageFormNotifications::class, ['record' => $form->getKey()])
-        ->fillForm(['notify_to_subscibers' => true])
+        ->fillForm(['notify_to_subscribers' => true])
         ->call('save')
         ->assertHasNoFormErrors();
 
-    expect($form->fresh()->notify_to_subscibers)->toBeTrue();
+    expect($form->fresh()->notify_to_subscribers)->toBeTrue();
 });
 
 test('can save all notification settings together on an authenticated form', function () {
@@ -155,7 +155,7 @@ test('can save all notification settings together on an authenticated form', fun
         ->fillForm([
             'notification_users' => [$userToNotify->getKey()],
             'notify_to_care_team' => true,
-            'notify_to_subscibers' => true,
+            'notify_to_subscribers' => true,
             'notify_via_app' => true,
             'notify_via_email' => true,
         ])
@@ -165,7 +165,7 @@ test('can save all notification settings together on an authenticated form', fun
     $fresh = $form->fresh();
 
     expect($fresh->notify_to_care_team)->toBeTrue();
-    expect($fresh->notify_to_subscibers)->toBeTrue();
+    expect($fresh->notify_to_subscribers)->toBeTrue();
     expect($fresh->notify_via_app)->toBeTrue();
     expect($fresh->notify_via_email)->toBeTrue();
     expect($fresh->notificationUsers)->toHaveCount(1);

@@ -43,7 +43,7 @@ return new class () extends Migration {
     {
         Schema::table('forms', function (Blueprint $table) {
             $table->boolean('notify_to_care_team')->default(false);
-            $table->boolean('notify_to_subscibers')->default(false);
+            $table->boolean('notify_to_subscribers')->default(false);
             $table->boolean('notify_via_app')->default(false);
             $table->boolean('notify_via_email')->default(false);
         });
@@ -52,7 +52,7 @@ return new class () extends Migration {
     public function down(): void
     {
         Schema::table('forms', function (Blueprint $table) {
-            $table->dropColumn(['notify_via_app', 'notify_via_email']);
+            $table->dropColumn(['notify_via_app', 'notify_via_email', 'notify_to_care_team', 'notify_to_subscribers']);
         });
     }
 };

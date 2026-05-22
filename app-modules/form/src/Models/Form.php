@@ -75,7 +75,7 @@ class Form extends Submissible
         'title_font_weight',
         'title_color',
         'notify_to_care_team',
-        'notify_to_subscibers',
+        'notify_to_subscribers',
         'notify_via_app',
         'notify_via_email',
     ];
@@ -91,7 +91,7 @@ class Form extends Submissible
         'generate_prospects' => 'boolean',
         'title_font_weight' => FontWeight::class,
         'notify_to_care_team' => 'boolean',
-        'notify_to_subscibers' => 'boolean',
+        'notify_to_subscribers' => 'boolean',
         'notify_via_app' => 'boolean',
         'notify_via_email' => 'boolean',
     ];

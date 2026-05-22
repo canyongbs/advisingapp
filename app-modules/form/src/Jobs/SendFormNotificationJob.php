@@ -76,7 +76,7 @@ class SendFormNotificationJob implements ShouldQueue
             $users = $users->merge($author->careTeam);
         }
 
-        if ($this->form->notify_to_subscibers && ($author instanceof Student || $author instanceof Prospect)) {
+        if ($this->form->notify_to_subscribers && ($author instanceof Student || $author instanceof Prospect)) {
             $users = $users->merge($author->subscribedUsers);
         }
 
