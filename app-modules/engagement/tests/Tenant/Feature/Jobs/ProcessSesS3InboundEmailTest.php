@@ -47,7 +47,6 @@ use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use App\Actions\Paths\ModulePath;
-use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Mockery\MockInterface;
@@ -68,26 +67,20 @@ it('handles spam verdict failure properly', function () {
 
     Storage::disk('s3-inbound-email')->putFileAs('', $file, 's3_email_spam');
 
-    /** @var ProcessSesS3InboundEmail $mock */
+    /** @var ProcessSesS3InboundEmail&MockInterface $mock */
     $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
-        $mock
-            ->shouldAllowMockingProtectedMethods()
-            ->shouldReceive('getContent')
-            ->once()
-            ->andReturn($content);
-
-        $mock
-            ->shouldReceive('fail')
-            ->once()
-            ->withArgs(function (Throwable $exception) {
-                $invadedException = invade($exception);
-
-                return $exception instanceof SesS3InboundSpamOrVirusDetected
-                    && $invadedException->spamVerdict === 'FAIL'
-                    && $invadedException->virusVerdict === 'PASS';
-            });
+        $mock->shouldAllowMockingProtectedMethods();
+        // @phpstan-ignore-next-line
+        $mock->shouldReceive('getContent')->once()->andReturn($content);
+        // @phpstan-ignore-next-line
+        $mock->shouldReceive('fail')->once()->withArgs(function (Throwable $exception) {
+            return $exception instanceof SesS3InboundSpamOrVirusDetected
+                && $exception->context()['spam_verdict'] === 'FAIL'
+                && $exception->context()['virus_verdict'] === 'PASS';
+        });
     });
 
+    // @phpstan-ignore-next-line
     invade($mock)->emailFilePath = 's3_email_spam';
 
     $mock->handle();
@@ -108,26 +101,20 @@ it('handles virus verdict failure properly', function () {
 
     Storage::disk('s3-inbound-email')->putFileAs('', $file, 's3_email_virus');
 
-    /** @var ProcessSesS3InboundEmail $mock */
+    /** @var ProcessSesS3InboundEmail&MockInterface $mock */
     $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
-        $mock
-            ->shouldAllowMockingProtectedMethods()
-            ->shouldReceive('getContent')
-            ->once()
-            ->andReturn($content);
-
-        $mock
-            ->shouldReceive('fail')
-            ->once()
-            ->withArgs(function (Throwable $exception) {
-                $invadedException = invade($exception);
-
-                return $exception instanceof SesS3InboundSpamOrVirusDetected
-                    && $invadedException->spamVerdict === 'PASS'
-                    && $invadedException->virusVerdict === 'FAIL';
-            });
+        $mock->shouldAllowMockingProtectedMethods();
+        // @phpstan-ignore-next-line
+        $mock->shouldReceive('getContent')->once()->andReturn($content);
+        // @phpstan-ignore-next-line
+        $mock->shouldReceive('fail')->once()->withArgs(function (Throwable $exception) {
+            return $exception instanceof SesS3InboundSpamOrVirusDetected
+                && $exception->context()['spam_verdict'] === 'PASS'
+                && $exception->context()['virus_verdict'] === 'FAIL';
+        });
     });
 
+    // @phpstan-ignore-next-line
     invade($mock)->emailFilePath = 's3_email_virus';
 
     $mock->handle();
@@ -140,8 +127,6 @@ it('properly handles not finding a Student or Prospect match and creates an Unma
     Storage::fake('s3');
     $filesystem = Storage::fake('s3-inbound-email');
 
-    assert($filesystem instanceof FilesystemAdapter);
-
     $modulePath = resolve(ModulePath::class);
 
     $content = file_get_contents($modulePath('engagement', 'tests/Fixtures/s3_email'));
@@ -150,15 +135,14 @@ it('properly handles not finding a Student or Prospect match and creates an Unma
 
     $filesystem->putFileAs('', $file, 's3_email');
 
-    /** @var ProcessSesS3InboundEmail $mock */
+    /** @var ProcessSesS3InboundEmail&MockInterface $mock */
     $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
-        $mock
-            ->shouldAllowMockingProtectedMethods()
-            ->shouldReceive('getContent')
-            ->once()
-            ->andReturn($content);
+        $mock->shouldAllowMockingProtectedMethods();
+        // @phpstan-ignore-next-line
+        $mock->shouldReceive('getContent')->once()->andReturn($content);
     });
 
+    // @phpstan-ignore-next-line
     invade($mock)->emailFilePath = 's3_email';
 
     $mock->handle();
@@ -178,8 +162,6 @@ it('properly creates an EngagementResponse for an inbound email matching a Stude
     Storage::fake('s3');
     $filesystem = Storage::fake('s3-inbound-email');
 
-    assert($filesystem instanceof FilesystemAdapter);
-
     $student = Student::factory()->create();
 
     StudentEmailAddress::factory()
@@ -194,15 +176,14 @@ it('properly creates an EngagementResponse for an inbound email matching a Stude
 
     $filesystem->putFileAs('', $file, 's3_email');
 
-    /** @var ProcessSesS3InboundEmail $mock */
+    /** @var ProcessSesS3InboundEmail&MockInterface $mock */
     $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
-        $mock
-            ->shouldAllowMockingProtectedMethods()
-            ->shouldReceive('getContent')
-            ->once()
-            ->andReturn($content);
+        $mock->shouldAllowMockingProtectedMethods();
+        // @phpstan-ignore-next-line
+        $mock->shouldReceive('getContent')->once()->andReturn($content);
     });
 
+    // @phpstan-ignore-next-line
     invade($mock)->emailFilePath = 's3_email';
 
     $filesystem->assertExists('s3_email');
@@ -225,8 +206,6 @@ it('properly creates an EngagementResponse for an inbound email matching a Prosp
     Storage::fake('s3');
     $filesystem = Storage::fake('s3-inbound-email');
 
-    assert($filesystem instanceof FilesystemAdapter);
-
     $prospect = Prospect::factory()->create();
 
     ProspectEmailAddress::factory()
@@ -241,15 +220,14 @@ it('properly creates an EngagementResponse for an inbound email matching a Prosp
 
     $filesystem->putFileAs('', $file, 's3_email');
 
-    /** @var ProcessSesS3InboundEmail $mock */
+    /** @var ProcessSesS3InboundEmail&MockInterface $mock */
     $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
-        $mock
-            ->shouldAllowMockingProtectedMethods()
-            ->shouldReceive('getContent')
-            ->once()
-            ->andReturn($content);
+        $mock->shouldAllowMockingProtectedMethods();
+        // @phpstan-ignore-next-line
+        $mock->shouldReceive('getContent')->once()->andReturn($content);
     });
 
+    // @phpstan-ignore-next-line
     invade($mock)->emailFilePath = 's3_email';
 
     $filesystem->assertExists('s3_email');
@@ -272,8 +250,6 @@ it('handles attachments properly for a Student', function () {
     Storage::fake('s3');
     $filesystem = Storage::fake('s3-inbound-email');
 
-    assert($filesystem instanceof FilesystemAdapter);
-
     $student = Student::factory()->create();
 
     StudentEmailAddress::factory()
@@ -288,15 +264,14 @@ it('handles attachments properly for a Student', function () {
 
     $filesystem->putFileAs('', $file, 's3_email');
 
-    /** @var ProcessSesS3InboundEmail $mock */
+    /** @var ProcessSesS3InboundEmail&MockInterface $mock */
     $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
-        $mock
-            ->shouldAllowMockingProtectedMethods()
-            ->shouldReceive('getContent')
-            ->once()
-            ->andReturn($content);
+        $mock->shouldAllowMockingProtectedMethods();
+        // @phpstan-ignore-next-line
+        $mock->shouldReceive('getContent')->once()->andReturn($content);
     });
 
+    // @phpstan-ignore-next-line
     invade($mock)->emailFilePath = 's3_email';
 
     $filesystem->assertExists('s3_email');
