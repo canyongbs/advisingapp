@@ -81,55 +81,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
         DB::beginTransaction();
 
         try {
-            $encryptionClient = new S3EncryptionClientV3(
-                new S3Client([
-                    'credentials' => [
-                        'key' => config('filesystems.disks.s3.key'),
-                        'secret' => config('filesystems.disks.s3.secret'),
-                    ],
-                    'region' => config('filesystems.disks.s3.region'),
-                ])
-            );
-
-            // Needed to suppress warnings from the SDK. SES encrypts using V1 so we need @SecurityProfile to be V3_AND_LEGACY
-            // But the SDK throws a warning when using V3_AND_LEGACY
-            $errorReportingLevel = error_reporting();
-            error_reporting(E_ERROR & ~E_WARNING);
-
-            try {
-                $result = $encryptionClient->getObject([
-                    '@KmsAllowDecryptWithAnyCmk' => false,
-                    '@SecurityProfile' => 'V3_AND_LEGACY',
-                    '@MaterialsProvider' => new KmsMaterialsProviderV3(
-                        new KmsClient([
-                            'credentials' => [
-                                'key' => config('filesystems.disks.s3.key'),
-                                'secret' => config('filesystems.disks.s3.secret'),
-                            ],
-                            'region' => 'us-west-2',
-                        ]),
-                        config('services.kms.ses_s3_key_id')
-                    ),
-                    '@CipherOptions' => [
-                        'Cipher' => 'gcm',
-                        'KeySize' => 256,
-                    ],
-                    '@CommitmentPolicy' => 'FORBID_ENCRYPT_ALLOW_DECRYPT',
-                    'Bucket' => config('filesystems.disks.s3.bucket'),
-                    'Key' => config('filesystems.disks.s3-inbound-email.root') . '/' . $this->emailFilePath,
-                ]);
-            } finally {
-                // Reset the error reporting level
-                error_reporting($errorReportingLevel);
-            }
-
-            try {
-                $content = $result['Body']?->getContents();
-            } catch (Throwable $e) {
-                throw new UnableToRetrieveContentFromSesS3EmailPayload($this->emailFilePath, $e);
-            }
-
-            throw_if(empty($content), new UnableToRetrieveContentFromSesS3EmailPayload($this->emailFilePath));
+            $content = $this->getContent();
 
             $parser = (new Parser())
                 ->setText($content);
@@ -187,7 +139,22 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
 
                             collect($parser->getAttachments())->each(function (Attachment $attachment) use ($engagementResponse) {
                                 try {
+                                    if (
+                                        ($attachment->getContentDisposition() === 'inline')
+                                        && filled(trim($contentId = $attachment->getContentID(), '<>'))
+                                    ) {
+                                        $engagementResponse->addMediaFromStream($attachment->getStream())
+                                            ->withCustomProperties(['cid' => trim($contentId, '<>')])
+                                            ->setName($attachment->getFilename())
+                                            ->setFileName($attachment->getFilename())
+                                            ->toMediaCollection('inline_attachments');
+
+                                        return;
+                                    }
+
                                     $engagementResponse->addMediaFromStream($attachment->getStream())
+                                        ->setName($attachment->getFilename())
+                                        ->setFileName($attachment->getFilename())
                                         ->toMediaCollection('attachments');
                                 } catch (Throwable $throw) {
                                     report($throw);
@@ -237,6 +204,19 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
 
                         collect($parser->getAttachments())->each(function (Attachment $attachment) use ($engagementResponse) {
                             try {
+                                if (
+                                    ($attachment->getContentDisposition() === 'inline')
+                                    && filled(trim($contentId = $attachment->getContentID(), '<>'))
+                                ) {
+                                    $engagementResponse->addMediaFromStream($attachment->getStream())
+                                        ->withCustomProperties(['cid' => trim($contentId, '<>')])
+                                        ->setName($attachment->getFilename())
+                                        ->setFileName($attachment->getFilename())
+                                        ->toMediaCollection('inline_attachments');
+
+                                    return;
+                                }
+
                                 $engagementResponse->addMediaFromStream($attachment->getStream())
                                     ->setName($attachment->getFilename())
                                     ->setFileName($attachment->getFilename())
@@ -268,7 +248,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
 
     public function failed(?Throwable $exception): void
     {
-        if (app()->bound('sentry')) {
+        if ($exception !== null && app()->bound('sentry')) {
             app('sentry')->captureException($exception);
         }
 
@@ -287,5 +267,61 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
     protected function moveFile(string $destination): void
     {
         Storage::disk('s3-inbound-email')->move($this->emailFilePath, $destination . '/' . $this->emailFilePath);
+    }
+
+    protected function getContent(): string
+    {
+        $encryptionClient = new S3EncryptionClientV3(
+            new S3Client([
+                'credentials' => [
+                    'key' => config('filesystems.disks.s3.key'),
+                    'secret' => config('filesystems.disks.s3.secret'),
+                ],
+                'region' => config('filesystems.disks.s3.region'),
+            ])
+        );
+
+        // Needed to suppress warnings from the SDK. SES encrypts using V1 so we need @SecurityProfile to be V3_AND_LEGACY
+        // But the SDK throws a warning when using V3_AND_LEGACY
+        $errorReportingLevel = error_reporting();
+        error_reporting(E_ERROR & ~E_WARNING);
+
+        try {
+            $result = $encryptionClient->getObject([
+                '@KmsAllowDecryptWithAnyCmk' => false,
+                '@SecurityProfile' => 'V3_AND_LEGACY',
+                '@MaterialsProvider' => new KmsMaterialsProviderV3(
+                    new KmsClient([
+                        'credentials' => [
+                            'key' => config('filesystems.disks.s3.key'),
+                            'secret' => config('filesystems.disks.s3.secret'),
+                        ],
+                        'region' => 'us-west-2',
+                    ]),
+                    config('services.kms.ses_s3_key_id')
+                ),
+                '@CipherOptions' => [
+                    'Cipher' => 'gcm',
+                    'KeySize' => 256,
+                ],
+                '@CommitmentPolicy' => 'FORBID_ENCRYPT_ALLOW_DECRYPT',
+                'Bucket' => config('filesystems.disks.s3.bucket'),
+                'Key' => config('filesystems.disks.s3-inbound-email.root') . '/' . $this->emailFilePath,
+            ]);
+        } finally {
+            // Reset the error reporting level
+            error_reporting($errorReportingLevel);
+        }
+
+        try {
+            // @phpstan-ignore method.nonObject
+            $content = $result['Body']?->getContents();
+        } catch (Throwable $exception) {
+            throw new UnableToRetrieveContentFromSesS3EmailPayload($this->emailFilePath, $exception);
+        }
+
+        throw_if(empty($content), new UnableToRetrieveContentFromSesS3EmailPayload($this->emailFilePath));
+
+        return (string) $content;
     }
 }
