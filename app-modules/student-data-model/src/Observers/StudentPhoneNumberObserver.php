@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Observers;
 
+use AdvisingApp\StudentDataModel\Contracts\PhoneNumberLookupService;
 use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
@@ -57,6 +58,11 @@ class StudentPhoneNumberObserver
         }
 
         if (blank($studentPhoneNumber->number)) {
+            return;
+        }
+
+        // Skip when no lookup provider is configured for this tenant.
+        if (! app(PhoneNumberLookupService::class)->isConfigured()) {
             return;
         }
 

@@ -34,11 +34,19 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
 use Illuminate\Support\Facades\Bus;
+
+beforeEach(function () {
+    // The observer only queues lookups when a provider is configured.
+    $settings = app(TwilioSettings::class);
+    $settings->telnyx_api_key = 'test-telnyx-api-key';
+    $settings->save();
+});
 
 it('queues a lookup when a prospect phone number is created', function () {
     Bus::fake([LookupPhoneNumber::class]);
@@ -89,6 +97,24 @@ it('does not queue a lookup when a result already exists for the number', functi
 
     $prospect = Prospect::factory()->create();
     PhoneNumberLookup::factory()->create(['number' => '+16502530000']);
+
+    ProspectPhoneNumber::factory()->create([
+        'prospect_id' => $prospect->getKey(),
+        'number' => '+16502530000',
+    ]);
+
+    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530000'))
+        ->toHaveCount(0);
+});
+
+it('does not queue a lookup when no lookup provider is configured', function () {
+    $settings = app(TwilioSettings::class);
+    $settings->telnyx_api_key = null;
+    $settings->save();
+
+    Bus::fake([LookupPhoneNumber::class]);
+
+    $prospect = Prospect::factory()->create();
 
     ProspectPhoneNumber::factory()->create([
         'prospect_id' => $prospect->getKey(),

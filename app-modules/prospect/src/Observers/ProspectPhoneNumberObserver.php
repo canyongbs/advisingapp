@@ -37,6 +37,7 @@
 namespace AdvisingApp\Prospect\Observers;
 
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
+use AdvisingApp\StudentDataModel\Contracts\PhoneNumberLookupService;
 use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
 use Illuminate\Support\Facades\DB;
@@ -57,6 +58,11 @@ class ProspectPhoneNumberObserver
         }
 
         if (blank($prospectPhoneNumber->number)) {
+            return;
+        }
+
+        // Skip when no lookup provider is configured for this tenant.
+        if (! app(PhoneNumberLookupService::class)->isConfigured()) {
             return;
         }
 
