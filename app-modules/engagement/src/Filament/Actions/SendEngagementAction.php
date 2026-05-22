@@ -115,11 +115,7 @@ class SendEngagementAction extends Action
                 return null;
             })
             ->mountUsing(function (array $arguments, Schema $schema) {
-                $livewire = $this->getLivewire();
-
-                if (method_exists($livewire, 'dispatch')) {
-                    $livewire->dispatch('engage-action-finished-loading');
-                }
+                $this->dispatchLivewireEvent('engage-action-finished-loading');
 
                 $educatable = $this->getEducatable();
 
@@ -288,8 +284,16 @@ class SendEngagementAction extends Action
             recipientRoute: $recipientRoute,
             schema: $schema,
         ));
+        $this->dispatchLivewireEvent('engagement-sent');
+    }
 
-        $this->getLivewire()->dispatch('engagement-sent');
+    protected function dispatchLivewireEvent(string $event): void
+    {
+        $livewire = $this->getLivewire();
+
+        if ($livewire && method_exists($livewire, 'dispatch')) {
+            $livewire->dispatch($event);
+        }
     }
 
     protected function getDraftWithAiAction(Prospect|Student $educatable): Action
