@@ -95,7 +95,7 @@ class PrepareAiThreadEmailing implements ShouldQueue
                             ->map(fn (User $recipient) => new EmailAiThread($this->thread, $this->sender, $recipient))
                             ->all(),
                     )
-                        ->name('PrepareAiThreadEmailing for team *')
+                        ->name("PrepareAiThreadEmailing for team {$team->id}")
                         ->then(function () use ($sender, $team) {
                             FilamentNotification::make()
                                 ->success()

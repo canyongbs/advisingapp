@@ -72,7 +72,7 @@ class CreateTenant
                 ...($themeConfig ? [new UpdateTenantTheme($tenant, $themeConfig)] : []),
             ],
         ])
-            ->name("deploy-tenant-*-{$domain}")
+            ->name("deploy-tenant-{$tenant->getKey()}-{$domain}")
             ->onQueue(config('queue.landlord_queue'))
             ->then(function () use ($tenant) {
                 $tenant->update(['setup_complete' => true]);

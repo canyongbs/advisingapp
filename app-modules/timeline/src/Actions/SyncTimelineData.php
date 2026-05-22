@@ -46,7 +46,7 @@ class SyncTimelineData
 {
     public function now(Model $recordModel, $modelsToTimeline): void
     {
-        if (cache()->has("timeline.synced.{$recordModel->getMorphClass()}.*")) {
+        if (cache()->has("timeline.synced.{$recordModel->getMorphClass()}.{$recordModel->getKey()}")) {
             return;
         }
 
@@ -79,7 +79,7 @@ class SyncTimelineData
         });
 
         cache()->put(
-            "timeline.synced.{$recordModel->getMorphClass()}.*",
+            "timeline.synced.{$recordModel->getMorphClass()}.{$recordModel->getKey()}",
             now(),
             now()->addMinutes(60)
         );

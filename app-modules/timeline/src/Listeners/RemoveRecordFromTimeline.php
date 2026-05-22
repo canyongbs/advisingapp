@@ -45,7 +45,7 @@ class RemoveRecordFromTimeline
     {
         $entity = $event->entity;
 
-        cache()->forget("timeline.synced.{$entity->getMorphClass()}.*");
+        cache()->forget("timeline.synced.{$entity->getMorphClass()}.{$entity->getKey()}");
 
         Timeline::where([
             'entity_type' => $entity->getMorphClass(),

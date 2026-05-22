@@ -45,7 +45,7 @@ class AddRecordToTimeline
     {
         $entity = $event->entity;
 
-        cache()->forget("timeline.synced.{$entity->getMorphClass()}.*");
+        cache()->forget("timeline.synced.{$entity->getMorphClass()}.{$entity->getKey()}");
 
         Timeline::firstOrCreate([
             'entity_type' => $entity->getMorphClass(),

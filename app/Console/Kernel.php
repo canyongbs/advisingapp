@@ -154,31 +154,31 @@ class Kernel extends ConsoleKernel
                         ->name("Dispatch UpdateCurrentQnaAdvisorLinks | Tenant {$tenant->domain}")
                         ->monitorName("Dispatch UpdateCurrentQnaAdvisorLinks | Tenant {$tenant->domain}");
 
-                    $schedule->command('tenants:artisan "cache:prune-stale-tags" --tenant=*')
+                    $schedule->command("tenants:artisan \"cache:prune-stale-tags\" --tenant={$tenant->id}")
                         ->hourly()
                         ->name("Prune Stale Cache Tags | Tenant {$tenant->domain}")
                         ->monitorName("Prune Stale Cache Tags | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
 
-                    $schedule->command('tenants:artisan "health:queue-check-heartbeat" --tenant=*')
+                    $schedule->command("tenants:artisan \"health:queue-check-heartbeat\" --tenant={$tenant->id}")
                         ->everyMinute()
                         ->name("Queue Check Heartbeat | Tenant {$tenant->domain}")
                         ->monitorName("Queue Check Heartbeat | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
 
-                    $schedule->command('ai:fetch-files-parsing-results --tenant=*')
+                    $schedule->command("ai:fetch-files-parsing-results --tenant={$tenant->id}")
                         ->everyMinute()
                         ->name("Fetch AI Assistant Files Parsed Results | Tenant {$tenant->domain}")
                         ->monitorName("Fetch AI Assistant Files Parsed Results | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
 
-                    $schedule->command('ai:delete-unsaved-ai-threads --tenant=*')
+                    $schedule->command("ai:delete-unsaved-ai-threads --tenant={$tenant->id}")
                         ->daily()
                         ->name("Delete Unsaved AI Threads | Tenant {$tenant->domain}")
                         ->monitorName("Delete Unsaved AI Threads | Tenant {$tenant->domain}")
                         ->withoutOverlapping(720);
 
-                    $schedule->command('integration-open-ai:upload-files-to-vector-stores --tenant=*')
+                    $schedule->command("integration-open-ai:upload-files-to-vector-stores --tenant={$tenant->id}")
                         ->everyFifteenMinutes()
                         ->name("Upload AI Assistant Files To Open AI Vector Stores | Tenant {$tenant->domain}")
                         ->monitorName("Upload AI Assistant Files To Open AI Vector Stores | Tenant {$tenant->domain}")
@@ -198,7 +198,7 @@ class Kernel extends ConsoleKernel
                     ])
                         ->join(',');
 
-                    $schedule->command("tenants:artisan \"model:prune --model={$modelsToPrune}\" --tenant=*")
+                    $schedule->command("tenants:artisan \"model:prune --model={$modelsToPrune}\" --tenant={$tenant->id}")
                         ->daily()
                         ->name("Prune Models | Tenant {$tenant->domain}")
                         ->monitorName("Prune Models | Tenant {$tenant->domain}")
@@ -207,7 +207,7 @@ class Kernel extends ConsoleKernel
                     $schedule->command(
                         command: RefreshCalendarRefreshTokens::class,
                         parameters: [
-                            '--tenant=*',
+                            "--tenant={$tenant->id}",
                         ]
                     )
                         ->daily()
@@ -215,19 +215,19 @@ class Kernel extends ConsoleKernel
                         ->monitorName("Refresh Calendar Refresh Tokens | Tenant {$tenant->domain}")
                         ->withoutOverlapping(720);
 
-                    $schedule->command('tenants:artisan "prospect:prune-eductable-pipeline-stages" --tenant=*')
+                    $schedule->command("tenants:artisan \"prospect:prune-eductable-pipeline-stages\" --tenant={$tenant->id}")
                         ->daily()
                         ->name("Prune Educatable Pipeline Stages | Tenant {$tenant->domain}")
                         ->monitorName("Prune Educatable Pipeline Stages | Tenant {$tenant->domain}")
                         ->withoutOverlapping(720);
 
-                    $schedule->command('tenants:artisan "health:check" --tenant=*')
+                    $schedule->command("tenants:artisan \"health:check\" --tenant={$tenant->id}")
                         ->everyMinute()
                         ->name("Health Check | Tenant {$tenant->domain}")
                         ->monitorName("Health Check | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
 
-                    $schedule->command('tenants:artisan "health:schedule-check-heartbeat" --tenant=*')
+                    $schedule->command("tenants:artisan \"health:schedule-check-heartbeat\" --tenant={$tenant->id}")
                         ->everyMinute()
                         ->name("Schedule Check Heartbeat | Tenant {$tenant->domain}")
                         ->monitorName("Schedule Check Heartbeat | Tenant {$tenant->domain}")

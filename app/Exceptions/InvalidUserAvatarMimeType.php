@@ -46,7 +46,7 @@ class InvalidUserAvatarMimeType extends Exception
         protected User $user
     ) {
         parent::__construct(
-            "The provided avatar image for user * has an invalid MIME type: {$mimeType}."
+            "The provided avatar image for user {$user->getKey()} has an invalid MIME type: {$mimeType}."
         );
     }
 }

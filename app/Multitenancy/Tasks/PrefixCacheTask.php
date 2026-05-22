@@ -65,7 +65,7 @@ class PrefixCacheTask implements SwitchTenantTask
             new Exception('Tenant is not an instance of Tenant')
         );
 
-        $this->setCachePrefix("{{$this->cacheKeyBase}*}");
+        $this->setCachePrefix("{{$this->cacheKeyBase}{$tenant->getKey()}}");
     }
 
     public function forgetCurrent(): void

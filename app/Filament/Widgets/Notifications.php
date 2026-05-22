@@ -106,7 +106,7 @@ class Notifications extends Widget
 
         $userClass = str_replace('\\', '.', $user::class);
 
-        return "{$userClass}.*";
+        return "{$userClass}.{$user->getKey()}";
     }
 
     public function getNotification(DatabaseNotification $notification): Notification
