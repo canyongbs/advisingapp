@@ -66,7 +66,7 @@ test('no notification sent when channels are enabled but no users qualify', func
 
     $form = Form::factory()->create([
         'notify_to_care_team' => false,
-        'notify_to_subscibers' => false,
+        'notify_to_subscribers' => false,
         'notify_via_email' => true,
         'notify_via_app' => true,
     ]);
@@ -203,7 +203,7 @@ test('care team is not notified when submission has no author', function () {
     Notification::assertNothingSent();
 });
 
-test('subscribers of a Student author are notified when notify_to_subscibers is enabled', function () {
+test('subscribers of a Student author are notified when notify_to_subscribers is enabled', function () {
     Notification::fake();
 
     $subscriberUser = User::factory()->licensed(LicenseType::cases())->create();
@@ -214,7 +214,7 @@ test('subscribers of a Student author are notified when notify_to_subscibers is 
     ]);
 
     $form = Form::factory()->create([
-        'notify_to_subscibers' => true,
+        'notify_to_subscribers' => true,
         'notify_via_email' => true,
         'notify_via_app' => false,
     ]);
@@ -229,7 +229,7 @@ test('subscribers of a Student author are notified when notify_to_subscibers is 
     Notification::assertSentTo($subscriberUser, FormSubmissionNotification::class);
 });
 
-test('subscribers of a Prospect author are notified when notify_to_subscibers is enabled', function () {
+test('subscribers of a Prospect author are notified when notify_to_subscribers is enabled', function () {
     Notification::fake();
 
     $subscriberUser = User::factory()->licensed(LicenseType::cases())->create();
@@ -240,7 +240,7 @@ test('subscribers of a Prospect author are notified when notify_to_subscibers is
     ]);
 
     $form = Form::factory()->create([
-        'notify_to_subscibers' => true,
+        'notify_to_subscribers' => true,
         'notify_via_email' => true,
         'notify_via_app' => false,
     ]);
@@ -259,7 +259,7 @@ test('subscribers are not notified when submission has no author', function () {
     Notification::fake();
 
     $form = Form::factory()->create([
-        'notify_to_subscibers' => true,
+        'notify_to_subscribers' => true,
         'notify_via_email' => true,
     ]);
     $submission = FormSubmission::factory()->create([
@@ -283,7 +283,7 @@ test('a user appearing in all three recipient lists only receives one notificati
 
     $form = Form::factory()->create([
         'notify_to_care_team' => true,
-        'notify_to_subscibers' => true,
+        'notify_to_subscribers' => true,
         'notify_via_email' => true,
         'notify_via_app' => false,
     ]);
@@ -317,7 +317,7 @@ test('distinct users each receive their own notification without interference', 
 
     $form = Form::factory()->create([
         'notify_to_care_team' => true,
-        'notify_to_subscibers' => true,
+        'notify_to_subscribers' => true,
         'notify_via_email' => true,
         'notify_via_app' => false,
     ]);
