@@ -1,0 +1,35 @@
+name: Zizmor Monitoring
+
+on:
+    push:
+        branches: [main]
+        paths:
+            - '.github/workflows/**'
+            - '.github/dependabot.yml'
+    schedule:
+        - cron: '0 11 * * 1' # Mondays at 11:00 UTC
+
+permissions: {}
+
+concurrency:
+    group: ${{ github.workflow }}
+    cancel-in-progress: false
+
+jobs:
+    zizmor:
+        name: Zizmor (monitoring)
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            actions: read
+            security-events: write
+        steps:
+            - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+              with:
+                  persist-credentials: false
+
+            - uses: zizmorcore/zizmor-action@5f14fd08f7cf1cb1609c1e344975f152c7ee938d # v0.5.6
+              with:
+                  advanced-security: true
+                  persona: auditor
+                  min-severity: informational
