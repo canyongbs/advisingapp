@@ -39,66 +39,36 @@ use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
 use Illuminate\Support\Facades\Exceptions;
-use InvalidArgumentException;
 
 it('delegates to the phone number lookup service when the provider is configured', function () {
-    $service = new class () implements PhoneNumberLookupService {
-        public ?string $lookedUpNumber = null;
+    $service = Mockery::mock(PhoneNumberLookupService::class);
+    $service->shouldReceive('isConfigured')->andReturn(true);
+    $service->shouldReceive('lookup')->once()->with('+16502530000'); // @phpstan-ignore method.notFound
 
-        public function isConfigured(): bool
-        {
-            return true;
-        }
+    app()->instance(PhoneNumberLookupService::class, $service);
 
-        public function lookup(string $phoneNumber): PhoneNumberLookup
-        {
-            $this->lookedUpNumber = $phoneNumber;
-
-            return new PhoneNumberLookup();
-        }
-    };
-
-    (new LookupPhoneNumber('+16502530000'))->handle($service);
-
-    expect($service->lookedUpNumber)->toBe('+16502530000');
+    app()->call([new LookupPhoneNumber('+16502530000'), 'handle']);
 });
 
 it('does nothing when the lookup provider is not configured', function () {
-    $service = new class () implements PhoneNumberLookupService {
-        public bool $lookupWasCalled = false;
+    $service = Mockery::mock(PhoneNumberLookupService::class);
+    $service->shouldReceive('isConfigured')->andReturn(false);
+    $service->shouldReceive('lookup')->never(); // @phpstan-ignore method.notFound
 
-        public function isConfigured(): bool
-        {
-            return false;
-        }
+    app()->instance(PhoneNumberLookupService::class, $service);
 
-        public function lookup(string $phoneNumber): PhoneNumberLookup
-        {
-            $this->lookupWasCalled = true;
-
-            return new PhoneNumberLookup();
-        }
-    };
-
-    (new LookupPhoneNumber('+16502530000'))->handle($service);
-
-    expect($service->lookupWasCalled)->toBeFalse();
+    app()->call([new LookupPhoneNumber('+16502530000'), 'handle']);
 });
 
 it('records an invalid result when the number fails E.164 validation', function () {
-    $service = new class () implements PhoneNumberLookupService {
-        public function isConfigured(): bool
-        {
-            return true;
-        }
+    $service = Mockery::mock(PhoneNumberLookupService::class);
+    $service->shouldReceive('isConfigured')->andReturn(true);
+    $service->shouldReceive('lookup') // @phpstan-ignore method.notFound
+        ->andThrow(new InvalidArgumentException('The phone number [+11234567890] is not a valid phone number.'));
 
-        public function lookup(string $phoneNumber): PhoneNumberLookup
-        {
-            throw new InvalidArgumentException("The phone number [{$phoneNumber}] is not a valid phone number.");
-        }
-    };
+    app()->instance(PhoneNumberLookupService::class, $service);
 
-    (new LookupPhoneNumber('+11234567890'))->handle($service);
+    app()->call([new LookupPhoneNumber('+11234567890'), 'handle']);
 
     expect(PhoneNumberLookup::query()->where('number', '+11234567890')->sole()->status)
         ->toBe(PhoneNumberLookupStatus::Invalid);

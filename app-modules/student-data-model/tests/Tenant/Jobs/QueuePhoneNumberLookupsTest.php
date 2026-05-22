@@ -49,23 +49,6 @@ use Filament\Actions\Imports\Events\ImportCompleted;
 use Filament\Actions\Imports\Models\Import;
 use Illuminate\Support\Facades\Bus;
 
-function configuredLookupService(bool $configured = true): PhoneNumberLookupService
-{
-    return new class ($configured) implements PhoneNumberLookupService {
-        public function __construct(private bool $configured) {}
-
-        public function isConfigured(): bool
-        {
-            return $this->configured;
-        }
-
-        public function lookup(string $phoneNumber): PhoneNumberLookup
-        {
-            return new PhoneNumberLookup();
-        }
-    };
-}
-
 it('queues a lookup for student and prospect numbers that have no existing result', function () {
     Bus::fake([LookupPhoneNumber::class]);
 
@@ -100,7 +83,12 @@ it('queues a lookup for student and prospect numbers that have no existing resul
     PhoneNumberLookup::factory()->create(['number' => '+16502530002']);
     PhoneNumberLookup::factory()->create(['number' => '+16502530004']);
 
-    (new QueuePhoneNumberLookups())->handle(configuredLookupService());
+    $service = Mockery::mock(PhoneNumberLookupService::class);
+    $service->shouldReceive('isConfigured')->andReturn(true);
+
+    app()->instance(PhoneNumberLookupService::class, $service);
+
+    app()->call([new QueuePhoneNumberLookups(), 'handle']);
 
     expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530001'))->toHaveCount(1)
         ->and(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530003'))->toHaveCount(1)
@@ -118,7 +106,12 @@ it('does not scan when the lookup provider is not configured', function () {
         'order' => 1,
     ]);
 
-    (new QueuePhoneNumberLookups())->handle(configuredLookupService(configured: false));
+    $service = Mockery::mock(PhoneNumberLookupService::class);
+    $service->shouldReceive('isConfigured')->andReturn(false);
+
+    app()->instance(PhoneNumberLookupService::class, $service);
+
+    app()->call([new QueuePhoneNumberLookups(), 'handle']);
 
     expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530009'))
         ->toHaveCount(0);
