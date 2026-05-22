@@ -55,6 +55,7 @@ class EngagementEmailBodyInput
     public static function make(): RichEditor
     {
         return RichEditor::make('body')
+            ->key('emailBody')
             ->fileAttachmentsDisk('s3-public')
             ->label('Body')
             ->toolbarButtons([
