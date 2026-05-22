@@ -65,9 +65,6 @@ class ManageFormNotifications extends EditRecord
 
     public function form(Schema $schema): Schema
     {
-        // /** @var Form $record */
-        // $form = $this->record;
-
         return $schema
             ->components([
                 Section::make('')
