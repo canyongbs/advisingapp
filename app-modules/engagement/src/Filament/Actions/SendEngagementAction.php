@@ -49,7 +49,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
@@ -451,7 +450,7 @@ class SendEngagementAction extends Action
         $this->getLivewire()->dispatch('engagement-sent');
     }
 
-    protected function getDraftWithAiAction(Educatable $educatable): Action
+    protected function getDraftWithAiAction(Prospect|Student $educatable): Action
     {
         if ($this->draftWithAiActionUsing) {
             return $this->evaluate($this->draftWithAiActionUsing);
