@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -73,7 +73,7 @@ test('no notification sent when channels are enabled but no users qualify', func
 
     $application = Application::factory()->create([
         'notify_to_care_team' => false,
-        'notify_to_subscibers' => false,
+        'notify_to_subscribers' => false,
         'notify_via_email' => true,
         'notify_via_app' => true,
     ]);
@@ -192,7 +192,7 @@ test('care team members of a Prospect author are notified when notify_to_care_te
     Notification::assertSentTo($careTeamUser, ApplicationSubmissionNotification::class);
 });
 
-test('subscribers of a Student author are notified when notify_to_subscibers is enabled', function () {
+test('subscribers of a Student author are notified when notify_to_subscribers is enabled', function () {
     Notification::fake();
 
     $subscriberUser = User::factory()->licensed(LicenseType::cases())->create();
@@ -203,7 +203,7 @@ test('subscribers of a Student author are notified when notify_to_subscibers is 
     ]);
 
     $application = Application::factory()->create([
-        'notify_to_subscibers' => true,
+        'notify_to_subscribers' => true,
         'notify_via_email' => true,
         'notify_via_app' => false,
     ]);
@@ -218,7 +218,7 @@ test('subscribers of a Student author are notified when notify_to_subscibers is 
     Notification::assertSentTo($subscriberUser, ApplicationSubmissionNotification::class);
 });
 
-test('subscribers of a Prospect author are notified when notify_to_subscibers is enabled', function () {
+test('subscribers of a Prospect author are notified when notify_to_subscribers is enabled', function () {
     Notification::fake();
 
     $subscriberUser = User::factory()->licensed(LicenseType::cases())->create();
@@ -229,7 +229,7 @@ test('subscribers of a Prospect author are notified when notify_to_subscibers is
     ]);
 
     $application = Application::factory()->create([
-        'notify_to_subscibers' => true,
+        'notify_to_subscribers' => true,
         'notify_via_email' => true,
         'notify_via_app' => false,
     ]);
@@ -248,7 +248,7 @@ test('subscribers are not notified when submission has no author', function () {
     Notification::fake();
 
     $application = Application::factory()->create([
-        'notify_to_subscibers' => true,
+        'notify_to_subscribers' => true,
         'notify_via_email' => true,
     ]);
     $submission = ApplicationSubmission::factory()->create([
@@ -276,7 +276,7 @@ test('a user appearing in all three recipient lists only receives one notificati
 
     $application = Application::factory()->create([
         'notify_to_care_team' => true,
-        'notify_to_subscibers' => true,
+        'notify_to_subscribers' => true,
         'notify_via_email' => true,
         'notify_via_app' => false,
     ]);
@@ -310,7 +310,7 @@ test('distinct users each receive their own notification without interference', 
 
     $application = Application::factory()->create([
         'notify_to_care_team' => true,
-        'notify_to_subscibers' => true,
+        'notify_to_subscribers' => true,
         'notify_via_email' => true,
         'notify_via_app' => false,
     ]);
