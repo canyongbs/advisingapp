@@ -158,7 +158,7 @@ class ManageFormSubmissions extends ManageRelatedRecords
         /** @var Form $ownerRecord */
         $formSubmissionsCount = Cache::tags('{form-submission-count}')
             ->remember(
-                "form-submission-count-*",
+                'form-submission-count-*',
                 now()->addMinutes(5),
                 fn (): int => $ownerRecord->submissions()->count(),
             );

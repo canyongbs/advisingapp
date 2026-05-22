@@ -88,7 +88,7 @@ class ManageProspectConcerns extends ManageRelatedRecords
         /** @var Prospect $ownerRecord */
         $concernsCount = Cache::tags('{concern-count}')
             ->remember(
-                "concern-count-*",
+                'concern-count-*',
                 now()->addMinutes(5),
                 function () use ($ownerRecord): int {
                     return $ownerRecord->concerns()->whereRelation('status', 'classification', SystemConcernStatusClassification::Active->value)->count();

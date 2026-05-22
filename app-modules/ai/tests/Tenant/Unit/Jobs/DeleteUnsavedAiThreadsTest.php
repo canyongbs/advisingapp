@@ -47,7 +47,7 @@ it('selects and soft deletes the proper records', function () {
 
     $tenant = Tenant::current();
 
-    artisan("ai:delete-unsaved-ai-threads --tenant=*");
+    artisan('ai:delete-unsaved-ai-threads --tenant=*');
 
     expect($notSavedAndOlderThanThreeDays->fresh()->deleted_at)->not->toBeNull()
         ->and($notSavedAndEarlierThanThreeDays->fresh()->deleted_at)->toBeNull()

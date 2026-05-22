@@ -75,7 +75,7 @@ class ReportPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["report.*.view"],
+            abilities: ['report.*.view'],
             denyResponse: 'You do not have permission to view this report.'
         );
     }
@@ -95,7 +95,7 @@ class ReportPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["report.*.update"],
+            abilities: ['report.*.update'],
             denyResponse: 'You do not have permission to update this report.'
         );
     }
@@ -107,7 +107,7 @@ class ReportPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["report.*.delete"],
+            abilities: ['report.*.delete'],
             denyResponse: 'You do not have permission to delete this report.'
         );
     }
@@ -119,7 +119,7 @@ class ReportPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["report.*.restore"],
+            abilities: ['report.*.restore'],
             denyResponse: 'You do not have permission to restore this report.'
         );
     }
@@ -131,7 +131,7 @@ class ReportPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["report.*.force-delete"],
+            abilities: ['report.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this report.'
         );
     }

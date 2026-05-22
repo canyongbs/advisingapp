@@ -74,7 +74,7 @@ class EventAttendeePolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, EventAttendee $eventAttendee): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["event_attendee.*.view"],
+            abilities: ['event_attendee.*.view'],
             denyResponse: 'You do not have permissions to view this event attendee.'
         );
     }
@@ -90,7 +90,7 @@ class EventAttendeePolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, EventAttendee $eventAttendee): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["event_attendee.*.update"],
+            abilities: ['event_attendee.*.update'],
             denyResponse: 'You do not have permissions to update this event attendee.'
         );
     }
@@ -98,7 +98,7 @@ class EventAttendeePolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, EventAttendee $eventAttendee): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["event_attendee.*.delete"],
+            abilities: ['event_attendee.*.delete'],
             denyResponse: 'You do not have permissions to delete this event attendee.'
         );
     }
@@ -106,7 +106,7 @@ class EventAttendeePolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, EventAttendee $eventAttendee): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["event_attendee.*.restore"],
+            abilities: ['event_attendee.*.restore'],
             denyResponse: 'You do not have permissions to restore this event attendee.'
         );
     }
@@ -114,7 +114,7 @@ class EventAttendeePolicy implements PerformsChecksBeforeAuthorization
     public function forceDelete(Authenticatable $authenticatable, EventAttendee $eventAttendee): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["event_attendee.*.force-delete"],
+            abilities: ['event_attendee.*.force-delete'],
             denyResponse: 'You do not have permissions to permanently delete this event attendee.'
         );
     }

@@ -62,7 +62,7 @@ class ProspectPolicy
     public function view(Authenticatable $authenticatable, Prospect $prospect): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["prospect.*.view"],
+            abilities: ['prospect.*.view'],
             denyResponse: 'You do not have permission to view this prospect.'
         );
     }
@@ -90,7 +90,7 @@ class ProspectPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["prospect.*.update"],
+            abilities: ['prospect.*.update'],
             denyResponse: 'You do not have permission to update this prospect.'
         );
     }
@@ -98,7 +98,7 @@ class ProspectPolicy
     public function delete(Authenticatable $authenticatable, Prospect $prospect): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["prospect.*.delete"],
+            abilities: ['prospect.*.delete'],
             denyResponse: 'You do not have permission to delete this prospect.'
         );
     }
@@ -106,7 +106,7 @@ class ProspectPolicy
     public function restore(Authenticatable $authenticatable, Prospect $prospect): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["prospect.*.restore"],
+            abilities: ['prospect.*.restore'],
             denyResponse: 'You do not have permission to restore this prospect.'
         );
     }
@@ -114,7 +114,7 @@ class ProspectPolicy
     public function forceDelete(Authenticatable $authenticatable, Prospect $prospect): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["prospect.*.force-delete"],
+            abilities: ['prospect.*.force-delete'],
             denyResponse: 'You do not have permission to force delete this prospect.'
         );
     }

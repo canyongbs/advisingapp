@@ -124,7 +124,7 @@ class ResourceHubArticleDownloadExternalMedia implements ShouldQueue
                     $media = $this->resourceHubArticle->addMedia($tmpFile)
                         ->toMediaCollection('article_details');
 
-                    return "{{media|id:*;}}";
+                    return '{{media|id:*;}}';
                 } catch (Exception $e) {
                     report($e);
                 }

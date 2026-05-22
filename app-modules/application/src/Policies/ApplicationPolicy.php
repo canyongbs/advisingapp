@@ -74,7 +74,7 @@ class ApplicationPolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, Application $application): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["application.*.view"],
+            abilities: ['application.*.view'],
             denyResponse: 'You do not have permission to view this application.'
         );
     }
@@ -90,7 +90,7 @@ class ApplicationPolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, Application $application): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["application.*.update"],
+            abilities: ['application.*.update'],
             denyResponse: 'You do not have permission to update this application.'
         );
     }
@@ -98,7 +98,7 @@ class ApplicationPolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, Application $application): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["application.*.delete"],
+            abilities: ['application.*.delete'],
             denyResponse: 'You do not have permission to delete this application.'
         );
     }
@@ -106,7 +106,7 @@ class ApplicationPolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, Application $application): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["application.*.restore"],
+            abilities: ['application.*.restore'],
             denyResponse: 'You do not have permission to restore this application.'
         );
     }
@@ -114,7 +114,7 @@ class ApplicationPolicy implements PerformsChecksBeforeAuthorization
     public function forceDelete(Authenticatable $authenticatable, Application $application): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["application.*.force-delete"],
+            abilities: ['application.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this application.'
         );
     }

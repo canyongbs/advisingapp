@@ -74,7 +74,7 @@ class EventPolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, Event $event): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["event.*.view"],
+            abilities: ['event.*.view'],
             denyResponse: 'You do not have permissions to view this event.'
         );
     }
@@ -90,7 +90,7 @@ class EventPolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, Event $event): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["event.*.update"],
+            abilities: ['event.*.update'],
             denyResponse: 'You do not have permissions to update this event.'
         );
     }
@@ -98,7 +98,7 @@ class EventPolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, Event $event): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["event.*.delete"],
+            abilities: ['event.*.delete'],
             denyResponse: 'You do not have permissions to delete this event.'
         );
     }
@@ -106,7 +106,7 @@ class EventPolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, Event $event): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["event.*.restore"],
+            abilities: ['event.*.restore'],
             denyResponse: 'You do not have permissions to restore this event.'
         );
     }
@@ -114,7 +114,7 @@ class EventPolicy implements PerformsChecksBeforeAuthorization
     public function forceDelete(Authenticatable $authenticatable, Event $event): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["event.*.force-delete"],
+            abilities: ['event.*.force-delete'],
             denyResponse: 'You do not have permissions to permanently delete this event.'
         );
     }

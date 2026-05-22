@@ -53,7 +53,7 @@ class AuditPolicy
     public function view(Authenticatable $authenticatable, Audit $audit): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["audit.*.view"],
+            abilities: ['audit.*.view'],
             denyResponse: 'You do not have permission to view this audit.'
         );
     }
@@ -69,7 +69,7 @@ class AuditPolicy
     public function update(Authenticatable $authenticatable, Audit $audit): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["audit.*.update"],
+            abilities: ['audit.*.update'],
             denyResponse: 'You do not have permission to update this audit.'
         );
     }
@@ -77,7 +77,7 @@ class AuditPolicy
     public function delete(Authenticatable $authenticatable, Audit $audit): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["audit.*.delete"],
+            abilities: ['audit.*.delete'],
             denyResponse: 'You do not have permission to delete this audit.'
         );
     }
@@ -85,7 +85,7 @@ class AuditPolicy
     public function restore(Authenticatable $authenticatable, Audit $audit): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["audit.*.restore"],
+            abilities: ['audit.*.restore'],
             denyResponse: 'You do not have permission to restore this audit.'
         );
     }
@@ -93,7 +93,7 @@ class AuditPolicy
     public function forceDelete(Authenticatable $authenticatable, Audit $audit): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["audit.*.force-delete"],
+            abilities: ['audit.*.force-delete'],
             denyResponse: 'You do not have permission to force delete this audit.'
         );
     }
