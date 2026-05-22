@@ -4,6 +4,12 @@ on:
     release:
         types: [prereleased]
 
+permissions: {}
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.release.tag_name }}
+    cancel-in-progress: false
+
 env:
     AWS_REGION: 'us-west-2'
 
@@ -17,20 +23,21 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #6.0.2
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
+                  persist-credentials: false
 
             - name: Login to Docker Hub
-              uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 #4.1.0
+              uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
               with:
                   username: ${{ secrets.DOCKERHUB_USERNAME }}
                   password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 #6.1.1
+              uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 # v6.1.1
               with:
                   aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
@@ -38,7 +45,7 @@ jobs:
 
             - name: Login to Amazon ECR
               id: login-ecr
-              uses: aws-actions/amazon-ecr-login@fa648b43de3d4d023bcb3f89ed6940096949c419 #2.1.5
+              uses: aws-actions/amazon-ecr-login@fa648b43de3d4d023bcb3f89ed6940096949c419 # v2.1.5
 
             - name: Build, tag, and push image to Amazon ECR
               id: build-image
@@ -62,14 +69,15 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #6.0.2
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
+                  persist-credentials: false
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 #6.1.1
+              uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 # v6.1.1
               with:
                   aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
@@ -77,7 +85,7 @@ jobs:
 
             - name: Fill in the new image ID in the Amazon ECS task definition
               id: task-def
-              uses: aws-actions/amazon-ecs-render-task-definition@6853cfae8c3a7d978fbf68b5a55453395541dfbb #1.8.5
+              uses: aws-actions/amazon-ecs-render-task-definition@6853cfae8c3a7d978fbf68b5a55453395541dfbb # v1.8.5
               with:
                   task-definition: 'docker/devops/ecs/advisingapp/advisingapp-dev-task-definition.json'
                   container-name: 'app'
@@ -85,7 +93,7 @@ jobs:
 
             - name: Deploy Amazon ECS task definition
               id: task-deploy
-              uses: aws-actions/amazon-ecs-deploy-task-definition@a310a830f5c14e583e35d84e4e1ec7dd177c3c9c #2.6.2
+              uses: aws-actions/amazon-ecs-deploy-task-definition@a310a830f5c14e583e35d84e4e1ec7dd177c3c9c # v2.6.2
               with:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
                   service: 'advisingapp-dev-service'
@@ -96,13 +104,15 @@ jobs:
               id: check-deployment
               run: |
                   CURRENT_TASK_DEF_ARN=$(aws ecs describe-services --cluster advisingapp-dev --services advisingapp-dev-service --query services[0].deployments[0].taskDefinition | jq -r ".")
-                  NEW_TASK_DEF_ARN=${{ steps.task-deploy.outputs.task-definition-arn }}
+                  NEW_TASK_DEF_ARN=${STEPS_TASK_DEPLOY_OUTPUTS_TASK_DEFINITION_ARN}
                   echo "Current task arn: $CURRENT_TASK_DEF_ARN"
                   echo "New task arn: $NEW_TASK_DEF_ARN"
                   if [ "$CURRENT_TASK_DEF_ARN" != "$NEW_TASK_DEF_ARN" ]; then
                     echo "Deployment failed."
                     exit 1
                   fi
+              env:
+                  STEPS_TASK_DEPLOY_OUTPUTS_TASK_DEFINITION_ARN: ${{ steps.task-deploy.outputs.task-definition-arn }}
 
     build-worker:
         name: Build Worker Image
@@ -113,20 +123,21 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #6.0.2
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
+                  persist-credentials: false
 
             - name: Login to Docker Hub
-              uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 #4.1.0
+              uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
               with:
                   username: ${{ secrets.DOCKERHUB_USERNAME }}
                   password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 #6.1.1
+              uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 # v6.1.1
               with:
                   aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
@@ -134,7 +145,7 @@ jobs:
 
             - name: Login to Amazon ECR
               id: login-ecr
-              uses: aws-actions/amazon-ecr-login@fa648b43de3d4d023bcb3f89ed6940096949c419 #2.1.5
+              uses: aws-actions/amazon-ecr-login@fa648b43de3d4d023bcb3f89ed6940096949c419 # v2.1.5
 
             - name: Build, tag, and push image to Amazon ECR
               id: build-image
@@ -158,14 +169,15 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #6.0.2
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
+                  persist-credentials: false
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 #6.1.1
+              uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 # v6.1.1
               with:
                   aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
@@ -173,7 +185,7 @@ jobs:
 
             - name: Fill in the new image ID in the Amazon ECS task definition
               id: task-def
-              uses: aws-actions/amazon-ecs-render-task-definition@6853cfae8c3a7d978fbf68b5a55453395541dfbb #1.8.5
+              uses: aws-actions/amazon-ecs-render-task-definition@6853cfae8c3a7d978fbf68b5a55453395541dfbb # v1.8.5
               with:
                   task-definition: 'docker/devops/ecs/advisingapp/advisingapp-worker-dev-task-definition.json'
                   container-name: 'worker'
@@ -181,7 +193,7 @@ jobs:
 
             - name: Deploy Amazon ECS task definition
               id: task-deploy
-              uses: aws-actions/amazon-ecs-deploy-task-definition@a310a830f5c14e583e35d84e4e1ec7dd177c3c9c #2.6.2
+              uses: aws-actions/amazon-ecs-deploy-task-definition@a310a830f5c14e583e35d84e4e1ec7dd177c3c9c # v2.6.2
               with:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
                   service: 'advisingapp-worker-dev-service'
@@ -192,13 +204,15 @@ jobs:
               id: check-deployment
               run: |
                   CURRENT_TASK_DEF_ARN=$(aws ecs describe-services --cluster advisingapp-dev --services advisingapp-worker-dev-service --query services[0].deployments[0].taskDefinition | jq -r ".")
-                  NEW_TASK_DEF_ARN=${{ steps.task-deploy.outputs.task-definition-arn }}
+                  NEW_TASK_DEF_ARN=${STEPS_TASK_DEPLOY_OUTPUTS_TASK_DEFINITION_ARN}
                   echo "Current task arn: $CURRENT_TASK_DEF_ARN"
                   echo "New task arn: $NEW_TASK_DEF_ARN"
                   if [ "$CURRENT_TASK_DEF_ARN" != "$NEW_TASK_DEF_ARN" ]; then
                     echo "Deployment failed."
                     exit 1
                   fi
+              env:
+                  STEPS_TASK_DEPLOY_OUTPUTS_TASK_DEFINITION_ARN: ${{ steps.task-deploy.outputs.task-definition-arn }}
 
     build-scheduler:
         name: Build Scheduler Image
@@ -209,20 +223,21 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #6.0.2
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
+                  persist-credentials: false
 
             - name: Login to Docker Hub
-              uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 #4.1.0
+              uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
               with:
                   username: ${{ secrets.DOCKERHUB_USERNAME }}
                   password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 #6.1.1
+              uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 # v6.1.1
               with:
                   aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
@@ -230,7 +245,7 @@ jobs:
 
             - name: Login to Amazon ECR
               id: login-ecr
-              uses: aws-actions/amazon-ecr-login@fa648b43de3d4d023bcb3f89ed6940096949c419 #2.1.5
+              uses: aws-actions/amazon-ecr-login@fa648b43de3d4d023bcb3f89ed6940096949c419 # v2.1.5
 
             - name: Build, tag, and push image to Amazon ECR
               id: build-image
@@ -254,14 +269,15 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #6.0.2
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
+                  persist-credentials: false
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 #6.1.1
+              uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 # v6.1.1
               with:
                   aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
@@ -269,7 +285,7 @@ jobs:
 
             - name: Fill in the new image ID in the Amazon ECS task definition
               id: task-def
-              uses: aws-actions/amazon-ecs-render-task-definition@6853cfae8c3a7d978fbf68b5a55453395541dfbb #1.8.5
+              uses: aws-actions/amazon-ecs-render-task-definition@6853cfae8c3a7d978fbf68b5a55453395541dfbb # v1.8.5
               with:
                   task-definition: 'docker/devops/ecs/advisingapp/advisingapp-scheduler-dev-task-definition.json'
                   container-name: 'scheduler'
@@ -277,7 +293,7 @@ jobs:
 
             - name: Deploy Amazon ECS task definition
               id: task-deploy
-              uses: aws-actions/amazon-ecs-deploy-task-definition@a310a830f5c14e583e35d84e4e1ec7dd177c3c9c #2.6.2
+              uses: aws-actions/amazon-ecs-deploy-task-definition@a310a830f5c14e583e35d84e4e1ec7dd177c3c9c # v2.6.2
               with:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
                   service: 'advisingapp-scheduler-dev-service'
@@ -288,13 +304,15 @@ jobs:
               id: check-deployment
               run: |
                   CURRENT_TASK_DEF_ARN=$(aws ecs describe-services --cluster advisingapp-dev --services advisingapp-scheduler-dev-service --query services[0].deployments[0].taskDefinition | jq -r ".")
-                  NEW_TASK_DEF_ARN=${{ steps.task-deploy.outputs.task-definition-arn }}
+                  NEW_TASK_DEF_ARN=${STEPS_TASK_DEPLOY_OUTPUTS_TASK_DEFINITION_ARN}
                   echo "Current task arn: $CURRENT_TASK_DEF_ARN"
                   echo "New task arn: $NEW_TASK_DEF_ARN"
                   if [ "$CURRENT_TASK_DEF_ARN" != "$NEW_TASK_DEF_ARN" ]; then
                     echo "Deployment failed."
                     exit 1
                   fi
+              env:
+                  STEPS_TASK_DEPLOY_OUTPUTS_TASK_DEFINITION_ARN: ${{ steps.task-deploy.outputs.task-definition-arn }}
 
     build-release-automation:
         name: Build Release Automation Image
@@ -305,20 +323,21 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #6.0.2
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
+                  persist-credentials: false
 
             - name: Login to Docker Hub
-              uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 #4.1.0
+              uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # v4.1.0
               with:
                   username: ${{ secrets.DOCKERHUB_USERNAME }}
                   password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 #6.1.1
+              uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 # v6.1.1
               with:
                   aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
@@ -326,7 +345,7 @@ jobs:
 
             - name: Login to Amazon ECR
               id: login-ecr
-              uses: aws-actions/amazon-ecr-login@fa648b43de3d4d023bcb3f89ed6940096949c419 #2.1.5
+              uses: aws-actions/amazon-ecr-login@fa648b43de3d4d023bcb3f89ed6940096949c419 # v2.1.5
 
             - name: Build, tag, and push image to Amazon ECR
               id: build-image
@@ -350,14 +369,15 @@ jobs:
 
         steps:
             - name: Checkout
-              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #6.0.2
+              uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }}
+                  persist-credentials: false
 
             - name: Configure AWS credentials
-              uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 #6.1.1
+              uses: aws-actions/configure-aws-credentials@d979d5b3a71173a29b74b5b88418bfda9437d885 # v6.1.1
               with:
                   aws-access-key-id: ${{ secrets.DEV_AWS_ACCESS_KEY_ID }}
                   aws-secret-access-key: ${{ secrets.DEV_AWS_SECRET_ACCESS_KEY }}
@@ -365,14 +385,14 @@ jobs:
 
             - name: Fill in the new image ID in the Amazon ECS task definition
               id: task-def
-              uses: aws-actions/amazon-ecs-render-task-definition@6853cfae8c3a7d978fbf68b5a55453395541dfbb #1.8.5
+              uses: aws-actions/amazon-ecs-render-task-definition@6853cfae8c3a7d978fbf68b5a55453395541dfbb # v1.8.5
               with:
                   task-definition: 'docker/devops/ecs/advisingapp/advisingapp-release-automation-dev-task-definition.json'
                   container-name: 'release-automation'
                   image: ${{ needs.build-release-automation.outputs.image }}
 
             - name: Deploy Amazon ECS task definition
-              uses: aws-actions/amazon-ecs-deploy-task-definition@a310a830f5c14e583e35d84e4e1ec7dd177c3c9c #2.6.2
+              uses: aws-actions/amazon-ecs-deploy-task-definition@a310a830f5c14e583e35d84e4e1ec7dd177c3c9c # v2.6.2
               with:
                   task-definition: ${{ steps.task-def.outputs.task-definition }}
                   cluster: 'advisingapp-dev'
