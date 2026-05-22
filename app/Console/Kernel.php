@@ -215,6 +215,12 @@ class Kernel extends ConsoleKernel
                         ->monitorName("Refresh Calendar Refresh Tokens | Tenant {$tenant->domain}")
                         ->withoutOverlapping(720);
 
+                    $schedule->command("student-data-model:auto-import-enrollment-semesters --tenant={$tenant->id}")
+                        ->daily()
+                        ->name("Auto Import Enrollment Semesters | Tenant {$tenant->domain}")
+                        ->monitorName("Auto Import Enrollment Semesters | Tenant {$tenant->domain}")
+                        ->withoutOverlapping(720);
+
                     $schedule->command("tenants:artisan \"prospect:prune-eductable-pipeline-stages\" --tenant={$tenant->id}")
                         ->daily()
                         ->name("Prune Educatable Pipeline Stages | Tenant {$tenant->domain}")

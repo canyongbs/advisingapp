@@ -34,24 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Settings;
+namespace AdvisingApp\StudentDataModel\Enums;
 
-use AdvisingApp\StudentDataModel\Enums\EnrollmentSemesterAutoImportDefaultOrder;
-use AdvisingApp\StudentDataModel\Enums\SisSystem;
-use Spatie\LaravelSettings\Settings;
+use Filament\Support\Contracts\HasLabel;
 
-class StudentInformationSystemSettings extends Settings
+enum EnrollmentSemesterAutoImportDefaultOrder: string implements HasLabel
 {
-    public bool $is_enabled = false;
+    case First = 'first';
 
-    public ?SisSystem $sis_system = null;
+    case Last = 'last';
 
-    public bool $is_enrollment_semester_auto_import_enabled = false;
-
-    public EnrollmentSemesterAutoImportDefaultOrder $enrollment_semester_auto_import_default_order = EnrollmentSemesterAutoImportDefaultOrder::First;
-
-    public static function group(): string
+    public function getLabel(): string
     {
-        return 'student_information_system';
+        return match ($this) {
+            self::First => 'First (Most Recent Semester)',
+            self::Last => 'Last (Oldest Semester)',
+        };
     }
 }

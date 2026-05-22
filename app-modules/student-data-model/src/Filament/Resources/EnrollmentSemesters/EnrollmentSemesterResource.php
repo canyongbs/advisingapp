@@ -97,7 +97,7 @@ class EnrollmentSemesterResource extends Resource
                 TextColumn::make('name'),
             ])
             ->defaultSort('order', 'desc')
-            ->reorderable('order', condition: auth()->user()->can('settings.*.update'))
+            ->reorderable('order', condition: auth()->user()->can('settings.*.update'), direction: 'desc')
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
