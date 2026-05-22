@@ -40,33 +40,21 @@ use AdvisingApp\Engagement\Actions\CreateEngagement;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
 use AdvisingApp\Engagement\Filament\Forms\Components\EngagementSmsBodyInput;
 use AdvisingApp\Engagement\Filament\Schemas\Components\EngagementEmailBodyInput;
+use AdvisingApp\Engagement\Filament\Schemas\Components\EngagementRecipientStep;
 use AdvisingApp\Engagement\Filament\Schemas\Components\EngagementScheduledAtDateTimePicker;
 use AdvisingApp\Engagement\Filament\Schemas\Components\EngagementSendLaterToggle;
 use AdvisingApp\Engagement\Filament\Schemas\Components\EngagementSubjectInput;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectEmailAddress;
-use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
-use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
-use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use App\Filament\Forms\Components\EducatableSelect;
 use Closure;
-use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Fieldset;
-use Filament\Schemas\Components\Grid;
-use Filament\Schemas\Components\Text;
 use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Carbon;
@@ -216,156 +204,10 @@ class SendEngagementAction extends Action
     protected function getEngagementSteps(): array
     {
         return [
-            Step::make('Recipient Details')
-                ->schema([
-                    ...$this->getEducatable() ? [] : [
-                        EducatableSelect::make(
-                            name: 'recipient',
-                            isExcludingConvertedProspects: true,
-                            modifyKeySelectUsing: function (Select $select): Select {
-                                return $select->disableOptionWhen(function (string $value): bool {
-                                    static $noContactCache = [];
-                                    $cacheKey = $value;
-
-                                    if (! array_key_exists($cacheKey, $noContactCache)) {
-                                        $educatable = Student::find($value) ?? Prospect::find($value);
-                                        $noContactCache[$cacheKey] = $educatable
-                                            ? ! $educatable->hasAnyValidContactRoute()
-                                            : false;
-                                    }
-
-                                    return $noContactCache[$cacheKey];
-                                });
-                            },
-                        )
-                            ->label('Recipient Info')
-                            ->live()
-                            ->typeSelectToggleButtons()
-                            ->required()
-                            ->columns(2)
-                            ->afterStateUpdated(function (Get $get, Set $set) {
-                                $educatable = match ($get('recipient_type')) {
-                                    'student' => Student::find($get('recipient_id')),
-                                    'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
-                                    default => null,
-                                };
-
-                                if (! $educatable) {
-                                    return;
-                                }
-
-                                $defaultChannel = $educatable->getDefaultEngagementChannel();
-
-                                if ($defaultChannel) {
-                                    $set('channel', $defaultChannel->value);
-                                    $set('recipient_route_id', $educatable->getDefaultRouteForEngagementChannel($defaultChannel));
-
-                                    return;
-                                }
-                            }),
-                    ],
-                    Grid::make(2)
-                        ->schema(function (Get $get): array {
-                            return [
-                                Fieldset::make('Message Type')
-                                    ->schema([
-                                        ToggleButtons::make('channel')
-                                            ->options(function (Get $get): array {
-                                                $educatable = $this->resolveEducatable($get);
-
-                                                if (! $educatable) {
-                                                    return [];
-                                                }
-
-                                                return array_filter(
-                                                    NotificationChannel::getAvailableEngagementOptions(),
-                                                    function (string $channelValue) use ($educatable): bool {
-                                                        $channel = NotificationChannel::tryFrom($channelValue);
-
-                                                        if ($channel?->getCaseDisabled() ?? false) {
-                                                            return false;
-                                                        }
-
-                                                        return match ($channel) {
-                                                            NotificationChannel::Email => $educatable->hasValidEmail(),
-                                                            NotificationChannel::Sms => $educatable->hasValidSms(),
-                                                            default => true,
-                                                        };
-                                                    },
-                                                    ARRAY_FILTER_USE_KEY
-                                                );
-                                            })
-                                            ->default(NotificationChannel::Email->value)
-                                            ->inline()
-                                            ->live()
-                                            ->afterStateUpdated(function (mixed $state, Get $get, Set $set): void {
-                                                $educatable = $this->resolveEducatable($get);
-
-                                                if (! $educatable) {
-                                                    return;
-                                                }
-
-                                                $channel = NotificationChannel::parse($state);
-                                                $set('recipient_route_id', $educatable->getDefaultRouteForEngagementChannel($channel));
-                                            }),
-                                        Select::make('recipient_route_id')
-                                            ->label(fn (Get $get): string => match (NotificationChannel::parse($get('channel'))) {
-                                                NotificationChannel::Email => 'Email address',
-                                                NotificationChannel::Sms => 'Phone number',
-                                                default => throw new Exception('Invalid channel.'),
-                                            })
-                                            ->options(function (Get $get): array {
-                                                $educatable = $this->resolveEducatable($get);
-
-                                                if (! $educatable) {
-                                                    return [];
-                                                }
-
-                                                return match (NotificationChannel::parse($get('channel'))) {
-                                                    NotificationChannel::Email => $educatable->emailAddresses()
-                                                        ->whereDoesntHave('bounced')
-                                                        ->whereDoesntHave('optedOut', fn ($query) => $query->where('status', EmailAddressOptInOptOutStatus::OptedOut))
-                                                        ->get()
-                                                        ->mapWithKeys(fn (StudentEmailAddress | ProspectEmailAddress $emailAddress): array => [
-                                                            $emailAddress->getKey() => $emailAddress->address . (filled($emailAddress->type) ? " ({$emailAddress->type})" : ''),
-                                                        ])
-                                                        ->all(),
-                                                    NotificationChannel::Sms => $educatable->phoneNumbers()
-                                                        ->where('can_receive_sms', true)
-                                                        ->whereDoesntHave('smsOptOut')
-                                                        ->whereDoesntHave('bounced')
-                                                        ->get()
-                                                        ->mapWithKeys(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber): array => [
-                                                            $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),
-                                                        ])
-                                                        ->all(),
-                                                    default => [],
-                                                };
-                                            })
-                                            ->disabled(function (Get $get): bool {
-                                                $educatable = $this->resolveEducatable($get);
-
-                                                return blank($educatable);
-                                            })
-                                            ->required(),
-                                    ])
-                                    ->visible(function (Get $get): bool {
-                                        $educatable = $this->resolveEducatable($get);
-
-                                        return $educatable !== null && $educatable->hasAnyValidContactRoute();
-                                    })
-                                    ->columnSpanFull(),
-                                Text::make('This recipient does not have valid contact information. Please select a different recipient.')
-                                    ->visible(function (Get $get): bool {
-                                        $educatable = $this->resolveEducatable($get);
-
-                                        return $educatable !== null && ! $educatable->hasAnyValidContactRoute();
-                                    })
-                                    ->columnSpanFull(),
-                            ];
-                        })
-                        ->visible(fn (Get $get) => ! is_null($this->getEducatable()) || $get('recipient_id')),
-                ]),
+            EngagementRecipientStep::make(
+                getEducatable: fn () => $this->getEducatable(),
+                resolveEducatable: fn (Get $get) => $this->resolveEducatable($get),
+            ),
             Step::make('Message Details')
                 ->schema(function (Get $get): array {
                     $educatable = $this->resolveEducatable($get);
