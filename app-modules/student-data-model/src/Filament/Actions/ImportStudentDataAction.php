@@ -143,7 +143,7 @@ class ImportStudentDataAction
             ->columns(1)
             ->inlineLabel()
             ->schema(function (Get $get) use ($action, $fileStatePath, $importer): array {
-                $csvFile = Arr::first((array) ($get($fileStatePath) ?? []));
+                $csvFile = $get($fileStatePath);
 
                 if (! $csvFile instanceof TemporaryUploadedFile) {
                     return [];
@@ -172,7 +172,7 @@ class ImportStudentDataAction
                 );
             })
             ->statePath($name)
-            ->visible(fn (Get $get): bool => Arr::first((array) ($get($fileStatePath) ?? [])) instanceof TemporaryUploadedFile);
+            ->visible(fn (Get $get): bool => $get($fileStatePath) instanceof TemporaryUploadedFile);
 
         $makeDownloadAction = fn (string $name, ?string $importer): Action => Action::make($name)
             ->label(__('filament-actions::import.modal.actions.download_example.label'))

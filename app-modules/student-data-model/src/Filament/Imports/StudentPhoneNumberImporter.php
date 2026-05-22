@@ -101,7 +101,7 @@ class StudentPhoneNumberImporter extends Importer
                 }),
             ImportColumn::make('ext')
                 ->label('Extension')
-                ->rules(['integer', 'max_digits:8'])
+                ->rules(['nullable', 'integer', 'max_digits:8'])
                 ->example('789'),
             ImportColumn::make('type')
                 ->rules(['max:255'])

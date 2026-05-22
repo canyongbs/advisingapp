@@ -44,6 +44,7 @@ use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\Middleware\RateLimitedWithRedis;
+use InvalidArgumentException;
 use Throwable;
 
 class LookupPhoneNumber implements ShouldBeUnique, ShouldQueue
@@ -70,7 +71,19 @@ class LookupPhoneNumber implements ShouldBeUnique, ShouldQueue
             return;
         }
 
-        $phoneNumberLookupService->lookup($this->phoneNumber);
+        try {
+            $phoneNumberLookupService->lookup($this->phoneNumber);
+        } catch (InvalidArgumentException $exception) {
+            // A structurally invalid number will never resolve. Record it as
+            // invalid rather than retrying and ultimately failing the job.
+            PhoneNumberLookup::query()->firstOrCreate(
+                ['number' => $this->phoneNumber],
+                [
+                    'status' => PhoneNumberLookupStatus::Invalid,
+                    'raw_response' => ['error' => $exception->getMessage()],
+                ],
+            );
+        }
     }
 
     /**

@@ -39,6 +39,7 @@ use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
 use Illuminate\Support\Facades\Exceptions;
+use InvalidArgumentException;
 
 it('delegates to the phone number lookup service when the provider is configured', function () {
     $service = new class () implements PhoneNumberLookupService {
@@ -82,6 +83,25 @@ it('does nothing when the lookup provider is not configured', function () {
     (new LookupPhoneNumber('+16502530000'))->handle($service);
 
     expect($service->lookupWasCalled)->toBeFalse();
+});
+
+it('records an invalid result when the number fails E.164 validation', function () {
+    $service = new class () implements PhoneNumberLookupService {
+        public function isConfigured(): bool
+        {
+            return true;
+        }
+
+        public function lookup(string $phoneNumber): PhoneNumberLookup
+        {
+            throw new InvalidArgumentException("The phone number [{$phoneNumber}] is not a valid phone number.");
+        }
+    };
+
+    (new LookupPhoneNumber('+11234567890'))->handle($service);
+
+    expect(PhoneNumberLookup::query()->where('number', '+11234567890')->sole()->status)
+        ->toBe(PhoneNumberLookupStatus::Invalid);
 });
 
 it('is uniquely identified by its phone number', function () {
