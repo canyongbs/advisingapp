@@ -34,38 +34,14 @@
 </COPYRIGHT>
 */
 
-use App\Features\PhoneNumberLookupFeature;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+namespace App\Features;
 
-return new class () extends Migration {
-    public function up(): void
+use App\Support\AbstractFeatureFlag;
+
+class PhoneNumberLookupFeature extends AbstractFeatureFlag
+{
+    public function resolve(mixed $scope): mixed
     {
-        DB::transaction(function () {
-            Schema::create('phone_number_lookups', function (Blueprint $table) {
-                $table->uuid('id')->primary();
-                $table->string('number')->unique();
-                $table->string('status');
-                $table->string('carrier_name')->nullable();
-                $table->string('carrier_type')->nullable();
-                $table->jsonb('raw_response')->nullable();
-                $table->timestamps();
-
-                $table->index('number');
-            });
-
-            PhoneNumberLookupFeature::activate();
-        });
+        return false;
     }
-
-    public function down(): void
-    {
-        DB::transaction(function () {
-            PhoneNumberLookupFeature::deactivate();
-
-            Schema::dropIfExists('phone_number_lookups');
-        });
-    }
-};
+}

@@ -146,3 +146,43 @@ it('does not dispatch the aggregate job for an unrelated import', function () {
 
     Bus::assertNotDispatched(QueuePhoneNumberLookups::class);
 });
+
+it('does not queue a lookup for phone numbers belonging to soft-deleted records', function () {
+    Bus::fake([LookupPhoneNumber::class]);
+
+    // An active record — its number should be queued.
+    $student = Student::factory()->create();
+    StudentPhoneNumber::factory()->createQuietly([
+        'sisid' => $student->sisid,
+        'number' => '+16502530005',
+        'order' => 1,
+    ]);
+
+    // Soft-deleted records — their numbers should be skipped.
+    $deletedStudent = Student::factory()->create();
+    StudentPhoneNumber::factory()->createQuietly([
+        'sisid' => $deletedStudent->sisid,
+        'number' => '+16502530006',
+        'order' => 1,
+    ]);
+    $deletedStudent->delete();
+
+    $deletedProspect = Prospect::factory()->create();
+    ProspectPhoneNumber::factory()->createQuietly([
+        'prospect_id' => $deletedProspect->getKey(),
+        'number' => '+16502530007',
+        'order' => 1,
+    ]);
+    $deletedProspect->delete();
+
+    $service = Mockery::mock(PhoneNumberLookupService::class);
+    $service->shouldReceive('isConfigured')->andReturn(true);
+
+    app()->instance(PhoneNumberLookupService::class, $service);
+
+    app()->call([new QueuePhoneNumberLookups(), 'handle']);
+
+    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530005'))->toHaveCount(1)
+        ->and(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530006'))->toHaveCount(0)
+        ->and(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530007'))->toHaveCount(0);
+});

@@ -36,9 +36,11 @@
 
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\IntegrationTwilio\Tests\Fixtures\FakeTelnyxHttpClient;
+use AdvisingApp\Notification\Enums\SmsMessagingProvider;
 use AdvisingApp\StudentDataModel\Contracts\PhoneNumberLookupService;
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
+use App\Features\PhoneNumberLookupFeature;
 use Telnyx\ApiRequestor;
 use Telnyx\Exception\ApiErrorException;
 use Telnyx\HttpClient\CurlClient;
@@ -52,7 +54,10 @@ function fakeTelnyxLookup(array $data, int $status = 200): void
 }
 
 beforeEach(function () {
+    PhoneNumberLookupFeature::activate();
+
     $settings = app(TwilioSettings::class);
+    $settings->provider = SmsMessagingProvider::Telnyx;
     $settings->telnyx_api_key = 'test-telnyx-api-key';
     $settings->save();
 });
@@ -185,13 +190,54 @@ it('throws when the phone number is not a valid E.164 number', function () {
         ->toThrow(InvalidArgumentException::class);
 });
 
-it('reports as configured when the Telnyx API key is set', function () {
+it('reports as configured when messaging is enabled with a Telnyx API key', function () {
+    $settings = app(TwilioSettings::class);
+    $settings->is_enabled = true;
+    $settings->save();
+
     expect(app(PhoneNumberLookupService::class)->isConfigured())->toBeTrue();
 });
 
 it('reports as not configured when the Telnyx API key is blank', function () {
     $settings = app(TwilioSettings::class);
+    $settings->is_enabled = true;
     $settings->telnyx_api_key = null;
+    $settings->save();
+
+    expect(app(PhoneNumberLookupService::class)->isConfigured())->toBeFalse();
+});
+
+it('reports as not configured when messaging is disabled', function () {
+    $settings = app(TwilioSettings::class);
+    $settings->is_enabled = false;
+    $settings->save();
+
+    expect(app(PhoneNumberLookupService::class)->isConfigured())->toBeFalse();
+});
+
+it('reports as not configured when SMS demo mode is enabled', function () {
+    $settings = app(TwilioSettings::class);
+    $settings->is_enabled = true;
+    $settings->is_demo_mode_enabled = true;
+    $settings->save();
+
+    expect(app(PhoneNumberLookupService::class)->isConfigured())->toBeFalse();
+});
+
+it('reports as not configured when Telnyx is not the selected provider', function () {
+    $settings = app(TwilioSettings::class);
+    $settings->is_enabled = true;
+    $settings->provider = SmsMessagingProvider::Twilio;
+    $settings->save();
+
+    expect(app(PhoneNumberLookupService::class)->isConfigured())->toBeFalse();
+});
+
+it('reports as not configured when the phone number lookup feature is disabled', function () {
+    PhoneNumberLookupFeature::deactivate();
+
+    $settings = app(TwilioSettings::class);
+    $settings->is_enabled = true;
     $settings->save();
 
     expect(app(PhoneNumberLookupService::class)->isConfigured())->toBeFalse();

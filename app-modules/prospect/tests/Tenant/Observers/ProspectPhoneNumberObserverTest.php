@@ -35,14 +35,20 @@
 */
 
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
+use AdvisingApp\Notification\Enums\SmsMessagingProvider;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
+use App\Features\PhoneNumberLookupFeature;
 use Illuminate\Support\Facades\Bus;
 
 beforeEach(function () {
+    PhoneNumberLookupFeature::activate();
+
     $settings = app(TwilioSettings::class);
+    $settings->is_enabled = true;
+    $settings->provider = SmsMessagingProvider::Telnyx;
     $settings->telnyx_api_key = 'test-telnyx-api-key';
     $settings->save();
 });
@@ -109,6 +115,60 @@ it('does not queue a lookup when a result already exists for the number', functi
 it('does not queue a lookup when no lookup provider is configured', function () {
     $settings = app(TwilioSettings::class);
     $settings->telnyx_api_key = null;
+    $settings->save();
+
+    Bus::fake([LookupPhoneNumber::class]);
+
+    $prospect = Prospect::factory()->create();
+
+    ProspectPhoneNumber::factory()->create([
+        'prospect_id' => $prospect->getKey(),
+        'number' => '+16502530000',
+    ]);
+
+    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530000'))
+        ->toHaveCount(0);
+});
+
+it('does not queue a lookup when messaging is disabled', function () {
+    $settings = app(TwilioSettings::class);
+    $settings->is_enabled = false;
+    $settings->save();
+
+    Bus::fake([LookupPhoneNumber::class]);
+
+    $prospect = Prospect::factory()->create();
+
+    ProspectPhoneNumber::factory()->create([
+        'prospect_id' => $prospect->getKey(),
+        'number' => '+16502530000',
+    ]);
+
+    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530000'))
+        ->toHaveCount(0);
+});
+
+it('does not queue a lookup when SMS demo mode is enabled', function () {
+    $settings = app(TwilioSettings::class);
+    $settings->is_demo_mode_enabled = true;
+    $settings->save();
+
+    Bus::fake([LookupPhoneNumber::class]);
+
+    $prospect = Prospect::factory()->create();
+
+    ProspectPhoneNumber::factory()->create([
+        'prospect_id' => $prospect->getKey(),
+        'number' => '+16502530000',
+    ]);
+
+    expect(Bus::dispatched(LookupPhoneNumber::class, fn (LookupPhoneNumber $job) => $job->phoneNumber === '+16502530000'))
+        ->toHaveCount(0);
+});
+
+it('does not queue a lookup when Telnyx is not the selected provider', function () {
+    $settings = app(TwilioSettings::class);
+    $settings->provider = SmsMessagingProvider::Twilio;
     $settings->save();
 
     Bus::fake([LookupPhoneNumber::class]);

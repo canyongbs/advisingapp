@@ -37,10 +37,12 @@
 namespace AdvisingApp\IntegrationTwilio\Services;
 
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
+use AdvisingApp\Notification\Enums\SmsMessagingProvider;
 use AdvisingApp\StudentDataModel\Actions\NormalizePhoneNumberToE164;
 use AdvisingApp\StudentDataModel\Contracts\PhoneNumberLookupService;
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
+use App\Features\PhoneNumberLookupFeature;
 use RuntimeException;
 use Telnyx\Exception\ApiErrorException;
 use Telnyx\NumberLookup;
@@ -55,7 +57,20 @@ class TelnyxPhoneNumberLookupService implements PhoneNumberLookupService
 
     public function isConfigured(): bool
     {
-        return filled(app(TwilioSettings::class)->telnyx_api_key);
+        if (! PhoneNumberLookupFeature::active()) {
+            return false;
+        }
+
+        $settings = app(TwilioSettings::class);
+
+        // Lookups must not run while messaging is disabled, and demo mode
+        // exists so that no real provider calls are ever made. Telnyx must
+        // also be the selected provider — its API key is only shown and
+        // kept current in the settings UI while it is.
+        return $settings->is_enabled
+            && ! $settings->is_demo_mode_enabled
+            && $settings->provider === SmsMessagingProvider::Telnyx
+            && filled($settings->telnyx_api_key);
     }
 
     public function lookup(string $phoneNumber): PhoneNumberLookup

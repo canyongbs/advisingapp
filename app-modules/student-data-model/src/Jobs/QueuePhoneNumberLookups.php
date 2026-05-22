@@ -73,15 +73,20 @@ class QueuePhoneNumberLookups implements ShouldBeUnique, ShouldQueue
             return;
         }
 
+        // whereHas() applies the related model's soft-delete scope, so numbers
+        // belonging to a soft-deleted Student or Prospect are excluded — an
+        // inactive record is not worth a paid lookup.
         $studentNumbers = StudentPhoneNumber::query()
             ->select('number')
             ->whereNotNull('number')
-            ->where('number', '!=', '');
+            ->where('number', '!=', '')
+            ->whereHas('student');
 
         $prospectNumbers = ProspectPhoneNumber::query()
             ->select('number')
             ->whereNotNull('number')
-            ->where('number', '!=', '');
+            ->where('number', '!=', '')
+            ->whereHas('prospect');
 
         // A UNION yields the distinct set of numbers across both tables, so
         // each number is dispatched exactly once. Chunking by the number

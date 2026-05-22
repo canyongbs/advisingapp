@@ -38,6 +38,8 @@ namespace AdvisingApp\IntegrationTwilio\Filament\Pages;
 
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Enums\SmsMessagingProvider;
+use AdvisingApp\StudentDataModel\Contracts\PhoneNumberLookupService;
+use AdvisingApp\StudentDataModel\Jobs\QueuePhoneNumberLookups;
 use App\Filament\Clusters\ProductIntegrations;
 use App\Models\User;
 use Filament\Forms\Components\Select;
@@ -60,6 +62,8 @@ class ManageMessagingSettings extends SettingsPage
     protected static ?int $navigationSort = 40;
 
     protected static ?string $cluster = ProductIntegrations::class;
+
+    protected bool $lookupWasConfiguredBeforeSave = false;
 
     public static function canAccess(): bool
     {
@@ -118,5 +122,26 @@ class ManageMessagingSettings extends SettingsPage
                     ])
                     ->visible(fn (Get $get) => $get('is_enabled') && ! $get('is_demo_mode_enabled')),
             ]);
+    }
+
+    protected function beforeSave(): void
+    {
+        $this->lookupWasConfiguredBeforeSave = app(PhoneNumberLookupService::class)->isConfigured();
+    }
+
+    protected function afterSave(): void
+    {
+        // When messaging has just become usable again — enabled, demo mode off,
+        // and a Telnyx key present — scan for phone numbers whose lookups were
+        // skipped while it was unavailable so they can catch up.
+        if ($this->lookupWasConfiguredBeforeSave) {
+            return;
+        }
+
+        if (! app(PhoneNumberLookupService::class)->isConfigured()) {
+            return;
+        }
+
+        QueuePhoneNumberLookups::dispatch()->afterCommit();
     }
 }
