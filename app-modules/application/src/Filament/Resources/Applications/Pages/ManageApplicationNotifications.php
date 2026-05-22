@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,10 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
+namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 
-use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
-use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use App\Features\FormsNotificationFeature;
 use App\Filament\Forms\Components\UserSelect;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection as ConcernsEditPageRedirection;
@@ -47,11 +46,11 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Override;
 
-class ManageFormNotifications extends EditRecord
+class ManageApplicationNotifications extends EditRecord
 {
     use ConcernsEditPageRedirection;
 
-    protected static string $resource = FormResource::class;
+    protected static string $resource = ApplicationResource::class;
 
     protected static ?string $navigationLabel = 'Notifications';
 
@@ -65,9 +64,6 @@ class ManageFormNotifications extends EditRecord
 
     public function form(Schema $schema): Schema
     {
-        // /** @var Form $record */
-        // $form = $this->record;
-
         return $schema
             ->components([
                 Section::make('')
@@ -79,11 +75,9 @@ class ManageFormNotifications extends EditRecord
                             ->searchable()
                             ->preload(),
                         Toggle::make('notify_to_care_team')
-                            ->label('Notify to Care Team')
-                            ->visible(fn (Form $form) => $form->is_authenticated),
-                        Toggle::make('notify_to_subscribers')
-                            ->label('Notify to Subscribers')
-                            ->visible(fn (Form $form) => $form->is_authenticated),
+                            ->label('Notify to Care Team'),
+                        Toggle::make('notify_to_subscibers')
+                            ->label('Notify to Subscribers'),
                         Toggle::make('notify_via_app')
                             ->label('Notify via App'),
                         Toggle::make('notify_via_email')

@@ -41,6 +41,9 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
+/**
+ * @mixin IdeHelperFormNotificationUser
+ */
 class FormNotificationUser extends Pivot
 {
     use HasUuids;

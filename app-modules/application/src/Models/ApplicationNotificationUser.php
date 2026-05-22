@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,24 +34,38 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+namespace AdvisingApp\Application\Models;
 
-return new class () extends Migration {
-    public function up(): void
+use App\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
+
+/**
+ * @mixin IdeHelperApplicationNotificationUser
+ */
+class ApplicationNotificationUser extends Pivot
+{
+    use HasUuids;
+
+    protected $fillable = [
+        'application_id',
+        'user_id',
+    ];
+
+    /**
+     * @return BelongsTo<Application, $this>
+     */
+    public function application(): BelongsTo
     {
-        Schema::create('form_notification_users', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->foreignUuid('form_id')->constrained('forms')->cascadeOnDelete();
-            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
-            $table->unique(['form_id', 'user_id']);
-            $table->timestamps();
-        });
+        return $this->belongsTo(Application::class);
     }
 
-    public function down(): void
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
     {
-        Schema::dropIfExists('form_notification_users');
+        return $this->belongsTo(User::class);
     }
-};
+}

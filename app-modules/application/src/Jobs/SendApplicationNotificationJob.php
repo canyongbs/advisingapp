@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Jobs;
+namespace AdvisingApp\Application\Jobs;
 
-use AdvisingApp\Form\Models\Form;
-use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Form\Notifications\FormSubmissionNotification;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Notifications\ApplicationSubmissionNotification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Bus\Queueable;
@@ -48,7 +48,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Notification;
 
-class SendFormNotificationJob implements ShouldQueue
+class SendApplicationNotificationJob implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -59,8 +59,8 @@ class SendFormNotificationJob implements ShouldQueue
      * Create a new job instance.
      */
     public function __construct(
-        public Form $form,
-        public FormSubmission $submission
+        public Application $application,
+        public ApplicationSubmission $submission
     ) {}
 
     /**
@@ -68,29 +68,29 @@ class SendFormNotificationJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $users = $this->form->notificationUsers;
+        $users = $this->application->notificationUsers;
 
         $author = $this->submission->author;
 
-        if ($this->form->notify_to_care_team && ($author instanceof Student || $author instanceof Prospect)) {
+        if ($this->application->notify_to_care_team && ($author instanceof Student || $author instanceof Prospect)) {
             $users = $users->merge($author->careTeam);
         }
 
-        if ($this->form->notify_to_subscibers && ($author instanceof Student || $author instanceof Prospect)) {
+        if ($this->application->notify_to_subscibers && ($author instanceof Student || $author instanceof Prospect)) {
             $users = $users->merge($author->subscribedUsers);
         }
 
         $users = $users->unique('id');
 
-        if ($users->isNotEmpty() && ($this->form->notify_via_app || $this->form->notify_via_email)) {
+        if ($users->isNotEmpty() && ($this->application->notify_via_app || $this->application->notify_via_email)) {
             $channels = match (true) {
-                $this->form->notify_via_email && $this->form->notify_via_app => ['mail', 'database'],
-                $this->form->notify_via_email => ['mail'],
-                $this->form->notify_via_app => ['database'],
+                $this->application->notify_via_email && $this->application->notify_via_app => ['mail', 'database'],
+                $this->application->notify_via_email => ['mail'],
+                $this->application->notify_via_app => ['database'],
                 default => [],
             };
 
-            Notification::send($users, new FormSubmissionNotification($this->form, $this->submission, $channels));
+            Notification::send($users, new ApplicationSubmissionNotification($this->application, $this->submission, $channels));
         }
     }
 }

@@ -40,10 +40,12 @@ use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Enums\FontWeight;
+use App\Models\User;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Spatie\MediaLibrary\HasMedia;
@@ -73,6 +75,10 @@ class Application extends Submissible implements HasMedia, HasRichContent
         'title',
         'title_color',
         'title_font_weight',
+        'notify_to_care_team',
+        'notify_to_subscibers',
+        'notify_via_app',
+        'notify_via_email',
     ];
 
     protected $casts = [
@@ -83,6 +89,10 @@ class Application extends Submissible implements HasMedia, HasRichContent
         'rounding' => Rounding::class,
         'should_generate_prospects' => 'boolean',
         'title_font_weight' => FontWeight::class,
+        'notify_to_care_team' => 'boolean',
+        'notify_to_subscibers' => 'boolean',
+        'notify_via_app' => 'boolean',
+        'notify_via_email' => 'boolean',
     ];
 
     public function setUpRichContent(): void
@@ -130,5 +140,15 @@ class Application extends Submissible implements HasMedia, HasRichContent
     public function workflows(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->workflowTriggers(), (new WorkflowTrigger())->workflow());
+    }
+
+    /**
+     * @return BelongsToMany<User, $this, ApplicationNotificationUser>
+     */
+    public function notificationUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'application_notification_users', 'application_id', 'user_id')
+            ->using(ApplicationNotificationUser::class)
+            ->withTimestamps();
     }
 }

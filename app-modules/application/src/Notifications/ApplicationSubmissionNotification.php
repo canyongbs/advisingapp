@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,13 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Notifications;
+namespace AdvisingApp\Application\Notifications;
 
-use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
-use AdvisingApp\Form\Models\Form;
-use AdvisingApp\Form\Models\FormField;
-use AdvisingApp\Form\Models\FormFieldSubmission;
-use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationField;
+use AdvisingApp\Application\Models\ApplicationFieldSubmission;
+use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -53,18 +53,18 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Notifications\Notification;
 
-class FormSubmissionNotification extends Notification implements ShouldQueue
+class ApplicationSubmissionNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
     /**
-     * @param Form $form
-     * @param FormSubmission $formSubmission
+     * @param Application $application
+     * @param ApplicationSubmission $applicationSubmission
      * @param array<int, string> $channels
      */
     public function __construct(
-        public Form $form,
-        public FormSubmission $formSubmission,
+        public Application $application,
+        public ApplicationSubmission $applicationSubmission,
         public array $channels = []
     ) {}
 
@@ -81,8 +81,8 @@ class FormSubmissionNotification extends Notification implements ShouldQueue
         $data = $this->buildViewData($notifiable);
 
         return (new MailMessage())
-            ->subject("New Form Submission: {$data['formName']}")
-            ->markdown('form::mail.form-submission', $data);
+            ->subject("New Application Submission: {$data['applicationName']}")
+            ->markdown('application::mail.application-submission', $data);
     }
 
     /**
@@ -97,29 +97,29 @@ class FormSubmissionNotification extends Notification implements ShouldQueue
 
         return FilamentNotification::make()
             ->info()
-            ->title('New Form Submission')
-            ->body("{$authorName} ({$data['email']}) submitted the <a href='{$data['formUrl']}'><u><b>{$data['formName']}</b></u></a> form on {$data['timestamp']}. <a href='{$data['submissionUrl']}'><u><b>View Submission</b></u></a>.")
+            ->title('New Application Submission')
+            ->body("{$authorName} ({$data['email']}) submitted the <a href='{$data['applicationUrl']}'><u><b>{$data['applicationName']}</b></u></a> application on {$data['timestamp']}. <a href='{$data['submissionUrl']}'><u><b>View Submission</b></u></a>.")
             ->getDatabaseMessage();
     }
 
     /**
-     * @return array{firstName: string, lastName: string, email: string, authorUrl: string, hasAuthorRecord: bool, formName: string, formUrl: string, submissionUrl: string, timestamp: string, formData: array<string, string>}
+     * @return array{firstName: string, lastName: string, email: string, authorUrl: string, hasAuthorRecord: bool, applicationName: string, applicationUrl: string, submissionUrl: string, timestamp: string, formData: array<string, string>}
      */
     protected function buildViewData(User $notifiable): array
     {
-        $this->formSubmission->loadMissing(['author', 'fields']);
+        $this->applicationSubmission->loadMissing(['author', 'fields']);
 
-        $submissionUrl = FormResource::getUrl('manage-submissions', [
-            'record' => $this->form,
+        $submissionUrl = ApplicationResource::getUrl('manage-submissions', [
+            'record' => $this->application,
             'tableAction' => 'view',
-            'tableActionRecord' => $this->formSubmission->id,
+            'tableActionRecord' => $this->applicationSubmission->id,
         ]);
 
-        $formUrl = FormResource::getUrl('edit', ['record' => $this->form]);
+        $applicationUrl = ApplicationResource::getUrl('edit', ['record' => $this->application]);
 
         $timestamp = now()->tz($notifiable->timezone ?? 'UTC')->format('M j, Y g:i a (T)');
 
-        $author = $this->formSubmission->author;
+        $author = $this->applicationSubmission->author;
         $firstName = 'Unknown';
         $lastName = 'Unknown';
         $email = 'No email';
@@ -141,15 +141,15 @@ class FormSubmissionNotification extends Notification implements ShouldQueue
             $email = $author->primaryEmailAddress->address ?? 'No email';
         }
 
-        $formName = (string) ($this->form->name ?? $this->form->title);
+        $applicationName = (string) ($this->application->name ?? $this->application->title);
 
         $formData = [];
 
-        /** @var Collection<int, FormField> $fields */
-        $fields = $this->formSubmission->fields;
+        /** @var Collection<int, ApplicationField> $fields */
+        $fields = $this->applicationSubmission->fields;
 
         foreach ($fields as $field) {
-            /** @var FormFieldSubmission $pivot */
+            /** @var ApplicationFieldSubmission $pivot */
             $pivot = $field->pivot;
             $response = $pivot->response;
             $formData[$field->label] = implode(', ', $response);
@@ -161,8 +161,8 @@ class FormSubmissionNotification extends Notification implements ShouldQueue
             'email' => $email,
             'authorUrl' => $authorUrl,
             'hasAuthorRecord' => $hasAuthorRecord,
-            'formName' => $formName,
-            'formUrl' => $formUrl,
+            'applicationName' => $applicationName,
+            'applicationUrl' => $applicationUrl,
             'submissionUrl' => $submissionUrl,
             'timestamp' => $timestamp,
             'formData' => $formData,
