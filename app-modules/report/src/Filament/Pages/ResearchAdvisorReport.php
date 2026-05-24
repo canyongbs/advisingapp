@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Report\Abstract\AiReport;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\ResearchAdvisorReportStats;
@@ -49,7 +50,7 @@ class ResearchAdvisorReport extends AiReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Enterprise AI';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::EnterpriseAi;
 
     protected static ?string $title = 'Research Advisor';
 

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\Roles;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\CreateRole;
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\EditRole;
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\ListRoles;
@@ -49,7 +50,7 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'User Management';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::UserManagement;
 
     protected static ?int $navigationSort = 30;
 

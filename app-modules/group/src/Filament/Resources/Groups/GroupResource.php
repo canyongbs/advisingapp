@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Group\Filament\Resources\Groups;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Group\Filament\Resources\Groups\Pages\CreateGroup;
 use AdvisingApp\Group\Filament\Resources\Groups\Pages\EditGroup;
 use AdvisingApp\Group\Filament\Resources\Groups\Pages\ListGroups;
@@ -47,7 +48,7 @@ class GroupResource extends Resource
 {
     protected static ?string $model = Group::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?int $navigationSort = 40;
 

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\CreateResourceHubArticle;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\EditResourceHubArticle;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\ListResourceHubArticles;
@@ -57,7 +58,7 @@ class ResourceHubArticleResource extends Resource
 
     protected static ?string $breadcrumb = 'Resource Hub';
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?int $navigationSort = 100;
 

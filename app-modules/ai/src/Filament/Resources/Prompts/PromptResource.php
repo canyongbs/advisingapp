@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\Prompts;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\CreatePrompt;
 use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\EditPrompt;
 use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\ListPrompts;
@@ -48,7 +49,7 @@ class PromptResource extends Resource
 {
     protected static ?string $model = Prompt::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Enterprise AI';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::EnterpriseAi;
 
     protected static ?string $navigationLabel = 'Prompt Library';
 

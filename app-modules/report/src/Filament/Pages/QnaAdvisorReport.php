@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Report\Abstract\AiReport;
 use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportLineChart;
 use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportStats;
@@ -51,7 +52,7 @@ class QnaAdvisorReport extends AiReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Enterprise AI';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::EnterpriseAi;
 
     protected static ?string $title = 'Customer Advisor';
 

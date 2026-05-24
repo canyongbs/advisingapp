@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Survey\Filament\Resources\Surveys;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Survey\Filament\Resources\Surveys\Pages\CreateSurvey;
 use AdvisingApp\Survey\Filament\Resources\Surveys\Pages\EditSurvey;
 use AdvisingApp\Survey\Filament\Resources\Surveys\Pages\ListSurveys;
@@ -50,7 +51,7 @@ class SurveyResource extends Resource
 {
     protected static ?string $model = Survey::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Premium Features';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::PremiumFeatures;
 
     protected static ?int $navigationSort = 70;
 

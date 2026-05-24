@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Portal\Filament\Pages;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Portal\Actions\GeneratePortalEmbedCode;
 use AdvisingApp\Portal\Enums\GdprBannerButtonLabel;
@@ -70,7 +71,7 @@ class ManagePortalSettings extends SettingsPage
 
     protected static ?string $title = 'Portals';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Global Administration';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::GlobalAdministration;
 
     public static function canAccess(): bool
     {

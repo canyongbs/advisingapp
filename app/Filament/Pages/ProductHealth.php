@@ -36,14 +36,38 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\NavigationGroup;
 use App\Models\User;
+use Carbon\Carbon;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
-use ShuvroRoy\FilamentSpatieLaravelHealth\Pages\HealthCheckResults;
+use Illuminate\Support\Facades\Artisan;
+use Spatie\Health\Commands\RunHealthChecksCommand;
 use Spatie\Health\Enums\Status;
 use Spatie\Health\ResultStores\ResultStore;
 
-class ProductHealth extends HealthCheckResults
+class ProductHealth extends Page
 {
+  /**
+   * @var array<string, string>
+   */
+  protected $listeners = ['refresh-component' => '$refresh'];
+
+  protected string $view = 'filament-spatie-health::pages.health-check-results';
+
+  protected static string | \UnitEnum | null $navigationGroup = NavigationGroup::GlobalAdministration;
+
+  protected function getActions(): array
+  {
+    return [
+      Action::make(__('filament-spatie-health::health.pages.health_check_results.buttons.refresh'))
+        ->button()
+        ->action('refresh'),
+    ];
+  }
+
     public static function getNavigationIcon(): string
     {
         return '';
@@ -59,14 +83,36 @@ class ProductHealth extends HealthCheckResults
         return 'Product Health';
     }
 
-    public static function getNavigationGroup(): ?string
+    public function getTitle(): string | Htmlable
     {
-        return 'Global Administration';
+      return static::getNavigationLabel();
     }
 
     public static function getNavigationSort(): ?int
     {
         return 90;
+    }
+
+    protected function getViewData(): array
+    {
+      $checkResults = app(ResultStore::class)->latestResults();
+
+      return [
+        'lastRanAt' => new Carbon($checkResults?->finishedAt),
+        'checkResults' => $checkResults,
+      ];
+    }
+
+    public function refresh(): void
+    {
+      Artisan::call(RunHealthChecksCommand::class);
+
+      $this->dispatch('refresh-component');
+
+      Notification::make()
+        ->title(__('filament-spatie-health::health.pages.health_check_results.notifications.results_refreshed'))
+        ->success()
+        ->send();
     }
 
     public static function getNavigationBadge(): ?string

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Resources\Reports;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Report\Filament\Resources\Reports\Pages\CreateReport;
 use AdvisingApp\Report\Filament\Resources\Reports\Pages\EditReport;
 use AdvisingApp\Report\Filament\Resources\Reports\Pages\ListReports;
@@ -47,7 +48,7 @@ class ReportResource extends Resource
 {
     protected static ?string $model = Report::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Data and Analytics';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::DataAndAnalytics;
 
     protected static ?int $navigationSort = 50;
 

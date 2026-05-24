@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Assistant\Filament\Pages;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageConsent;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders;
@@ -61,7 +62,7 @@ class InstitutionalAdvisor extends Page
 
     protected string $view = 'assistant::filament.pages.personal-assistant';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Enterprise AI';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::EnterpriseAi;
 
     protected static ?string $navigationLabel = 'Institutional Advisor';
 

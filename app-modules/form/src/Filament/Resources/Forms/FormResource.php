@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Form\Filament\Resources\Forms;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\CreateForm;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\EditForm;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ListForms;
@@ -54,7 +55,7 @@ class FormResource extends Resource
 {
     protected static ?string $model = Form::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?int $navigationSort = 120;
 

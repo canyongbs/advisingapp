@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\CreateEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEventDetails;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEventPage;
@@ -53,7 +54,7 @@ class EventResource extends Resource
 {
     protected static ?string $model = Event::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?int $navigationSort = 80;
 

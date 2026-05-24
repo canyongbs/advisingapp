@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Project\Filament\Resources\Projects;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Pipeline\Filament\Resources\Pipelines\PipelineResource;
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\CreateProject;
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\EditProject;
@@ -57,7 +58,7 @@ class ProjectResource extends Resource
 {
     protected static ?string $model = Project::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?int $navigationSort = 90;
 

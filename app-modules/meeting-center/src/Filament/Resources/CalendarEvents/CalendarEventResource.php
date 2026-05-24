@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages\CreateCalendarEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages\EditCalendarEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages\ListCalendarEvents;
@@ -48,7 +49,7 @@ class CalendarEventResource extends Resource
 {
     protected static ?string $model = CalendarEvent::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?int $navigationSort = 60;
 

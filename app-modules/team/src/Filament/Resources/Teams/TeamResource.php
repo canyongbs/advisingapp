@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Team\Filament\Resources\Teams;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Team\Filament\Resources\Teams\Pages\CreateTeam;
 use AdvisingApp\Team\Filament\Resources\Teams\Pages\EditTeam;
 use AdvisingApp\Team\Filament\Resources\Teams\Pages\ListTeams;
@@ -49,7 +50,7 @@ class TeamResource extends Resource
 {
     protected static ?string $model = Team::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'User Management';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::UserManagement;
 
     protected static ?int $navigationSort = 20;
 

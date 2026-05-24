@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\CreateQnaAdvisor;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\EditQnaAdvisor;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\EditQnaAdvisorLinks;
@@ -56,7 +57,7 @@ class QnaAdvisorResource extends Resource
 {
     protected static ?string $model = QnaAdvisor::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Chatbots';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Chatbots;
 
     protected static ?string $modelLabel = 'Customer Advisor';
 

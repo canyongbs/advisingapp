@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Report\Abstract\AiReport;
 use AdvisingApp\Report\Filament\Widgets\AiStats;
 use AdvisingApp\Report\Filament\Widgets\ExchangesByMonthLineChart;
@@ -50,7 +51,7 @@ class ArtificialIntelligence extends AiReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Enterprise AI';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::EnterpriseAi;
 
     protected static ?string $navigationLabel = 'Utilization';
 

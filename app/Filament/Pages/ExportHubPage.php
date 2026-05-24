@@ -36,6 +36,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\NavigationGroup;
 use App\Models\Export;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -57,7 +58,7 @@ class ExportHubPage extends Page implements HasForms, HasTable
 
     protected string $view = 'filament.pages.export-hub-page';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Data and Analytics';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::DataAndAnalytics;
 
     protected static ?string $navigationLabel = 'Export Hub';
 

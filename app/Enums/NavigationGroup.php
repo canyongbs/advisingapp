@@ -34,46 +34,47 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
+namespace App\Enums;
 
-use App\Enums\NavigationGroup;
-use AdvisingApp\Report\Abstract\AiReport;
-use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use AdvisingApp\Report\Filament\Widgets\InstitutionalAdvisorLineChart;
-use AdvisingApp\Report\Filament\Widgets\InstitutionalAdvisorStats;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use App\Filament\Clusters\ReportLibrary;
-use UnitEnum;
+use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Contracts\HasLabel;
 
-class InstitutionalAdvisorReport extends AiReport
+enum NavigationGroup implements HasIcon, HasLabel
 {
-    use HasFiltersForm;
+    case EnterpriseAi;
+    case Chatbots;
+    case Crm;
+    case PremiumFeatures;
+    case DataAndAnalytics;
+    case UserManagement;
+    case Settings;
+    case GlobalAdministration;
 
-    protected static ?string $cluster = ReportLibrary::class;
-
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::EnterpriseAi;
-
-    protected static ?string $title = 'Institutional Advisor';
-
-    protected static string $routePath = 'institutional-advisor-report';
-
-    protected static ?int $navigationSort = 150;
-
-    protected string $cacheTag = 'institutional-advisor-report';
-
-    public function getWidgets(): array
+    public function getLabel(): string
     {
-        return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            InstitutionalAdvisorStats::make(['cacheTag' => $this->cacheTag]),
-            InstitutionalAdvisorLineChart::make(['cacheTag' => $this->cacheTag]),
-        ];
+        return match ($this) {
+            self::EnterpriseAi => 'Enterprise AI',
+            self::Chatbots => 'Chatbots',
+            self::Crm => 'CRM',
+            self::PremiumFeatures => 'Premium Features',
+            self::DataAndAnalytics => 'Data and Analytics',
+            self::UserManagement => 'User Management',
+            self::Settings => 'Settings',
+            self::GlobalAdministration => 'Global Administration',
+        };
     }
 
-    public function getWidgetData(): array
+    public function getIcon(): string
     {
-        return [
-            'filters' => $this->filters,
-        ];
+        return match ($this) {
+            self::EnterpriseAi => 'heroicon-o-sparkles',
+            self::Chatbots => 'heroicon-o-bolt',
+            self::Crm => 'heroicon-o-academic-cap',
+            self::PremiumFeatures => 'heroicon-o-rocket-launch',
+            self::DataAndAnalytics => 'heroicon-o-circle-stack',
+            self::UserManagement => 'heroicon-o-users',
+            self::Settings => 'heroicon-o-wrench-screwdriver',
+            self::GlobalAdministration => 'heroicon-o-adjustments-vertical',
+        };
     }
 }

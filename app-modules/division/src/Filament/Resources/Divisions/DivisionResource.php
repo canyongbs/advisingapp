@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Division\Filament\Resources\Divisions;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Division\Filament\Resources\Divisions\Pages\CreateDivision;
 use AdvisingApp\Division\Filament\Resources\Divisions\Pages\EditDivision;
 use AdvisingApp\Division\Filament\Resources\Divisions\Pages\ListDivisions;
@@ -49,7 +50,7 @@ class DivisionResource extends Resource
 {
     protected static ?string $model = Division::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'User Management';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::UserManagement;
 
     protected static ?int $navigationSort = 50;
 

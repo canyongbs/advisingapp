@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages\CreateBasicNeedsProgram;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages\EditBasicNeedsProgram;
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages\ListBasicNeedsPrograms;
@@ -57,7 +58,7 @@ class BasicNeedsProgramResource extends Resource
 
     protected static ?int $navigationSort = 110;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?string $recordTitleAttribute = 'name';
 

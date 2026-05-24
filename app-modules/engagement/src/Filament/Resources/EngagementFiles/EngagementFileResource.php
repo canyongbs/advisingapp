@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Engagement\Filament\Resources\EngagementFiles;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\Pages\CreateEngagementFile;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\Pages\EditEngagementFile;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\Pages\ListEngagementFiles;
@@ -52,7 +53,7 @@ class EngagementFileResource extends Resource
 {
     protected static ?string $model = EngagementFile::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?int $navigationSort = 7;
 

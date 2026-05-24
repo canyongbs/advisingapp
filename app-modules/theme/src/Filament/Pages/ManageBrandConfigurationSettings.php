@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Theme\Filament\Pages;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Theme\Settings\ThemeSettings;
 use App\Models\Tenant;
 use App\Models\User;
@@ -63,7 +64,7 @@ class ManageBrandConfigurationSettings extends SettingsPage
 
     protected static ?string $title = 'Partner Branding';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Global Administration';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::GlobalAdministration;
 
     public static function canAccess(): bool
     {

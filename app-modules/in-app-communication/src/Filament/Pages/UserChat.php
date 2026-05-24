@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\InAppCommunication\Filament\Pages;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\InAppCommunication\Actions\AddUserToConversation;
 use AdvisingApp\InAppCommunication\Actions\CreateTwilioConversation;
@@ -97,7 +98,7 @@ class UserChat extends Page implements HasForms, HasActions
 
     public array $conversationActiveUsers = [];
 
-    protected static string | UnitEnum | null $navigationGroup = 'Premium Features';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::PremiumFeatures;
 
     protected static ?int $navigationSort = 10;
 

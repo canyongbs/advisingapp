@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Application\Filament\Resources\Applications;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\CreateApplication;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\EditApplication;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ListApplications;
@@ -52,7 +53,7 @@ class ApplicationResource extends Resource
 {
     protected static ?string $model = Application::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?int $navigationSort = 130;
 

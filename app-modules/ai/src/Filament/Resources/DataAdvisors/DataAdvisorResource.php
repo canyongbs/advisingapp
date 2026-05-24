@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\DataAdvisors;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Ai\Filament\Resources\DataAdvisors\Pages\CreateDataAdvisor;
 use AdvisingApp\Ai\Filament\Resources\DataAdvisors\Pages\EditDataAdvisor;
 use AdvisingApp\Ai\Filament\Resources\DataAdvisors\Pages\ListDataAdvisors;
@@ -52,7 +53,7 @@ class DataAdvisorResource extends Resource
 {
     protected static ?string $model = DataAdvisor::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Enterprise AI';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::EnterpriseAi;
 
     protected static ?int $navigationSort = 40;
 

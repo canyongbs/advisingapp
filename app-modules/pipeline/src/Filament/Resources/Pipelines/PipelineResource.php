@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Pipeline\Filament\Resources\Pipelines;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages\CreatePipeline;
 use AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages\EditPipeline;
 use AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages\ManageEductables;
@@ -50,7 +51,7 @@ class PipelineResource extends Resource
 {
     protected static ?string $model = Pipeline::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?int $navigationSort = 30;
 

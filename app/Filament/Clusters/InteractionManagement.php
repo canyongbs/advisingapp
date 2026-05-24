@@ -36,6 +36,7 @@
 
 namespace App\Filament\Clusters;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\InteractionDriverResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionInitiatives\InteractionInitiativeResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomes\InteractionOutcomeResource;
@@ -48,7 +49,7 @@ use UnitEnum;
 
 class InteractionManagement extends Cluster
 {
-    protected static string | UnitEnum | null $navigationGroup = 'Settings';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Settings;
 
     protected static ?int $navigationSort = 80;
 

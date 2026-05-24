@@ -56,7 +56,6 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Infolists\Components\Entry;
 use Filament\Navigation\MenuItem;
-use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Assets\Asset;
@@ -148,40 +147,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ])
-            ->navigationGroups([
-                NavigationGroup::make()
-                    ->label('Enterprise AI')
-                    ->icon('heroicon-o-sparkles')
-                    ->collapsed(),
-                NavigationGroup::make()
-                    ->label('Chatbots')
-                    ->icon('heroicon-o-bolt')
-                    ->collapsed(),
-                NavigationGroup::make()
-                    ->label('CRM')
-                    ->icon('heroicon-o-academic-cap')
-                    ->collapsed(),
-                NavigationGroup::make()
-                    ->label('Premium Features')
-                    ->icon('heroicon-o-rocket-launch')
-                    ->collapsed(),
-                NavigationGroup::make()
-                    ->label('Data and Analytics')
-                    ->icon('heroicon-o-circle-stack')
-                    ->collapsed(),
-                NavigationGroup::make()
-                    ->label('User Management')
-                    ->icon('heroicon-o-users')
-                    ->collapsed(),
-                NavigationGroup::make()
-                    ->label('Settings')
-                    ->icon('heroicon-o-wrench-screwdriver')
-                    ->collapsed(),
-                NavigationGroup::make()
-                    ->label('Global Administration')
-                    ->icon('heroicon-o-adjustments-vertical')
-                    ->collapsed(),
             ])
             ->sidebarCollapsibleOnDesktop()
             ->plugins([

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StockMedia\Filament\Pages;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\StockMedia\Enums\StockMediaProvider;
 use AdvisingApp\StockMedia\Settings\StockMediaSettings;
 use Filament\Forms\Components\Select;
@@ -48,7 +49,7 @@ use UnitEnum;
 
 class ManageStockMediaSettings extends SettingsPage
 {
-    protected static string | UnitEnum | null $navigationGroup = 'Global Administration';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::GlobalAdministration;
 
     protected static ?int $navigationSort = 80;
 

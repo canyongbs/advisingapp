@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\Prospects;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\CreateProspect;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\EditProspect;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ListProspects;
@@ -60,7 +61,7 @@ class ProspectResource extends Resource
 
     protected static ?int $navigationSort = 20;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?string $recordTitleAttribute = 'full_name';
 

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Students;
 
+use App\Enums\NavigationGroup;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\CreateStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\EditStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ListStudents;
@@ -61,7 +62,7 @@ class StudentResource extends Resource
 
     protected static ?int $navigationSort = 30;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?string $recordTitleAttribute = 'full_name';
 
