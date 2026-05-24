@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\CreateResourceHubArticle;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\EditResourceHubArticle;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\ListResourceHubArticles;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\ViewResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;

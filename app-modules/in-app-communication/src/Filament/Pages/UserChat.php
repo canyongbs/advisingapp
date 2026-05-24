@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\InAppCommunication\Filament\Pages;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\InAppCommunication\Actions\AddUserToConversation;
 use AdvisingApp\InAppCommunication\Actions\CreateTwilioConversation;
@@ -54,6 +53,7 @@ use AdvisingApp\IntegrationTwilio\Actions\GetTwilioApiKey;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use App\Enums\Feature;
 use App\Enums\Integration;
+use App\Enums\NavigationGroup;
 use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Exception;

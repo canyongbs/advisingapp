@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use App\Enums\NavigationGroup;
 use Filament\Pages\Page;
 use UnitEnum;
 

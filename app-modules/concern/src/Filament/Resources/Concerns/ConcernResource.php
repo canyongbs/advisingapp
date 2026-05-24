@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Concern\Filament\Resources\Concerns;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Concern\Filament\Resources\Concerns\Pages\ListConcerns;
 use AdvisingApp\Concern\Models\Concern;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
 use UnitEnum;
 

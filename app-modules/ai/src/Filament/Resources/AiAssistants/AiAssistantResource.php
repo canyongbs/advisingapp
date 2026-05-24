@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\AiAssistants;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\CreateAiAssistant;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\EditAiAssistant;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\EditAiAssistantLinks;
@@ -45,6 +44,7 @@ use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ManageAiAssistantAdditi
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ManageEmployeeAdvisorCategories;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ManageEmployeeAdvisorQuestions;
 use AdvisingApp\Ai\Models\AiAssistant;
+use App\Enums\NavigationGroup;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
 use UnitEnum;

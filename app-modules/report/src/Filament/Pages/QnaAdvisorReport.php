@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Report\Abstract\AiReport;
 use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportLineChart;
 use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportStats;
 use AdvisingApp\Report\Filament\Widgets\QnaAdvisorReportTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Enums\Feature;
+use App\Enums\NavigationGroup;
 use App\Features\AiAssistantDtoRenameFeature;
 use App\Filament\Clusters\ReportLibrary;
 use Illuminate\Support\Facades\Gate;

@@ -47,26 +47,18 @@ use Illuminate\Support\Facades\Artisan;
 use Spatie\Health\Commands\RunHealthChecksCommand;
 use Spatie\Health\Enums\Status;
 use Spatie\Health\ResultStores\ResultStore;
+use UnitEnum;
 
 class ProductHealth extends Page
 {
-  /**
-   * @var array<string, string>
-   */
-  protected $listeners = ['refresh-component' => '$refresh'];
+    /**
+     * @var array<string, string>
+     */
+    protected $listeners = ['refresh-component' => '$refresh'];
 
-  protected string $view = 'filament-spatie-health::pages.health-check-results';
+    protected string $view = 'filament-spatie-health::pages.health-check-results';
 
-  protected static string | \UnitEnum | null $navigationGroup = NavigationGroup::GlobalAdministration;
-
-  protected function getActions(): array
-  {
-    return [
-      Action::make(__('filament-spatie-health::health.pages.health_check_results.buttons.refresh'))
-        ->button()
-        ->action('refresh'),
-    ];
-  }
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::GlobalAdministration;
 
     public static function getNavigationIcon(): string
     {
@@ -85,7 +77,7 @@ class ProductHealth extends Page
 
     public function getTitle(): string | Htmlable
     {
-      return static::getNavigationLabel();
+        return static::getNavigationLabel();
     }
 
     public static function getNavigationSort(): ?int
@@ -93,26 +85,16 @@ class ProductHealth extends Page
         return 90;
     }
 
-    protected function getViewData(): array
-    {
-      $checkResults = app(ResultStore::class)->latestResults();
-
-      return [
-        'lastRanAt' => new Carbon($checkResults?->finishedAt),
-        'checkResults' => $checkResults,
-      ];
-    }
-
     public function refresh(): void
     {
-      Artisan::call(RunHealthChecksCommand::class);
+        Artisan::call(RunHealthChecksCommand::class);
 
-      $this->dispatch('refresh-component');
+        $this->dispatch('refresh-component');
 
-      Notification::make()
-        ->title(__('filament-spatie-health::health.pages.health_check_results.notifications.results_refreshed'))
-        ->success()
-        ->send();
+        Notification::make()
+            ->title(__('filament-spatie-health::health.pages.health_check_results.notifications.results_refreshed'))
+            ->success()
+            ->send();
     }
 
     public static function getNavigationBadge(): ?string
@@ -137,5 +119,24 @@ class ProductHealth extends Page
         $user = auth()->user();
 
         return $user->isSuperAdmin();
+    }
+
+    protected function getActions(): array
+    {
+        return [
+            Action::make(__('filament-spatie-health::health.pages.health_check_results.buttons.refresh'))
+                ->button()
+                ->action('refresh'),
+        ];
+    }
+
+    protected function getViewData(): array
+    {
+        $checkResults = app(ResultStore::class)->latestResults();
+
+        return [
+            'lastRanAt' => new Carbon($checkResults?->finishedAt),
+            'checkResults' => $checkResults,
+        ];
     }
 }

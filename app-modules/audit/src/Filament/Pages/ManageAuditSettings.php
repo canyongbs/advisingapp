@@ -36,9 +36,9 @@
 
 namespace AdvisingApp\Audit\Filament\Pages;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Audit\Actions\Finders\AuditableModels;
 use AdvisingApp\Audit\Settings\AuditSettings;
+use App\Enums\NavigationGroup;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;

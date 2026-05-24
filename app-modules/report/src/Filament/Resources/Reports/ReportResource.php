@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Report\Filament\Resources\Reports;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Report\Filament\Resources\Reports\Pages\CreateReport;
 use AdvisingApp\Report\Filament\Resources\Reports\Pages\EditReport;
 use AdvisingApp\Report\Filament\Resources\Reports\Pages\ListReports;
 use AdvisingApp\Report\Models\Report;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
 use UnitEnum;
 

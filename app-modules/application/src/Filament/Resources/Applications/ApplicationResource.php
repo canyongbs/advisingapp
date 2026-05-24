@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Application\Filament\Resources\Applications;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\CreateApplication;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\EditApplication;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ListApplications;
@@ -44,6 +43,7 @@ use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicat
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationWorkflows;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ViewApplication;
 use AdvisingApp\Application\Models\Application;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;

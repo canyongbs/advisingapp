@@ -67,7 +67,7 @@ class ManageResearchRequests extends Page
     {
         return [
             NavigationItem::make('Research Advisor')
-          ->group(NavigationGroup::EnterpriseAi->getLabel())
+                ->group(NavigationGroup::EnterpriseAi->getLabel())
                 ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName(), NewResearchRequest::getRouteName()))
                 ->sort(30)
                 ->url(static::getUrl()),
