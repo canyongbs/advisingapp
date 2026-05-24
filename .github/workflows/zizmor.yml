@@ -1,0 +1,38 @@
+name: zizmor
+
+on:
+    pull_request:
+    merge_group:
+        types: [checks_requested]
+
+permissions: {}
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    zizmor:
+        name: Zizmor
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+        steps:
+            - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+              with:
+                  persist-credentials: false
+
+            - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d # v4.0.1
+              id: changes
+              with:
+                  filters: |
+                      workflows:
+                          - '.github/workflows/**'
+                          - '.github/dependabot.yml'
+
+            - if: steps.changes.outputs.workflows == 'true'
+              uses: zizmorcore/zizmor-action@5f14fd08f7cf1cb1609c1e344975f152c7ee938d # v0.5.6
+              with:
+                  advanced-security: false
+                  persona: auditor
+                  min-severity: informational

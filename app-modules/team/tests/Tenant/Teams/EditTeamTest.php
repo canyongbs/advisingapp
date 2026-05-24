@@ -100,6 +100,8 @@ test('Non Super Admin Users can be added to a team', function () {
 
     $user->givePermissionTo('team.view-any');
     $user->givePermissionTo('team.*.update');
+    $user->givePermissionTo('user.view-any');
+    $user->givePermissionTo('user.*.update');
 
     actingAs($user)
         ->get(
@@ -127,6 +129,8 @@ test('Super Admin Users cannot be added to a team', function () {
 
     $user->givePermissionTo('team.view-any');
     $user->givePermissionTo('team.*.update');
+    $user->givePermissionTo('user.view-any');
+    $user->givePermissionTo('user.*.update');
 
     $superAdmin->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
@@ -157,6 +161,8 @@ test('Super Admin Users do not show up in UsersRelationManager for Teams search 
 
     $user->givePermissionTo('team.view-any');
     $user->givePermissionTo('team.*.update');
+    $user->givePermissionTo('user.view-any');
+    $user->givePermissionTo('user.*.update');
 
     $superAdmin->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
