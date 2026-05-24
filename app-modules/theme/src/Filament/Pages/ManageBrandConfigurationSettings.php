@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Theme\Filament\Pages;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Theme\Settings\ThemeSettings;
+use App\Enums\NavigationGroup;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Multitenancy\DataTransferObjects\TenantConfig;

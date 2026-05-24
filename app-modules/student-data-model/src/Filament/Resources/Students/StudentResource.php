@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Students;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\CreateStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\EditStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ListStudents;
@@ -48,6 +47,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudentActivityFeed;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudentAlerts;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Enums\NavigationGroup;
 use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;

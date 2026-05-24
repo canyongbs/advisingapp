@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Pipeline\Filament\Resources\Pipelines;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages\CreatePipeline;
 use AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages\EditPipeline;
 use AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages\ManageEductables;
 use AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages\ViewPipeline;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Pipeline\Settings\ProspectPipelineSettings;
+use App\Enums\NavigationGroup;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
 use UnitEnum;

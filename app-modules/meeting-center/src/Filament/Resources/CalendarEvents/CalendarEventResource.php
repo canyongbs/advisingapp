@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages\CreateCalendarEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages\EditCalendarEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages\ListCalendarEvents;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages\ViewCalendarEvent;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
 use UnitEnum;
 

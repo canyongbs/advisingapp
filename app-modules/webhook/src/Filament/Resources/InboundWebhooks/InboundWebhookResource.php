@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Webhook\Filament\Resources\InboundWebhooks;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Webhook\Filament\Resources\InboundWebhooks\Pages\ListInboundWebhooks;
 use AdvisingApp\Webhook\Filament\Resources\InboundWebhooks\Pages\ViewInboundWebhook;
 use AdvisingApp\Webhook\Models\InboundWebhook;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
 use UnitEnum;
 

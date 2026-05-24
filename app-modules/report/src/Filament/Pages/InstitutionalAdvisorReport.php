@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Report\Abstract\AiReport;
 use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
 use AdvisingApp\Report\Filament\Widgets\InstitutionalAdvisorLineChart;
 use AdvisingApp\Report\Filament\Widgets\InstitutionalAdvisorStats;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+use App\Enums\NavigationGroup;
 use App\Filament\Clusters\ReportLibrary;
 use UnitEnum;
 

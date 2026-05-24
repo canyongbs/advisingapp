@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Authorization\Filament\Resources\Roles;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\CreateRole;
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\EditRole;
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\ListRoles;
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\ViewRole;
 use AdvisingApp\Authorization\Models\Role;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;

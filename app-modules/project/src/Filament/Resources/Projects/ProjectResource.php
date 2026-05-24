@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Project\Filament\Resources\Projects;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Pipeline\Filament\Resources\Pipelines\PipelineResource;
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\CreateProject;
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\EditProject;
@@ -49,6 +48,7 @@ use AdvisingApp\Project\Filament\Resources\Projects\Pages\ManageProjectPipelines
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\ManageTasks;
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\ViewProject;
 use AdvisingApp\Project\Models\Project;
+use App\Enums\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;

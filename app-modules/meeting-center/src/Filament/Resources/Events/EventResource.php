@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\CreateEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEventDetails;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEventPage;
@@ -45,6 +44,7 @@ use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ListEvents;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ManageEventAttendees;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ViewEvent;
 use AdvisingApp\MeetingCenter\Models\Event;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;

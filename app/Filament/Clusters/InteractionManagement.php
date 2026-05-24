@@ -36,13 +36,13 @@
 
 namespace App\Filament\Clusters;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\InteractionDriverResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionInitiatives\InteractionInitiativeResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomes\InteractionOutcomeResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionRelations\InteractionRelationResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\InteractionStatusResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypes\InteractionTypeResource;
+use App\Enums\NavigationGroup;
 use Filament\Clusters\Cluster;
 use Filament\Resources\Resource;
 use UnitEnum;

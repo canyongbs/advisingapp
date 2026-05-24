@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\QnaAdvisors;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\CreateQnaAdvisor;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\EditQnaAdvisor;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\EditQnaAdvisorLinks;
@@ -49,6 +48,7 @@ use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\PreviewQnaAdvisor;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\QnaAdvisorEmbed;
 use AdvisingApp\Ai\Filament\Resources\QnaAdvisors\Pages\ViewQnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisor;
+use App\Enums\NavigationGroup;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
 use UnitEnum;

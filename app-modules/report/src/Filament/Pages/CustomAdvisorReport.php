@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Report\Abstract\AiReport;
 use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
 use AdvisingApp\Report\Filament\Widgets\CustomAdvisorLineChart;
@@ -44,6 +43,7 @@ use AdvisingApp\Report\Filament\Widgets\CustomAdvisorStats;
 use AdvisingApp\Report\Filament\Widgets\CustomAdvisorTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Enums\Feature;
+use App\Enums\NavigationGroup;
 use App\Features\AiAssistantDtoRenameFeature;
 use App\Filament\Clusters\ReportLibrary;
 use Illuminate\Support\Facades\Gate;

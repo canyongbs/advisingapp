@@ -36,13 +36,13 @@
 
 namespace AdvisingApp\Team\Filament\Resources\Teams;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Team\Filament\Resources\Teams\Pages\CreateTeam;
 use AdvisingApp\Team\Filament\Resources\Teams\Pages\EditTeam;
 use AdvisingApp\Team\Filament\Resources\Teams\Pages\ListTeams;
 use AdvisingApp\Team\Filament\Resources\Teams\Pages\ViewTeam;
 use AdvisingApp\Team\Filament\Resources\Teams\RelationManagers\UsersRelationManager;
 use AdvisingApp\Team\Models\Team;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
 use UnitEnum;
 

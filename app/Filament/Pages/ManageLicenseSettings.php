@@ -36,8 +36,8 @@
 
 namespace App\Filament\Pages;
 
-use App\Enums\NavigationGroup;
 use App\DataTransferObjects\LicenseManagement\LicenseData;
+use App\Enums\NavigationGroup;
 use App\Features\AiAssistantDtoRenameFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;

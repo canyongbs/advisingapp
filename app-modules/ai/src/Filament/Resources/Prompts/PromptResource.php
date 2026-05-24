@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\Prompts;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\CreatePrompt;
 use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\EditPrompt;
 use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\ListPrompts;
 use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\ViewPrompt;
 use AdvisingApp\Ai\Models\Prompt;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
 use UnitEnum;
 

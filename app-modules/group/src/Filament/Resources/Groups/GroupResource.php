@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Group\Filament\Resources\Groups;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Group\Filament\Resources\Groups\Pages\CreateGroup;
 use AdvisingApp\Group\Filament\Resources\Groups\Pages\EditGroup;
 use AdvisingApp\Group\Filament\Resources\Groups\Pages\ListGroups;
 use AdvisingApp\Group\Models\Group;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
 use UnitEnum;
 

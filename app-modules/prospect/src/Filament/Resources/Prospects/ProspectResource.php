@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\Prospects;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\CreateProspect;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\EditProspect;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ListProspects;
@@ -47,6 +46,7 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectTasks;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ViewProspect;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ViewProspectActivityFeed;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Enums\NavigationGroup;
 use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;

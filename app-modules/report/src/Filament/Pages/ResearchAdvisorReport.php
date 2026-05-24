@@ -36,12 +36,12 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Report\Abstract\AiReport;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\ResearchAdvisorReportStats;
 use AdvisingApp\Report\Filament\Widgets\ResearchAdvisorReportTable;
 use App\Enums\Feature;
+use App\Enums\NavigationGroup;
 use App\Filament\Clusters\ReportLibrary;
 use Illuminate\Support\Facades\Gate;
 use UnitEnum;

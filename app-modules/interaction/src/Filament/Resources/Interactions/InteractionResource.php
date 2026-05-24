@@ -36,11 +36,11 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\Interactions;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\CreateInteraction;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\EditInteraction;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\ListInteractions;
 use AdvisingApp\Interaction\Models\Interaction;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
 use UnitEnum;
 

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Report\Filament\Pages;
 
-use App\Enums\NavigationGroup;
 use AdvisingApp\Report\Abstract\AiReport;
 use AdvisingApp\Report\Filament\Widgets\AiStats;
 use AdvisingApp\Report\Filament\Widgets\ExchangesByMonthLineChart;
@@ -44,6 +43,7 @@ use AdvisingApp\Report\Filament\Widgets\PromptsByCategoryDoughnutChart;
 use AdvisingApp\Report\Filament\Widgets\PromptsCreatedLineChart;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\SpecialActionsDoughnutChart;
+use App\Enums\NavigationGroup;
 use App\Filament\Clusters\ReportLibrary;
 use UnitEnum;
 
