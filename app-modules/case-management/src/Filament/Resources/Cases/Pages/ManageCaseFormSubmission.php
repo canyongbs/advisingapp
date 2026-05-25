@@ -40,6 +40,7 @@ use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
 use AdvisingApp\CaseManagement\Filament\Resources\Cases\Pages\Concerns\HasCaseRecordHeader;
 use AdvisingApp\CaseManagement\Filament\Resources\Cases\RelationManagers\CaseFormSubmissionRelationManager;
 use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 use Illuminate\Database\Eloquent\Model;
 
 class ManageCaseFormSubmission extends ManageRelatedRecords
@@ -66,7 +67,7 @@ class ManageCaseFormSubmission extends ManageRelatedRecords
     }
 
     /**
-     * @return array<int, class-string<CaseFormSubmissionRelationManager>>
+     * @return array<int, class-string<RelationManager>>
      */
     protected static function managers(?Model $record = null): array
     {
