@@ -36,7 +36,6 @@
 @use(AdvisingApp\StudentDataModel\Models\Student)
 @use(AdvisingApp\Engagement\Enums\EngagementResponseType)
 @use(AdvisingApp\Engagement\Enums\EngagementResponseStatus)
-@use(App\Features\EngagementResponseMarkAsActionedFeature)
 
 <x-filament-panels::page>
     <div>
@@ -59,7 +58,7 @@
                     Reply
                 </x-filament::button>
 
-                @if (EngagementResponseMarkAsActionedFeature::active() && $this->record->status === EngagementResponseStatus::New)
+                @if ($this->record->status === EngagementResponseStatus::New)
                     <x-filament::button wire:click="mountAction('markAsActioned')">
                         Mark as {{ $this->getInvertedStatus()->name }}
                     </x-filament::button>
@@ -93,7 +92,7 @@
                     />
                 </div>
 
-                @if (EngagementResponseMarkAsActionedFeature::active() && $this->record->status === EngagementResponseStatus::New)
+                @if ($this->record->status === EngagementResponseStatus::New)
                     <x-filament::button wire:click="mountAction('markAsActioned')">
                         Mark as {{ $this->getInvertedStatus()->name }}
                     </x-filament::button>
