@@ -125,7 +125,6 @@ class CaseFormSubmission extends Submission
 
     public function deliverRequest(): void
     {
-        // @phpstan-ignore-next-line
         $this->request_method->deliver($this);
     }
 

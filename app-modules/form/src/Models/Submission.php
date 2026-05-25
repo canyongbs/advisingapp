@@ -40,14 +40,17 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\BaseModel;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 /**
+ * @property string|null $request_note
  * @property-read Submissible $submissible
  * @property-read Collection<int, SubmissibleField> $fields
  * @property-read Student|Prospect|null $author
+ * @property-read User|null $requester
  */
 abstract class Submission extends BaseModel
 {

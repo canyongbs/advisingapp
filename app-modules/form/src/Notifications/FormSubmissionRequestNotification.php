@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Form\Notifications;
 
-use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Form\Models\Submission;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -47,7 +47,7 @@ class FormSubmissionRequestNotification extends Notification implements ShouldQu
     use Queueable;
 
     public function __construct(
-        public FormSubmission $submission,
+        public Submission $submission,
     ) {}
 
     /**
