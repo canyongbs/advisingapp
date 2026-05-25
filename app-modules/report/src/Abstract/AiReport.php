@@ -38,13 +38,20 @@ namespace AdvisingApp\Report\Abstract;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
+use BackedEnum;
 use Filament\Pages\Dashboard;
+use Illuminate\Contracts\Support\Htmlable;
 
 abstract class AiReport extends Dashboard
 {
     use HasFiltersForm;
 
     protected string $view = 'report::filament.pages.report';
+
+    public static function getNavigationIcon(): string | BackedEnum | Htmlable | null
+    {
+        return null;
+    }
 
     public static function canAccess(): bool
     {
