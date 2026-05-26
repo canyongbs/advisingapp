@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Http\Controllers\CustomerAdvisors;
 
 use AdvisingApp\Ai\Actions\GetCustomerAdvisorInstructions;
+use AdvisingApp\Ai\Enums\AiReasoningEffort;
 use AdvisingApp\Ai\Jobs\CustomerAdvisors\SendCustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;

@@ -128,7 +128,7 @@ test('can edit Customer Advisor', function () {
     );
 });
 
-test('Edit Customer Advisor validates the inputs', function ($data, $errors) {
+test('Edit Customer Advisor validates the inputs', function (array $data, array $errors) {
     Storage::fake('s3');
 
     $settings = app(LicenseSettings::class);

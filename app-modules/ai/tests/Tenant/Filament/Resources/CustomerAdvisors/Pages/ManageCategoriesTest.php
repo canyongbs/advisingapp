@@ -111,7 +111,7 @@ test('can create Customer Advisor Category', function () {
     );
 });
 
-test('Create Customer Advisor Category validates the inputs', function ($data, $errors) {
+test('Create Customer Advisor Category validates the inputs', function (array $data, array $errors) {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
@@ -207,7 +207,7 @@ test('can edit Customer Advisor Category', function () {
     );
 });
 
-test('Edit Customer Advisor Category validates the inputs', function ($data, $errors) {
+test('Edit Customer Advisor Category validates the inputs', function (array $data, array $errors) {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;

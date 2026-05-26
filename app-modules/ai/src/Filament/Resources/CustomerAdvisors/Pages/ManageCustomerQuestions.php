@@ -52,6 +52,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Str;
 use UnitEnum;
 
@@ -71,7 +72,7 @@ class ManageCustomerQuestions extends ManageRelatedRecords
             ->components([
                 Select::make('category_id')
                     ->label('Category')
-                    ->relationship('category', 'name', modifyQueryUsing: function ($query) {
+                    ->relationship('category', 'name', modifyQueryUsing: function (Builder $query) {
                         /** @var CustomerAdvisor $advisor */
                         $advisor = $this->getOwnerRecord();
                         $query->where(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id', $advisor->getKey());
@@ -134,7 +135,7 @@ class ManageCustomerQuestions extends ManageRelatedRecords
             ->filters([
                 SelectFilter::make('category_id')
                     ->label('Category')
-                    ->relationship('category', 'name', modifyQueryUsing: function ($query) {
+                    ->relationship('category', 'name', modifyQueryUsing: function (Builder $query) {
                         /** @var CustomerAdvisor $customerAdvisor */
                         $customerAdvisor = $this->getOwnerRecord();
                         $query->where(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id', $customerAdvisor->getKey());

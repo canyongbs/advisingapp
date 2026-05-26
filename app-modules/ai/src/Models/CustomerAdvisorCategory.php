@@ -46,10 +46,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 
-#[ObservedBy(CustomerAdvisorCategoryObserver::class)]
 /**
  * @mixin IdeHelperCustomerAdvisorCategory
  */
+#[ObservedBy(CustomerAdvisorCategoryObserver::class)]
 class CustomerAdvisorCategory extends BaseModel implements Auditable
 {
     use SoftDeletes;

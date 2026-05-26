@@ -125,7 +125,7 @@ test('can create QnA Advisor', function () {
     );
 });
 
-test('Create QnA Advisor validates the inputs', function ($data, $errors) {
+test('Create QnA Advisor validates the inputs', function (array $data, array $errors) {
     Storage::fake('s3');
 
     $settings = app(LicenseSettings::class);
