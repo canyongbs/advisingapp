@@ -34,46 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Report\Filament\Pages\EmployeeAdvisorReport;
+use App\Features\CustomAdvisorRenameFeature;
+use App\Models\User;
+use App\Settings\LicenseSettings;
 
-use AdvisingApp\Ai\Filament\Resources\AiAssistants\AiAssistantResource;
-use AdvisingApp\Ai\Filament\Resources\AiAssistants\Forms\AiAssistantForm;
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Settings\AiEmployeeAdvisorSettings;
-use Exception;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Schemas\Schema;
-use Illuminate\Database\Eloquent\Model;
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 
-class CreateAiAssistant extends CreateRecord
-{
-    protected static string $resource = AiAssistantResource::class;
+beforeEach(function () {
+    CustomAdvisorRenameFeature::activate();
+});
 
-    public function form(Schema $schema): Schema
-    {
-        return resolve(AiAssistantForm::class)->form($schema);
-    }
+it('is gated with proper access control', function () {
+    $settings = app(LicenseSettings::class);
+    $user = User::factory()->create();
 
-    protected function handleRecordCreation(array $data): Model
-    {
-        if (! ($data['has_resource_hub_knowledge'] ?? false)) {
-            $data['resource_hub_article_access'] = null;
-        }
+    $settings->data->addons->employeeAdvisors = false;
+    $settings->save();
 
-        $record = new ($this->getModel())($data);
+    actingAs($user);
 
-        throw_if(
-            ! $record instanceof AiAssistant,
-            new Exception('The model must be an instance of AiAssistant.')
-        );
+    get(EmployeeAdvisorReport::getUrl())->assertForbidden();
 
-        $settings = app(AiEmployeeAdvisorSettings::class);
+    $user->grantLicense(LicenseType::ConversationalAi);
 
-        if (! $settings->allow_selection_of_model) {
-            $record->model = $settings->preselected_model ?? $record->model;
-        }
-        $record->save();
+    $user->refresh();
 
-        return $record;
-    }
-}
+    get(EmployeeAdvisorReport::getUrl())->assertForbidden();
+
+    $user->givePermissionTo('report-library.view-any');
+
+    get(EmployeeAdvisorReport::getUrl())->assertForbidden();
+
+    $settings->data->addons->employeeAdvisors = true;
+    $settings->save();
+
+    get(EmployeeAdvisorReport::getUrl())->assertSuccessful();
+});

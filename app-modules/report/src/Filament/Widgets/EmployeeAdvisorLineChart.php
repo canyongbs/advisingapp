@@ -40,7 +40,7 @@ use AdvisingApp\Ai\Models\AiAssistantUse;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 
-class CustomAdvisorLineChart extends LineChartReportWidget
+class EmployeeAdvisorLineChart extends LineChartReportWidget
 {
     protected ?string $heading = 'Exchanges by month';
 
@@ -87,7 +87,7 @@ class CustomAdvisorLineChart extends LineChartReportWidget
 
         $monthlyData = $shouldBypassCache
             ? $buildData($startDate, $endDate)
-            : Cache::tags(["{{$this->cacheTag}}"])->remember('custom_advisor_line_chart_data', now()->addHours(24), function () use ($buildData) {
+            : Cache::tags(["{{$this->cacheTag}}"])->remember('employee_advisor_line_chart_data', now()->addHours(24), function () use ($buildData) {
                 return $buildData();
             });
 

@@ -43,7 +43,7 @@ use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Number;
 
-class CustomAdvisorStats extends StatsOverviewReportWidget
+class EmployeeAdvisorStats extends StatsOverviewReportWidget
 {
     protected int | string | array $columnSpan = 'full';
 
@@ -54,7 +54,7 @@ class CustomAdvisorStats extends StatsOverviewReportWidget
 
         $shouldBypassCache = filled($startDate) || filled($endDate);
 
-        $customAdvisorsCount = $shouldBypassCache
+        $employeeAdvisorsCount = $shouldBypassCache
             ? AiAssistant::query()
                 ->where('is_default', false)
                 ->when(
@@ -106,7 +106,7 @@ class CustomAdvisorStats extends StatsOverviewReportWidget
 
         return [
             Stat::make('Employee Advisors', Number::abbreviate(
-                $customAdvisorsCount,
+                $employeeAdvisorsCount,
                 maxPrecision: 2,
             )),
             Stat::make('Exchanges', Number::abbreviate(
