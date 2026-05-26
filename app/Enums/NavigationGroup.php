@@ -36,10 +36,11 @@
 
 namespace App\Enums;
 
+use Filament\Support\Contracts\Collapsible;
 use Filament\Support\Contracts\HasIcon;
 use Filament\Support\Contracts\HasLabel;
 
-enum NavigationGroup implements HasIcon, HasLabel
+enum NavigationGroup implements Collapsible, HasIcon, HasLabel
 {
     case EnterpriseAi;
     case Chatbots;
@@ -76,5 +77,15 @@ enum NavigationGroup implements HasIcon, HasLabel
             self::Settings => 'heroicon-o-wrench-screwdriver',
             self::GlobalAdministration => 'heroicon-o-adjustments-vertical',
         };
+    }
+
+    public function isCollapsible(): bool
+    {
+        return true;
+    }
+
+    public function isCollapsed(): bool
+    {
+        return true;
     }
 }

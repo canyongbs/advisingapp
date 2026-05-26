@@ -38,6 +38,7 @@ namespace App\Providers\Filament;
 
 use AdvisingApp\Authorization\Filament\Pages\Auth\Login;
 use AdvisingApp\Theme\Settings\ThemeSettings;
+use App\Enums\NavigationGroup;
 use App\Filament\Clusters\ProfileSettings;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\ProductHealth;
@@ -132,6 +133,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([])
+            ->navigationGroups(NavigationGroup::class)
             ->middleware([
                 NeedsTenant::class,
                 StartSession::class,
