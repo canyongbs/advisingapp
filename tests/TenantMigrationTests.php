@@ -43,7 +43,6 @@ use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
-use AdvisingApp\Authorization\Models\PermissionGroup;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\Engagement;
 use App\Models\User;
@@ -103,108 +102,107 @@ test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements
 });
 
 describe('2026_05_12_222040_rename_qna_advisors_table_and_columns_to_customer_advisors', function () {
-  it('properly updates existing qna advisors and related models', function () {
-    isolatedMigration(
-      '2026_05_12_222040_rename_qna_advisors_table_and_columns_to_customer_advisors',
-      function () {
-        // Setup data
-        $user = User::factory()->create();
+    it('properly updates existing qna advisors and related models', function () {
+        isolatedMigration(
+            '2026_05_12_222040_rename_qna_advisors_table_and_columns_to_customer_advisors',
+            function () {
+                // Setup data
+                $user = User::factory()->create();
 
-        $user->givePermissionTo('qna_advisor.view-any');
-        $user->givePermissionTo('qna_advisor.create');
-        $user->givePermissionTo('qna_advisor.*.delete');
-        $user->givePermissionTo('qna_advisor.*.force-delete');
-        $user->givePermissionTo('qna_advisor.*.restore');
-        $user->givePermissionTo('qna_advisor.*.update');
-        $user->givePermissionTo('qna_advisor.*.view');
-        $user->givePermissionTo('qna_advisor_embed.view-any');
-        $user->givePermissionTo('qna_advisor_embed.*.view');
+                $user->givePermissionTo('qna_advisor.view-any');
+                $user->givePermissionTo('qna_advisor.create');
+                $user->givePermissionTo('qna_advisor.*.delete');
+                $user->givePermissionTo('qna_advisor.*.force-delete');
+                $user->givePermissionTo('qna_advisor.*.restore');
+                $user->givePermissionTo('qna_advisor.*.update');
+                $user->givePermissionTo('qna_advisor.*.view');
+                $user->givePermissionTo('qna_advisor_embed.view-any');
+                $user->givePermissionTo('qna_advisor_embed.*.view');
 
-        $advisor = CustomerAdvisor::factory()->create();
-        $category = CustomerAdvisorCategory::factory()->for($advisor, 'customerAdvisor')->create();
-        $file = CustomerAdvisorFile::factory()->create();
-        $link = CustomerAdvisorLink::factory()->create();
-        $message = CustomerAdvisorMessage::factory()->create();
-        $question = CustomerAdvisorQuestion::factory()->create();
-        $thread = CustomerAdvisorThread::factory()->create();
+                $advisor = CustomerAdvisor::factory()->create();
+                $category = CustomerAdvisorCategory::factory()->for($advisor, 'customerAdvisor')->create();
+                $file = CustomerAdvisorFile::factory()->create();
+                $link = CustomerAdvisorLink::factory()->create();
+                $message = CustomerAdvisorMessage::factory()->create();
+                $question = CustomerAdvisorQuestion::factory()->create();
+                $thread = CustomerAdvisorThread::factory()->create();
 
-        $settings = app(AiCustomerAdvisorSettings::class);
-        $settings->preselected_model = AiModel::Test;
-        $settings->instructions = 'Test instructions';
-        $settings->background_information = 'Test background information';
-        $settings->restrictions = 'Test restrictions';
-        $settings->save();
+                $settings = app(AiCustomerAdvisorSettings::class);
+                $settings->preselected_model = AiModel::Test;
+                $settings->instructions = 'Test instructions';
+                $settings->background_information = 'Test background information';
+                $settings->restrictions = 'Test restrictions';
+                $settings->save();
 
-        expect($advisor->getTable())->toBe('qna_advisors');
-        expect($category->getTable())->toBe('qna_advisor_categories');
-        expect($file->getTable())->toBe('qna_advisor_files');
-        expect($link->getTable())->toBe('qna_advisor_links');
-        expect($message->getTable())->toBe('qna_advisor_messages');
-        expect($question->getTable())->toBe('qna_advisor_questions');
-        expect($thread->getTable())->toBe('qna_advisor_threads');
+                expect($advisor->getTable())->toBe('qna_advisors');
+                expect($category->getTable())->toBe('qna_advisor_categories');
+                expect($file->getTable())->toBe('qna_advisor_files');
+                expect($link->getTable())->toBe('qna_advisor_links');
+                expect($message->getTable())->toBe('qna_advisor_messages');
+                expect($question->getTable())->toBe('qna_advisor_questions');
+                expect($thread->getTable())->toBe('qna_advisor_threads');
 
-        expect($category->customerAdvisor)->toBe($advisor->getKey());
+                expect($category->customerAdvisor)->toBe($advisor->getKey());
 
-        expect(DB::table('permission_groups')->where('name', 'QnA Advisor')->exists())->toBeTrue();
-        expect(DB::table('permission_groups')->where('name', 'QnA Advisor Embed')->exists())->toBeTrue();
+                expect(DB::table('permission_groups')->where('name', 'QnA Advisor')->exists())->toBeTrue();
+                expect(DB::table('permission_groups')->where('name', 'QnA Advisor Embed')->exists())->toBeTrue();
 
-        expect(DB::table('settings')->where('group', 'ai-qna-advisor')->exists())->toBeTrue();
+                expect(DB::table('settings')->where('group', 'ai-qna-advisor')->exists())->toBeTrue();
 
-        // Run migration
-        $migrate = Artisan::call('migrate', ['--path' => 'app-modules/ai/database/migrations/2026_05_12_222040_rename_qna_advisors_table_and_columns_to_customer_advisors.php']);
+                // Run migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/ai/database/migrations/2026_05_12_222040_rename_qna_advisors_table_and_columns_to_customer_advisors.php']);
 
-        // Verify changes
-        expect($migrate)->toBe(Command::SUCCESS);
+                // Verify changes
+                expect($migrate)->toBe(Command::SUCCESS);
 
-        expect($advisor->getTable())->toBe('customer_advisors');
-        expect($category->getTable())->toBe('customer_advisor_categories');
-        expect($file->getTable())->toBe('customer_advisor_files');
-        expect($link->getTable())->toBe('customer_advisor_links');
-        expect($message->getTable())->toBe('customer_advisor_messages');
-        expect($question->getTable())->toBe('customer_advisor_questions');
-        expect($thread->getTable())->toBe('customer_advisor_threads');
+                expect($advisor->getTable())->toBe('customer_advisors');
+                expect($category->getTable())->toBe('customer_advisor_categories');
+                expect($file->getTable())->toBe('customer_advisor_files');
+                expect($link->getTable())->toBe('customer_advisor_links');
+                expect($message->getTable())->toBe('customer_advisor_messages');
+                expect($question->getTable())->toBe('customer_advisor_questions');
+                expect($thread->getTable())->toBe('customer_advisor_threads');
 
-        expect($category->customerAdvisor)->toBe($advisor->getKey());
+                expect($category->customerAdvisor)->toBe($advisor->getKey());
 
-        $user->refresh();
+                $user->refresh();
 
-        expect($user->hasPermissionTo('qna_advisor.view-any'))->toBeFalse();
-        expect($user->hasPermissionTo('qna_advisor.create'))->toBeFalse();
-        expect($user->hasPermissionTo('qna_advisor.*.delete'))->toBeFalse();
-        expect($user->hasPermissionTo('qna_advisor.*.force-delete'))->toBeFalse();
-        expect($user->hasPermissionTo('qna_advisor.*.restore'))->toBeFalse();
-        expect($user->hasPermissionTo('qna_advisor.*.update'))->toBeFalse();
-        expect($user->hasPermissionTo('qna_advisor.*.view'))->toBeFalse();
-        expect($user->hasPermissionTo('qna_advisor_embed.view-any'))->toBeFalse();
-        expect($user->hasPermissionTo('qna_advisor_embed.*.view'))->toBeFalse();
-        
-        expect($user->hasPermissionTo('customer_advisor.view-any'))->toBeTrue();
-        expect($user->hasPermissionTo('customer_advisor.create'))->toBeTrue();
-        expect($user->hasPermissionTo('customer_advisor.*.delete'))->toBeTrue();
-        expect($user->hasPermissionTo('customer_advisor.*.force-delete'))->toBeTrue();
-        expect($user->hasPermissionTo('customer_advisor.*.restore'))->toBeTrue();
-        expect($user->hasPermissionTo('customer_advisor.*.update'))->toBeTrue();
-        expect($user->hasPermissionTo('customer_advisor.*.view'))->toBeTrue();
-        expect($user->hasPermissionTo('customer_advisor_embed.view-any'))->toBeTrue();
-        expect($user->hasPermissionTo('customer_advisor_embed.*.view'))->toBeTrue();
+                expect($user->hasPermissionTo('qna_advisor.view-any'))->toBeFalse();
+                expect($user->hasPermissionTo('qna_advisor.create'))->toBeFalse();
+                expect($user->hasPermissionTo('qna_advisor.*.delete'))->toBeFalse();
+                expect($user->hasPermissionTo('qna_advisor.*.force-delete'))->toBeFalse();
+                expect($user->hasPermissionTo('qna_advisor.*.restore'))->toBeFalse();
+                expect($user->hasPermissionTo('qna_advisor.*.update'))->toBeFalse();
+                expect($user->hasPermissionTo('qna_advisor.*.view'))->toBeFalse();
+                expect($user->hasPermissionTo('qna_advisor_embed.view-any'))->toBeFalse();
+                expect($user->hasPermissionTo('qna_advisor_embed.*.view'))->toBeFalse();
 
-        app()->forgetInstance(AiCustomerAdvisorSettings::class);
-        $settings = app(AiCustomerAdvisorSettings::class);
+                expect($user->hasPermissionTo('customer_advisor.view-any'))->toBeTrue();
+                expect($user->hasPermissionTo('customer_advisor.create'))->toBeTrue();
+                expect($user->hasPermissionTo('customer_advisor.*.delete'))->toBeTrue();
+                expect($user->hasPermissionTo('customer_advisor.*.force-delete'))->toBeTrue();
+                expect($user->hasPermissionTo('customer_advisor.*.restore'))->toBeTrue();
+                expect($user->hasPermissionTo('customer_advisor.*.update'))->toBeTrue();
+                expect($user->hasPermissionTo('customer_advisor.*.view'))->toBeTrue();
+                expect($user->hasPermissionTo('customer_advisor_embed.view-any'))->toBeTrue();
+                expect($user->hasPermissionTo('customer_advisor_embed.*.view'))->toBeTrue();
 
-        expect($settings->preselected_model)->toBe(AiModel::Test);
-        expect($settings->instructions)->toBe('Test instructions');
-        expect($settings->background_information)->toBe('Test background information');
-        expect($settings->restrictions)->toBe('Test restrictions');
+                app()->forgetInstance(AiCustomerAdvisorSettings::class);
+                $settings = app(AiCustomerAdvisorSettings::class);
 
-        expect(DB::table('permission_groups')->where('name', 'Customer Advisor')->exists())->toBeTrue();
-        expect(DB::table('permission_groups')->where('name', 'Customer Advisor Embed')->exists())->toBeTrue();
-        expect(DB::table('permission_groups')->where('name', 'QnA Advisor')->exists())->toBeFalse();
-        expect(DB::table('permission_groups')->where('name', 'QnA Advisor Embed')->exists())->toBeFalse();
+                expect($settings->preselected_model)->toBe(AiModel::Test);
+                expect($settings->instructions)->toBe('Test instructions');
+                expect($settings->background_information)->toBe('Test background information');
+                expect($settings->restrictions)->toBe('Test restrictions');
 
-        expect(DB::table('settings')->where('group', 'ai-customer-advisor')->exists())->toBeTrue();
-        expect(DB::table('settings')->where('group', 'ai-qna-advisor')->exists())->toBeFalse();
-      }
-    );
-  });
-  
+                expect(DB::table('permission_groups')->where('name', 'Customer Advisor')->exists())->toBeTrue();
+                expect(DB::table('permission_groups')->where('name', 'Customer Advisor Embed')->exists())->toBeTrue();
+                expect(DB::table('permission_groups')->where('name', 'QnA Advisor')->exists())->toBeFalse();
+                expect(DB::table('permission_groups')->where('name', 'QnA Advisor Embed')->exists())->toBeFalse();
+
+                expect(DB::table('settings')->where('group', 'ai-customer-advisor')->exists())->toBeTrue();
+                expect(DB::table('settings')->where('group', 'ai-qna-advisor')->exists())->toBeFalse();
+            }
+        );
+    });
 });
