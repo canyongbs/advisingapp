@@ -1,0 +1,309 @@
+Return-Path: <kevin.ullyott@canyongbs.com>
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2109.outbound.protection.outlook.com [40.107.244.109])
+ by inbound-smtp.us-west-2.amazonaws.com with SMTP id bq8ij3scgtpdh688k59udb2bhpnscr5e4uvio4g1
+ for test@mail-dev.advising.app;
+ Thu, 20 Feb 2025 20:25:41 +0000 (UTC)
+X-SES-Spam-Verdict: PASS
+X-SES-Virus-Verdict: PASS
+Received-SPF: pass (spfCheck: domain of canyongbs.com designates 40.107.244.109 as permitted sender) client-ip=40.107.244.109; envelope-from=kevin.ullyott@canyongbs.com; helo=NAM12-MW2-obe.outbound.protection.outlook.com;
+Authentication-Results: amazonses.com;
+ spf=pass (spfCheck: domain of canyongbs.com designates 40.107.244.109 as permitted sender) client-ip=40.107.244.109; envelope-from=kevin.ullyott@canyongbs.com; helo=NAM12-MW2-obe.outbound.protection.outlook.com;
+ dmarc=pass header.from=canyongbs.com;
+X-SES-RECEIPT: AEFBQUFBQUFBQUFGZEJpVHhQNU9qenJ4V0E4cHpheUd3MkRnZGJPdTZzbis5QWRzUEtJM2JOaVhlYXZSRXdtTkZsUmVQVGJLSWQ3OWFQSC9MWXJvZnJMZ2NucXBzSTVnWEVlaGVmQXpKd01NZmhGNkV0Y0d0d3R4RTNUS2JZUmo0SittYThaOG1qcVpQRFNVYW5RalN5aTc0cUMyVnhPUXdadXlvUG40cWEwMU1zSlMxUjNicUM4TVArYm44OXJGNzJDeWhCU0lBd1lROU1nbGxSTXVVNjAxZUd3eGVuWnFaNjFGRFNJZVhSTWRjZ1NYSGVrSmFYWWxrcmJkWVV2V0YxallOdFVDNE9UdU1BQnE2S2RTejBQOEhCS2ltMS9XNWNoaHFhdDNGbS82MitBVGd4WDI4ZXc9PQ==
+X-SES-DKIM-SIGNATURE: a=rsa-sha256; q=dns/txt; b=ZBN1s3xikETrRFZa5J0NldC2Qw88edPF4l0LXxlEyV7PFU8KuKWyk+SmoLM35vi2CP7W3BPcU7HWUgZzIFLACsmS47YAXNNx3dWRCRPMHZIc3HQaQLWtIhABB1vqmoM1Wx7QYopHj+5/zGCXjxZVNoWmQ0AZzFbfN2Tk/0ivWJU=; c=relaxed/simple; s=7v7vs6w47njt4pimodk5mmttbegzsi6n; d=amazonses.com; t=1740083141; v=1; bh=mReTiqaJuKdaOKVzIsJEwkEhNqX8QSZQ9d8dUSYwYBc=; h=From:To:Cc:Bcc:Subject:Date:Message-ID:MIME-Version:Content-Type:X-SES-RECEIPT;
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=j0+zJQRj8TPtl6lqwsxhuhSoatAslqj9TdTso+YVJ6QSDsDzqYxY4LI11wNZdCBk4jjAFm2moYgdC1SUFrQTTNRhQUUuTC8plMKktKI17A1fyY4OUGPwX8PpqiJxMNKIuUISXfPQpq07P7O60Gked+c5WbU6w9sRG+ONty+jR0OAAnCSzA0sD2GnkmL5xFrfEAhg/Eaw0OYk7rgbWur2vWVnunM1j9fettW7GIpHx6ldFSp+qKjnDTEXh0qFbalQSiyLhGfQt6pEcDGE/N74SD51d0VbFY/NLDRjOTWTpySqGUryRNjwjUzh/LLKBVyuWaPNdE88J2wmOVP4LoZeYw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=aUpdRc8FasGUANhIKIKARltmCH/oNSbg7e4x+S2gW2k=;
+ b=Oyx8zT0futX08CE1lcm6ISvHxWiJrmksTFS1ZThpNX4OzTwxSREAuPpqK1iKm02r3rVcI8mMgF+oEamZv+X6fHnAWbvaM8Qci8hdYBOHaIAVbjZC/ryMF9yKlJpHhKwD4NpgOMISG76RKZ7E6QyW65/CrviHQLXboZ944KddxpEcr6cusH4VKbBgLkIJo01EDEkQhqDPTcqzWloWzoT1NoAi2CV7LGsX3nRWbTwLW07uyTAbHLEL+xIIPuIcCSDfX5BwKoQLLPflOhK5NVeFz47uurIOn1FkQvADmjBtpVu5LfDJRlFd2CTkKcUqR1TRZhliU94YyTFfeC2/qd5cpA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=canyongbs.com; dmarc=pass action=none
+ header.from=canyongbs.com; dkim=pass header.d=canyongbs.com; arc=none
+Received: from SA6PR18MB6369.namprd18.prod.outlook.com (2603:10b6:806:409::8)
+ by DS1PR18MB6361.namprd18.prod.outlook.com (2603:10b6:8:213::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.16; Thu, 20 Feb
+ 2025 20:25:37 +0000
+Received: from SA6PR18MB6369.namprd18.prod.outlook.com
+ ([fe80::faa6:ac23:58ac:326]) by SA6PR18MB6369.namprd18.prod.outlook.com
+ ([fe80::faa6:ac23:58ac:326%4]) with mapi id 15.20.8466.015; Thu, 20 Feb 2025
+ 20:25:37 +0000
+From: Kevin Ullyott <kevin.ullyott@canyongbs.com>
+To: "test@mail-dev.advising.app" <test@mail-dev.advising.app>
+Subject: This is a test
+Thread-Topic: This is a test
+Thread-Index: AQHbg9WEpn3yUlYsU0Gu23YRry9VFQ==
+Date: Thu, 20 Feb 2025 20:25:37 +0000
+Message-ID:
+ <SA6PR18MB6369D9D2914876A74436FC6BE5C42@SA6PR18MB6369.namprd18.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: yes
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=canyongbs.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA6PR18MB6369:EE_|DS1PR18MB6361:EE_
+x-ms-office365-filtering-correlation-id: c77e144e-b07b-41c5-2c4d-08dd51ecbca8
+x-ms-exchange-atpmessageproperties: SA
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|376014|1800799024|39142699007|31052699007|10070799003|4053099003|8096899003|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?0NWGqB20JoT4cm4ZgtX1oXelnmgJPymsRPtrZmOZhulrdX+LenM28VmPHi?=
+ =?iso-8859-1?Q?KgZjnzBy/SjVS+IYwJx8ONqlafg12ILeAMLxJOjTHgX1VL5YihzqZdEAGK?=
+ =?iso-8859-1?Q?x5sfplzd/csq+n8lRs88YbJHv+Hi6WandVjQQHRaAx7HKSXyJn25paG1Rq?=
+ =?iso-8859-1?Q?7mEOMjdnR0SP9Bv69bzuDNUsoJHdp/FQRMkpJH3T+Ggf6esO3AdutdHt7s?=
+ =?iso-8859-1?Q?kzt0BKhzUKaH/YglIQPKfJ9ra+PUuVxiuNDtkFN5c5ZArTTttWPjdC5yLQ?=
+ =?iso-8859-1?Q?DiC6/8wn57XmI4ZjEvbGlZHzLNgL1jCPw5524/WUsrzC2jWnEgHYJ3S/Xs?=
+ =?iso-8859-1?Q?R6WMI6wlf1iSGU1VI8rOLjD/Ei8ZPaUH+D86HqieWr5Ok1hsJWqSE79vPW?=
+ =?iso-8859-1?Q?xBQj/7BShL7Zqq0n8D/owCLDEE9qDGEca2d30C3ixIBgFY6Rl7Mru+rMAN?=
+ =?iso-8859-1?Q?i1cG45sP5nRgAj+wM2MUjcGJOf6jTWH43xS4qhNqrgu3q7XPc9wc1+Lxlt?=
+ =?iso-8859-1?Q?/pWUnW/CI+yY/bqk2fC4WdeewjppXYQDK8/L8U1CQut39Za9caC2wnXuke?=
+ =?iso-8859-1?Q?CVvfK1+bvasZJNbttYj8/hp+ThQcC+IFelZ0/cyx1jolbeip8rBOFqo/yz?=
+ =?iso-8859-1?Q?EVgB59xf482M+PtYLdv0bBSbPLUdV9NzGBAdi2qLrqajEnqjfwBaljWfNE?=
+ =?iso-8859-1?Q?3dCi1OHvAKUqoyHstwzZoY3u4YXGF16SzX9KV2nDw/D8Klt4b062bd2TRE?=
+ =?iso-8859-1?Q?g6UarSH2oQ/9AfMqKD4hxvuK8B6wTboSZmAZOhI0WtRer+cP/i9HKhLJ/J?=
+ =?iso-8859-1?Q?0eeeVplbPSpLCERU79FfwqFOza3kv6ZAbkLEv0sr/pt7wcJsbNzyV+nDIE?=
+ =?iso-8859-1?Q?ztuN4lHMecMaxWryiLym/RtL9RQl9MHTqNrW/5ueefGmlfOaVQExKl9Htt?=
+ =?iso-8859-1?Q?2AfEZx3vxh3dLxR0gBKZL04qwknGnJuZwMc+r3mWwogTv0uJGzN7S0APR4?=
+ =?iso-8859-1?Q?IbC/8e8ZcU6Q8k/dl09/A2ei90OH87ImSozd4S6Io0CLMzqQSHrSPxUhL5?=
+ =?iso-8859-1?Q?11u142do2j0slFWfT1Nx40V08k3s/vHe5G18UAyyXzjlk7dqv72Ve66AZW?=
+ =?iso-8859-1?Q?vQxD4gM1u1OoctaX+HJzueuLY9OPvMUUTU4oFbrTsRrKNyayH509cSj2Qd?=
+ =?iso-8859-1?Q?YsK+EK+Mf61zhxpVKzk80LKd8691KSFUs+2DT6A4KbwrEqpXH7+qmUNzuu?=
+ =?iso-8859-1?Q?T8riHy0QEFF+6k/fZe5rnUqSrmGrZsGN5oYaDsa6QWJK0FW59592Bi0USN?=
+ =?iso-8859-1?Q?o/yyQPGqwN9XWkBv+1Uy+EpOA8I08lrfbI0I2b75qlKTL7+DnePKEYKtgZ?=
+ =?iso-8859-1?Q?Wl1xrc0VlmSO27ijygSbcSq+guiExSa0cBoCO57wh+YaXr3zM3usUfLkli?=
+ =?iso-8859-1?Q?rRtlbVb0wnxJ2TRso731S6qUQjJ5kjJIvsBy/UKgnatBKAljeKfKH7vzQG?=
+ =?iso-8859-1?Q?zVfOj+S7MIiYFzGJXnJYSY?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA6PR18MB6369.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(39142699007)(31052699007)(10070799003)(4053099003)(8096899003)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?m+dp8F1t41qvc9GEuXszTKn6t3IIOFhhgdXIGNvRlZbxewznLuVf9NJIwg?=
+ =?iso-8859-1?Q?LTxFqTfWSjMHZHTmVo6SxvZ4C7Kat9IdpKiySxciz0rSkkC3QcNQ6Vb5J0?=
+ =?iso-8859-1?Q?+fnCCTKbZaCt6R0+NJUaUhH0AGJBMrPkJYdLSXq5NuAlYdNNwBcXE5RLQZ?=
+ =?iso-8859-1?Q?znLH5dtig8Zk7RA0NJuEEBHZuFDexr0s13+WtVP97xMRmle25WAWfa48bi?=
+ =?iso-8859-1?Q?MiTSU6BI8t29dLG0SoDZa09MSJ2XpgecWkEl4xyWKOvsiSvWifnEQwVkU1?=
+ =?iso-8859-1?Q?TzdD0WQJClcM+X/mKyQ8zr6zLJvqlowzqmCNcdHIg3ejz8qESwPWjTXmu5?=
+ =?iso-8859-1?Q?HuMRt92M9MHNfjYircrniRI793v7KeuI2OlN7Hg8HbhDDKrWpVnF4p6la8?=
+ =?iso-8859-1?Q?nO7ySRbYrEMx+f4sx5k60fuIiaccEI2h+BzVLHBh1vwxwdq14AbPAbYg3l?=
+ =?iso-8859-1?Q?CG5ITDbIecA7Vj+QLiYVYk2TruBF4/prswIswy4tEMe90Eh9kMIiS15oZf?=
+ =?iso-8859-1?Q?AZJTZHJavXcEvc1KdQi8/2jFJQM6WhkPxD5UAQpfa2H2iC/9GHlXixyxMB?=
+ =?iso-8859-1?Q?iiqli5Ztrr2pyjkayJGoQXdiupYzD4WhVFoW987tA937/hvTC1XKepF1mY?=
+ =?iso-8859-1?Q?+hF0fgkiBynw7HhEsyhAuBUjygU+B3t2BVxjFKzJ79cfQg2sTNTHycQf27?=
+ =?iso-8859-1?Q?oVSQU9YpP10qzdbW/86ZMVqQmIzOlvwkBlydJWSCDLc7tN7xJ97Vyk/dVJ?=
+ =?iso-8859-1?Q?5jnvVZIN5sem56FHBGibFbgTJOiaZ7XF3QmDzx07VX52R2LyJdGax809fF?=
+ =?iso-8859-1?Q?YG4VFwumNBQ1ViOwZMrWuoR5fE0UYjpU7Nr5cZ1SPQ+/WGqwYrtovdNV3f?=
+ =?iso-8859-1?Q?KmWeVdo505bE0nqY2Shda3SWkvQNsQ75q3gY2oZfvrNaIXMGWYHgmVyokf?=
+ =?iso-8859-1?Q?RSdLN2IJDIpdMyvjQPTAhDW4hPp8O9FeK+RQcgQAoT/EwaiRnl7y1egiqq?=
+ =?iso-8859-1?Q?e5CXhQTcvPCJ04X0gUOS127uAWbyeCGJtaUinLoC1acUW0NJ+uCcFkRxSK?=
+ =?iso-8859-1?Q?JQ9mMs8Pq0+fEyMF+7rIqqzDmDBvrpMUI0dyu3reiHIuu0EQMVS9rr1ca6?=
+ =?iso-8859-1?Q?LItsodhTMJ6ZtB06/CP52nct8sLbdkqDyVSj0j+31iXogziwM+JotWgIvz?=
+ =?iso-8859-1?Q?GstxztV7r3E+9Wdi9Chgo3mcs4e0rbn7XYzJ6Vg5XzhDfeahzrkZz4CG2z?=
+ =?iso-8859-1?Q?nzfUJiZUyOETjOwcEPtN4Wf4LROUw03iTGQqECaqyKjMYlYORb7sKdK77c?=
+ =?iso-8859-1?Q?oATMqw06qNh6RfO7kUFkY4assfo01VJuzVViRHlRcA0KOYcrU5yqI3CyRo?=
+ =?iso-8859-1?Q?WAT5tvG+ayORqATUwKqyuRDMMaVOqcCxc0kBGt2i9Q7Djn3dcV5dvIhqPq?=
+ =?iso-8859-1?Q?u2ropwHmq2GZQg8McqMq0Iqx3YXmxmz24wq3iB8/Rarkdm/cEQud3W6Fpy?=
+ =?iso-8859-1?Q?YZHPQXRUiFipveVk6C/jNvF9OIBXkxnZ0sfugMvlIyU2r5qDRKaDUp69vG?=
+ =?iso-8859-1?Q?ch4r6zFnbhMKJdnx2JrmV1VeNF/UwMidSG98UYKxzB6OKHiOHhgUdOw1zT?=
+ =?iso-8859-1?Q?p8W9xOrrgURa3YyNpFH1uW0kQClgAhHfH/7M6A+Wu05/nLh0i0z2rKgGUl?=
+ =?iso-8859-1?Q?6jpaPSIJQ37Ed31tN/Q=3D?=
+Content-Type: multipart/related;
+	boundary="_004_SA6PR18MB6369D9D2914876A74436FC6BE5C42SA6PR18MB6369namp_";
+	type="multipart/alternative"
+MIME-Version: 1.0
+X-OriginatorOrg: canyongbs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA6PR18MB6369.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: c77e144e-b07b-41c5-2c4d-08dd51ecbca8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 20 Feb 2025 20:25:37.5308
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: af905c0d-24ca-4c1b-86e8-e6ac7d45c7f1
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: SZGlx9ASNFwLwNCHlREUWPvM6rZ/ro9hPUTlsz54zey8hxJwze4cWimyraaDHIzcBBxvnAEqgE8mi4pZdnRrjzbih3vQdLnn8p/QwETmBj0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS1PR18MB6361
+
+--_004_SA6PR18MB6369D9D2914876A74436FC6BE5C42SA6PR18MB6369namp_
+Content-Type: multipart/alternative;
+	boundary="_000_SA6PR18MB6369D9D2914876A74436FC6BE5C42SA6PR18MB6369namp_"
+
+--_000_SA6PR18MB6369D9D2914876A74436FC6BE5C42SA6PR18MB6369namp_
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+Hello there! This should be put in S3!
+
+
+
+Sincerely,
+Kevin Ullyott
+
+---
+
+Kevin Ullyott
+Software Development Director
+
+p: (520) 357-1351 x 124
+e: kevin.ullyott@canyongbs.com
+
+[cid:3b6f9726-978c-4746-98b5-d49b79a34ba9]
+IMPORTANT: The contents of this email and any attachments are confidential.=
+ They are intended for the named recipient(s) only. If you have received th=
+is email by mistake, please notify the sender immediately and do not disclo=
+se the contents to anyone or make copies thereof.
+
+--_000_SA6PR18MB6369D9D2914876A74436FC6BE5C42SA6PR18MB6369namp_
+Content-Type: text/html; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+
+<html>
+<head>
+<meta http-equiv=3D"Content-Type" content=3D"text/html; charset=3Diso-8859-=
+1">
+<style type=3D"text/css" style=3D"display:none;"> P {margin-top:0;margin-bo=
+ttom:0;} </style>
+</head>
+<body dir=3D"ltr">
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+Hello there! This should be put in S3!</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div class=3D"elementToProof" style=3D"font-family: Aptos, Aptos_EmbeddedFo=
+nt, Aptos_MSFontService, Calibri, Helvetica, sans-serif; font-size: 11pt; c=
+olor: rgb(0, 0, 0);">
+<br>
+</div>
+<div id=3D"Signature" class=3D"elementToProof" style=3D"color: inherit;">
+<div style=3D"text-align: left; text-indent: 0px; background-color: rgb(255=
+, 255, 255); margin: 0px; font-family: Calibri, Arial, Helvetica, sans-seri=
+f; font-size: 12pt; color: black;">
+<br>
+</div>
+<div style=3D"text-align: left; text-indent: 0px; background-color: rgb(255=
+, 255, 255); margin: 0px; font-family: Calibri, Arial, Helvetica, sans-seri=
+f; font-size: 12pt; color: black;">
+Sincerely,</div>
+<div style=3D"text-align: left; text-indent: 0px; background-color: rgb(255=
+, 255, 255); margin: 0px; font-family: Calibri, Arial, Helvetica, sans-seri=
+f; font-size: 12pt; color: black;">
+Kevin Ullyott</div>
+<div style=3D"text-align: left; text-indent: 0px; background-color: rgb(255=
+, 255, 255); margin: 0px; font-family: Calibri, Arial, Helvetica, sans-seri=
+f; font-size: 12pt; color: black;">
+<br>
+</div>
+<div style=3D"text-align: left; text-indent: 0px; background-color: rgb(255=
+, 255, 255); margin: 0px; font-family: Calibri, Arial, Helvetica, sans-seri=
+f; font-size: 12pt; color: black;">
+---</div>
+<div style=3D"text-align: left; text-indent: 0px; background-color: rgb(255=
+, 255, 255); margin: 0px; font-family: Calibri, Arial, Helvetica, sans-seri=
+f; font-size: 12pt; color: black;">
+<br>
+</div>
+<div style=3D"text-align: left; text-indent: 0px; background-color: rgb(255=
+, 255, 255); margin: 0px; font-family: Calibri, Arial, Helvetica, sans-seri=
+f; font-size: 14pt; color: black;">
+<b>Kevin Ullyott</b></div>
+<div style=3D"text-align: left; text-indent: 0px; background-color: rgb(255=
+, 255, 255); margin: 0px; font-family: Calibri, Arial, Helvetica, sans-seri=
+f; font-size: 10pt; color: black;">
+<i>Software Development Director</i></div>
+<div style=3D"text-align: left; text-indent: 0px; background-color: rgb(255=
+, 255, 255); margin: 0px; font-family: Calibri, Arial, Helvetica, sans-seri=
+f; font-size: 8pt; color: black;">
+<br>
+</div>
+<div style=3D"text-align: left; text-indent: 0px; background-color: rgb(255=
+, 255, 255); margin: 0px; font-family: Calibri, Arial, Helvetica, sans-seri=
+f; font-size: 9pt; color: black;">
+<b>p: </b>(520) 357-1351 x 124</div>
+<div style=3D"text-align: left; text-indent: 0px; background-color: rgb(255=
+, 255, 255); margin: 0px; font-family: Calibri, Arial, Helvetica, sans-seri=
+f; font-size: 9pt; color: black;">
+<b>e: </b>kevin.ullyott@canyongbs.com&nbsp;</div>
+<div style=3D"text-align: left; text-indent: 0px; background-color: rgb(255=
+, 255, 255); margin: 0px; font-family: Calibri, Arial, Helvetica, sans-seri=
+f; font-size: 12pt; color: black;">
+<br>
+</div>
+<div style=3D"text-align: left; text-indent: 0px; background-color: rgb(255=
+, 255, 255); margin: 0px; font-family: Calibri, Arial, Helvetica, sans-seri=
+f; font-size: 12pt; color: black;">
+<img style=3D"height: auto; max-width: 800px; min-width: auto; min-height: =
+auto; margin: 0px;" data-outlook-trace=3D"F:2|T:2" src=3D"cid:3b6f9726-978c=
+-4746-98b5-d49b79a34ba9"></div>
+<div style=3D"text-align: left; text-indent: 0px; background-color: rgb(255=
+, 255, 255); margin: 0px; font-family: Calibri, Arial, Helvetica, sans-seri=
+f; font-size: 10pt; color: rgb(204, 204, 204);">
+<i>IMPORTANT: The contents of this email and any attachments are confidenti=
+al. They are intended for the named recipient(s) only. If you have received=
+ this email by mistake, please notify the sender immediately and do not dis=
+close the contents to anyone or
+ make copies thereof.</i></div>
+</div>
+</body>
+</html>
+
+--_000_SA6PR18MB6369D9D2914876A74436FC6BE5C42SA6PR18MB6369namp_--
+
+--_004_SA6PR18MB6369D9D2914876A74436FC6BE5C42SA6PR18MB6369namp_
+Content-Type: image/png; name="Outlook-xx50f3o5.png"
+Content-Description: Outlook-xx50f3o5.png
+Content-Disposition: inline; filename="Outlook-xx50f3o5.png"; size=2112;
+	creation-date="Thu, 20 Feb 2025 20:25:37 GMT";
+	modification-date="Thu, 20 Feb 2025 20:25:37 GMT"
+Content-ID: <3b6f9726-978c-4746-98b5-d49b79a34ba9>
+Content-Transfer-Encoding: base64
+
+iVBORw0KGgoAAAANSUhEUgAAAMgAAAAdCAYAAADvqyMCAAAAAXNSR0IArs4c6QAAB/pJREFUeF7t
+XM1u20YQnqHtplfnCVrnkjZH+96itdGDqzZWYD9AotjorTf7EewnKJIofYAIkZOqBgrECOqeQyCH
+osklKvoCVY91Yu8Wsyap5XJ2uaRIVTFIIAggLpe7s/PNzzdDIzRXI4FGAlYJYF2yufHLQOpzS4ST
+P75qfe77vm827mxKxFUAWI7+xY+GgDgEAaHA895R/8eh75zNuOlLoNXubIPERUC5n3k7wggEHtDv
+g8MH6n/9Us8C3MtddTwPytGg373vGr/evr0UAG5LwGUEIP26uBBGUkKIEo+FlMdHT7rhxc81XWUB
+sn6zsxwESigEDJ9rJ08oPpM0Y6qVgFJuhH2QsOg7M0q59dPhw1483hsg6ReEQsBOrOBpwN3ZB8Bd
+z/UMB/3utVyAPH/1+ld9Qinh5ZefXv8+7yVlAKK8RoD3ighVCFjhhJG3vuZ+fRJo3br7CKTcLPgG
+pZClPEj2RUNxurBydPTDSAMbGV3ySL7X/UG/u+MDkFSoBAAnX3xyPTdUKgoQ5Tnm4FkRcABARqi+
+u2/G1SOBVruQlR4vQuKeGWaV9CAXc2rzRVHJiyI7DgDXnvYfHM8MQL5ud56lYsLxboYgcRxXolwC
+hE0FJEaoRYRQZizFsPMwt0TPnp3Oh7qVKjNfmWfowOcDVKHLGZwPJ83DqtrTt+27qwLkM+ueJO6l
+7gWwHHsaAeKauQ8bQOKx6+vfLQZX3lFuw3kG5QHofa2Nu7tsDiRxL0AIpRSLEoIlQOX1KLRPDO9M
+AMQh2FCcLqxxSkjCE6cLPfYeCYSuQO4yHikEiT0uKaRHMkCNQBitkQ4jlRtJgGMpYE8P81rtzhsA
+UCBKLsTe4PGDLVN5Wu1O1vUzY9X7EbYtoYsyIuLt/H1OHlXsyQfIViNn2Xs8J4XWeu4R/54HkGTc
+rc7fzDmPAcKEfHRuP/e7a+a+YmNB3oPuzQRAWCUBAM6quA6qkCtFGIlzWDPzF+aQiSUjhsXJpsQu
+WVksC/sy6Hcz8m7xh5siHqwWMCuMoRCwVcee8gBywQ4FZBjMq3QYPBlA5MGg/1B5LDbsQxgFErdi
+INj2NxFAxO+fpfMTlCfBjd9UflIkB2m1OxQfmqxVOOh3V/IOJmOReYWzTZNJ5hyhXt5SEkVQrv/D
+d29Mq2ayNKznRBgNHnevJtbRFh7YT3Qk/l24pnuSKvaUt/mIln+UGTdBGOwDEJvx0I2ry8CQJ5kD
+PLABZVYAYhIBqSQr73D0+wWs7cVjxgFOoEwpj2fxionbt1o2gGSMDWhq2QCUQFIewtHhqfdUtSfX
+OVgVVWMZ2dAzPWnK25RO0o0zVd4NgxcuAsgGlEsHEFIqvPLuERV89DzDoWy+yjSOabm8gVKeiPmg
+M7eEe6YCZHIVnbb2UjqLhxGnC1djL+IASKE9OQFiYa/0sHIKAAlRyoMi+Yy5J5VTni5sxbK7dABx
+HaJFUbwAoiucLd7WARLlIpnQMQaAF4A8kkvbWvRwzgaQMnuyyddG704ZIMqz2kKmAsXLhBy6dABR
+nuKDs21AsehZNc0FCMd4tNqdTFjIACTbKhG5f9Y7eIV74+QzyVOYteihIweQsnuyAsTmyTT6dgoe
+JFmerYCc6AfPcOrbGxcK/7x5aBb+/vn4ycZLGv381WtrobCyJD2HpvPNQUoWqWoDiCWsU+QDR0yY
+rB1r+fmCmjOHmwpALMydSUzEZ2mh9r1yEF1Oju4LJ8mTC5SILFEe5K+Nw3RjIcDJR4cbCjTTAAir
+CETDGmxMmSTRA1y1ASQKszJ1DrJuQQDpyi5TK+BDo9n0IDaK3VZvqAogDrIDOFrd1IcLI3Z2j6sv
+0fMzARAH85RS3szm2reX4uorZ5FVwgViRxvD9ePUChCL4lBngFn9zTRdckyYqXA++dA0PEhkDLIF
+UoYppJ+qBQhTbKUO4ajuRPqld+iaemQrVM8MQBxFJgDEHgrRQwySxjMBYhUANyXAMK6GcjkBwNja
+Ru+gNoh0hVujVUlwdSiTpc4zPiej9qHlFmy7txfTlcNiVZ2DRABxtadnW4ayRqJQiDXON/lW+rie
+pJ2p6qKg9pIzIUdUULV1SMTtJjPhQVxu0hUi6YdsqUh7RFjjukONAMn7roH1lHXWQeoAiI258zmE
+aIwXQDznS2Raqg4U5XozA5Co8YwsvO93IIrS0zyITzsztY1M3YO4FJ0O29Wyb61Q27SEcjcpVvTG
+vzq8ou31Zc5Rm6sagBgyKAwQLf+dGYCQkFwJE3cgOkAcIVT8qOpTwgD2ja7hWnOQcbhkbQPP7VXy
+rij795eljIsW0uVS157Wm/rRfAyWOV0VAMl8MFUQIKl+tpkCSCytnM5V9XkkSOgFgD29h+bCer3d
+zdQ/JO7Fna5MQjYVgFjzLM9epej53aTVP61axbp5o1YVs5vVp7bjCxBl8KjFQ85tSpSreZ8ycJ9P
+exuGiAhAEEOuih5/Zkt5KxNBJAaU64jOLRQWEUgdY/VvH2j+/+sbjEn3ZmNKinYsK8Wr+HuQSff2
+vj1PZ6Gv2aVTMw+Q90343HqtcXnOdxKXYe/v+x4agNR0gspjyIhwQEkslkkOpJoba1pGM+2EEmgA
+MqEAbY/ntd3bKsw1LaeZtqQEGoCUFFzeY06AFGyjyXtXc78+CTQAqUm2DoCEAsTWpH9ooaZlN9Ma
+EmgAUpNKUA5yDjL5I2UIMkQJIUdD1rSEZtoKJNAApAIhNlNcXgn8B9GLh4eG2h2wAAAAAElFTkSu
+QmCC
+
+--_004_SA6PR18MB6369D9D2914876A74436FC6BE5C42SA6PR18MB6369namp_--
