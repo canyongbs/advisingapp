@@ -175,13 +175,37 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                         ->get();
 
                     if ($prospects->isEmpty()) {
-                        UnmatchedInboundCommunication::create([
+                        $unmatchedInboundCommunication = UnmatchedInboundCommunication::create([
                             'type' => EngagementResponseType::Email,
                             'subject' => $parser->getHeader('subject'),
                             'body' => $parser->getMessageBody('htmlEmbedded'),
                             'occurred_at' => $parser->getHeader('date'),
                             'sender' => $sender,
                         ]);
+
+                        collect($parser->getAttachments())->each(function (Attachment $attachment) use ($unmatchedInboundCommunication) {
+                            try {
+                                if (
+                                    ($attachment->getContentDisposition() === 'inline')
+                                    && filled(trim($contentId = $attachment->getContentID(), '<>'))
+                                ) {
+                                    $unmatchedInboundCommunication->addMediaFromStream($attachment->getStream())
+                                        ->withCustomProperties(['cid' => trim($contentId, '<>')])
+                                        ->setName($attachment->getFilename())
+                                        ->setFileName($attachment->getFilename())
+                                        ->toMediaCollection('inline_attachments');
+
+                                    return;
+                                }
+
+                                $unmatchedInboundCommunication->addMediaFromStream($attachment->getStream())
+                                    ->setName($attachment->getFilename())
+                                    ->setFileName($attachment->getFilename())
+                                    ->toMediaCollection('attachments');
+                            } catch (Throwable $throw) {
+                                report($throw);
+                            }
+                        });
 
                         Storage::disk('s3-inbound-email')->delete($this->emailFilePath);
 

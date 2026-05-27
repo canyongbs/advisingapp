@@ -58,6 +58,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 use League\HTMLToMarkdown\HtmlConverter;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
@@ -124,6 +125,29 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
 
         if (preg_match('/<body[^>]*>(.*?)<\/body>/is', $content, $matches)) {
             $content = $matches[1];
+        }
+
+        foreach ($this->getMedia('inline_attachments') as $inlineAttachment) {
+            $inlineAttachmentTemporaryUrl = $inlineAttachment->getTemporaryUrl(now()->addDay());
+
+            $cid = $inlineAttachment->getCustomProperty('cid');
+
+            if (! is_string($cid)) {
+                continue;
+            }
+
+            $content = Str::replace(
+                "\"cid:{$cid}\"",
+                '"' . $inlineAttachmentTemporaryUrl . '"',
+                $content,
+            );
+
+            // In case single quotes are used in the HTML
+            $content = Str::replace(
+                "'cid:{$cid}'",
+                '\'' . $inlineAttachmentTemporaryUrl . '\'',
+                $content,
+            );
         }
 
         return str(
