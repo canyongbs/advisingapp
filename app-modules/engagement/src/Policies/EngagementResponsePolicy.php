@@ -53,7 +53,7 @@ class EngagementResponsePolicy
     public function view(Authenticatable $authenticatable, EngagementResponse $engagementResponse): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["engagement_response.{$engagementResponse->getKey()}.view"],
+            abilities: ['engagement_response.*.view'],
             denyResponse: 'You do not have permission to view this engagement response.'
         );
     }
@@ -69,7 +69,7 @@ class EngagementResponsePolicy
     public function update(Authenticatable $authenticatable, EngagementResponse $engagementResponse): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["engagement_response.{$engagementResponse->getKey()}.update"],
+            abilities: ['engagement_response.*.update'],
             denyResponse: 'You do not have permission to update this engagement response.'
         );
     }
@@ -77,7 +77,7 @@ class EngagementResponsePolicy
     public function delete(Authenticatable $authenticatable, EngagementResponse $engagementResponse): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["engagement_response.{$engagementResponse->getKey()}.delete"],
+            abilities: ['engagement_response.*.delete'],
             denyResponse: 'You do not have permission to delete this engagement response.'
         );
     }
@@ -85,7 +85,7 @@ class EngagementResponsePolicy
     public function restore(Authenticatable $authenticatable, EngagementResponse $engagementResponse): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["engagement_response.{$engagementResponse->getKey()}.restore"],
+            abilities: ['engagement_response.*.restore'],
             denyResponse: 'You do not have permission to restore this engagement response.'
         );
     }
@@ -93,7 +93,7 @@ class EngagementResponsePolicy
     public function forceDelete(Authenticatable $authenticatable, EngagementResponse $engagementResponse): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["engagement_response.{$engagementResponse->getKey()}.force-delete"],
+            abilities: ['engagement_response.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this engagement response.'
         );
     }

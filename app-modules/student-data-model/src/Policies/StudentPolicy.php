@@ -63,7 +63,7 @@ class StudentPolicy
     public function view(Authenticatable $authenticatable, Student $student): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "student.{$student->getKey()}.view",
+            abilities: 'student.*.view',
             denyResponse: 'You do not have permission to view this student.'
         );
     }
@@ -87,7 +87,7 @@ class StudentPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: "student.{$student->getKey()}.update",
+            abilities: 'student.*.update',
             denyResponse: 'You do not have permission to update this student.'
         );
     }
@@ -99,7 +99,7 @@ class StudentPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: "student.{$student->getKey()}.delete",
+            abilities: 'student.*.delete',
             denyResponse: 'You do not have permission to delete this student.'
         );
     }
@@ -111,7 +111,7 @@ class StudentPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: "student.{$student->getKey()}.restore",
+            abilities: 'student.*.restore',
             denyResponse: 'You do not have permission to restore this student.'
         );
     }
@@ -123,7 +123,7 @@ class StudentPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: "student.{$student->getKey()}.force-delete",
+            abilities: 'student.*.force-delete',
             denyResponse: 'You do not have permission to force delete this student.'
         );
     }

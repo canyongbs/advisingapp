@@ -53,7 +53,7 @@ class UserPolicy
     public function view(Authenticatable $authenticatable, User $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["user.{$model->getKey()}.view"],
+            abilities: ['user.*.view'],
             denyResponse: 'You do not have permission to view this user.'
         );
     }
@@ -77,7 +77,7 @@ class UserPolicy
     public function update(Authenticatable $authenticatable, User $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["user.{$model->getKey()}.update"],
+            abilities: ['user.*.update'],
             denyResponse: 'You do not have permission to update this user.'
         );
     }
@@ -85,7 +85,7 @@ class UserPolicy
     public function delete(Authenticatable $authenticatable, User $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["user.{$model->getKey()}.delete"],
+            abilities: ['user.*.delete'],
             denyResponse: 'You do not have permission to delete this user.'
         );
     }
@@ -93,7 +93,7 @@ class UserPolicy
     public function restore(Authenticatable $authenticatable, User $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["user.{$model->getKey()}.restore"],
+            abilities: ['user.*.restore'],
             denyResponse: 'You do not have permission to restore this user.'
         );
     }
@@ -101,7 +101,7 @@ class UserPolicy
     public function forceDelete(Authenticatable $authenticatable, User $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["user.{$model->getKey()}.force-delete"],
+            abilities: ['user.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this user.'
         );
     }
@@ -109,7 +109,7 @@ class UserPolicy
     public function resetMultifactorAuthentication(Authenticatable $authenticatable, User $model): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["user.{$model->getKey()}.update"],
+            abilities: ['user.*.update'],
             denyResponse: 'You do not have permission to update this user, therefore you may not reset their MFA.'
         );
     }
