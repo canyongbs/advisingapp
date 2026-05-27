@@ -121,11 +121,13 @@ describe('2026_05_12_222040_rename_qna_advisors_table_and_columns_to_customer_ad
 
                 $advisor = CustomerAdvisor::factory()->create();
                 $category = CustomerAdvisorCategory::factory()->for($advisor, 'customerAdvisor')->create();
-                $file = CustomerAdvisorFile::factory()->create();
                 $link = CustomerAdvisorLink::factory()->create();
                 $message = CustomerAdvisorMessage::factory()->create();
                 $question = CustomerAdvisorQuestion::factory()->create();
                 $thread = CustomerAdvisorThread::factory()->create();
+
+                $file = new CustomerAdvisorFile();
+                $file->advisor()->associate($advisor);
 
                 $settings = app(AiCustomerAdvisorSettings::class);
                 $settings->preselected_model = AiModel::Test;
