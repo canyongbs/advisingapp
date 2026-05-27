@@ -42,6 +42,7 @@ use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Spatie\Multitenancy\Commands\Concerns\TenantAware;
 
 class AutoImportEnrollmentSemesters extends Command
@@ -91,6 +92,7 @@ class AutoImportEnrollmentSemesters extends Command
                 ->increment('order', $newCount);
 
             $newSemesters = $newSemesterNames->values()->map(fn (string $name, int $index): array => [
+                'id' => Str::uuid(),
                 'name' => $name,
                 'order' => $index + 1,
                 'created_at' => now(),
