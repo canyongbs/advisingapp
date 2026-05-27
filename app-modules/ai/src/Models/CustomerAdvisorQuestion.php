@@ -67,6 +67,6 @@ class CustomerAdvisorQuestion extends BaseModel implements Auditable
     // TODO: Cleanup Task - RenameQnaAdvisorsFeature, remove the getTable() method
     public function getTable()
     {
-      return RenameQnaAdvisorsFeature::active() ? 'customer_advisor_questions' : 'qna_advisor_questions';
+        return RenameQnaAdvisorsFeature::active() ? 'customer_advisor_questions' : 'qna_advisor_questions';
     }
 }

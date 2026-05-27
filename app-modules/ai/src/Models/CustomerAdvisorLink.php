@@ -116,6 +116,6 @@ class CustomerAdvisorLink extends BaseModel implements AiFile, Auditable
     // TODO: Cleanup Task - RenameQnaAdvisorsFeature, remove the getTable() method
     public function getTable()
     {
-      return RenameQnaAdvisorsFeature::active() ? 'customer_advisor_links' : 'qna_advisor_links';
+        return RenameQnaAdvisorsFeature::active() ? 'customer_advisor_links' : 'qna_advisor_links';
     }
 }

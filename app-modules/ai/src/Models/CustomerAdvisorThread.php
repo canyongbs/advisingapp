@@ -104,6 +104,6 @@ class CustomerAdvisorThread extends BaseModel
     // TODO: Cleanup Task - RenameQnaAdvisorsFeature, remove the getTable() method
     public function getTable()
     {
-      return RenameQnaAdvisorsFeature::active() ? 'customer_advisor_threads' : 'qna_advisor_threads';
+        return RenameQnaAdvisorsFeature::active() ? 'customer_advisor_threads' : 'qna_advisor_threads';
     }
 }

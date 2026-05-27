@@ -84,6 +84,6 @@ class CustomerAdvisorMessage extends BaseModel
     // TODO: Cleanup Task - RenameQnaAdvisorsFeature, remove the getTable() method
     public function getTable()
     {
-      return RenameQnaAdvisorsFeature::active() ? 'customer_advisor_messages' : 'qna_advisor_messages';
+        return RenameQnaAdvisorsFeature::active() ? 'customer_advisor_messages' : 'qna_advisor_messages';
     }
 }

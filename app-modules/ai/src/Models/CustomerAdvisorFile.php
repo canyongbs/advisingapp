@@ -124,6 +124,6 @@ class CustomerAdvisorFile extends BaseModel implements AiFile, HasMedia
     // TODO: Cleanup Task - RenameQnaAdvisorsFeature, remove the getTable() method
     public function getTable()
     {
-      return RenameQnaAdvisorsFeature::active() ? 'customer_advisor_files' : 'qna_advisor_files';
+        return RenameQnaAdvisorsFeature::active() ? 'customer_advisor_files' : 'qna_advisor_files';
     }
 }
