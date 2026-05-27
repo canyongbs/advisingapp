@@ -80,22 +80,17 @@ class AutoImportEnrollmentSemesters implements ShouldQueue, TenantAware
         $defaultOrder = $settings->enrollment_semester_auto_import_default_order;
 
         if ($defaultOrder === EnrollmentSemesterAutoImportDefaultOrder::First) {
-            DB::transaction(function () use ($newSemesterNames) {
-                $maxOrder = (int) EnrollmentSemester::query()
-                    ->lockForUpdate()
-                    ->pluck('order')
-                    ->max();
+            $table = (new EnrollmentSemester())->getTable();
 
-                $newSemesters = $newSemesterNames->values()->map(fn (string $name, int $index): array => [
-                    'id' => Str::uuid(),
-                    'name' => $name,
-                    'order' => $maxOrder + $index + 1,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ])->all();
+            $newSemesters = $newSemesterNames->values()->map(fn (string $name, int $index): array => [
+                'id' => Str::uuid(),
+                'name' => $name,
+                'order' => DB::raw('(SELECT COALESCE(MAX("order"), 0) FROM "' . $table . '") + ' . ($index + 1)),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ])->all();
 
-                EnrollmentSemester::insert($newSemesters);
-            });
+            EnrollmentSemester::insert($newSemesters);
 
             return;
         }
