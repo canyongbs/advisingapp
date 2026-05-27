@@ -41,7 +41,6 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Enums\EmployeeAdvisorResourceHubArticleAccess;
 use AdvisingApp\Ai\Settings\AiEmployeeAdvisorSettings;
-use App\Features\CustomAdvisorRenameFeature;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\User;
@@ -88,18 +87,14 @@ class AiAssistantForm
                 Select::make('model')
                     ->reactive()
                     ->options(fn (AiModel|string|null $state) => array_unique([
-                        ...(CustomAdvisorRenameFeature::active()
-                            ? AiModelApplicabilityFeature::EmployeeAdvisors
-                            : AiModelApplicabilityFeature::CustomAdvisors)->getModelsAsSelectOptions(),
+                        ...AiModelApplicabilityFeature::EmployeeAdvisors->getModelsAsSelectOptions(),
                         ...match (true) {
                             $state instanceof AiModel => [$state->value => $state->getLabel()],
                             is_string($state) => [$state => AiModel::parse($state)->getLabel()],
                             default => [],
                         },
                     ]))
-                    ->rule(Rule::enum(AiModel::class)->only((CustomAdvisorRenameFeature::active()
-                        ? AiModelApplicabilityFeature::EmployeeAdvisors
-                        : AiModelApplicabilityFeature::CustomAdvisors)->getModels()))
+                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::EmployeeAdvisors->getModels()))
                     ->searchable()
                     ->required()
                     ->visible(fn (Get $get): bool => filled($get('application')) && auth()->user()->isSuperAdmin())

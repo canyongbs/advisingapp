@@ -42,7 +42,7 @@ enum AiModelApplicabilityFeature: string implements HasLabel
 {
     case InstitutionalAdvisor = 'institutional_advisor';
 
-    case CustomAdvisors = 'custom_advisors'; //TODO: CustomAdvisorRenameFeature clean up: remove this when you clean up CustomAdvisorRenameFeature
+    case CustomAdvisors = 'custom_advisors'; //TODO: CustomAdvisorRenameFeature clean up: remove this case and the matching `self::CustomAdvisors` arm in getLabel() when you clean up CustomAdvisorRenameFeature
 
     case EmployeeAdvisors = 'employee_advisors';
 
@@ -95,6 +95,11 @@ enum AiModelApplicabilityFeature: string implements HasLabel
     {
         if ($value instanceof self) {
             return $value;
+        }
+
+        //TODO: CustomAdvisorRenameFeature clean up: remove this entire `if` block when you clean up CustomAdvisorRenameFeature
+        if ($value === 'custom_advisors') {
+            return self::EmployeeAdvisors;
         }
 
         return self::tryFrom($value);

@@ -36,6 +36,7 @@
 
 use App\Features\CustomAdvisorRenameFeature;
 use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Exceptions\SettingDoesNotExist;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
@@ -104,7 +105,7 @@ return new class () extends SettingsMigration {
     {
         try {
             $this->migrator->rename($from, $to);
-        } catch (SettingDoesNotExist) {
+        } catch (SettingAlreadyExists $exception) {
             // do nothing
         }
     }
@@ -118,7 +119,7 @@ return new class () extends SettingsMigration {
                     $values,
                 ));
             });
-        } catch (SettingDoesNotExist) {
+        } catch (SettingDoesNotExist $exception) {
             // do nothing
         }
     }
