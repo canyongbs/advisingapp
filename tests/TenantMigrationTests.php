@@ -144,7 +144,7 @@ describe('2026_05_12_222040_rename_qna_advisors_table_and_columns_to_customer_ad
                 expect($question->getTable())->toBe('qna_advisor_questions');
                 expect($thread->getTable())->toBe('qna_advisor_threads');
 
-                expect($category->customerAdvisor)->toBe($advisor->getKey());
+                expect($category->customerAdvisor->getKey())->toBe($advisor->getKey());
 
                 expect(DB::table('permission_groups')->where('name', 'QnA Advisor')->exists())->toBeTrue();
                 expect(DB::table('permission_groups')->where('name', 'QnA Advisor Embed')->exists())->toBeTrue();
