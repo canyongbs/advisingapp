@@ -43,6 +43,7 @@ use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\SmsTemplate;
+use AdvisingApp\Engagement\Models\UnmatchedInboundCommunication;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
@@ -63,6 +64,7 @@ class EngagementServiceProvider extends ServiceProvider
             'engagement_response' => EngagementResponse::class,
             'engagement' => Engagement::class,
             'sms_template' => SmsTemplate::class,
+            'unmatched_inbound_communication' => UnmatchedInboundCommunication::class,
         ]);
     }
 }
