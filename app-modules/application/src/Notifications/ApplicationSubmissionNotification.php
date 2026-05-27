@@ -151,8 +151,9 @@ class ApplicationSubmissionNotification extends Notification implements ShouldQu
         foreach ($fields as $field) {
             /** @var ApplicationFieldSubmission $pivot */
             $pivot = $field->pivot;
+            /** @var mixed $response */
             $response = $pivot->response;
-            $formData[$field->label] = implode(', ', $response);
+            $formData[$field->label] = is_array($response) ? implode(', ', $response) : (string) ($response ?? '');
         }
 
         return [

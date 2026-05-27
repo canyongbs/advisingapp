@@ -269,10 +269,6 @@ test('a user appearing in all three recipient lists only receives one notificati
     $careTeamRole = CareTeamRole::factory()->create();
     $student = Student::factory()->create();
     $student->careTeam()->attach($sharedUser, ['care_team_role_id' => $careTeamRole->id]);
-    // $sharedUser->subscriptions()->create([
-    //     'subscribable_id'   => $student->getKey(),
-    //     'subscribable_type' => $student->getMorphClass(),
-    // ]);
 
     $application = Application::factory()->create([
         'notify_to_care_team' => true,

@@ -151,8 +151,9 @@ class FormSubmissionNotification extends Notification implements ShouldQueue
         foreach ($fields as $field) {
             /** @var FormFieldSubmission $pivot */
             $pivot = $field->pivot;
+            /** @var mixed $response */
             $response = $pivot->response;
-            $formData[$field->label] = implode(', ', $response);
+            $formData[$field->label] = is_array($response) ? implode(', ', $response) : (string) ($response ?? '');
         }
 
         return [
