@@ -121,7 +121,7 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
 
     public function getBody(): HtmlString
     {
-        $content = $this->content;
+        $content = $this->content ?? '';
 
         if (preg_match('/<body[^>]*>(.*?)<\/body>/is', $content, $matches)) {
             $content = $matches[1];
