@@ -34,24 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Settings;
+namespace App\Features;
 
-use AdvisingApp\StudentDataModel\Enums\EnrollmentSemesterAutoImportDefaultOrder;
-use AdvisingApp\StudentDataModel\Enums\SisSystem;
-use Spatie\LaravelSettings\Settings;
+use App\Support\AbstractFeatureFlag;
 
-class StudentInformationSystemSettings extends Settings
+class EnrollmentSemesterAutoImportSettingsFeature extends AbstractFeatureFlag
 {
-    public bool $is_enabled = false;
-
-    public ?SisSystem $sis_system = null;
-
-    public bool $is_enrollment_semester_auto_import_enabled = false;
-
-    public EnrollmentSemesterAutoImportDefaultOrder $enrollment_semester_auto_import_default_order = EnrollmentSemesterAutoImportDefaultOrder::First;
-
-    public static function group(): string
+    public function resolve(mixed $scope): mixed
     {
-        return 'student_information_system';
+        return false;
     }
 }

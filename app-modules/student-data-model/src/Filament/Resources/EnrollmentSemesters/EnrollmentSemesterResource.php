@@ -107,7 +107,7 @@ class EnrollmentSemesterResource extends Resource
                     ->color(fn (mixed $state): string => $state ? 'success' : 'gray'),
             ])
             ->defaultSort('order', 'desc')
-            ->reorderable('order', condition: auth()->user()->can('settings.*.update'))
+            ->reorderable('order', condition: auth()->user()->can('settings.*.update'), direction: 'desc')
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make(),

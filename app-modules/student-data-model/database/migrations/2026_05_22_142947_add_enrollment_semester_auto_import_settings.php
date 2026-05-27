@@ -34,24 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Settings;
+use App\Features\EnrollmentSemesterAutoImportSettingsFeature;
+use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use AdvisingApp\StudentDataModel\Enums\EnrollmentSemesterAutoImportDefaultOrder;
-use AdvisingApp\StudentDataModel\Enums\SisSystem;
-use Spatie\LaravelSettings\Settings;
-
-class StudentInformationSystemSettings extends Settings
-{
-    public bool $is_enabled = false;
-
-    public ?SisSystem $sis_system = null;
-
-    public bool $is_enrollment_semester_auto_import_enabled = false;
-
-    public EnrollmentSemesterAutoImportDefaultOrder $enrollment_semester_auto_import_default_order = EnrollmentSemesterAutoImportDefaultOrder::First;
-
-    public static function group(): string
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return 'student_information_system';
+        DB::transaction(function () {
+            try {
+                $this->migrator->add('student_information_system.is_enrollment_semester_auto_import_enabled', false);
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+
+            try {
+                $this->migrator->add('student_information_system.enrollment_semester_auto_import_default_order', 'first');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+
+            EnrollmentSemesterAutoImportSettingsFeature::activate();
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            EnrollmentSemesterAutoImportSettingsFeature::deactivate();
+
+            $this->migrator->deleteIfExists('student_information_system.is_enrollment_semester_auto_import_enabled');
+            $this->migrator->deleteIfExists('student_information_system.enrollment_semester_auto_import_default_order');
+        });
+    }
+};
