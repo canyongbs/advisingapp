@@ -34,31 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Console\Commands;
+namespace AdvisingApp\StudentDataModel\Jobs;
 
 use AdvisingApp\StudentDataModel\Enums\EnrollmentSemesterAutoImportDefaultOrder;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
-use Illuminate\Console\Command;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use Spatie\Multitenancy\Jobs\TenantAware;
 
-class AutoImportEnrollmentSemesters extends Command
+class AutoImportEnrollmentSemesters implements ShouldQueue, TenantAware
 {
-    use TenantAware;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
-    protected $signature = 'student-data-model:auto-import-enrollment-semesters {--tenant=*}';
-
-    protected $description = 'Imports unsynced enrollment semesters and assigns order based on tenant settings.';
-
-    public function handle(): int
+    public function handle(): void
     {
         $settings = app(StudentInformationSystemSettings::class);
 
         if (! $settings->is_enrollment_semester_auto_import_enabled) {
-            return static::SUCCESS;
+            return;
         }
 
         $newSemesterNames = Enrollment::query()
@@ -71,17 +74,29 @@ class AutoImportEnrollmentSemesters extends Command
             ->pluck('semester_name');
 
         if ($newSemesterNames->isEmpty()) {
-            return static::SUCCESS;
+            return;
         }
 
         $defaultOrder = $settings->enrollment_semester_auto_import_default_order;
 
         if ($defaultOrder === EnrollmentSemesterAutoImportDefaultOrder::First) {
-            foreach ($newSemesterNames as $name) {
-                EnrollmentSemester::create(['name' => $name]);
-            }
+            DB::transaction(function () use ($newSemesterNames) {
+                $maxOrder = (int) EnrollmentSemester::query()
+                    ->lockForUpdate()
+                    ->max('order');
 
-            return static::SUCCESS;
+                $newSemesters = $newSemesterNames->values()->map(fn (string $name, int $index): array => [
+                    'id' => Str::uuid(),
+                    'name' => $name,
+                    'order' => $maxOrder + $index + 1,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ])->all();
+
+                EnrollmentSemester::insert($newSemesters);
+            });
+
+            return;
         }
 
         DB::transaction(function () use ($newSemesterNames) {
@@ -101,7 +116,5 @@ class AutoImportEnrollmentSemesters extends Command
 
             EnrollmentSemester::insert($newSemesters);
         });
-
-        return static::SUCCESS;
     }
 }

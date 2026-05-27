@@ -48,6 +48,7 @@ use AdvisingApp\Engagement\Jobs\DeliverEngagements as DeliverEngagementsJob;
 use AdvisingApp\Engagement\Jobs\GatherAndDispatchSesS3InboundEmails;
 use AdvisingApp\Engagement\Jobs\UnmatchedInboundCommunicationsJob;
 use AdvisingApp\Engagement\Models\EngagementFile;
+use AdvisingApp\StudentDataModel\Jobs\AutoImportEnrollmentSemesters;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
 use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
@@ -215,7 +216,11 @@ class Kernel extends ConsoleKernel
                         ->monitorName("Refresh Calendar Refresh Tokens | Tenant {$tenant->domain}")
                         ->withoutOverlapping(720);
 
-                    $schedule->command("student-data-model:auto-import-enrollment-semesters --tenant={$tenant->id}")
+                    $schedule->call(function () use ($tenant) {
+                        $tenant->execute(function () {
+                            dispatch(new AutoImportEnrollmentSemesters());
+                        });
+                    })
                         ->daily()
                         ->name("Auto Import Enrollment Semesters | Tenant {$tenant->domain}")
                         ->monitorName("Auto Import Enrollment Semesters | Tenant {$tenant->domain}")

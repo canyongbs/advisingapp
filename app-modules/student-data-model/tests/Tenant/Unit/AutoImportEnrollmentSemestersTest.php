@@ -35,11 +35,10 @@
 */
 
 use AdvisingApp\StudentDataModel\Enums\EnrollmentSemesterAutoImportDefaultOrder;
+use AdvisingApp\StudentDataModel\Jobs\AutoImportEnrollmentSemesters;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
-
-use function Pest\Laravel\artisan;
 
 it('does not run when auto import is disabled', function () {
     $settings = app(StudentInformationSystemSettings::class);
@@ -48,8 +47,7 @@ it('does not run when auto import is disabled', function () {
 
     Enrollment::factory()->create(['semester_name' => 'Fall 2024']);
 
-    artisan('student-data-model:auto-import-enrollment-semesters')
-        ->assertSuccessful();
+    (new AutoImportEnrollmentSemesters())->handle();
 
     expect(EnrollmentSemester::count())->toBe(0);
 });
@@ -62,8 +60,7 @@ it('does nothing when there are no unsynced semesters', function () {
     EnrollmentSemester::create(['name' => 'Fall 2024']);
     Enrollment::factory()->create(['semester_name' => 'Fall 2024']);
 
-    artisan('student-data-model:auto-import-enrollment-semesters')
-        ->assertSuccessful();
+    (new AutoImportEnrollmentSemesters())->handle();
 
     expect(EnrollmentSemester::count())->toBe(1);
 });
@@ -80,8 +77,7 @@ it('imports unsynced semesters with order first placing them at the top', functi
     Enrollment::factory()->create(['semester_name' => 'Spring 2025']);
     Enrollment::factory()->create(['semester_name' => 'Fall 2025']);
 
-    artisan('student-data-model:auto-import-enrollment-semesters')
-        ->assertSuccessful();
+    (new AutoImportEnrollmentSemesters())->handle();
 
     expect(EnrollmentSemester::count())->toBe(4);
 
@@ -108,8 +104,7 @@ it('imports unsynced semesters with order last placing them at the bottom', func
     Enrollment::factory()->create(['semester_name' => 'Spring 2025']);
     Enrollment::factory()->create(['semester_name' => 'Fall 2025']);
 
-    artisan('student-data-model:auto-import-enrollment-semesters')
-        ->assertSuccessful();
+    (new AutoImportEnrollmentSemesters())->handle();
 
     expect(EnrollmentSemester::count())->toBe(4);
 
@@ -136,8 +131,7 @@ it('preserves relative order of existing semesters when placing new ones last', 
 
     Enrollment::factory()->create(['semester_name' => 'Spring 2025']);
 
-    artisan('student-data-model:auto-import-enrollment-semesters')
-        ->assertSuccessful();
+    (new AutoImportEnrollmentSemesters())->handle();
 
     $fall2024 = EnrollmentSemester::where('name', 'Fall 2024')->first();
     $summer2024 = EnrollmentSemester::where('name', 'Summer 2024')->first();
@@ -157,8 +151,7 @@ it('skips enrollments with null semester name', function () {
     Enrollment::factory()->create(['semester_name' => null]);
     Enrollment::factory()->create(['semester_name' => 'Fall 2024']);
 
-    artisan('student-data-model:auto-import-enrollment-semesters')
-        ->assertSuccessful();
+    (new AutoImportEnrollmentSemesters())->handle();
 
     expect(EnrollmentSemester::count())->toBe(1);
     expect(EnrollmentSemester::first()->name)->toBe('Fall 2024');
@@ -173,8 +166,7 @@ it('does not duplicate already synced semesters', function () {
     Enrollment::factory()->create(['semester_name' => 'Fall 2024']);
     Enrollment::factory()->create(['semester_name' => 'Spring 2025']);
 
-    artisan('student-data-model:auto-import-enrollment-semesters')
-        ->assertSuccessful();
+    (new AutoImportEnrollmentSemesters())->handle();
 
     expect(EnrollmentSemester::count())->toBe(2);
     expect(EnrollmentSemester::where('name', 'Fall 2024')->count())->toBe(1);
