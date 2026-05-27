@@ -189,8 +189,7 @@ describe('2026_05_12_222040_rename_qna_advisors_table_and_columns_to_customer_ad
                 expect($user->hasPermissionTo('customer_advisor_embed.view-any'))->toBeTrue();
                 expect($user->hasPermissionTo('customer_advisor_embed.*.view'))->toBeTrue();
 
-                app()->forgetInstance(AiCustomerAdvisorSettings::class);
-                $settings = app(AiCustomerAdvisorSettings::class);
+                $settings->refresh();
 
                 expect($settings->preselected_model)->toBe(AiModel::Test);
                 expect($settings->instructions)->toBe('Test instructions');
