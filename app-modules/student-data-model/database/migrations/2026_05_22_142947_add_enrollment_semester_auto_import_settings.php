@@ -36,14 +36,24 @@
 
 use App\Features\EnrollmentSemesterAutoImportSettingsFeature;
 use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
     public function up(): void
     {
         DB::transaction(function () {
-            $this->migrator->add('student_information_system.is_enrollment_semester_auto_import_enabled', false);
-            $this->migrator->add('student_information_system.enrollment_semester_auto_import_default_order', 'first');
+            try {
+                $this->migrator->add('student_information_system.is_enrollment_semester_auto_import_enabled', false);
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+
+            try {
+                $this->migrator->add('student_information_system.enrollment_semester_auto_import_default_order', 'first');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
 
             EnrollmentSemesterAutoImportSettingsFeature::activate();
         });

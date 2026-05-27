@@ -84,24 +84,20 @@ class AutoImportEnrollmentSemesters extends Command
         }
 
         DB::transaction(function () use ($newSemesterNames) {
-            $existingSemesters = EnrollmentSemester::query()
-                ->lockForUpdate()
-                ->orderBy('order', 'desc')
-                ->get();
-
             $newCount = $newSemesterNames->count();
-            $order = $existingSemesters->count() + $newCount;
 
-            foreach ($existingSemesters as $semester) {
-                $semester->updateQuietly(['order' => $order--]);
-            }
+            EnrollmentSemester::query()
+                ->lockForUpdate()
+                ->increment('order', $newCount);
 
-            foreach ($newSemesterNames as $name) {
-                EnrollmentSemester::create([
-                    'name' => $name,
-                    'order' => $order--,
-                ]);
-            }
+            $newSemesters = $newSemesterNames->values()->map(fn (string $name, int $index): array => [
+                'name' => $name,
+                'order' => $index + 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ])->all();
+
+            EnrollmentSemester::insert($newSemesters);
         });
 
         return static::SUCCESS;
