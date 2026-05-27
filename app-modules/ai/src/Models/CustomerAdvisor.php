@@ -47,6 +47,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Override;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
@@ -67,8 +68,6 @@ class CustomerAdvisor extends BaseModel implements HasMedia, Auditable
 
     use SoftDeletes;
     use AuditableTrait;
-
-    protected $table = 'customer_advisors'; // Temporary measure for testing
 
     protected $fillable = [
         'archived_at',
@@ -194,5 +193,11 @@ class CustomerAdvisor extends BaseModel implements HasMedia, Auditable
             ->whereNotNull('article_details')
             ->get(['id', 'updated_at'])
             ->all();
+    }
+
+    // TODO: Cleanup Task - RenameQnaAdvisorsFeature, remove the getTable() method
+    public function getTable()
+    {
+        return RenameQnaAdvisorsFeature::active() ? 'customer_advisors' : 'qna_advisors';
     }
 }

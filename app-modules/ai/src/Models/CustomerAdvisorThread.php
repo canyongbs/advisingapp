@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Interaction\Models\Interaction;
+use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -98,5 +99,11 @@ class CustomerAdvisorThread extends BaseModel
     public function interaction(): BelongsTo
     {
         return $this->belongsTo(Interaction::class);
+    }
+
+    // TODO: Cleanup Task - RenameQnaAdvisorsFeature, remove the getTable() method
+    public function getTable()
+    {
+      return RenameQnaAdvisorsFeature::active() ? 'customer_advisor_threads' : 'qna_advisor_threads';
     }
 }

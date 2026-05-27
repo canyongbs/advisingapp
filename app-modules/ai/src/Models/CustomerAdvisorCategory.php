@@ -43,6 +43,7 @@ use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Override;
 use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -76,5 +77,11 @@ class CustomerAdvisorCategory extends BaseModel implements Auditable
     public function questions(): HasMany
     {
         return $this->hasMany(CustomerAdvisorQuestion::class, 'category_id');
+    }
+
+    // TODO: Cleanup Task - RenameQnaAdvisorsFeature, remove the getTable() method
+    public function getTable()
+    {
+      return RenameQnaAdvisorsFeature::active() ? 'customer_advisor_categories' : 'qna_advisor_categories';
     }
 }

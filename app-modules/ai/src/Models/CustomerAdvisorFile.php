@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
+use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\BaseModel;
 use App\Models\Media;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
@@ -118,5 +119,11 @@ class CustomerAdvisorFile extends BaseModel implements AiFile, HasMedia
     public function openAiVectorStores(): MorphMany
     {
         return $this->morphMany(OpenAiVectorStore::class, 'file');
+    }
+
+    // TODO: Cleanup Task - RenameQnaAdvisorsFeature, remove the getTable() method
+    public function getTable()
+    {
+      return RenameQnaAdvisorsFeature::active() ? 'customer_advisor_files' : 'qna_advisor_files';
     }
 }
