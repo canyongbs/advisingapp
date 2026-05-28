@@ -44,11 +44,13 @@ use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
 use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 // Add tests for migration files here
 
@@ -70,6 +72,153 @@ use Illuminate\Support\Facades\DB;
 //        );
 //    });
 //});
+
+/** @return array<string, mixed> */
+function oldTiptapCaseFormContent(): array
+{
+    return [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'tiptapBlock',
+                'attrs' => [
+                    'id' => 'case-field-uuid-1',
+                    'type' => 'text_input',
+                    'data' => [
+                        'label' => 'Full Name',
+                        'isRequired' => true,
+                        'description' => 'Enter your name',
+                    ],
+                ],
+            ],
+            [
+                'type' => 'tiptapBlock',
+                'attrs' => [
+                    'id' => 'case-field-uuid-2',
+                    'type' => 'select',
+                    'data' => [
+                        'label' => 'Color',
+                        'isRequired' => false,
+                        'options' => ['red' => 'Red', 'blue' => 'Blue'],
+                    ],
+                ],
+            ],
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    ['type' => 'text', 'text' => 'Some text'],
+                ],
+            ],
+        ],
+    ];
+}
+
+/** @return array<string, mixed> */
+function oldTiptapCaseEmailTemplateBody(): array
+{
+    return [
+        'type' => 'doc',
+        'content' => [
+            [
+                'type' => 'paragraph',
+                'content' => [
+                    ['type' => 'text', 'text' => 'Hello '],
+                    ['type' => 'mergeTag', 'attrs' => ['id' => 'contact name']],
+                ],
+            ],
+            [
+                'type' => 'tiptapBlock',
+                'attrs' => [
+                    'id' => null,
+                    'type' => 'caseTypeEmailTemplateButtonBlock',
+                    'data' => [
+                        'label' => 'Open Case',
+                        'alignment' => 'center',
+                    ],
+                ],
+            ],
+        ],
+    ];
+}
+
+$caseManagementMigrationPath = 'app-modules/case-management/database/migrations/2026_05_28_201050_tmp_migrate_from_content_tiptap_to_richeditor_for_case_management.php';
+
+test('2026_05_28_201050 converts tiptapBlock to customBlock in case_forms', function () use ($caseManagementMigrationPath) {
+    isolatedMigration(
+        '2026_05_28_201050_tmp_migrate_from_content_tiptap_to_richeditor_for_case_management',
+        function () use ($caseManagementMigrationPath) {
+            $caseFormId = (string) Str::uuid();
+
+            DB::table('case_forms')->insert([
+                'id' => $caseFormId,
+                'name' => 'Test Case Form ' . Str::uuid(),
+                'content' => json_encode(oldTiptapCaseFormContent()),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => $caseManagementMigrationPath]);
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $content = json_decode((string) DB::table('case_forms')->where('id', $caseFormId)->value('content'), associative: true); /** @phpstan-ignore-line */
+
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['type'])->toBe('customBlock');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['id'])->toBe('text_input');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['config']['fieldId'])->toBe('case-field-uuid-1');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['config']['label'])->toBe('Full Name');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][0]['attrs']['config']['isRequired'])->toBeTrue();
+
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][1]['type'])->toBe('customBlock');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][1]['attrs']['id'])->toBe('select');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][1]['attrs']['config']['fieldId'])->toBe('case-field-uuid-2');
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][1]['attrs']['config']['options'])->toBe(['red' => 'Red', 'blue' => 'Blue']);
+
+            /** @phpstan-ignore-next-line */
+            expect($content['content'][2]['type'])->toBe('paragraph');
+        }
+    );
+});
+
+test('2026_05_28_201050 converts caseTypeEmailTemplateButtonBlock in case_type_email_templates body', function () use ($caseManagementMigrationPath) {
+    isolatedMigration(
+        '2026_05_28_201050_tmp_migrate_from_content_tiptap_to_richeditor_for_case_management',
+        function () use ($caseManagementMigrationPath) {
+            $template = CaseTypeEmailTemplate::factory()->createQuietly();
+
+            DB::table('case_type_email_templates')
+                ->where('id', $template->id)
+                ->update(['body' => json_encode(oldTiptapCaseEmailTemplateBody())]);
+
+            $migrate = Artisan::call('migrate', ['--path' => $caseManagementMigrationPath]);
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            $body = json_decode((string) DB::table('case_type_email_templates')->where('id', $template->id)->value('body'), associative: true); /** @phpstan-ignore-line */
+
+            // Paragraph node is unchanged
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][0]['type'])->toBe('paragraph');
+
+            // Button block is converted
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][1]['type'])->toBe('customBlock');
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][1]['attrs']['id'])->toBe('caseTypeEmailTemplateButtonBlock');
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][1]['attrs']['config']['label'])->toBe('Open Case');
+            /** @phpstan-ignore-next-line */
+            expect($body['content'][1]['attrs']['config']['alignment'])->toBe('center');
+        }
+    );
+});
 
 test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements_table renames column and backfills source_type', function () {
     isolatedMigration(
