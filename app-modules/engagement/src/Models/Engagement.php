@@ -367,6 +367,13 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
             ->mergeTags($this->getMergeData());
     }
 
+    protected static function booted(): void
+    {
+        static::addGlobalScope('licensed', function (Builder $builder) {
+            $builder->tap(new LicensedToEducatable('recipient'));
+        });
+    }
+
     private function resolveEmailHealthStatus(Educatable $recipient, string $route): EmailHealthStatus
     {
         /** @var StudentEmailAddress|ProspectEmailAddress $emailAddress */
@@ -383,12 +390,5 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
             ?? $recipient->phoneNumbers()->make(['number' => $route, 'can_receive_sms' => true]);
 
         return $phoneNumber->getHealthStatus();
-    }
-
-    protected static function booted(): void
-    {
-        static::addGlobalScope('licensed', function (Builder $builder) {
-            $builder->tap(new LicensedToEducatable('recipient'));
-        });
     }
 }
