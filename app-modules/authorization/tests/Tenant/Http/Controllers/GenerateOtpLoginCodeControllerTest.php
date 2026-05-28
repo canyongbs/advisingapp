@@ -388,6 +388,10 @@ it('performs case-insensitive domain matching', function () {
 it('rate limits OTP generation requests', function () {
     config()->set('authorization.admin_otp_allowed_email_domains', ['example.com']);
 
+    $settings = app(OlympusSettings::class);
+    $settings->key = 'test-olympus-key';
+    $settings->save();
+
     for ($idx = 0; $idx < 5; $idx++) {
         post(
             route('otp-code.generate'),
@@ -396,7 +400,7 @@ it('rate limits OTP generation requests', function () {
                 'name' => fake()->name(),
                 'type' => Authenticatable::SUPER_ADMIN_ROLE,
             ],
-            ['Authorization' => 'Bearer ' . app(OlympusSettings::class)->key]
+            ['Authorization' => 'Bearer test-olympus-key']
         )
             ->assertOk();
     }
@@ -408,7 +412,7 @@ it('rate limits OTP generation requests', function () {
             'name' => fake()->name(),
             'type' => Authenticatable::SUPER_ADMIN_ROLE,
         ],
-        ['Authorization' => 'Bearer ' . app(OlympusSettings::class)->key]
+        ['Authorization' => 'Bearer test-olympus-key']
     )
         ->assertStatus(429);
 });
