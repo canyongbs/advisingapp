@@ -40,8 +40,10 @@ use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Observers\FormObserver;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Enums\FontWeight;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -72,6 +74,10 @@ class Form extends Submissible
         'title',
         'title_font_weight',
         'title_color',
+        'notify_to_care_team',
+        'notify_to_subscribers',
+        'notify_via_app',
+        'notify_via_email',
     ];
 
     protected $casts = [
@@ -84,6 +90,10 @@ class Form extends Submissible
         'rounding' => Rounding::class,
         'generate_prospects' => 'boolean',
         'title_font_weight' => FontWeight::class,
+        'notify_to_care_team' => 'boolean',
+        'notify_to_subscribers' => 'boolean',
+        'notify_via_app' => 'boolean',
+        'notify_via_email' => 'boolean',
     ];
 
     /**
@@ -132,5 +142,15 @@ class Form extends Submissible
     public function workflows(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->workflowTriggers(), (new WorkflowTrigger())->workflow());
+    }
+
+    /**
+     * @return BelongsToMany<User, $this, FormNotificationUser>
+     */
+    public function notificationUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'form_notification_users', 'form_id', 'user_id')
+            ->using(FormNotificationUser::class)
+            ->withTimestamps();
     }
 }

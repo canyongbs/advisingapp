@@ -149,7 +149,7 @@ trait CanUploadFiles
             ->iconButton()
             ->color('gray')
             ->disabled(count($this->files) >= 1)
-            ->badge(count($this->files))
+            ->badge(fn () => count($this->files))
             ->badgeColor('primary')
             ->modalSubmitActionLabel('Upload')
             ->schema([

@@ -41,7 +41,7 @@ use Filament\Actions\Exports\Jobs\CreateXlsxFile;
 
 class CreateXlsxFileOverride extends CreateXlsxFile
 {
-    public int $tries = 2;
+    public ?int $tries = 2;
 
     /**
      * The number of seconds the job can run before timing out.

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Application\Http\Controllers;
 
+use AdvisingApp\Application\Jobs\SendApplicationNotificationJob;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
 use AdvisingApp\Application\Models\ApplicationSubmission;
@@ -309,6 +310,8 @@ class ApplicationWidgetController extends Controller
         }
 
         $submission->save();
+
+        SendApplicationNotificationJob::dispatch($application, $submission)->afterCommit();
 
         return response()->json(
             [

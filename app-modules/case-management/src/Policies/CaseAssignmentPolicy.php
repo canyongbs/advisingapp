@@ -73,7 +73,7 @@ class CaseAssignmentPolicy
     public function view(Authenticatable $authenticatable, CaseAssignment $caseAssignment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["case_assignment.{$caseAssignment->getKey()}.view"],
+            abilities: ['case_assignment.*.view'],
             denyResponse: 'You do not have permissions to view this case assignment.'
         );
     }
@@ -89,7 +89,7 @@ class CaseAssignmentPolicy
     public function update(Authenticatable $authenticatable, CaseAssignment $caseAssignment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["case_assignment.{$caseAssignment->getKey()}.update"],
+            abilities: ['case_assignment.*.update'],
             denyResponse: 'You do not have permissions to update this case assignment.'
         );
     }
@@ -97,7 +97,7 @@ class CaseAssignmentPolicy
     public function delete(Authenticatable $authenticatable, CaseAssignment $caseAssignment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["case_assignment.{$caseAssignment->getKey()}.delete"],
+            abilities: ['case_assignment.*.delete'],
             denyResponse: 'You do not have permissions to delete this case assignment.'
         );
     }
@@ -105,7 +105,7 @@ class CaseAssignmentPolicy
     public function restore(Authenticatable $authenticatable, CaseAssignment $caseAssignment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["case_assignment.{$caseAssignment->getKey()}.restore"],
+            abilities: ['case_assignment.*.restore'],
             denyResponse: 'You do not have permissions to restore this case assignment.'
         );
     }
@@ -113,7 +113,7 @@ class CaseAssignmentPolicy
     public function forceDelete(Authenticatable $authenticatable, CaseAssignment $caseAssignment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["case_assignment.{$caseAssignment->getKey()}.force-delete"],
+            abilities: ['case_assignment.*.force-delete'],
             denyResponse: 'You do not have permissions to force delete this case assignment.'
         );
     }
