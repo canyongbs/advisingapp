@@ -41,13 +41,13 @@
 
 <div class="flex items-center gap-2">
     <x-filament::icon
-        class="h-5 w-5 shrink-0 text-gray-500 dark:text-gray-400"
+        class="h-5 w-5 shrink-0"
         icon="{{ $channel->getIcon() }}"
         x-tooltip.raw="{{ $channel->getLabel() }}"
     />
 
     @if (filled($recipientRoute))
-        <span class="text-sm text-gray-950 dark:text-white">
+        <span class="text-sm">
             {{ $recipientRoute }}
         </span>
 

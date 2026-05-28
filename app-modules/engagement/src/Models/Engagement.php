@@ -47,17 +47,16 @@ use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\SmsMessage;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Enums\EmailHealthStatus;
 use AdvisingApp\StudentDataModel\Enums\PhoneHealthStatus;
-use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
-use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use AdvisingApp\StudentDataModel\Models\EmailAddressOptInOptOut;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
-use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\EngagementTimeline;
@@ -207,9 +206,15 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
             return null;
         }
 
+        $recipient = $this->recipient;
+
+        if (! $recipient instanceof Educatable) {
+            return null;
+        }
+
         return match ($this->channel) {
-            NotificationChannel::Email => $this->resolveEmailHealthStatus($route),
-            NotificationChannel::Sms => $this->resolvePhoneHealthStatus($route),
+            NotificationChannel::Email => $this->resolveEmailHealthStatus($recipient, $route),
+            NotificationChannel::Sms => $this->resolvePhoneHealthStatus($recipient, $route),
             default => null,
         };
     }
@@ -362,30 +367,22 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
             ->mergeTags($this->getMergeData());
     }
 
-    protected function resolveEmailHealthStatus(string $address): EmailHealthStatus
+    private function resolveEmailHealthStatus(Educatable $recipient, string $route): EmailHealthStatus
     {
-        if (BouncedEmailAddress::where('address', $address)->exists()) {
-            return EmailHealthStatus::Bounced;
-        }
+        /** @var StudentEmailAddress|ProspectEmailAddress $emailAddress */
+        $emailAddress = $recipient->emailAddresses()->where('address', $route)->first()
+            ?? $recipient->emailAddresses()->make(['address' => $route]);
 
-        if (EmailAddressOptInOptOut::where('address', $address)->where('status', EmailAddressOptInOptOutStatus::OptedOut)->exists()) {
-            return EmailHealthStatus::OptedOut;
-        }
-
-        return EmailHealthStatus::Healthy;
+        return $emailAddress->getHealthStatus();
     }
 
-    protected function resolvePhoneHealthStatus(string $number): PhoneHealthStatus
+    private function resolvePhoneHealthStatus(Educatable $recipient, string $route): PhoneHealthStatus
     {
-        if (BouncedPhoneNumber::where('number', $number)->exists()) {
-            return PhoneHealthStatus::Bounced;
-        }
+        /** @var StudentPhoneNumber|ProspectPhoneNumber $phoneNumber */
+        $phoneNumber = $recipient->phoneNumbers()->where('number', $route)->first()
+            ?? $recipient->phoneNumbers()->make(['number' => $route, 'can_receive_sms' => true]);
 
-        if (SmsOptOutPhoneNumber::where('number', $number)->exists()) {
-            return PhoneHealthStatus::OptedOut;
-        }
-
-        return PhoneHealthStatus::Healthy;
+        return $phoneNumber->getHealthStatus();
     }
 
     protected static function booted(): void

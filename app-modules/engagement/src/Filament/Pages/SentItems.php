@@ -102,7 +102,7 @@ class SentItems extends Page implements HasTable
             ->query(
                 Engagement::query()
                     ->whereHas('recipient')
-                    ->with(['latestEmailMessage', 'latestSmsMessage'])
+                    ->with(['latestEmailMessage', 'latestSmsMessage', 'recipient'])
             )
             ->columns([
                 TextColumn::make('direction')
@@ -125,6 +125,7 @@ class SentItems extends Page implements HasTable
                     ->openUrlInNewTab(),
                 ViewColumn::make('channel')
                     ->label('Type')
+                    ->state(fn (Engagement $record): ?string => $record->getRecipientRoute())
                     ->view('engagement::filament.columns.channel-detail'),
                 TextColumn::make('subject')
                     ->description(

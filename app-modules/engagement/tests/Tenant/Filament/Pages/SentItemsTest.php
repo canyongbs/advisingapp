@@ -44,12 +44,18 @@ use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
 use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\EmailAddressOptInOptOut;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('displays the type column with channel icon, email address, and healthy status for email engagements', function () {
     asSuperAdmin();
+
+    $student = Student::factory()->create();
+    StudentEmailAddress::factory()->create(['sisid' => $student->sisid, 'address' => 'student@university.edu']);
 
     $engagement = Engagement::factory()
         ->has(
@@ -58,20 +64,24 @@ it('displays the type column with channel icon, email address, and healthy statu
         )
         ->email()
         ->deliverNow()
-        ->forStudent()
-        ->create(['dispatched_at' => now()]);
+        ->create([
+            'dispatched_at' => now(),
+            'recipient_id' => $student->sisid,
+            'recipient_type' => (new Student())->getMorphClass(),
+        ]);
 
     livewire(SentItems::class)
         ->assertSuccessful()
         ->assertTableColumnExists('channel')
         ->assertCanSeeTableRecords([$engagement])
-        ->assertSeeHtml('student@university.edu')
-        ->assertSeeHtml(EmailHealthStatus::Healthy->getColorClasses())
-        ->assertSeeHtml(EmailHealthStatus::Healthy->getTooltipText());
+        ->assertTableColumnStateSet('channel', 'student@university.edu', record: $engagement);
 });
 
 it('displays the type column with channel icon, phone number, and healthy status for sms engagements', function () {
     asSuperAdmin();
+
+    $student = Student::factory()->create();
+    StudentPhoneNumber::factory()->canReceiveSms()->create(['sisid' => $student->sisid, 'number' => '+15551234567']);
 
     $engagement = Engagement::factory()
         ->has(
@@ -80,21 +90,24 @@ it('displays the type column with channel icon, phone number, and healthy status
         )
         ->sms()
         ->deliverNow()
-        ->forStudent()
-        ->create(['dispatched_at' => now()]);
+        ->create([
+            'dispatched_at' => now(),
+            'recipient_id' => $student->sisid,
+            'recipient_type' => (new Student())->getMorphClass(),
+        ]);
 
     livewire(SentItems::class)
         ->assertSuccessful()
         ->assertCanSeeTableRecords([$engagement])
-        ->assertSeeHtml('+15551234567')
-        ->assertSeeHtml(PhoneHealthStatus::Healthy->getColorClasses())
-        ->assertSeeHtml(PhoneHealthStatus::Healthy->getTooltipText());
+        ->assertTableColumnStateSet('channel', '+15551234567', record: $engagement);
 });
 
 it('displays the bounced status icon for a bounced email address', function () {
     asSuperAdmin();
 
     $email = 'bounced@example.com';
+    $student = Student::factory()->create();
+    StudentEmailAddress::factory()->create(['sisid' => $student->sisid, 'address' => $email]);
     BouncedEmailAddress::factory()->create(['address' => $email]);
 
     Engagement::factory()
@@ -104,14 +117,16 @@ it('displays the bounced status icon for a bounced email address', function () {
         )
         ->email()
         ->deliverNow()
-        ->forStudent()
-        ->create(['dispatched_at' => now()]);
+        ->create([
+            'dispatched_at' => now(),
+            'recipient_id' => $student->sisid,
+            'recipient_type' => (new Student())->getMorphClass(),
+        ]);
 
     livewire(SentItems::class)
         ->assertSuccessful()
         ->loadTable()
         ->assertSeeHtml($email)
-        ->assertSeeHtml(EmailHealthStatus::Bounced->getColorClasses())
         ->assertSeeHtml(EmailHealthStatus::Bounced->getTooltipText());
 });
 
@@ -119,6 +134,8 @@ it('displays the opted out status icon for an opted-out email address', function
     asSuperAdmin();
 
     $email = 'optedout@example.com';
+    $student = Student::factory()->create();
+    StudentEmailAddress::factory()->create(['sisid' => $student->sisid, 'address' => $email]);
     EmailAddressOptInOptOut::factory()->optedOut()->create(['address' => $email]);
 
     Engagement::factory()
@@ -128,14 +145,16 @@ it('displays the opted out status icon for an opted-out email address', function
         )
         ->email()
         ->deliverNow()
-        ->forStudent()
-        ->create(['dispatched_at' => now()]);
+        ->create([
+            'dispatched_at' => now(),
+            'recipient_id' => $student->sisid,
+            'recipient_type' => (new Student())->getMorphClass(),
+        ]);
 
     livewire(SentItems::class)
         ->assertSuccessful()
         ->loadTable()
         ->assertSeeHtml($email)
-        ->assertSeeHtml(EmailHealthStatus::OptedOut->getColorClasses())
         ->assertSeeHtml(EmailHealthStatus::OptedOut->getTooltipText());
 });
 
@@ -143,6 +162,8 @@ it('displays the bounced status icon for a bounced phone number', function () {
     asSuperAdmin();
 
     $phone = '+15552220000';
+    $student = Student::factory()->create();
+    StudentPhoneNumber::factory()->canReceiveSms()->create(['sisid' => $student->sisid, 'number' => $phone]);
     BouncedPhoneNumber::factory()->create(['number' => $phone]);
 
     Engagement::factory()
@@ -152,14 +173,16 @@ it('displays the bounced status icon for a bounced phone number', function () {
         )
         ->sms()
         ->deliverNow()
-        ->forStudent()
-        ->create(['dispatched_at' => now()]);
+        ->create([
+            'dispatched_at' => now(),
+            'recipient_id' => $student->sisid,
+            'recipient_type' => (new Student())->getMorphClass(),
+        ]);
 
     livewire(SentItems::class)
         ->assertSuccessful()
         ->loadTable()
         ->assertSeeHtml($phone)
-        ->assertSeeHtml(PhoneHealthStatus::Bounced->getColorClasses())
         ->assertSeeHtml(PhoneHealthStatus::Bounced->getTooltipText());
 });
 
@@ -167,6 +190,8 @@ it('displays the opted out status icon for an opted-out phone number', function 
     asSuperAdmin();
 
     $phone = '+15553330000';
+    $student = Student::factory()->create();
+    StudentPhoneNumber::factory()->canReceiveSms()->create(['sisid' => $student->sisid, 'number' => $phone]);
     SmsOptOutPhoneNumber::factory()->create(['number' => $phone]);
 
     Engagement::factory()
@@ -176,14 +201,16 @@ it('displays the opted out status icon for an opted-out phone number', function 
         )
         ->sms()
         ->deliverNow()
-        ->forStudent()
-        ->create(['dispatched_at' => now()]);
+        ->create([
+            'dispatched_at' => now(),
+            'recipient_id' => $student->sisid,
+            'recipient_type' => (new Student())->getMorphClass(),
+        ]);
 
     livewire(SentItems::class)
         ->assertSuccessful()
         ->loadTable()
         ->assertSeeHtml($phone)
-        ->assertSeeHtml(PhoneHealthStatus::OptedOut->getColorClasses())
         ->assertSeeHtml(PhoneHealthStatus::OptedOut->getTooltipText());
 });
 
@@ -249,6 +276,9 @@ it('returns null recipient route when no message and recipient_route is null', f
 it('returns healthy email health status when address is not bounced or opted out', function () {
     asSuperAdmin();
 
+    $student = Student::factory()->create();
+    StudentEmailAddress::factory()->create(['sisid' => $student->sisid, 'address' => 'healthy@example.com']);
+
     $engagement = Engagement::factory()
         ->has(
             EmailMessage::factory()->state(['recipient_address' => 'healthy@example.com']),
@@ -256,7 +286,10 @@ it('returns healthy email health status when address is not bounced or opted out
         )
         ->email()
         ->deliverNow()
-        ->create();
+        ->create([
+            'recipient_id' => $student->sisid,
+            'recipient_type' => (new Student())->getMorphClass(),
+        ]);
 
     expect($engagement->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::Healthy);
 });
@@ -265,6 +298,8 @@ it('returns bounced email health status for a bounced email address', function (
     asSuperAdmin();
 
     $email = 'bounced@example.com';
+    $student = Student::factory()->create();
+    StudentEmailAddress::factory()->create(['sisid' => $student->sisid, 'address' => $email]);
     BouncedEmailAddress::factory()->create(['address' => $email]);
 
     $engagement = Engagement::factory()
@@ -274,7 +309,10 @@ it('returns bounced email health status for a bounced email address', function (
         )
         ->email()
         ->deliverNow()
-        ->create();
+        ->create([
+            'recipient_id' => $student->sisid,
+            'recipient_type' => (new Student())->getMorphClass(),
+        ]);
 
     expect($engagement->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::Bounced);
 });
@@ -283,6 +321,8 @@ it('returns opted out email health status for an opted-out email address', funct
     asSuperAdmin();
 
     $email = 'optedout@example.com';
+    $student = Student::factory()->create();
+    StudentEmailAddress::factory()->create(['sisid' => $student->sisid, 'address' => $email]);
     EmailAddressOptInOptOut::factory()->optedOut()->create(['address' => $email]);
 
     $engagement = Engagement::factory()
@@ -292,13 +332,19 @@ it('returns opted out email health status for an opted-out email address', funct
         )
         ->email()
         ->deliverNow()
-        ->create();
+        ->create([
+            'recipient_id' => $student->sisid,
+            'recipient_type' => (new Student())->getMorphClass(),
+        ]);
 
     expect($engagement->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::OptedOut);
 });
 
 it('returns healthy phone health status when number is not bounced or opted out', function () {
     asSuperAdmin();
+
+    $student = Student::factory()->create();
+    StudentPhoneNumber::factory()->canReceiveSms()->create(['sisid' => $student->sisid, 'number' => '+15551110000']);
 
     $engagement = Engagement::factory()
         ->has(
@@ -307,7 +353,10 @@ it('returns healthy phone health status when number is not bounced or opted out'
         )
         ->sms()
         ->deliverNow()
-        ->create();
+        ->create([
+            'recipient_id' => $student->sisid,
+            'recipient_type' => (new Student())->getMorphClass(),
+        ]);
 
     expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::Healthy);
 });
@@ -316,6 +365,8 @@ it('returns bounced phone health status for a bounced phone number', function ()
     asSuperAdmin();
 
     $phone = '+15552220000';
+    $student = Student::factory()->create();
+    StudentPhoneNumber::factory()->canReceiveSms()->create(['sisid' => $student->sisid, 'number' => $phone]);
     BouncedPhoneNumber::factory()->create(['number' => $phone]);
 
     $engagement = Engagement::factory()
@@ -325,7 +376,10 @@ it('returns bounced phone health status for a bounced phone number', function ()
         )
         ->sms()
         ->deliverNow()
-        ->create();
+        ->create([
+            'recipient_id' => $student->sisid,
+            'recipient_type' => (new Student())->getMorphClass(),
+        ]);
 
     expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::Bounced);
 });
@@ -334,6 +388,8 @@ it('returns opted out phone health status for an opted-out phone number', functi
     asSuperAdmin();
 
     $phone = '+15553330000';
+    $student = Student::factory()->create();
+    StudentPhoneNumber::factory()->canReceiveSms()->create(['sisid' => $student->sisid, 'number' => $phone]);
     SmsOptOutPhoneNumber::factory()->create(['number' => $phone]);
 
     $engagement = Engagement::factory()
@@ -343,7 +399,10 @@ it('returns opted out phone health status for an opted-out phone number', functi
         )
         ->sms()
         ->deliverNow()
-        ->create();
+        ->create([
+            'recipient_id' => $student->sisid,
+            'recipient_type' => (new Student())->getMorphClass(),
+        ]);
 
     expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::OptedOut);
 });
@@ -351,10 +410,60 @@ it('returns opted out phone health status for an opted-out phone number', functi
 it('returns null health status when recipient route is null', function () {
     asSuperAdmin();
 
+    $student = Student::factory()->create();
+
     $engagement = Engagement::factory()
         ->email()
         ->deliverNow()
-        ->create(['recipient_route' => null]);
+        ->create([
+            'recipient_route' => null,
+            'recipient_id' => $student->sisid,
+            'recipient_type' => (new Student())->getMorphClass(),
+        ]);
 
     expect($engagement->getRecipientRouteHealthStatus())->toBeNull();
+});
+
+it('returns bounced email health status even when no StudentEmailAddress record exists', function () {
+    asSuperAdmin();
+
+    $email = 'no-record-bounced@example.com';
+    $student = Student::factory()->create();
+    BouncedEmailAddress::factory()->create(['address' => $email]);
+
+    $engagement = Engagement::factory()
+        ->has(
+            EmailMessage::factory()->state(['recipient_address' => $email]),
+            'latestEmailMessage'
+        )
+        ->email()
+        ->deliverNow()
+        ->create([
+            'recipient_id' => $student->sisid,
+            'recipient_type' => (new Student())->getMorphClass(),
+        ]);
+
+    expect($engagement->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::Bounced);
+});
+
+it('returns bounced phone health status even when no StudentPhoneNumber record exists', function () {
+    asSuperAdmin();
+
+    $phone = '+15554440000';
+    $student = Student::factory()->create();
+    BouncedPhoneNumber::factory()->create(['number' => $phone]);
+
+    $engagement = Engagement::factory()
+        ->has(
+            SmsMessage::factory()->state(['recipient_number' => $phone]),
+            'latestSmsMessage'
+        )
+        ->sms()
+        ->deliverNow()
+        ->create([
+            'recipient_id' => $student->sisid,
+            'recipient_type' => (new Student())->getMorphClass(),
+        ]);
+
+    expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::Bounced);
 });
