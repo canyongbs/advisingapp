@@ -127,7 +127,7 @@ class EnrollmentsRelationManager extends RelationManager
                             ->on(DB::raw('LOWER(enrollments.semester_name)'), '=', DB::raw('LOWER(enrollment_semesters.name)'))
                             ->whereNull('enrollment_semesters.deleted_at');
                     })
-                    ->orderByRaw('enrollment_semesters."order" NULLS FIRST')
+                    ->orderByRaw('enrollment_semesters."order" DESC NULLS FIRST')
                     ->select('enrollments.*');
             })
             ->recordTitleAttribute('division')

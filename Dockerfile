@@ -1,5 +1,5 @@
 ARG BASE_IMAGE="public.ecr.aws/lts/ubuntu:24.04"
-ARG IMAGEMAGICK_VERSION='7.1.2-23'
+ARG IMAGEMAGICK_VERSION='7.1.2-24'
 
 FROM ${BASE_IMAGE} AS setup
 
@@ -272,7 +272,7 @@ WORKDIR /var/www/html
 ENV NVM_VERSION=v0.40.4
 # If we change this version, remember to also update the .nvmrc file
 ENV NODE_VERSION=24.16.0
-ENV NPM_VERSION=^11.15.0
+ENV NPM_VERSION=^11.16.0
 ENV NVM_DIR=/usr/local/nvm
 RUN mkdir "$NVM_DIR"
 

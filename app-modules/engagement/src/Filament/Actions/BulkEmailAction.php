@@ -38,30 +38,21 @@ namespace AdvisingApp\Engagement\Filament\Actions;
 
 use AdvisingApp\Engagement\Actions\CreateEngagementBatch;
 use AdvisingApp\Engagement\DataTransferObjects\EngagementCreationData;
-use AdvisingApp\Engagement\Models\EmailTemplate;
+use AdvisingApp\Engagement\Filament\Schemas\Components\EngagementEmailBodyInput;
+use AdvisingApp\Engagement\Filament\Schemas\Components\EngagementScheduledAtDateTimePicker;
+use AdvisingApp\Engagement\Filament\Schemas\Components\EngagementSendLaterToggle;
+use AdvisingApp\Engagement\Filament\Schemas\Components\EngagementSubjectInput;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
-use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Actions;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Schemas\Schema;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class BulkEmailAction
 {
@@ -78,116 +69,8 @@ class BulkEmailAction
                 Step::make('Engagement Details')
                     ->description("Add the details that will be sent to the selected {$context}")
                     ->schema([
-                        RichEditor::make('subject')
-                            ->label('Subject')
-                            ->toolbarButtons([])
-                            ->json()
-                            ->helperText('You may use "merge tags" to substitute information about a recipient into your subject line. Insert a "{{" in the subject line field to see a list of available merge tags')
-                            ->required()
-                            ->placeholder('Enter the email subject here...')
-                            ->columnSpanFull(),
-                        RichEditor::make('body')
-                            ->fileAttachmentsDisk('s3-public')
-                            ->label('Body')
-                            ->toolbarButtons([
-                                ['bold', 'italic', 'link'],
-                                [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
-                                ['textColor', 'small'],
-                                ['attachFiles', 'mergeTags'],
-                                ['clearFormatting'],
-                                ['undo', 'redo'],
-                            ])
-                            ->activePanel('mergeTags')
-                            ->resizableImages()
-                            ->json()
-                            ->required()
-                            ->hintAction(fn (RichEditor $component) => Action::make('loadEmailTemplate')
-                                ->schema([
-                                    Select::make('emailTemplate')
-                                        ->searchable()
-                                        ->options(function (Get $get): array {
-                                            return EmailTemplate::query()
-                                                ->when(
-                                                    $get('onlyMyTemplates'),
-                                                    fn (Builder $query) => $query->whereBelongsTo(auth()->user())
-                                                )
-                                                ->orderBy('name')
-                                                ->limit(50)
-                                                ->pluck('name', 'id')
-                                                ->toArray();
-                                        })
-                                        ->getSearchResultsUsing(function (Get $get, string $search): array {
-                                            return EmailTemplate::query()
-                                                ->when(
-                                                    $get('onlyMyTemplates'),
-                                                    fn (Builder $query) => $query->whereBelongsTo(auth()->user())
-                                                )
-                                                ->when(
-                                                    $get('onlyMyTeamTemplates'),
-                                                    fn (Builder $query) => $query->whereIn('user_id', auth()->user()->team->users->pluck('id'))
-                                                )
-                                                ->where(new Expression('lower(name)'), 'like', "%{$search}%")
-                                                ->orderBy('name')
-                                                ->limit(50)
-                                                ->pluck('name', 'id')
-                                                ->toArray();
-                                        })
-                                        ->getOptionLabelUsing(function (Get $get, string|int|null $value): ?string {
-                                            if (blank($value)) {
-                                                return null;
-                                            }
-
-                                            return EmailTemplate::query()
-                                                ->when(
-                                                    $get('onlyMyTemplates'),
-                                                    fn (Builder $query) => $query->whereBelongsTo(auth()->user())
-                                                )
-                                                ->when(
-                                                    $get('onlyMyTeamTemplates'),
-                                                    fn (Builder $query) => $query->whereIn('user_id', auth()->user()->team->users->pluck('id'))
-                                                )
-                                                ->whereKey($value)
-                                                ->value('name');
-                                        }),
-                                    Checkbox::make('onlyMyTemplates')
-                                        ->label('Only show my templates')
-                                        ->live()
-                                        ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
-                                    Checkbox::make('onlyMyTeamTemplates')
-                                        ->label("Only show my team's templates")
-                                        ->live()
-                                        ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
-                                ])
-                                ->action(function (array $data) use ($component) {
-                                    $template = EmailTemplate::find($data['emailTemplate']);
-
-                                    if (! $template) {
-                                        return;
-                                    }
-
-                                    $component->state($template->content);
-                                }))
-                            ->getFileAttachmentUrlFromAnotherRecordUsing(function (mixed $file): ?string {
-                                return Media::query()
-                                    ->where('uuid', $file)
-                                    ->where('model_type', (new EmailTemplate())->getMorphClass())
-                                    ->first()
-                                    ?->getUrl();
-                            })
-                            ->saveFileAttachmentFromAnotherRecordUsing(function (mixed $file, ?EngagementBatch $record): ?string {
-                                if (! $record) {
-                                    return null;
-                                }
-
-                                return Media::query()
-                                    ->where('uuid', $file)
-                                    ->where('model_type', (new EmailTemplate())->getMorphClass())
-                                    ->first()
-                                    ?->copy($record, 'body', 's3-public')
-                                    ->uuid;
-                            })
-                            ->helperText('You can insert recipient information by typing {{ and choosing a merge value to insert.')
-                            ->columnSpanFull(),
+                        EngagementSubjectInput::make(),
+                        EngagementEmailBodyInput::make(),
                         Actions::make([
                             BulkDraftWithAiAction::make()
                                 ->mergeTags(Engagement::getMergeTags()),
@@ -196,12 +79,8 @@ class BulkEmailAction
                 Step::make('Schedule')
                     ->description('Choose when you would like to send this engagement.')
                     ->schema([
-                        Toggle::make('send_later')
-                            ->reactive()
-                            ->helperText('By default, this email will send as soon as it is created unless you schedule it to send later.'),
-                        DateTimePicker::make('scheduled_at')
-                            ->required()
-                            ->visible(fn (Get $get) => $get('send_later')),
+                        EngagementSendLaterToggle::make(),
+                        EngagementScheduledAtDateTimePicker::make(),
                     ]),
             ])
             ->action(function (Collection $records, array $data, Schema $schema) {

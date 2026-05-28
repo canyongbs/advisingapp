@@ -74,7 +74,7 @@ class ResourceHubArticlePolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, ResourceHubArticle $resourceHubArticle): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["resource_hub_article.{$resourceHubArticle->getKey()}.view"],
+            abilities: ['resource_hub_article.*.view'],
             denyResponse: 'You do not have permission to view this resource hub article.'
         );
     }
@@ -90,7 +90,7 @@ class ResourceHubArticlePolicy implements PerformsChecksBeforeAuthorization
     public function update(Authenticatable $authenticatable, ResourceHubArticle $resourceHubArticle): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["resource_hub_article.{$resourceHubArticle->getKey()}.update"],
+            abilities: ['resource_hub_article.*.update'],
             denyResponse: 'You do not have permissions to update this resource hub article.'
         );
     }
@@ -98,7 +98,7 @@ class ResourceHubArticlePolicy implements PerformsChecksBeforeAuthorization
     public function delete(Authenticatable $authenticatable, ResourceHubArticle $resourceHubArticle): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["resource_hub_article.{$resourceHubArticle->getKey()}.delete"],
+            abilities: ['resource_hub_article.*.delete'],
             denyResponse: 'You do not have permissions to delete this resource hub article.'
         );
     }
@@ -106,7 +106,7 @@ class ResourceHubArticlePolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, ResourceHubArticle $resourceHubArticle): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["resource_hub_article.{$resourceHubArticle->getKey()}.restore"],
+            abilities: ['resource_hub_article.*.restore'],
             denyResponse: 'You do not have permissions to restore this resource hub article.'
         );
     }
@@ -114,7 +114,7 @@ class ResourceHubArticlePolicy implements PerformsChecksBeforeAuthorization
     public function forceDelete(Authenticatable $authenticatable, ResourceHubArticle $resourceHubArticle): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["resource_hub_article.{$resourceHubArticle->getKey()}.force-delete"],
+            abilities: ['resource_hub_article.*.force-delete'],
             denyResponse: 'You do not have permissions to force delete this resource hub article.'
         );
     }

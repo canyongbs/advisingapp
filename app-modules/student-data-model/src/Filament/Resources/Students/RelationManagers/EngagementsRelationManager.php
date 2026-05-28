@@ -40,7 +40,8 @@ use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Filament\Actions\EngagementResponseMarkAsActionedAction;
-use AdvisingApp\Engagement\Filament\Actions\RelationManagerSendEngagementAction;
+use AdvisingApp\Engagement\Filament\Actions\RelationManagerDraftWithAiAction;
+use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Engagement\Models\Contracts\HasDeliveryMethod;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
@@ -344,7 +345,9 @@ class EngagementsRelationManager extends RelationManager
                     ),
             ])
             ->headerActions([
-                RelationManagerSendEngagementAction::make(),
+                SendEngagementAction::make()
+                    ->draftWithAiAction(fn () => RelationManagerDraftWithAiAction::make()->mergeTags(SendEngagementAction::getDefaultMergeTags()))
+                    ->educatable(fn () => $this->getOwnerRecord()),
             ])
             ->recordAction('view')
             ->filters([
