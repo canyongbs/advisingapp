@@ -34,36 +34,44 @@
 </COPYRIGHT>
 */
 
-use App\Features\PhoneNumberLookupFeature;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+namespace AdvisingApp\StudentDataModel\Observers\Concerns;
 
-return new class () extends Migration {
-    public function up(): void
+use AdvisingApp\StudentDataModel\Contracts\PhoneNumberLookupService;
+use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
+use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
+use Illuminate\Database\Eloquent\Model;
+
+/**
+ * Observer concern that queues a Telnyx lookup whenever a phone-number record
+ * is first introduced or its `number` changes — provided no lookup result
+ * exists for that number yet and the lookup service is configured.
+ *
+ * Used by both Student and Prospect phone-number observers; the model is
+ * expected to expose a `number` attribute.
+ */
+trait QueuesPhoneNumberLookupOnSave
+{
+    public function saved(Model $phoneNumber): void
     {
-        DB::transaction(function () {
-            Schema::create('phone_number_lookups', function (Blueprint $table) {
-                $table->uuid('id')->primary();
-                $table->string('number')->unique();
-                $table->string('status');
-                $table->string('carrier_name')->nullable();
-                $table->string('carrier_type')->nullable();
-                $table->jsonb('raw_response')->nullable();
-                $table->timestamps();
-            });
+        if (! $phoneNumber->wasRecentlyCreated && ! $phoneNumber->wasChanged('number')) {
+            return;
+        }
 
-            PhoneNumberLookupFeature::activate();
-        });
+        $number = $phoneNumber->getAttribute('number');
+
+        if (! is_string($number) || blank($number)) {
+            return;
+        }
+
+        if (! app(PhoneNumberLookupService::class)->isConfigured()) {
+            return;
+        }
+
+        // Reuse an existing lookup result rather than paying for another.
+        if (PhoneNumberLookup::query()->where('number', $number)->exists()) {
+            return;
+        }
+
+        dispatch(new LookupPhoneNumber($number))->afterCommit();
     }
-
-    public function down(): void
-    {
-        DB::transaction(function () {
-            PhoneNumberLookupFeature::deactivate();
-
-            Schema::dropIfExists('phone_number_lookups');
-        });
-    }
-};
+}

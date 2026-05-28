@@ -34,36 +34,25 @@
 </COPYRIGHT>
 */
 
-use App\Features\PhoneNumberLookupFeature;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+namespace AdvisingApp\StudentDataModel\Http\Controllers;
 
-return new class () extends Migration {
-    public function up(): void
+use AdvisingApp\StudentDataModel\Events\SisSyncCompleted;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+
+class SisSyncCompletedController extends Controller
+{
+    /**
+     * Olympus-protected endpoint that fires a SisSyncCompleted event when
+     * called. Returns 202 immediately.
+     */
+    public function __invoke(): JsonResponse
     {
-        DB::transaction(function () {
-            Schema::create('phone_number_lookups', function (Blueprint $table) {
-                $table->uuid('id')->primary();
-                $table->string('number')->unique();
-                $table->string('status');
-                $table->string('carrier_name')->nullable();
-                $table->string('carrier_type')->nullable();
-                $table->jsonb('raw_response')->nullable();
-                $table->timestamps();
-            });
+        SisSyncCompleted::dispatch();
 
-            PhoneNumberLookupFeature::activate();
-        });
+        return response()->json([
+            'message' => 'SIS sync completion acknowledged.',
+        ], Response::HTTP_ACCEPTED);
     }
-
-    public function down(): void
-    {
-        DB::transaction(function () {
-            PhoneNumberLookupFeature::deactivate();
-
-            Schema::dropIfExists('phone_number_lookups');
-        });
-    }
-};
+}

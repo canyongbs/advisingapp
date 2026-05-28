@@ -41,13 +41,19 @@ use AdvisingApp\Notification\Enums\SmsMessagingProvider;
 use AdvisingApp\StudentDataModel\Actions\NormalizePhoneNumberToE164;
 use AdvisingApp\StudentDataModel\Contracts\PhoneNumberLookupService;
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
+use AdvisingApp\StudentDataModel\Exceptions\PhoneNumberLookupInvalidNumber;
+use AdvisingApp\StudentDataModel\Exceptions\PhoneNumberLookupRateLimited;
+use AdvisingApp\StudentDataModel\Jobs\Middleware\SkipWhilePhoneNumberLookupIsRateLimited;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
 use App\Features\PhoneNumberLookupFeature;
+use Illuminate\Support\Facades\Cache;
+use InvalidArgumentException;
 use RuntimeException;
 use Telnyx\Exception\ApiErrorException;
 use Telnyx\NumberLookup;
 use Telnyx\Telnyx;
 use Telnyx\TelnyxObject;
+use Telnyx\Util\CaseInsensitiveArray;
 
 class TelnyxPhoneNumberLookupService implements PhoneNumberLookupService
 {
@@ -75,9 +81,15 @@ class TelnyxPhoneNumberLookupService implements PhoneNumberLookupService
 
     public function lookup(string $phoneNumber): PhoneNumberLookup
     {
-        // re-validate the E.164 format regardless of where
-        // the number originated. Throws InvalidArgumentException when invalid.
-        $normalizedNumber = ($this->normalizePhoneNumberToE164)($phoneNumber);
+        // Re-validate the E.164 format regardless of where the number
+        // originated. Translate the generic parser exception into the
+        // domain-specific one so the caller knows for certain that the
+        // failure was phone-number validation and not something else.
+        try {
+            $normalizedNumber = ($this->normalizePhoneNumberToE164)($phoneNumber);
+        } catch (InvalidArgumentException $exception) {
+            throw new PhoneNumberLookupInvalidNumber($phoneNumber, previous: $exception);
+        }
 
         // never look up the same normalized number twice.
         $existingLookup = PhoneNumberLookup::query()
@@ -108,7 +120,55 @@ class TelnyxPhoneNumberLookupService implements PhoneNumberLookupService
                 'id' => $normalizedNumber,
                 'type' => ['carrier'],
             ]);
+
+            $data = $result->toArray();
+
+            // Telnyx reports overall validity directly. An explicit false means
+            // the number is not real, regardless of any carrier/line-type data.
+            if (($data['valid_number'] ?? null) === false) {
+                return $this->store(
+                    number: $normalizedNumber,
+                    status: PhoneNumberLookupStatus::Invalid,
+                    carrierName: null,
+                    carrierType: null,
+                    rawResponse: $this->rawResponse($result),
+                );
+            }
+
+            // Carrier/line-type data can arrive in either the `carrier` object or
+            // the `portability` (LRN) object. For US, VoIP, and ported numbers
+            // `carrier` is frequently null and `portability` holds the real data.
+            $carrier = $data['carrier'] ?? [];
+            $portability = $data['portability'] ?? [];
+
+            $carrierType = $this->firstFilled($carrier['type'] ?? null, $portability['line_type'] ?? null);
+            $carrierName = $this->firstFilled($carrier['name'] ?? null, $portability['spid_carrier_name'] ?? null);
+
+            return $this->store(
+                number: $normalizedNumber,
+                status: PhoneNumberLookupStatus::fromTelnyxCarrierType($carrierType),
+                carrierName: $carrierName,
+                carrierType: $carrierType,
+                rawResponse: $this->rawResponse($result),
+            );
         } catch (ApiErrorException $exception) {
+            // Telnyx returned 429 — record the rate-limit window so other
+            // queued lookups in this tenant can be released by the
+            // SkipWhilePhoneNumberLookupIsRateLimited middleware without
+            // even hitting the API, then surface a domain exception so this
+            // job can release itself.
+            if ($exception->getHttpStatus() === 429) {
+                $resetInSeconds = $this->resetInFromHeaders($exception->getHttpHeaders());
+
+                Cache::put(
+                    SkipWhilePhoneNumberLookupIsRateLimited::cacheKey(),
+                    now()->timestamp + $resetInSeconds,
+                    $resetInSeconds,
+                );
+
+                throw new PhoneNumberLookupRateLimited(secondsUntilReset: $resetInSeconds);
+            }
+
             // A 404 means Telnyx could not recognize the number at all, which
             // is a definitive result: the number is invalid.
             if ($exception->getHttpStatus() === 404) {
@@ -121,43 +181,16 @@ class TelnyxPhoneNumberLookupService implements PhoneNumberLookupService
                 );
             }
 
-            // Any other API error (auth, rate limit, server error, connection
-            // failure) is operational and potentially transient. Re-throw so
-            // the queued job can retry it; a persistent failure is recorded as
+            // Any other API error (auth, server error, connection failure) is
+            // operational and potentially transient. Re-throw so the queued
+            // job can retry it; a persistent failure is recorded as
             // lookup_failed by the job's failed() handler.
             throw $exception;
+        } finally {
+            // Clear the global Telnyx key so it cannot accidentally carry over
+            // to another tenant in this worker process.
+            Telnyx::setApiKey('');
         }
-
-        $data = $result->toArray();
-
-        // Telnyx reports overall validity directly. An explicit false means
-        // the number is not real, regardless of any carrier/line-type data.
-        if (($data['valid_number'] ?? null) === false) {
-            return $this->store(
-                number: $normalizedNumber,
-                status: PhoneNumberLookupStatus::Invalid,
-                carrierName: null,
-                carrierType: null,
-                rawResponse: $this->rawResponse($result),
-            );
-        }
-
-        // Carrier/line-type data can arrive in either the `carrier` object or
-        // the `portability` (LRN) object. For US, VoIP, and ported numbers
-        // `carrier` is frequently null and `portability` holds the real data.
-        $carrier = $data['carrier'] ?? [];
-        $portability = $data['portability'] ?? [];
-
-        $carrierType = $this->firstFilled($carrier['type'] ?? null, $portability['line_type'] ?? null);
-        $carrierName = $this->firstFilled($carrier['name'] ?? null, $portability['spid_carrier_name'] ?? null);
-
-        return $this->store(
-            number: $normalizedNumber,
-            status: PhoneNumberLookupStatus::fromTelnyxCarrierType($carrierType),
-            carrierName: $carrierName,
-            carrierType: $carrierType,
-            rawResponse: $this->rawResponse($result),
-        );
     }
 
     protected function firstFilled(mixed ...$values): ?string
@@ -169,6 +202,20 @@ class TelnyxPhoneNumberLookupService implements PhoneNumberLookupService
         }
 
         return null;
+    }
+
+    /**
+     * @param array<string, mixed>|CaseInsensitiveArray|null $headers
+     */
+    protected function resetInFromHeaders(mixed $headers): int
+    {
+        $reset = $headers['x-ratelimit-reset'] ?? null;
+
+        if (! is_numeric($reset)) {
+            return 60;
+        }
+
+        return max(1, (int) $reset);
     }
 
     /**

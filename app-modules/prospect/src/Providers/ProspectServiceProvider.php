@@ -76,7 +76,7 @@ class ProspectServiceProvider extends ServiceProvider
                 return;
             }
 
-            QueuePhoneNumberLookups::dispatch();
+            dispatch(new QueuePhoneNumberLookups());
         });
     }
 }

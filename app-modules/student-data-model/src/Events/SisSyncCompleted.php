@@ -41,9 +41,6 @@ use Illuminate\Queue\SerializesModels;
 
 /**
  * Fired once a Student Information System (SIS) sync has completed.
- *
- * Listeners can use this to run follow-up work that should happen after a
- * sync, such as queuing phone number lookups for newly synced numbers.
  */
 class SisSyncCompleted
 {

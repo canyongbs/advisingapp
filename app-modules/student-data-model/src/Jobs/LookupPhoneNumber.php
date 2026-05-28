@@ -38,13 +38,15 @@ namespace AdvisingApp\StudentDataModel\Jobs;
 
 use AdvisingApp\StudentDataModel\Contracts\PhoneNumberLookupService;
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
+use AdvisingApp\StudentDataModel\Exceptions\PhoneNumberLookupInvalidNumber;
+use AdvisingApp\StudentDataModel\Exceptions\PhoneNumberLookupRateLimited;
+use AdvisingApp\StudentDataModel\Jobs\Middleware\SkipWhilePhoneNumberLookupIsRateLimited;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
 use DateTimeInterface;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Queue\Middleware\RateLimitedWithRedis;
-use InvalidArgumentException;
 use Throwable;
 
 class LookupPhoneNumber implements ShouldBeUnique, ShouldQueue
@@ -52,8 +54,6 @@ class LookupPhoneNumber implements ShouldBeUnique, ShouldQueue
     use Queueable;
 
     public int $timeout = 60;
-
-    public int $maxExceptions = 3;
 
     public int $backoff = 30;
 
@@ -73,7 +73,7 @@ class LookupPhoneNumber implements ShouldBeUnique, ShouldQueue
 
         try {
             $phoneNumberLookupService->lookup($this->phoneNumber);
-        } catch (InvalidArgumentException $exception) {
+        } catch (PhoneNumberLookupInvalidNumber $exception) {
             // A structurally invalid number will never resolve. Record it as
             // invalid rather than retrying and ultimately failing the job.
             PhoneNumberLookup::query()->firstOrCreate(
@@ -83,6 +83,10 @@ class LookupPhoneNumber implements ShouldBeUnique, ShouldQueue
                     'raw_response' => ['error' => $exception->getMessage()],
                 ],
             );
+        } catch (PhoneNumberLookupRateLimited $exception) {
+            // Telnyx is rate-limiting us; back off until the limit window
+            // resets, per the x-ratelimit-reset header.
+            $this->release($exception->secondsUntilReset);
         }
     }
 
@@ -91,12 +95,15 @@ class LookupPhoneNumber implements ShouldBeUnique, ShouldQueue
      */
     public function middleware(): array
     {
-        return [new RateLimitedWithRedis('telnyx-number-lookup')];
+        return [
+            new SkipWhilePhoneNumberLookupIsRateLimited(),
+            new RateLimitedWithRedis('telnyx-number-lookup'),
+        ];
     }
 
     public function retryUntil(): DateTimeInterface
     {
-        return now()->addHours(24);
+        return now()->addHours(6);
     }
 
     public function uniqueId(): string

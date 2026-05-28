@@ -37,40 +37,17 @@
 namespace AdvisingApp\Prospect\Observers;
 
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
-use AdvisingApp\StudentDataModel\Contracts\PhoneNumberLookupService;
-use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
+use AdvisingApp\StudentDataModel\Observers\Concerns\QueuesPhoneNumberLookupOnSave;
 use Illuminate\Support\Facades\DB;
 
 class ProspectPhoneNumberObserver
 {
+    use QueuesPhoneNumberLookupOnSave;
+
     public function creating(ProspectPhoneNumber $prospectPhoneNumber): void
     {
         if (blank($prospectPhoneNumber->order)) {
             $prospectPhoneNumber->order = DB::raw("(SELECT COALESCE(MAX(\"{$prospectPhoneNumber->getTable()}\".order), 0) + 1 FROM \"{$prospectPhoneNumber->getTable()}\" WHERE prospect_id = '{$prospectPhoneNumber->prospect_id}')");
         }
-    }
-
-    public function saved(ProspectPhoneNumber $prospectPhoneNumber): void
-    {
-        if (! $prospectPhoneNumber->wasRecentlyCreated && ! $prospectPhoneNumber->wasChanged('number')) {
-            return;
-        }
-
-        if (blank($prospectPhoneNumber->number)) {
-            return;
-        }
-
-        // Skip when no lookup provider is configured for this tenant.
-        if (! app(PhoneNumberLookupService::class)->isConfigured()) {
-            return;
-        }
-
-        // Reuse an existing lookup result rather than paying for another.
-        if (PhoneNumberLookup::query()->where('number', $prospectPhoneNumber->number)->exists()) {
-            return;
-        }
-
-        LookupPhoneNumber::dispatch($prospectPhoneNumber->number)->afterCommit();
     }
 }

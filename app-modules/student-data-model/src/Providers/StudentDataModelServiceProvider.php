@@ -38,7 +38,7 @@ namespace AdvisingApp\StudentDataModel\Providers;
 
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
 use AdvisingApp\StudentDataModel\Events\SisSyncCompleted;
-use AdvisingApp\StudentDataModel\Jobs\QueuePhoneNumberLookups;
+use AdvisingApp\StudentDataModel\Listeners\QueuePhoneNumberLookupsAfterSisSync;
 use AdvisingApp\StudentDataModel\Listeners\SaveBouncedEmailAddress;
 use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
 use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
@@ -90,20 +90,21 @@ class StudentDataModelServiceProvider extends ServiceProvider
             SaveBouncedEmailAddress::class
         );
 
-        // After a SIS sync completes, scan for any phone numbers that have not
-        // yet been looked up and queue the lookups.
-        Event::listen(SisSyncCompleted::class, function (): void {
-            QueuePhoneNumberLookups::dispatch();
-        });
+        Event::listen(
+            SisSyncCompleted::class,
+            QueuePhoneNumberLookupsAfterSisSync::class,
+        );
 
         // Telnyx applies rate limits per account, and each tenant uses its own
-        // Telnyx account/API key, so the limit must be keyed per tenant. The
-        // conservative 2 requests/second default can be raised once real
-        // throughput is observed. Consumed by the LookupPhoneNumber job.
+        // Telnyx account/API key, so the limit must be keyed per tenant. This
+        // per-second budget is a soft local cap to keep us well under Telnyx's
+        // own limit; if we still trip Telnyx's 429, the lookup service caches
+        // the reset window and the SkipWhilePhoneNumberLookupIsRateLimited
+        // middleware releases subsequent jobs until that window clears.
         RateLimiter::for('telnyx-number-lookup', function (): Limit {
             $tenantKey = Tenant::current()?->getKey() ?? 'landlord';
 
-            return Limit::perSecond(2)->by("telnyx-number-lookup:{$tenantKey}");
+            return Limit::perSecond(10)->by("telnyx-number-lookup:{$tenantKey}");
         });
     }
 }

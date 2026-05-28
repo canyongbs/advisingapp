@@ -34,36 +34,24 @@
 </COPYRIGHT>
 */
 
-use App\Features\PhoneNumberLookupFeature;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+use AdvisingApp\StudentDataModel\Events\SisSyncCompleted;
+use App\Http\Middleware\CheckOlympusKey;
+use Illuminate\Support\Facades\Event;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        DB::transaction(function () {
-            Schema::create('phone_number_lookups', function (Blueprint $table) {
-                $table->uuid('id')->primary();
-                $table->string('number')->unique();
-                $table->string('status');
-                $table->string('carrier_name')->nullable();
-                $table->string('carrier_type')->nullable();
-                $table->jsonb('raw_response')->nullable();
-                $table->timestamps();
-            });
+use function Pest\Laravel\postJson;
+use function Pest\Laravel\withoutMiddleware;
 
-            PhoneNumberLookupFeature::activate();
-        });
-    }
+it('rejects requests without a valid Olympus key', function () {
+    postJson(route('sis-sync-completed'))
+        ->assertForbidden();
+});
 
-    public function down(): void
-    {
-        DB::transaction(function () {
-            PhoneNumberLookupFeature::deactivate();
+it('dispatches the SisSyncCompleted event and returns 202', function () {
+    Event::fake([SisSyncCompleted::class]);
 
-            Schema::dropIfExists('phone_number_lookups');
-        });
-    }
-};
+    withoutMiddleware(CheckOlympusKey::class)
+        ->postJson(route('sis-sync-completed'))
+        ->assertAccepted();
+
+    Event::assertDispatched(SisSyncCompleted::class);
+});

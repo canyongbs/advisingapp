@@ -34,24 +34,26 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\StudentDataModel\Events\SisSyncCompleted;
-use App\Http\Middleware\CheckOlympusKey;
-use Illuminate\Support\Facades\Event;
+namespace AdvisingApp\StudentDataModel\Exceptions;
 
-use function Pest\Laravel\postJson;
-use function Pest\Laravel\withoutMiddleware;
+use InvalidArgumentException;
+use Throwable;
 
-it('rejects requests without a valid Olympus key', function () {
-    postJson(route('trigger-phone-number-lookups'))
-        ->assertForbidden();
-});
-
-it('dispatches the SisSyncCompleted event and returns 202', function () {
-    Event::fake([SisSyncCompleted::class]);
-
-    withoutMiddleware(CheckOlympusKey::class)
-        ->postJson(route('trigger-phone-number-lookups'))
-        ->assertAccepted();
-
-    Event::assertDispatched(SisSyncCompleted::class);
-});
+/**
+ * Thrown by the phone number lookup service when the supplied number fails
+ * E.164 validation. Wraps the underlying parser exception as {@see getPrevious()}
+ * so callers can distinguish a validation failure from any other
+ * InvalidArgumentException that may bubble up through the lookup pipeline.
+ */
+class PhoneNumberLookupInvalidNumber extends InvalidArgumentException
+{
+    public function __construct(
+        public readonly string $phoneNumber,
+        ?Throwable $previous = null,
+    ) {
+        parent::__construct(
+            "The phone number [{$phoneNumber}] is not a valid E.164 number for lookup.",
+            previous: $previous,
+        );
+    }
+}

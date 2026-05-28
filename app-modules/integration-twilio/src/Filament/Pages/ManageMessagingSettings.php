@@ -142,6 +142,6 @@ class ManageMessagingSettings extends SettingsPage
             return;
         }
 
-        QueuePhoneNumberLookups::dispatch()->afterCommit();
+        dispatch(new QueuePhoneNumberLookups())->afterCommit();
     }
 }

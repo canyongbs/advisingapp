@@ -96,7 +96,7 @@ class QueuePhoneNumberLookups implements ShouldBeUnique, ShouldQueue
             ->whereNotIn('number', PhoneNumberLookup::query()->select('number'))
             ->chunkById(1000, function (Collection $phoneNumbers): void {
                 foreach ($phoneNumbers as $phoneNumber) {
-                    LookupPhoneNumber::dispatch($phoneNumber->number);
+                    dispatch(new LookupPhoneNumber($phoneNumber->number));
                 }
             }, 'number');
     }

@@ -39,18 +39,26 @@ use AdvisingApp\IntegrationTwilio\Tests\Fixtures\FakeTelnyxHttpClient;
 use AdvisingApp\Notification\Enums\SmsMessagingProvider;
 use AdvisingApp\StudentDataModel\Contracts\PhoneNumberLookupService;
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
+use AdvisingApp\StudentDataModel\Exceptions\PhoneNumberLookupInvalidNumber;
+use AdvisingApp\StudentDataModel\Exceptions\PhoneNumberLookupRateLimited;
+use AdvisingApp\StudentDataModel\Jobs\Middleware\SkipWhilePhoneNumberLookupIsRateLimited;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
 use App\Features\PhoneNumberLookupFeature;
+use Illuminate\Support\Facades\Cache;
+
+use function Pest\Laravel\travelTo;
+
 use Telnyx\ApiRequestor;
 use Telnyx\Exception\ApiErrorException;
 use Telnyx\HttpClient\CurlClient;
 
 /**
  * @param array<mixed> $data
+ * @param array<string, mixed> $responseHeaders
  */
-function fakeTelnyxLookup(array $data, int $status = 200): void
+function fakeTelnyxLookup(array $data, int $status = 200, array $responseHeaders = []): void
 {
-    ApiRequestor::setHttpClient(new FakeTelnyxHttpClient(json_encode($data, JSON_THROW_ON_ERROR), $status));
+    ApiRequestor::setHttpClient(new FakeTelnyxHttpClient(json_encode($data, JSON_THROW_ON_ERROR), $status, $responseHeaders));
 }
 
 beforeEach(function () {
@@ -187,7 +195,7 @@ it('re-throws transient provider errors without storing a result', function () {
 
 it('throws when the phone number is not a valid E.164 number', function () {
     expect(fn () => app(PhoneNumberLookupService::class)->lookup('not-a-phone-number'))
-        ->toThrow(InvalidArgumentException::class);
+        ->toThrow(PhoneNumberLookupInvalidNumber::class);
 });
 
 it('reports as configured when messaging is enabled with a Telnyx API key', function () {
@@ -241,4 +249,23 @@ it('reports as not configured when the phone number lookup feature is disabled',
     $settings->save();
 
     expect(app(PhoneNumberLookupService::class)->isConfigured())->toBeFalse();
+});
+
+it('throws PhoneNumberLookupRateLimited and caches the clear-at timestamp when Telnyx returns 429', function () {
+    travelTo(now()->startOfMinute());
+
+    fakeTelnyxLookup(
+        ['errors' => [['code' => '10009', 'title' => 'Rate limit exceeded']]],
+        429,
+        ['x-ratelimit-reset' => '42'],
+    );
+
+    try {
+        app(PhoneNumberLookupService::class)->lookup('+16502530000');
+        $this->fail('Expected PhoneNumberLookupRateLimited to be thrown.');
+    } catch (PhoneNumberLookupRateLimited $exception) {
+        expect($exception->secondsUntilReset)->toBe(42)
+            ->and(Cache::get(SkipWhilePhoneNumberLookupIsRateLimited::cacheKey()))
+            ->toBe(now()->timestamp + 42);
+    }
 });

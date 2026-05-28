@@ -43,7 +43,7 @@ use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -71,18 +71,18 @@ class PhoneNumberLookup extends BaseModel implements Auditable
     ];
 
     /**
-     * @return BelongsTo<StudentPhoneNumber, $this>
+     * @return HasMany<StudentPhoneNumber, $this>
      */
-    public function studentPhoneNumber(): BelongsTo
+    public function studentPhoneNumbers(): HasMany
     {
-        return $this->belongsTo(StudentPhoneNumber::class, 'number', 'number');
+        return $this->hasMany(StudentPhoneNumber::class, 'number', 'number');
     }
 
     /**
-     * @return BelongsTo<ProspectPhoneNumber, $this>
+     * @return HasMany<ProspectPhoneNumber, $this>
      */
-    public function prospectPhoneNumber(): BelongsTo
+    public function prospectPhoneNumbers(): HasMany
     {
-        return $this->belongsTo(ProspectPhoneNumber::class, 'number', 'number');
+        return $this->hasMany(ProspectPhoneNumber::class, 'number', 'number');
     }
 }

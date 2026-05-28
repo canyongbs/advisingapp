@@ -34,27 +34,15 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Http\Controllers;
+namespace AdvisingApp\StudentDataModel\Listeners;
 
 use AdvisingApp\StudentDataModel\Events\SisSyncCompleted;
-use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
-use Symfony\Component\HttpFoundation\Response;
+use AdvisingApp\StudentDataModel\Jobs\QueuePhoneNumberLookups;
 
-class TriggerPhoneNumberLookupsController extends Controller
+class QueuePhoneNumberLookupsAfterSisSync
 {
-    /**
-     * Olympus-protected endpoint, intended to be called after a nightly SIS
-     * sync. It only fires the SisSyncCompleted event and returns immediately;
-     * a queued listener performs the scan and dispatches the lookups, so this
-     * request never blocks SIS sync completion.
-     */
-    public function __invoke(): JsonResponse
+    public function handle(SisSyncCompleted $event): void
     {
-        SisSyncCompleted::dispatch();
-
-        return response()->json([
-            'message' => 'Phone number lookups have been queued.',
-        ], Response::HTTP_ACCEPTED);
+        dispatch(new QueuePhoneNumberLookups());
     }
 }

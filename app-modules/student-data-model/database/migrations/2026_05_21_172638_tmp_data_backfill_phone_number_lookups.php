@@ -45,7 +45,7 @@ return new class () extends Migration {
      */
     public function up(): void
     {
-        QueuePhoneNumberLookups::dispatch();
+        dispatch(new QueuePhoneNumberLookups());
     }
 
     public function down(): void

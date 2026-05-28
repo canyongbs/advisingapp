@@ -36,8 +36,11 @@
 
 use AdvisingApp\StudentDataModel\Contracts\PhoneNumberLookupService;
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
+use AdvisingApp\StudentDataModel\Exceptions\PhoneNumberLookupInvalidNumber;
+use AdvisingApp\StudentDataModel\Exceptions\PhoneNumberLookupRateLimited;
 use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
+use Illuminate\Contracts\Queue\Job;
 use Illuminate\Support\Facades\Exceptions;
 
 it('delegates to the phone number lookup service when the provider is configured', function () {
@@ -64,7 +67,7 @@ it('records an invalid result when the number fails E.164 validation', function 
     $service = Mockery::mock(PhoneNumberLookupService::class);
     $service->shouldReceive('isConfigured')->andReturn(true);
     $service->shouldReceive('lookup') // @phpstan-ignore method.notFound
-        ->andThrow(new InvalidArgumentException('The phone number [+11234567890] is not a valid phone number.'));
+        ->andThrow(new PhoneNumberLookupInvalidNumber('+11234567890'));
 
     app()->instance(PhoneNumberLookupService::class, $service);
 
@@ -99,4 +102,21 @@ it('does not overwrite an existing result when the job fails', function () {
     expect(PhoneNumberLookup::query()->where('number', '+16502530000')->count())->toBe(1)
         ->and(PhoneNumberLookup::query()->where('number', '+16502530000')->sole()->status)
         ->toBe(PhoneNumberLookupStatus::ValidMobile);
+});
+
+it('releases the job with the rate-limit reset delay when the lookup service reports rate limiting', function () {
+    $service = Mockery::mock(PhoneNumberLookupService::class);
+    $service->shouldReceive('isConfigured')->andReturn(true);
+    $service->shouldReceive('lookup') // @phpstan-ignore method.notFound
+        ->andThrow(new PhoneNumberLookupRateLimited(secondsUntilReset: 42));
+
+    app()->instance(PhoneNumberLookupService::class, $service);
+
+    $queueJob = Mockery::mock(Job::class);
+    $queueJob->shouldReceive('release')->once()->with(42); // @phpstan-ignore method.notFound
+
+    $job = new LookupPhoneNumber('+16502530000');
+    $job->setJob($queueJob); // @phpstan-ignore argument.type
+
+    app()->call([$job, 'handle']);
 });

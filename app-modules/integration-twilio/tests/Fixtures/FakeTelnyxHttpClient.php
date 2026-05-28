@@ -40,9 +40,13 @@ use Telnyx\HttpClient\ClientInterface;
 
 class FakeTelnyxHttpClient implements ClientInterface
 {
+    /**
+     * @param array<string, mixed> $responseHeaders
+     */
     public function __construct(
         private readonly string $body,
         private readonly int $statusCode = 200,
+        private readonly array $responseHeaders = [],
     ) {}
 
     /**
@@ -56,6 +60,6 @@ class FakeTelnyxHttpClient implements ClientInterface
      */
     public function request($method, $absUrl, $headers, $params, $hasFile): array
     {
-        return [$this->body, $this->statusCode, []];
+        return [$this->body, $this->statusCode, $this->responseHeaders];
     }
 }

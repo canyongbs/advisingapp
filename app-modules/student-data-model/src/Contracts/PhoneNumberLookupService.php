@@ -36,14 +36,14 @@
 
 namespace AdvisingApp\StudentDataModel\Contracts;
 
+use AdvisingApp\StudentDataModel\Exceptions\PhoneNumberLookupInvalidNumber;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
-use InvalidArgumentException;
 use Throwable;
 
 interface PhoneNumberLookupService
 {
     /**
-     * @throws InvalidArgumentException when $phoneNumber is not a valid E.164 number.
+     * @throws PhoneNumberLookupInvalidNumber when $phoneNumber is not a valid E.164 number.
      * @throws Throwable on a transient provider/API failure.
      */
     public function lookup(string $phoneNumber): PhoneNumberLookup;

@@ -34,36 +34,21 @@
 </COPYRIGHT>
 */
 
-use App\Features\PhoneNumberLookupFeature;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+namespace AdvisingApp\StudentDataModel\Exceptions;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        DB::transaction(function () {
-            Schema::create('phone_number_lookups', function (Blueprint $table) {
-                $table->uuid('id')->primary();
-                $table->string('number')->unique();
-                $table->string('status');
-                $table->string('carrier_name')->nullable();
-                $table->string('carrier_type')->nullable();
-                $table->jsonb('raw_response')->nullable();
-                $table->timestamps();
-            });
+use RuntimeException;
 
-            PhoneNumberLookupFeature::activate();
-        });
+/**
+ * Thrown when the upstream phone number lookup provider rate-limits the
+ * request. The caller (the queued LookupPhoneNumber job) should release
+ * itself back to the queue with a delay of {@see $secondsUntilReset} so
+ * the next attempt happens after the provider's rate-limit window resets.
+ */
+class PhoneNumberLookupRateLimited extends RuntimeException
+{
+    public function __construct(
+        public readonly int $secondsUntilReset,
+    ) {
+        parent::__construct("Phone number lookup rate-limited; retry in {$secondsUntilReset}s.");
     }
-
-    public function down(): void
-    {
-        DB::transaction(function () {
-            PhoneNumberLookupFeature::deactivate();
-
-            Schema::dropIfExists('phone_number_lookups');
-        });
-    }
-};
+}

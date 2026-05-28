@@ -34,36 +34,44 @@
 </COPYRIGHT>
 */
 
-use App\Features\PhoneNumberLookupFeature;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+namespace AdvisingApp\StudentDataModel\Jobs\Middleware;
 
-return new class () extends Migration {
-    public function up(): void
+use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
+use App\Models\Tenant;
+use Closure;
+use Illuminate\Support\Facades\Cache;
+
+/**
+ * When the lookup service hits a Telnyx 429, it caches the unix timestamp at
+ * which the rate-limit window clears. This middleware reads that timestamp
+ * before the job hits the API and releases the job for the remaining delay
+ * if the window is still active — avoiding an HTTP call that we already
+ * know would be rate-limited.
+ *
+ * The key is tenant-scoped to mirror the per-tenant Telnyx accounts and the
+ * matching tenant-scoped named rate limiter in StudentDataModelServiceProvider.
+ */
+class SkipWhilePhoneNumberLookupIsRateLimited
+{
+    public static function cacheKey(): string
     {
-        DB::transaction(function () {
-            Schema::create('phone_number_lookups', function (Blueprint $table) {
-                $table->uuid('id')->primary();
-                $table->string('number')->unique();
-                $table->string('status');
-                $table->string('carrier_name')->nullable();
-                $table->string('carrier_type')->nullable();
-                $table->jsonb('raw_response')->nullable();
-                $table->timestamps();
-            });
-
-            PhoneNumberLookupFeature::activate();
-        });
+        return 'phone-number-lookup-rate-limit:' . (Tenant::current()?->getKey() ?? 'landlord');
     }
 
-    public function down(): void
+    public function handle(LookupPhoneNumber $job, Closure $next): mixed
     {
-        DB::transaction(function () {
-            PhoneNumberLookupFeature::deactivate();
+        $clearsAt = Cache::get(static::cacheKey());
 
-            Schema::dropIfExists('phone_number_lookups');
-        });
+        if (is_int($clearsAt)) {
+            $remaining = $clearsAt - now()->timestamp;
+
+            if ($remaining > 0) {
+                $job->release($remaining);
+
+                return null;
+            }
+        }
+
+        return $next($job);
     }
-};
+}

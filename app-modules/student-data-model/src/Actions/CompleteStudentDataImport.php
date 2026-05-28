@@ -115,7 +115,7 @@ class CompleteStudentDataImport
 
             // The phone number table was just swapped in via raw SQL, which
             // bypasses model observers, so queue lookups for any new numbers.
-            QueuePhoneNumberLookups::dispatch();
+            dispatch(new QueuePhoneNumberLookups());
         } else {
             DB::statement("drop table if exists \"import_{$import->studentsImport->getKey()}_students\"");
 
