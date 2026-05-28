@@ -42,8 +42,11 @@ use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Authorization\Models\Role;
 use Filament\Panel;
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use SocialiteProviders\Azure\AzureExtendSocialite;
 use SocialiteProviders\Google\GoogleExtendSocialite;
@@ -60,10 +63,13 @@ class AuthorizationServiceProvider extends ServiceProvider
         });
 
         $this->mergeConfigFrom(__DIR__ . '/../../config/permission.php', 'permission');
+        $this->mergeConfigFrom(__DIR__ . '/../../config/authorization.php', 'authorization');
     }
 
     public function boot(): void
     {
+        RateLimiter::for('otp-generate', fn (Request $request) => Limit::perMinute(5)->by($request->ip()));
+
         Relation::morphMap([
             'role' => Role::class,
             'permission' => Permission::class,

@@ -40,11 +40,16 @@ use AdvisingApp\Authorization\Tests\Tenant\Http\Controllers\RequestFactories\Gen
 use App\Http\Middleware\CheckOlympusKey;
 use App\Models\Authenticatable;
 use App\Models\User;
+use App\Settings\OlympusSettings;
 use Illuminate\Support\Facades\Notification;
 
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\post;
 use function Pest\Laravel\withoutMiddleware;
+
+beforeEach(function () {
+    config()->set('authorization.admin_otp_allowed_email_domains', ['example.com', 'example.org', 'example.net']);
+});
 
 it('requires Olympus Key authentication', function () {
     post(
@@ -307,3 +312,103 @@ it('requires valid data', function (GenerateOtpLoginCodeRequestFactory $data, ar
             ],
         ],
     );
+
+it('rejects emails with domains not in the allowlist', function () {
+    config()->set('authorization.admin_otp_allowed_email_domains', ['allowed.com']);
+
+    withoutMiddleware(CheckOlympusKey::class)
+        ->post(
+            route('otp-code.generate'),
+            [
+                'email' => 'attacker@malicious.com',
+                'name' => fake()->name(),
+                'type' => Authenticatable::SUPER_ADMIN_ROLE,
+            ]
+        )
+        ->assertInvalid(['email']);
+
+    assertDatabaseCount(OtpLoginCode::class, 0);
+    assertDatabaseCount(User::class, 0);
+});
+
+it('accepts emails with domains in the allowlist', function () {
+    config()->set('authorization.admin_otp_allowed_email_domains', ['allowed.com']);
+
+    withoutMiddleware(CheckOlympusKey::class)
+        ->post(
+            route('otp-code.generate'),
+            [
+                'email' => 'user@allowed.com',
+                'name' => fake()->name(),
+                'type' => Authenticatable::SUPER_ADMIN_ROLE,
+            ]
+        )
+        ->assertOk()
+        ->assertJsonStructure(['link']);
+
+    assertDatabaseCount(OtpLoginCode::class, 1);
+});
+
+it('rejects all emails when the allowlist is empty', function () {
+    config()->set('authorization.admin_otp_allowed_email_domains', []);
+
+    withoutMiddleware(CheckOlympusKey::class)
+        ->post(
+            route('otp-code.generate'),
+            [
+                'email' => 'user@anydomain.com',
+                'name' => fake()->name(),
+                'type' => Authenticatable::SUPER_ADMIN_ROLE,
+            ]
+        )
+        ->assertInvalid(['email']);
+
+    assertDatabaseCount(OtpLoginCode::class, 0);
+    assertDatabaseCount(User::class, 0);
+});
+
+it('performs case-insensitive domain matching', function () {
+    config()->set('authorization.admin_otp_allowed_email_domains', ['Allowed.COM']);
+
+    withoutMiddleware(CheckOlympusKey::class)
+        ->post(
+            route('otp-code.generate'),
+            [
+                'email' => 'user@allowed.com',
+                'name' => fake()->name(),
+                'type' => Authenticatable::SUPER_ADMIN_ROLE,
+            ]
+        )
+        ->assertOk()
+        ->assertJsonStructure(['link']);
+
+    assertDatabaseCount(OtpLoginCode::class, 1);
+});
+
+it('rate limits OTP generation requests', function () {
+    config()->set('authorization.admin_otp_allowed_email_domains', ['example.com']);
+
+    for ($idx = 0; $idx < 5; $idx++) {
+        post(
+            route('otp-code.generate'),
+            [
+                'email' => "user{$idx}@example.com",
+                'name' => fake()->name(),
+                'type' => Authenticatable::SUPER_ADMIN_ROLE,
+            ],
+            ['Authorization' => 'Bearer ' . app(OlympusSettings::class)->key]
+        )
+            ->assertOk();
+    }
+
+    post(
+        route('otp-code.generate'),
+        [
+            'email' => 'user5@example.com',
+            'name' => fake()->name(),
+            'type' => Authenticatable::SUPER_ADMIN_ROLE,
+        ],
+        ['Authorization' => 'Bearer ' . app(OlympusSettings::class)->key]
+    )
+        ->assertStatus(429);
+});

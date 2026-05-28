@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,46 +34,8 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Http\Requests;
-
-use App\Models\Authenticatable;
-use Closure;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rule;
-
-class GenerateOtpLoginCodeRequest extends FormRequest
-{
-    /**
-     * @return ValidationRules
-     */
-    public function rules(): array
-    {
-        return [
-            'email' => ['required', 'email', $this->allowedEmailDomainRule()],
-            'name' => ['required', 'string', 'max:255'],
-            'type' => ['required', 'string', Rule::in([Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE, Authenticatable::AI_ADMIN_ROLE])],
-        ];
-    }
-
-    protected function allowedEmailDomainRule(): Closure
-    {
-        return function (string $attribute, mixed $value, Closure $fail): void {
-            $allowedDomains = config('authorization.admin_otp_allowed_email_domains', []);
-
-            if (empty($allowedDomains)) {
-                $fail('No allowed email domains have been configured.');
-
-                return;
-            }
-
-            $domain = Str::lower(Str::after($value, '@'));
-
-            $allowed = in_array($domain, array_map(fn (string $allowedDomain) => Str::lower($allowedDomain), $allowedDomains));
-
-            if (! $allowed) {
-                $fail('The email domain is not allowed.');
-            }
-        };
-    }
-}
+return [
+    'admin_otp_allowed_email_domains' => env('ADMIN_OTP_ALLOWED_EMAIL_DOMAINS')
+        ? array_map('trim', explode(',', env('ADMIN_OTP_ALLOWED_EMAIL_DOMAINS')))
+        : [],
+];
