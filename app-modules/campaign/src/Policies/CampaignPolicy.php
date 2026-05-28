@@ -80,7 +80,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["campaign.{$campaign->getKey()}.view"],
+            abilities: ['campaign.*.view'],
             denyResponse: 'You do not have permission to view this campaign.'
         );
     }
@@ -100,7 +100,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["campaign.{$campaign->getKey()}.update"],
+            abilities: ['campaign.*.update'],
             denyResponse: 'You do not have permission to update this campaign.'
         );
     }
@@ -112,7 +112,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["campaign.{$campaign->getKey()}.delete"],
+            abilities: ['campaign.*.delete'],
             denyResponse: 'You do not have permission to delete this campaign.'
         );
     }
@@ -124,7 +124,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["campaign.{$campaign->getKey()}.delete"],
+            abilities: ['campaign.*.delete'],
             denyResponse: 'You do not have permission to archive this campaign.'
         );
     }
@@ -136,7 +136,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["campaign.{$campaign->getKey()}.restore"],
+            abilities: ['campaign.*.restore'],
             denyResponse: 'You do not have permission to restore this campaign.'
         );
     }
@@ -148,7 +148,7 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["campaign.{$campaign->getKey()}.force-delete"],
+            abilities: ['campaign.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this campaign.'
         );
     }

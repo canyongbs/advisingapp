@@ -73,7 +73,7 @@ class CasePriorityPolicy
     public function view(Authenticatable $authenticatable, CasePriority $casePriority): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$casePriority->getKey()}.view"],
+            abilities: ['product_admin.*.view'],
             denyResponse: 'You do not have permissions to view this case priority.'
         );
     }
@@ -89,7 +89,7 @@ class CasePriorityPolicy
     public function update(Authenticatable $authenticatable, CasePriority $casePriority): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$casePriority->getKey()}.update"],
+            abilities: ['product_admin.*.update'],
             denyResponse: 'You do not have permissions to update this case priority.'
         );
     }
@@ -97,7 +97,7 @@ class CasePriorityPolicy
     public function delete(Authenticatable $authenticatable, CasePriority $casePriority): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$casePriority->getKey()}.delete"],
+            abilities: ['product_admin.*.delete'],
             denyResponse: 'You do not have permissions to delete this case priority.'
         );
     }
@@ -105,7 +105,7 @@ class CasePriorityPolicy
     public function restore(Authenticatable $authenticatable, CasePriority $casePriority): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$casePriority->getKey()}.restore"],
+            abilities: ['product_admin.*.restore'],
             denyResponse: 'You do not have permissions to restore this case priority.'
         );
     }
@@ -113,7 +113,7 @@ class CasePriorityPolicy
     public function forceDelete(Authenticatable $authenticatable, CasePriority $casePriority): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["product_admin.{$casePriority->getKey()}.force-delete"],
+            abilities: ['product_admin.*.force-delete'],
             denyResponse: 'You do not have permissions to force delete this case priority.'
         );
     }

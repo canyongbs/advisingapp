@@ -64,7 +64,7 @@ class EnrollmentPolicy
     public function view(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
         return $authenticatable->canOrElse(
-            abilities: "enrollment.{$enrollment->getKey()}.view",
+            abilities: 'enrollment.*.view',
             denyResponse: 'You do not have permission to view this enrollment.'
         );
     }
@@ -88,7 +88,7 @@ class EnrollmentPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: "enrollment.{$enrollment->getKey()}.update",
+            abilities: 'enrollment.*.update',
             denyResponse: 'You do not have permission to update this enrollment.'
         );
     }
@@ -100,7 +100,7 @@ class EnrollmentPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: "enrollment.{$enrollment->getKey()}.delete",
+            abilities: 'enrollment.*.delete',
             denyResponse: 'You do not have permission to delete this enrollment.'
         );
     }
@@ -112,7 +112,7 @@ class EnrollmentPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: "enrollment.{$enrollment->getKey()}.update",
+            abilities: 'enrollment.*.update',
             denyResponse: 'You do not have permission to restore this enrollment.'
         );
     }
@@ -124,7 +124,7 @@ class EnrollmentPolicy
         }
 
         return $authenticatable->canOrElse(
-            abilities: "enrollment.{$enrollment->getKey()}.force-delete",
+            abilities: 'enrollment.*.force-delete',
             denyResponse: 'You do not have permission to force delete this enrollment.'
         );
     }

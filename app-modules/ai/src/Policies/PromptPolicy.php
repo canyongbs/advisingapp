@@ -67,7 +67,7 @@ class PromptPolicy implements PerformsChecksBeforeAuthorization
     public function view(Authenticatable $authenticatable, Prompt $prompt): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["prompt.{$prompt->getKey()}.view"],
+            abilities: ['prompt.*.view'],
             denyResponse: 'You do not have permission to view this prompt.'
         );
     }
@@ -89,7 +89,7 @@ class PromptPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["prompt.{$prompt->getKey()}.update"],
+            abilities: ['prompt.*.update'],
             denyResponse: 'You do not have permission to update this prompt.'
         );
     }
@@ -103,7 +103,7 @@ class PromptPolicy implements PerformsChecksBeforeAuthorization
         }
 
         return $authenticatable->canOrElse(
-            abilities: ["prompt.{$prompt->getKey()}.delete"],
+            abilities: ['prompt.*.delete'],
             denyResponse: 'You do not have permission to delete this prompt.'
         );
     }
@@ -111,7 +111,7 @@ class PromptPolicy implements PerformsChecksBeforeAuthorization
     public function restore(Authenticatable $authenticatable, Prompt $prompt): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["prompt.{$prompt->getKey()}.restore"],
+            abilities: ['prompt.*.restore'],
             denyResponse: 'You do not have permission to restore this prompt.'
         );
     }
@@ -119,7 +119,7 @@ class PromptPolicy implements PerformsChecksBeforeAuthorization
     public function forceDelete(Authenticatable $authenticatable, Prompt $prompt): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["prompt.{$prompt->getKey()}.force-delete"],
+            abilities: ['prompt.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this prompt.'
         );
     }

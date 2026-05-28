@@ -39,6 +39,7 @@ namespace AdvisingApp\Application\Filament\Resources\Applications;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\CreateApplication;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\EditApplication;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ListApplications;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationNotifications;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationSubmissions;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationWorkflows;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ViewApplication;
@@ -78,6 +79,7 @@ class ApplicationResource extends Resource
             EditApplication::class,
             ManageApplicationWorkflows::class,
             ManageApplicationSubmissions::class,
+            ManageApplicationNotifications::class,
         ]);
     }
 
@@ -90,6 +92,7 @@ class ApplicationResource extends Resource
             'view' => ViewApplication::route('/{record}'),
             'manage-application-workflows' => ManageApplicationWorkflows::route('/{record}/workflows'),
             'manage-submissions' => ManageApplicationSubmissions::route('/{record}/submissions'),
+            'manage-notifications' => ManageApplicationNotifications::route('/{record}/notifications'),
         ];
     }
 }

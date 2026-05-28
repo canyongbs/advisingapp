@@ -337,6 +337,11 @@ abstract class BaseOpenAiService implements AiService
         try {
             $vectorStoreId = $this->getReadyVectorStoreId($files, $filesContext);
 
+            // file_search tool cannot be used with 'minimal' reasoning effort on models < 5.1
+            if (filled($vectorStoreId) && isset($options['reasoning']['effort']) && $options['reasoning']['effort'] === 'minimal') {
+                $options['reasoning']['effort'] = $this->resolveReasoningEffortValue(AiReasoningEffort::Low);
+            }
+
             $tools = [
                 ...filled($vectorStoreId) ? [[
                     'type' => 'file_search',

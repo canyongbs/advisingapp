@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Settings;
 
+use AdvisingApp\StudentDataModel\Enums\EnrollmentSemesterAutoImportDefaultOrder;
 use AdvisingApp\StudentDataModel\Enums\SisSystem;
 use Spatie\LaravelSettings\Settings;
 
@@ -44,6 +45,10 @@ class StudentInformationSystemSettings extends Settings
     public bool $is_enabled = false;
 
     public ?SisSystem $sis_system = null;
+
+    public bool $is_enrollment_semester_auto_import_enabled = false;
+
+    public EnrollmentSemesterAutoImportDefaultOrder $enrollment_semester_auto_import_default_order = EnrollmentSemesterAutoImportDefaultOrder::First;
 
     public static function group(): string
     {

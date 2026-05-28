@@ -42,6 +42,7 @@ use AdvisingApp\Form\Actions\GenerateSubmissibleValidator;
 use AdvisingApp\Form\Actions\ProcessSubmissionField;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Http\Requests\RegisterProspectRequest;
+use AdvisingApp\Form\Jobs\SendFormNotificationJob;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\Form\Models\FormSubmission;
@@ -338,6 +339,7 @@ class FormWidgetController extends Controller
             }
 
             $submission->save();
+            SendFormNotificationJob::dispatch($form, $submission)->afterCommit();
 
             DB::commit();
         } catch (Throwable $e) {
