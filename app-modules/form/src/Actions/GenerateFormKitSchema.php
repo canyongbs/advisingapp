@@ -63,15 +63,6 @@ class GenerateFormKitSchema
     /**
      * @return array<string, mixed>
      */
-    /**
-     * @return array<string, mixed>
-     */
-    /**
-     * @return array<string, mixed>
-     */
-    /**
-     * @return array<string, mixed>
-     */
     public function __invoke(Submissible $submissible): array
     {
         return [

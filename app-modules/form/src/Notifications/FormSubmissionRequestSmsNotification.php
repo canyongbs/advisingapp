@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Form\Notifications;
 
-use AdvisingApp\Form\Models\Submission;
+use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -47,7 +47,7 @@ class FormSubmissionRequestSmsNotification extends Notification implements Shoul
     use Queueable;
 
     public function __construct(
-        public Submission $submission,
+        public FormSubmission $submission,
     ) {}
 
     /**
