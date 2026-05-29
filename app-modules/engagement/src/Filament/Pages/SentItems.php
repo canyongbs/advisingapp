@@ -165,10 +165,10 @@ class SentItems extends Page implements HasTable
                     ->query(
                         function (Builder $query) {
                             return $query
-                                ->whereRelation('recipient.careTeam', 'user_id', '=', auth()->id())
-                                ->get();
+                                ->whereRelation('recipient.careTeam', 'user_id', '=', auth()->id());
                         }
-                    ),
+                    )
+                    ->default(),
                 SelectFilter::make('my_groups')
                     ->label('My Population Groups')
                     ->options(

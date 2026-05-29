@@ -50,6 +50,11 @@ use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Engagement\Filament\Pages\SentItems;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
 
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
@@ -758,4 +763,27 @@ it('returns opted out phone health status for a prospect opted-out phone number'
         ]);
 
     expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::OptedOut);
+it('defaults to the care team filter', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    asSuperAdmin($user);
+
+    $student = Student::factory()->create();
+    $student->careTeam()->sync([$user->getKey()]);
+
+    $careTeamEngagements = Engagement::factory()->count(3)->create([
+        'recipient_type' => (new Student())->getMorphClass(),
+        'recipient_id' => $student->getKey(),
+        'user_id' => $user->getKey(),
+    ]);
+
+    $otherStudent = Student::factory()->create();
+    $otherEngagements = Engagement::factory()->count(3)->create([
+        'recipient_type' => (new Student())->getMorphClass(),
+        'recipient_id' => $otherStudent->getKey(),
+        'user_id' => $user->getKey(),
+    ]);
+
+    livewire(SentItems::class)
+        ->assertCanSeeTableRecords($careTeamEngagements)
+        ->assertCanNotSeeTableRecords($otherEngagements);
 });
