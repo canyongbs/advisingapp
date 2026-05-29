@@ -36,9 +36,7 @@
 
 namespace AdvisingApp\Authorization\Http\Requests;
 
-use App\Models\Authenticatable;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class GenerateOtpLoginCodeRequest extends FormRequest
 {
@@ -49,8 +47,6 @@ class GenerateOtpLoginCodeRequest extends FormRequest
     {
         return [
             'email' => ['required', 'email'],
-            'name' => ['required', 'string', 'max:255'],
-            'type' => ['required', 'string', Rule::in([Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE, Authenticatable::AI_ADMIN_ROLE])],
         ];
     }
 }
