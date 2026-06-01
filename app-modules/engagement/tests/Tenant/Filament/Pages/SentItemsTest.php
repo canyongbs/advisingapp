@@ -759,4 +759,3 @@ it('returns opted out phone health status for a prospect opted-out phone number'
 
     expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::OptedOut);
 });
-
