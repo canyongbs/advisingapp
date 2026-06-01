@@ -36,30 +36,26 @@
 
 namespace AdvisingApp\StudentDataModel\Observers\Concerns;
 
+use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Contracts\PhoneNumberLookupService;
 use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
-use Illuminate\Database\Eloquent\Model;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 
 /**
  * Observer concern that queues a Telnyx lookup whenever a phone-number record
  * is first introduced or its `number` changes — provided no lookup result
  * exists for that number yet and the lookup service is configured.
- *
- * Used by both Student and Prospect phone-number observers; the model is
- * expected to expose a `number` attribute.
  */
 trait QueuesPhoneNumberLookupOnSave
 {
-    public function saved(Model $phoneNumber): void
+    public function saved(StudentPhoneNumber|ProspectPhoneNumber $phoneNumber): void
     {
         if (! $phoneNumber->wasRecentlyCreated && ! $phoneNumber->wasChanged('number')) {
             return;
         }
 
-        $number = $phoneNumber->getAttribute('number');
-
-        if (! is_string($number) || blank($number)) {
+        if (blank($phoneNumber->number)) {
             return;
         }
 
@@ -68,10 +64,10 @@ trait QueuesPhoneNumberLookupOnSave
         }
 
         // Reuse an existing lookup result rather than paying for another.
-        if (PhoneNumberLookup::query()->where('number', $number)->exists()) {
+        if (PhoneNumberLookup::query()->where('number', $phoneNumber->number)->exists()) {
             return;
         }
 
-        dispatch(new LookupPhoneNumber($number))->afterCommit();
+        dispatch(new LookupPhoneNumber($phoneNumber->number))->afterCommit();
     }
 }

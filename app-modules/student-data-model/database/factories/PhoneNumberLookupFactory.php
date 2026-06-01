@@ -50,15 +50,12 @@ class PhoneNumberLookupFactory extends Factory
      */
     public function definition(): array
     {
-        $carrierName = $this->faker->company();
-        $carrierType = $this->faker->randomElement(['mobile', 'fixed line', 'voip', 'toll free']);
-
         return [
             'number' => $this->faker->unique()->e164PhoneNumber(),
-            'status' => PhoneNumberLookupStatus::fromTelnyxCarrierType($carrierType),
-            'carrier_name' => $carrierName,
-            'carrier_type' => $carrierType,
-            'raw_response' => $this->carrierLookupResponse($carrierName, $carrierType),
+            'carrier_type' => $this->faker->randomElement(['mobile', 'fixed line', 'voip', 'toll free']),
+            'carrier_name' => $this->faker->company(),
+            'status' => fn (array $attributes) => PhoneNumberLookupStatus::fromTelnyxCarrierType($attributes['carrier_type']),
+            'raw_response' => fn (array $attributes) => $this->carrierLookupResponse($attributes['carrier_name'], $attributes['carrier_type']),
         ];
     }
 
@@ -101,7 +98,9 @@ class PhoneNumberLookupFactory extends Factory
      */
     public function unknown(): Factory
     {
-        return $this->withCarrierType($this->faker->randomElement(['other', 'voicemail']));
+        return $this->state(fn () => [
+            'carrier_type' => $this->faker->randomElement(['other', 'voicemail']),
+        ]);
     }
 
     /**
@@ -148,14 +147,7 @@ class PhoneNumberLookupFactory extends Factory
      */
     protected function withCarrierType(string $carrierType): Factory
     {
-        $carrierName = $this->faker->company();
-
-        return $this->state([
-            'status' => PhoneNumberLookupStatus::fromTelnyxCarrierType($carrierType),
-            'carrier_name' => $carrierName,
-            'carrier_type' => $carrierType,
-            'raw_response' => $this->carrierLookupResponse($carrierName, $carrierType),
-        ]);
+        return $this->state(['carrier_type' => $carrierType]);
     }
 
     /**
