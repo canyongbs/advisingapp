@@ -346,6 +346,7 @@ class EngagementsRelationManager extends RelationManager
             ])
             ->headerActions([
                 SendEngagementAction::make()
+                    ->label('New')
                     ->draftWithAiAction(fn () => RelationManagerDraftWithAiAction::make()->mergeTags(SendEngagementAction::getDefaultMergeTags()))
                     ->educatable(fn () => $this->getOwnerRecord()),
             ])

@@ -38,7 +38,6 @@ use AdvisingApp\Authorization\Models\OtpLoginCode;
 use AdvisingApp\Authorization\Notifications\OtpCodeNotification;
 use AdvisingApp\Authorization\Tests\Tenant\Http\Controllers\RequestFactories\GenerateOtpLoginCodeRequestFactory;
 use App\Http\Middleware\CheckOlympusKey;
-use App\Models\Authenticatable;
 use App\Models\User;
 use Illuminate\Support\Facades\Notification;
 
@@ -51,69 +50,39 @@ it('requires Olympus Key authentication', function () {
         route('otp-code.generate'),
         [
             'email' => fake()->safeEmail(),
-            'name' => fake()->name(),
-            'type' => Authenticatable::SUPER_ADMIN_ROLE,
         ]
     )
         ->assertForbidden();
 });
 
-it('can generate a login OTP for a non-existing user', function () {
+it('returns 422 for a non-existing user', function () {
     $email = fake()->safeEmail();
-    $name = fake()->name();
 
     withoutMiddleware(CheckOlympusKey::class)
         ->post(
             route('otp-code.generate'),
             [
                 'email' => $email,
-                'name' => $name,
-                'type' => Authenticatable::SUPER_ADMIN_ROLE,
             ]
         )
-        ->assertOk()
-        ->assertJsonStructure(['link']);
+        ->assertUnprocessable()
+        ->assertJson(['error' => 'User not found.']);
 
-    // Verify that the user was created
-    $user = User::where('email', $email)->first();
-    expect($user)->not->toBeNull()
-        ->and($user->name)->toEqual($name)
-        ->and($user->is_external)->toBeTrue()
-        ->and($user->hasExactRoles([Authenticatable::SUPER_ADMIN_ROLE]))->toBeTrue();
-
-    assertDatabaseCount(OtpLoginCode::class, 1);
-
-    $otpCode = OtpLoginCode::first();
-
-    expect($otpCode->user_id)->toEqual($user->id);
+    assertDatabaseCount(OtpLoginCode::class, 0);
 });
 
 it('can generate a login OTP for an existing user', function () {
     $user = User::factory()->create();
 
-    $email = $user->email;
-    $name = $user->name;
-
     withoutMiddleware(CheckOlympusKey::class)
         ->post(
             route('otp-code.generate'),
             [
-                'email' => $email,
-                'name' => $name,
-                'type' => Authenticatable::SUPER_ADMIN_ROLE,
+                'email' => $user->email,
             ]
         )
         ->assertOk()
         ->assertJsonStructure(['link']);
-
-    assertDatabaseCount(User::class, 1);
-
-    $user->refresh();
-
-    expect($user->name)->toEqual($name)
-        ->and($user->email)->toEqual($email)
-        ->and($user->is_external)->toBeTrue()
-        ->and($user->hasExactRoles([Authenticatable::SUPER_ADMIN_ROLE]))->toBeTrue();
 
     assertDatabaseCount(OtpLoginCode::class, 1);
 
@@ -122,11 +91,8 @@ it('can generate a login OTP for an existing user', function () {
     expect($otpCode->user_id)->toEqual($user->id);
 });
 
-it('can generate a login OTP for an existing user that is deleted', function () {
+it('returns 422 for a soft-deleted user', function () {
     $user = User::factory()->create();
-
-    $email = $user->email;
-    $name = $user->name;
 
     $user->delete();
 
@@ -136,78 +102,17 @@ it('can generate a login OTP for an existing user that is deleted', function () 
         ->post(
             route('otp-code.generate'),
             [
-                'email' => $email,
-                'name' => $name,
-                'type' => Authenticatable::SUPER_ADMIN_ROLE,
+                'email' => $user->email,
             ]
         )
-        ->assertOk()
-        ->assertJsonStructure(['link']);
+        ->assertUnprocessable()
+        ->assertJson(['error' => 'User not found.']);
 
-    assertDatabaseCount(User::class, 1);
-
-    $user->refresh();
-
-    expect($user->trashed())->toBeFalse()
-        ->and($user->name)->toEqual($name)
-        ->and($user->email)->toEqual($email)
-        ->and($user->is_external)->toBeTrue()
-        ->and($user->hasExactRoles([Authenticatable::SUPER_ADMIN_ROLE]))->toBeTrue();
-
-    assertDatabaseCount(OtpLoginCode::class, 1);
-
-    $otpCode = OtpLoginCode::first();
-
-    expect($otpCode->user_id)->toEqual($user->id);
-});
-
-it('updates details of an existing user', function () {
-    $user = User::factory()->create(
-        [
-            'is_external' => false,
-            'email_verified_at' => null,
-        ]
-    );
-
-    $email = $user->email;
-    $name = fake()->name();
-
-    expect($user->name)->not->toBe($name);
-
-    withoutMiddleware(CheckOlympusKey::class)
-        ->post(
-            route('otp-code.generate'),
-            [
-                'email' => $email,
-                'name' => $name,
-                'type' => Authenticatable::SUPER_ADMIN_ROLE,
-            ]
-        )
-        ->assertOk()
-        ->assertJsonStructure(['link']);
-
-    assertDatabaseCount(User::class, 1);
-
-    $user->refresh();
-
-    expect($user->name)->toEqual($name)
-        ->and($user->email)->toEqual($email)
-        ->and($user->is_external)->toBeTrue()
-        ->and($user->email_verified_at)->not->toBeNull()
-        ->and($user->hasExactRoles([Authenticatable::SUPER_ADMIN_ROLE]))->toBeTrue();
-
-    assertDatabaseCount(OtpLoginCode::class, 1);
-
-    $otpCode = OtpLoginCode::first();
-
-    expect($otpCode->user_id)->toEqual($user->id);
+    assertDatabaseCount(OtpLoginCode::class, 0);
 });
 
 it('deletes existing OTP codes for a user', function () {
     $user = User::factory()->create();
-
-    $email = $user->email;
-    $name = $user->name;
 
     $existingOtpCode = OtpLoginCode::factory()->create(['user_id' => $user->id]);
 
@@ -215,22 +120,11 @@ it('deletes existing OTP codes for a user', function () {
         ->post(
             route('otp-code.generate'),
             [
-                'email' => $email,
-                'name' => $name,
-                'type' => Authenticatable::SUPER_ADMIN_ROLE,
+                'email' => $user->email,
             ]
         )
         ->assertOk()
         ->assertJsonStructure(['link']);
-
-    assertDatabaseCount(User::class, 1);
-
-    $user->refresh();
-
-    expect($user->name)->toEqual($name)
-        ->and($user->email)->toEqual($email)
-        ->and($user->is_external)->toBeTrue()
-        ->and($user->hasExactRoles([Authenticatable::SUPER_ADMIN_ROLE]))->toBeTrue();
 
     assertDatabaseCount(OtpLoginCode::class, 1);
 
@@ -244,15 +138,13 @@ it('deletes existing OTP codes for a user', function () {
 it('sends OTP code notification to the provided email', function () {
     Notification::fake();
 
-    $email = fake()->safeEmail();
+    $user = User::factory()->create();
 
     withoutMiddleware(CheckOlympusKey::class)
         ->post(
             route('otp-code.generate'),
             [
-                'email' => $email,
-                'name' => fake()->name(),
-                'type' => Authenticatable::SUPER_ADMIN_ROLE,
+                'email' => $user->email,
             ]
         )
         ->assertOk()
@@ -260,7 +152,7 @@ it('sends OTP code notification to the provided email', function () {
         ->assertJsonMissing(['otp']);
 
     Notification::assertSentTo(
-        User::where('email', $email)->first(),
+        $user,
         OtpCodeNotification::class,
     );
 });
@@ -284,26 +176,6 @@ it('requires valid data', function (GenerateOtpLoginCodeRequestFactory $data, ar
             'email must be valid email' => [
                 GenerateOtpLoginCodeRequestFactory::new()->state(['email' => 'invalid-email']),
                 ['email' => 'email'],
-            ],
-            'name required' => [
-                GenerateOtpLoginCodeRequestFactory::new()->state(['name' => null]),
-                ['name' => 'required'],
-            ],
-            'name string' => [
-                GenerateOtpLoginCodeRequestFactory::new()->state(['name' => 1]),
-                ['name' => 'string'],
-            ],
-            'name max' => [
-                GenerateOtpLoginCodeRequestFactory::new()->state(['name' => str()->random(256)]),
-                ['name' => ['The name may not be greater than 255 characters.']],
-            ],
-            'type required' => [
-                GenerateOtpLoginCodeRequestFactory::new()->state(['type' => null]),
-                ['type' => 'required'],
-            ],
-            'type must be correct value' => [
-                GenerateOtpLoginCodeRequestFactory::new()->state(['type' => 'invalid']),
-                ['type' => 'in'],
             ],
         ],
     );
