@@ -38,6 +38,9 @@ use AdvisingApp\Engagement\Filament\Pages\SentItems;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\SmsMessage;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Enums\EmailHealthStatus;
 use AdvisingApp\StudentDataModel\Enums\PhoneHealthStatus;
 use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
@@ -125,7 +128,6 @@ it('displays the bounced status icon for a bounced email address', function () {
 
     livewire(SentItems::class)
         ->assertSuccessful()
-        ->loadTable()
         ->assertSeeHtml($email)
         ->assertSeeHtml(EmailHealthStatus::Bounced->getTooltipText());
 });
@@ -153,7 +155,6 @@ it('displays the opted out status icon for an opted-out email address', function
 
     livewire(SentItems::class)
         ->assertSuccessful()
-        ->loadTable()
         ->assertSeeHtml($email)
         ->assertSeeHtml(EmailHealthStatus::OptedOut->getTooltipText());
 });
@@ -181,7 +182,6 @@ it('displays the bounced status icon for a bounced phone number', function () {
 
     livewire(SentItems::class)
         ->assertSuccessful()
-        ->loadTable()
         ->assertSeeHtml($phone)
         ->assertSeeHtml(PhoneHealthStatus::Bounced->getTooltipText());
 });
@@ -209,7 +209,6 @@ it('displays the opted out status icon for an opted-out phone number', function 
 
     livewire(SentItems::class)
         ->assertSuccessful()
-        ->loadTable()
         ->assertSeeHtml($phone)
         ->assertSeeHtml(PhoneHealthStatus::OptedOut->getTooltipText());
 });
@@ -467,3 +466,297 @@ it('returns bounced phone health status even when no StudentPhoneNumber record e
 
     expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::Bounced);
 });
+
+it('displays the type column with channel icon, email address, and healthy status for prospect email engagements', function () {
+    asSuperAdmin();
+
+    $prospect = Prospect::factory()->create();
+    ProspectEmailAddress::factory()->create(['prospect_id' => $prospect->id, 'address' => 'prospect@university.edu']);
+
+    $engagement = Engagement::factory()
+        ->has(
+            EmailMessage::factory()->state(['recipient_address' => 'prospect@university.edu']),
+            'latestEmailMessage'
+        )
+        ->email()
+        ->deliverNow()
+        ->create([
+            'dispatched_at' => now(),
+            'recipient_id' => $prospect->id,
+            'recipient_type' => (new Prospect())->getMorphClass(),
+        ]);
+
+    livewire(SentItems::class)
+        ->assertSuccessful()
+        ->assertTableColumnExists('channel')
+        ->assertCanSeeTableRecords([$engagement])
+        ->assertTableColumnStateSet('channel', 'prospect@university.edu', record: $engagement);
+});
+
+it('displays the type column with channel icon, phone number, and healthy status for prospect sms engagements', function () {
+    asSuperAdmin();
+
+    $prospect = Prospect::factory()->create();
+    ProspectPhoneNumber::factory()->canReceiveSms()->create(['prospect_id' => $prospect->id, 'number' => '+15557654321']);
+
+    $engagement = Engagement::factory()
+        ->has(
+            SmsMessage::factory()->state(['recipient_number' => '+15557654321']),
+            'latestSmsMessage'
+        )
+        ->sms()
+        ->deliverNow()
+        ->create([
+            'dispatched_at' => now(),
+            'recipient_id' => $prospect->id,
+            'recipient_type' => (new Prospect())->getMorphClass(),
+        ]);
+
+    livewire(SentItems::class)
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords([$engagement])
+        ->assertTableColumnStateSet('channel', '+15557654321', record: $engagement);
+});
+
+it('displays the bounced status icon for a prospect bounced email address', function () {
+    asSuperAdmin();
+
+    $email = 'prospect-bounced@example.com';
+    $prospect = Prospect::factory()->create();
+    ProspectEmailAddress::factory()->create(['prospect_id' => $prospect->id, 'address' => $email]);
+    BouncedEmailAddress::factory()->create(['address' => $email]);
+
+    Engagement::factory()
+        ->has(
+            EmailMessage::factory()->state(['recipient_address' => $email]),
+            'latestEmailMessage'
+        )
+        ->email()
+        ->deliverNow()
+        ->create([
+            'dispatched_at' => now(),
+            'recipient_id' => $prospect->id,
+            'recipient_type' => (new Prospect())->getMorphClass(),
+        ]);
+
+    livewire(SentItems::class)
+        ->assertSuccessful()
+        ->assertSeeHtml($email)
+        ->assertSeeHtml(EmailHealthStatus::Bounced->getTooltipText());
+});
+
+it('displays the opted out status icon for a prospect opted-out email address', function () {
+    asSuperAdmin();
+
+    $email = 'prospect-optedout@example.com';
+    $prospect = Prospect::factory()->create();
+    ProspectEmailAddress::factory()->create(['prospect_id' => $prospect->id, 'address' => $email]);
+    EmailAddressOptInOptOut::factory()->optedOut()->create(['address' => $email]);
+
+    Engagement::factory()
+        ->has(
+            EmailMessage::factory()->state(['recipient_address' => $email]),
+            'latestEmailMessage'
+        )
+        ->email()
+        ->deliverNow()
+        ->create([
+            'dispatched_at' => now(),
+            'recipient_id' => $prospect->id,
+            'recipient_type' => (new Prospect())->getMorphClass(),
+        ]);
+
+    livewire(SentItems::class)
+        ->assertSuccessful()
+        ->assertSeeHtml($email)
+        ->assertSeeHtml(EmailHealthStatus::OptedOut->getTooltipText());
+});
+
+it('displays the bounced status icon for a prospect bounced phone number', function () {
+    asSuperAdmin();
+
+    $phone = '+15556660000';
+    $prospect = Prospect::factory()->create();
+    ProspectPhoneNumber::factory()->canReceiveSms()->create(['prospect_id' => $prospect->id, 'number' => $phone]);
+    BouncedPhoneNumber::factory()->create(['number' => $phone]);
+
+    Engagement::factory()
+        ->has(
+            SmsMessage::factory()->state(['recipient_number' => $phone]),
+            'latestSmsMessage'
+        )
+        ->sms()
+        ->deliverNow()
+        ->create([
+            'dispatched_at' => now(),
+            'recipient_id' => $prospect->id,
+            'recipient_type' => (new Prospect())->getMorphClass(),
+        ]);
+
+    livewire(SentItems::class)
+        ->assertSuccessful()
+        ->assertSeeHtml($phone)
+        ->assertSeeHtml(PhoneHealthStatus::Bounced->getTooltipText());
+});
+
+it('displays the opted out status icon for a prospect opted-out phone number', function () {
+    asSuperAdmin();
+
+    $phone = '+15557770000';
+    $prospect = Prospect::factory()->create();
+    ProspectPhoneNumber::factory()->canReceiveSms()->create(['prospect_id' => $prospect->id, 'number' => $phone]);
+    SmsOptOutPhoneNumber::factory()->create(['number' => $phone]);
+
+    Engagement::factory()
+        ->has(
+            SmsMessage::factory()->state(['recipient_number' => $phone]),
+            'latestSmsMessage'
+        )
+        ->sms()
+        ->deliverNow()
+        ->create([
+            'dispatched_at' => now(),
+            'recipient_id' => $prospect->id,
+            'recipient_type' => (new Prospect())->getMorphClass(),
+        ]);
+
+    livewire(SentItems::class)
+        ->assertSuccessful()
+        ->assertSeeHtml($phone)
+        ->assertSeeHtml(PhoneHealthStatus::OptedOut->getTooltipText());
+});
+
+it('returns healthy email health status for a prospect when address is not bounced or opted out', function () {
+    asSuperAdmin();
+
+    $prospect = Prospect::factory()->create();
+    ProspectEmailAddress::factory()->create(['prospect_id' => $prospect->id, 'address' => 'prospect-healthy@example.com']);
+
+    $engagement = Engagement::factory()
+        ->has(
+            EmailMessage::factory()->state(['recipient_address' => 'prospect-healthy@example.com']),
+            'latestEmailMessage'
+        )
+        ->email()
+        ->deliverNow()
+        ->create([
+            'recipient_id' => $prospect->id,
+            'recipient_type' => (new Prospect())->getMorphClass(),
+        ]);
+
+    expect($engagement->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::Healthy);
+});
+
+it('returns bounced email health status for a prospect bounced email address', function () {
+    asSuperAdmin();
+
+    $email = 'prospect-bounced@example.com';
+    $prospect = Prospect::factory()->create();
+    ProspectEmailAddress::factory()->create(['prospect_id' => $prospect->id, 'address' => $email]);
+    BouncedEmailAddress::factory()->create(['address' => $email]);
+
+    $engagement = Engagement::factory()
+        ->has(
+            EmailMessage::factory()->state(['recipient_address' => $email]),
+            'latestEmailMessage'
+        )
+        ->email()
+        ->deliverNow()
+        ->create([
+            'recipient_id' => $prospect->id,
+            'recipient_type' => (new Prospect())->getMorphClass(),
+        ]);
+
+    expect($engagement->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::Bounced);
+});
+
+it('returns opted out email health status for a prospect opted-out email address', function () {
+    asSuperAdmin();
+
+    $email = 'prospect-optedout@example.com';
+    $prospect = Prospect::factory()->create();
+    ProspectEmailAddress::factory()->create(['prospect_id' => $prospect->id, 'address' => $email]);
+    EmailAddressOptInOptOut::factory()->optedOut()->create(['address' => $email]);
+
+    $engagement = Engagement::factory()
+        ->has(
+            EmailMessage::factory()->state(['recipient_address' => $email]),
+            'latestEmailMessage'
+        )
+        ->email()
+        ->deliverNow()
+        ->create([
+            'recipient_id' => $prospect->id,
+            'recipient_type' => (new Prospect())->getMorphClass(),
+        ]);
+
+    expect($engagement->getRecipientRouteHealthStatus())->toBe(EmailHealthStatus::OptedOut);
+});
+
+it('returns healthy phone health status for a prospect when number is not bounced or opted out', function () {
+    asSuperAdmin();
+
+    $prospect = Prospect::factory()->create();
+    ProspectPhoneNumber::factory()->canReceiveSms()->create(['prospect_id' => $prospect->id, 'number' => '+15558880000']);
+
+    $engagement = Engagement::factory()
+        ->has(
+            SmsMessage::factory()->state(['recipient_number' => '+15558880000']),
+            'latestSmsMessage'
+        )
+        ->sms()
+        ->deliverNow()
+        ->create([
+            'recipient_id' => $prospect->id,
+            'recipient_type' => (new Prospect())->getMorphClass(),
+        ]);
+
+    expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::Healthy);
+});
+
+it('returns bounced phone health status for a prospect bounced phone number', function () {
+    asSuperAdmin();
+
+    $phone = '+15556660000';
+    $prospect = Prospect::factory()->create();
+    ProspectPhoneNumber::factory()->canReceiveSms()->create(['prospect_id' => $prospect->id, 'number' => $phone]);
+    BouncedPhoneNumber::factory()->create(['number' => $phone]);
+
+    $engagement = Engagement::factory()
+        ->has(
+            SmsMessage::factory()->state(['recipient_number' => $phone]),
+            'latestSmsMessage'
+        )
+        ->sms()
+        ->deliverNow()
+        ->create([
+            'recipient_id' => $prospect->id,
+            'recipient_type' => (new Prospect())->getMorphClass(),
+        ]);
+
+    expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::Bounced);
+});
+
+it('returns opted out phone health status for a prospect opted-out phone number', function () {
+    asSuperAdmin();
+
+    $phone = '+15557770000';
+    $prospect = Prospect::factory()->create();
+    ProspectPhoneNumber::factory()->canReceiveSms()->create(['prospect_id' => $prospect->id, 'number' => $phone]);
+    SmsOptOutPhoneNumber::factory()->create(['number' => $phone]);
+
+    $engagement = Engagement::factory()
+        ->has(
+            SmsMessage::factory()->state(['recipient_number' => $phone]),
+            'latestSmsMessage'
+        )
+        ->sms()
+        ->deliverNow()
+        ->create([
+            'recipient_id' => $prospect->id,
+            'recipient_type' => (new Prospect())->getMorphClass(),
+        ]);
+
+    expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::OptedOut);
+});
+

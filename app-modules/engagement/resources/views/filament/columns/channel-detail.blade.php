@@ -47,9 +47,7 @@
     />
 
     @if (filled($recipientRoute))
-        <span class="text-sm">
-            {{ $recipientRoute }}
-        </span>
+        <span>{{ $recipientRoute }}</span>
 
         @if ($healthStatus)
             <x-filament::icon

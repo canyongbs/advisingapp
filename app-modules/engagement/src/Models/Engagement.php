@@ -377,7 +377,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     private function resolveEmailHealthStatus(Educatable $recipient, string $route): EmailHealthStatus
     {
         /** @var StudentEmailAddress|ProspectEmailAddress $emailAddress */
-        $emailAddress = $recipient->emailAddresses()->where('address', $route)->first()
+        $emailAddress = $recipient->emailAddresses()->firstWhere('address', $route)
             ?? $recipient->emailAddresses()->make(['address' => $route]);
 
         return $emailAddress->getHealthStatus();
@@ -386,7 +386,7 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     private function resolvePhoneHealthStatus(Educatable $recipient, string $route): PhoneHealthStatus
     {
         /** @var StudentPhoneNumber|ProspectPhoneNumber $phoneNumber */
-        $phoneNumber = $recipient->phoneNumbers()->where('number', $route)->first()
+        $phoneNumber = $recipient->phoneNumbers()->firstWhere('number', $route)
             ?? $recipient->phoneNumbers()->make(['number' => $route, 'can_receive_sms' => true]);
 
         return $phoneNumber->getHealthStatus();
