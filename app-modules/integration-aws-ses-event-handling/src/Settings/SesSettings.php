@@ -42,6 +42,8 @@ class SesSettings extends Settings
 {
     public ?string $configuration_set = null;
 
+    public bool $is_demo_auto_reply_mode_enabled = false;
+
     public static function group(): string
     {
         return 'ses';

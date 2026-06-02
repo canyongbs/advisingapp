@@ -35,10 +35,17 @@
 */
 
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
+use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Enums\EmailType;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Models\Tenant;
+
+use function Pest\Laravel\travelTo;
 
 it('getEmailType returns the engagement email_type value', function () {
     $engagement = Engagement::factory()
@@ -100,4 +107,51 @@ it('creates an EmailMessage with email_type transactional when engagement is tra
 
     expect($emailMessage)->not->toBeNull()
         ->and($emailMessage->email_type)->toBe(EmailType::Transactional);
+});
+
+it('creates a proper Engagement Response for emails when demo mode is turned on', function () {
+    $tenantConfig = Tenant::current()->config;
+    $tenantConfig->mail->isDemoModeEnabled = true;
+    Tenant::current()->update([
+        'config' => $tenantConfig,
+    ]);
+
+    $settings = app(SesSettings::class);
+    $settings->is_demo_auto_reply_mode_enabled = true;
+    $settings->save();
+
+    $prospect = Prospect::factory()->create();
+
+    $engagement = Engagement::factory()
+        ->forProspect()
+        ->email()
+        ->create(['channel' => NotificationChannel::Email]);
+
+    $notification = new EngagementNotification($engagement);
+
+    $prospect->notify($notification);
+
+    expect(EngagementResponse::count())->toBe(1);
+    expect(EngagementResponse::first()->content)->toBe('Thank you for your message. Will get back to you shortly.');
+});
+
+it('creates a proper Engagement Response for SMS when demo mode is turned on', function () {
+    $settings = app(TwilioSettings::class);
+    $settings->is_demo_mode_enabled = true;
+    $settings->is_demo_auto_reply_mode_enabled = true;
+    $settings->save();
+
+    $prospect = Prospect::factory()->create();
+
+    $engagement = Engagement::factory()
+        ->forProspect()
+        ->email()
+        ->create(['channel' => NotificationChannel::Sms]);
+
+    $notification = new EngagementNotification($engagement);
+
+    $prospect->notify($notification);
+
+    expect(EngagementResponse::count())->toBe(1);
+    expect(EngagementResponse::first()->content)->toBe('Thank you for your message. Will get back to you shortly.');
 });

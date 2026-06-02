@@ -42,6 +42,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Settings\EngagementSettings;
+use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\DataTransferObjects\NotificationResultData;
 use AdvisingApp\Notification\Enums\EmailType;
@@ -53,6 +54,7 @@ use AdvisingApp\Notification\Notifications\Contracts\HasBeforeSendHook;
 use AdvisingApp\Notification\Notifications\Contracts\HasEmailType;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
+use App\Models\Tenant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Model;
@@ -156,6 +158,25 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
         ) {
             EngagementResponse::create([
                 'type' => EngagementResponseType::Sms,
+                'sender_id' => $this->engagement->recipient->getKey(),
+                'sender_type' => $this->engagement->recipient->getMorphClass(),
+                'content' => 'Thank you for your message. Will get back to you shortly.',
+                'sent_at' => now()->addSeconds(2),
+                'status' => EngagementResponseStatus::New,
+            ]);
+        }
+        
+        $sesSettings = app(SesSettings::class);
+
+        if (
+            $this->engagement->channel === NotificationChannel::Email
+            && Tenant::current()->config->mail->isDemoModeEnabled
+            && $sesSettings->is_demo_auto_reply_mode_enabled
+            && $this->engagement->recipient instanceof Model
+        ) {
+            EngagementResponse::create([
+                'type' => EngagementResponseType::Email,
+                'subject' => 'Re: ' . $this->engagement->getSubject(),
                 'sender_id' => $this->engagement->recipient->getKey(),
                 'sender_type' => $this->engagement->recipient->getMorphClass(),
                 'content' => 'Thank you for your message. Will get back to you shortly.',
