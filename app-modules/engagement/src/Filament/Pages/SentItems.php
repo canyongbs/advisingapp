@@ -57,12 +57,14 @@ use Filament\Navigation\NavigationItem;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Str;
 
 class SentItems extends Page implements HasTable
@@ -99,7 +101,18 @@ class SentItems extends Page implements HasTable
     {
         return $table
             ->query(
-                Engagement::query()->whereHas('recipient')
+                Engagement::query()
+                    ->whereHas('recipient')
+                    ->with([/** @phpstan-ignore argument.type */
+                        'latestEmailMessage',
+                        'latestSmsMessage',
+                        'recipient' => function (MorphTo $morphTo) {
+                            $morphTo->morphWith([
+                                Student::class => ['emailAddresses', 'phoneNumbers'],
+                                Prospect::class => ['emailAddresses', 'phoneNumbers'],
+                            ]);
+                        },
+                    ])
             )
             ->columns([
                 TextColumn::make('direction')
@@ -120,10 +133,10 @@ class SentItems extends Page implements HasTable
                         default => null,
                     })
                     ->openUrlInNewTab(),
-                TextColumn::make('channel')
+                ViewColumn::make('channel')
                     ->label('Type')
-                    ->state(fn (Engagement $record): string => $record->channel->getLabel())
-                    ->icon(fn (Engagement $record): string => $record->channel->getIcon()),
+                    ->state(fn (Engagement $record): ?string => $record->getRecipientRoute())
+                    ->view('engagement::filament.columns.channel-detail'),
                 TextColumn::make('subject')
                     ->description(
                         fn (Engagement $record): ?string => filled($body = $record->getBodyText())
