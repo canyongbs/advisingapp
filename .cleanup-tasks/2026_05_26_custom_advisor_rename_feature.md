@@ -9,7 +9,6 @@ created: 2026-05-26
 
 ## Temporary Migrations
 
-
 ## Additional Cleanup
 
 - Search for `TODO: CustomAdvisorRenameFeature clean up` in the codebase — every gated branch has an inline note explaining exactly what to keep and what to delete.
