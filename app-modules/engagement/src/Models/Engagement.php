@@ -47,12 +47,16 @@ use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\SmsMessage;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Enums\EmailHealthStatus;
 use AdvisingApp\StudentDataModel\Enums\PhoneHealthStatus;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\EngagementTimeline;
@@ -375,6 +379,8 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         $emailAddress = $recipient->emailAddresses->firstWhere('address', $route)
             ?? $recipient->emailAddresses()->make(['address' => $route]);
 
+        assert($emailAddress instanceof StudentEmailAddress || $emailAddress instanceof ProspectEmailAddress);
+
         return $emailAddress->getHealthStatus();
     }
 
@@ -382,6 +388,8 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     {
         $phoneNumber = $recipient->phoneNumbers->firstWhere('number', $route)
             ?? $recipient->phoneNumbers()->make(['number' => $route, 'can_receive_sms' => true]);
+
+        assert($phoneNumber instanceof StudentPhoneNumber || $phoneNumber instanceof ProspectPhoneNumber);
 
         return $phoneNumber->getHealthStatus();
     }
