@@ -64,6 +64,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Str;
 
 class SentItems extends Page implements HasTable
@@ -102,7 +103,16 @@ class SentItems extends Page implements HasTable
             ->query(
                 Engagement::query()
                     ->whereHas('recipient')
-                    ->with(['latestEmailMessage', 'latestSmsMessage', 'recipient'])
+                    ->with([/** @phpstan-ignore argument.type */
+                        'latestEmailMessage',
+                        'latestSmsMessage',
+                        'recipient' => function (MorphTo $morphTo) {
+                            $morphTo->morphWith([
+                                Student::class => ['emailAddresses', 'phoneNumbers'],
+                                Prospect::class => ['emailAddresses', 'phoneNumbers'],
+                            ]);
+                        },
+                    ])
             )
             ->columns([
                 TextColumn::make('direction')

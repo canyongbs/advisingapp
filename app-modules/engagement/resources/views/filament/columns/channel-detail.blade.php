@@ -32,8 +32,6 @@
     </COPYRIGHT>
 --}}
 @php
-    use AdvisingApp\Engagement\Models\Engagement;
-
     $channel = $record->channel;
     $recipientRoute = $record->getRecipientRoute();
     $healthStatus = $record->getRecipientRouteHealthStatus();
