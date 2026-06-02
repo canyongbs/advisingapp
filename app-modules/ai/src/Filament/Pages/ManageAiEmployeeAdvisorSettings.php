@@ -39,7 +39,7 @@ namespace AdvisingApp\Ai\Filament\Pages;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
+use AdvisingApp\Ai\Settings\AiEmployeeAdvisorSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
@@ -53,9 +53,9 @@ use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
-class ManageAiCustomAdvisorSettings extends SettingsPage
+class ManageAiEmployeeAdvisorSettings extends SettingsPage
 {
-    protected static string $settings = AiCustomAdvisorSettings::class;
+    protected static string $settings = AiEmployeeAdvisorSettings::class;
 
     protected static ?string $title = 'Employee Advisor';
 
@@ -91,7 +91,7 @@ class ManageAiCustomAdvisorSettings extends SettingsPage
                 Select::make('preselected_model')
                     ->label('Select Model')
                     ->options(fn (AiModel|string|null $state) => array_unique([
-                        ...AiModelApplicabilityFeature::CustomAdvisors->getModelsAsSelectOptions(),
+                        ...AiModelApplicabilityFeature::EmployeeAdvisors->getModelsAsSelectOptions(),
                         ...match (true) {
                             $state instanceof AiModel => [$state->value => $state->getLabel()],
                             is_string($state) => [$state => AiModel::parse($state)->getLabel()],
@@ -101,7 +101,7 @@ class ManageAiCustomAdvisorSettings extends SettingsPage
                     ->searchable()
                     ->helperText('This model will be the model used for employee advisors.')
                     ->required()
-                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomAdvisors->getModels()))
+                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::EmployeeAdvisors->getModels()))
                     ->visible(fn (Get $get): bool => ! $get('allow_selection_of_model')),
             ])
             ->disabled(! Auth::user()->canAccessAiSettings());

@@ -34,37 +34,20 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Report\Filament\Pages\CustomAdvisorReport;
-use App\Models\User;
-use App\Settings\LicenseSettings;
+namespace AdvisingApp\Ai\Settings;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Laravel\get;
+use AdvisingApp\Ai\Enums\AiModel;
+use App\Features\CustomAdvisorRenameFeature;
+use Spatie\LaravelSettings\Settings;
 
-it('is gated with proper access control', function () {
-    $settings = app(LicenseSettings::class);
-    $user = User::factory()->create();
+class AiEmployeeAdvisorSettings extends Settings
+{
+    public bool $allow_selection_of_model = true;
 
-    $settings->data->addons->employeeAdvisors = false;
-    $settings->save();
+    public ?AiModel $preselected_model = null;
 
-    actingAs($user);
-
-    get(CustomAdvisorReport::getUrl())->assertForbidden();
-
-    $user->grantLicense(LicenseType::ConversationalAi);
-
-    $user->refresh();
-
-    get(CustomAdvisorReport::getUrl())->assertForbidden();
-
-    $user->givePermissionTo('report-library.view-any');
-
-    get(CustomAdvisorReport::getUrl())->assertForbidden();
-
-    $settings->data->addons->employeeAdvisors = true;
-    $settings->save();
-
-    get(CustomAdvisorReport::getUrl())->assertSuccessful();
-});
+    public static function group(): string
+    {
+        return CustomAdvisorRenameFeature::active() ? 'ai-employee-advisor' : 'ai-custom-advisor';
+    }
+}

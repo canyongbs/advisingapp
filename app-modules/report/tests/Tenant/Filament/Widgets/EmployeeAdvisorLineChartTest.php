@@ -36,43 +36,43 @@
 
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiAssistantUse;
-use AdvisingApp\Report\Filament\Widgets\CustomAdvisorLineChart;
+use AdvisingApp\Report\Filament\Widgets\EmployeeAdvisorLineChart;
+use App\Features\CustomAdvisorRenameFeature;
 
-it('returns correct monthly custom advisor exchanges data within the given date range', function () {
+beforeEach(function () {
+    CustomAdvisorRenameFeature::activate();
+});
+
+it('returns correct monthly employee advisor exchanges data within the given date range', function () {
     $startDate = now()->subMonths(3);
     $endDate = now()->subDays(5);
 
-    // Create custom advisors
-    $customAdvisor1 = AiAssistant::factory()->create(['is_default' => false]);
-    $customAdvisor2 = AiAssistant::factory()->create(['is_default' => false]);
+    $employeeAdvisor1 = AiAssistant::factory()->create(['is_default' => false]);
+    $employeeAdvisor2 = AiAssistant::factory()->create(['is_default' => false]);
 
-    // Create default advisor (should be excluded)
     $defaultAdvisor = AiAssistant::factory()->create(['is_default' => true]);
 
-    // Create assistant uses for custom advisors within date range
     AiAssistantUse::factory()->count(5)->create([
-        'assistant_id' => $customAdvisor1->id,
+        'assistant_id' => $employeeAdvisor1->id,
         'created_at' => $startDate,
     ]);
 
     AiAssistantUse::factory()->count(3)->create([
-        'assistant_id' => $customAdvisor2->id,
+        'assistant_id' => $employeeAdvisor2->id,
         'created_at' => $endDate,
     ]);
 
-    // Create assistant uses for default advisor (should be excluded)
     AiAssistantUse::factory()->count(4)->create([
         'assistant_id' => $defaultAdvisor->id,
         'created_at' => $startDate,
     ]);
 
-    // Create assistant uses outside date range (should be excluded)
     AiAssistantUse::factory()->count(2)->create([
-        'assistant_id' => $customAdvisor1->id,
+        'assistant_id' => $employeeAdvisor1->id,
         'created_at' => now()->subMonths(4),
     ]);
 
-    $widgetInstance = new CustomAdvisorLineChart();
+    $widgetInstance = new EmployeeAdvisorLineChart();
     $widgetInstance->cacheTag = 'report-employee-advisor';
     $widgetInstance->pageFilters = [
         'startDate' => $startDate->toDateString(),
@@ -88,35 +88,31 @@ it('returns correct monthly custom advisor exchanges data within the given date 
         ->and($data['datasets'][0]['borderColor'])->toBe('#7C3AED')
         ->and($data['datasets'][0]['pointBackgroundColor'])->toBe('#7C3AED')
         ->and($data['labels'])->not->toBeEmpty()
-        ->and(array_sum($data['datasets'][0]['data']))->toBe(8); // 5 + 3 custom advisor uses
+        ->and(array_sum($data['datasets'][0]['data']))->toBe(8);
 });
 
-it('returns correct monthly custom advisor exchanges data without date filters', function () {
-    // Create custom advisors
-    $customAdvisor1 = AiAssistant::factory()->create(['is_default' => false]);
-    $customAdvisor2 = AiAssistant::factory()->create(['is_default' => false]);
+it('returns correct monthly employee advisor exchanges data without date filters', function () {
+    $employeeAdvisor1 = AiAssistant::factory()->create(['is_default' => false]);
+    $employeeAdvisor2 = AiAssistant::factory()->create(['is_default' => false]);
 
-    // Create default advisor (should be excluded)
     $defaultAdvisor = AiAssistant::factory()->create(['is_default' => true]);
 
-    // Create assistant uses for custom advisors
     AiAssistantUse::factory()->count(7)->create([
-        'assistant_id' => $customAdvisor1->id,
+        'assistant_id' => $employeeAdvisor1->id,
         'created_at' => now()->subMonth(),
     ]);
 
     AiAssistantUse::factory()->count(4)->create([
-        'assistant_id' => $customAdvisor2->id,
+        'assistant_id' => $employeeAdvisor2->id,
         'created_at' => now()->subMonths(2),
     ]);
 
-    // Create assistant uses for default advisor (should be excluded)
     AiAssistantUse::factory()->count(5)->create([
         'assistant_id' => $defaultAdvisor->id,
         'created_at' => now()->subDays(30),
     ]);
 
-    $widgetInstance = new CustomAdvisorLineChart();
+    $widgetInstance = new EmployeeAdvisorLineChart();
     $widgetInstance->cacheTag = 'report-employee-advisor';
     $widgetInstance->pageFilters = [];
 
@@ -126,21 +122,19 @@ it('returns correct monthly custom advisor exchanges data without date filters',
         ->and($data['datasets'])->toHaveCount(1)
         ->and($data['datasets'][0])->toHaveKeys(['label', 'data', 'borderColor', 'pointBackgroundColor'])
         ->and($data['datasets'][0]['label'])->toBe('Exchanges')
-        ->and($data['labels'])->toHaveCount(12) // Default 12 months
-        ->and(array_sum($data['datasets'][0]['data']))->toBe(11); // 7 + 4 custom advisor uses
+        ->and($data['labels'])->toHaveCount(12)
+        ->and(array_sum($data['datasets'][0]['data']))->toBe(11);
 });
 
-it('returns empty data when no custom advisor exchanges exist', function () {
-    // Create only default advisor
+it('returns empty data when no employee advisor exchanges exist', function () {
     $defaultAdvisor = AiAssistant::factory()->create(['is_default' => true]);
 
-    // Create assistant uses only for default advisor
     AiAssistantUse::factory()->count(3)->create([
         'assistant_id' => $defaultAdvisor->id,
         'created_at' => now()->subMonth(),
     ]);
 
-    $widgetInstance = new CustomAdvisorLineChart();
+    $widgetInstance = new EmployeeAdvisorLineChart();
     $widgetInstance->cacheTag = 'report-employee-advisor';
     $widgetInstance->pageFilters = [];
 

@@ -44,7 +44,7 @@ use Filament\Widgets\TableWidget as BaseWidget;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Livewire\Attributes\On;
 
-class CustomAdvisorTable extends BaseWidget
+class EmployeeAdvisorTable extends BaseWidget
 {
     use InteractsWithPageFilters;
 

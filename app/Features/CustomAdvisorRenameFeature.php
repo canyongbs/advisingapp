@@ -34,19 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Settings;
+namespace App\Features;
 
-use AdvisingApp\Ai\Enums\AiModel;
-use Spatie\LaravelSettings\Settings;
+use App\Support\AbstractFeatureFlag;
 
-class AiCustomAdvisorSettings extends Settings
+class CustomAdvisorRenameFeature extends AbstractFeatureFlag
 {
-    public bool $allow_selection_of_model = true;
-
-    public ?AiModel $preselected_model = null;
-
-    public static function group(): string
+    public function resolve(mixed $scope): mixed
     {
-        return 'ai-custom-advisor';
+        return false;
     }
 }
