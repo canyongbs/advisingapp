@@ -165,7 +165,7 @@ class EngagementNotification extends Notification implements ShouldQueue, HasBef
                 'status' => EngagementResponseStatus::New,
             ]);
         }
-        
+
         $sesSettings = app(SesSettings::class);
 
         if (

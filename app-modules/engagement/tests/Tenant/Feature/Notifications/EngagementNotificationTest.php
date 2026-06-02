@@ -45,8 +45,6 @@ use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Models\Tenant;
 
-use function Pest\Laravel\travelTo;
-
 it('getEmailType returns the engagement email_type value', function () {
     $engagement = Engagement::factory()
         ->forProspect()
