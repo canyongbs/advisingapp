@@ -45,7 +45,7 @@ class CustomerAdvisorResourceController
     public function __invoke(Request $request, string $file): StreamedResponse
     {
         $file = str_replace('qna-advisor', 'customer-advisor', $request->route('file'));
-        
+
         $path = "widgets/ai/customer-advisors/{$file}";
 
         $disk = Storage::disk('public');

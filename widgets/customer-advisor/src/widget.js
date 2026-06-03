@@ -39,24 +39,24 @@ import config from './formkit.config.js';
 import styles from './widget.css?inline';
 
 const customerAdvisor = {
-        styles: [styles],
-        setup(props) {
-            const app = createApp();
-            const pinia = createPinia();
+    styles: [styles],
+    setup(props) {
+        const app = createApp();
+        const pinia = createPinia();
 
-            app.use(pinia);
-            app.use(plugin, defaultConfig(config));
+        app.use(pinia);
+        app.use(plugin, defaultConfig(config));
 
-            app.config.devtools = true;
+        app.config.devtools = true;
 
-            const inst = getCurrentInstance();
-            Object.assign(inst.appContext, app._context);
-            Object.assign(inst.provides, app._context.provides);
+        const inst = getCurrentInstance();
+        Object.assign(inst.appContext, app._context);
+        Object.assign(inst.provides, app._context.provides);
 
-            return () => h(App, props);
-        },
-        props: ['url'],
-    };
+        return () => h(App, props);
+    },
+    props: ['url'],
+};
 
 customElements.define('customer-advisor-embed', defineCustomElement(customerAdvisor));
 customElements.define('qna-advisor-embed', defineCustomElement(customerAdvisor));
