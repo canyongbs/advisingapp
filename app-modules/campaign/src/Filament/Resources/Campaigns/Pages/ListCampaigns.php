@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 
+use AdvisingApp\Campaign\Filament\Actions\ArchiveCampaignAction;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
 use App\Filament\Tables\Columns\IdColumn;
@@ -91,6 +92,7 @@ class ListCampaigns extends ListRecords
                 return $query;
             })
             ->recordActions([
+                ArchiveCampaignAction::make(),
                 ViewAction::make(),
                 EditAction::make()
                     ->hidden(fn (Campaign $record) => $record->hasBeenExecuted() === true),
