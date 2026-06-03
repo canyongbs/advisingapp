@@ -34,25 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAwsSesEventHandling\Settings;
+namespace App\Features;
 
-use Spatie\LaravelSettings\Settings;
+use App\Support\AbstractFeatureFlag;
 
-class SesSettings extends Settings
+class AddEmailDemoModeAutoReplyFeature extends AbstractFeatureFlag
 {
-    public ?string $configuration_set = null;
-
-    public bool $is_demo_auto_reply_mode_enabled = false;
-
-    public static function group(): string
+    public function resolve(mixed $scope): mixed
     {
-        return 'ses';
-    }
-
-    public static function encrypted(): array
-    {
-        return [
-            'configuration_set',
-        ];
+        return false;
     }
 }

@@ -34,25 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAwsSesEventHandling\Settings;
+use App\Features\AddEmailDemoModeAutoReplyFeature;
+use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsBlueprint;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use Spatie\LaravelSettings\Settings;
-
-class SesSettings extends Settings
-{
-    public ?string $configuration_set = null;
-
-    public bool $is_demo_auto_reply_mode_enabled = false;
-
-    public static function group(): string
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return 'ses';
+        DB::transaction(function () {
+            try {
+                $this->migrator->inGroup('ses', function (SettingsBlueprint $blueprint): void {
+                    $blueprint->add('is_demo_auto_reply_mode_enabled', false);
+                });
+            } catch (SettingAlreadyExists) {
+            }
+
+            AddEmailDemoModeAutoReplyFeature::activate();
+        });
     }
 
-    public static function encrypted(): array
+    public function down(): void
     {
-        return [
-            'configuration_set',
-        ];
+        DB::transaction(function () {
+            AddEmailDemoModeAutoReplyFeature::deactivate();
+
+            $this->migrator->inGroup('ses', function (SettingsBlueprint $blueprint): void {
+                $blueprint->delete('is_demo_auto_reply_mode_enabled');
+            });
+        });
     }
-}
+};
