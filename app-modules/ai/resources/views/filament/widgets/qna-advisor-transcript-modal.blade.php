@@ -54,7 +54,7 @@
                     <div
                         class="{{ $message->is_advisor ? 'text-gray-900 dark:text-gray-100 dark:prose-invert prose-p:mb-3 prose-p:leading-relaxed' : 'text-white prose-invert prose-p:mb-3 prose-p:leading-relaxed' }} prose prose-sm max-w-none leading-relaxed"
                     >
-                        {!! str($message->content)->markdown() !!}
+                        {{ str($message->content)->markdown()->sanitizeHtml()->toHtmlString() }}
                     </div>
                 </div>
             </div>

@@ -34,11 +34,13 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Filament\Pages\Inbox;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
 
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
@@ -55,6 +57,7 @@ it('can properly filter sender type', function () {
 
     livewire(Inbox::class)
         ->set('tableRecordsPerPage', 10)
+        ->removeTableFilter('care_team')
         ->assertCanSeeTableRecords($prospectEngagementResponses->merge($studentEngagementResponses))
         ->filterTable('sender_type', 'student')
         ->assertCanSeeTableRecords($studentEngagementResponses)
@@ -72,6 +75,7 @@ it('can properly filter engagement response type', function () {
 
     livewire(Inbox::class)
         ->set('tableRecordsPerPage', 10)
+        ->removeTableFilter('care_team')
         ->assertCanSeeTableRecords($emailEngagementResponses->merge($smsEngagementResponses))
         ->filterTable('type', EngagementResponseType::Sms->value)
         ->assertCanSeeTableRecords($smsEngagementResponses)
@@ -79,4 +83,35 @@ it('can properly filter engagement response type', function () {
         ->filterTable('type', EngagementResponseType::Email->value)
         ->assertCanSeeTableRecords($emailEngagementResponses)
         ->assertCanNotSeeTableRecords($smsEngagementResponses);
+});
+
+it('loads the Care Team filter as active when the component first renders', function () {
+    asSuperAdmin();
+
+    livewire(Inbox::class)
+        ->assertTableFilterExists('care_team')
+        ->assertSet('tableFilters.care_team.isActive', true);
+});
+
+it('can properly filter by care team', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    asSuperAdmin($user);
+
+    $student = Student::factory()->create();
+    $student->careTeam()->sync([$user->getKey()]);
+
+    $careTeamResponses = EngagementResponse::factory()->count(3)->create([
+        'sender_type' => (new Student())->getMorphClass(),
+        'sender_id' => $student->getKey(),
+    ]);
+
+    $otherStudent = Student::factory()->create();
+    $otherResponses = EngagementResponse::factory()->count(3)->create([
+        'sender_type' => (new Student())->getMorphClass(),
+        'sender_id' => $otherStudent->getKey(),
+    ]);
+
+    livewire(Inbox::class)
+        ->assertCanSeeTableRecords($careTeamResponses)
+        ->assertCanNotSeeTableRecords($otherResponses);
 });

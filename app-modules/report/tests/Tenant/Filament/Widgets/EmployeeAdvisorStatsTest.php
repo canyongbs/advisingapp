@@ -36,16 +36,20 @@
 
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiAssistantUse;
-use AdvisingApp\Report\Filament\Widgets\CustomAdvisorStats;
+use AdvisingApp\Report\Filament\Widgets\EmployeeAdvisorStats;
+use App\Features\CustomAdvisorRenameFeature;
 use App\Models\User;
 
-it('returns correct total custom advisor stats within the given date range', function () {
+beforeEach(function () {
+    CustomAdvisorRenameFeature::activate();
+});
+
+it('returns correct total employee advisor stats within the given date range', function () {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
     $count = random_int(1, 5);
 
-    // Create custom advisors within date range
     AiAssistant::factory()->count($count)->create([
         'is_default' => false,
         'created_at' => $startDate,
@@ -56,59 +60,52 @@ it('returns correct total custom advisor stats within the given date range', fun
         'created_at' => $endDate,
     ]);
 
-    // Create default advisors (should be excluded)
     AiAssistant::factory()->count($count)->create([
         'is_default' => true,
         'created_at' => $startDate,
     ]);
 
-    // Create custom advisors outside date range (should be excluded)
     AiAssistant::factory()->count($count)->create([
         'is_default' => false,
         'created_at' => now()->subDays(20),
     ]);
 
-    // Create custom advisor and unique users
-    $customAdvisor = AiAssistant::factory()->create(['is_default' => false]);
+    $employeeAdvisor = AiAssistant::factory()->create(['is_default' => false]);
     $user1 = User::factory()->create();
     $user2 = User::factory()->create();
     $user3 = User::factory()->create();
 
-    // Create assistant uses with specific users within date range
     AiAssistantUse::factory()->count($count)->create([
-        'assistant_id' => $customAdvisor->id,
+        'assistant_id' => $employeeAdvisor->id,
         'user_id' => $user1->id,
         'created_at' => $startDate,
     ]);
 
     AiAssistantUse::factory()->count($count)->create([
-        'assistant_id' => $customAdvisor->id,
+        'assistant_id' => $employeeAdvisor->id,
         'user_id' => $user2->id,
         'created_at' => $endDate,
     ]);
 
-    // Additional use with third user
     AiAssistantUse::factory()->create([
-        'assistant_id' => $customAdvisor->id,
+        'assistant_id' => $employeeAdvisor->id,
         'user_id' => $user3->id,
         'created_at' => $endDate,
     ]);
 
-    // Create assistant uses for default advisor (should be excluded)
     $defaultAdvisor = AiAssistant::factory()->create(['is_default' => true]);
     AiAssistantUse::factory()->count($count)->create([
         'assistant_id' => $defaultAdvisor->id,
         'created_at' => $startDate,
     ]);
 
-    // Create uses for default advisor with same users (should be excluded)
     AiAssistantUse::factory()->create([
         'assistant_id' => $defaultAdvisor->id,
         'user_id' => $user1->id,
         'created_at' => $startDate,
     ]);
 
-    $widget = new CustomAdvisorStats();
+    $widget = new EmployeeAdvisorStats();
     $widget->cacheTag = 'report-employee-advisor';
     $widget->pageFilters = [
         'startDate' => $startDate->toDateString(),
@@ -119,47 +116,41 @@ it('returns correct total custom advisor stats within the given date range', fun
 
     expect($stats)->toHaveCount(3)
         ->and($stats[0]->getLabel())->toBe('Employee Advisors')
-        ->and($stats[0]->getValue())->toEqual($count * 2) // Only custom advisors within date range
+        ->and($stats[0]->getValue())->toEqual($count * 2)
         ->and($stats[1]->getLabel())->toBe('Exchanges')
-        ->and($stats[1]->getValue())->toEqual(($count * 2) + 1) // Custom advisor uses within date range
+        ->and($stats[1]->getValue())->toEqual(($count * 2) + 1)
         ->and($stats[2]->getLabel())->toBe('Unique Users')
-        ->and($stats[2]->getValue())->toEqual(3); // Unique users for custom advisor
+        ->and($stats[2]->getValue())->toEqual(3);
 });
 
-it('returns correct total custom advisor stats without date filters', function () {
+it('returns correct total employee advisor stats without date filters', function () {
     $count = random_int(1, 5);
 
-    // Create custom advisors
     AiAssistant::factory()->count($count)->create(['is_default' => false]);
 
-    // Create default advisors (should be excluded)
     AiAssistant::factory()->count($count)->create(['is_default' => true]);
 
-    // Create custom advisor and unique users
-    $customAdvisor = AiAssistant::factory()->create(['is_default' => false]);
+    $employeeAdvisor = AiAssistant::factory()->create(['is_default' => false]);
     $users = User::factory()->count(3)->create();
 
-    // Create assistant uses with specific users
     AiAssistantUse::factory()->count($count)->create([
-        'assistant_id' => $customAdvisor->id,
+        'assistant_id' => $employeeAdvisor->id,
         'user_id' => $users[0]->id,
     ]);
 
-    // Create assistant uses for default advisor (should be excluded)
     $defaultAdvisor = AiAssistant::factory()->create(['is_default' => true]);
     AiAssistantUse::factory()->count($count)->create([
         'assistant_id' => $defaultAdvisor->id,
     ]);
 
-    // Create additional uses with other specific users
     foreach ($users->slice(1) as $user) {
         AiAssistantUse::factory()->create([
-            'assistant_id' => $customAdvisor->id,
+            'assistant_id' => $employeeAdvisor->id,
             'user_id' => $user->id,
         ]);
     }
 
-    $widget = new CustomAdvisorStats();
+    $widget = new EmployeeAdvisorStats();
     $widget->cacheTag = 'report-employee-advisor';
     $widget->pageFilters = [];
 
@@ -167,24 +158,22 @@ it('returns correct total custom advisor stats without date filters', function (
 
     expect($stats)->toHaveCount(3)
         ->and($stats[0]->getLabel())->toBe('Employee Advisors')
-        ->and($stats[0]->getValue())->toEqual($count + 1) // All custom advisors
+        ->and($stats[0]->getValue())->toEqual($count + 1)
         ->and($stats[1]->getLabel())->toBe('Exchanges')
-        ->and($stats[1]->getValue())->toEqual($count + 2) // All custom advisor uses
+        ->and($stats[1]->getValue())->toEqual($count + 2)
         ->and($stats[2]->getLabel())->toBe('Unique Users')
-        ->and($stats[2]->getValue())->toEqual(3); // Unique users for custom advisor
+        ->and($stats[2]->getValue())->toEqual(3);
 });
 
-it('returns zero stats when no custom advisors exist', function () {
-    // Create only default advisors
+it('returns zero stats when no employee advisors exist', function () {
     AiAssistant::factory()->count(3)->create(['is_default' => true]);
 
-    // Create assistant uses only for default advisors
     $defaultAdvisor = AiAssistant::factory()->create(['is_default' => true]);
     AiAssistantUse::factory()->count(5)->create([
         'assistant_id' => $defaultAdvisor->id,
     ]);
 
-    $widget = new CustomAdvisorStats();
+    $widget = new EmployeeAdvisorStats();
     $widget->cacheTag = 'report-employee-advisor';
     $widget->pageFilters = [];
 

@@ -48,7 +48,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rule;
 
-class ManageAiQnaAdvisorSettings extends ManageAiCustomAdvisorSettings
+class ManageAiQnaAdvisorSettings extends ManageAiEmployeeAdvisorSettings
 {
     protected static string $settings = AiQnaAdvisorSettings::class;
 

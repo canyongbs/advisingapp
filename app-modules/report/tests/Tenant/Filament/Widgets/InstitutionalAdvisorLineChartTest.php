@@ -47,8 +47,8 @@ it('returns correct monthly institutional advisor usage data within the given da
     // Create institutional (default) advisor
     $institutionalAdvisor = AiAssistant::factory()->create(['is_default' => true]);
 
-    // Create custom advisor (should be excluded)
-    $customAdvisor = AiAssistant::factory()->create(['is_default' => false]);
+    // Create employee advisor (should be excluded)
+    $employeeAdvisor = AiAssistant::factory()->create(['is_default' => false]);
 
     // Create smart and custom prompts
     $smartPrompt = Prompt::factory()->create(['is_smart' => true]);
@@ -65,9 +65,9 @@ it('returns correct monthly institutional advisor usage data within the given da
         'created_at' => $endDate,
     ]);
 
-    // Create assistant uses for custom advisor (should be excluded)
+    // Create assistant uses for employee advisor (should be excluded)
     AiAssistantUse::factory()->count(4)->create([
-        'assistant_id' => $customAdvisor->id,
+        'assistant_id' => $employeeAdvisor->id,
         'created_at' => $startDate,
     ]);
 
@@ -132,8 +132,8 @@ it('returns correct monthly institutional advisor usage data without date filter
     // Create institutional (default) advisor
     $institutionalAdvisor = AiAssistant::factory()->create(['is_default' => true]);
 
-    // Create custom advisor (should be excluded)
-    $customAdvisor = AiAssistant::factory()->create(['is_default' => false]);
+    // Create employee advisor (should be excluded)
+    $employeeAdvisor = AiAssistant::factory()->create(['is_default' => false]);
 
     // Create smart and custom prompts
     $smartPrompt = Prompt::factory()->create(['is_smart' => true]);
@@ -145,9 +145,9 @@ it('returns correct monthly institutional advisor usage data without date filter
         'created_at' => now()->subDays(30),
     ]);
 
-    // Create assistant uses for custom advisor (should be excluded)
+    // Create assistant uses for employee advisor (should be excluded)
     AiAssistantUse::factory()->count(4)->create([
-        'assistant_id' => $customAdvisor->id,
+        'assistant_id' => $employeeAdvisor->id,
         'created_at' => now()->subMonth(),
     ]);
 
@@ -181,16 +181,16 @@ it('returns correct monthly institutional advisor usage data without date filter
 });
 
 it('returns empty data when no institutional advisor usage exists', function () {
-    // Create only custom advisor
-    $customAdvisor = AiAssistant::factory()->create(['is_default' => false]);
+    // Create only employee advisor
+    $employeeAdvisor = AiAssistant::factory()->create(['is_default' => false]);
 
     // Create smart and custom prompts but no uses
     Prompt::factory()->create(['is_smart' => true]);
     Prompt::factory()->create(['is_smart' => false]);
 
-    // Create assistant uses only for custom advisor
+    // Create assistant uses only for employee advisor
     AiAssistantUse::factory()->count(3)->create([
-        'assistant_id' => $customAdvisor->id,
+        'assistant_id' => $employeeAdvisor->id,
         'created_at' => now()->subMonth(),
     ]);
 

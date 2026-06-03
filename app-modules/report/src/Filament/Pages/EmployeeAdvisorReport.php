@@ -38,9 +38,9 @@ namespace AdvisingApp\Report\Filament\Pages;
 
 use AdvisingApp\Report\Abstract\AiReport;
 use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use AdvisingApp\Report\Filament\Widgets\CustomAdvisorLineChart;
-use AdvisingApp\Report\Filament\Widgets\CustomAdvisorStats;
-use AdvisingApp\Report\Filament\Widgets\CustomAdvisorTable;
+use AdvisingApp\Report\Filament\Widgets\EmployeeAdvisorLineChart;
+use AdvisingApp\Report\Filament\Widgets\EmployeeAdvisorStats;
+use AdvisingApp\Report\Filament\Widgets\EmployeeAdvisorTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Enums\Feature;
 use App\Features\AiAssistantDtoRenameFeature;
@@ -48,7 +48,7 @@ use App\Filament\Clusters\ReportLibrary;
 use Illuminate\Support\Facades\Gate;
 use UnitEnum;
 
-class CustomAdvisorReport extends AiReport
+class EmployeeAdvisorReport extends AiReport
 {
     use HasFiltersForm;
 
@@ -77,9 +77,9 @@ class CustomAdvisorReport extends AiReport
     {
         return [
             RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            CustomAdvisorStats::make(['cacheTag' => $this->cacheTag]),
-            CustomAdvisorLineChart::make(['cacheTag' => $this->cacheTag]),
-            CustomAdvisorTable::make(['cacheTag' => $this->cacheTag]),
+            EmployeeAdvisorStats::make(['cacheTag' => $this->cacheTag]),
+            EmployeeAdvisorLineChart::make(['cacheTag' => $this->cacheTag]),
+            EmployeeAdvisorTable::make(['cacheTag' => $this->cacheTag]),
         ];
     }
 
