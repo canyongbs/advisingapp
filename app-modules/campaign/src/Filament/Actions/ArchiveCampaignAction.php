@@ -40,9 +40,6 @@ use AdvisingApp\Campaign\Models\Campaign;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\EditRecord;
-use Filament\Resources\Pages\Page;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -76,14 +73,6 @@ class ArchiveCampaignAction
                         ->body($exception->getMessage())
                         ->send();
                 }
-            })
-            ->authorize(fn (Model $record, Page $livewire): bool => $livewire::getResource()::can('archive', $record))
-            ->successRedirectUrl(function (Page $livewire): ?string {
-                if ($livewire instanceof EditRecord) {
-                    return $livewire::getResource()::getUrl('index');
-                }
-
-                return null;
             });
     }
 }

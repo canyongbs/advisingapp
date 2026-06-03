@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 
+use AdvisingApp\Campaign\Filament\Actions\ArchiveCampaignAction;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
 use Filament\Actions\EditAction;
@@ -73,6 +74,7 @@ class ViewCampaign extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
+            ArchiveCampaignAction::make(),
             EditAction::make()
                 ->hidden(fn (Campaign $record) => $record->hasBeenExecuted() === true),
         ];
