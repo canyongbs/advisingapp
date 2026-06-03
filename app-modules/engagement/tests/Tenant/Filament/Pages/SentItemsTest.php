@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Filament\Pages\SentItems;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Models\EmailMessage;
@@ -50,10 +51,6 @@ use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Engagement\Filament\Pages\SentItems;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 
 use function Pest\Livewire\livewire;
@@ -763,6 +760,15 @@ it('returns opted out phone health status for a prospect opted-out phone number'
         ]);
 
     expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::OptedOut);
+});
+
+it('When the component loads, the Care Team filter is already active.', function () {
+    asSuperAdmin();
+
+    livewire(SentItems::class)
+        ->assertTableFilterExists('care_team')
+        ->assertSet('tableFilters.care_team.isActive', true);
+});
 it('defaults to the care team filter', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     asSuperAdmin($user);

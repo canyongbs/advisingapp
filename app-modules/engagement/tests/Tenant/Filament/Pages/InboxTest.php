@@ -85,6 +85,14 @@ it('can properly filter engagement response type', function () {
         ->assertCanNotSeeTableRecords($smsEngagementResponses);
 });
 
+it('When the component loads, the Care Team filter is already active.', function () {
+    asSuperAdmin();
+
+    livewire(Inbox::class)
+        ->assertTableFilterExists('care_team')
+        ->assertSet('tableFilters.care_team.isActive', true);
+});
+
 it('defaults to the care team filter', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     asSuperAdmin($user);
