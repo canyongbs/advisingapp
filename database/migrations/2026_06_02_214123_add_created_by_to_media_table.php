@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,39 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Models;
+use App\Features\MediaCreatedByFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-use App\Models\Media;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-
-/**
- * @mixin IdeHelperApplicationFieldSubmission
- */
-class ApplicationFieldSubmission extends Pivot implements HasMedia
-{
-    use HasUuids;
-
-    /** @use InteractsWithMedia<Media> */
-    use InteractsWithMedia;
-
-    protected $table = 'application_field_submission';
-
-    protected $fillable = [
-        'id',
-        'response',
-        'field_id',
-        'submission_id',
-    ];
-
-    protected $casts = [
-        'response' => 'array',
-    ];
-
-    public function registerMediaCollections(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $this->addMediaCollection('files');
+        DB::transaction(function () {
+            Schema::table('media', function (Blueprint $table) {
+                $table->nullableUuidMorphs('created_by');
+            });
+
+            MediaCreatedByFeature::activate();
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            MediaCreatedByFeature::deactivate();
+
+            Schema::table('media', function (Blueprint $table) {
+                $table->dropMorphs('created_by');
+            });
+        });
+    }
+};

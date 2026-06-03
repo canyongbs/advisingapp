@@ -48,6 +48,7 @@ use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\Team\Models\Team;
 use App\Models\BaseModel;
+use App\Models\Media;
 use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -61,7 +62,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 
 /**
  * @mixin IdeHelperAiAssistant
@@ -71,7 +72,10 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
 {
     use CanAddAssistantLicenseGlobalScope;
     use HasUserSaveTracking;
+
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use SoftDeletes;
     use AuditableTrait;
 
@@ -120,7 +124,7 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
             });
     }
 
-    public function registerMediaConversions(?Media $media = null): void
+    public function registerMediaConversions(?SpatieMedia $media = null): void
     {
         $this->addMediaConversion('avatar-height-250px')
             ->performOnCollections('avatar')

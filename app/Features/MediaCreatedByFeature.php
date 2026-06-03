@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,39 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Models;
+namespace App\Features;
 
-use App\Models\Media;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @mixin IdeHelperApplicationFieldSubmission
- */
-class ApplicationFieldSubmission extends Pivot implements HasMedia
+class MediaCreatedByFeature extends AbstractFeatureFlag
 {
-    use HasUuids;
-
-    /** @use InteractsWithMedia<Media> */
-    use InteractsWithMedia;
-
-    protected $table = 'application_field_submission';
-
-    protected $fillable = [
-        'id',
-        'response',
-        'field_id',
-        'submission_id',
-    ];
-
-    protected $casts = [
-        'response' => 'array',
-    ];
-
-    public function registerMediaCollections(): void
+    public function resolve(mixed $scope): mixed
     {
-        $this->addMediaCollection('files');
+        return false;
     }
 }

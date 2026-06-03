@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Models;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use App\Models\BaseModel;
+use App\Models\Media;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -52,7 +53,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class QnaAdvisorFile extends BaseModel implements AiFile, HasMedia
 {
     use HasUserSaveTracking;
+
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use SoftDeletes;
 
     protected $fillable = [

@@ -41,10 +41,10 @@ use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Exceptions\SesS3InboundSpamOrVirusDetected;
 use AdvisingApp\Engagement\Exceptions\UnableToDetectTenantFromSesS3EmailPayload;
 use AdvisingApp\Engagement\Exceptions\UnableToRetrieveContentFromSesS3EmailPayload;
-use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\UnmatchedInboundCommunication;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\MediaCreatedByFeature;
 use App\Models\Tenant;
 use Aws\Crypto\KmsMaterialsProviderV3;
 use Aws\Kms\KmsClient;
@@ -126,7 +126,6 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
 
                     if ($students->isNotEmpty()) {
                         $students->each(function (Student $student) use ($parser, $content) {
-                            /** @var EngagementResponse $engagementResponse */
                             $engagementResponse = $student->engagementResponses()
                                 ->create([
                                     'subject' => $parser->getHeader('subject'),
@@ -137,25 +136,35 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                                     'status' => EngagementResponseStatus::New,
                                 ]);
 
-                            collect($parser->getAttachments())->each(function (Attachment $attachment) use ($engagementResponse) {
+                            collect($parser->getAttachments())->each(function (Attachment $attachment) use ($engagementResponse, $student) {
                                 try {
                                     if (
                                         ($attachment->getContentDisposition() === 'inline')
                                         && filled(trim($contentId = $attachment->getContentID(), '<>'))
                                     ) {
-                                        $engagementResponse->addMediaFromStream($attachment->getStream())
+                                        $media = $engagementResponse->addMediaFromStream($attachment->getStream())
                                             ->withCustomProperties(['cid' => trim($contentId, '<>')])
                                             ->setName($attachment->getFilename())
                                             ->setFileName($attachment->getFilename())
                                             ->toMediaCollection('inline_attachments');
 
+                                        if (MediaCreatedByFeature::active() && is_null($media->created_by_id)) {
+                                            $media->createdBy()->associate($student);
+                                            $media->saveQuietly();
+                                        }
+
                                         return;
                                     }
 
-                                    $engagementResponse->addMediaFromStream($attachment->getStream())
+                                    $media = $engagementResponse->addMediaFromStream($attachment->getStream())
                                         ->setName($attachment->getFilename())
                                         ->setFileName($attachment->getFilename())
                                         ->toMediaCollection('attachments');
+
+                                    if (MediaCreatedByFeature::active() && is_null($media->created_by_id)) {
+                                        $media->createdBy()->associate($student);
+                                        $media->saveQuietly();
+                                    }
                                 } catch (Throwable $throw) {
                                     report($throw);
                                 }
@@ -215,7 +224,6 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                     }
 
                     $prospects->each(function (Prospect $prospect) use ($parser, $content) {
-                        /** @var EngagementResponse $engagementResponse */
                         $engagementResponse = $prospect->engagementResponses()
                             ->create([
                                 'subject' => $parser->getHeader('subject'),
@@ -226,25 +234,35 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                                 'status' => EngagementResponseStatus::New,
                             ]);
 
-                        collect($parser->getAttachments())->each(function (Attachment $attachment) use ($engagementResponse) {
+                        collect($parser->getAttachments())->each(function (Attachment $attachment) use ($engagementResponse, $prospect) {
                             try {
                                 if (
                                     ($attachment->getContentDisposition() === 'inline')
                                     && filled(trim($contentId = $attachment->getContentID(), '<>'))
                                 ) {
-                                    $engagementResponse->addMediaFromStream($attachment->getStream())
+                                    $media = $engagementResponse->addMediaFromStream($attachment->getStream())
                                         ->withCustomProperties(['cid' => trim($contentId, '<>')])
                                         ->setName($attachment->getFilename())
                                         ->setFileName($attachment->getFilename())
                                         ->toMediaCollection('inline_attachments');
 
+                                    if (MediaCreatedByFeature::active() && is_null($media->created_by_id)) {
+                                        $media->createdBy()->associate($prospect);
+                                        $media->saveQuietly();
+                                    }
+
                                     return;
                                 }
 
-                                $engagementResponse->addMediaFromStream($attachment->getStream())
+                                $media = $engagementResponse->addMediaFromStream($attachment->getStream())
                                     ->setName($attachment->getFilename())
                                     ->setFileName($attachment->getFilename())
                                     ->toMediaCollection('attachments');
+
+                                if (MediaCreatedByFeature::active() && is_null($media->created_by_id)) {
+                                    $media->createdBy()->associate($prospect);
+                                    $media->saveQuietly();
+                                }
                             } catch (Throwable $throw) {
                                 report($throw);
                             }

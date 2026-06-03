@@ -155,6 +155,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "App\\Rector\\": "rector-rules/",
             "Tests\\": "tests/"
         }
     },
@@ -210,11 +211,19 @@
         "clear-prettier-cache": [
             "rm -rf ./.cache/prettier"
         ],
+        "rector": [
+            "./vendor/bin/rector process"
+        ],
+        "rector-dryrun": [
+            "./vendor/bin/rector process --dry-run"
+        ],
         "format-dryrun": [
+            "@rector-dryrun",
             "@php-cs-format-dryrun",
             "@prettier-format-dryrun"
         ],
         "format": [
+            "@rector",
             "@php-cs-format",
             "@prettier-format"
         ],

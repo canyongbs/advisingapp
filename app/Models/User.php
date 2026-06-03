@@ -104,7 +104,7 @@ use Lab404\Impersonate\Models\Impersonate;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
@@ -130,7 +130,10 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     use HasManyEngagementBatches;
     use CanConsent;
     use Impersonate;
+
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use NotifiableViaSms;
     use MultifactorAuthenticatable;
 
@@ -569,7 +572,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
             ]);
     }
 
-    public function registerMediaConversions(?Media $media = null): void
+    public function registerMediaConversions(?SpatieMedia $media = null): void
     {
         $this->addMediaConversion('avatar-height-250px')
             ->performOnCollections('avatar')
