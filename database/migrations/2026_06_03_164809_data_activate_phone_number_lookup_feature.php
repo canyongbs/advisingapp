@@ -34,26 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models\Scopes;
+use App\Features\PhoneNumberLookupFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-
-class HealthyEducatablePrimaryPhoneNumber
-{
-    /**
-     * @template TModel of Model
-     *
-     * @param Builder<TModel> $query
-     *
-     * @return Builder<TModel>
-     */
-    public function __invoke(Builder $query): Builder
+return new class () extends Migration {
+    public function up(): void
     {
-        return $query->whereHas(
-            'primaryPhoneNumber',
-            // @phpstan-ignore method.notFound (scope is on StudentPhoneNumber|ProspectPhoneNumber, not the generic Builder)
-            fn (Builder $query) => $query->textable(),
-        );
+        PhoneNumberLookupFeature::activate();
     }
-}
+
+    public function down(): void
+    {
+        PhoneNumberLookupFeature::deactivate();
+    }
+};

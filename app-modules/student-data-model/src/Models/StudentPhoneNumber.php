@@ -38,7 +38,10 @@ namespace AdvisingApp\StudentDataModel\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\StudentDataModel\Enums\PhoneHealthStatus;
+use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
+use AdvisingApp\StudentDataModel\Models\Concerns\IsTextable;
 use AdvisingApp\StudentDataModel\Observers\StudentPhoneNumberObserver;
+use App\Features\PhoneNumberLookupFeature;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
@@ -54,6 +57,7 @@ class StudentPhoneNumber extends BaseModel implements Auditable
 {
     use AuditableTrait;
     use HasUuids;
+    use IsTextable;
 
     protected $fillable = [
         'sisid',
@@ -110,10 +114,14 @@ class StudentPhoneNumber extends BaseModel implements Auditable
             return PhoneHealthStatus::OptedOut;
         }
 
-        if (! $this->can_receive_sms) {
-            return PhoneHealthStatus::NoSmsCapability;
+        if (PhoneNumberLookupFeature::active()) {
+            $hasTextableLookup = $this->phoneNumberLookup()
+                ->whereIn('status', PhoneNumberLookupStatus::textableStatuses())
+                ->exists();
+
+            return $hasTextableLookup ? PhoneHealthStatus::Healthy : PhoneHealthStatus::NoSmsCapability;
         }
 
-        return PhoneHealthStatus::Healthy;
+        return $this->can_receive_sms ? PhoneHealthStatus::Healthy : PhoneHealthStatus::NoSmsCapability;
     }
 }

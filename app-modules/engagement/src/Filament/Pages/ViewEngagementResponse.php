@@ -101,7 +101,7 @@ class ViewEngagementResponse extends Page
             $this->replyForm->fill([
                 'recipient_route_id' => match ($this->record->type) {
                     EngagementResponseType::Email => $this->record->sender->emailAddresses()->whereDoesntHave('bounced')->orderBy('order')->first()?->getKey(),
-                    EngagementResponseType::Sms => $this->record->sender->phoneNumbers()->where('can_receive_sms', true)->orderBy('order')->first()?->getKey(),
+                    EngagementResponseType::Sms => $this->record->sender->phoneNumbers()->textable()->orderBy('order')->first()?->getKey(),
                 },
                 'subject' => ($this->record->type === EngagementResponseType::Email) ? "RE: {$this->record->subject}" : '',
                 'body' => ($this->record->type === EngagementResponseType::Email) ? $this->generateEmailReplyBody() : '',
@@ -188,7 +188,7 @@ class ViewEngagementResponse extends Page
                             ])
                             ->all(),
                         EngagementResponseType::Sms => $this->record->sender->phoneNumbers()
-                            ->where('can_receive_sms', true)
+                            ->textable()
                             ->get()
                             ->mapWithKeys(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber): array => [
                                 $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),

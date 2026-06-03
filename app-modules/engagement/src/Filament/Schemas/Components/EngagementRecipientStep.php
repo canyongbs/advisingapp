@@ -182,9 +182,7 @@ class EngagementRecipientStep
                                                     ])
                                                     ->all(),
                                                 NotificationChannel::Sms => $educatable->phoneNumbers()
-                                                    ->where('can_receive_sms', true)
-                                                    ->whereDoesntHave('smsOptOut')
-                                                    ->whereDoesntHave('bounced')
+                                                    ->textable()
                                                     ->get()
                                                     ->mapWithKeys(fn (StudentPhoneNumber | ProspectPhoneNumber $phoneNumber): array => [
                                                         $phoneNumber->getKey() => $phoneNumber->number . (filled($phoneNumber->ext) ? " (ext. {$phoneNumber->ext})" : '') . (filled($phoneNumber->type) ? " ({$phoneNumber->type})" : ''),

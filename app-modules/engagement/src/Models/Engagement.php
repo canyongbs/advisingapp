@@ -60,6 +60,7 @@ use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\EngagementTimeline;
+use App\Features\PhoneNumberLookupFeature;
 use App\Models\BaseModel;
 use App\Models\User;
 use CanyonGBS\Common\Parser\Parser;
@@ -387,7 +388,10 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     private function resolvePhoneHealthStatus(Educatable $recipient, string $route): PhoneHealthStatus
     {
         $phoneNumber = $recipient->phoneNumbers->firstWhere('number', $route)
-            ?? $recipient->phoneNumbers()->make(['number' => $route, 'can_receive_sms' => true]);
+            ?? $recipient->phoneNumbers()->make([
+                'number' => $route,
+                ...(! PhoneNumberLookupFeature::active() ? ['can_receive_sms' => true] : []),
+            ]);
 
         assert($phoneNumber instanceof StudentPhoneNumber || $phoneNumber instanceof ProspectPhoneNumber);
 

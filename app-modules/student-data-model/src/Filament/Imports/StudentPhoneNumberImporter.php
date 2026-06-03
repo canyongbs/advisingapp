@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Imports;
 
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use App\Features\PhoneNumberLookupFeature;
 use App\Settings\ImportSettings;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
@@ -106,10 +107,12 @@ class StudentPhoneNumberImporter extends Importer
             ImportColumn::make('type')
                 ->rules(['max:255'])
                 ->example('Work'),
-            ImportColumn::make('can_receive_sms')
-                ->boolean()
-                ->rules(['boolean'])
-                ->example('false'),
+            ...(! PhoneNumberLookupFeature::active() ? [
+                ImportColumn::make('can_receive_sms')
+                    ->boolean()
+                    ->rules(['boolean'])
+                    ->example('false'),
+            ] : []),
             ImportColumn::make('is_primary')
                 ->boolean()
                 ->rules(['boolean'])

@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\StudentDataModel\Database\Factories;
 
+use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use App\Features\PhoneNumberLookupFeature;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -45,8 +47,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class StudentPhoneNumberFactory extends Factory
 {
     /**
-     * Define the model's default state.
-     *
      * @return array<string, mixed>
      */
     public function definition(): array
@@ -55,7 +55,9 @@ class StudentPhoneNumberFactory extends Factory
             'number' => $this->faker->phoneNumber(),
             'ext' => null,
             'type' => $this->faker->randomElement(['Mobile', 'Home', 'Work']),
-            'can_receive_sms' => $this->faker->boolean(),
+            ...(! PhoneNumberLookupFeature::active() ? [
+                'can_receive_sms' => $this->faker->boolean(),
+            ] : []),
         ];
     }
 
@@ -64,11 +66,13 @@ class StudentPhoneNumberFactory extends Factory
      */
     public function canNotReceiveSms(): Factory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'can_receive_sms' => false,
-            ];
-        });
+        if (PhoneNumberLookupFeature::active()) {
+            return $this->afterCreating(function (StudentPhoneNumber $phoneNumber): void {
+                PhoneNumberLookup::factory()->invalid()->create(['number' => $phoneNumber->number]);
+            });
+        }
+
+        return $this->state(['can_receive_sms' => false]);
     }
 
     /**
@@ -76,11 +80,13 @@ class StudentPhoneNumberFactory extends Factory
      */
     public function canReceiveSms(): Factory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'can_receive_sms' => true,
-            ];
-        });
+        if (PhoneNumberLookupFeature::active()) {
+            return $this->afterCreating(function (StudentPhoneNumber $phoneNumber): void {
+                PhoneNumberLookup::factory()->mobile()->create(['number' => $phoneNumber->number]);
+            });
+        }
+
+        return $this->state(['can_receive_sms' => true]);
     }
 
     /**
@@ -88,10 +94,6 @@ class StudentPhoneNumberFactory extends Factory
      */
     public function withExtension(): Factory
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'ext' => $this->faker->randomNumber(),
-            ];
-        });
+        return $this->state(fn () => ['ext' => $this->faker->randomNumber()]);
     }
 }

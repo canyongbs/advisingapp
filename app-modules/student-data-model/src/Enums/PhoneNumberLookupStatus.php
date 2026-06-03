@@ -68,6 +68,27 @@ enum PhoneNumberLookupStatus: string implements HasLabel
     }
 
     /**
+     * Statuses that confirm a number can receive SMS, per carrier lookup.
+     * Landlines, invalid numbers, and inconclusive results are intentionally
+     * excluded — only an affirmative textable classification counts.
+     *
+     * @return list<self>
+     */
+    public static function textableStatuses(): array
+    {
+        return [
+            self::ValidMobile,
+            self::ValidVoip,
+            self::ValidTollFree,
+        ];
+    }
+
+    public function isTextable(): bool
+    {
+        return in_array($this, self::textableStatuses(), strict: true);
+    }
+
+    /**
      * Map a Telnyx Number Lookup `carrier.type` value to an internal status.
      *
      * Telnyx returns a successful lookup with a carrier object whose `type`
