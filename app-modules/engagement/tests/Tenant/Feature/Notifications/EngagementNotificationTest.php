@@ -40,7 +40,6 @@ use AdvisingApp\Engagement\Notifications\EngagementNotification;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Enums\EmailType;
-use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Models\Tenant;

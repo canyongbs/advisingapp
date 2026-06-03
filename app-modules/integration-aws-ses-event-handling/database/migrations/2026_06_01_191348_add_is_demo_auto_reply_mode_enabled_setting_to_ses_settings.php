@@ -43,26 +43,26 @@ use Spatie\LaravelSettings\Migrations\SettingsMigration;
 return new class () extends SettingsMigration {
     public function up(): void
     {
-      DB::transaction(function () {
-        try {
-            $this->migrator->inGroup('ses', function (SettingsBlueprint $blueprint): void {
-                $blueprint->add('is_demo_auto_reply_mode_enabled', false);
-            });
-        } catch (SettingAlreadyExists) {
-        }
+        DB::transaction(function () {
+            try {
+                $this->migrator->inGroup('ses', function (SettingsBlueprint $blueprint): void {
+                    $blueprint->add('is_demo_auto_reply_mode_enabled', false);
+                });
+            } catch (SettingAlreadyExists) {
+            }
 
-        AddEmailDemoModeAutoReplyFeature::activate();
-      });
+            AddEmailDemoModeAutoReplyFeature::activate();
+        });
     }
 
     public function down(): void
     {
-      DB::transaction(function () {
-        AddEmailDemoModeAutoReplyFeature::deactivate();
+        DB::transaction(function () {
+            AddEmailDemoModeAutoReplyFeature::deactivate();
 
-        $this->migrator->inGroup('ses', function (SettingsBlueprint $blueprint): void {
-            $blueprint->delete('is_demo_auto_reply_mode_enabled');
+            $this->migrator->inGroup('ses', function (SettingsBlueprint $blueprint): void {
+                $blueprint->delete('is_demo_auto_reply_mode_enabled');
+            });
         });
-      });
     }
 };
