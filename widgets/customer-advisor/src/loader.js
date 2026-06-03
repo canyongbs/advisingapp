@@ -33,7 +33,7 @@
 */
 (function () {
     // Get the embed element
-    const embedElement = document.querySelector('customer-advisor-embed');
+    const embedElement = document.querySelector('customer-advisor-embed, qna-advisor-embed');
     if (!embedElement) throw new Error('Embed not found');
 
     // Get the assets URL from the element

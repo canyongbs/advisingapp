@@ -135,3 +135,86 @@ Route::middleware([
             ->where('file', '(.*)')
             ->name('asset');
     });
+
+// Legacy support
+Route::middleware([
+    'api',
+    EncryptCookies::class,
+    CustomerAdvisorWidgetCors::class,
+])
+    ->name('widgets.ai.qna-advisors.')
+    ->prefix('widgets/ai/qna-advisors')
+    ->group(function () {
+        Route::prefix('api/{advisor}')
+            ->name('api.')
+            ->middleware([
+                EnsureCustomerAdvisorEmbedIsEnabled::class,
+                EnsureCustomerAdvisorRequestComingFromAuthorizedDomain::class,
+            ])
+            ->group(function () {
+                Route::get('/', CustomerAdvisorResourcesController::class)
+                    ->name('assets');
+
+                Route::post('/entry', ShowAdvisorController::class)
+                    ->name('entry');
+
+                Route::match(
+                    ['GET', 'POST', 'HEAD'],
+                    '/broadcasting/auth',
+                    [CustomerAdvisorBroadcastController::class, 'auth']
+                )
+                    ->middleware([CustomerAdvisorAuthorization::class])
+                    ->name('broadcasting.auth');
+
+                Route::post('/authenticate/request', RequestAuthenticationController::class)
+                    ->middleware(['signed'])
+                    ->name('authentication.request');
+
+                Route::post('/authenticate/register', RegisterProspectController::class)
+                    ->middleware(['signed'])
+                    ->name('register-prospect');
+
+                Route::post('/authenticate/confirm/{authentication}', AuthenticationConfirmController::class)
+                    ->middleware(['signed'])
+                    ->name('authentication.confirm');
+
+                Route::post('/authenticate/refresh', AuthenticationRefreshController::class)
+                    ->middleware(['signed'])
+                    ->name('authentication.refresh');
+
+                Route::post('/threads/start', StartAdvisorThreadController::class)
+                    ->middleware([
+                        'signed',
+                        CustomerAdvisorAuthorization::class,
+                    ])
+                    ->name('threads.start');
+
+                Route::post('/messages', SendCustomerAdvisorMessageController::class)
+                    ->middleware([
+                        'signed',
+                        CustomerAdvisorAuthorization::class,
+                    ])
+                    ->name('messages.send');
+
+                Route::post('/threads/{thread}/finish', FinishAdvisorThreadController::class)
+                    ->middleware([
+                        'signed',
+                        CustomerAdvisorAuthorization::class,
+                    ])
+                    ->name('threads.finish');
+
+                // Handle preflight CORS requests for all routes in this group
+                // MUST remain the last route in this group
+                Route::options('/{any}', function (Request $request, CustomerAdvisor $advisor) {
+                    return response()->noContent();
+                })
+                    ->where('any', '.*')
+                    ->name('preflight');
+            });
+
+        // This route MUST remain at /widgets/... in order to catch requests to asset files and return the correct headers
+        // NGINX has been configured to route all requests for assets under /widgets to the application
+        Route::get('{file?}', CustomerAdvisorResourceController::class)
+            ->where('file', '(.*)')
+            ->name('asset');
+    });

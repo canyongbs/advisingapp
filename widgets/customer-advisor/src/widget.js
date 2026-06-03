@@ -38,9 +38,7 @@ import App from './App.ce.vue';
 import config from './formkit.config.js';
 import styles from './widget.css?inline';
 
-customElements.define(
-    'customer-advisor-embed',
-    defineCustomElement({
+const customerAdvisor = {
         styles: [styles],
         setup(props) {
             const app = createApp();
@@ -58,5 +56,7 @@ customElements.define(
             return () => h(App, props);
         },
         props: ['url'],
-    }),
-);
+    };
+
+customElements.define('customer-advisor-embed', defineCustomElement(customerAdvisor));
+customElements.define('qna-advisor-embed', defineCustomElement(customerAdvisor));
