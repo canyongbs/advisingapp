@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Filament\Pages\SentItems;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Models\EmailMessage;
@@ -50,6 +51,7 @@ use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use App\Models\User;
 
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
@@ -75,6 +77,7 @@ it('displays the type column with channel icon, email address, and healthy statu
 
     livewire(SentItems::class)
         ->assertSuccessful()
+        ->removeTableFilter('care_team')
         ->assertTableColumnExists('channel')
         ->assertCanSeeTableRecords([$engagement])
         ->assertTableColumnStateSet('channel', 'student@university.edu', record: $engagement);
@@ -101,6 +104,7 @@ it('displays the type column with channel icon, phone number, and healthy status
 
     livewire(SentItems::class)
         ->assertSuccessful()
+        ->removeTableFilter('care_team')
         ->assertCanSeeTableRecords([$engagement])
         ->assertTableColumnStateSet('channel', '+15551234567', record: $engagement);
 });
@@ -128,6 +132,7 @@ it('displays the bounced status icon for a bounced email address', function () {
 
     livewire(SentItems::class)
         ->assertSuccessful()
+        ->removeTableFilter('care_team')
         ->assertSeeHtml($email)
         ->assertSeeHtml(EmailHealthStatus::Bounced->getTooltipText());
 });
@@ -155,6 +160,7 @@ it('displays the opted out status icon for an opted-out email address', function
 
     livewire(SentItems::class)
         ->assertSuccessful()
+        ->removeTableFilter('care_team')
         ->assertSeeHtml($email)
         ->assertSeeHtml(EmailHealthStatus::OptedOut->getTooltipText());
 });
@@ -182,6 +188,7 @@ it('displays the bounced status icon for a bounced phone number', function () {
 
     livewire(SentItems::class)
         ->assertSuccessful()
+        ->removeTableFilter('care_team')
         ->assertSeeHtml($phone)
         ->assertSeeHtml(PhoneHealthStatus::Bounced->getTooltipText());
 });
@@ -209,6 +216,7 @@ it('displays the opted out status icon for an opted-out phone number', function 
 
     livewire(SentItems::class)
         ->assertSuccessful()
+        ->removeTableFilter('care_team')
         ->assertSeeHtml($phone)
         ->assertSeeHtml(PhoneHealthStatus::OptedOut->getTooltipText());
 });
@@ -488,6 +496,7 @@ it('displays the type column with channel icon, email address, and healthy statu
 
     livewire(SentItems::class)
         ->assertSuccessful()
+        ->removeTableFilter('care_team')
         ->assertTableColumnExists('channel')
         ->assertCanSeeTableRecords([$engagement])
         ->assertTableColumnStateSet('channel', 'prospect@university.edu', record: $engagement);
@@ -514,6 +523,7 @@ it('displays the type column with channel icon, phone number, and healthy status
 
     livewire(SentItems::class)
         ->assertSuccessful()
+        ->removeTableFilter('care_team')
         ->assertCanSeeTableRecords([$engagement])
         ->assertTableColumnStateSet('channel', '+15557654321', record: $engagement);
 });
@@ -541,6 +551,7 @@ it('displays the bounced status icon for a prospect bounced email address', func
 
     livewire(SentItems::class)
         ->assertSuccessful()
+        ->removeTableFilter('care_team')
         ->assertSeeHtml($email)
         ->assertSeeHtml(EmailHealthStatus::Bounced->getTooltipText());
 });
@@ -568,6 +579,7 @@ it('displays the opted out status icon for a prospect opted-out email address', 
 
     livewire(SentItems::class)
         ->assertSuccessful()
+        ->removeTableFilter('care_team')
         ->assertSeeHtml($email)
         ->assertSeeHtml(EmailHealthStatus::OptedOut->getTooltipText());
 });
@@ -595,6 +607,7 @@ it('displays the bounced status icon for a prospect bounced phone number', funct
 
     livewire(SentItems::class)
         ->assertSuccessful()
+        ->removeTableFilter('care_team')
         ->assertSeeHtml($phone)
         ->assertSeeHtml(PhoneHealthStatus::Bounced->getTooltipText());
 });
@@ -622,6 +635,7 @@ it('displays the opted out status icon for a prospect opted-out phone number', f
 
     livewire(SentItems::class)
         ->assertSuccessful()
+        ->removeTableFilter('care_team')
         ->assertSeeHtml($phone)
         ->assertSeeHtml(PhoneHealthStatus::OptedOut->getTooltipText());
 });
@@ -758,4 +772,36 @@ it('returns opted out phone health status for a prospect opted-out phone number'
         ]);
 
     expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::OptedOut);
+});
+
+it('loads the Care Team filter as active when the component first renders', function () {
+    asSuperAdmin();
+
+    livewire(SentItems::class)
+        ->assertTableFilterExists('care_team')
+        ->assertSet('tableFilters.care_team.isActive', true);
+});
+it('can properly filter by care team', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    asSuperAdmin($user);
+
+    $student = Student::factory()->create();
+    $student->careTeam()->sync([$user->getKey()]);
+
+    $careTeamEngagements = Engagement::factory()->count(3)->create([
+        'recipient_type' => (new Student())->getMorphClass(),
+        'recipient_id' => $student->getKey(),
+        'user_id' => $user->getKey(),
+    ]);
+
+    $otherStudent = Student::factory()->create();
+    $otherEngagements = Engagement::factory()->count(3)->create([
+        'recipient_type' => (new Student())->getMorphClass(),
+        'recipient_id' => $otherStudent->getKey(),
+        'user_id' => $user->getKey(),
+    ]);
+
+    livewire(SentItems::class)
+        ->assertCanSeeTableRecords($careTeamEngagements)
+        ->assertCanNotSeeTableRecords($otherEngagements);
 });
