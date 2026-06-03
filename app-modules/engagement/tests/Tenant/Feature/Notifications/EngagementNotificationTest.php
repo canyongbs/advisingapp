@@ -123,7 +123,7 @@ it('creates a proper Engagement Response for emails when demo mode is turned on'
     $engagement = Engagement::factory()
         ->forProspect()
         ->email()
-        ->create(['channel' => NotificationChannel::Email]);
+        ->create();
 
     $notification = new EngagementNotification($engagement);
 
@@ -143,8 +143,8 @@ it('creates a proper Engagement Response for SMS when demo mode is turned on', f
 
     $engagement = Engagement::factory()
         ->forProspect()
-        ->email()
-        ->create(['channel' => NotificationChannel::Sms]);
+        ->sms()
+        ->create();
 
     $notification = new EngagementNotification($engagement);
 
