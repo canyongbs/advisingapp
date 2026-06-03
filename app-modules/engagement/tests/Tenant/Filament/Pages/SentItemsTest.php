@@ -774,14 +774,14 @@ it('returns opted out phone health status for a prospect opted-out phone number'
     expect($engagement->getRecipientRouteHealthStatus())->toBe(PhoneHealthStatus::OptedOut);
 });
 
-it('When the component loads, the Care Team filter is already active.', function () {
+it('loads the Care Team filter as active when the component first renders', function () {
     asSuperAdmin();
 
     livewire(SentItems::class)
         ->assertTableFilterExists('care_team')
         ->assertSet('tableFilters.care_team.isActive', true);
 });
-it('defaults to the care team filter', function () {
+it('can properly filter by care team', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     asSuperAdmin($user);
 
