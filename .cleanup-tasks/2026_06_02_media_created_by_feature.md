@@ -9,14 +9,12 @@ created: 2026-06-02
 
 ## Temporary Migrations
 
-
-
 ## Additional Cleanup
 
 - In `database/migrations/2026_06_02_214123_add_created_by_to_media_table.php`:
-  1. Remove the `MediaCreatedByFeature::activate()` call from the `up()` method
-  2. Remove the `MediaCreatedByFeature::deactivate()` call from the `down()` method
-  3. Remove the `use App\Features\MediaCreatedByFeature;` import
+    1. Remove the `MediaCreatedByFeature::activate()` call from the `up()` method
+    2. Remove the `MediaCreatedByFeature::deactivate()` call from the `down()` method
+    3. Remove the `use App\Features\MediaCreatedByFeature;` import
 
 - In `app/Models/Media.php`: in `getCreatedByNameAttribute()` and `getCreatedBySubLabelAttribute()`, remove the `! MediaCreatedByFeature::active() ||` guard conditions — the methods should always resolve the creator. Remove the `use App\Features\MediaCreatedByFeature;` import.
 
