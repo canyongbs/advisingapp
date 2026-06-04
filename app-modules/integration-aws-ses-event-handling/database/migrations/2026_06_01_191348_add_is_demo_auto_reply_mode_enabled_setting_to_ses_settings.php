@@ -34,51 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
+use App\Features\AddEmailDemoModeAutoReplyFeature;
+use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsBlueprint;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use AdvisingApp\Campaign\Filament\Actions\ArchiveCampaignAction;
-use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
-use AdvisingApp\Group\Models\Group;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Resources\Pages\EditRecord;
-use Filament\Schemas\Schema;
-
-class EditCampaign extends EditRecord
-{
-    use EditPageRedirection;
-
-    protected static string $resource = CampaignResource::class;
-
-    public function form(Schema $schema): Schema
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return $schema
-            ->components([
-                TextInput::make('name')
-                    ->required(),
-                Select::make('segment_id')
-                    ->label('Population Group')
-                    ->options(function () {
-                        return Group::query()
-                            ->whereHas('user', function ($query) {
-                                $query->whereKey(auth()->id())->orWhereRelation('team.users', 'id', auth()->id());
-                            })
-                            ->pluck('name', 'id');
-                    })
-                    ->searchable()
-                    ->required(),
-                Toggle::make('enabled'),
-            ]);
+        DB::transaction(function () {
+            try {
+                $this->migrator->inGroup('ses', function (SettingsBlueprint $blueprint): void {
+                    $blueprint->add('is_demo_auto_reply_mode_enabled', false);
+                });
+            } catch (SettingAlreadyExists) {
+            }
+
+            AddEmailDemoModeAutoReplyFeature::activate();
+        });
     }
 
-    protected function getHeaderActions(): array
+    public function down(): void
     {
-        return [
-            ArchiveCampaignAction::make(),
-            DeleteAction::make(),
-        ];
+        DB::transaction(function () {
+            AddEmailDemoModeAutoReplyFeature::deactivate();
+
+            $this->migrator->inGroup('ses', function (SettingsBlueprint $blueprint): void {
+                $blueprint->delete('is_demo_auto_reply_mode_enabled');
+            });
+        });
     }
-}
+};

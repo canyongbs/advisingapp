@@ -34,51 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
+namespace App\Features;
 
-use AdvisingApp\Campaign\Filament\Actions\ArchiveCampaignAction;
-use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
-use AdvisingApp\Group\Models\Group;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Resources\Pages\EditRecord;
-use Filament\Schemas\Schema;
+use App\Support\AbstractFeatureFlag;
 
-class EditCampaign extends EditRecord
+class AddEmailDemoModeAutoReplyFeature extends AbstractFeatureFlag
 {
-    use EditPageRedirection;
-
-    protected static string $resource = CampaignResource::class;
-
-    public function form(Schema $schema): Schema
+    public function resolve(mixed $scope): mixed
     {
-        return $schema
-            ->components([
-                TextInput::make('name')
-                    ->required(),
-                Select::make('segment_id')
-                    ->label('Population Group')
-                    ->options(function () {
-                        return Group::query()
-                            ->whereHas('user', function ($query) {
-                                $query->whereKey(auth()->id())->orWhereRelation('team.users', 'id', auth()->id());
-                            })
-                            ->pluck('name', 'id');
-                    })
-                    ->searchable()
-                    ->required(),
-                Toggle::make('enabled'),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            ArchiveCampaignAction::make(),
-            DeleteAction::make(),
-        ];
+        return false;
     }
 }

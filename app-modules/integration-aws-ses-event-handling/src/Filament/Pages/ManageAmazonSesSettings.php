@@ -38,6 +38,7 @@ namespace AdvisingApp\IntegrationAwsSesEventHandling\Filament\Pages;
 
 use AdvisingApp\Engagement\Settings\EngagementSettings;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
+use App\Features\AddEmailDemoModeAutoReplyFeature;
 use App\Filament\Clusters\ProductIntegrations;
 use App\Models\Tenant;
 use App\Models\User;
@@ -87,6 +88,10 @@ class ManageAmazonSesSettings extends SettingsPage
                 Toggle::make('isDemoModeEnabled')
                     ->label('Demo Mode')
                     ->live(),
+                Toggle::make('is_demo_auto_reply_mode_enabled')
+                    ->visible(AddEmailDemoModeAutoReplyFeature::active())
+                    ->label('Demo Autoreply')
+                    ->helperText('When enabled, email messages will receive an automatic reply.'),
                 Checkbox::make('isExcludingSystemNotificationsFromDemoMode')
                     ->label('Exclude authentication related messages')
                     ->visible(fn (Get $get): bool => (bool) $get('isDemoModeEnabled')),

@@ -34,49 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
+namespace AdvisingApp\Campaign\Filament\Actions;
 
-use AdvisingApp\Campaign\Filament\Actions\ArchiveCampaignAction;
-use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
-use Filament\Actions\EditAction;
-use Filament\Infolists\Components\IconEntry;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
+use CanyonGBS\Common\Filament\Actions\ArchiveAction;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
-class ViewCampaign extends ViewRecord
+class ArchiveCampaignAction
 {
-    protected static string $resource = CampaignResource::class;
-
-    public function infolist(Schema $schema): Schema
+    public static function make(): Action
     {
-        return $schema
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('name'),
-                        TextEntry::make('group.name')
-                            ->label('Population Group'),
-                        IconEntry::make('enabled')
-                            ->boolean(),
-                        IconEntry::make('execution_status')
-                            ->label('Has Been Executed?')
-                            ->state(fn (Campaign $record) => $record->hasBeenExecuted())
-                            ->boolean(),
-                        TextEntry::make('createdBy.name')
-                            ->label('Created By'),
-                    ]),
-            ]);
-    }
+        return ArchiveAction::make()
+            ->label(fn (Campaign $record): string => $record->enabled ? 'Disable and Archive' : 'Archive')
+            ->modalHeading(fn (Campaign $record): string => $record->enabled ? 'Disable and Archive Campaign' : 'Archive Campaign')
+            ->modalSubmitActionLabel(fn (Campaign $record): string => $record->enabled ? 'Disable and Archive' : 'Archive')
+            ->action(function (Campaign $record): void {
+                try {
+                    DB::transaction(function () use ($record) {
+                        if ($record->enabled) {
+                            $record->update(['enabled' => false]);
+                        }
+                        $record->archive();
+                    });
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            ArchiveCampaignAction::make(),
-            EditAction::make()
-                ->hidden(fn (Campaign $record) => $record->hasBeenExecuted() === true),
-        ];
+                    Notification::make()
+                        ->success()
+                        ->title('Campaign archived successfully')
+                        ->send();
+                } catch (Throwable $exception) {
+                    report($exception);
+
+                    Notification::make()
+                        ->danger()
+                        ->title('Failed to archive campaign')
+                        ->body($exception->getMessage())
+                        ->send();
+                }
+            });
     }
 }
