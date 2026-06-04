@@ -40,6 +40,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\ListCampaigns;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\ViewCampaign;
 use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Campaign\Models\CampaignAction;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -52,7 +53,6 @@ test('archive action is visible on view page', function () {
 
     $user->givePermissionTo('campaign.view-any');
     $user->givePermissionTo('campaign.*.view');
-    $user->givePermissionTo('campaign.*.update');
     $user->givePermissionTo('group.*.view');
 
     actingAs($user);
@@ -126,4 +126,32 @@ test('archive action redirects to index after archiving', function () {
     livewire(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
         ->callAction('archive')
         ->assertRedirect(ListCampaigns::getUrl());
+});
+
+test('edit action is hidden for completed campaigns', function () {
+    asSuperAdmin();
+
+    $campaign = Campaign::factory()->has(CampaignAction::factory()->finishedAt(), 'actions')->create();
+
+    expect($campaign->hasBeenExecuted())->toBeTrue();
+
+    livewire(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
+        ->assertActionHidden('edit')
+        ->assertActionVisible('archive');
+});
+
+test('archive action successfully archives completed campaigns', function () {
+    asSuperAdmin();
+
+    $campaign = Campaign::factory()->has(CampaignAction::factory()->finishedAt(), 'actions')->create();
+
+    expect($campaign->hasBeenExecuted())->toBeTrue()
+        ->and($campaign->isArchived())->toBeFalse();
+
+    livewire(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
+        ->callAction('archive');
+
+    $campaign = $campaign->fresh();
+
+    expect($campaign->isArchived())->toBeTrue();
 });
