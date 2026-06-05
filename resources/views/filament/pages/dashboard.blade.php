@@ -82,11 +82,11 @@
 
         function updateTime() {
             document.getElementById('current-time').textContent = new Date().toLocaleTimeString('en-US', {
-            timeZone: @json($timezone),
-            hour: 'numeric',
-            minute: '2-digit',
-            hour12: true,
-        });
+                timeZone: @json($timezone),
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true,
+            });
         }
 
         updateTime();
