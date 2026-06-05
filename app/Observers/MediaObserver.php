@@ -44,7 +44,7 @@ class MediaObserver
 {
     public function creating(Media $media): void
     {
-        if (! MediaCreatedByFeature::active() || $media->createdBy) {
+        if (! MediaCreatedByFeature::active() || ! is_null($media->created_by_id)) {
             return;
         }
 

@@ -45,7 +45,9 @@ return new class () extends Migration {
     {
         DB::transaction(function () {
             Schema::table('media', function (Blueprint $table) {
-                $table->nullableUuidMorphs('created_by');
+                $table->string('created_by_type')->nullable();
+                $table->string('created_by_id')->nullable();
+                $table->index(['created_by_type', 'created_by_id']);
             });
 
             MediaCreatedByFeature::activate();
@@ -58,7 +60,8 @@ return new class () extends Migration {
             MediaCreatedByFeature::deactivate();
 
             Schema::table('media', function (Blueprint $table) {
-                $table->dropMorphs('created_by');
+                $table->dropIndex(['created_by_type', 'created_by_id']);
+                $table->dropColumn(['created_by_type', 'created_by_id']);
             });
         });
     }

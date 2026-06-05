@@ -34,87 +34,212 @@
 </COPYRIGHT>
 */
 
-use App\Features\MediaCreatedByFeature;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Media;
 use App\Models\User;
-use App\Observers\MediaObserver;
-use Illuminate\Support\Facades\Auth;
-use Laravel\Pennant\Feature;
+use Illuminate\Support\Facades\Storage;
 
-describe('MediaObserver', function () {
-    it('sets created_by on creating when feature is active and user is authenticated', function () {
-        Feature::activate(MediaCreatedByFeature::class);
+use function Pest\Laravel\actingAs;
+
+describe('Media createdBy observer integration', function () {
+    it('sets createdBy to the authenticated user on media upload', function () {
+        Storage::fake('s3');
 
         $user = User::factory()->create();
-        Auth::login($user);
+        actingAs($user);
 
-        $media = new Media();
-        $media->name = 'test';
-        $media->file_name = 'test.txt';
-        $media->collection_name = 'default';
-        $media->disk = 's3';
-        $media->manipulations = [];
-        $media->custom_properties = [];
-        $media->generated_conversions = [];
-        $media->responsive_images = [];
-        $media->size = 100;
-
-        $observer = new MediaObserver();
-        $observer->creating($media);
+        $media = $user->addMediaFromString('test content')
+            ->usingFileName('test.txt')
+            ->toMediaCollection('default');
 
         expect($media->created_by_id)->toBe($user->getKey())
             ->and($media->created_by_type)->toBe($user->getMorphClass());
     });
 
-    it('does not set created_by when feature is inactive', function () {
-        Feature::deactivate(MediaCreatedByFeature::class);
-
-        $user = User::factory()->create();
-        Auth::login($user);
-
-        $media = new Media();
-        $media->name = 'test';
-        $media->file_name = 'test.txt';
-
-        $observer = new MediaObserver();
-        $observer->creating($media);
-
-        expect($media->created_by_id)->toBeNull()
-            ->and($media->created_by_type)->toBeNull();
-    });
-
-    it('does not set created_by when no user is authenticated', function () {
-        Feature::activate(MediaCreatedByFeature::class);
-
-        $media = new Media();
-        $media->name = 'test';
-        $media->file_name = 'test.txt';
-
-        $observer = new MediaObserver();
-        $observer->creating($media);
-
-        expect($media->created_by_id)->toBeNull()
-            ->and($media->created_by_type)->toBeNull();
-    });
-
-    it('does not overwrite existing createdBy association', function () {
-        Feature::activate(MediaCreatedByFeature::class);
+    it('does not overwrite existing createdBy on media', function () {
+        Storage::fake('s3');
 
         $user = User::factory()->create();
         $anotherUser = User::factory()->create();
-        Auth::login($user);
+        actingAs($user);
 
-        $media = new Media();
-        $media->name = 'test';
-        $media->file_name = 'test.txt';
-        $media->created_by_id = $anotherUser->getKey();
-        $media->created_by_type = $anotherUser->getMorphClass();
+        $media = $user->addMediaFromString('test content')
+            ->usingFileName('test.txt')
+            ->toMediaCollection('default');
 
-        $observer = new MediaObserver();
-        $observer->creating($media);
+        // Manually set a different creator
+        $media->createdBy()->associate($anotherUser);
+        $media->saveQuietly();
 
-        // Should NOT be overwritten
+        $media->refresh();
+
         expect($media->created_by_id)->toBe($anotherUser->getKey())
             ->and($media->created_by_type)->toBe($anotherUser->getMorphClass());
+    });
+
+    it('does not set createdBy on media when no user is authenticated', function () {
+        Storage::fake('s3');
+
+        $user = User::factory()->create();
+
+        $media = $user->addMediaFromString('test content')
+            ->usingFileName('test.txt')
+            ->toMediaCollection('default');
+
+        expect($media->created_by_id)->toBeNull()
+            ->and($media->created_by_type)->toBeNull();
+    });
+});
+
+describe('Media model createdBy relationship', function () {
+    it('returns the user who created the media via createdBy relationship', function () {
+        Storage::fake('s3');
+
+        $user = User::factory()->create();
+        actingAs($user);
+
+        $media = $user->addMediaFromString('test content')
+            ->usingFileName('test.txt')
+            ->toMediaCollection('default');
+
+        $media->refresh();
+
+        expect($media->createdBy)->toBeInstanceOf(User::class)
+            ->and($media->createdBy->getKey())->toBe($user->getKey());
+    });
+
+    it('returns student as media creator when manually associated', function () {
+        Storage::fake('s3');
+
+        $user = User::factory()->create();
+        $student = Student::factory()->create();
+
+        $media = $user->addMediaFromString('test content')
+            ->usingFileName('test.txt')
+            ->toMediaCollection('default');
+
+        $media->createdBy()->associate($student);
+        $media->saveQuietly();
+        $media->refresh();
+
+        expect($media->createdBy)->toBeInstanceOf(Student::class)
+            ->and($media->createdBy->getKey())->toBe($student->getKey());
+    });
+});
+
+describe('Media model accessor attributes', function () {
+    it('returns user name from media created_by_name attribute', function () {
+        Storage::fake('s3');
+
+        $user = User::factory()->create(['name' => 'John Doe']);
+        actingAs($user);
+
+        $media = $user->addMediaFromString('test content')
+            ->usingFileName('test.txt')
+            ->toMediaCollection('default');
+
+        $media->refresh();
+
+        expect($media->created_by_name)->toBe('John Doe');
+    });
+
+    it('returns student name from media created_by_name attribute', function () {
+        Storage::fake('s3');
+
+        $user = User::factory()->create();
+        $student = Student::factory()->create([
+            'first' => 'Jane',
+            'last' => 'Smith',
+            'full_name' => 'Jane Smith',
+        ]);
+
+        $media = $user->addMediaFromString('test content')
+            ->usingFileName('test.txt')
+            ->toMediaCollection('default');
+
+        $media->createdBy()->associate($student);
+        $media->saveQuietly();
+        $media->refresh();
+
+        expect($media->created_by_name)->toBe('Jane Smith');
+    });
+
+    it('returns N/A for media created_by_name when no creator is set', function () {
+        Storage::fake('s3');
+
+        $user = User::factory()->create();
+
+        $media = $user->addMediaFromString('test content')
+            ->usingFileName('test.txt')
+            ->toMediaCollection('default');
+
+        expect($media->created_by_name)->toBe('N/A');
+    });
+
+    it('returns sub label for media creator user with job title', function () {
+        Storage::fake('s3');
+
+        $user = User::factory()->create([
+            'name' => 'John Doe',
+            'job_title' => 'Engineer',
+        ]);
+        actingAs($user);
+
+        $media = $user->addMediaFromString('test content')
+            ->usingFileName('test.txt')
+            ->toMediaCollection('default');
+
+        $media->refresh();
+
+        expect($media->created_by_sub_label)->toContain('Engineer');
+    });
+
+    it('returns Student as media created_by_sub_label for student creator', function () {
+        Storage::fake('s3');
+
+        $user = User::factory()->create();
+        $student = Student::factory()->create();
+
+        $media = $user->addMediaFromString('test content')
+            ->usingFileName('test.txt')
+            ->toMediaCollection('default');
+
+        $media->createdBy()->associate($student);
+        $media->saveQuietly();
+        $media->refresh();
+
+        expect($media->created_by_sub_label)->toBe('Student');
+    });
+
+    it('returns Prospect as media created_by_sub_label for prospect creator', function () {
+        Storage::fake('s3');
+
+        $user = User::factory()->create();
+        $prospect = Prospect::factory()->create();
+
+        $media = $user->addMediaFromString('test content')
+            ->usingFileName('test.txt')
+            ->toMediaCollection('default');
+
+        $media->createdBy()->associate($prospect);
+        $media->saveQuietly();
+        $media->refresh();
+
+        expect($media->created_by_sub_label)->toBe('Prospect');
+    });
+});
+
+describe('Media model config', function () {
+    it('uses the custom Media model from config', function () {
+        $mediaModel = config('media-library.media_model');
+
+        expect($mediaModel)->toBe(Media::class);
+    });
+
+    it('Media model extends Spatie Media', function () {
+        $media = new Media();
+
+        expect($media)->toBeInstanceOf(Spatie\MediaLibrary\MediaCollections\Models\Media::class);
     });
 });
