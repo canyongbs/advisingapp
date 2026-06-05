@@ -40,6 +40,7 @@ This guide covers gating features behind addon toggles tied to the account subsc
             ];
         }
     ```
+
     Additionally, a cleanup task should be created to make this new field required in the future, in both files. Allowing it to be nullable prevents issues if the app is updated before the external API.
 
 4. Add Feature Toggle to License Settings
