@@ -74,6 +74,7 @@ class SyncTenantRequest extends FormRequest
             'addons.dataAdvisor' => ['required', 'boolean'],
             'addons.projectManagement' => ['required', 'boolean'],
             'addons.earlyAlert' => ['required', 'boolean'],
+            'addons.publicProfiles' => ['nullable', 'boolean'], // TODO: During Public Profiles feature cleanup, make this required
             'smartPrompts' => ['nullable', 'array'],
             'smartPrompts.*.title' => ['required', 'string'],
             'smartPrompts.*.description' => ['nullable', 'string'],

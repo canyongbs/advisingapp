@@ -36,10 +36,11 @@ This guide covers gating features behind addon toggles tied to the account subsc
         {
             return [
                 // ...
-                'addons.exampleFeature' => ['required', 'boolean'],
+                'addons.exampleFeature' => ['nullable', 'boolean'],
             ];
         }
     ```
+    Additionally, a cleanup task should be created to make this new field required in the future, in both files. Allowing it to be nullable prevents issues if the app is updated before the external API.
 
 4. Add Feature Toggle to License Settings
 
@@ -149,13 +150,4 @@ This guide covers gating features behind addon toggles tied to the account subsc
 
         get(ListExamples::getUrl())->assertSuccessful();
     });
-    ```
-
-    `tests/TestCase.php`: Both the `createTenant` function and the `refreshTenantTestingEnvironment` will need to be updated:
-
-    ```php
-    new LicenseAddonsData(
-            // ...
-            exampleFeature: true,
-        )
     ```
