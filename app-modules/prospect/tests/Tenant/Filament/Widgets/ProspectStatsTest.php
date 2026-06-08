@@ -60,14 +60,12 @@ it('returns correct stats for prospects within the given date range', function (
     $endDate = now()->subDays(5);
     $count = random_int(1, 5);
 
-    // New Messages — in range
     EngagementResponse::factory()->count($count)->state([
         'sender_type' => (new Prospect())->getMorphClass(),
         'status' => EngagementResponseStatus::New,
         'created_at' => $startDate,
     ])->create();
 
-    // Open Concerns — in range
     Concern::factory()->count($count)->state([
         'concern_type' => (new Prospect())->getMorphClass(),
         'concern_id' => Prospect::factory(),
@@ -77,7 +75,6 @@ it('returns correct stats for prospects within the given date range', function (
         'created_at' => $startDate,
     ])->create();
 
-    // Open Tasks — in range
     Task::factory()->count($count)->state([
         'concern_type' => (new Prospect())->getMorphClass(),
         'concern_id' => Prospect::factory(),
@@ -86,7 +83,6 @@ it('returns correct stats for prospects within the given date range', function (
         'created_at' => $startDate,
     ])->create();
 
-    // Open Cases — in range
     CaseModel::factory()->count($count)->state([
         'respondent_type' => (new Prospect())->getMorphClass(),
         'respondent_id' => Prospect::factory(),
@@ -96,14 +92,12 @@ it('returns correct stats for prospects within the given date range', function (
         'created_at' => $startDate,
     ])->create();
 
-    // Actioned Messages — in range
     EngagementResponse::factory()->count($count)->state([
         'sender_type' => (new Prospect())->getMorphClass(),
         'status' => EngagementResponseStatus::Actioned,
         'created_at' => $endDate,
     ])->create();
 
-    // Closed Concerns — in range
     Concern::factory()->count($count)->state([
         'concern_type' => (new Prospect())->getMorphClass(),
         'concern_id' => Prospect::factory(),
@@ -113,7 +107,6 @@ it('returns correct stats for prospects within the given date range', function (
         'created_at' => $endDate,
     ])->create();
 
-    // Closed Tasks — in range
     Task::factory()->count($count)->state([
         'concern_type' => (new Prospect())->getMorphClass(),
         'concern_id' => Prospect::factory(),
@@ -122,7 +115,6 @@ it('returns correct stats for prospects within the given date range', function (
         'created_at' => $endDate,
     ])->create();
 
-    // Closed Cases — in range
     CaseModel::factory()->count($count)->state([
         'respondent_type' => (new Prospect())->getMorphClass(),
         'respondent_id' => Prospect::factory(),
@@ -132,7 +124,6 @@ it('returns correct stats for prospects within the given date range', function (
         'created_at' => $endDate,
     ])->create();
 
-    // Out-of-range records — should not be counted
     EngagementResponse::factory()->count($count)->state([
         'sender_type' => (new Prospect())->getMorphClass(),
         'status' => EngagementResponseStatus::New,
@@ -218,7 +209,6 @@ it('returns correct stats for prospects based on group filter', function () {
         'classification' => SystemCaseClassification::Closed,
     ]);
 
-    // John's records
     EngagementResponse::factory()->count($count)->state([
         'sender_type' => (new Prospect())->getMorphClass(),
         'sender_id' => $johnProspect->getKey(),
@@ -265,7 +255,6 @@ it('returns correct stats for prospects based on group filter', function () {
         'status_id' => $closedCaseStatus->getKey(),
     ])->create();
 
-    // Doe's records (should not be counted with group filter)
     EngagementResponse::factory()->count($count)->state([
         'sender_type' => (new Prospect())->getMorphClass(),
         'sender_id' => $doeProspect->getKey(),
