@@ -93,7 +93,9 @@ class StudentFactory extends Factory
                 'address' => $this->faker->email(),
                 'order' => 1,
             ]));
-            $student->primaryPhoneNumber()->associate(StudentPhoneNumber::factory()->canReceiveSms()->create([
+            // createQuietly() skips the StudentPhoneNumber observer so factory
+            // and seeder data does not dispatch real Telnyx lookup jobs.
+            $student->primaryPhoneNumber()->associate(StudentPhoneNumber::factory()->canReceiveSms()->createQuietly([
                 'sisid' => $student->getKey(),
                 'number' => $this->faker->e164PhoneNumber(),
                 'order' => 1,

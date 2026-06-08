@@ -34,32 +34,23 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
 
-it('returns true when student has a healthy primary phone number', function () {
+it('returns true when the primary phone has a textable Telnyx lookup and is not opted out or bounced', function () {
     $student = Student::factory()->create();
-
-    $phoneNumber = StudentPhoneNumber::factory()
-        ->for($student, 'student')
-        ->create(['can_receive_sms' => true]);
-
-    $student->primaryPhoneNumber()->associate($phoneNumber);
-    $student->save();
-    $student->refresh();
 
     assertTrue($student->canReceiveSms());
 });
 
-it('returns false when student has no primary phone number', function () {
+it('returns false when the student has no primary phone number', function () {
     $student = Student::factory()->create();
 
-    // Remove the primary phone that was auto-created if applicable
     $student->primary_phone_id = null;
     $student->save();
     $student->refresh();
@@ -67,74 +58,56 @@ it('returns false when student has no primary phone number', function () {
     assertFalse($student->canReceiveSms());
 });
 
-it('returns false when student primary phone number has can_receive_sms disabled', function () {
+it('returns false when the primary phone has no Telnyx lookup yet', function () {
     $student = Student::factory()->create();
 
-    $phoneNumber = StudentPhoneNumber::factory()
-        ->for($student, 'student')
-        ->create(['can_receive_sms' => false]);
-
-    $student->primaryPhoneNumber()->associate($phoneNumber);
-    $student->save();
+    // Simulate a phone created before the lookup job ran.
+    $student->primaryPhoneNumber->phoneNumberLookup()->delete();
     $student->refresh();
 
     assertFalse($student->canReceiveSms());
 });
 
-it('returns false when student primary phone number is sms opted out', function () {
+it('returns false when the primary phone has a non-textable Telnyx lookup', function (PhoneNumberLookupStatus $status) {
     $student = Student::factory()->create();
 
-    $phoneNumber = StudentPhoneNumber::factory()
-        ->for($student, 'student')
-        ->create(['can_receive_sms' => true]);
+    $student->primaryPhoneNumber->phoneNumberLookup->update(['status' => $status]);
+    $student->refresh();
+
+    assertFalse($student->canReceiveSms());
+})->with([
+    PhoneNumberLookupStatus::Invalid,
+    PhoneNumberLookupStatus::ValidLandline,
+    PhoneNumberLookupStatus::Unknown,
+    PhoneNumberLookupStatus::LookupFailed,
+]);
+
+it('returns false when the primary phone is opted out of SMS', function () {
+    $student = Student::factory()->create();
 
     SmsOptOutPhoneNumber::factory()->create([
-        'number' => $phoneNumber->number,
+        'number' => $student->primaryPhoneNumber->number,
     ]);
-
-    $student->primaryPhoneNumber()->associate($phoneNumber);
-    $student->save();
-    $student->refresh();
 
     assertFalse($student->canReceiveSms());
 });
 
-it('returns false when student primary phone number is bounced', function () {
+it('returns false when the primary phone has previously bounced', function () {
     $student = Student::factory()->create();
 
-    $phoneNumber = StudentPhoneNumber::factory()
-        ->for($student, 'student')
-        ->create(['can_receive_sms' => true]);
-
     BouncedPhoneNumber::factory()->create([
-        'number' => $phoneNumber->number,
+        'number' => $student->primaryPhoneNumber->number,
     ]);
-
-    $student->primaryPhoneNumber()->associate($phoneNumber);
-    $student->save();
-    $student->refresh();
 
     assertFalse($student->canReceiveSms());
 });
 
-it('returns false when student primary phone is both bounced and sms opted out', function () {
+it('returns false when the primary phone is both bounced and opted out', function () {
     $student = Student::factory()->create();
+    $number = $student->primaryPhoneNumber->number;
 
-    $phoneNumber = StudentPhoneNumber::factory()
-        ->for($student, 'student')
-        ->create(['can_receive_sms' => true]);
-
-    BouncedPhoneNumber::factory()->create([
-        'number' => $phoneNumber->number,
-    ]);
-
-    SmsOptOutPhoneNumber::factory()->create([
-        'number' => $phoneNumber->number,
-    ]);
-
-    $student->primaryPhoneNumber()->associate($phoneNumber);
-    $student->save();
-    $student->refresh();
+    BouncedPhoneNumber::factory()->create(['number' => $number]);
+    SmsOptOutPhoneNumber::factory()->create(['number' => $number]);
 
     assertFalse($student->canReceiveSms());
 });

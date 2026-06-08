@@ -67,6 +67,7 @@ use AdvisingApp\StudentDataModel\Enums\EmailHealthStatus;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Scopes\RetentionCrmRestrictionScope;
+use AdvisingApp\StudentDataModel\Models\Scopes\Textable;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Timeline\Models\Timeline;
@@ -529,9 +530,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     public function canReceiveSms(): bool
     {
-        return $this->primaryPhoneNumber?->can_receive_sms
-            && (! $this->primaryPhoneNumber->smsOptOut()->exists())
-            && (! $this->primaryPhoneNumber->bounced()->exists());
+        return $this->primaryPhoneNumber?->isTextable() ?? false;
     }
 
     public function hasValidEmail(): bool
@@ -544,11 +543,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     public function hasValidSms(): bool
     {
-        return $this->phoneNumbers()
-            ->where('can_receive_sms', true)
-            ->whereDoesntHave('smsOptOut')
-            ->whereDoesntHave('bounced')
-            ->exists();
+        return $this->phoneNumbers()->tap(new Textable())->exists();
     }
 
     public function hasAnyValidContactRoute(): bool
@@ -584,19 +579,8 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
                     ->first()
                     ?->getKey(),
 
-            NotificationChannel::Sms => $this->primaryPhoneNumber()
-                ->where('can_receive_sms', true)
-                ->whereDoesntHave('smsOptOut')
-                ->whereDoesntHave('bounced')
-                ->first()
-                ?->getKey()
-                ?? $this->phoneNumbers()
-                    ->where('can_receive_sms', true)
-                    ->whereDoesntHave('smsOptOut')
-                    ->whereDoesntHave('bounced')
-                    ->orderBy('order')
-                    ->first()
-                    ?->getKey(),
+            NotificationChannel::Sms => $this->primaryPhoneNumber()->tap(new Textable())->first()?->getKey()
+                ?? $this->phoneNumbers()->tap(new Textable())->orderBy('order')->first()?->getKey(),
 
             default => null,
         };

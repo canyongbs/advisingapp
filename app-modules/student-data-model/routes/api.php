@@ -49,6 +49,7 @@ use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentProgram
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentPrograms\PutStudentProgramsController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\UpdateStudentController;
 use AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\ViewStudentController;
+use AdvisingApp\StudentDataModel\Http\Controllers\SisSyncCompletedController;
 use AdvisingApp\StudentDataModel\Http\Controllers\UpdateStudentInformationSystemSettingsController;
 use App\Http\Middleware\CheckOlympusKey;
 use Illuminate\Support\Facades\Route;
@@ -61,6 +62,9 @@ Route::prefix('api')
     ->group(function () {
         Route::post('/update-sis-settings', UpdateStudentInformationSystemSettingsController::class)
             ->name('update-sis-settings');
+
+        Route::post('/sis-sync-completed', SisSyncCompletedController::class)
+            ->name('sis-sync-completed');
     });
 
 Route::api(majorVersion: 1, routes: function () {

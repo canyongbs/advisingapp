@@ -38,6 +38,7 @@ namespace AdvisingApp\Report\Filament\Exports;
 
 use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\PhoneNumberLookupFeature;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
@@ -71,9 +72,15 @@ class EmailPhoneHealthExporter extends Exporter
             ExportColumn::make('is_primary_phone_set')
                 ->state(fn (Student $record) => filled($record->primaryPhoneNumber) ? 'Yes' : 'No')
                 ->label('Primary Phone Set'),
-            ExportColumn::make('can_receive_sms')
-                ->state(fn (Student $record) => (filled($record->primaryPhoneNumber?->number) && $record->primaryPhoneNumber->can_receive_sms) ? 'Yes' : 'No')
-                ->label('SMS Capable'),
+            ...(PhoneNumberLookupFeature::active() ? [
+                ExportColumn::make('is_textable')
+                    ->state(fn (Student $record) => $record->primaryPhoneNumber?->isTextable() ? 'Yes' : 'No')
+                    ->label('SMS Capable'),
+            ] : [
+                ExportColumn::make('can_receive_sms')
+                    ->state(fn (Student $record) => (filled($record->primaryPhoneNumber?->number) && $record->primaryPhoneNumber->can_receive_sms) ? 'Yes' : 'No')
+                    ->label('SMS Capable'),
+            ]),
             ExportColumn::make('is_sms_opted_out')
                 ->state(fn (Student $record) => $record->primaryPhoneNumber && $record->primaryPhoneNumber->smsOptOut()->exists() ? 'Yes' : 'No')
                 ->label('SMS Opt Out'),

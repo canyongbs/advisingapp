@@ -46,6 +46,7 @@ use AdvisingApp\Notification\Notifications\Channels\SmsChannel;
 use AdvisingApp\Notification\Tests\Fixtures\TestSmsNotification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
+use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 
 use function Pest\Laravel\assertDatabaseHas;
@@ -114,8 +115,9 @@ it('will not send an SMS if recipient phone number has previously bounced', func
 
     $phoneNumber = $notifiable->phoneNumbers()->create([
         'number' => '+13125000001',
-        'can_receive_sms' => true,
     ]);
+
+    PhoneNumberLookup::factory()->mobile()->create(['number' => '+13125000001']);
 
     $notifiable->primaryPhoneNumber()->associate($phoneNumber)->save();
 
@@ -138,8 +140,9 @@ it('creates an SmsOptOutPhoneNumber and records a FailedDispatch event when Teln
 
     $phoneNumber = $notifiable->phoneNumbers()->create([
         'number' => '+13125000002',
-        'can_receive_sms' => true,
     ]);
+
+    PhoneNumberLookup::factory()->mobile()->create(['number' => '+13125000002']);
 
     $notifiable->primaryPhoneNumber()->associate($phoneNumber)->save();
 
@@ -175,8 +178,9 @@ it('creates a BouncedPhoneNumber and records a FailedDispatch event when Telnyx 
 
     $phoneNumber = $notifiable->phoneNumbers()->create([
         'number' => '+13125000003',
-        'can_receive_sms' => true,
     ]);
+
+    PhoneNumberLookup::factory()->mobile()->create(['number' => '+13125000003']);
 
     $notifiable->primaryPhoneNumber()->associate($phoneNumber)->save();
 
@@ -217,8 +221,9 @@ it('records a FailedDispatch event without creating opt-out or bounce records fo
 
     $phoneNumber = $notifiable->phoneNumbers()->create([
         'number' => '+13125000004',
-        'can_receive_sms' => true,
     ]);
+
+    PhoneNumberLookup::factory()->mobile()->create(['number' => '+13125000004']);
 
     $notifiable->primaryPhoneNumber()->associate($phoneNumber)->save();
 
@@ -276,8 +281,9 @@ it('short-circuits with BouncedSmsException before the API call when the number 
 
     $phoneNumber = $notifiable->phoneNumbers()->create([
         'number' => '+13125000010',
-        'can_receive_sms' => true,
     ]);
+
+    PhoneNumberLookup::factory()->mobile()->create(['number' => '+13125000010']);
 
     $notifiable->primaryPhoneNumber()->associate($phoneNumber)->save();
 
@@ -308,8 +314,9 @@ it('short-circuits with SmsOptOutException before the API call when the number i
 
     $phoneNumber = $notifiable->phoneNumbers()->create([
         'number' => '+13125000011',
-        'can_receive_sms' => true,
     ]);
+
+    PhoneNumberLookup::factory()->mobile()->create(['number' => '+13125000011']);
 
     $notifiable->primaryPhoneNumber()->associate($phoneNumber)->save();
 
