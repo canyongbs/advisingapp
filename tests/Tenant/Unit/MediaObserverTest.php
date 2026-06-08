@@ -38,9 +38,10 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Media;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
-use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 
 use function Pest\Laravel\actingAs;
+
+use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 
 describe('Media createdBy observer integration', function () {
     it('sets createdBy to the authenticated user on media upload', function () {
