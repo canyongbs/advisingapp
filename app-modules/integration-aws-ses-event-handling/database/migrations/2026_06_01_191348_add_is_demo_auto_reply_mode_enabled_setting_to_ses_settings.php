@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\AddEmailDemoModeAutoReplyFeature;
 use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsBlueprint;
@@ -51,15 +50,12 @@ return new class () extends SettingsMigration {
             } catch (SettingAlreadyExists) {
             }
 
-            AddEmailDemoModeAutoReplyFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            AddEmailDemoModeAutoReplyFeature::deactivate();
-
             $this->migrator->inGroup('ses', function (SettingsBlueprint $blueprint): void {
                 $blueprint->delete('is_demo_auto_reply_mode_enabled');
             });
