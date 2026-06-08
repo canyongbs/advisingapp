@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\MeetingCenter\Actions\GetAvailableGroupAppointmentSlots;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
@@ -648,4 +649,352 @@ it('allows a second booking adjacent to the first without conflict', function ()
     ]);
 
     expect(BookingGroupAppointment::count())->toBe(2);
+});
+
+$bstHours = [
+    'monday' => ['is_enabled' => true, 'starts_at' => '23:00', 'ends_at' => '07:00'],
+    'tuesday' => ['is_enabled' => true, 'starts_at' => '23:00', 'ends_at' => '07:00'],
+    'wednesday' => ['is_enabled' => true, 'starts_at' => '23:00', 'ends_at' => '07:00'],
+    'thursday' => ['is_enabled' => true, 'starts_at' => '23:00', 'ends_at' => '07:00'],
+    'friday' => ['is_enabled' => true, 'starts_at' => '23:00', 'ends_at' => '07:00'],
+    'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+    'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+];
+
+$hstHours = [
+    'monday' => ['is_enabled' => true, 'starts_at' => '18:00', 'ends_at' => '03:00'],
+    'tuesday' => ['is_enabled' => true, 'starts_at' => '18:00', 'ends_at' => '03:00'],
+    'wednesday' => ['is_enabled' => true, 'starts_at' => '18:00', 'ends_at' => '03:00'],
+    'thursday' => ['is_enabled' => true, 'starts_at' => '18:00', 'ends_at' => '03:00'],
+    'friday' => ['is_enabled' => true, 'starts_at' => '18:00', 'ends_at' => '03:00'],
+    'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+    'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+];
+
+$aestHours = [
+    'monday' => ['is_enabled' => true, 'starts_at' => '22:00', 'ends_at' => '07:00'],
+    'tuesday' => ['is_enabled' => true, 'starts_at' => '22:00', 'ends_at' => '07:00'],
+    'wednesday' => ['is_enabled' => true, 'starts_at' => '22:00', 'ends_at' => '07:00'],
+    'thursday' => ['is_enabled' => true, 'starts_at' => '22:00', 'ends_at' => '07:00'],
+    'friday' => ['is_enabled' => true, 'starts_at' => '22:00', 'ends_at' => '07:00'],
+    'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+    'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+];
+
+$nzstHours = [
+    'monday' => ['is_enabled' => true, 'starts_at' => '20:00', 'ends_at' => '05:00'],
+    'tuesday' => ['is_enabled' => true, 'starts_at' => '20:00', 'ends_at' => '05:00'],
+    'wednesday' => ['is_enabled' => true, 'starts_at' => '20:00', 'ends_at' => '05:00'],
+    'thursday' => ['is_enabled' => true, 'starts_at' => '20:00', 'ends_at' => '05:00'],
+    'friday' => ['is_enabled' => true, 'starts_at' => '20:00', 'ends_at' => '05:00'],
+    'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+    'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+];
+
+it('computes slots correctly for BST positive offset crossing midnight (23:00-07:00 UTC)', function () use ($bstHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
+
+    $member = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-bst']))
+        ->create([
+            'working_hours_are_enabled' => true,
+            'working_hours' => $bstHours,
+        ]);
+
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($member, [], 'users')
+        ->create([
+            'available_appointment_hours' => $bstHours,
+        ]);
+
+    $action = new GetAvailableGroupAppointmentSlots();
+    $blocks = $action($bookingGroup, 2026, 4);
+
+    expect($blocks)->not->toBeEmpty();
+
+    // Monday Apr 6: group hours cross midnight, heuristic subDays start
+    // Result should be Sun Apr 5 23:00 to Mon Apr 6 07:00 (8 hour block)
+    $mondayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-05T23:00'));
+    expect($mondayBlock)->not->toBeNull();
+    expect($mondayBlock['end'])->toBe('2026-04-06T07:00:00+00:00');
+
+    // Tuesday Apr 7: Mon Apr 6 23:00 to Tue Apr 7 07:00
+    $tuesdayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-06T23:00'));
+    expect($tuesdayBlock)->not->toBeNull();
+    expect($tuesdayBlock['end'])->toBe('2026-04-07T07:00:00+00:00');
+});
+
+it('does not produce Saturday slots when Saturday is disabled with BST offset', function () use ($bstHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
+
+    $member = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-bst-sat']))
+        ->create([
+            'working_hours_are_enabled' => true,
+            'working_hours' => $bstHours,
+        ]);
+
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($member, [], 'users')
+        ->create([
+            'available_appointment_hours' => $bstHours,
+        ]);
+
+    $action = new GetAvailableGroupAppointmentSlots();
+    $blocks = $action($bookingGroup, 2026, 4);
+
+    // Saturday is disabled, so no block should represent Saturday (Fri 23:00 to Sat 07:00)
+    $saturdayBlocks = collect($blocks)->filter(function (array $block) {
+        $end = Carbon::parse($block['end']);
+
+        return $end->isSaturday() && $end->hour === 7;
+    });
+
+    expect($saturdayBlocks)->toBeEmpty();
+});
+
+it('computes slots correctly for HST negative offset crossing midnight (18:00-03:00 UTC)', function () use ($hstHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
+
+    $member = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-hst']))
+        ->create([
+            'working_hours_are_enabled' => true,
+            'working_hours' => $hstHours,
+        ]);
+
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($member, [], 'users')
+        ->create([
+            'available_appointment_hours' => $hstHours,
+        ]);
+
+    $action = new GetAvailableGroupAppointmentSlots();
+    $blocks = $action($bookingGroup, 2026, 4);
+
+    expect($blocks)->not->toBeEmpty();
+
+    // Monday Apr 6: heuristic addDays end
+    // Result should be Mon Apr 6 18:00 to Tue Apr 7 03:00 (9 hour block)
+    $mondayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-06T18:00'));
+    expect($mondayBlock)->not->toBeNull();
+    expect($mondayBlock['end'])->toBe('2026-04-07T03:00:00+00:00');
+
+    // Friday Apr 10: Fri Apr 10 18:00 to Sat Apr 11 03:00
+    $fridayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-10T18:00'));
+    expect($fridayBlock)->not->toBeNull();
+    expect($fridayBlock['end'])->toBe('2026-04-11T03:00:00+00:00');
+});
+
+it('does not produce Saturday slots when Saturday is disabled with HST offset', function () use ($hstHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
+
+    $member = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-hst-sat']))
+        ->create([
+            'working_hours_are_enabled' => true,
+            'working_hours' => $hstHours,
+        ]);
+
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($member, [], 'users')
+        ->create([
+            'available_appointment_hours' => $hstHours,
+        ]);
+
+    $action = new GetAvailableGroupAppointmentSlots();
+    $blocks = $action($bookingGroup, 2026, 4);
+
+    // Saturday is disabled, so no block starting on Sat 18:00
+    $saturdayBlocks = collect($blocks)->filter(fn ($block) => Carbon::parse($block['start'])->isSaturday() && str_contains($block['start'], 'T18:00'));
+
+    expect($saturdayBlocks)->toBeEmpty();
+});
+
+it('computes slots correctly for AEST large positive offset crossing midnight (22:00-07:00 UTC)', function () use ($aestHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
+
+    $member = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-aest']))
+        ->create([
+            'working_hours_are_enabled' => true,
+            'working_hours' => $aestHours,
+        ]);
+
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($member, [], 'users')
+        ->create([
+            'available_appointment_hours' => $aestHours,
+        ]);
+
+    $action = new GetAvailableGroupAppointmentSlots();
+    $blocks = $action($bookingGroup, 2026, 4);
+
+    expect($blocks)->not->toBeEmpty();
+
+    // Monday Apr 6: heuristic subDays start (startMinFromMidnight=120, endMinFromMidnight=420)
+    // Result: Sun Apr 5 22:00 to Mon Apr 6 07:00 (9 hour block)
+    $mondayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-05T22:00'));
+    expect($mondayBlock)->not->toBeNull();
+    expect($mondayBlock['end'])->toBe('2026-04-06T07:00:00+00:00');
+});
+
+it('computes slots correctly for NZST very large positive offset crossing midnight (20:00-05:00 UTC)', function () use ($nzstHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
+
+    $member = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-nzst']))
+        ->create([
+            'working_hours_are_enabled' => true,
+            'working_hours' => $nzstHours,
+        ]);
+
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($member, [], 'users')
+        ->create([
+            'available_appointment_hours' => $nzstHours,
+        ]);
+
+    $action = new GetAvailableGroupAppointmentSlots();
+    $blocks = $action($bookingGroup, 2026, 4);
+
+    expect($blocks)->not->toBeEmpty();
+
+    // Monday Apr 6: startMinFromMidnight=240, endMinFromMidnight=300, 240<=300 → subDay start
+    // Result: Sun Apr 5 20:00 to Mon Apr 6 05:00 (9 hour block)
+    $mondayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-05T20:00'));
+    expect($mondayBlock)->not->toBeNull();
+    expect($mondayBlock['end'])->toBe('2026-04-06T05:00:00+00:00');
+});
+
+it('correctly intersects member hours that also cross midnight', function () use ($bstHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
+
+    // Group has wide hours (22:00-08:00 UTC) but member has narrower BST hours (23:00-07:00 UTC)
+    $wideHours = [
+        'monday' => ['is_enabled' => true, 'starts_at' => '22:00', 'ends_at' => '08:00'],
+        'tuesday' => ['is_enabled' => true, 'starts_at' => '22:00', 'ends_at' => '08:00'],
+        'wednesday' => ['is_enabled' => true, 'starts_at' => '22:00', 'ends_at' => '08:00'],
+        'thursday' => ['is_enabled' => true, 'starts_at' => '22:00', 'ends_at' => '08:00'],
+        'friday' => ['is_enabled' => true, 'starts_at' => '22:00', 'ends_at' => '08:00'],
+        'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+        'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+    ];
+
+    $member = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-intersect']))
+        ->create([
+            'working_hours_are_enabled' => true,
+            'working_hours' => $bstHours,
+        ]);
+
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($member, [], 'users')
+        ->create([
+            'available_appointment_hours' => $wideHours,
+        ]);
+
+    $action = new GetAvailableGroupAppointmentSlots();
+    $blocks = $action($bookingGroup, 2026, 4);
+
+    expect($blocks)->not->toBeEmpty();
+
+    // Group: Sun 22:00 to Mon 08:00, Member: Sun 23:00 to Mon 07:00
+    // Intersection should be Sun 23:00 to Mon 07:00 (the narrower member hours)
+    $mondayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-05T23:00'));
+    expect($mondayBlock)->not->toBeNull();
+    expect($mondayBlock['end'])->toBe('2026-04-06T07:00:00+00:00');
+});
+
+it('produces correct number of weekday blocks with midnight-crossing hours', function () use ($bstHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
+
+    $member = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-count']))
+        ->create([
+            'working_hours_are_enabled' => true,
+            'working_hours' => $bstHours,
+        ]);
+
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($member, [], 'users')
+        ->create([
+            'available_appointment_hours' => $bstHours,
+        ]);
+
+    $action = new GetAvailableGroupAppointmentSlots();
+    $blocks = $action($bookingGroup, 2026, 4);
+
+    // April 2026 has 22 weekdays (Mon-Fri)
+    expect($blocks)->toHaveCount(22);
+});
+
+it('handles member hours crossing midnight with negative offset independently from group hours', function () use ($hstHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
+
+    // Group has standard non-crossing hours that encompass the full day
+    $wideNonCrossingHours = [
+        'monday' => ['is_enabled' => true, 'starts_at' => '00:00', 'ends_at' => '23:59'],
+        'tuesday' => ['is_enabled' => true, 'starts_at' => '00:00', 'ends_at' => '23:59'],
+        'wednesday' => ['is_enabled' => true, 'starts_at' => '00:00', 'ends_at' => '23:59'],
+        'thursday' => ['is_enabled' => true, 'starts_at' => '00:00', 'ends_at' => '23:59'],
+        'friday' => ['is_enabled' => true, 'starts_at' => '00:00', 'ends_at' => '23:59'],
+        'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+        'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+    ];
+
+    // Member has HST hours that cross midnight (18:00-03:00 UTC)
+    $member = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-hst-member']))
+        ->create([
+            'working_hours_are_enabled' => true,
+            'working_hours' => $hstHours,
+        ]);
+
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($member, [], 'users')
+        ->create([
+            'available_appointment_hours' => $wideNonCrossingHours,
+        ]);
+
+    $action = new GetAvailableGroupAppointmentSlots();
+    $blocks = $action($bookingGroup, 2026, 4);
+
+    expect($blocks)->not->toBeEmpty();
+
+    // Group: Mon 00:00 to Mon 23:59, Member: Mon 18:00 to Tue 03:00
+    // Intersection: Mon 18:00 to Mon 23:59 (clamped by group end)
+    $mondayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-06T18:00'));
+    expect($mondayBlock)->not->toBeNull();
+    expect($mondayBlock['end'])->toBe('2026-04-06T23:59:00+00:00');
+});
+
+it('does not produce slots outside the month boundary with midnight-crossing hours', function () use ($bstHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
+
+    $member = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-boundary']))
+        ->create([
+            'working_hours_are_enabled' => true,
+            'working_hours' => $bstHours,
+        ]);
+
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($member, [], 'users')
+        ->create([
+            'available_appointment_hours' => $bstHours,
+        ]);
+
+    $action = new GetAvailableGroupAppointmentSlots();
+    $blocks = $action($bookingGroup, 2026, 4);
+
+    foreach ($blocks as $block) {
+        $start = Carbon::parse($block['start']);
+        $end = Carbon::parse($block['end']);
+
+        // Start can be Mar 31 23:00 at earliest (for Wed Apr 1's midnight-crossing slot)
+        expect($start->gte(Carbon::parse('2026-03-31T23:00:00+00:00')))->toBeTrue();
+        // End should not go past Apr 30
+        expect($end->lte(Carbon::parse('2026-05-01T07:00:00+00:00')))->toBeTrue();
+    }
 });
