@@ -54,6 +54,6 @@ class AiCustomerAdvisorSettings extends Settings
 
     public static function group(): string
     {
-        return RenameQnaAdvisorsFeature::active() ? 'ai-custom-advisor' : 'ai-qna-advisor';
+        return RenameQnaAdvisorsFeature::active() ? 'ai-customer-advisor' : 'ai-qna-advisor';
     }
 }

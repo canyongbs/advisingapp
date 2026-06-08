@@ -86,6 +86,10 @@ return new class () extends Migration {
                 ->where('group', 'ai-qna-advisor')
                 ->update(['group' => 'ai-customer-advisor']);
 
+            DB::table('portal_authentications')
+                ->where('portal_type', 'qna_advisor_widget')
+                ->update(['portal_type' => 'customer_advisor_widget']);
+
             collect($this->guards)->each(function (string $guard) {
                 $this->renamePermissions($this->permissions, $guard);
             });
@@ -119,6 +123,10 @@ return new class () extends Migration {
             DB::table('settings')
                 ->where('group', 'ai-customer-advisor')
                 ->update(['group' => 'ai-qna-advisor']);
+
+            DB::table('portal_authentications')
+                ->where('portal_type', 'customer_advisor_widget')
+                ->update(['portal_type' => 'qna_advisor_widget']);
 
             collect($this->guards)->each(function (string $guard) {
                 $this->renamePermissions(array_flip($this->permissions), $guard);
