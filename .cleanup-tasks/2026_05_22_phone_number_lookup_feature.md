@@ -48,19 +48,21 @@ The PhoneNumberLookupFeature gates the transition from the legacy `can_receive_s
 - In `app-modules/prospect/database/factories/ProspectPhoneNumberFactory.php`: same as above.
 
 - Grep the test suite for `can_receive_sms` and `canReceiveSms` (excluding the factory state methods named after the feature). For each hit: if it's a test that explicitly sets `'can_receive_sms' => true/false` in a request body or create array, delete the key. If it's a validation-test case for `can_receive_sms`, delete the dataset entry.
-  - Likely hits include: `app-modules/student-data-model/tests/Tenant/Http/Controllers/Api/V1/Students/CreateStudentControllerTest.php`, `app-modules/student-data-model/tests/Tenant/Http/Controllers/Api/V1/Students/StudentPhoneNumbers/CreateStudentPhoneNumberControllerTest.php`, `app-modules/student-data-model/tests/Tenant/Http/Controllers/Api/V1/Students/StudentPhoneNumbers/UpdateStudentPhoneNumberControllerTest.php`, `app-modules/student-data-model/tests/Tenant/Filament/Resources/Students/Pages/CreateStudentTest.php`, `app-modules/prospect/tests/Tenant/Prospect/CreateProspectTest.php`, `app-modules/notification/tests/Tenant/Notifications/Channels/SmsChannelSmsMessageTest.php`, and the three RequestFactories under `app-modules/student-data-model/tests/Tenant/Http/Controllers/Api/V1/Students/StudentPhoneNumbers/RequestFactories/` and `app-modules/prospect/tests/Tenant/Prospect/RequestFactories/`.
+    - Likely hits include: `app-modules/student-data-model/tests/Tenant/Http/Controllers/Api/V1/Students/CreateStudentControllerTest.php`, `app-modules/student-data-model/tests/Tenant/Http/Controllers/Api/V1/Students/StudentPhoneNumbers/CreateStudentPhoneNumberControllerTest.php`, `app-modules/student-data-model/tests/Tenant/Http/Controllers/Api/V1/Students/StudentPhoneNumbers/UpdateStudentPhoneNumberControllerTest.php`, `app-modules/student-data-model/tests/Tenant/Filament/Resources/Students/Pages/CreateStudentTest.php`, `app-modules/prospect/tests/Tenant/Prospect/CreateProspectTest.php`, `app-modules/notification/tests/Tenant/Notifications/Channels/SmsChannelSmsMessageTest.php`, and the three RequestFactories under `app-modules/student-data-model/tests/Tenant/Http/Controllers/Api/V1/Students/StudentPhoneNumbers/RequestFactories/` and `app-modules/prospect/tests/Tenant/Prospect/RequestFactories/`.
 
 Create one drop-column migration per app-module, matching the pattern used by the original `create_*_phone_numbers_table` migrations (each table is owned by the module that introduced it):
 
 - `app-modules/student-data-model/database/migrations/<timestamp>_drop_can_receive_sms_from_student_phone_numbers_table.php`
-  ```php
-  Schema::table('student_phone_numbers', fn (Blueprint $table) => $table->dropColumn('can_receive_sms'));
-  ```
+    ```php
+    Schema::table('student_phone_numbers', fn (Blueprint $table) => $table->dropColumn('can_receive_sms'));
+    ```
 - `app-modules/prospect/database/migrations/<timestamp>_drop_can_receive_sms_from_prospect_phone_numbers_table.php`
-  ```php
-  Schema::table('prospect_phone_numbers', fn (Blueprint $table) => $table->dropColumn('can_receive_sms'));
-  ```
-Both should provide a `down()` that re-adds the column with `boolean()->default(false)` for rollback safety.
+
+    ```php
+    Schema::table('prospect_phone_numbers', fn (Blueprint $table) => $table->dropColumn('can_receive_sms'));
+    ```
+
+    Both should provide a `down()` that re-adds the column with `boolean()->default(false)` for rollback safety.
 
 - After working through everything above, do a global search across the entire codebase for `can_receive_sms` AND `canReceiveSms`. Every remaining reference must be deleted — including comments, docblocks, dev fixtures, seeders, helper variables, debug logs, anything. Anything that survives the explicit per-file list is a straggler that needs to go. Re-grep until both queries return zero hits in source code (a few historical references may remain in pre-cleanup migrations like `2025_02_04_*_create_*_phone_numbers_table.php` and the new drop-column migrations created above — those are fine to leave).
 
