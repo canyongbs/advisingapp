@@ -37,14 +37,12 @@
 namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
-use App\Features\FormsNotificationFeature;
 use App\Filament\Forms\Components\UserSelect;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection as ConcernsEditPageRedirection;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Override;
 
 class ManageApplicationNotifications extends EditRecord
 {
@@ -55,12 +53,6 @@ class ManageApplicationNotifications extends EditRecord
     protected static ?string $navigationLabel = 'Notifications';
 
     protected static ?string $breadcrumb = 'Notifications';
-
-    #[Override]
-    public static function canAccess(array $parameters = []): bool
-    {
-        return FormsNotificationFeature::active() && parent::canAccess($parameters);
-    }
 
     public function form(Schema $schema): Schema
     {

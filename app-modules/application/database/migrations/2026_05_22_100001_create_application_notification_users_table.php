@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\FormsNotificationFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
@@ -51,16 +50,12 @@ return new class () extends Migration {
                 $table->unique(['application_id', 'user_id']);
                 $table->timestamps();
             });
-
-            FormsNotificationFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            FormsNotificationFeature::deactivate();
-
             Schema::dropIfExists('application_notification_users');
         });
     }
