@@ -67,6 +67,7 @@ use AdvisingApp\StudentDataModel\Enums\EmailHealthStatus;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Scopes\RetentionCrmRestrictionScope;
+use AdvisingApp\StudentDataModel\Models\Scopes\Textable;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Timeline\Models\Timeline;
@@ -542,7 +543,7 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
 
     public function hasValidSms(): bool
     {
-        return $this->phoneNumbers()->textable()->exists();
+        return $this->phoneNumbers()->tap(new Textable())->exists();
     }
 
     public function hasAnyValidContactRoute(): bool
@@ -578,8 +579,8 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
                     ->first()
                     ?->getKey(),
 
-            NotificationChannel::Sms => $this->primaryPhoneNumber()->textable()->first()?->getKey()
-                ?? $this->phoneNumbers()->textable()->orderBy('order')->first()?->getKey(),
+            NotificationChannel::Sms => $this->primaryPhoneNumber()->tap(new Textable())->first()?->getKey()
+                ?? $this->phoneNumbers()->tap(new Textable())->orderBy('order')->first()?->getKey(),
 
             default => null,
         };

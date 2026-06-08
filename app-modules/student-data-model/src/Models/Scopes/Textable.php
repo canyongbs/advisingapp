@@ -34,22 +34,33 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\StudentDataModel\Jobs\QueuePhoneNumberLookups;
-use Illuminate\Database\Migrations\Migration;
+namespace AdvisingApp\StudentDataModel\Models\Scopes;
 
-return new class () extends Migration {
+use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
+use App\Features\PhoneNumberLookupFeature;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class Textable
+{
     /**
-     * One-time backfill: queue Telnyx lookups for every existing Student and
-     * Prospect phone number that has not yet been checked, when this feature
-     * is first deployed.
+     * @template TModel of Model
+     *
+     * @param Builder<TModel> $query
+     *
+     * @return Builder<TModel>
      */
-    public function up(): void
+    public function __invoke(Builder $query): Builder
     {
-        dispatch(new QueuePhoneNumberLookups());
-    }
+        $query->whereDoesntHave('smsOptOut')->whereDoesntHave('bounced');
 
-    public function down(): void
-    {
-        // One-time backfill trigger; there is nothing to roll back.
+        if (PhoneNumberLookupFeature::active()) {
+            return $query->whereHas(
+                'phoneNumberLookup',
+                fn (Builder $lookup) => $lookup->whereIn('status', PhoneNumberLookupStatus::textableStatuses()),
+            );
+        }
+
+        return $query->where('can_receive_sms', true);
     }
-};
+}

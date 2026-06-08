@@ -34,6 +34,8 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\StudentDataModel\Jobs\QueuePhoneNumberLookups;
+use App\Features\PhoneNumberLookupFeature;
 use Illuminate\Database\Migrations\Migration;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
@@ -50,10 +52,24 @@ return new class () extends Migration {
             $table->jsonb('raw_response')->nullable();
             $table->timestamps();
         });
+
+        PhoneNumberLookupFeature::activate();
+
+        // TODO: PhoneNumberLookupFeature Cleanup - this one-time backfill dispatch
+        // queues Telnyx lookups for every existing Student and Prospect phone
+        // number. Remove it once it has run across all tenants/environments.
+        //
+        // afterCommit() is required: the migration runs inside a transaction, and
+        // this job reads the phone_number_lookups table created above. Without it,
+        // a worker could pick the job up before the transaction commits and fail
+        // on a table that does not exist yet.
+        dispatch(new QueuePhoneNumberLookups())->afterCommit();
     }
 
     public function down(): void
     {
+        PhoneNumberLookupFeature::deactivate();
+
         Schema::dropIfExists('phone_number_lookups');
     }
 };

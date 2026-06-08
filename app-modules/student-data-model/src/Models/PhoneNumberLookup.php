@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\StudentDataModel\Models;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Database\Factories\PhoneNumberLookupFactory;
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
@@ -44,15 +43,13 @@ use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use OwenIt\Auditing\Contracts\Auditable;
 
 /**
  * @mixin IdeHelperPhoneNumberLookup
  */
-class PhoneNumberLookup extends BaseModel implements Auditable
+class PhoneNumberLookup extends BaseModel
 {
     use HasUuids;
-    use AuditableTrait;
 
     /** @use HasFactory<PhoneNumberLookupFactory> */
     use HasFactory;

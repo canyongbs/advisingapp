@@ -54,8 +54,7 @@ class UnhealthyEducatablePrimaryPhoneNumber
         // (opted out, bounced, or lacking a textable Telnyx lookup).
         return $query->whereDoesntHave(
             'primaryPhoneNumber',
-            // @phpstan-ignore method.notFound (scope is on StudentPhoneNumber|ProspectPhoneNumber, not the generic Builder)
-            fn (Builder $query) => $query->textable(),
+            fn (Builder $query) => $query->tap(new Textable()),
         );
     }
 }

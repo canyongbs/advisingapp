@@ -9,14 +9,22 @@ created: 2026-05-22
 
 ## Temporary Migrations
 
-- `app-modules/student-data-model/database/migrations/2026_05_21_172638_tmp_data_backfill_phone_number_lookups.php`
-- `database/migrations/2026_06_03_164809_data_activate_phone_number_lookup_feature.php`
+The one-time feature activation and backfill dispatch were consolidated into the **permanent** create-table migration `app-modules/student-data-model/database/migrations/2026_05_20_170052_create_phone_number_lookups_table.php` (single-step, zero-downtime deploy). Do **not** delete that migration — the `phone_number_lookups` table is permanent. Instead, on cleanup strip the temporary pieces out of it so it no longer references the deleted feature flag:
+
+- Remove the `PhoneNumberLookupFeature::activate()` call from `up()`.
+- Remove the `dispatch(new QueuePhoneNumberLookups())->afterCommit()` backfill dispatch, along with its `TODO` and `afterCommit()` comment block, from `up()`.
+- Remove the `PhoneNumberLookupFeature::deactivate()` call from `down()`.
+- Drop the now-unused `use App\Features\PhoneNumberLookupFeature;` and `use AdvisingApp\StudentDataModel\Jobs\QueuePhoneNumberLookups;` imports.
+- Leave only the `Schema::create(...)` / `Schema::dropIfExists(...)` schema operations.
+
+> ⚠️ This is required: deleting `app/Features/PhoneNumberLookupFeature.php` (per the steps below) while this migration still references it would fatal any fresh `migrate` / `migrate:fresh` run.
 
 ## Additional Cleanup
 
 The PhoneNumberLookupFeature gates the transition from the legacy `can_receive_sms` column on `student_phone_numbers` / `prospect_phone_numbers` to a Telnyx-lookup-driven "is textable" derivation. When the feature is permanently on for every tenant, the legacy column and every code path that reads, writes, or surfaces it must be removed.
 
-- In `app-modules/student-data-model/src/Models/Concerns/IsTextable.php`: in both `isTextable()` and `scopeTextable()`, remove the `if (PhoneNumberLookupFeature::active())` branches and keep **only** the body that reads/queries `phoneNumberLookup` against `PhoneNumberLookupStatus::textableStatuses()`. Delete the legacy `$this->getAttribute('can_receive_sms')` / `->where('can_receive_sms', true)` fallbacks. Drop the `use App\Features\PhoneNumberLookupFeature;` import.
+- In `app-modules/student-data-model/src/Models/Concerns/IsTextable.php`: in `isTextable()`, remove the `if (PhoneNumberLookupFeature::active())` branch and keep **only** the body that reads `phoneNumberLookup` against `PhoneNumberLookupStatus::textableStatuses()`. Delete the legacy `$this->getAttribute('can_receive_sms')` fallback. Drop the `use App\Features\PhoneNumberLookupFeature;` import.
+- In `app-modules/student-data-model/src/Models/Scopes/Textable.php`: same — in `__invoke()`, remove the `if (PhoneNumberLookupFeature::active())` branch and keep **only** the body that queries `phoneNumberLookup` against `PhoneNumberLookupStatus::textableStatuses()`. Delete the legacy `->where('can_receive_sms', true)` fallback. Drop the `use App\Features\PhoneNumberLookupFeature;` import.
 - In `app-modules/student-data-model/src/Models/StudentPhoneNumber.php`: in `getHealthStatus()`, remove the feature-flag check and the `$this->can_receive_sms` fallback — keep only the `phoneNumberLookup()->whereIn('status', PhoneNumberLookupStatus::textableStatuses())` derivation. Drop the `use App\Features\PhoneNumberLookupFeature;` import.
 - In `app-modules/prospect/src/Models/ProspectPhoneNumber.php`: same as above for the Prospect side.
 

@@ -50,4 +50,9 @@ class StudentPhoneNumberObserver
             $studentPhoneNumber->order = DB::raw("(SELECT COALESCE(MAX(\"{$studentPhoneNumber->getTable()}\".order), 0) + 1 FROM \"{$studentPhoneNumber->getTable()}\" WHERE sisid = '{$studentPhoneNumber->sisid}')");
         }
     }
+
+    public function saved(StudentPhoneNumber $studentPhoneNumber): void
+    {
+        $this->queuePhoneNumberLookupIfNeeded($studentPhoneNumber);
+    }
 }

@@ -38,12 +38,11 @@ namespace AdvisingApp\StudentDataModel\Models\Concerns;
 
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 use App\Features\PhoneNumberLookupFeature;
-use Illuminate\Database\Eloquent\Builder;
 
 /**
- * Used by StudentPhoneNumber and ProspectPhoneNumber; both expose the
- * `smsOptOut`, `bounced`, and `phoneNumberLookup` relationships keyed by
- * `number`.
+ * Provides a per-row `isTextable()` predicate for StudentPhoneNumber and
+ * ProspectPhoneNumber. Both expose the `smsOptOut`, `bounced`, and
+ * `phoneNumberLookup` relationships keyed by `number`.
  *
  * Textability is gated per-tenant by the PhoneNumberLookupFeature Pennant
  * flag so the rollout can be staged:
@@ -75,24 +74,5 @@ trait IsTextable
         }
 
         return (bool) $this->getAttribute('can_receive_sms');
-    }
-
-    /**
-     * @param Builder<static> $query
-     */
-    public function scopeTextable(Builder $query): void
-    {
-        $query->whereDoesntHave('smsOptOut')->whereDoesntHave('bounced');
-
-        if (PhoneNumberLookupFeature::active()) {
-            $query->whereHas(
-                'phoneNumberLookup',
-                fn (Builder $lookup) => $lookup->whereIn('status', PhoneNumberLookupStatus::textableStatuses()),
-            );
-
-            return;
-        }
-
-        $query->where('can_receive_sms', true);
     }
 }

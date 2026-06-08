@@ -46,10 +46,14 @@ use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
  * Observer concern that queues a Telnyx lookup whenever a phone-number record
  * is first introduced or its `number` changes — provided no lookup result
  * exists for that number yet and the lookup service is configured.
+ *
+ * Deliberately NOT named `saved()` so it doesn't claim the Eloquent observer
+ * lifecycle method — each observer should call this from its own `saved()`,
+ * leaving room to layer additional per-observer behavior alongside.
  */
 trait QueuesPhoneNumberLookupOnSave
 {
-    public function saved(StudentPhoneNumber|ProspectPhoneNumber $phoneNumber): void
+    protected function queuePhoneNumberLookupIfNeeded(StudentPhoneNumber|ProspectPhoneNumber $phoneNumber): void
     {
         if (! $phoneNumber->wasRecentlyCreated && ! $phoneNumber->wasChanged('number')) {
             return;

@@ -52,8 +52,7 @@ class HealthyEducatablePrimaryPhoneNumber
     {
         return $query->whereHas(
             'primaryPhoneNumber',
-            // @phpstan-ignore method.notFound (scope is on StudentPhoneNumber|ProspectPhoneNumber, not the generic Builder)
-            fn (Builder $query) => $query->textable(),
+            fn (Builder $query) => $query->tap(new Textable()),
         );
     }
 }

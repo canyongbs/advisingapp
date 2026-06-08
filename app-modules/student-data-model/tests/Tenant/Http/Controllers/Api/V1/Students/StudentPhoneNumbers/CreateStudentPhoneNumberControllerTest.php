@@ -157,8 +157,9 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
 ]);
 
 // TODO: When the PhoneNumberLookupFeature is removed, delete this test
-// case and add a `can_receive_sms is boolean` dataset entry back to the
-// `validates` test above.
+// case entirely. The `can_receive_sms` column and its validation rule are
+// both being dropped at the same time (per the cleanup task), so there's
+// nothing left to validate.
 it('validates can_receive_sms as boolean when the PhoneNumberLookupFeature is inactive (legacy gate)', function () {
     PhoneNumberLookupFeature::deactivate();
 

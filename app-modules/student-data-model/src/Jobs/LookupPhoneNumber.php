@@ -59,6 +59,8 @@ class LookupPhoneNumber implements ShouldBeUnique, ShouldQueue
 
     public int $uniqueFor = 90000;
 
+    public int $maxExceptions = 3;
+
     public function __construct(
         public readonly string $phoneNumber,
     ) {}
