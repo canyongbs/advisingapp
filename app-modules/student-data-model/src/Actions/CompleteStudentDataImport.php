@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Actions;
 
+use AdvisingApp\StudentDataModel\Jobs\QueuePhoneNumberLookups;
 use AdvisingApp\StudentDataModel\Models\StudentDataImport;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -111,6 +112,10 @@ class CompleteStudentDataImport
                     DB::statement("alter table \"import_{$import->enrollmentsImport->getKey()}_enrollments\" rename to \"enrollments\"");
                 }
             });
+
+            // The phone number table was just swapped in via raw SQL, which
+            // bypasses model observers, so queue lookups for any new numbers.
+            dispatch(new QueuePhoneNumberLookups());
         } else {
             DB::statement("drop table if exists \"import_{$import->studentsImport->getKey()}_students\"");
 

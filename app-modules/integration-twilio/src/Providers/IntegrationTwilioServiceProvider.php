@@ -40,7 +40,9 @@ use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
 use AdvisingApp\Engagement\Actions\FindEngagementResponseSender;
 use AdvisingApp\IntegrationTwilio\Actions\Playground\FindEngagementResponseSender as PlaygroundFindEngagementResponseSender;
 use AdvisingApp\IntegrationTwilio\IntegrationTwilioPlugin;
+use AdvisingApp\IntegrationTwilio\Services\TelnyxPhoneNumberLookupService;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
+use AdvisingApp\StudentDataModel\Contracts\PhoneNumberLookupService;
 use App\Enums\Integration;
 use App\Exceptions\IntegrationException;
 use Filament\Panel;
@@ -60,6 +62,8 @@ class IntegrationTwilioServiceProvider extends ServiceProvider
 
             return new FindEngagementResponseSender();
         });
+
+        $this->app->scoped(PhoneNumberLookupService::class, TelnyxPhoneNumberLookupService::class);
 
         $settings = $this->app->make(TwilioSettings::class);
 

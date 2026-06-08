@@ -192,7 +192,7 @@ it('excludes bounced phones from sms channel options', function () {
     // Add a bounced phone as the only phone
     $phoneNumber = StudentPhoneNumber::factory()
         ->for($student, 'student')
-        ->create(['can_receive_sms' => true]);
+        ->create();
 
     BouncedPhoneNumber::factory()->create([
         'number' => $phoneNumber->number,
