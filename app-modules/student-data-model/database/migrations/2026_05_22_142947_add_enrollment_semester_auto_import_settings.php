@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\EnrollmentSemesterAutoImportSettingsFeature;
 use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
@@ -54,16 +53,12 @@ return new class () extends SettingsMigration {
             } catch (SettingAlreadyExists $exception) {
                 // do nothing
             }
-
-            EnrollmentSemesterAutoImportSettingsFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            EnrollmentSemesterAutoImportSettingsFeature::deactivate();
-
             $this->migrator->deleteIfExists('student_information_system.is_enrollment_semester_auto_import_enabled');
             $this->migrator->deleteIfExists('student_information_system.enrollment_semester_auto_import_default_order');
         });
