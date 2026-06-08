@@ -34,34 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\DataTransferObjects\LicenseManagement;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Filament\Pages\ProfileInformation;
+use App\Models\User;
+use App\Settings\LicenseSettings;
 
-use Spatie\LaravelData\Attributes\MapInputName;
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
-#[MapInputName(SnakeCaseMapper::class)]
-class LicenseAddonsData extends Data
-{
-    public function __construct(
-        public bool $onlineForms = false,
-        public bool $onlineSurveys = false,
-        public bool $onlineAdmissions = false,
-        public bool $caseManagement = false,
-        public bool $resourceHub = false,
-        public bool $supportPrograms = false,
-        public bool $eventManagement = false,
-        public bool $realtimeChat = false,
-        public bool $mobileApps = false,
-        public bool $scheduleAndAppointments = false,
-        public bool $customAiAssistants = false, //TODO: AiAssistantDtoRenameFeature cleanup: remove this when you remove the feature flag
-        public bool $employeeAdvisors = false,
-        public bool $researchAdvisor = false,
-        public bool $qnaAdvisor = false, //TODO: AiAssistantDtoRenameFeature cleanup: remove this when you remove the feature flag
-        public bool $customerAdvisors = false,
-        public bool $dataAdvisor = false,
-        public bool $projectManagement = false,
-        public bool $earlyAlert = false,
-        public bool $publicProfiles = false,
-    ) {}
-}
+it('is gated by proper access control', function () {
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->publicProfiles = false;
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    actingAs($user);
+
+    livewire(ProfileInformation::class)
+        ->assertSchemaComponentHidden('public-profile');
+
+    $settings->data->addons->publicProfiles = true;
+    $settings->save();
+
+    livewire(ProfileInformation::class)
+        ->assertSchemaComponentVisible('public-profile');
+});
