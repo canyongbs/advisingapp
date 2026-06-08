@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\CustomAdvisorRenameFeature;
 use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Exceptions\SettingDoesNotExist;
@@ -75,16 +74,12 @@ return new class () extends SettingsMigration {
             foreach ($this->applicableFeatureKeys as $key) {
                 $this->mapApplicableFeatures($key, 'custom_advisors', 'employee_advisors');
             }
-
-            CustomAdvisorRenameFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            CustomAdvisorRenameFeature::deactivate();
-
             foreach ($this->applicableFeatureKeys as $key) {
                 $this->mapApplicableFeatures($key, 'employee_advisors', 'custom_advisors');
             }

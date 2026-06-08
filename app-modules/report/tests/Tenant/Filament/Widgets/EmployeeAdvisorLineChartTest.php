@@ -37,11 +37,6 @@
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiAssistantUse;
 use AdvisingApp\Report\Filament\Widgets\EmployeeAdvisorLineChart;
-use App\Features\CustomAdvisorRenameFeature;
-
-beforeEach(function () {
-    CustomAdvisorRenameFeature::activate();
-});
 
 it('returns correct monthly employee advisor exchanges data within the given date range', function () {
     $startDate = now()->subMonths(3);
