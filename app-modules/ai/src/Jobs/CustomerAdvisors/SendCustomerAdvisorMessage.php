@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Jobs\CustomerAdvisors;
 
 use AdvisingApp\Ai\Actions\GetCustomerAdvisorInstructions;
+use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiReasoningEffort;
 use AdvisingApp\Ai\Events\CustomerAdvisors\CustomerAdvisorMessageChunk;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
@@ -72,6 +73,7 @@ class SendCustomerAdvisorMessage implements ShouldQueue
         protected CustomerAdvisorThread $thread,
         protected string $content,
         protected array $request = [],
+        protected ?AiModel $model = null,
     ) {}
 
     public function handle(GetCustomerAdvisorInstructions $getCustomerAdvisorInstructions): void
@@ -87,7 +89,7 @@ class SendCustomerAdvisorMessage implements ShouldQueue
         $message->save();
 
         try {
-            $aiService = $this->advisor->model->getService();
+            $aiService = ($this->model ?? $this->advisor->model)->getService();
 
             $files = [
                 ...$this->advisor->files()->whereNotNull('parsing_results')->get()->all(),
