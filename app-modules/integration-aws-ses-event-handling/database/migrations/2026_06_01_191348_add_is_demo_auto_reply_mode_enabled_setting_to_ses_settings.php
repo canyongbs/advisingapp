@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsBlueprint;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
@@ -42,23 +41,18 @@ use Spatie\LaravelSettings\Migrations\SettingsMigration;
 return new class () extends SettingsMigration {
     public function up(): void
     {
-        DB::transaction(function () {
-            try {
-                $this->migrator->inGroup('ses', function (SettingsBlueprint $blueprint): void {
-                    $blueprint->add('is_demo_auto_reply_mode_enabled', false);
-                });
-            } catch (SettingAlreadyExists) {
-            }
-
-        });
+        try {
+            $this->migrator->inGroup('ses', function (SettingsBlueprint $blueprint): void {
+                $blueprint->add('is_demo_auto_reply_mode_enabled', false);
+            });
+        } catch (SettingAlreadyExists) {
+        }
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            $this->migrator->inGroup('ses', function (SettingsBlueprint $blueprint): void {
-                $blueprint->delete('is_demo_auto_reply_mode_enabled');
-            });
+        $this->migrator->inGroup('ses', function (SettingsBlueprint $blueprint): void {
+            $blueprint->delete('is_demo_auto_reply_mode_enabled');
         });
     }
 };
