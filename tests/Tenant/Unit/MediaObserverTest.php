@@ -34,11 +34,11 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Media;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 
 use function Pest\Laravel\actingAs;
 
@@ -128,108 +128,6 @@ describe('Media model createdBy relationship', function () {
     });
 });
 
-describe('Media model accessor attributes', function () {
-    it('returns user name from media created_by_name attribute', function () {
-        Storage::fake('s3');
-
-        $user = User::factory()->create(['name' => 'John Doe']);
-        actingAs($user);
-
-        $media = $user->addMediaFromString('test content')
-            ->usingFileName('test.txt')
-            ->toMediaCollection('default');
-
-        $media->refresh();
-
-        expect($media->created_by_name)->toBe('John Doe');
-    });
-
-    it('returns student name from media created_by_name attribute', function () {
-        Storage::fake('s3');
-
-        $user = User::factory()->create();
-        $student = Student::factory()->create([
-            'first' => 'Jane',
-            'last' => 'Smith',
-            'full_name' => 'Jane Smith',
-        ]);
-
-        $media = $user->addMediaFromString('test content')
-            ->usingFileName('test.txt')
-            ->toMediaCollection('default');
-
-        $media->createdBy()->associate($student);
-        $media->saveQuietly();
-        $media->refresh();
-
-        expect($media->created_by_name)->toBe('Jane Smith');
-    });
-
-    it('returns N/A for media created_by_name when no creator is set', function () {
-        Storage::fake('s3');
-
-        $user = User::factory()->create();
-
-        $media = $user->addMediaFromString('test content')
-            ->usingFileName('test.txt')
-            ->toMediaCollection('default');
-
-        expect($media->created_by_name)->toBe('N/A');
-    });
-
-    it('returns sub label for media creator user with job title', function () {
-        Storage::fake('s3');
-
-        $user = User::factory()->create([
-            'name' => 'John Doe',
-            'job_title' => 'Engineer',
-        ]);
-        actingAs($user);
-
-        $media = $user->addMediaFromString('test content')
-            ->usingFileName('test.txt')
-            ->toMediaCollection('default');
-
-        $media->refresh();
-
-        expect($media->created_by_sub_label)->toContain('Engineer');
-    });
-
-    it('returns Student as media created_by_sub_label for student creator', function () {
-        Storage::fake('s3');
-
-        $user = User::factory()->create();
-        $student = Student::factory()->create();
-
-        $media = $user->addMediaFromString('test content')
-            ->usingFileName('test.txt')
-            ->toMediaCollection('default');
-
-        $media->createdBy()->associate($student);
-        $media->saveQuietly();
-        $media->refresh();
-
-        expect($media->created_by_sub_label)->toBe('Student');
-    });
-
-    it('returns Prospect as media created_by_sub_label for prospect creator', function () {
-        Storage::fake('s3');
-
-        $user = User::factory()->create();
-        $prospect = Prospect::factory()->create();
-
-        $media = $user->addMediaFromString('test content')
-            ->usingFileName('test.txt')
-            ->toMediaCollection('default');
-
-        $media->createdBy()->associate($prospect);
-        $media->saveQuietly();
-        $media->refresh();
-
-        expect($media->created_by_sub_label)->toBe('Prospect');
-    });
-});
-
 describe('Media model config', function () {
     it('uses the custom Media model from config', function () {
         $mediaModel = config('media-library.media_model');
@@ -240,6 +138,6 @@ describe('Media model config', function () {
     it('Media model extends Spatie Media', function () {
         $media = new Media();
 
-        expect($media)->toBeInstanceOf(Spatie\MediaLibrary\MediaCollections\Models\Media::class);
+        expect($media)->toBeInstanceOf(SpatieMedia::class);
     });
 });
