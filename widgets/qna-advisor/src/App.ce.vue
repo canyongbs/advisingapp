@@ -75,8 +75,11 @@
     const loadingError = ref(null);
     const startThreadUrl = ref(null);
     const sendMessageUrl = ref(null);
+    const retryMessageUrl = ref(null);
     const threadId = ref(null);
     const finishThreadUrl = ref(null);
+    const responseError = ref(null);
+    const isRateLimited = ref(false);
     const message = ref('');
     const messages = ref([]);
     const currentResponse = ref('');
@@ -97,6 +100,7 @@
     let pendingComplete = false;
     let messageSentAt = null;
     let hasLoggedFirstChunk = false;
+    let lastUserMessage = null;
 
     function renderMarkdown(raw) {
         return DOMPurify.sanitize(marked.parse(raw), {
@@ -175,6 +179,7 @@
                 authentication.value.refreshUrl = json.refresh_url;
                 startThreadUrl.value = json.start_thread_url;
                 sendMessageUrl.value = json.send_message_url;
+                retryMessageUrl.value = json.retry_message_url;
                 advisor.value = json.advisor;
 
                 if (requiresAuthentication.value === true) {
@@ -267,12 +272,15 @@
 
         const userMessage = message.value;
         message.value = '';
+        lastUserMessage = userMessage;
 
         messages.value.push({
             from: 'user',
             content: userMessage,
         });
 
+        responseError.value = null;
+        isRateLimited.value = false;
         isLoading.value = true;
         currentResponse.value = '';
         resetWordQueue();
@@ -286,6 +294,29 @@
             await authorizedPost(sendMessageUrl.value, requestBody);
         } catch (error) {
             console.error('Send message error:', error);
+            isLoading.value = false;
+        }
+    }
+
+    async function retryMessage() {
+        if (!retryMessageUrl.value || !lastUserMessage || !threadId.value) return;
+
+        messageSentAt = new Date();
+        hasLoggedFirstChunk = false;
+
+        responseError.value = null;
+        isRateLimited.value = false;
+        isLoading.value = true;
+        currentResponse.value = '';
+        resetWordQueue();
+
+        try {
+            await authorizedPost(retryMessageUrl.value, {
+                content: lastUserMessage,
+                thread_id: threadId.value,
+            });
+        } catch (error) {
+            console.error('Retry message error:', error);
             isLoading.value = false;
         }
     }
@@ -444,14 +475,33 @@
             startRenderInterval();
 
             websocketChannel.listen('.qna-advisor-message.chunk', (data) => {
+                // Heavy traffic: the backend hit a rate limit. Mirror the institutional
+                // advisor by waiting for the limit to reset, then retrying automatically.
+                if (data.rate_limit_resets_after_seconds) {
+                    responseError.value = 'Heavy traffic, just a few more moments...';
+                    isRateLimited.value = true;
+                    resetWordQueue();
+
+                    setTimeout(() => {
+                        retryMessage();
+                    }, data.rate_limit_resets_after_seconds * 1000);
+
+                    return;
+                }
+
                 if (data.error) {
-                    console.error('Advisor message error:', data.error);
+                    responseError.value = data.error;
+                    isRateLimited.value = false;
                     resetWordQueue();
                     isLoading.value = false;
+
                     return;
                 }
 
                 if (data.content) {
+                    responseError.value = null;
+                    isRateLimited.value = false;
+
                     if (!hasLoggedFirstChunk) {
                         console.log((new Date() - messageSentAt) / 1000);
                         hasLoggedFirstChunk = true;
@@ -829,6 +879,21 @@
                         </div>
                     </div>
                 </div>
+                <div
+                    v-if="responseError"
+                    class="flex items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-2 text-sm text-red-700 dark:border-red-500/20 dark:bg-red-500/10 dark:text-red-400"
+                >
+                    <span>{{ responseError }}</span>
+
+                    <button
+                        v-if="!isRateLimited"
+                        @click="retryMessage"
+                        class="shrink-0 font-semibold underline hover:no-underline"
+                    >
+                        Try again
+                    </button>
+                </div>
+
                 <div
                     v-if="!isThreadFinished"
                     class="w-full overflow-hidden rounded-xl border border-gray-950/5 bg-gray-50 shadow-xs dark:border-white/10 dark:bg-gray-700"

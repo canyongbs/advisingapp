@@ -34,60 +34,48 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Events\QnaAdvisors;
+namespace AdvisingApp\Ai\Http\Controllers\QnaAdvisors;
 
+use AdvisingApp\Ai\Jobs\QnaAdvisors\RetryQnaAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisor;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
-use Carbon\CarbonInterface;
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
-use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
-class QnaAdvisorMessageChunk implements ShouldBroadcastNow
+class RetryAdvisorMessageController
 {
-    use Dispatchable;
-    use InteractsWithSockets;
-
-    public function __construct(
-        public QnaAdvisor $advisor,
-        public QnaAdvisorThread $thread,
-        public string $content,
-        public bool $isComplete = false,
-        public ?string $error = null,
-        public ?CarbonInterface $rateLimitResetsAt = null,
-    ) {}
-
-    public function broadcastAs(): string
+    public function __invoke(Request $request, QnaAdvisor $advisor): JsonResponse
     {
-        return 'qna-advisor-message.chunk';
-    }
+        $data = $request->validate([
+            'content' => ['required', 'string', 'max:25000'],
+            'thread_id' => ['required', 'string', 'max:255'],
+        ]);
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function broadcastWith(): array
-    {
-        return [
-            'content' => $this->content,
-            'is_complete' => $this->isComplete,
-            'error' => $this->error,
-            'rate_limit_resets_after_seconds' => $this->rateLimitResetsAt ? (now()->diffInSeconds($this->rateLimitResetsAt) + 1) : null,
-        ];
-    }
+        $author = auth('student')->user() ?? auth('prospect')->user();
 
-    /**
-     * @return array<int, Channel>
-     */
-    public function broadcastOn(): array
-    {
-        $channelName = "qna-advisor-thread-{$this->thread->getKey()}";
+        $thread = QnaAdvisorThread::query()
+            ->whereKey($data['thread_id'])
+            ->whereBelongsTo($advisor, 'advisor')
+            ->whereMorphedTo('author', $author)
+            ->whereNull('finished_at')
+            ->firstOrFail();
 
-        return [
-            $this->advisor->is_requires_authentication_enabled
-                ? new PrivateChannel($channelName)
-                : new Channel($channelName),
-        ];
+        dispatch(new RetryQnaAdvisorMessage(
+            $advisor,
+            $thread,
+            $data['content'],
+            request: [
+                'headers' => Arr::only(
+                    request()->headers->all(),
+                    ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
+                ),
+                'ip' => request()->ip(),
+            ],
+        ))->onConnection('background');
+
+        return response()->json([
+            'message' => 'Message dispatched for processing via websockets.',
+        ]);
     }
 }

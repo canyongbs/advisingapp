@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\QnaAdvisorResourceController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\QnaAdvisorResourcesController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\RegisterProspectController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\RequestAuthenticationController;
+use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\RetryAdvisorMessageController as RetryQnaAdvisorMessageController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\SendAdvisorMessageController as SendQnaAdvisorMessageController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\ShowAdvisorController;
 use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\StartAdvisorThreadController;
@@ -112,6 +113,13 @@ Route::middleware([
                         QnaAdvisorAuthorization::class,
                     ])
                     ->name('messages.send');
+
+                Route::post('/messages/retry', RetryQnaAdvisorMessageController::class)
+                    ->middleware([
+                        'signed',
+                        QnaAdvisorAuthorization::class,
+                    ])
+                    ->name('messages.retry');
 
                 Route::post('/threads/{thread}/finish', FinishAdvisorThreadController::class)
                     ->middleware([

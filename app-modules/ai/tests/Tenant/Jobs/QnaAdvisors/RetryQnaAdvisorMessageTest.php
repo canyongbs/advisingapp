@@ -34,60 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Events\QnaAdvisors;
-
+use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Events\QnaAdvisors\QnaAdvisorMessageChunk;
+use AdvisingApp\Ai\Jobs\QnaAdvisors\RetryQnaAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Models\QnaAdvisorMessage;
 use AdvisingApp\Ai\Models\QnaAdvisorThread;
-use Carbon\CarbonInterface;
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
-use Illuminate\Foundation\Events\Dispatchable;
+use AdvisingApp\Ai\Services\TestAiService;
+use AdvisingApp\Ai\Support\StreamingChunks\Finish;
+use AdvisingApp\Ai\Support\StreamingChunks\Text;
+use Illuminate\Support\Facades\Event;
 
-class QnaAdvisorMessageChunk implements ShouldBroadcastNow
-{
-    use Dispatchable;
-    use InteractsWithSockets;
+it('reuses the existing user message when retrying instead of duplicating it', function () {
+    Event::fake([QnaAdvisorMessageChunk::class]);
 
-    public function __construct(
-        public QnaAdvisor $advisor,
-        public QnaAdvisorThread $thread,
-        public string $content,
-        public bool $isComplete = false,
-        public ?string $error = null,
-        public ?CarbonInterface $rateLimitResetsAt = null,
-    ) {}
+    $advisor = QnaAdvisor::factory()->create(['model' => AiModel::Test]);
+    $thread = QnaAdvisorThread::factory()->for($advisor, 'advisor')->create();
 
-    public function broadcastAs(): string
-    {
-        return 'qna-advisor-message.chunk';
-    }
+    $userMessage = new QnaAdvisorMessage();
+    $userMessage->thread()->associate($thread);
+    $userMessage->content = 'What are your office hours?';
+    $userMessage->is_advisor = false;
+    $userMessage->save();
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function broadcastWith(): array
-    {
-        return [
-            'content' => $this->content,
-            'is_complete' => $this->isComplete,
-            'error' => $this->error,
-            'rate_limit_resets_after_seconds' => $this->rateLimitResetsAt ? (now()->diffInSeconds($this->rateLimitResetsAt) + 1) : null,
-        ];
-    }
+    $service = Mockery::mock(TestAiService::class)->makePartial();
+    $service->shouldReceive('streamRaw')->once()->andReturn(function () {
+        yield new Text('We are open 9 to 5.');
 
-    /**
-     * @return array<int, Channel>
-     */
-    public function broadcastOn(): array
-    {
-        $channelName = "qna-advisor-thread-{$this->thread->getKey()}";
+        yield new Finish();
+    });
+    app()->instance(TestAiService::class, $service);
 
-        return [
-            $this->advisor->is_requires_authentication_enabled
-                ? new PrivateChannel($channelName)
-                : new Channel($channelName),
-        ];
-    }
-}
+    dispatch_sync(new RetryQnaAdvisorMessage($advisor, $thread, 'What are your office hours?'));
+
+    // The user message is reused (not duplicated) and a fresh advisor response is generated.
+    expect(QnaAdvisorMessage::query()->where('is_advisor', false)->count())->toBe(1);
+
+    $response = QnaAdvisorMessage::query()->where('is_advisor', true)->first();
+
+    expect($response)->not->toBeNull()
+        ->and($response->content)->toBe('We are open 9 to 5.');
+});
