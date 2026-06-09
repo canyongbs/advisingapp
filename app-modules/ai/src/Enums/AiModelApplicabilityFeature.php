@@ -46,7 +46,7 @@ enum AiModelApplicabilityFeature: string implements HasLabel
 
     case ResearchAdvisor = 'research_advisor';
 
-    case QuestionAndAnswerAdvisor = 'question_and_answer_advisor';
+    case CustomerAdvisor = 'question_and_answer_advisor';
 
     case IntegratedAdvisor = 'integrated_advisor';
 
@@ -56,7 +56,7 @@ enum AiModelApplicabilityFeature: string implements HasLabel
             self::InstitutionalAdvisor => 'Institutional Advisor',
             self::EmployeeAdvisors => 'Employee Advisors',
             self::ResearchAdvisor => 'Research Advisor',
-            self::QuestionAndAnswerAdvisor => 'Customer Advisor',
+            self::CustomerAdvisor => 'Customer Advisor',
             self::IntegratedAdvisor => 'Integrated Advisor',
         };
     }

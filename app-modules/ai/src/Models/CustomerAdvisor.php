@@ -1,0 +1,202 @@
+<?php
+
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS Inc.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+
+namespace AdvisingApp\Ai\Models;
+
+use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
+use AdvisingApp\Ai\Observers\CustomerAdvisorObserver;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use App\Features\RenameQnaAdvisorsFeature;
+use App\Models\BaseModel;
+use App\Models\Media;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\MediaLibrary\MediaCollections\File;
+use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
+
+/**
+ * @mixin IdeHelperCustomerAdvisor
+ */
+#[ObservedBy([CustomerAdvisorObserver::class])]
+class CustomerAdvisor extends BaseModel implements HasMedia, Auditable
+{
+    use CanAddAssistantLicenseGlobalScope;
+
+    /** @use InteractsWithMedia<Media> */
+    use InteractsWithMedia;
+
+    use SoftDeletes;
+    use AuditableTrait;
+
+    protected $fillable = [
+        'archived_at',
+        'name',
+        'model',
+        'description',
+        'is_embed_enabled',
+        'authorized_domains',
+        'is_requires_authentication_enabled',
+        'is_generate_prospects_enabled',
+        'is_introductory_message_enabled',
+        'is_introductory_message_dynamic',
+        'introductory_message',
+        'title_text_color',
+        'description_text_color',
+        'button_text_color',
+        'button_text_hover_color',
+        'button_background_color',
+        'button_background_hover_color',
+        'default_theme',
+        'has_resource_hub_knowledge',
+    ];
+
+    protected $casts = [
+        'archived_at' => 'datetime',
+        'model' => AiModel::class,
+        'is_embed_enabled' => 'boolean',
+        'authorized_domains' => 'json',
+        'is_requires_authentication_enabled' => 'boolean',
+        'is_generate_prospects_enabled' => 'boolean',
+        'is_introductory_message_enabled' => 'boolean',
+        'is_introductory_message_dynamic' => 'boolean',
+        'has_resource_hub_knowledge' => 'boolean',
+    ];
+
+    /**
+     * @return HasMany<CustomerAdvisorCategory, $this>
+     */
+    public function categories(): HasMany
+    {
+        return $this->hasMany(CustomerAdvisorCategory::class, RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id');
+    }
+
+    /**
+     * @return HasManyThrough<CustomerAdvisorQuestion, CustomerAdvisorCategory, $this>
+     */
+    public function questions(): HasManyThrough
+    {
+        return $this->hasManyThrough(
+            CustomerAdvisorQuestion::class,
+            CustomerAdvisorCategory::class,
+            RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id',
+            'category_id',
+            'id',
+            'id'
+        );
+    }
+
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('avatar')
+            ->acceptsFile(function (File $file) {
+                return in_array($file->mimeType, [
+                    'image/png',
+                    'image/jpeg',
+                    'image/gif',
+                ]);
+            });
+    }
+
+    public function registerMediaConversions(?SpatieMedia $media = null): void
+    {
+        $this->addMediaConversion('avatar-height-250px')
+            ->performOnCollections('avatar')
+            ->height(250);
+
+        $this->addMediaConversion('thumbnail')
+            ->performOnCollections('avatar')
+            ->width(32)
+            ->height(32);
+    }
+
+    /**
+     * @return HasMany<CustomerAdvisorFile, $this>
+     */
+    public function files(): HasMany
+    {
+        return $this->hasMany(CustomerAdvisorFile::class, 'advisor_id');
+    }
+
+    /**
+     * @return HasMany<CustomerAdvisorLink, $this>
+     */
+    public function links(): HasMany
+    {
+        return $this->hasMany(CustomerAdvisorLink::class, 'advisor_id');
+    }
+
+    public function getInstructionsCacheKey(): string
+    {
+        return 'customer-advisor-' . $this->getKey() . '-instructions';
+    }
+
+    /**
+     * @return HasMany<CustomerAdvisorThread, $this>
+     */
+    public function threads(): HasMany
+    {
+        return $this->hasMany(CustomerAdvisorThread::class, 'advisor_id');
+    }
+
+    /**
+     * @return array<int, ResourceHubArticle>
+     */
+    public function getResourceHubArticles(): array
+    {
+        if (! $this->has_resource_hub_knowledge) {
+            return [];
+        }
+
+        return ResourceHubArticle::query()
+            ->public()
+            ->whereNotNull('article_details')
+            ->get(['id', 'updated_at'])
+            ->all();
+    }
+
+    // TODO: Cleanup Task - RenameQnaAdvisorsFeature, remove the getTable() method
+    public function getTable()
+    {
+        return RenameQnaAdvisorsFeature::active() ? 'customer_advisors' : 'qna_advisors';
+    }
+}

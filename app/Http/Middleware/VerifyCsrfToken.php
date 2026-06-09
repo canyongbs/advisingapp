@@ -49,7 +49,7 @@ class VerifyCsrfToken extends Middleware
         '/api/forms/*',
         '/api/applications/*',
         '/api/surveys/*',
-        '/api/ai/qna-advisors/*',
+        '/api/ai/customer-advisors/*',
         '/api/event-registration/*',
         '/api/cases/*',
         '/api/v1/*',

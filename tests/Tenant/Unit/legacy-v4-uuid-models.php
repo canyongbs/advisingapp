@@ -13,19 +13,19 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiThreadFolder;
 use AdvisingApp\Ai\Models\ConfidentialPromptTeam;
 use AdvisingApp\Ai\Models\ConfidentialPromptUser;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
+use AdvisingApp\Ai\Models\CustomerAdvisorFile;
+use AdvisingApp\Ai\Models\CustomerAdvisorLink;
+use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
+use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Ai\Models\DataAdvisor;
 use AdvisingApp\Ai\Models\LegacyAiMessageLog;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Ai\Models\PromptUpvote;
 use AdvisingApp\Ai\Models\PromptUse;
-use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorCategory;
-use AdvisingApp\Ai\Models\QnaAdvisorFile;
-use AdvisingApp\Ai\Models\QnaAdvisorLink;
-use AdvisingApp\Ai\Models\QnaAdvisorMessage;
-use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
-use AdvisingApp\Ai\Models\QnaAdvisorThread;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Alert\Models\StudentAlert;
 use AdvisingApp\Application\Models\Application;
@@ -289,13 +289,13 @@ return [
     PromptType::class,
     PromptUpvote::class,
     PromptUse::class,
-    QnaAdvisor::class,
-    QnaAdvisorCategory::class,
-    QnaAdvisorFile::class,
-    QnaAdvisorLink::class,
-    QnaAdvisorMessage::class,
-    QnaAdvisorQuestion::class,
-    QnaAdvisorThread::class,
+    CustomerAdvisor::class,
+    CustomerAdvisorCategory::class,
+    CustomerAdvisorFile::class,
+    CustomerAdvisorLink::class,
+    CustomerAdvisorMessage::class,
+    CustomerAdvisorQuestion::class,
+    CustomerAdvisorThread::class,
     AlertConfiguration::class,
     StudentAlert::class,
     Application::class,
