@@ -42,9 +42,9 @@ use AdvisingApp\Report\Filament\Widgets\CustomerAdvisorReportStats;
 use AdvisingApp\Report\Filament\Widgets\CustomerAdvisorReportTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Enums\Feature;
-use App\Enums\NavigationGroup;
 use App\Features\AiAssistantDtoRenameFeature;
 use App\Filament\Clusters\ReportLibrary;
+use App\Filament\Clusters\ReportLibraryNavigationGroup;
 use Illuminate\Support\Facades\Gate;
 use UnitEnum;
 
@@ -52,7 +52,7 @@ class CustomerAdvisorReport extends AiReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::EnterpriseAi;
+    protected static string | UnitEnum | null $navigationGroup = ReportLibraryNavigationGroup::EnterpriseAi;
 
     protected static ?string $title = 'Customer Advisor';
 

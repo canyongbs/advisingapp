@@ -44,6 +44,7 @@ use AdvisingApp\Report\Filament\Widgets\ProspectInteractionTypeDoughnutChart;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionUsersTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Filament\Clusters\ReportLibrary;
+use App\Filament\Clusters\ReportLibraryNavigationGroup;
 use UnitEnum;
 
 class ProspectInteractionReport extends ProspectReport
@@ -54,7 +55,7 @@ class ProspectInteractionReport extends ProspectReport
 
     protected static string $routePath = 'prospect-interaction-report';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
+    protected static string | UnitEnum | null $navigationGroup = ReportLibraryNavigationGroup::Prospects;
 
     protected string $cacheTag = 'report-prospect-interaction';
 

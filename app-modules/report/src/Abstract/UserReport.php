@@ -37,6 +37,7 @@
 namespace AdvisingApp\Report\Abstract;
 
 use App\Filament\Clusters\ReportLibrary;
+use App\Filament\Clusters\ReportLibraryNavigationGroup;
 use Filament\Pages\Dashboard;
 use UnitEnum;
 
@@ -44,7 +45,7 @@ abstract class UserReport extends Dashboard
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Users';
+    protected static string | UnitEnum | null $navigationGroup = ReportLibraryNavigationGroup::Users;
 
     public static function canAccess(): bool
     {

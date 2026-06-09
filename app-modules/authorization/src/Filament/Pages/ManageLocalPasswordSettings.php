@@ -38,6 +38,7 @@ namespace AdvisingApp\Authorization\Filament\Pages;
 
 use AdvisingApp\Authorization\Settings\LocalPasswordSettings;
 use App\Filament\Clusters\Authentication;
+use App\Filament\Clusters\AuthenticationNavigationGroup;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
@@ -48,7 +49,7 @@ class ManageLocalPasswordSettings extends SettingsPage
 {
     protected static ?string $navigationLabel = 'Local Passwords';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Local Authentication';
+    protected static string | UnitEnum | null $navigationGroup = AuthenticationNavigationGroup::LocalAuthentication;
 
     protected static ?string $cluster = Authentication::class;
 

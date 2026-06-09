@@ -41,8 +41,8 @@ use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
 use AdvisingApp\Report\Filament\Widgets\InstitutionalAdvisorLineChart;
 use AdvisingApp\Report\Filament\Widgets\InstitutionalAdvisorStats;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use App\Enums\NavigationGroup;
 use App\Filament\Clusters\ReportLibrary;
+use App\Filament\Clusters\ReportLibraryNavigationGroup;
 use UnitEnum;
 
 class InstitutionalAdvisorReport extends AiReport
@@ -51,7 +51,7 @@ class InstitutionalAdvisorReport extends AiReport
 
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::EnterpriseAi;
+    protected static string | UnitEnum | null $navigationGroup = ReportLibraryNavigationGroup::EnterpriseAi;
 
     protected static ?string $title = 'Institutional Advisor';
 

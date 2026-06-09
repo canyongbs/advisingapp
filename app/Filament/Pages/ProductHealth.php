@@ -38,28 +38,14 @@ namespace App\Filament\Pages;
 
 use App\Enums\NavigationGroup;
 use App\Models\User;
-use Carbon\Carbon;
-use Filament\Actions\Action;
-use Filament\Notifications\Notification;
-use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Facades\Artisan;
-use Spatie\Health\Commands\RunHealthChecksCommand;
+use ShuvroRoy\FilamentSpatieLaravelHealth\Pages\HealthCheckResults;
 use Spatie\Health\Enums\Status;
 use Spatie\Health\ResultStores\ResultStore;
 use UnitEnum;
 
-class ProductHealth extends Page
+class ProductHealth extends HealthCheckResults
 {
-    /**
-     * @var array<string, string>
-     */
-    protected $listeners = ['refresh-component' => '$refresh'];
-
-    protected string $view = 'filament-spatie-health::pages.health-check-results';
-
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::GlobalAdministration;
-
     public static function getNavigationIcon(): string
     {
         return '';
@@ -75,26 +61,14 @@ class ProductHealth extends Page
         return 'Product Health';
     }
 
-    public function getTitle(): string | Htmlable
+    public static function getNavigationGroup(): string | UnitEnum | null
     {
-        return static::getNavigationLabel();
+        return NavigationGroup::GlobalAdministration;
     }
 
     public static function getNavigationSort(): ?int
     {
         return 90;
-    }
-
-    public function refresh(): void
-    {
-        Artisan::call(RunHealthChecksCommand::class);
-
-        $this->dispatch('refresh-component');
-
-        Notification::make()
-            ->title(__('filament-spatie-health::health.pages.health_check_results.notifications.results_refreshed'))
-            ->success()
-            ->send();
     }
 
     public static function getNavigationBadge(): ?string
@@ -119,24 +93,5 @@ class ProductHealth extends Page
         $user = auth()->user();
 
         return $user->isSuperAdmin();
-    }
-
-    protected function getActions(): array
-    {
-        return [
-            Action::make(__('filament-spatie-health::health.pages.health_check_results.buttons.refresh'))
-                ->button()
-                ->action('refresh'),
-        ];
-    }
-
-    protected function getViewData(): array
-    {
-        $checkResults = app(ResultStore::class)->latestResults();
-
-        return [
-            'lastRanAt' => new Carbon($checkResults?->finishedAt),
-            'checkResults' => $checkResults,
-        ];
     }
 }

@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,34 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
+namespace App\Filament\Clusters;
 
-use AdvisingApp\Report\Abstract\ProjectManagementReport;
-use AdvisingApp\Report\Filament\Widgets\ProjectManagementTable;
-use App\Filament\Clusters\ReportLibrary;
-use App\Filament\Clusters\ReportLibraryNavigationGroup;
-use UnitEnum;
+use Filament\Support\Contracts\HasLabel;
 
-class ProjectReport extends ProjectManagementReport
+enum CommunicationNavigationGroup implements HasLabel
 {
-    protected static ?string $cluster = ReportLibrary::class;
+    case Settings;
+    case Templates;
 
-    protected static string | UnitEnum | null $navigationGroup = ReportLibraryNavigationGroup::ProjectManagement;
-
-    protected static ?string $navigationLabel = 'Projects';
-
-    protected static ?string $title = 'Projects';
-
-    protected static ?int $navigationSort = 210;
-
-    protected static string $routePath = 'project-report';
-
-    protected string $cacheTag = 'project-management-report-cache';
-
-    public function getWidgets(): array
+    public function getLabel(): string
     {
-        return [
-            ProjectManagementTable::make(['cacheTag' => $this->cacheTag]),
-        ];
+        return match ($this) {
+            self::Settings => 'Settings',
+            self::Templates => 'Templates',
+        };
     }
 }
