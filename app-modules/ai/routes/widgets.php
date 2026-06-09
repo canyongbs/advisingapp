@@ -34,104 +34,117 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\AuthenticationConfirmController;
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\AuthenticationRefreshController;
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\FinishAdvisorThreadController;
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\QnaAdvisorBroadcastController;
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\QnaAdvisorResourceController;
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\QnaAdvisorResourcesController;
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\RegisterProspectController;
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\RequestAuthenticationController;
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\SendAdvisorMessageController as SendQnaAdvisorMessageController;
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\ShowAdvisorController;
-use AdvisingApp\Ai\Http\Controllers\QnaAdvisors\StartAdvisorThreadController;
-use AdvisingApp\Ai\Http\Middleware\EnsureQnaAdvisorEmbedIsEnabled;
-use AdvisingApp\Ai\Http\Middleware\EnsureQnaAdvisorRequestComingFromAuthorizedDomain;
-use AdvisingApp\Ai\Http\Middleware\QnaAdvisorAuthorization;
-use AdvisingApp\Ai\Http\Middleware\QnaAdvisorWidgetCors;
-use AdvisingApp\Ai\Models\QnaAdvisor;
+use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\AuthenticationConfirmController;
+use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\AuthenticationRefreshController;
+use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\CustomerAdvisorBroadcastController;
+use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\CustomerAdvisorResourceController;
+use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\CustomerAdvisorResourcesController;
+use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\FinishAdvisorThreadController;
+use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\RegisterProspectController;
+use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\RequestAuthenticationController;
+use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\SendAdvisorMessageController as SendCustomerAdvisorMessageController;
+use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\ShowAdvisorController;
+use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\StartAdvisorThreadController;
+use AdvisingApp\Ai\Http\Middleware\CustomerAdvisorAuthorization;
+use AdvisingApp\Ai\Http\Middleware\CustomerAdvisorWidgetCors;
+use AdvisingApp\Ai\Http\Middleware\EnsureCustomerAdvisorEmbedIsEnabled;
+use AdvisingApp\Ai\Http\Middleware\EnsureCustomerAdvisorRequestComingFromAuthorizedDomain;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use App\Http\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+$registerAdvisorRoutes = function () {
+    Route::prefix('api/{advisor}')
+        ->name('api.')
+        ->middleware([
+            EnsureCustomerAdvisorEmbedIsEnabled::class,
+            EnsureCustomerAdvisorRequestComingFromAuthorizedDomain::class,
+        ])
+        ->group(function () {
+            Route::get('/', CustomerAdvisorResourcesController::class)
+                ->name('assets');
+
+            Route::post('/entry', ShowAdvisorController::class)
+                ->name('entry');
+
+            Route::match(
+                ['GET', 'POST', 'HEAD'],
+                '/broadcasting/auth',
+                [CustomerAdvisorBroadcastController::class, 'auth']
+            )
+                ->middleware([CustomerAdvisorAuthorization::class])
+                ->name('broadcasting.auth');
+
+            Route::post('/authenticate/request', RequestAuthenticationController::class)
+                ->middleware(['signed'])
+                ->name('authentication.request');
+
+            Route::post('/authenticate/register', RegisterProspectController::class)
+                ->middleware(['signed'])
+                ->name('register-prospect');
+
+            Route::post('/authenticate/confirm/{authentication}', AuthenticationConfirmController::class)
+                ->middleware(['signed'])
+                ->name('authentication.confirm');
+
+            Route::post('/authenticate/refresh', AuthenticationRefreshController::class)
+                ->middleware(['signed'])
+                ->name('authentication.refresh');
+
+            Route::post('/threads/start', StartAdvisorThreadController::class)
+                ->middleware([
+                    'signed',
+                    CustomerAdvisorAuthorization::class,
+                ])
+                ->name('threads.start');
+
+            Route::post('/messages', SendCustomerAdvisorMessageController::class)
+                ->middleware([
+                    'signed',
+                    CustomerAdvisorAuthorization::class,
+                ])
+                ->name('messages.send');
+
+            Route::post('/threads/{thread}/finish', FinishAdvisorThreadController::class)
+                ->middleware([
+                    'signed',
+                    CustomerAdvisorAuthorization::class,
+                ])
+                ->name('threads.finish');
+
+            // Handle preflight CORS requests for all routes in this group
+            // MUST remain the last route in this group
+            Route::options('/{any}', function (Request $request, CustomerAdvisor $advisor) {
+                return response()->noContent();
+            })
+                ->where('any', '.*')
+                ->name('preflight');
+        });
+
+    // This route MUST remain at /widgets/... in order to catch requests to asset files and return the correct headers
+    // NGINX has been configured to route all requests for assets under /widgets to the application
+    Route::get('{file?}', CustomerAdvisorResourceController::class)
+        ->where('file', '(.*)')
+        ->name('asset');
+};
+
+// Primary routes
 Route::middleware([
     'api',
     EncryptCookies::class,
-    QnaAdvisorWidgetCors::class,
+    CustomerAdvisorWidgetCors::class,
+])
+    ->name('widgets.ai.customer-advisors.')
+    ->prefix('widgets/ai/customer-advisors')
+    ->group($registerAdvisorRoutes);
+
+// Legacy support
+Route::middleware([
+    'api',
+    EncryptCookies::class,
+    CustomerAdvisorWidgetCors::class,
 ])
     ->name('widgets.ai.qna-advisors.')
     ->prefix('widgets/ai/qna-advisors')
-    ->group(function () {
-        Route::prefix('api/{advisor}')
-            ->name('api.')
-            ->middleware([
-                EnsureQnaAdvisorEmbedIsEnabled::class,
-                EnsureQnaAdvisorRequestComingFromAuthorizedDomain::class,
-            ])
-            ->group(function () {
-                Route::get('/', QnaAdvisorResourcesController::class)
-                    ->name('assets');
-
-                Route::post('/entry', ShowAdvisorController::class)
-                    ->name('entry');
-
-                Route::match(
-                    ['GET', 'POST', 'HEAD'],
-                    '/broadcasting/auth',
-                    [QnaAdvisorBroadcastController::class, 'auth']
-                )
-                    ->middleware([QnaAdvisorAuthorization::class])
-                    ->name('broadcasting.auth');
-
-                Route::post('/authenticate/request', RequestAuthenticationController::class)
-                    ->middleware(['signed'])
-                    ->name('authentication.request');
-
-                Route::post('/authenticate/register', RegisterProspectController::class)
-                    ->middleware(['signed'])
-                    ->name('register-prospect');
-
-                Route::post('/authenticate/confirm/{authentication}', AuthenticationConfirmController::class)
-                    ->middleware(['signed'])
-                    ->name('authentication.confirm');
-
-                Route::post('/authenticate/refresh', AuthenticationRefreshController::class)
-                    ->middleware(['signed'])
-                    ->name('authentication.refresh');
-
-                Route::post('/threads/start', StartAdvisorThreadController::class)
-                    ->middleware([
-                        'signed',
-                        QnaAdvisorAuthorization::class,
-                    ])
-                    ->name('threads.start');
-
-                Route::post('/messages', SendQnaAdvisorMessageController::class)
-                    ->middleware([
-                        'signed',
-                        QnaAdvisorAuthorization::class,
-                    ])
-                    ->name('messages.send');
-
-                Route::post('/threads/{thread}/finish', FinishAdvisorThreadController::class)
-                    ->middleware([
-                        'signed',
-                        QnaAdvisorAuthorization::class,
-                    ])
-                    ->name('threads.finish');
-
-                // Handle preflight CORS requests for all routes in this group
-                // MUST remain the last route in this group
-                Route::options('/{any}', function (Request $request, QnaAdvisor $advisor) {
-                    return response()->noContent();
-                })
-                    ->where('any', '.*')
-                    ->name('preflight');
-            });
-
-        // This route MUST remain at /widgets/... in order to catch requests to asset files and return the correct headers
-        // NGINX has been configured to route all requests for assets under /widgets to the application
-        Route::get('{file?}', QnaAdvisorResourceController::class)
-            ->where('file', '(.*)')
-            ->name('asset');
-    });
+    ->group($registerAdvisorRoutes);

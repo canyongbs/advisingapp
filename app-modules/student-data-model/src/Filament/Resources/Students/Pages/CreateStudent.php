@@ -40,6 +40,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\DataTransferObjects\AutocompletedAddress;
+use App\Features\PhoneNumberLookupFeature;
 use App\Filament\Forms\Components\AddressInput;
 use DefStudio\SearchableInput\DTO\SearchResult;
 use Filament\Actions\Action;
@@ -213,7 +214,8 @@ class CreateStudent extends CreateRecord
                                     ]),
                                 Checkbox::make('can_receive_sms')
                                     ->label('Can receive SMS messages')
-                                    ->default(true),
+                                    ->default(true)
+                                    ->visible(fn (): bool => ! PhoneNumberLookupFeature::active()),
                                 Checkbox::make('sms_opt_out_phone_number')
                                     ->label('SMS Opt Out')
                                     ->default(false),

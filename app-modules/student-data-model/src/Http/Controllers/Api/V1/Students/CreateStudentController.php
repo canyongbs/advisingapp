@@ -40,6 +40,7 @@ use AdvisingApp\StudentDataModel\Actions\CreateStudent;
 use AdvisingApp\StudentDataModel\DataTransferObjects\CreateStudentData;
 use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\PhoneNumberLookupFeature;
 use App\Http\Controllers\Api\Concerns\CanIncludeRelationships;
 use Dedoc\Scramble\Attributes\Example;
 use Dedoc\Scramble\Attributes\Group;
@@ -96,7 +97,9 @@ class CreateStudentController
             'phone_numbers.*.type' => ['sometimes', 'max:255'],
             'phone_numbers.*.order' => ['sometimes', 'integer'],
             'phone_numbers.*.ext' => ['sometimes', 'integer'],
-            'phone_numbers.*.can_receive_sms' => ['sometimes', 'boolean'],
+            ...(! PhoneNumberLookupFeature::active() ? [
+                'phone_numbers.*.can_receive_sms' => ['sometimes', 'boolean'],
+            ] : []),
         ]);
 
         $student = $createStudent->execute(CreateStudentData::from($data));

@@ -38,7 +38,6 @@ namespace AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\AiAssistantResource;
 use AdvisingApp\Ai\Models\AiAssistant;
-use App\Features\EmployeeAdvisorQnaFeature;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -65,15 +64,6 @@ class ManageEmployeeAdvisorQuestions extends ManageRelatedRecords
     protected static ?string $title = 'Questions';
 
     protected static string | UnitEnum | null $navigationGroup = 'Configuration';
-
-    public static function canAccess(array $parameters = []): bool
-    {
-        if (! EmployeeAdvisorQnaFeature::active()) {
-            return false;
-        }
-
-        return parent::canAccess($parameters);
-    }
 
     public function form(Schema $schema): Schema
     {

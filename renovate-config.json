@@ -11,7 +11,7 @@
     "enabledManagers": ["custom.regex", "docker-compose"],
     "reviewers": ["orrison"],
     "vulnerabilityAlerts": {
-        "enabled": false
+        "enabled": true
     },
     "customManagers": [
         {
@@ -98,6 +98,17 @@
             "description": "No cooldown for security-related Docker updates",
             "matchDatasources": ["docker"],
             "matchUpdateTypes": ["patch"],
+            "isVulnerabilityAlert": true,
+            "minimumReleaseAge": "0 days"
+        },
+        {
+            "description": "7-day cooldown for non-Docker dependency updates (supply-chain protection)",
+            "matchDatasources": ["github-releases", "node-version", "npm"],
+            "minimumReleaseAge": "7 days"
+        },
+        {
+            "description": "No cooldown for security-related non-Docker updates",
+            "matchDatasources": ["github-releases", "node-version", "npm"],
             "isVulnerabilityAlert": true,
             "minimumReleaseAge": "0 days"
         }

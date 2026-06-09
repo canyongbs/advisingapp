@@ -87,6 +87,9 @@ class ManageAmazonSesSettings extends SettingsPage
                 Toggle::make('isDemoModeEnabled')
                     ->label('Demo Mode')
                     ->live(),
+                Toggle::make('is_demo_auto_reply_mode_enabled')
+                    ->label('Demo Autoreply')
+                    ->helperText('When enabled, email messages will receive an automatic reply.'),
                 Checkbox::make('isExcludingSystemNotificationsFromDemoMode')
                     ->label('Exclude authentication related messages')
                     ->visible(fn (Get $get): bool => (bool) $get('isDemoModeEnabled')),

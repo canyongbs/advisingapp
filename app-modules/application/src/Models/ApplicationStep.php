@@ -38,6 +38,7 @@ namespace AdvisingApp\Application\Models;
 
 use AdvisingApp\Form\Models\SubmissibleStep;
 use App\Models\Attributes\NoPermissions;
+use App\Models\Media;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
@@ -54,7 +55,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class ApplicationStep extends SubmissibleStep implements HasMedia, HasRichContent
 {
     use SoftDeletes;
+
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use InteractsWithRichContent;
 
     protected $fillable = [

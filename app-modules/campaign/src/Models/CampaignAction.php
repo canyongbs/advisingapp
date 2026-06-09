@@ -39,6 +39,7 @@ namespace AdvisingApp\Campaign\Models;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Campaign\Enums\CampaignActionType;
 use App\Models\BaseModel;
+use App\Models\Media;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
@@ -56,7 +57,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class CampaignAction extends BaseModel implements Auditable, HasMedia, HasRichContent
 {
     use AuditableTrait;
+
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use InteractsWithRichContent;
     use SoftDeletes;
 

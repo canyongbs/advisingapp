@@ -47,14 +47,22 @@ use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\SmsMessage;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
+use AdvisingApp\StudentDataModel\Enums\EmailHealthStatus;
+use AdvisingApp\StudentDataModel\Enums\PhoneHealthStatus;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\EngagementTimeline;
+use App\Features\PhoneNumberLookupFeature;
 use App\Models\BaseModel;
+use App\Models\Media;
 use App\Models\User;
 use CanyonGBS\Common\Parser\Parser;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
@@ -85,7 +93,10 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 {
     use AuditableTrait;
     use BelongsToEducatable;
+
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use InteractsWithRichContent;
     use SoftDeletes;
 
@@ -181,6 +192,36 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
     public function latestSmsMessage(): MorphOne
     {
         return $this->morphOne(SmsMessage::class, 'related')->latestOfMany();
+    }
+
+    public function getRecipientRoute(): ?string
+    {
+        return match ($this->channel) {
+            NotificationChannel::Email => $this->latestEmailMessage->recipient_address ?? $this->recipient_route,
+            NotificationChannel::Sms => $this->latestSmsMessage->recipient_number ?? $this->recipient_route,
+            default => $this->recipient_route,
+        };
+    }
+
+    public function getRecipientRouteHealthStatus(): EmailHealthStatus|PhoneHealthStatus|null
+    {
+        $route = $this->getRecipientRoute();
+
+        if (blank($route)) {
+            return null;
+        }
+
+        $recipient = $this->recipient;
+
+        if (! $recipient instanceof Educatable) {
+            return null;
+        }
+
+        return match ($this->channel) {
+            NotificationChannel::Email => $this->resolveEmailHealthStatus($recipient, $route),
+            NotificationChannel::Sms => $this->resolvePhoneHealthStatus($recipient, $route),
+            default => null,
+        };
     }
 
     /**
@@ -336,5 +377,28 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         static::addGlobalScope('licensed', function (Builder $builder) {
             $builder->tap(new LicensedToEducatable('recipient'));
         });
+    }
+
+    private function resolveEmailHealthStatus(Educatable $recipient, string $route): EmailHealthStatus
+    {
+        $emailAddress = $recipient->emailAddresses->firstWhere('address', $route)
+            ?? $recipient->emailAddresses()->make(['address' => $route]);
+
+        assert($emailAddress instanceof StudentEmailAddress || $emailAddress instanceof ProspectEmailAddress);
+
+        return $emailAddress->getHealthStatus();
+    }
+
+    private function resolvePhoneHealthStatus(Educatable $recipient, string $route): PhoneHealthStatus
+    {
+        $phoneNumber = $recipient->phoneNumbers->firstWhere('number', $route)
+            ?? $recipient->phoneNumbers()->make([
+                'number' => $route,
+                ...(! PhoneNumberLookupFeature::active() ? ['can_receive_sms' => true] : []),
+            ]);
+
+        assert($phoneNumber instanceof StudentPhoneNumber || $phoneNumber instanceof ProspectPhoneNumber);
+
+        return $phoneNumber->getHealthStatus();
     }
 }

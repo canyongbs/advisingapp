@@ -1,0 +1,218 @@
+<?php
+
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS Inc.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+
+namespace AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages;
+
+use AdvisingApp\Ai\Actions\UploadFileForParsing;
+use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisorFile;
+use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Number;
+use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use UnitEnum;
+
+class ManageCustomerAdditionalKnowledge extends EditRecord
+{
+    use EditPageRedirection;
+
+    protected static string $resource = CustomerAdvisorResource::class;
+
+    protected static ?string $navigationLabel = 'Additional Knowledge';
+
+    protected static string | UnitEnum | null $navigationGroup = 'Configuration';
+
+    protected static ?string $breadcrumb = 'Additional Knowledge';
+
+    /**
+     * @return array<int|string, string|null>
+     */
+    public function getBreadcrumbs(): array
+    {
+        $resource = static::getResource();
+        /** @var CustomerAdvisor $record */
+        $record = $this->getRecord();
+
+        /** @var array<string, string> $breadcrumbs */
+        $breadcrumbs = [
+            $resource::getUrl() => $resource::getBreadcrumb(),
+            $resource::getUrl('view', ['record' => $record]) => Str::limit($record->name, 16),
+            ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
+        ];
+
+        if (filled($cluster = static::getCluster())) {
+            return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);
+        }
+
+        return $breadcrumbs;
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        $user = auth()->guard('web')->user();
+
+        assert($user instanceof User);
+
+        return $schema
+            ->components([
+                Section::make('Additional Knowledge')
+                    ->description('Add additional knowledge to this Customer Advisor to improve its responses.')
+                    ->reactive()
+                    ->columns([
+                        'sm' => 1,
+                        'md' => 2,
+                    ])
+                    ->schema([
+                        Repeater::make('files')
+                            ->relationship('files')
+                            ->hiddenLabel()
+                            ->when(
+                                $user->isSuperAdmin(),
+                                fn (Repeater $repeater) => $repeater->schema([
+                                    TextInput::make('name')
+                                        ->disabled(),
+                                    Textarea::make('parsing_results')
+                                        ->placeholder('Not parsed yet')
+                                        ->disabled()
+                                        ->visible($user->isSuperAdmin()),
+                                ]),
+                                fn (Repeater $repeater) => $repeater->simple(
+                                    TextInput::make('name')
+                                        ->disabled(),
+                                ),
+                            )
+                            ->addable(false)
+                            ->visible(fn (CustomerAdvisor $record): bool => $record->files->isNotEmpty())
+                            ->deleteAction(
+                                fn (Action $action) => $action->requiresConfirmation()
+                                    ->modalHeading('Are you sure you want to delete this file?')
+                                    ->modalDescription('This file will be permanently removed from this Customer Advisor, and cannot be restored.')
+                            ),
+                        FileUpload::make('uploaded_files')
+                            ->hiddenLabel()
+                            ->multiple()
+                            ->reactive()
+                            ->maxFiles(fn (CustomerAdvisor $record): int => 25 - $record->files->count())
+                            ->disabled(fn (CustomerAdvisor $record): bool => $record->files->count() >= 25)
+                            ->acceptedFileTypes(config('ai.supported_file_types'))
+                            ->storeFiles(false)
+                            ->helperText(function (CustomerAdvisor $record): string {
+                                if ($record->files->count() < 25) {
+                                    return 'You may upload a total of 25 files to this Customer Advisor. Files must be less than ' . Number::fileSize(config('ai.file_size_limit_kb') * 1000) . '.';
+                                }
+
+                                return "You've reached the maximum file upload limit of 25 for this Customer Advisor. Please delete a file if you wish to upload another.";
+                            })
+                            ->maxSize(config('ai.file_size_limit_kb'))
+                            ->columnSpan(function (Get $get) {
+                                $files = $get('files');
+                                $firstFile = reset($files);
+
+                                if (! $firstFile || blank($firstFile['name'])) {
+                                    return 'full';
+                                }
+
+                                return 1;
+                            }),
+                    ]),
+            ]);
+    }
+
+    public function getRedirectUrl(): ?string
+    {
+        return $this->getUrl(['record' => $this->getRecord()]);
+    }
+
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        $record->fill($data);
+
+        assert($record instanceof CustomerAdvisor);
+
+        if (filled($data['uploaded_files'] ?? null)) {
+            foreach ($data['uploaded_files'] as $attachment) {
+                if (! ($attachment instanceof TemporaryUploadedFile)) {
+                    continue;
+                }
+
+                $file = new CustomerAdvisorFile();
+                $file->advisor()->associate($record);
+                $file->name = $attachment->getClientOriginalName();
+                $file->mime_type = $attachment->getMimeType();
+                $file->temporary_url = $attachment->temporaryUrl();
+
+                $result = app(UploadFileForParsing::class)->execute(
+                    path: $attachment->getRealPath(),
+                    name: $file->name,
+                    mimeType: $file->mime_type,
+                );
+
+                if (blank($result->fileId) && blank($result->parsingResults)) {
+                    Notification::make()
+                        ->title('File Upload Failed')
+                        ->body('There was an error uploading the file. Please try again later.')
+                        ->danger()
+                        ->send();
+
+                    continue;
+                }
+
+                $file->file_id = $result->fileId;
+                $file->parsing_results = $result->parsingResults;
+                $file->save();
+
+                $file->addMediaFromUrl($file->temporary_url)->toMediaCollection('file');
+            }
+        }
+
+        $this->fillForm();
+
+        return $record;
+    }
+}

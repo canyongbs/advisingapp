@@ -1,0 +1,122 @@
+<?php
+
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS Inc.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+
+namespace AdvisingApp\Ai\Actions;
+
+use AdvisingApp\Ai\Models\CustomerAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
+use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
+use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
+use Illuminate\Support\Facades\Cache;
+
+class GetCustomerAdvisorInstructions
+{
+    public function execute(CustomerAdvisor $customerAdvisor): string
+    {
+        return Cache::tags(['{customer_advisor_instructions}'])
+            ->remember(
+                $customerAdvisor->getInstructionsCacheKey(),
+                now()->addHour(),
+                function () use ($customerAdvisor) {
+                    $settings = app(AiCustomerAdvisorSettings::class);
+
+                    $instructions = $settings->instructions ?? '';
+                    $backgroundInformation = $settings->background_information ?? '';
+
+                    $qnaSection = $this->generateQnaSection($customerAdvisor);
+
+                    $restrictions = $settings->restrictions ?? '';
+
+                    return <<<END
+
+                    # Instructions
+                    {$instructions}
+
+                    ## Institutional Background Information
+                    {$backgroundInformation}
+
+                    {$qnaSection}
+                    ## Restrictions
+                    {$restrictions}
+
+                    END;
+                }
+            );
+    }
+
+    protected function generateQnaSection(CustomerAdvisor $customerAdvisor): string
+    {
+        $customerAdvisor->loadMissing('categories.questions');
+
+        /**
+         * Note: Please be careful in adjusting tabing / spacing within the HEREDOCs as even a minor change can cause the markdown to render incorrectly.
+         */
+        $qnaSection = <<<END
+        ## Questions and Answers
+        This section contains the specialized knowledge you will use to answer questions from students via a conversational bot experience.
+
+
+        END;
+
+        $customerAdvisor
+            ->categories
+            ->where(fn (CustomerAdvisorCategory $category) => $category->questions->isNotEmpty())
+            ->each(function (CustomerAdvisorCategory $category) use (&$qnaSection) {
+                $questions = $category->questions->reduce(
+                    function (string $carry, CustomerAdvisorQuestion $question) {
+                        return $carry . <<<END
+                        #### {$question->question}
+                        {$question->answer}
+                    
+                    
+                    END;
+                    },
+                    ''
+                );
+
+                $qnaSection .= <<<END
+                ### Category
+                {$category->name}
+                {$category->description}
+                The following questions are part of this category of knowledge for you to use when answering student questions.
+
+            {$questions}
+            END;
+            });
+
+        return $qnaSection;
+    }
+}

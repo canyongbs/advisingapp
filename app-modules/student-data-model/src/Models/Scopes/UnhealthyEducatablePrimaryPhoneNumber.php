@@ -50,12 +50,11 @@ class UnhealthyEducatablePrimaryPhoneNumber
      */
     public function __invoke(Builder $query): Builder
     {
-        return $query->where(function (Builder $query) {
-            $query->whereDoesntHave('primaryPhoneNumber')
-                ->orWhereHas('primaryPhoneNumber', function (Builder $query) {
-                    $query->where('can_receive_sms', false)
-                        ->orWhereHas('smsOptOut');
-                });
-        });
+        // Either no primary phone OR a primary phone that is not textable
+        // (opted out, bounced, or lacking a textable Telnyx lookup).
+        return $query->whereDoesntHave(
+            'primaryPhoneNumber',
+            fn (Builder $query) => $query->tap(new Textable()),
+        );
     }
 }

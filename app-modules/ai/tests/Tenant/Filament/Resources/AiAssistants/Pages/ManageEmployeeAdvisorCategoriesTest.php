@@ -41,7 +41,6 @@ use AdvisingApp\Ai\Models\EmployeeAdvisorCategory;
 use AdvisingApp\Ai\Tests\RequestFactories\EmployeeAdvisorCategoryRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Features\AiAssistantDtoRenameFeature;
-use App\Features\EmployeeAdvisorQnaFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
@@ -53,7 +52,6 @@ use function PHPUnit\Framework\assertCount;
 
 beforeEach(function () {
     AiAssistantDtoRenameFeature::activate();
-    EmployeeAdvisorQnaFeature::activate();
 
     $settings = app(LicenseSettings::class);
     $settings->data->addons->employeeAdvisors = true;

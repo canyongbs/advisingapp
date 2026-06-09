@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Events\AiThreadTrashed;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use AdvisingApp\Ai\Models\Scopes\AiThreadScope;
 use App\Models\BaseModel;
+use App\Models\Media;
 use App\Models\User;
 use App\Settings\DisplaySettings;
 use Carbon\Carbon;
@@ -66,6 +67,8 @@ class AiThread extends BaseModel implements HasMedia, Wireable
     use CanAddAssistantLicenseGlobalScope;
     use SoftDeletes;
     use Prunable;
+
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
 
     protected $fillable = [

@@ -211,6 +211,8 @@ class ManageLicenseSettings extends SettingsPage
                                 ->label('Project Management'),
                             Toggle::make('data.addons.earlyAlert')
                                 ->label('Early Alert'),
+                            Toggle::make('data.addons.publicProfiles')
+                                ->label('Public Profiles'),
                         ]
                     ),
             ])

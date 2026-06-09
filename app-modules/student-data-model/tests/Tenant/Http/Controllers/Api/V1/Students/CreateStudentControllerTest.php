@@ -39,6 +39,7 @@ use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\RequestFactories\CreateStudentRequestFactory;
 use AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\StudentEmailAddresses\RequestFactories\CreateStudentEmailAddressRequestFactory;
 use AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\StudentPhoneNumbers\RequestFactories\CreateStudentPhoneNumberRequestFactory;
+use App\Features\PhoneNumberLookupFeature;
 use App\Models\SystemUser;
 use Laravel\Sanctum\Sanctum;
 
@@ -365,8 +366,60 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     '`phone_numbers.*.type` is max 255 characters' => [['phone_numbers' => [['number' => '123456789', 'type' => str_repeat('a', 256)]]], 'phone_numbers.0.type', 'The phone_numbers.0.type may not be greater than 255 characters.'],
     '`phone_numbers.*.order` is a valid integer' => [['phone_numbers' => [['number' => '123456789', 'order' => 'not-integer']]], 'phone_numbers.0.order', 'The phone_numbers.0.order must be an integer.'],
     '`phone_numbers.*.ext` is a valid integer' => [['phone_numbers' => [['number' => '123456789', 'ext' => 'not-integer']]], 'phone_numbers.0.ext', 'The phone_numbers.0.ext must be an integer.'],
-    '`phone_numbers.*.can_receive_sms` is boolean' => [['phone_numbers' => [['number' => '123456789', 'can_receive_sms' => 'not-boolean']]], 'phone_numbers.0.can_receive_sms', 'The phone_numbers.0.can_receive_sms field must be true or false.'],
 ]);
+
+// TODO: When the PhoneNumberLookupFeature is removed, delete this test
+// case entirely. The `can_receive_sms` column and its validation rule are
+// both being dropped at the same time (per the cleanup task), so there's
+// nothing left to validate.
+it('validates phone_numbers.*.can_receive_sms as boolean when the PhoneNumberLookupFeature is inactive (legacy gate)', function () {
+    PhoneNumberLookupFeature::deactivate();
+
+    $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
+    $studentConfigurationSettings->is_enabled = true;
+    $studentConfigurationSettings->save();
+
+    $user = SystemUser::factory()->create();
+    $user->givePermissionTo(['student.view-any', 'student.create']);
+    Sanctum::actingAs($user, ['api']);
+
+    $createStudentRequestData = CreateStudentRequestFactory::new()->create([
+        'email_addresses' => [
+            CreateStudentEmailAddressRequestFactory::new()->create(),
+        ],
+        'phone_numbers' => [['number' => '123456789', 'can_receive_sms' => 'not-boolean']],
+    ]);
+
+    $response = postJson(route('api.v1.students.create', [], false), $createStudentRequestData);
+    $response->assertUnprocessable();
+    $response->assertJsonValidationErrors([
+        'phone_numbers.0.can_receive_sms' => ['The phone_numbers.0.can_receive_sms field must be true or false.'],
+    ]);
+});
+
+// TODO: When the PhoneNumberLookupFeature is removed, delete this test
+// case — it only exists to cover the feature-on branch during the
+// dual-mode rollout.
+it('does not validate phone_numbers.*.can_receive_sms when the PhoneNumberLookupFeature is active (new gate)', function () {
+    $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
+    $studentConfigurationSettings->is_enabled = true;
+    $studentConfigurationSettings->save();
+
+    $user = SystemUser::factory()->create();
+    $user->givePermissionTo(['student.view-any', 'student.create']);
+    Sanctum::actingAs($user, ['api']);
+
+    $createStudentRequestData = CreateStudentRequestFactory::new()->create([
+        'email_addresses' => [
+            CreateStudentEmailAddressRequestFactory::new()->create(),
+        ],
+        'phone_numbers' => [['number' => '+15551234567', 'can_receive_sms' => 'not-boolean']],
+    ]);
+
+    $response = postJson(route('api.v1.students.create', [], false), $createStudentRequestData);
+    $response->assertCreated();
+    $response->assertJsonMissingValidationErrors(['phone_numbers.0.can_receive_sms']);
+});
 
 it('can include related student relationships', function (string $relationship, string $responseKey) {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);

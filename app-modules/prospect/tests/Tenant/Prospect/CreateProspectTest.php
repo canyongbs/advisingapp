@@ -105,7 +105,15 @@ test('CreateProspect is gated with proper access control', function () {
 
     assertDatabaseHas(Prospect::class, Arr::except($request->toArray(), ['emailAddresses', 'phoneNumbers', 'addresses']));
     assertDatabaseHas(ProspectEmailAddress::class, Arr::first($emailAddresses));
-    assertDatabaseHas(ProspectPhoneNumber::class, Arr::first($phoneNumbers));
+    // TODO: When the PhoneNumberLookupFeature is removed, simplify this back
+    // to `assertDatabaseHas(ProspectPhoneNumber::class, Arr::first($phoneNumbers));`
+    // — by that point the `can_receive_sms` column and the corresponding key
+    // in `CreateProspectRequestFactory` will both be gone (per the cleanup
+    // task), so the `Arr::except` wrapper is no longer needed. The wrapper
+    // only exists today because the PhoneNumberLookupFeature hides the
+    // Checkbox under the new gate, Filament drops the submitted value, and
+    // the column ends up with its DB default instead of the request value.
+    assertDatabaseHas(ProspectPhoneNumber::class, Arr::except(Arr::first($phoneNumbers), ['can_receive_sms']));
     assertDatabaseHas(ProspectAddress::class, Arr::first($addresses));
 });
 

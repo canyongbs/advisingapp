@@ -38,6 +38,7 @@ use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentDeliverabilityStats;
 use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
+use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
 use AdvisingApp\StudentDataModel\Models\EmailAddressOptInOptOut;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
@@ -58,7 +59,7 @@ it('returns correct percentages of students with Email missing, Email unhealthy,
 
     $student3 = Student::factory()->state(['created_at_source' => $startDate])->create();
     BouncedEmailAddress::factory()->create(['address' => $student3->primaryEmailAddress->address]);
-    $student3->primaryPhoneNumber->update(['can_receive_sms' => false]);
+    $student3->primaryPhoneNumber->phoneNumberLookup->update(['status' => PhoneNumberLookupStatus::Invalid]);
 
     $student4 = Student::factory()->state(['created_at_source' => $endDate])->create();
     EmailAddressOptInOptOut::factory()->create([
@@ -124,7 +125,7 @@ it('returns correct percentages of students Email missing, Email unhealthy, Phon
 
     $student2 = Student::factory()->state(['last' => 'John'])->create();
     BouncedEmailAddress::factory()->create(['address' => $student2->primaryEmailAddress->address]);
-    $student2->primaryPhoneNumber->update(['can_receive_sms' => false]);
+    $student2->primaryPhoneNumber->phoneNumberLookup->update(['status' => PhoneNumberLookupStatus::Invalid]);
 
     $student3 = Student::factory()->state(['last' => 'John'])->create();
 

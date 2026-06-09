@@ -167,7 +167,8 @@ class Inbox extends Page implements HasTable
                             return $query
                                 ->whereRelation('sender.careTeam', 'user_id', auth()->id());
                         }
-                    ),
+                    )
+                    ->default(),
                 SelectFilter::make('my_groups')
                     ->label('My Population Groups')
                     ->options(

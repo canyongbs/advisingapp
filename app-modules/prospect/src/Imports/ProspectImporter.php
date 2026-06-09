@@ -39,6 +39,7 @@ namespace AdvisingApp\Prospect\Imports;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use App\Features\PhoneNumberLookupFeature;
 use App\Models\User;
 use App\Settings\ImportSettings;
 use Filament\Actions\Imports\ImportColumn;
@@ -169,11 +170,13 @@ class ProspectImporter extends Importer
                 ->rules(['max:255'])
                 ->example('Mobile')
                 ->fillRecordUsing(fn () => null),
-            ImportColumn::make('phone_1_can_receive_sms')
-                ->boolean()
-                ->rules(['boolean'])
-                ->example('true')
-                ->fillRecordUsing(fn () => null),
+            ...(! PhoneNumberLookupFeature::active() ? [
+                ImportColumn::make('phone_1_can_receive_sms')
+                    ->boolean()
+                    ->rules(['boolean'])
+                    ->example('true')
+                    ->fillRecordUsing(fn () => null),
+            ] : []),
             ImportColumn::make('phone_2')
                 ->rules(['max:255'])
                 ->example('+1 (666) 666-6666')
@@ -188,11 +191,13 @@ class ProspectImporter extends Importer
                 ->rules(['max:255'])
                 ->example('Home')
                 ->fillRecordUsing(fn () => null),
-            ImportColumn::make('phone_2_can_receive_sms')
-                ->boolean()
-                ->rules(['boolean'])
-                ->example('false')
-                ->fillRecordUsing(fn () => null),
+            ...(! PhoneNumberLookupFeature::active() ? [
+                ImportColumn::make('phone_2_can_receive_sms')
+                    ->boolean()
+                    ->rules(['boolean'])
+                    ->example('false')
+                    ->fillRecordUsing(fn () => null),
+            ] : []),
             ImportColumn::make('phone_3')
                 ->rules(['max:255'])
                 ->example('+1 (777) 777-7777')
@@ -207,11 +212,13 @@ class ProspectImporter extends Importer
                 ->rules(['max:255'])
                 ->example('Work')
                 ->fillRecordUsing(fn () => null),
-            ImportColumn::make('phone_3_can_receive_sms')
-                ->boolean()
-                ->rules(['boolean'])
-                ->example('false')
-                ->fillRecordUsing(fn () => null),
+            ...(! PhoneNumberLookupFeature::active() ? [
+                ImportColumn::make('phone_3_can_receive_sms')
+                    ->boolean()
+                    ->rules(['boolean'])
+                    ->example('false')
+                    ->fillRecordUsing(fn () => null),
+            ] : []),
             ImportColumn::make('address_1_line_1')
                 ->rules(['max:255'])
                 ->example('123 Main St.')
@@ -371,7 +378,11 @@ class ProspectImporter extends Importer
                 'number' => $this->data["phone_{$iteration}"],
                 'ext' => $this->data["phone_{$iteration}_ext"] ?? null,
                 'type' => $this->data["phone_{$iteration}_type"] ?? null,
-                'can_receive_sms' => $this->data["phone_{$iteration}_can_receive_sms"] ?? false,
+                // The legacy gate reads `can_receive_sms`; the new gate uses
+                // the Telnyx lookup dispatched by the observer.
+                ...(! PhoneNumberLookupFeature::active() ? [
+                    'can_receive_sms' => $this->data["phone_{$iteration}_can_receive_sms"] ?? false,
+                ] : []),
             ]);
         }
 
