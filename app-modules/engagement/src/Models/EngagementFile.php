@@ -41,6 +41,7 @@ use AdvisingApp\Engagement\Observers\EngagementFileObserver;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\BaseModel;
+use App\Models\Media;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -57,7 +58,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 #[ObservedBy(EngagementFileObserver::class)]
 class EngagementFile extends BaseModel implements HasMedia, Auditable
 {
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use AuditableTrait;
     use Prunable;
 

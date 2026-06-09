@@ -37,6 +37,7 @@
 namespace App\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Enums\Feature;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -50,6 +51,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Password;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
@@ -74,7 +76,8 @@ class ProfileInformation extends ProfilePage
         return $schema
             ->components([
                 Section::make('Public Profile')
-                    ->visible($hasCrmLicense)
+                    ->key('public-profile')
+                    ->visible($hasCrmLicense && Gate::check(Feature::PublicProfiles->getGateName()))
                     ->schema([
                         Toggle::make('has_enabled_public_profile')
                             ->label('Enable public profile')

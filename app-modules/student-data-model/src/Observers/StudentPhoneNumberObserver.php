@@ -37,14 +37,22 @@
 namespace AdvisingApp\StudentDataModel\Observers;
 
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use AdvisingApp\StudentDataModel\Observers\Concerns\QueuesPhoneNumberLookupOnSave;
 use Illuminate\Support\Facades\DB;
 
 class StudentPhoneNumberObserver
 {
+    use QueuesPhoneNumberLookupOnSave;
+
     public function creating(StudentPhoneNumber $studentPhoneNumber): void
     {
         if (blank($studentPhoneNumber->order)) {
             $studentPhoneNumber->order = DB::raw("(SELECT COALESCE(MAX(\"{$studentPhoneNumber->getTable()}\".order), 0) + 1 FROM \"{$studentPhoneNumber->getTable()}\" WHERE sisid = '{$studentPhoneNumber->sisid}')");
         }
+    }
+
+    public function saved(StudentPhoneNumber $studentPhoneNumber): void
+    {
+        $this->queuePhoneNumberLookupIfNeeded($studentPhoneNumber);
     }
 }

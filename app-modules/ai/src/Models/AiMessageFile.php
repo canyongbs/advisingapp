@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Models;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use App\Models\BaseModel;
+use App\Models\Media;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Prunable;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -53,7 +54,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class AiMessageFile extends BaseModel implements AiFile, HasMedia
 {
     use SoftDeletes;
+
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use Prunable;
 
     protected $fillable = [

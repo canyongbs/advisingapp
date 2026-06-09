@@ -48,6 +48,7 @@ use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\EngagementResponseTimeline;
 use App\Models\BaseModel;
+use App\Models\Media;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
@@ -58,6 +59,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 use League\HTMLToMarkdown\HtmlConverter;
 use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
@@ -73,6 +75,8 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
 {
     use AuditableTrait;
     use SoftDeletes;
+
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
 
     protected $fillable = [
@@ -95,6 +99,7 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
     public function registerMediaCollections(): void
     {
         $this->addMediaCollection('attachments');
+        $this->addMediaCollection('inline_attachments');
     }
 
     public function timelineRecord(): MorphOne
@@ -119,10 +124,33 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
 
     public function getBody(): HtmlString
     {
-        $content = $this->content;
+        $content = $this->content ?? '';
 
         if (preg_match('/<body[^>]*>(.*?)<\/body>/is', $content, $matches)) {
             $content = $matches[1];
+        }
+
+        foreach ($this->getMedia('inline_attachments') as $inlineAttachment) {
+            $inlineAttachmentTemporaryUrl = $inlineAttachment->getTemporaryUrl(now()->addDay());
+
+            $cid = $inlineAttachment->getCustomProperty('cid');
+
+            if (! is_string($cid)) {
+                continue;
+            }
+
+            $content = Str::replace(
+                "\"cid:{$cid}\"",
+                '"' . $inlineAttachmentTemporaryUrl . '"',
+                $content,
+            );
+
+            // In case single quotes are used in the HTML
+            $content = Str::replace(
+                "'cid:{$cid}'",
+                '\'' . $inlineAttachmentTemporaryUrl . '\'',
+                $content,
+            );
         }
 
         return str(

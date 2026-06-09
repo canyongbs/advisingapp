@@ -35,31 +35,22 @@
 */
 
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
+use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
 
-it('returns true when prospect has a healthy primary phone number', function () {
+it('returns true when the primary phone has a textable Telnyx lookup and is not opted out or bounced', function () {
     $prospect = Prospect::factory()->create();
-
-    $phoneNumber = ProspectPhoneNumber::factory()
-        ->for($prospect)
-        ->create(['can_receive_sms' => true]);
-
-    $prospect->primaryPhoneNumber()->associate($phoneNumber);
-    $prospect->save();
-    $prospect->refresh();
 
     assertTrue($prospect->canReceiveSms());
 });
 
-it('returns false when prospect has no primary phone number', function () {
+it('returns false when the prospect has no primary phone number', function () {
     $prospect = Prospect::factory()->create();
 
-    // Remove the primary phone that was auto-created if applicable
     $prospect->primary_phone_id = null;
     $prospect->save();
     $prospect->refresh();
@@ -67,74 +58,56 @@ it('returns false when prospect has no primary phone number', function () {
     assertFalse($prospect->canReceiveSms());
 });
 
-it('returns false when prospect primary phone number has can_receive_sms disabled', function () {
+it('returns false when the primary phone has no Telnyx lookup yet', function () {
     $prospect = Prospect::factory()->create();
 
-    $phoneNumber = ProspectPhoneNumber::factory()
-        ->for($prospect)
-        ->create(['can_receive_sms' => false]);
-
-    $prospect->primaryPhoneNumber()->associate($phoneNumber);
-    $prospect->save();
+    // Simulate a phone created before the lookup job ran.
+    $prospect->primaryPhoneNumber->phoneNumberLookup()->delete();
     $prospect->refresh();
 
     assertFalse($prospect->canReceiveSms());
 });
 
-it('returns false when prospect primary phone number is sms opted out', function () {
+it('returns false when the primary phone has a non-textable Telnyx lookup', function (PhoneNumberLookupStatus $status) {
     $prospect = Prospect::factory()->create();
 
-    $phoneNumber = ProspectPhoneNumber::factory()
-        ->for($prospect)
-        ->create(['can_receive_sms' => true]);
+    $prospect->primaryPhoneNumber->phoneNumberLookup->update(['status' => $status]);
+    $prospect->refresh();
+
+    assertFalse($prospect->canReceiveSms());
+})->with([
+    PhoneNumberLookupStatus::Invalid,
+    PhoneNumberLookupStatus::ValidLandline,
+    PhoneNumberLookupStatus::Unknown,
+    PhoneNumberLookupStatus::LookupFailed,
+]);
+
+it('returns false when the primary phone is opted out of SMS', function () {
+    $prospect = Prospect::factory()->create();
 
     SmsOptOutPhoneNumber::factory()->create([
-        'number' => $phoneNumber->number,
+        'number' => $prospect->primaryPhoneNumber->number,
     ]);
-
-    $prospect->primaryPhoneNumber()->associate($phoneNumber);
-    $prospect->save();
-    $prospect->refresh();
 
     assertFalse($prospect->canReceiveSms());
 });
 
-it('returns false when prospect primary phone number is bounced', function () {
+it('returns false when the primary phone has previously bounced', function () {
     $prospect = Prospect::factory()->create();
 
-    $phoneNumber = ProspectPhoneNumber::factory()
-        ->for($prospect)
-        ->create(['can_receive_sms' => true]);
-
     BouncedPhoneNumber::factory()->create([
-        'number' => $phoneNumber->number,
+        'number' => $prospect->primaryPhoneNumber->number,
     ]);
-
-    $prospect->primaryPhoneNumber()->associate($phoneNumber);
-    $prospect->save();
-    $prospect->refresh();
 
     assertFalse($prospect->canReceiveSms());
 });
 
-it('returns false when prospect primary phone is both bounced and sms opted out', function () {
+it('returns false when the primary phone is both bounced and opted out', function () {
     $prospect = Prospect::factory()->create();
+    $number = $prospect->primaryPhoneNumber->number;
 
-    $phoneNumber = ProspectPhoneNumber::factory()
-        ->for($prospect)
-        ->create(['can_receive_sms' => true]);
-
-    BouncedPhoneNumber::factory()->create([
-        'number' => $phoneNumber->number,
-    ]);
-
-    SmsOptOutPhoneNumber::factory()->create([
-        'number' => $phoneNumber->number,
-    ]);
-
-    $prospect->primaryPhoneNumber()->associate($phoneNumber);
-    $prospect->save();
-    $prospect->refresh();
+    BouncedPhoneNumber::factory()->create(['number' => $number]);
+    SmsOptOutPhoneNumber::factory()->create(['number' => $number]);
 
     assertFalse($prospect->canReceiveSms());
 });

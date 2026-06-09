@@ -74,7 +74,8 @@ class UnmatchedInboundCommunicationsJob implements ShouldQueue
 
         if ($students->isNotEmpty()) {
             $students->each(function (Student $student) use ($communication) {
-                $student->engagementResponses()
+                /** @var EngagementResponse $engagementResponse */
+                $engagementResponse = $student->engagementResponses()
                     ->create([
                         'subject' => $communication->subject,
                         'content' => $communication->body,
@@ -82,6 +83,14 @@ class UnmatchedInboundCommunicationsJob implements ShouldQueue
                         'type' => EngagementResponseType::Email,
                         'status' => EngagementResponseStatus::New,
                     ]);
+
+                foreach ($communication->getMedia('inline_attachments') as $media) {
+                    $media->copy($engagementResponse, 'inline_attachments');
+                }
+
+                foreach ($communication->getMedia('attachments') as $media) {
+                    $media->copy($engagementResponse, 'attachments');
+                }
             });
             $communication->delete();
 
@@ -97,7 +106,8 @@ class UnmatchedInboundCommunicationsJob implements ShouldQueue
         }
 
         $prospects->each(function (Prospect $prospect) use ($communication) {
-            $prospect->engagementResponses()
+            /** @var EngagementResponse $engagementResponse */
+            $engagementResponse = $prospect->engagementResponses()
                 ->create([
                     'subject' => $communication->subject,
                     'content' => $communication->body,
@@ -105,6 +115,14 @@ class UnmatchedInboundCommunicationsJob implements ShouldQueue
                     'type' => EngagementResponseType::Email,
                     'status' => EngagementResponseStatus::New,
                 ]);
+
+            foreach ($communication->getMedia('inline_attachments') as $media) {
+                $media->copy($engagementResponse, 'inline_attachments');
+            }
+
+            foreach ($communication->getMedia('attachments') as $media) {
+                $media->copy($engagementResponse, 'attachments');
+            }
         });
 
         $communication->delete();

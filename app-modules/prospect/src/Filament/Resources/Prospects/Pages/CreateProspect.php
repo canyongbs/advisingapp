@@ -41,6 +41,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\DataTransferObjects\AutocompletedAddress;
+use App\Features\PhoneNumberLookupFeature;
 use App\Filament\Forms\Components\AddressInput;
 use DefStudio\SearchableInput\DTO\SearchResult;
 use Filament\Actions\Action;
@@ -202,7 +203,8 @@ class CreateProspect extends CreateRecord
                                 Checkbox::make('can_receive_sms')
                                     ->label('Can receive SMS messages')
                                     ->columnSpanFull()
-                                    ->default(true),
+                                    ->default(true)
+                                    ->visible(fn (): bool => ! PhoneNumberLookupFeature::active()),
                             ])
                             ->orderColumn('order')
                             ->itemLabel(fn (Repeater $component, Schema $schema): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $schema->getStatePath()) ? 'Primary phone number' : 'Additional phone number')

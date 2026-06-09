@@ -42,11 +42,11 @@ enum AiModelApplicabilityFeature: string implements HasLabel
 {
     case InstitutionalAdvisor = 'institutional_advisor';
 
-    case CustomAdvisors = 'custom_advisors';
+    case EmployeeAdvisors = 'employee_advisors';
 
     case ResearchAdvisor = 'research_advisor';
 
-    case QuestionAndAnswerAdvisor = 'question_and_answer_advisor';
+    case CustomerAdvisor = 'question_and_answer_advisor';
 
     case IntegratedAdvisor = 'integrated_advisor';
 
@@ -54,9 +54,9 @@ enum AiModelApplicabilityFeature: string implements HasLabel
     {
         return match ($this) {
             self::InstitutionalAdvisor => 'Institutional Advisor',
-            self::CustomAdvisors => 'Employee Advisors',
+            self::EmployeeAdvisors => 'Employee Advisors',
             self::ResearchAdvisor => 'Research Advisor',
-            self::QuestionAndAnswerAdvisor => 'Customer Advisor',
+            self::CustomerAdvisor => 'Customer Advisor',
             self::IntegratedAdvisor => 'Integrated Advisor',
         };
     }

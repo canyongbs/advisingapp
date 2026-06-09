@@ -48,7 +48,9 @@ use Spatie\MediaLibrary\InteractsWithMedia;
  */
 class NotificationSetting extends BaseModel implements HasMedia
 {
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use SoftDeletes;
 
     protected $fillable = [

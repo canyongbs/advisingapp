@@ -46,9 +46,11 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
+use App\Enums\Feature;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Number;
 use Livewire\Attributes\Reactive;
 
@@ -96,14 +98,14 @@ class ProspectStats extends StatsOverviewWidget
                 )
                 ->whereNotIn('status', [TaskStatus::Completed, TaskStatus::Canceled])
                 ->count())),
-            Stat::make('Open Cases', Number::format(CaseModel::query()
+            ...Gate::check(Feature::CaseManagement->getGateName()) ? [Stat::make('Open Cases', Number::format(CaseModel::query()
                 ->whereHasMorph('respondent', Prospect::class, $prospectQuery)
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
                 )
                 ->whereRelation('status', 'classification', '!=', SystemCaseClassification::Closed)
-                ->count())),
+                ->count()))] : [],
             Stat::make('Actioned Messages', Number::format(EngagementResponse::query()
                 ->whereHasMorph('sender', Prospect::class, $prospectQuery)
                 ->when(
@@ -131,7 +133,7 @@ class ProspectStats extends StatsOverviewWidget
                 ->whereIn('status', [TaskStatus::Completed, TaskStatus::Canceled])
                 ->count()))
                 ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
-            Stat::make('Closed Cases', Number::format(CaseModel::query()
+            ...Gate::check(Feature::CaseManagement->getGateName()) ? [Stat::make('Closed Cases', Number::format(CaseModel::query()
                 ->whereHasMorph('respondent', Prospect::class, $prospectQuery)
                 ->when(
                     $startDate && $endDate,
@@ -139,7 +141,7 @@ class ProspectStats extends StatsOverviewWidget
                 )
                 ->whereRelation('status', 'classification', SystemCaseClassification::Closed)
                 ->count()))
-                ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
+                ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary'])] : [],
         ];
     }
 

@@ -40,7 +40,7 @@ use AdvisingApp\Ai\AiPlugin;
 use AdvisingApp\Ai\Events\AiMessageCreated;
 use AdvisingApp\Ai\Events\AiMessageTrashed;
 use AdvisingApp\Ai\Events\AiThreadTrashed;
-use AdvisingApp\Ai\Listeners\ClearQnaAdvisorInstructionsCacheOnGlobalSettingsUpdate;
+use AdvisingApp\Ai\Listeners\ClearCustomerAdvisorInstructionsCacheOnGlobalSettingsUpdate;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Models\AiAssistantLink;
@@ -48,16 +48,16 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiThreadFolder;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
+use AdvisingApp\Ai\Models\CustomerAdvisorFile;
+use AdvisingApp\Ai\Models\CustomerAdvisorLink;
+use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
 use AdvisingApp\Ai\Models\DataAdvisor;
 use AdvisingApp\Ai\Models\EmployeeAdvisorCategory;
 use AdvisingApp\Ai\Models\EmployeeAdvisorQuestion;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptType;
-use AdvisingApp\Ai\Models\QnaAdvisor;
-use AdvisingApp\Ai\Models\QnaAdvisorCategory;
-use AdvisingApp\Ai\Models\QnaAdvisorFile;
-use AdvisingApp\Ai\Models\QnaAdvisorLink;
-use AdvisingApp\Ai\Models\QnaAdvisorQuestion;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event;
@@ -70,7 +70,7 @@ class AiServiceProvider extends ServiceProvider
         AiThreadTrashed::class => AiThreadTrashed::LISTENERS,
         AiMessageCreated::class => AiMessageCreated::LISTENERS,
         AiMessageTrashed::class => AiMessageTrashed::LISTENERS,
-        SettingsSaved::class => [ClearQnaAdvisorInstructionsCacheOnGlobalSettingsUpdate::class],
+        SettingsSaved::class => [ClearCustomerAdvisorInstructionsCacheOnGlobalSettingsUpdate::class],
     ];
 
     public function register(): void
@@ -98,11 +98,16 @@ class AiServiceProvider extends ServiceProvider
             'ai_thread' => AiThread::class,
             'prompt_type' => PromptType::class,
             'prompt' => Prompt::class,
-            'qna_advisor' => QnaAdvisor::class,
-            'qna_advisor_category' => QnaAdvisorCategory::class,
-            'qna_advisor_file' => QnaAdvisorFile::class,
-            'qna_advisor_link' => QnaAdvisorLink::class,
-            'qna_advisor_question' => QnaAdvisorQuestion::class,
+            'customer_advisor' => CustomerAdvisor::class,
+            'customer_advisor_category' => CustomerAdvisorCategory::class,
+            'customer_advisor_file' => CustomerAdvisorFile::class,
+            'customer_advisor_link' => CustomerAdvisorLink::class,
+            'customer_advisor_question' => CustomerAdvisorQuestion::class,
+            'qna_advisor' => CustomerAdvisor::class, // LEGACY, kept for backwards compatability
+            'qna_advisor_category' => CustomerAdvisorCategory::class, // LEGACY, kept for backwards compatability
+            'qna_advisor_file' => CustomerAdvisorFile::class, // LEGACY, kept for backwards compatability
+            'qna_advisor_link' => CustomerAdvisorLink::class, // LEGACY, kept for backwards compatability
+            'qna_advisor_question' => CustomerAdvisorQuestion::class, // LEGACY, kept for backwards compatability
             'data_advisor' => DataAdvisor::class,
             'employee_advisor_category' => EmployeeAdvisorCategory::class,
             'employee_advisor_question' => EmployeeAdvisorQuestion::class,

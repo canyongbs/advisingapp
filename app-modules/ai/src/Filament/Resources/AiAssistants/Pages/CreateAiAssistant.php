@@ -39,7 +39,7 @@ namespace AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\AiAssistantResource;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Forms\AiAssistantForm;
 use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
+use AdvisingApp\Ai\Settings\AiEmployeeAdvisorSettings;
 use Exception;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
@@ -67,7 +67,7 @@ class CreateAiAssistant extends CreateRecord
             new Exception('The model must be an instance of AiAssistant.')
         );
 
-        $settings = app(AiCustomAdvisorSettings::class);
+        $settings = app(AiEmployeeAdvisorSettings::class);
 
         if (! $settings->allow_selection_of_model) {
             $record->model = $settings->preselected_model ?? $record->model;

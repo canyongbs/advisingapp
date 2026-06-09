@@ -37,6 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Models;
 
 use App\Models\BaseModel;
+use App\Models\Media;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -51,6 +52,8 @@ class Event extends BaseModel implements HasMedia
 {
     use SoftDeletes;
     use HasUserSaveTracking;
+
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
 
     protected $fillable = [

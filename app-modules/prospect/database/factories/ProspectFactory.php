@@ -78,7 +78,9 @@ class ProspectFactory extends Factory
                 'address' => $this->faker->unique()->email(),
                 'order' => 1,
             ]));
-            $prospect->primaryPhoneNumber()->associate(ProspectPhoneNumber::factory()->canReceiveSms()->create([
+            // createQuietly() skips the ProspectPhoneNumber observer so factory
+            // and seeder data does not dispatch real Telnyx lookup jobs.
+            $prospect->primaryPhoneNumber()->associate(ProspectPhoneNumber::factory()->canReceiveSms()->createQuietly([
                 'prospect_id' => $prospect->getKey(),
                 'number' => $this->faker->e164PhoneNumber(),
                 'order' => 1,

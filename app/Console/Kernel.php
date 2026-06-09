@@ -36,8 +36,8 @@
 
 namespace App\Console;
 
-use AdvisingApp\Ai\Jobs\QnaAdvisors\AutomaticallyEndQnaAdvisors;
-use AdvisingApp\Ai\Jobs\QnaAdvisors\UpdateCurrentQnaAdvisorLinks;
+use AdvisingApp\Ai\Jobs\CustomerAdvisors\AutomaticallyEndCustomerAdvisors;
+use AdvisingApp\Ai\Jobs\CustomerAdvisors\UpdateCurrentCustomerAdvisorLinks;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
@@ -52,6 +52,7 @@ use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
 use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
 use AdvisingApp\Project\Models\ProjectFile;
+use AdvisingApp\StudentDataModel\Jobs\AutoImportEnrollmentSemesters;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionStepsJob;
 use App\Models\HealthCheckResultHistoryItem;
 use App\Models\MonitoredScheduledTaskLogItem;
@@ -137,22 +138,22 @@ class Kernel extends ConsoleKernel
 
                     $schedule->call(function () use ($tenant) {
                         $tenant->execute(function () {
-                            dispatch(new AutomaticallyEndQnaAdvisors());
+                            dispatch(new AutomaticallyEndCustomerAdvisors());
                         });
                     })
                         ->everyMinute()
-                        ->name("Dispatch AutomaticallyEndQnaAdvisors | Tenant {$tenant->domain}")
-                        ->monitorName("Dispatch AutomaticallyEndQnaAdvisors | Tenant {$tenant->domain}")
+                        ->name("Dispatch AutomaticallyEndCustomerAdvisors | Tenant {$tenant->domain}")
+                        ->monitorName("Dispatch AutomaticallyEndCustomerAdvisors | Tenant {$tenant->domain}")
                         ->withoutOverlapping(15);
 
                     $schedule->call(function () use ($tenant) {
                         $tenant->execute(function () {
-                            dispatch(new UpdateCurrentQnaAdvisorLinks());
+                            dispatch(new UpdateCurrentCustomerAdvisorLinks());
                         });
                     })
                         ->monthlyOn(1, '0:0')
-                        ->name("Dispatch UpdateCurrentQnaAdvisorLinks | Tenant {$tenant->domain}")
-                        ->monitorName("Dispatch UpdateCurrentQnaAdvisorLinks | Tenant {$tenant->domain}");
+                        ->name("Dispatch UpdateCurrentCustomerAdvisorLinks | Tenant {$tenant->domain}")
+                        ->monitorName("Dispatch UpdateCurrentCustomerAdvisorLinks | Tenant {$tenant->domain}");
 
                     $schedule->command("tenants:artisan \"cache:prune-stale-tags\" --tenant={$tenant->id}")
                         ->hourly()
@@ -213,6 +214,16 @@ class Kernel extends ConsoleKernel
                         ->daily()
                         ->name("Refresh Calendar Refresh Tokens | Tenant {$tenant->domain}")
                         ->monitorName("Refresh Calendar Refresh Tokens | Tenant {$tenant->domain}")
+                        ->withoutOverlapping(720);
+
+                    $schedule->call(function () use ($tenant) {
+                        $tenant->execute(function () {
+                            dispatch(new AutoImportEnrollmentSemesters());
+                        });
+                    })
+                        ->daily()
+                        ->name("Auto Import Enrollment Semesters | Tenant {$tenant->domain}")
+                        ->monitorName("Auto Import Enrollment Semesters | Tenant {$tenant->domain}")
                         ->withoutOverlapping(720);
 
                     $schedule->command("tenants:artisan \"prospect:prune-eductable-pipeline-stages\" --tenant={$tenant->id}")

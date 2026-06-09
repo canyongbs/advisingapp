@@ -56,7 +56,7 @@
                                 icon="heroicon-m-magnifying-glass"
                                 x-on:click="isSearchingAssistants = ! isSearchingAssistants"
                             >
-                                Use Custom Advisor
+                                Use Employee Advisor
                             </x-filament::button>
                         @endif
                     </div>

@@ -57,7 +57,6 @@ use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns\InteractsW
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns\InteractsWithVectorStores;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use App\Features\EmployeeAdvisorQnaFeature;
 use App\Models\User;
 use Closure;
 use Exception;
@@ -336,6 +335,11 @@ abstract class BaseOpenAiService implements AiService
 
         try {
             $vectorStoreId = $this->getReadyVectorStoreId($files, $filesContext);
+
+            // file_search tool cannot be used with 'minimal' reasoning effort on models < 5.1
+            if (filled($vectorStoreId) && isset($options['reasoning']['effort']) && $options['reasoning']['effort'] === 'minimal') {
+                $options['reasoning']['effort'] = $this->resolveReasoningEffortValue(AiReasoningEffort::Low);
+            }
 
             $tools = [
                 ...filled($vectorStoreId) ? [[
@@ -958,9 +962,7 @@ abstract class BaseOpenAiService implements AiService
 
     protected function generateAssistantInstructions(AiAssistant $assistant, User $user, bool $withDynamicContext = false): string
     {
-        $assistantInstructions = rtrim(EmployeeAdvisorQnaFeature::active()
-            ? app(GetEmployeeAdvisorQnaInstructions::class)->execute($assistant)
-            : $assistant->instructions, '. ');
+        $assistantInstructions = rtrim(app(GetEmployeeAdvisorQnaInstructions::class)->execute($assistant), '. ');
 
         $maxAssistantInstructionsLength = $this->getMaxAssistantInstructionsLength();
 

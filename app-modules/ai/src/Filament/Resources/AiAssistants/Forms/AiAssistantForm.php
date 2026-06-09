@@ -40,7 +40,7 @@ use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Enums\EmployeeAdvisorResourceHubArticleAccess;
-use AdvisingApp\Ai\Settings\AiCustomAdvisorSettings;
+use AdvisingApp\Ai\Settings\AiEmployeeAdvisorSettings;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\User;
@@ -87,20 +87,20 @@ class AiAssistantForm
                 Select::make('model')
                     ->reactive()
                     ->options(fn (AiModel|string|null $state) => array_unique([
-                        ...AiModelApplicabilityFeature::CustomAdvisors->getModelsAsSelectOptions(),
+                        ...AiModelApplicabilityFeature::EmployeeAdvisors->getModelsAsSelectOptions(),
                         ...match (true) {
                             $state instanceof AiModel => [$state->value => $state->getLabel()],
                             is_string($state) => [$state => AiModel::parse($state)->getLabel()],
                             default => [],
                         },
                     ]))
-                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::CustomAdvisors->getModels()))
+                    ->rule(Rule::enum(AiModel::class)->only(AiModelApplicabilityFeature::EmployeeAdvisors->getModels()))
                     ->searchable()
                     ->required()
                     ->visible(fn (Get $get): bool => filled($get('application')) && auth()->user()->isSuperAdmin())
-                    ->disabled(fn (): bool => ! app(AiCustomAdvisorSettings::class)->allow_selection_of_model)
+                    ->disabled(fn (): bool => ! app(AiEmployeeAdvisorSettings::class)->allow_selection_of_model)
                     ->default(function () {
-                        $settings = app(AiCustomAdvisorSettings::class);
+                        $settings = app(AiEmployeeAdvisorSettings::class);
 
                         if ($settings->allow_selection_of_model) {
                             return null;

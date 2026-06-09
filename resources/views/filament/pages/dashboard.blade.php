@@ -71,18 +71,25 @@
 </x-filament-panels::page>
 
 <script>
-    document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
-        timeZone: @json($timezone),
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    });
+    (function () {
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+            timeZone: @json($timezone),
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+        });
 
-    document.getElementById('current-time').textContent = new Date().toLocaleTimeString('en-US', {
-        timeZone: @json($timezone),
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true,
-    });
+        function updateTime() {
+            document.getElementById('current-time').textContent = new Date().toLocaleTimeString('en-US', {
+                timeZone: @json($timezone),
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true,
+            });
+        }
+
+        updateTime();
+        setInterval(updateTime, 1000);
+    })();
 </script>

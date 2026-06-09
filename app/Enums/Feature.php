@@ -77,6 +77,8 @@ enum Feature: string
 
     case EarlyAlert = 'early-alert';
 
+    case PublicProfiles = 'public-profiles';
+
     public function generateGate(): void
     {
         // If features are added that are not based on a License Addon we will need to update this

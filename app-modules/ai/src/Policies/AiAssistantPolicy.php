@@ -78,7 +78,7 @@ class AiAssistantPolicy
     public function view(Authenticatable $authenticatable, AiAssistant $aiAssistant): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["assistant_custom.{$aiAssistant->getKey()}.view"],
+            abilities: ['assistant_custom.*.view'],
             denyResponse: 'You do not have permission to view this AI Assistant.'
         );
     }
@@ -106,7 +106,7 @@ class AiAssistantPolicy
     public function update(Authenticatable $authenticatable, AiAssistant $aiAssistant): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ["assistant_custom.{$aiAssistant->getKey()}.update"],
+            abilities: ['assistant_custom.*.update'],
             denyResponse: 'You do not have permission to update this AI Assistant.'
         );
     }

@@ -41,6 +41,7 @@ use AdvisingApp\Engagement\Observers\EngagementBatchObserver;
 use AdvisingApp\Notification\Enums\EmailType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use App\Models\BaseModel;
+use App\Models\Media;
 use App\Models\User;
 use DOMDocument;
 use DOMXPath;
@@ -59,7 +60,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class EngagementBatch extends BaseModel implements HasMedia, HasRichContent
 {
     use HasManyEngagements;
+
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use InteractsWithRichContent;
 
     protected $fillable = [

@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\EmployeeAdvisorQnaFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
@@ -63,16 +62,12 @@ return new class () extends Migration {
                 $table->timestamps();
                 $table->softDeletes();
             });
-
-            EmployeeAdvisorQnaFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            EmployeeAdvisorQnaFeature::deactivate();
-
             Schema::dropIfExists('employee_advisor_questions');
             Schema::dropIfExists('employee_advisor_categories');
         });

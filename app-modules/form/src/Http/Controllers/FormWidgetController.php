@@ -42,6 +42,7 @@ use AdvisingApp\Form\Actions\GenerateSubmissibleValidator;
 use AdvisingApp\Form\Actions\ProcessSubmissionField;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Http\Requests\RegisterProspectRequest;
+use AdvisingApp\Form\Jobs\SendFormNotificationJob;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\Form\Models\FormSubmission;
@@ -52,6 +53,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\PhoneNumberLookupFeature;
 use App\Http\Controllers\Controller;
 use Closure;
 use Filament\Support\Colors\Color;
@@ -338,6 +340,7 @@ class FormWidgetController extends Controller
             }
 
             $submission->save();
+            SendFormNotificationJob::dispatch($form, $submission)->afterCommit();
 
             DB::commit();
         } catch (Throwable $e) {
@@ -395,7 +398,7 @@ class FormWidgetController extends Controller
             $phoneNumber = $prospect->phoneNumbers()->create([
                 'number' => $data['mobile'],
                 'type' => 'Mobile',
-                'can_receive_sms' => true,
+                ...(! PhoneNumberLookupFeature::active() ? ['can_receive_sms' => true] : []),
             ]);
             $prospect->primaryPhoneNumber()->associate($phoneNumber);
 

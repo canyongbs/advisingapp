@@ -40,6 +40,7 @@ use AdvisingApp\Form\Filament\Resources\Forms\Pages\CreateForm;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\EditForm;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ListForms;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageFormEmailAutoReply;
+use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageFormNotifications;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageFormSubmissions;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageFormWorkflows;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\SubmissionOnScreenResponse;
@@ -83,6 +84,7 @@ class FormResource extends Resource
             ManageFormWorkflows::class,
             ManageFormSubmissions::class,
             ManageFormEmailAutoReply::class,
+            ManageFormNotifications::class,
         ]);
     }
 
@@ -97,6 +99,7 @@ class FormResource extends Resource
             'manage-form-workflows' => ManageFormWorkflows::route('/{record}/workflows'),
             'manage-submissions' => ManageFormSubmissions::route('/{record}/submissions'),
             'manage-email-auto-reply' => ManageFormEmailAutoReply::route('/{record}/email-auto-reply'),
+            'manage-notifications' => ManageFormNotifications::route('/{record}/notifications'),
         ];
     }
 }

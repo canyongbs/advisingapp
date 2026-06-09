@@ -50,11 +50,9 @@ class HealthyEducatablePrimaryPhoneNumber
      */
     public function __invoke(Builder $query): Builder
     {
-        return $query->where(function (Builder $query) {
-            $query->whereHas('primaryPhoneNumber', function (Builder $query) {
-                $query->where('can_receive_sms', true)
-                    ->whereDoesntHave('smsOptOut');
-            });
-        });
+        return $query->whereHas(
+            'primaryPhoneNumber',
+            fn (Builder $query) => $query->tap(new Textable()),
+        );
     }
 }
