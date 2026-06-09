@@ -52,7 +52,7 @@ it('surfaces the rate limit reset time and does not persist a partial response w
     $thread = QnaAdvisorThread::factory()->for($advisor, 'advisor')->create();
 
     $service = Mockery::mock(TestAiService::class)->makePartial();
-    $service->shouldReceive('streamRaw')->once()->andReturn(function () {
+    $service->shouldReceive('streamRaw')->andReturn(function () {
         yield new Text('A partial answer that gets cut off');
 
         yield new Finish(rateLimitResetsAt: now()->addSeconds(30));
@@ -80,7 +80,7 @@ it('completes and persists the response when the stream finishes normally', func
     $thread = QnaAdvisorThread::factory()->for($advisor, 'advisor')->create();
 
     $service = Mockery::mock(TestAiService::class)->makePartial();
-    $service->shouldReceive('streamRaw')->once()->andReturn(function () {
+    $service->shouldReceive('streamRaw')->andReturn(function () {
         yield new Text('Here is a complete answer.');
 
         yield new Finish();

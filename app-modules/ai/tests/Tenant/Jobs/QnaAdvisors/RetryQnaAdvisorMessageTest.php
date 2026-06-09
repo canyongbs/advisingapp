@@ -58,7 +58,7 @@ it('reuses the existing user message when retrying instead of duplicating it', f
     $userMessage->save();
 
     $service = Mockery::mock(TestAiService::class)->makePartial();
-    $service->shouldReceive('streamRaw')->once()->andReturn(function () {
+    $service->shouldReceive('streamRaw')->andReturn(function () {
         yield new Text('We are open 9 to 5.');
 
         yield new Finish();
