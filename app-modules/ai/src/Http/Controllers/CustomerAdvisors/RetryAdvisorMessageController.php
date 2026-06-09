@@ -34,60 +34,48 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Events\CustomerAdvisors;
+namespace AdvisingApp\Ai\Http\Controllers\CustomerAdvisors;
 
+use AdvisingApp\Ai\Jobs\CustomerAdvisors\RetryCustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
-use Carbon\CarbonInterface;
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
-use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
-class CustomerAdvisorMessageChunk implements ShouldBroadcastNow
+class RetryAdvisorMessageController
 {
-    use Dispatchable;
-    use InteractsWithSockets;
-
-    public function __construct(
-        public CustomerAdvisor $advisor,
-        public CustomerAdvisorThread $thread,
-        public string $content,
-        public bool $isComplete = false,
-        public ?string $error = null,
-        public ?CarbonInterface $rateLimitResetsAt = null,
-    ) {}
-
-    public function broadcastAs(): string
+    public function __invoke(Request $request, CustomerAdvisor $advisor): JsonResponse
     {
-        return 'customer-advisor-message.chunk';
-    }
+        $data = $request->validate([
+            'content' => ['required', 'string', 'max:25000'],
+            'thread_id' => ['required', 'string', 'max:255'],
+        ]);
 
-    /**
-     * @return array<string, mixed>
-     */
-    public function broadcastWith(): array
-    {
-        return [
-            'content' => $this->content,
-            'is_complete' => $this->isComplete,
-            'error' => $this->error,
-            'rate_limit_resets_after_seconds' => $this->rateLimitResetsAt ? (now()->diffInSeconds($this->rateLimitResetsAt) + 1) : null,
-        ];
-    }
+        $author = auth('student')->user() ?? auth('prospect')->user();
 
-    /**
-     * @return array<int, Channel>
-     */
-    public function broadcastOn(): array
-    {
-        $channelName = "customer-advisor-thread-{$this->thread->getKey()}";
+        $thread = CustomerAdvisorThread::query()
+            ->whereKey($data['thread_id'])
+            ->whereBelongsTo($advisor, 'advisor')
+            ->whereMorphedTo('author', $author)
+            ->whereNull('finished_at')
+            ->firstOrFail();
 
-        return [
-            $this->advisor->is_requires_authentication_enabled
-                ? new PrivateChannel($channelName)
-                : new Channel($channelName),
-        ];
+        dispatch(new RetryCustomerAdvisorMessage(
+            $advisor,
+            $thread,
+            $data['content'],
+            request: [
+                'headers' => Arr::only(
+                    request()->headers->all(),
+                    ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
+                ),
+                'ip' => request()->ip(),
+            ],
+        ))->onConnection('background');
+
+        return response()->json([
+            'message' => 'Message dispatched for processing via websockets.',
+        ]);
     }
 }
