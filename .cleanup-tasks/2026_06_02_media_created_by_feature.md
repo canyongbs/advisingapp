@@ -22,6 +22,10 @@ created: 2026-06-02
 
 - In `app-modules/engagement/src/Jobs/ProcessSesS3InboundEmail.php`: remove all four `if (MediaCreatedByFeature::active() && is_null($media->created_by_id))` blocks — always associate the creator unconditionally (keep the `$media->createdBy()->associate(...)` and `$media->saveQuietly()` calls directly). Remove the `use App\Features\MediaCreatedByFeature;` import.
 
+- In `app-modules/authorization/src/Http/Controllers/SocialiteController.php`: remove the `if (MediaCreatedByFeature::active() && is_null($media->created_by_id))` guard — always associate `$user` as the media creator unconditionally. Remove the `use App\Features\MediaCreatedByFeature;` import.
+
+- In `app-modules/form/src/Actions/ProcessSubmissionField.php`: remove all `if (MediaCreatedByFeature::active() && is_null($media->created_by_id))` guards — always associate the author/creator unconditionally. Remove the `use App\Features\MediaCreatedByFeature;` import.
+
 - Remove every remaining `use App\Features\MediaCreatedByFeature;` import that becomes unused after the above edits.
 
 - Delete the feature flag class itself: `app/Features/MediaCreatedByFeature.php`.
