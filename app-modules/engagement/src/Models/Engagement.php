@@ -62,6 +62,7 @@ use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\EngagementTimeline;
 use App\Features\PhoneNumberLookupFeature;
 use App\Models\BaseModel;
+use App\Models\Media;
 use App\Models\User;
 use CanyonGBS\Common\Parser\Parser;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
@@ -92,7 +93,10 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
 {
     use AuditableTrait;
     use BelongsToEducatable;
+
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use InteractsWithRichContent;
     use SoftDeletes;
 

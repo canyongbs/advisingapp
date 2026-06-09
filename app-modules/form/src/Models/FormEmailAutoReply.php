@@ -39,6 +39,7 @@ namespace AdvisingApp\Form\Models;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\BaseModel;
+use App\Models\Media;
 use Closure;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
@@ -54,7 +55,10 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class FormEmailAutoReply extends BaseModel implements HasMedia, HasRichContent
 {
     use SoftDeletes;
+
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use InteractsWithRichContent;
 
     protected $fillable = [

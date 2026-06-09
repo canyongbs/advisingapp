@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Form\Models;
 
+use App\Models\Media;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -48,6 +49,8 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 class FormFieldSubmission extends Pivot implements HasMedia
 {
     use HasUuids;
+
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
 
     protected $fillable = [

@@ -291,9 +291,72 @@ it('handles attachments properly for a Student', function () {
     expect($engagementResponse->getMedia('attachments'))->toHaveCount(2)
         ->and($inlineAttachments)->toHaveCount(1)
         ->and($inlineAttachments->first()->getCustomProperty('cid'))->toBe('image001.png@01DBEF93.EE8A3EB0')
+        ->and($engagementResponse->getMedia('attachments')->every(fn ($media) => $media->created_by_id === $student->getKey()))->toBeTrue()
+        ->and($engagementResponse->getMedia('attachments')->every(fn ($media) => $media->created_by_type === $student->getMorphClass()))->toBeTrue()
+        ->and($inlineAttachments->every(fn ($media) => $media->created_by_id === $student->getKey()))->toBeTrue()
+        ->and($inlineAttachments->every(fn ($media) => $media->created_by_type === $student->getMorphClass()))->toBeTrue()
         ->and($engagementResponse->subject)->toBe('This is a test')
         ->and($engagementResponse->sender_id)->toBe($student->getKey())
         ->and($engagementResponse->sender_type)->toBe($student->getMorphClass())
+        ->and($engagementResponse->type)->toBe(EngagementResponseType::Email)
+        ->and($engagementResponse->status)->toBe(EngagementResponseStatus::New)
+        ->and($engagementResponse->raw)->toBe(file_get_contents($modulePath('engagement', 'tests/Fixtures/s3_email_with_attachments')));
+
+    $filesystem->assertMissing('s3_email');
+});
+
+it('handles attachments properly for a Prospect', function () {
+    Storage::fake('s3');
+    $filesystem = Storage::fake('s3-inbound-email');
+
+    $prospect = Prospect::factory()->create();
+
+    ProspectEmailAddress::factory()
+        ->for($prospect)
+        ->create(['address' => 'kevin.ullyott@canyongbs.com']);
+
+    $modulePath = resolve(ModulePath::class);
+
+    $content = file_get_contents($modulePath('engagement', 'tests/Fixtures/s3_email_with_attachments'));
+
+    $file = UploadedFile::fake()->createWithContent('s3_email', $content);
+
+    $filesystem->putFileAs('', $file, 's3_email');
+
+    /** @var ProcessSesS3InboundEmail&MockInterface $mock */
+    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
+        $mock->shouldAllowMockingProtectedMethods();
+        // @phpstan-ignore-next-line
+        $mock->shouldReceive('getContent')->once()->andReturn($content);
+    });
+
+    // @phpstan-ignore-next-line
+    invade($mock)->emailFilePath = 's3_email';
+
+    $filesystem->assertExists('s3_email');
+
+    $mock->handle();
+
+    $engagementResponses = EngagementResponse::all();
+
+    expect($engagementResponses)->toHaveCount(1);
+
+    $engagementResponse = $engagementResponses->first();
+
+    assert($engagementResponse instanceof EngagementResponse);
+
+    $inlineAttachments = $engagementResponse->getMedia('inline_attachments');
+
+    expect($engagementResponse->getMedia('attachments'))->toHaveCount(2)
+        ->and($inlineAttachments)->toHaveCount(1)
+        ->and($inlineAttachments->first()->getCustomProperty('cid'))->toBe('image001.png@01DBEF93.EE8A3EB0')
+        ->and($engagementResponse->getMedia('attachments')->every(fn ($media) => $media->created_by_id === $prospect->getKey()))->toBeTrue()
+        ->and($engagementResponse->getMedia('attachments')->every(fn ($media) => $media->created_by_type === $prospect->getMorphClass()))->toBeTrue()
+        ->and($inlineAttachments->every(fn ($media) => $media->created_by_id === $prospect->getKey()))->toBeTrue()
+        ->and($inlineAttachments->every(fn ($media) => $media->created_by_type === $prospect->getMorphClass()))->toBeTrue()
+        ->and($engagementResponse->subject)->toBe('This is a test')
+        ->and($engagementResponse->sender_id)->toBe($prospect->getKey())
+        ->and($engagementResponse->sender_type)->toBe($prospect->getMorphClass())
         ->and($engagementResponse->type)->toBe(EngagementResponseType::Email)
         ->and($engagementResponse->status)->toBe(EngagementResponseStatus::New)
         ->and($engagementResponse->raw)->toBe(file_get_contents($modulePath('engagement', 'tests/Fixtures/s3_email_with_attachments')));

@@ -40,6 +40,7 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
 use AdvisingApp\Research\Database\Factories\ResearchRequestFactory;
 use App\Models\BaseModel;
+use App\Models\Media;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -55,6 +56,7 @@ class ResearchRequest extends BaseModel implements HasMedia
     /** @use HasFactory<ResearchRequestFactory> */
     use HasFactory;
 
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
 
     protected $fillable = [

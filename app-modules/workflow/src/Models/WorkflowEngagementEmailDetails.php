@@ -44,6 +44,7 @@ use AdvisingApp\Workflow\Filament\Blocks\EngagementEmailBlock;
 use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Jobs\EngagementEmailWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionJob;
+use App\Models\Media;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
@@ -62,7 +63,10 @@ class WorkflowEngagementEmailDetails extends WorkflowDetails implements Auditabl
     use SoftDeletes;
     use AuditableTrait;
     use HasUuids;
+
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use InteractsWithRichContent;
 
     /** @use HasFactory<WorkflowEngagementEmailDetailsFactory> */

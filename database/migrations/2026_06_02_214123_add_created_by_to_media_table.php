@@ -34,39 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Models;
+use App\Features\MediaCreatedByFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-use App\Models\Media;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
-
-/**
- * @mixin IdeHelperApplicationFieldSubmission
- */
-class ApplicationFieldSubmission extends Pivot implements HasMedia
-{
-    use HasUuids;
-
-    /** @use InteractsWithMedia<Media> */
-    use InteractsWithMedia;
-
-    protected $table = 'application_field_submission';
-
-    protected $fillable = [
-        'id',
-        'response',
-        'field_id',
-        'submission_id',
-    ];
-
-    protected $casts = [
-        'response' => 'array',
-    ];
-
-    public function registerMediaCollections(): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $this->addMediaCollection('files');
+        DB::transaction(function () {
+            Schema::table('media', function (Blueprint $table) {
+                $table->string('created_by_type')->nullable();
+                $table->string('created_by_id')->nullable();
+                $table->index(['created_by_type', 'created_by_id']);
+            });
+
+            MediaCreatedByFeature::activate();
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            MediaCreatedByFeature::deactivate();
+
+            Schema::table('media', function (Blueprint $table) {
+                $table->dropIndex(['created_by_type', 'created_by_id']);
+                $table->dropColumn(['created_by_type', 'created_by_id']);
+            });
+        });
+    }
+};

@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use AdvisingApp\Ai\Observers\QnaAdvisorObserver;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use App\Models\BaseModel;
+use App\Models\Media;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
@@ -50,7 +51,7 @@ use OwenIt\Auditing\Contracts\Auditable;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\File;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
+use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
 
 /**
  * @mixin IdeHelperQnaAdvisor
@@ -59,7 +60,10 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 class QnaAdvisor extends BaseModel implements HasMedia, Auditable
 {
     use CanAddAssistantLicenseGlobalScope;
+
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use SoftDeletes;
     use AuditableTrait;
 
@@ -132,7 +136,7 @@ class QnaAdvisor extends BaseModel implements HasMedia, Auditable
             });
     }
 
-    public function registerMediaConversions(?Media $media = null): void
+    public function registerMediaConversions(?SpatieMedia $media = null): void
     {
         $this->addMediaConversion('avatar-height-250px')
             ->performOnCollections('avatar')

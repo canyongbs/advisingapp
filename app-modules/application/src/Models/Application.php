@@ -40,6 +40,7 @@ use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Enums\FontWeight;
+use App\Models\Media;
 use App\Models\User;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
@@ -59,7 +60,10 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 class Application extends Submissible implements HasMedia, HasRichContent
 {
     use HasRelationships;
+
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use InteractsWithRichContent;
 
     protected $fillable = [

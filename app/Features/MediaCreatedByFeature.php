@@ -34,39 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Models;
+namespace App\Features;
 
-use App\Models\Media;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\Pivot;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @mixin IdeHelperApplicationFieldSubmission
- */
-class ApplicationFieldSubmission extends Pivot implements HasMedia
+class MediaCreatedByFeature extends AbstractFeatureFlag
 {
-    use HasUuids;
-
-    /** @use InteractsWithMedia<Media> */
-    use InteractsWithMedia;
-
-    protected $table = 'application_field_submission';
-
-    protected $fillable = [
-        'id',
-        'response',
-        'field_id',
-        'submission_id',
-    ];
-
-    protected $casts = [
-        'response' => 'array',
-    ];
-
-    public function registerMediaCollections(): void
+    public function resolve(mixed $scope): mixed
     {
-        $this->addMediaCollection('files');
+        return false;
     }
 }

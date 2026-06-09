@@ -42,6 +42,7 @@ use AdvisingApp\Division\Models\Division;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use AdvisingApp\ResourceHub\Observers\ResourceHubArticleObserver;
 use App\Models\BaseModel;
+use App\Models\Media;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\RichContentPlugins\VideoRichContentPlugin;
 use DateTimeInterface;
@@ -69,7 +70,10 @@ class ResourceHubArticle extends BaseModel implements AiFile, Auditable, HasMedi
 {
     use AuditableTrait;
     use HasUuids;
+
+    /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use InteractsWithRichContent;
     use SoftDeletes;
 

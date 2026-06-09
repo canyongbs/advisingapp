@@ -36,6 +36,20 @@
 
 declare(strict_types = 1);
 
+use App\Rector\AddInteractsWithMediaUseTagRector;
 use Rector\Config\RectorConfig;
 
-return static function (RectorConfig $rectorConfig): void {};
+require_once __DIR__ . '/rector-rules/AddInteractsWithMediaUseTagRector.php';
+
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->paths([
+        __DIR__ . '/app',
+        __DIR__ . '/app-modules',
+    ]);
+
+    $rectorConfig->skip([
+        __DIR__ . '/app-modules/*/vendor',
+    ]);
+
+    $rectorConfig->rule(AddInteractsWithMediaUseTagRector::class);
+};

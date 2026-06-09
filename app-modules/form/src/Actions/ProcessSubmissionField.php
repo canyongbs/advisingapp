@@ -55,6 +55,7 @@ use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormFieldSubmission;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\MediaCreatedByFeature;
 use App\Settings\ImportSettings;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -96,6 +97,11 @@ class ProcessSubmissionField
                         ->addMediaFromDisk($key, 's3')
                         ->usingFileName($file['originalFileName'] ?? basename($key))
                         ->toMediaCollection('files', 's3');
+
+                    if (MediaCreatedByFeature::active() && is_null($media->created_by_id) && $submission->author) {
+                        $media->createdBy()->associate($submission->author);
+                        $media->saveQuietly();
+                    }
 
                     $fieldSubmission->update([
                         'response' => [
@@ -446,6 +452,11 @@ class ProcessSubmissionField
                 ->usingFileName($file['originalFileName'] ?? basename($key))
                 ->toMediaCollection('files', 's3');
 
+            if (MediaCreatedByFeature::active() && is_null($media->created_by_id)) {
+                $media->createdBy()->associate($author);
+                $media->saveQuietly();
+            }
+
             $fieldSubmission->update([
                 'response' => [
                     'media_id' => $media->id,
@@ -458,11 +469,16 @@ class ProcessSubmissionField
                 'description' => "Uploaded via form: {$submissible->name} - {$field->label}",
             ]);
 
-            $engagementFile
+            $engagementFileMedia = $engagementFile
                 ->addMediaFromDisk($media->getPathRelativeToRoot(), $media->disk)
                 ->usingFileName($media->file_name)
                 ->preservingOriginal()
                 ->toMediaCollection('file', 's3');
+
+            if (MediaCreatedByFeature::active() && is_null($engagementFileMedia->created_by_id)) {
+                $engagementFileMedia->createdBy()->associate($author);
+                $engagementFileMedia->saveQuietly();
+            }
 
             // @phpstan-ignore instanceof.alwaysTrue, booleanOr.alwaysTrue (EventAttendee excluded - doesn't have engagementFiles)
             if ($author instanceof Student || $author instanceof Prospect) {
