@@ -32,7 +32,6 @@
     </COPYRIGHT>
 --}}
 @php
-    use App\Features\CustomAdvisorRenameFeature;
     use Filament\Support\Enums\Size;
     use Illuminate\Support\Facades\Vite;
 @endphp
@@ -57,7 +56,7 @@
                                 icon="heroicon-m-magnifying-glass"
                                 x-on:click="isSearchingAssistants = ! isSearchingAssistants"
                             >
-                                {{ CustomAdvisorRenameFeature::active() ? 'Use Employee Advisor' : 'Use Custom Advisor' }}
+                                Use Employee Advisor
                             </x-filament::button>
                         @endif
                     </div>

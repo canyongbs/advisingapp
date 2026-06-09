@@ -37,7 +37,6 @@
 namespace AdvisingApp\Ai\Settings;
 
 use AdvisingApp\Ai\Enums\AiModel;
-use App\Features\CustomAdvisorRenameFeature;
 use Spatie\LaravelSettings\Settings;
 
 class AiEmployeeAdvisorSettings extends Settings
@@ -48,6 +47,6 @@ class AiEmployeeAdvisorSettings extends Settings
 
     public static function group(): string
     {
-        return CustomAdvisorRenameFeature::active() ? 'ai-employee-advisor' : 'ai-custom-advisor';
+        return 'ai-employee-advisor';
     }
 }

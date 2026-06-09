@@ -36,16 +36,11 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Report\Filament\Pages\EmployeeAdvisorReport;
-use App\Features\CustomAdvisorRenameFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-
-beforeEach(function () {
-    CustomAdvisorRenameFeature::activate();
-});
 
 it('is gated with proper access control', function () {
     $settings = app(LicenseSettings::class);

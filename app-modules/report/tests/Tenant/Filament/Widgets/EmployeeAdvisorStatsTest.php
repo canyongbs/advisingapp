@@ -37,12 +37,7 @@
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiAssistantUse;
 use AdvisingApp\Report\Filament\Widgets\EmployeeAdvisorStats;
-use App\Features\CustomAdvisorRenameFeature;
 use App\Models\User;
-
-beforeEach(function () {
-    CustomAdvisorRenameFeature::activate();
-});
 
 it('returns correct total employee advisor stats within the given date range', function () {
     $startDate = now()->subDays(10);
