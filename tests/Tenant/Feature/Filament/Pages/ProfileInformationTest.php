@@ -34,14 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Filament\Pages\ProfileInformation;
+use App\Models\User;
+use App\Settings\LicenseSettings;
 
-use App\Support\AbstractFeatureFlag;
+use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
-class FormsNotificationFeature extends AbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
-    {
-        return false;
-    }
-}
+it('is gated by proper access control', function () {
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->publicProfiles = false;
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    actingAs($user);
+
+    livewire(ProfileInformation::class)
+        ->assertSchemaComponentHidden('public-profile');
+
+    $settings->data->addons->publicProfiles = true;
+    $settings->save();
+
+    livewire(ProfileInformation::class)
+        ->assertSchemaComponentVisible('public-profile');
+});

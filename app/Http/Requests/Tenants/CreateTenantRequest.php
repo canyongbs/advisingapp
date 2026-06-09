@@ -48,7 +48,7 @@ class CreateTenantRequest extends FormRequest
     public function rules(): array
     {
         $rules = [
-            'domain' => ['required', 'string', 'max:255', Rule::unique(Tenant::class)],
+            'domain' => ['required', 'string', 'max:255', Rule::unique(Tenant::class)->whereNull('deleted_at')],
             'database' => ['required', 'string', 'max:255'],
             'limits' => ['required', 'array'],
             'limits.conversationalAiSeats' => ['required', 'integer', 'min:0'],
@@ -78,6 +78,7 @@ class CreateTenantRequest extends FormRequest
             'addons.dataAdvisor' => ['required', 'boolean'],
             'addons.projectManagement' => ['required', 'boolean'],
             'addons.earlyAlert' => ['required', 'boolean'],
+            'addons.publicProfiles' => ['nullable', 'boolean'], // TODO: During Public Profiles feature cleanup, make this required
             'subscription' => ['required', 'array'],
             'subscription.clientName' => ['required', 'string'],
             'subscription.partnerName' => ['required', 'string'],
