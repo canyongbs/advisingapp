@@ -155,7 +155,7 @@ class EditCustomerAdvisor extends EditRecord
 
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $settings = app(AiQnaAdvisorSettings::class);
+        $settings = app(AiCustomerAdvisorSettings::class);
 
         if (! $settings->allow_selection_of_model && $settings->preselected_model) {
             $data['model'] = $settings->preselected_model;
