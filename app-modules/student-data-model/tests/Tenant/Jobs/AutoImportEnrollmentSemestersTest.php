@@ -35,10 +35,20 @@
 */
 
 use AdvisingApp\StudentDataModel\Enums\EnrollmentSemesterAutoImportDefaultOrder;
+use AdvisingApp\StudentDataModel\Events\SisSyncCompleted;
 use AdvisingApp\StudentDataModel\Jobs\AutoImportEnrollmentSemesters;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use Illuminate\Support\Facades\Bus;
+
+it('is dispatched when a SIS sync completes', function () {
+    Bus::fake([AutoImportEnrollmentSemesters::class]);
+
+    SisSyncCompleted::dispatch();
+
+    Bus::assertDispatched(AutoImportEnrollmentSemesters::class);
+});
 
 it('does not run when auto import is disabled', function () {
     $settings = app(StudentInformationSystemSettings::class);
