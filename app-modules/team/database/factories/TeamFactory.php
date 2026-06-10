@@ -50,13 +50,7 @@ class TeamFactory extends Factory
         return [
             'name' => $this->faker->unique()->sentence(),
             'description' => $this->faker->sentence(),
+            'division_id' => fn () => $this->faker->boolean() ? Division::factory() : null,
         ];
-    }
-
-    public function configure(): TeamFactory|Factory
-    {
-        return $this->afterMaking(function (Team $team) {
-            $team->division()->associate($this->faker->randomElement([Division::factory()->create(), null]));
-        });
     }
 }
