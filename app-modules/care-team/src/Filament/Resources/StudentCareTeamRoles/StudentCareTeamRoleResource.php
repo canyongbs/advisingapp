@@ -43,6 +43,7 @@ use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoles\Pages\ViewStude
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use App\Enums\CareTeamRoleType;
 use App\Filament\Clusters\ConstituentManagement;
+use App\Filament\Clusters\ConstituentManagementNavigationGroup;
 use App\Models\User;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
@@ -57,7 +58,7 @@ class StudentCareTeamRoleResource extends Resource
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Students';
+    protected static string | UnitEnum | null $navigationGroup = ConstituentManagementNavigationGroup::Students;
 
     protected static ?string $breadcrumb = 'Student Care Team Roles';
 

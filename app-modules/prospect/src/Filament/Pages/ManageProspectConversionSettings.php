@@ -38,6 +38,7 @@ namespace AdvisingApp\Prospect\Filament\Pages;
 
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Filament\Clusters\ConstituentManagement;
+use App\Filament\Clusters\ConstituentManagementNavigationGroup;
 use App\Filament\Forms\Components\Heading;
 use App\Filament\Forms\Components\Paragraph;
 use App\Models\User;
@@ -59,7 +60,7 @@ class ManageProspectConversionSettings extends SettingsPage
 
     protected static ?int $navigationSort = 80;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
+    protected static string | UnitEnum | null $navigationGroup = ConstituentManagementNavigationGroup::Prospects;
 
     protected static ?string $cluster = ConstituentManagement::class;
 

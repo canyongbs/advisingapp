@@ -34,51 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatuses;
+namespace App\Filament\Clusters;
 
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages\CreateProspectStatus;
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages\EditProspectStatus;
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages\ListProspectStatuses;
-use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages\ViewProspectStatus;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use App\Filament\Clusters\ConstituentManagement;
-use App\Filament\Clusters\ConstituentManagementNavigationGroup;
-use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
-use UnitEnum;
+use Filament\Support\Contracts\HasLabel;
 
-class ProspectStatusResource extends Resource
+enum ConstituentManagementNavigationGroup implements HasLabel
 {
-    protected static ?string $model = ProspectStatus::class;
+    case Students;
+    case Prospects;
+    case BasicNeeds;
+    case Concern;
 
-    protected static ?string $navigationLabel = 'Statuses';
-
-    protected static ?int $navigationSort = 60;
-
-    protected static ?string $cluster = ConstituentManagement::class;
-
-    protected static string | UnitEnum | null $navigationGroup = ConstituentManagementNavigationGroup::Prospects;
-
-    public static function form(Schema $schema): Schema
+    public function getLabel(): string
     {
-        return $schema
-            ->components([
-            ]);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-        ];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListProspectStatuses::route('/'),
-            'create' => CreateProspectStatus::route('/create'),
-            'view' => ViewProspectStatus::route('/{record}'),
-            'edit' => EditProspectStatus::route('/{record}/edit'),
-        ];
+        return match ($this) {
+            self::Students => 'Students',
+            self::Prospects => 'Prospects',
+            self::BasicNeeds => 'Basic Needs',
+            self::Concern => 'Concern',
+        };
     }
 }
