@@ -88,12 +88,7 @@ class SendCustomerAdvisorMessage implements ShouldQueue
         $message->save();
 
         try {
-            $settings = app(AiCustomerAdvisorSettings::class);
-
-            $effectiveModel = (! $settings->allow_selection_of_model && $settings->preselected_model)
-                ? $settings->preselected_model
-                : $this->advisor->model;
-
+            
             $aiService = $this->advisor->getAiServiceModel()->getService();
 
             $files = [
