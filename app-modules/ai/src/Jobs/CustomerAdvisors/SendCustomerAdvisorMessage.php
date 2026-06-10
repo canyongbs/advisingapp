@@ -42,7 +42,6 @@ use AdvisingApp\Ai\Events\CustomerAdvisors\CustomerAdvisorMessageChunk;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
-use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
 use AdvisingApp\Ai\Support\StreamingChunks\Finish;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
@@ -88,7 +87,6 @@ class SendCustomerAdvisorMessage implements ShouldQueue
         $message->save();
 
         try {
-            
             $aiService = $this->advisor->getAiServiceModel()->getService();
 
             $files = [
