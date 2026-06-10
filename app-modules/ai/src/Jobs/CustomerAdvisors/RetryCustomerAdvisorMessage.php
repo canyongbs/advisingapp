@@ -96,7 +96,7 @@ class RetryCustomerAdvisorMessage implements ShouldQueue
         $message->save();
 
         try {
-            $aiService = $this->advisor->model->getService();
+            $aiService = $this->advisor->getAiServiceModel()->getService();
 
             $files = [
                 ...$this->advisor->files()->whereNotNull('parsing_results')->get()->all(),

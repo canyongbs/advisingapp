@@ -57,7 +57,7 @@ class SendAdvisorMessageController
         ]);
 
         if ($request->query('preview')) {
-            $aiService = $advisor->model->getService();
+            $aiService = $advisor->getAiServiceModel()->getService();
 
             try {
                 return response()->stream(
