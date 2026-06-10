@@ -57,8 +57,8 @@ class EventRegistrationFormSubmissionFactory extends Factory
         return [
             'attendee_status' => $this->faker->randomElement(EventAttendeeStatus::class),
             'submitted_at' => $this->faker->dateTime(),
-            'form_id' => EventRegistrationForm::factory(),
-            'event_attendee_id' => EventAttendee::factory(),
+            'form_id' => EventRegistrationForm::inRandomOrder()->first() ?? EventRegistrationForm::factory()->create(),
+            'event_attendee_id' => EventAttendee::inRandomOrder()->first() ?? EventAttendee::factory()->create(),
         ];
     }
 

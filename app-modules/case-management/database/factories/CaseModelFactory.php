@@ -58,9 +58,9 @@ class CaseModelFactory extends Factory
             },
             'close_details' => $this->faker->sentence(),
             'res_details' => $this->faker->sentence(),
-            'division_id' => Division::factory(),
-            'status_id' => CaseStatus::factory(),
-            'priority_id' => CasePriority::factory(),
+            'division_id' => Division::inRandomOrder()->first()->id ?? Division::factory(),
+            'status_id' => CaseStatus::inRandomOrder()->first() ?? CaseStatus::factory(),
+            'priority_id' => CasePriority::inRandomOrder()->first() ?? CasePriority::factory(),
             'created_by_id' => User::factory(),
         ];
     }

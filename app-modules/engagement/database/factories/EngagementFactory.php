@@ -82,7 +82,7 @@ class EngagementFactory extends Factory
     public function forStudent(): self
     {
         return $this->state([
-            'recipient_id' => Student::factory(),
+            'recipient_id' => Student::inRandomOrder()->first()->sisid ?? Student::factory(),
             'recipient_type' => (new Student())->getMorphClass(),
         ]);
     }
