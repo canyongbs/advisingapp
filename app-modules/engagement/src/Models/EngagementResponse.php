@@ -136,6 +136,8 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
             $cid = $inlineAttachment->getCustomProperty('cid');
 
             if (is_string($cid)) {
+                assert(is_string($content));
+                
                 $content = Str::replace(
                     "\"cid:{$cid}\"",
                     '"' . $inlineAttachmentTemporaryUrl . '"',
