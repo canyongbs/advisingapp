@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use App\Enums\NavigationGroup;
 use Filament\Pages\Page;
 use UnitEnum;
 
@@ -48,7 +49,7 @@ class ManageSisDataPipeline extends Page
 
     protected static ?int $navigationSort = 20;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Data and Analytics';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::DataAndAnalytics;
 
     protected string $view = 'student-data-model::filament.pages.manage-sis-data-pipeline';
 

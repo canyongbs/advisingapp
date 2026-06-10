@@ -44,6 +44,7 @@ use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ManageAiAssistantAdditi
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ManageEmployeeAdvisorCategories;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ManageEmployeeAdvisorQuestions;
 use AdvisingApp\Ai\Models\AiAssistant;
+use App\Enums\NavigationGroup;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
 use UnitEnum;
@@ -52,7 +53,7 @@ class AiAssistantResource extends Resource
 {
     protected static ?string $model = AiAssistant::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Chatbots';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Chatbots;
 
     protected static ?string $navigationLabel = 'Employee Advisors';
 

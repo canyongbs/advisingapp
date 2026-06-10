@@ -41,6 +41,7 @@ use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages\EditEmailTemp
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages\ListEmailTemplates;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use App\Filament\Clusters\Communication;
+use App\Filament\Clusters\CommunicationNavigationGroup;
 use Filament\Resources\Resource;
 use UnitEnum;
 
@@ -52,7 +53,7 @@ class EmailTemplateResource extends Resource
 
     protected static ?string $cluster = Communication::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Templates';
+    protected static string | UnitEnum | null $navigationGroup = CommunicationNavigationGroup::Templates;
 
     protected static string | null $navigationLabel = 'Email';
 

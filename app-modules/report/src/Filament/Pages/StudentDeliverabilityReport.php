@@ -41,6 +41,7 @@ use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\StudentDeliverabilityStats;
 use AdvisingApp\Report\Filament\Widgets\StudentDeliverableTable;
 use App\Filament\Clusters\ReportLibrary;
+use App\Filament\Clusters\ReportLibraryNavigationGroup;
 use UnitEnum;
 
 class StudentDeliverabilityReport extends StudentReport
@@ -51,7 +52,7 @@ class StudentDeliverabilityReport extends StudentReport
 
     protected static string $routePath = 'student-deliverability-report';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Students';
+    protected static string | UnitEnum | null $navigationGroup = ReportLibraryNavigationGroup::Students;
 
     protected $cacheTag = 'report-student-deliverability';
 

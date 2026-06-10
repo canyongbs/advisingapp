@@ -38,6 +38,7 @@ namespace AdvisingApp\Audit\Filament\Pages;
 
 use AdvisingApp\Audit\Actions\Finders\AuditableModels;
 use AdvisingApp\Audit\Settings\AuditSettings;
+use App\Enums\NavigationGroup;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -55,7 +56,7 @@ class ManageAuditSettings extends SettingsPage
 
     protected static ?string $title = 'Auditing';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Global Administration';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::GlobalAdministration;
 
     public static function canAccess(): bool
     {

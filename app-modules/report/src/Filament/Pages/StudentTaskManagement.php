@@ -43,13 +43,14 @@ use AdvisingApp\Report\Filament\Widgets\MostRecentTasksTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\ReportLibrary;
+use App\Filament\Clusters\ReportLibraryNavigationGroup;
 use UnitEnum;
 
 class StudentTaskManagement extends EngagementReport implements HasGroupModel
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Students';
+    protected static string | UnitEnum | null $navigationGroup = ReportLibraryNavigationGroup::Students;
 
     protected static ?string $navigationLabel = 'Tasks Management';
 

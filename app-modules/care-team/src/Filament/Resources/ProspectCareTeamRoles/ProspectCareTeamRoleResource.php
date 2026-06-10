@@ -44,6 +44,7 @@ use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Enums\CareTeamRoleType;
 use App\Filament\Clusters\ConstituentManagement;
+use App\Filament\Clusters\ConstituentManagementNavigationGroup;
 use App\Models\User;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
@@ -58,7 +59,7 @@ class ProspectCareTeamRoleResource extends Resource
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
+    protected static string | UnitEnum | null $navigationGroup = ConstituentManagementNavigationGroup::Prospects;
 
     protected static ?string $breadcrumb = 'Prospect Care Team Roles';
 

@@ -44,13 +44,14 @@ use AdvisingApp\Report\Abstract\EngagementReport;
 use AdvisingApp\Report\Filament\Widgets\MostRecentTasksTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Filament\Clusters\ReportLibrary;
+use App\Filament\Clusters\ReportLibraryNavigationGroup;
 use UnitEnum;
 
 class ProspectTaskManagement extends EngagementReport implements HasGroupModel
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
+    protected static string | UnitEnum | null $navigationGroup = ReportLibraryNavigationGroup::Prospects;
 
     protected static ?string $navigationLabel = 'Tasks Management';
 

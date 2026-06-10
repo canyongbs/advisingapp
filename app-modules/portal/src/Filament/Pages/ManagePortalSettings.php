@@ -42,6 +42,7 @@ use AdvisingApp\Portal\Enums\GdprBannerButtonLabel;
 use AdvisingApp\Portal\Enums\PortalType;
 use AdvisingApp\Portal\Settings\PortalSettings;
 use App\Enums\Feature;
+use App\Enums\NavigationGroup;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Actions\Action;
@@ -70,7 +71,7 @@ class ManagePortalSettings extends SettingsPage
 
     protected static ?string $title = 'Portals';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Global Administration';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::GlobalAdministration;
 
     public static function canAccess(): bool
     {

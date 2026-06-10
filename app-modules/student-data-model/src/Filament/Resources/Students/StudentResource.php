@@ -47,6 +47,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudentActivityFeed;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudentAlerts;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Enums\NavigationGroup;
 use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
@@ -61,7 +62,7 @@ class StudentResource extends Resource
 
     protected static ?int $navigationSort = 30;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?string $recordTitleAttribute = 'full_name';
 

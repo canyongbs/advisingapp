@@ -36,11 +36,13 @@
 
 namespace App\Filament\Pages;
 
+use App\Enums\NavigationGroup;
 use App\Models\User;
 use Illuminate\Contracts\Support\Htmlable;
 use ShuvroRoy\FilamentSpatieLaravelHealth\Pages\HealthCheckResults;
 use Spatie\Health\Enums\Status;
 use Spatie\Health\ResultStores\ResultStore;
+use UnitEnum;
 
 class ProductHealth extends HealthCheckResults
 {
@@ -59,9 +61,9 @@ class ProductHealth extends HealthCheckResults
         return 'Product Health';
     }
 
-    public static function getNavigationGroup(): ?string
+    public static function getNavigationGroup(): string | UnitEnum | null
     {
-        return 'Global Administration';
+        return NavigationGroup::GlobalAdministration;
     }
 
     public static function getNavigationSort(): ?int

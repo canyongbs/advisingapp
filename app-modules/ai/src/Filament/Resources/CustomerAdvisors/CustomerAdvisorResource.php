@@ -48,6 +48,7 @@ use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\ManageCustomerQuest
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\PreviewCustomerAdvisor;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\ViewCustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
+use App\Enums\NavigationGroup;
 use App\Features\RenameQnaAdvisorsFeature;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
@@ -58,7 +59,7 @@ class CustomerAdvisorResource extends Resource
 {
     protected static ?string $model = CustomerAdvisor::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Chatbots';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Chatbots;
 
     protected static ?string $modelLabel = 'Customer Advisor';
 

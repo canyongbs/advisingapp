@@ -40,6 +40,7 @@ use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\CreateInteract
 use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\EditInteraction;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\ListInteractions;
 use AdvisingApp\Interaction\Models\Interaction;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
 use UnitEnum;
 
@@ -47,7 +48,7 @@ class InteractionResource extends Resource
 {
     protected static ?string $model = Interaction::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?int $navigationSort = 6;
 

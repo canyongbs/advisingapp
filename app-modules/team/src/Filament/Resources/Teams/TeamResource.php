@@ -42,6 +42,7 @@ use AdvisingApp\Team\Filament\Resources\Teams\Pages\ListTeams;
 use AdvisingApp\Team\Filament\Resources\Teams\Pages\ViewTeam;
 use AdvisingApp\Team\Filament\Resources\Teams\RelationManagers\UsersRelationManager;
 use AdvisingApp\Team\Models\Team;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
 use UnitEnum;
 
@@ -49,7 +50,7 @@ class TeamResource extends Resource
 {
     protected static ?string $model = Team::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'User Management';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::UserManagement;
 
     protected static ?int $navigationSort = 20;
 

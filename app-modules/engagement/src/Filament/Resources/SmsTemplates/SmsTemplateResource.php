@@ -41,6 +41,7 @@ use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages\EditSmsTemplate
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\Pages\ListSmsTemplates;
 use AdvisingApp\Engagement\Models\SmsTemplate;
 use App\Filament\Clusters\Communication;
+use App\Filament\Clusters\CommunicationNavigationGroup;
 use Filament\Resources\Resource;
 use UnitEnum;
 
@@ -56,7 +57,7 @@ class SmsTemplateResource extends Resource
 
     protected static ?string $cluster = Communication::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Templates';
+    protected static string | UnitEnum | null $navigationGroup = CommunicationNavigationGroup::Templates;
 
     public static function getPages(): array
     {

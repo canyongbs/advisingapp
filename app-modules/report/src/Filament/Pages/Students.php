@@ -44,13 +44,14 @@ use AdvisingApp\Report\Filament\Widgets\StudentOverviewEthnicityRadarChart;
 use AdvisingApp\Report\Filament\Widgets\StudentOverviewGenderDoughnutChart;
 use AdvisingApp\Report\Filament\Widgets\StudentsStats;
 use App\Filament\Clusters\ReportLibrary;
+use App\Filament\Clusters\ReportLibraryNavigationGroup;
 use UnitEnum;
 
 class Students extends StudentReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Students';
+    protected static string | UnitEnum | null $navigationGroup = ReportLibraryNavigationGroup::Students;
 
     protected static ?string $navigationLabel = 'Overview';
 

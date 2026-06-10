@@ -43,6 +43,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\StudentTags\Pages\ViewStuden
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\TagType;
 use App\Filament\Clusters\ConstituentManagement;
+use App\Filament\Clusters\ConstituentManagementNavigationGroup;
 use App\Models\Tag;
 use App\Models\User;
 use Filament\Resources\Resource;
@@ -59,7 +60,7 @@ class StudentTagResource extends Resource
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Students';
+    protected static string | UnitEnum | null $navigationGroup = ConstituentManagementNavigationGroup::Students;
 
     public static function canAccess(): bool
     {

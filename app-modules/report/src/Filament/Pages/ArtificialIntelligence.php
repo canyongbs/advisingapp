@@ -44,13 +44,14 @@ use AdvisingApp\Report\Filament\Widgets\PromptsCreatedLineChart;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use AdvisingApp\Report\Filament\Widgets\SpecialActionsDoughnutChart;
 use App\Filament\Clusters\ReportLibrary;
+use App\Filament\Clusters\ReportLibraryNavigationGroup;
 use UnitEnum;
 
 class ArtificialIntelligence extends AiReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Enterprise AI';
+    protected static string | UnitEnum | null $navigationGroup = ReportLibraryNavigationGroup::EnterpriseAi;
 
     protected static ?string $navigationLabel = 'Utilization';
 

@@ -41,6 +41,7 @@ use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\EditRes
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\ListResourceHubArticles;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\ViewResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
@@ -57,7 +58,7 @@ class ResourceHubArticleResource extends Resource
 
     protected static ?string $breadcrumb = 'Resource Hub';
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?int $navigationSort = 100;
 

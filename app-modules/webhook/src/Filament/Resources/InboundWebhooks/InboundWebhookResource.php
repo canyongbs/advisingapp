@@ -39,6 +39,7 @@ namespace AdvisingApp\Webhook\Filament\Resources\InboundWebhooks;
 use AdvisingApp\Webhook\Filament\Resources\InboundWebhooks\Pages\ListInboundWebhooks;
 use AdvisingApp\Webhook\Filament\Resources\InboundWebhooks\Pages\ViewInboundWebhook;
 use AdvisingApp\Webhook\Models\InboundWebhook;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
 use UnitEnum;
 
@@ -48,7 +49,7 @@ class InboundWebhookResource extends Resource
 
     protected static ?int $navigationSort = 30;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Global Administration';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::GlobalAdministration;
 
     public static function getPages(): array
     {

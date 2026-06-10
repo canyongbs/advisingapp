@@ -40,6 +40,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters\Pages\Ma
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use App\Filament\Clusters\ConstituentManagement;
+use App\Filament\Clusters\ConstituentManagementNavigationGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -59,7 +60,7 @@ class EnrollmentSemesterResource extends Resource
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Students';
+    protected static string | UnitEnum | null $navigationGroup = ConstituentManagementNavigationGroup::Students;
 
     protected static ?string $navigationLabel = 'Semester Order';
 

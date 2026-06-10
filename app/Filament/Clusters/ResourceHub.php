@@ -36,12 +36,13 @@
 
 namespace App\Filament\Clusters;
 
+use App\Enums\NavigationGroup;
 use Filament\Clusters\Cluster;
 use UnitEnum;
 
 class ResourceHub extends Cluster
 {
-    protected static string | UnitEnum | null $navigationGroup = 'Settings';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Settings;
 
     protected static ?int $navigationSort = 110;
 }

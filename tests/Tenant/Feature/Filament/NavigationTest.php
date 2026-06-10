@@ -102,3 +102,34 @@ test('navigation items in labeled groups must not have an icon, while items in t
         }
     }
 });
+
+test('cluster sub-navigation groups must be defined via a dedicated enum, never a string literal', function () {
+    $clusters = Filament::getCurrentOrDefaultPanel()->getClusters();
+
+    expect($clusters)->not()->toBeEmpty();
+
+    $offenders = [];
+
+    foreach ($clusters as $clusterClass) {
+        foreach ($clusterClass::getClusteredComponents() as $component) {
+            $group = $component::getNavigationGroup();
+
+            if ($group === null) {
+                continue;
+            }
+
+            if (is_string($group)) {
+                $offenders[] = "  - {$component} (in {$clusterClass}) uses string '{$group}'";
+            }
+        }
+    }
+
+    expect($offenders)->toBeEmpty(
+        "The following clustered components use a string literal for \$navigationGroup:\n"
+        . implode("\n", $offenders) . "\n\n"
+        . 'Cluster sub-group names must be defined via a dedicated HasLabel-only enum '
+        . '(e.g. ReportLibraryNavigationGroup, CommunicationNavigationGroup, ConstituentManagementNavigationGroup) '
+        . 'so the convention is type-safe and discoverable. '
+        . 'Either reuse an existing cluster enum or add a new case / new enum for this cluster.'
+    );
+});
