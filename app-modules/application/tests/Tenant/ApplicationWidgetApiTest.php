@@ -37,6 +37,7 @@
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
+use AdvisingApp\Application\Models\ApplicationField;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Settings\LicenseSettings;
@@ -47,6 +48,7 @@ use function Pest\Laravel\get;
 use function Pest\Laravel\post;
 use function Pest\Laravel\seed;
 use function Pest\Laravel\withoutMiddleware;
+use function Tests\asSuperAdmin;
 
 test('define is protected with proper feature access control', function () {
     withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
@@ -197,4 +199,100 @@ test('submit is protected with proper feature access control', function () {
         parameters: ['application' => $application, 'authentication' => $authorization],
     ))
         ->assertSuccessful();
+});
+
+test('preview endpoint returns a populated schema for an application', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->onlineAdmissions = true;
+
+    $settings->save();
+
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+
+    expect($application->fields()->count())->toBeGreaterThan(0);
+
+    $response = get(route('applications.api.preview', ['application' => $application]))
+        ->assertSuccessful();
+
+    expect($response->json('schema.children'))->toBeArray()->not->toBeEmpty();
+});
+
+test('preview renders the application fields', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->onlineAdmissions = true;
+
+    $settings->save();
+
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+
+    $application->fields()->delete();
+
+    $firstName = $application->fields()->create([
+        'label' => 'What is your first name?',
+        'type' => 'text_input',
+        'is_required' => true,
+        'config' => [],
+    ]);
+
+    $aboutYou = $application->fields()->create([
+        'label' => 'Tell us about yourself',
+        'type' => 'text_area',
+        'is_required' => false,
+        'config' => [],
+    ]);
+
+    $block = fn (ApplicationField $field): array => [
+        'type' => 'customBlock',
+        'attrs' => [
+            'config' => [
+                'fieldId' => $field->id,
+                'label' => $field->label,
+                'isRequired' => $field->is_required,
+            ],
+            'id' => $field->type,
+        ],
+    ];
+
+    $application->content = [
+        'type' => 'doc',
+        'content' => [$block($firstName), $block($aboutYou)],
+    ];
+
+    $application->save();
+
+    get(route('applications.api.preview', ['application' => $application]))
+        ->assertSuccessful()
+        ->assertJsonFragment(['label' => 'What is your first name?'])
+        ->assertJsonFragment(['label' => 'Tell us about yourself']);
+});
+
+test('assets endpoint points entry at the preview route only in preview mode', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+    $application = Application::factory()->create();
+
+    $previewEntry = get(route('widgets.applications.api.assets', ['application' => $application, 'preview' => 'true']))
+        ->assertSuccessful()
+        ->json('entry');
+
+    expect($previewEntry)->toContain("/api/applications/{$application->getKey()}/preview");
+
+    $normalEntry = get(route('widgets.applications.api.assets', ['application' => $application]))
+        ->assertSuccessful()
+        ->json('entry');
+
+    expect($normalEntry)->not->toContain('/preview');
+    expect($normalEntry)->toContain('/entry');
 });

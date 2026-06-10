@@ -136,6 +136,7 @@
             applicationTitleColor.value = json.title_color;
             applicationTitleFontWeight.value = json.title_font_weight;
             authentication.value.requestUrl = json.authentication_url;
+            schema.value = json.schema ?? [];
 
             if (props.preview === 'true' || props.preview === true) {
                 visitedSteps.value = [];
@@ -150,8 +151,12 @@
                 });
             }
 
-            if ((props.preview === 'true' || props.preview === true) && !json.authentication_url) {
-                applicationSubmissionUrl.value = 'preview-mode';
+            if (props.preview === 'true' || props.preview === true) {
+                // Applications always require authentication, so simulate the
+                // sign-in step with disabled, pre-filled values.
+                authentication.value.isRequested = true;
+                authentication.value.email = 'noreply@canyongbs.com';
+                authentication.value.code = '111111';
             }
 
             applicationRounding.value = {
@@ -514,6 +519,7 @@
                         validation="required"
                         validation-visibility="submit"
                         v-if="authentication.isRequested"
+                        :disabled="props.preview === 'true' || props.preview === true"
                     />
                 </FormKit>
             </div>

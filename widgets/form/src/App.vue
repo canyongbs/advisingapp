@@ -185,8 +185,15 @@
                     });
                 }
 
-                if ((props.preview === 'true' || props.preview === true) && !json.authentication_url) {
-                    formSubmissionUrl.value = 'preview-mode';
+                if (props.preview === 'true' || props.preview === true) {
+                    if (formIsAuthenticated.value) {
+                        // Simulate the authenticated sign-in step with disabled, pre-filled values.
+                        authentication.value.isRequested = true;
+                        authentication.value.email = 'noreply@canyongbs.com';
+                        authentication.value.code = '111111';
+                    } else if (!json.authentication_url) {
+                        formSubmissionUrl.value = 'preview-mode';
+                    }
                 }
 
                 formRounding.value = {
@@ -556,6 +563,7 @@
                         validation="required"
                         validation-visibility="submit"
                         v-if="authentication.isRequested"
+                        :disabled="props.preview === 'true' || props.preview === true"
                     />
                 </FormKit>
             </div>
