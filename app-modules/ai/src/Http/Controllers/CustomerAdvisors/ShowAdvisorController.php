@@ -63,6 +63,11 @@ class ShowAdvisorController
                 expiration: now()->addDays(3),
                 parameters: ['advisor' => $advisor],
             ),
+            'retry_message_url' => URL::temporarySignedRoute(
+                name: 'widgets.ai.customer-advisors.api.messages.retry',
+                expiration: now()->addDays(3),
+                parameters: ['advisor' => $advisor],
+            ),
             'websockets_config' => [
                 ...config('filament.broadcasting.echo'),
                 'authEndpoint' => route('widgets.ai.customer-advisors.api.broadcasting.auth', ['advisor' => $advisor]),
