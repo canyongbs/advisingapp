@@ -155,6 +155,17 @@ class GetAvailableGroupAppointmentSlots
         $groupStart = Carbon::parse("{$date->toDateString()} {$groupDayHours['starts_at']}", 'UTC');
         $groupEnd = Carbon::parse("{$date->toDateString()} {$groupDayHours['ends_at']}", 'UTC');
 
+        if ($groupStart->gte($groupEnd)) {
+            $startMinutesFromMidnight = (24 * 60) - ($groupStart->hour * 60 + $groupStart->minute);
+            $endMinutesFromMidnight = $groupEnd->hour * 60 + $groupEnd->minute;
+
+            if ($startMinutesFromMidnight <= $endMinutesFromMidnight) {
+                $groupStart = $groupStart->copy()->subDay();
+            } else {
+                $groupEnd = $groupEnd->copy()->addDay();
+            }
+        }
+
         if ($groupEnd->lte($now)) {
             return [];
         }
@@ -173,15 +184,35 @@ class GetAvailableGroupAppointmentSlots
                 return [];
             }
 
-            $memberBlocks = collect($memberHours)->map(function (array $period) use ($date) {
-                $startTime = $period['start'] ?? $period['starts_at'];
-                $endTime = $period['end'] ?? $period['ends_at'];
+            $memberBlocks = [];
 
-                return [
-                    'start' => Carbon::parse("{$date->toDateString()} {$startTime}", 'UTC'),
-                    'end' => Carbon::parse("{$date->toDateString()} {$endTime}", 'UTC'),
+            foreach ($memberHours as $period) {
+                $startTime = $period['start'] ?? $period['starts_at'] ?? null;
+                $endTime = $period['end'] ?? $period['ends_at'] ?? null;
+
+                if (! is_string($startTime) || ! is_string($endTime)) {
+                    continue;
+                }
+
+                $blockStart = Carbon::parse("{$date->toDateString()} {$startTime}", 'UTC');
+                $blockEnd = Carbon::parse("{$date->toDateString()} {$endTime}", 'UTC');
+
+                if ($blockStart->gte($blockEnd)) {
+                    $startMinutesFromMidnight = (24 * 60) - ($blockStart->hour * 60 + $blockStart->minute);
+                    $endMinutesFromMidnight = $blockEnd->hour * 60 + $blockEnd->minute;
+
+                    if ($startMinutesFromMidnight <= $endMinutesFromMidnight) {
+                        $blockStart = $blockStart->copy()->subDay();
+                    } else {
+                        $blockEnd = $blockEnd->copy()->addDay();
+                    }
+                }
+
+                $memberBlocks[] = [
+                    'start' => $blockStart,
+                    'end' => $blockEnd,
                 ];
-            })->all();
+            }
 
             $intersectedBlocks = $this->intersectTwoBlockSets($intersectedBlocks, $memberBlocks);
 

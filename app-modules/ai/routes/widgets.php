@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\CustomerAdvisorResourcesCon
 use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\FinishAdvisorThreadController;
 use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\RegisterProspectController;
 use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\RequestAuthenticationController;
+use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\RetryAdvisorMessageController as RetryCustomerAdvisorMessageController;
 use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\SendAdvisorMessageController as SendCustomerAdvisorMessageController;
 use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\ShowAdvisorController;
 use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\StartAdvisorThreadController;
@@ -105,6 +106,13 @@ $registerAdvisorRoutes = function () {
                     CustomerAdvisorAuthorization::class,
                 ])
                 ->name('messages.send');
+
+            Route::post('/messages/retry', RetryCustomerAdvisorMessageController::class)
+                ->middleware([
+                    'signed',
+                    CustomerAdvisorAuthorization::class,
+                ])
+                ->name('messages.retry');
 
             Route::post('/threads/{thread}/finish', FinishAdvisorThreadController::class)
                 ->middleware([

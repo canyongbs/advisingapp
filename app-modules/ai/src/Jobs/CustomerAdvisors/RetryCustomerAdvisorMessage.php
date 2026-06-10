@@ -55,7 +55,7 @@ use Prism\Prism\ValueObjects\Messages\AssistantMessage;
 use Prism\Prism\ValueObjects\Messages\UserMessage;
 use Throwable;
 
-class SendCustomerAdvisorMessage implements ShouldQueue
+class RetryCustomerAdvisorMessage implements ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -76,14 +76,23 @@ class SendCustomerAdvisorMessage implements ShouldQueue
 
     public function handle(GetCustomerAdvisorInstructions $getCustomerAdvisorInstructions): void
     {
-        $isStartOfConversation = ! $this->thread->messages()->where('is_advisor', false)->exists();
+        // The conversation is at its start when no advisor response has been generated yet,
+        // in which case we seed the request with the full message history.
+        $isStartOfConversation = ! $this->thread->messages()->where('is_advisor', true)->exists();
 
-        $message = new CustomerAdvisorMessage();
-        $message->thread()->associate($this->thread);
-        $message->author()->associate($this->thread->author);
-        $message->content = $this->content;
+        // Reuse the existing last user message when retrying so we don't duplicate it. Only
+        // recreate it if it is missing or its content has changed.
+        $message = $this->thread->messages()->where('is_advisor', false)->latest()->first();
+
+        if ($message?->content !== $this->content) {
+            $message = new CustomerAdvisorMessage();
+            $message->thread()->associate($this->thread);
+            $message->author()->associate($this->thread->author);
+            $message->content = $this->content;
+            $message->is_advisor = false;
+        }
+
         $message->request = $this->request;
-        $message->is_advisor = false;
         $message->save();
 
         try {

@@ -40,7 +40,6 @@ use AdvisingApp\StudentDataModel\Enums\EnrollmentSemesterAutoImportDefaultOrder;
 use AdvisingApp\StudentDataModel\Enums\SisSystem;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
-use App\Features\EnrollmentSemesterAutoImportSettingsFeature;
 use App\Filament\Clusters\ProductIntegrations;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -103,8 +102,7 @@ class ManageStudentInformationSystemSettings extends SettingsPage
                             ->default(EnrollmentSemesterAutoImportDefaultOrder::First)
                             ->visible(fn (Get $get): bool => $get('is_enrollment_semester_auto_import_enabled')),
                     ])
-                    ->disabled(! auth()->user()->can('product_admin.*.update'))
-                    ->visible(EnrollmentSemesterAutoImportSettingsFeature::active()),
+                    ->disabled(! auth()->user()->can('product_admin.*.update')),
                 Section::make('Student Record Management')
                     ->description('If toggled, this enables direct editing of student records without relying on SIS synchronization.')
                     ->schema([
