@@ -62,7 +62,10 @@ class GenerateSubmissibleEmbedCode
 
                 $loaderScriptUrl = url("widgets/forms/{$manifest['src/loader.js']['file']}");
 
-                $assetsUrl = route(name: 'widgets.forms.api.assets', parameters: ['form' => $submissible]);
+                $assetsUrl = route(name: 'widgets.forms.api.assets', parameters: [
+                    'form' => $submissible,
+                    ...($preview ? ['preview' => 'true'] : []),
+                ]);
 
                 $preview = $preview ? 'true' : 'false';
 
@@ -83,7 +86,10 @@ class GenerateSubmissibleEmbedCode
 
                 $loaderScriptUrl = url("widgets/applications/{$manifest['src/loader.js']['file']}");
 
-                $assetsUrl = route(name: 'widgets.applications.api.assets', parameters: ['application' => $submissible]);
+                $assetsUrl = route(name: 'widgets.applications.api.assets', parameters: [
+                    'application' => $submissible,
+                    ...($preview ? ['preview' => 'true'] : []),
+                ]);
 
                 $preview = $preview ? 'true' : 'false';
 
