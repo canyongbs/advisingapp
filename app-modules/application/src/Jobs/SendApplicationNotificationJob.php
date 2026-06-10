@@ -86,8 +86,7 @@ class SendApplicationNotificationJob implements ShouldQueue
             $channels = match (true) {
                 $this->application->notify_via_email && $this->application->notify_via_app => ['mail', 'database'],
                 $this->application->notify_via_email => ['mail'],
-                $this->application->notify_via_app => ['database'],
-                default => [],
+                default => ['database'],
             };
 
             Notification::send($users, new ApplicationSubmissionNotification($this->application, $this->submission, $channels));
