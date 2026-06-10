@@ -94,7 +94,7 @@ class SendCustomerAdvisorMessage implements ShouldQueue
                 ? $settings->preselected_model
                 : $this->advisor->model;
 
-            $aiService = $effectiveModel->getService();
+            $aiService = $this->advisor->getAiServiceModel()->getService();
 
             $files = [
                 ...$this->advisor->files()->whereNotNull('parsing_results')->get()->all(),

@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Models;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use AdvisingApp\Ai\Observers\CustomerAdvisorObserver;
+use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\BaseModel;
@@ -198,5 +199,14 @@ class CustomerAdvisor extends BaseModel implements HasMedia, Auditable
     public function getTable()
     {
         return RenameQnaAdvisorsFeature::active() ? 'customer_advisors' : 'qna_advisors';
+    }
+
+    public function getAiServiceModel(): AiModel
+    {
+        $settings = app(AiCustomerAdvisorSettings::class);
+
+        return (! $settings->allow_selection_of_model && $settings->preselected_model)
+            ? $settings->preselected_model
+            : $this->model;
     }
 }

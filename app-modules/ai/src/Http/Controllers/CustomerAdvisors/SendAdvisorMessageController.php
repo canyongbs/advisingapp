@@ -41,7 +41,6 @@ use AdvisingApp\Ai\Enums\AiReasoningEffort;
 use AdvisingApp\Ai\Jobs\CustomerAdvisors\SendCustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
-use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
@@ -58,12 +57,7 @@ class SendAdvisorMessageController
         ]);
 
         if ($request->query('preview')) {
-            $settings = app(AiCustomerAdvisorSettings::class);
-
-            $effectiveModel = (! $settings->allow_selection_of_model && $settings->preselected_model)
-                ? $settings->preselected_model
-                : $advisor->model;
-            $aiService = $effectiveModel->getService();
+            $aiService = $advisor->getAiServiceModel()->getService();
 
             try {
                 return response()->stream(
