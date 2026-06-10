@@ -37,13 +37,13 @@
 namespace AdvisingApp\Ai\Jobs\CustomerAdvisors;
 
 use AdvisingApp\Ai\Actions\GetCustomerAdvisorInstructions;
-use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiReasoningEffort;
 use AdvisingApp\Ai\Events\CustomerAdvisors\CustomerAdvisorMessageChunk;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Ai\Support\StreamingChunks\Finish;
+use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use Illuminate\Bus\Queueable;
@@ -73,7 +73,6 @@ class SendCustomerAdvisorMessage implements ShouldQueue
         protected CustomerAdvisorThread $thread,
         protected string $content,
         protected array $request = [],
-        protected ?AiModel $model = null,
     ) {}
 
     public function handle(GetCustomerAdvisorInstructions $getCustomerAdvisorInstructions): void
@@ -89,7 +88,13 @@ class SendCustomerAdvisorMessage implements ShouldQueue
         $message->save();
 
         try {
-            $aiService = ($this->model ?? $this->advisor->model)->getService();
+            $settings = app(AiCustomerAdvisorSettings::class);
+
+            $effectiveModel = (! $settings->allow_selection_of_model && $settings->preselected_model)
+                ? $settings->preselected_model
+                : $this->advisor->model;
+
+            $aiService = $effectiveModel->getService();
 
             $files = [
                 ...$this->advisor->files()->whereNotNull('parsing_results')->get()->all(),

@@ -57,13 +57,12 @@ class SendAdvisorMessageController
             'options' => ['nullable', 'array'],
         ]);
 
-        $settings = app(AiCustomerAdvisorSettings::class);
-
-        $effectiveModel = (! $settings->allow_selection_of_model && $settings->preselected_model)
-            ? $settings->preselected_model
-            : $advisor->model;
-
         if ($request->query('preview')) {
+            $settings = app(AiCustomerAdvisorSettings::class);
+
+            $effectiveModel = (! $settings->allow_selection_of_model && $settings->preselected_model)
+                ? $settings->preselected_model
+                : $advisor->model;
             $aiService = $effectiveModel->getService();
 
             try {
@@ -114,7 +113,6 @@ class SendAdvisorMessageController
             $advisor,
             $thread,
             $data['content'],
-            model: $effectiveModel,
             request: [
                 'headers' => Arr::only(
                     request()->headers->all(),
