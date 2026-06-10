@@ -34,14 +34,48 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\Ai\Http\Controllers\CustomerAdvisors;
 
-use App\Support\AbstractFeatureFlag;
+use AdvisingApp\Ai\Jobs\CustomerAdvisors\RetryCustomerAdvisorMessage;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisorThread;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 
-class AiAssistantDtoRenameFeature extends AbstractFeatureFlag
+class RetryAdvisorMessageController
 {
-    public function resolve(mixed $scope): mixed
+    public function __invoke(Request $request, CustomerAdvisor $advisor): JsonResponse
     {
-        return false;
+        $data = $request->validate([
+            'content' => ['required', 'string', 'max:25000'],
+            'thread_id' => ['required', 'string', 'max:255'],
+        ]);
+
+        $author = auth('student')->user() ?? auth('prospect')->user();
+
+        $thread = CustomerAdvisorThread::query()
+            ->whereKey($data['thread_id'])
+            ->whereBelongsTo($advisor, 'advisor')
+            ->whereMorphedTo('author', $author)
+            ->whereNull('finished_at')
+            ->firstOrFail();
+
+        dispatch(new RetryCustomerAdvisorMessage(
+            $advisor,
+            $thread,
+            $data['content'],
+            request: [
+                'headers' => Arr::only(
+                    request()->headers->all(),
+                    ['host', 'sec-ch-ua', 'user-agent', 'sec-ch-ua-platform', 'origin', 'referer', 'accept-language'],
+                ),
+                'ip' => request()->ip(),
+            ],
+        ))->onConnection('background');
+
+        return response()->json([
+            'message' => 'Message dispatched for processing via websockets.',
+        ]);
     }
 }

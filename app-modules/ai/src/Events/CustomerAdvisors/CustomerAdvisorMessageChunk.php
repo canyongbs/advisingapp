@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Events\CustomerAdvisors;
 
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
+use Carbon\CarbonInterface;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -55,6 +56,7 @@ class CustomerAdvisorMessageChunk implements ShouldBroadcastNow
         public string $content,
         public bool $isComplete = false,
         public ?string $error = null,
+        public ?CarbonInterface $rateLimitResetsAt = null,
     ) {}
 
     public function broadcastAs(): string
@@ -71,6 +73,7 @@ class CustomerAdvisorMessageChunk implements ShouldBroadcastNow
             'content' => $this->content,
             'is_complete' => $this->isComplete,
             'error' => $this->error,
+            'rate_limit_resets_after_seconds' => $this->rateLimitResetsAt ? (now()->diffInSeconds($this->rateLimitResetsAt) + 1) : null,
         ];
     }
 

@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Concerns\PerformsLicenseChecks;
 use App\Enums\Feature;
-use App\Features\AiAssistantDtoRenameFeature;
 use App\Models\Authenticatable;
 use App\Settings\LicenseSettings;
 use Illuminate\Auth\Access\Response;
@@ -61,11 +60,7 @@ class AiAssistantPolicy
 
     public function viewAny(Authenticatable $authenticatable): Response
     {
-        $featureGate = AiAssistantDtoRenameFeature::active()
-            ? Feature::EmployeeAdvisors->getGateName()
-            : Feature::CustomAiAssistants->getGateName();
-
-        if (! Gate::check($featureGate)) {
+        if (! Gate::check(Feature::EmployeeAdvisors->getGateName())) {
             return Response::deny('AI Assistants are not enabled.');
         }
 
@@ -85,9 +80,7 @@ class AiAssistantPolicy
 
     public function create(Authenticatable $authenticatable): Response
     {
-        $assistantsLimit = AiAssistantDtoRenameFeature::active()
-            ? app(LicenseSettings::class)->data->limits->employeeAdvisorsCount
-            : app(LicenseSettings::class)->data->limits->conversationalAiAssistants;
+        $assistantsLimit = app(LicenseSettings::class)->data->limits->employeeAdvisorsCount;
         $assistantsCount = AiAssistant::query()
             ->where('is_default', false)
             ->whereNull('archived_at')

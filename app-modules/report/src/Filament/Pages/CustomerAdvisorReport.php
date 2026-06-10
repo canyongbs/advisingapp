@@ -42,7 +42,6 @@ use AdvisingApp\Report\Filament\Widgets\CustomerAdvisorReportStats;
 use AdvisingApp\Report\Filament\Widgets\CustomerAdvisorReportTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Enums\Feature;
-use App\Features\AiAssistantDtoRenameFeature;
 use App\Filament\Clusters\ReportLibrary;
 use App\Filament\Clusters\ReportLibraryNavigationGroup;
 use Illuminate\Support\Facades\Gate;
@@ -64,9 +63,7 @@ class CustomerAdvisorReport extends AiReport
 
     public static function canAccess(): bool
     {
-        $featureGate = AiAssistantDtoRenameFeature::active() ? Feature::CustomerAdvisors->getGateName() : Feature::QnAAdvisor->getGateName();
-
-        return Gate::check($featureGate) && parent::canAccess();
+        return Gate::check(Feature::CustomerAdvisors->getGateName()) && parent::canAccess();
     }
 
     public function getWidgets(): array

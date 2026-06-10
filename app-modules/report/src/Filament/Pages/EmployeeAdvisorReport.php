@@ -43,7 +43,6 @@ use AdvisingApp\Report\Filament\Widgets\EmployeeAdvisorStats;
 use AdvisingApp\Report\Filament\Widgets\EmployeeAdvisorTable;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Enums\Feature;
-use App\Features\AiAssistantDtoRenameFeature;
 use App\Filament\Clusters\ReportLibrary;
 use App\Filament\Clusters\ReportLibraryNavigationGroup;
 use Illuminate\Support\Facades\Gate;
@@ -67,11 +66,7 @@ class EmployeeAdvisorReport extends AiReport
 
     public static function canAccess(): bool
     {
-        $featureGate = AiAssistantDtoRenameFeature::active()
-              ? Feature::EmployeeAdvisors->getGateName()
-              : Feature::CustomAiAssistants->getGateName();
-
-        return Gate::check($featureGate) && parent::canAccess();
+        return Gate::check(Feature::EmployeeAdvisors->getGateName()) && parent::canAccess();
     }
 
     public function getWidgets(): array
