@@ -62,7 +62,11 @@ class ApplicationAuthenticationFactory extends Factory
                 /** @var Student|Prospect $senderModel */
                 $senderModel = new $senderClass();
 
-                return $senderModel::factory()->create()->getKey();
+                $sender = $senderClass === Student::class
+                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
+                    : $senderModel::factory()->create();
+
+                return $sender->getKey();
             },
             'code' => Hash::make((string) random_int(100000, 999999)),
             'application_id' => Application::factory(),

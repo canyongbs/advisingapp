@@ -59,7 +59,11 @@ class ConcernFactory extends Factory
                 /** @var Student|Prospect $concernModel */
                 $concernModel = new $concernClass();
 
-                return $concernModel::factory()->create()->getKey();
+                $concern = $concernClass === Student::class
+                  ? Student::inRandomOrder()->first() ?? Student::factory()->create()
+                  : $concernModel::factory()->create();
+
+                return $concern->getKey();
             },
             'description' => $this->faker->sentence(),
             'severity' => $this->faker->randomElement(ConcernSeverity::cases()),

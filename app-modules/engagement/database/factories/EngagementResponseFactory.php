@@ -62,7 +62,11 @@ class EngagementResponseFactory extends Factory
                 /** @var Student|Prospect $senderModel */
                 $senderModel = new $senderClass();
 
-                return $senderModel::factory()->create()->getKey();
+                $sender = $senderClass === Student::class
+                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
+                    : $senderModel::factory()->create();
+
+                return $sender->getKey();
             },
             'sent_at' => $this->faker->dateTimeBetween('-1 year', '-1 day'),
             'type' => $this->faker->randomElement(EngagementResponseType::cases()),

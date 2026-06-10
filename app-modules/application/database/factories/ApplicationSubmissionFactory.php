@@ -60,7 +60,11 @@ class ApplicationSubmissionFactory extends Factory
                 /** @var Student|Prospect $authorModel */
                 $authorModel = new $authorClass();
 
-                return $authorModel::factory()->create()->getKey();
+                $author = $authorClass === Student::class
+                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
+                    : $authorModel::factory()->create();
+
+                return $author->getKey();
             },
             'state_id' => ApplicationSubmissionState::factory(),
         ];
