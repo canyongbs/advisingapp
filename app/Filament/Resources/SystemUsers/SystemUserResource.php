@@ -36,6 +36,7 @@
 
 namespace App\Filament\Resources\SystemUsers;
 
+use App\Enums\NavigationGroup;
 use App\Filament\Resources\SystemUsers\Pages\CreateSystemUser;
 use App\Filament\Resources\SystemUsers\Pages\EditSystemUser;
 use App\Filament\Resources\SystemUsers\Pages\ListSystemUsers;
@@ -48,7 +49,7 @@ class SystemUserResource extends Resource
 {
     protected static ?string $model = SystemUser::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'User Management';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::UserManagement;
 
     protected static ?string $navigationLabel = 'Programmatic Users';
 

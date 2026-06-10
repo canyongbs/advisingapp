@@ -42,6 +42,7 @@ use AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages\ManageEductables;
 use AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages\ViewPipeline;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Pipeline\Settings\ProspectPipelineSettings;
+use App\Enums\NavigationGroup;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
 use UnitEnum;
@@ -50,7 +51,7 @@ class PipelineResource extends Resource
 {
     protected static ?string $model = Pipeline::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?int $navigationSort = 30;
 

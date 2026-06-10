@@ -42,6 +42,7 @@ use AdvisingApp\Division\Filament\Resources\Divisions\Pages\ListDivisions;
 use AdvisingApp\Division\Filament\Resources\Divisions\Pages\ViewDivision;
 use AdvisingApp\Division\Filament\Resources\Divisions\RelationManagers\TeamsRelationManager;
 use AdvisingApp\Division\Models\Division;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
 use UnitEnum;
 
@@ -49,7 +50,7 @@ class DivisionResource extends Resource
 {
     protected static ?string $model = Division::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'User Management';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::UserManagement;
 
     protected static ?int $navigationSort = 50;
 

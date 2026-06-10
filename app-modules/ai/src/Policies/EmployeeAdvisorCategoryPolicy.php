@@ -39,7 +39,6 @@ namespace AdvisingApp\Ai\Policies;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Concerns\PerformsLicenseChecks;
 use App\Enums\Feature;
-use App\Features\AiAssistantDtoRenameFeature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
@@ -54,11 +53,7 @@ class EmployeeAdvisorCategoryPolicy
             return $response;
         }
 
-        $featureGate = AiAssistantDtoRenameFeature::active()
-            ? Feature::EmployeeAdvisors->getGateName()
-            : Feature::CustomAiAssistants->getGateName();
-
-        if (! Gate::check($featureGate)) {
+        if (! Gate::check(Feature::EmployeeAdvisors->getGateName())) {
             return Response::deny('AI Assistants are not enabled.');
         }
 

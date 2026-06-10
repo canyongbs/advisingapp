@@ -41,6 +41,7 @@ use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\EditRole;
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\ListRoles;
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\ViewRole;
 use AdvisingApp\Authorization\Models\Role;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
@@ -49,7 +50,7 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'User Management';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::UserManagement;
 
     protected static ?int $navigationSort = 30;
 

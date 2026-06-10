@@ -42,13 +42,14 @@ use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomes\InteractionOu
 use AdvisingApp\Interaction\Filament\Resources\InteractionRelations\InteractionRelationResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\InteractionStatusResource;
 use AdvisingApp\Interaction\Filament\Resources\InteractionTypes\InteractionTypeResource;
+use App\Enums\NavigationGroup;
 use Filament\Clusters\Cluster;
 use Filament\Resources\Resource;
 use UnitEnum;
 
 class InteractionManagement extends Cluster
 {
-    protected static string | UnitEnum | null $navigationGroup = 'Settings';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Settings;
 
     protected static ?int $navigationSort = 80;
 

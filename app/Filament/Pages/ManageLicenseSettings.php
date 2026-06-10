@@ -37,7 +37,7 @@
 namespace App\Filament\Pages;
 
 use App\DataTransferObjects\LicenseManagement\LicenseData;
-use App\Features\AiAssistantDtoRenameFeature;
+use App\Enums\NavigationGroup;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Forms\Components\DatePicker;
@@ -57,7 +57,7 @@ class ManageLicenseSettings extends SettingsPage
 
     protected static string $settings = LicenseSettings::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Global Administration';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::GlobalAdministration;
 
     public static function canAccess(): bool
     {
@@ -103,33 +103,17 @@ class ManageLicenseSettings extends SettingsPage
                                 ->numeric()
                                 ->minValue(0)
                                 ->required(),
-                            TextInput::make('data.limits.conversationalAiAssistants')
-                                ->label('Artificial Intelligence Assistants')
-                                ->numeric()
-                                ->minValue(0)
-                                ->required()
-                                ->visible(fn (): bool => ! AiAssistantDtoRenameFeature::active())
-                                ->disabled(fn (Get $get): bool => ! $get('data.addons.customAiAssistants')),
-                            TextInput::make('data.limits.qnaAdvisorsCount')
-                                ->label('QnA Advisors')
-                                ->numeric()
-                                ->minValue(0)
-                                ->required()
-                                ->visible(fn (): bool => ! AiAssistantDtoRenameFeature::active())
-                                ->disabled(fn (Get $get): bool => ! $get('data.addons.qnaAdvisor')),
                             TextInput::make('data.limits.employeeAdvisorsCount')
                                 ->label('Employee Advisors')
                                 ->numeric()
                                 ->minValue(0)
                                 ->required()
-                                ->visible(fn (): bool => AiAssistantDtoRenameFeature::active())
                                 ->disabled(fn (Get $get): bool => ! $get('data.addons.employeeAdvisors')),
                             TextInput::make('data.limits.customerAdvisorsCount')
                                 ->label('Customer Advisors')
                                 ->numeric()
                                 ->minValue(0)
                                 ->required()
-                                ->visible(fn (): bool => AiAssistantDtoRenameFeature::active())
                                 ->disabled(fn (Get $get): bool => ! $get('data.addons.customerAdvisors')),
                             TextInput::make('data.limits.dataAdvisorsCount')
                                 ->label('Data Advisors')
@@ -186,23 +170,13 @@ class ManageLicenseSettings extends SettingsPage
                                 ->label('Mobile Apps'),
                             Toggle::make('data.addons.scheduleAndAppointments')
                                 ->label('My Appointments'),
-                            Toggle::make('data.addons.customAiAssistants')
-                                ->label('Custom AI Assistants')
-                                ->visible(fn (): bool => ! AiAssistantDtoRenameFeature::active())
-                                ->live(),
                             Toggle::make('data.addons.employeeAdvisors')
                                 ->label('Employee Advisors')
-                                ->visible(fn (): bool => AiAssistantDtoRenameFeature::active())
                                 ->live(),
                             Toggle::make('data.addons.researchAdvisor')
                                 ->label('Research Advisors'),
-                            Toggle::make('data.addons.qnaAdvisor')
-                                ->label('QnA Advisors')
-                                ->visible(fn (): bool => ! AiAssistantDtoRenameFeature::active())
-                                ->live(),
                             Toggle::make('data.addons.customerAdvisors')
                                 ->label('Customer Advisors')
-                                ->visible(fn (): bool => AiAssistantDtoRenameFeature::active())
                                 ->live(),
                             Toggle::make('data.addons.dataAdvisor')
                                 ->label('Data Advisors')

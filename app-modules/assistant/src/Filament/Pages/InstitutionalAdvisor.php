@@ -43,6 +43,7 @@ use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManagePromptLibrary;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageThreads;
 use AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanUploadFiles;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Enums\NavigationGroup;
 use App\Models\User;
 use Filament\Pages\Page;
 use UnitEnum;
@@ -61,7 +62,7 @@ class InstitutionalAdvisor extends Page
 
     protected string $view = 'assistant::filament.pages.personal-assistant';
 
-    protected static string | UnitEnum | null $navigationGroup = 'Enterprise AI';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::EnterpriseAi;
 
     protected static ?string $navigationLabel = 'Institutional Advisor';
 

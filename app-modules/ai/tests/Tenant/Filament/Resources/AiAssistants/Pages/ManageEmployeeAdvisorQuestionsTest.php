@@ -41,7 +41,6 @@ use AdvisingApp\Ai\Models\EmployeeAdvisorCategory;
 use AdvisingApp\Ai\Models\EmployeeAdvisorQuestion;
 use AdvisingApp\Ai\Tests\RequestFactories\EmployeeAdvisorQuestionRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Features\AiAssistantDtoRenameFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
@@ -52,8 +51,6 @@ use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 
 beforeEach(function () {
-    AiAssistantDtoRenameFeature::activate();
-
     $settings = app(LicenseSettings::class);
     $settings->data->addons->employeeAdvisors = true;
     $settings->save();

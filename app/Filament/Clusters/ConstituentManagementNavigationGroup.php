@@ -36,15 +36,22 @@
 
 namespace App\Filament\Clusters;
 
-use App\Enums\NavigationGroup;
-use Filament\Clusters\Cluster;
-use UnitEnum;
+use Filament\Support\Contracts\HasLabel;
 
-class GlobalArtificialIntelligence extends Cluster
+enum ConstituentManagementNavigationGroup implements HasLabel
 {
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::GlobalAdministration;
+    case Students;
+    case Prospects;
+    case BasicNeeds;
+    case Concern;
 
-    protected static ?int $navigationSort = 100;
-
-    protected static ?string $title = 'Artificial Intelligence';
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::Students => 'Students',
+            self::Prospects => 'Prospects',
+            self::BasicNeeds => 'Basic Needs',
+            self::Concern => 'Concern',
+        };
+    }
 }

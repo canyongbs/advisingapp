@@ -42,6 +42,7 @@ use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\ListConcernStat
 use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages\ViewConcernStatus;
 use AdvisingApp\Concern\Models\ConcernStatus;
 use App\Filament\Clusters\ConstituentManagement;
+use App\Filament\Clusters\ConstituentManagementNavigationGroup;
 use Filament\Resources\Resource;
 use UnitEnum;
 
@@ -53,7 +54,7 @@ class ConcernStatusResource extends Resource
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Concern';
+    protected static string | UnitEnum | null $navigationGroup = ConstituentManagementNavigationGroup::Concern;
 
     protected static ?int $navigationSort = 120;
 

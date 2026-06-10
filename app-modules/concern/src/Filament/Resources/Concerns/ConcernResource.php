@@ -38,12 +38,13 @@ namespace AdvisingApp\Concern\Filament\Resources\Concerns;
 
 use AdvisingApp\Concern\Filament\Resources\Concerns\Pages\ListConcerns;
 use AdvisingApp\Concern\Models\Concern;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
 use UnitEnum;
 
 class ConcernResource extends Resource
 {
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?int $navigationSort = 5;
 

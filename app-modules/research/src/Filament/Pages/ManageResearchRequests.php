@@ -42,6 +42,7 @@ use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManag
 use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageFolders;
 use AdvisingApp\Research\Filament\Pages\ManageResearchRequests\Concerns\CanManageRequests;
 use App\Enums\Feature;
+use App\Enums\NavigationGroup;
 use App\Models\User;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
@@ -66,7 +67,7 @@ class ManageResearchRequests extends Page
     {
         return [
             NavigationItem::make('Research Advisor')
-                ->group('Enterprise AI')
+                ->group(NavigationGroup::EnterpriseAi)
                 ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName(), NewResearchRequest::getRouteName()))
                 ->sort(30)
                 ->url(static::getUrl()),

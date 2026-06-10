@@ -43,6 +43,7 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectTags\Pages\ViewProspectTag;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Enums\TagType;
 use App\Filament\Clusters\ConstituentManagement;
+use App\Filament\Clusters\ConstituentManagementNavigationGroup;
 use App\Models\Tag;
 use App\Models\User;
 use Filament\Resources\Resource;
@@ -59,7 +60,7 @@ class ProspectTagResource extends Resource
 
     protected static ?string $cluster = ConstituentManagement::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
+    protected static string | UnitEnum | null $navigationGroup = ConstituentManagementNavigationGroup::Prospects;
 
     public static function canAccess(): bool
     {

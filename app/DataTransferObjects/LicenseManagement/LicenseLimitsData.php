@@ -46,8 +46,6 @@ class LicenseLimitsData extends Data
 {
     public function __construct(
         public int $conversationalAiSeats = 0,
-        public int $conversationalAiAssistants = 0, //TODO: AiAssistantDtoRenameFeature cleanup: remove this when you remove the feature flag
-        public int $qnaAdvisorsCount = 0, //TODO: AiAssistantDtoRenameFeature cleanup: remove this when you remove the feature flag
         public int $employeeAdvisorsCount = 0,
         public int $customerAdvisorsCount = 0,
         public int $dataAdvisorsCount = 0,

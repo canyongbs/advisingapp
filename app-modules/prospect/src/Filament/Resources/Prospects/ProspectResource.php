@@ -46,6 +46,7 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ManageProspectTasks;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ViewProspect;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ViewProspectActivityFeed;
 use AdvisingApp\Prospect\Models\Prospect;
+use App\Enums\NavigationGroup;
 use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
@@ -60,7 +61,7 @@ class ProspectResource extends Resource
 
     protected static ?int $navigationSort = 20;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?string $recordTitleAttribute = 'full_name';
 

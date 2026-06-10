@@ -42,11 +42,12 @@ use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportTableChart;
 use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
 use App\Filament\Clusters\ReportLibrary;
+use App\Filament\Clusters\ReportLibraryNavigationGroup;
 use UnitEnum;
 
 class ProspectReport extends AbstractProspectReport
 {
-    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
+    protected static string | UnitEnum | null $navigationGroup = ReportLibraryNavigationGroup::Prospects;
 
     protected static string $routePath = 'prospect-report';
 

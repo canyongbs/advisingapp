@@ -42,6 +42,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Abstract\ProspectReport;
 use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use App\Filament\Clusters\ReportLibrary;
+use App\Filament\Clusters\ReportLibraryNavigationGroup;
 use App\Models\User;
 use BackedEnum;
 use Livewire\Attributes\Url;
@@ -52,7 +53,7 @@ class RecruitmentCrmDashboard extends ProspectReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Prospects';
+    protected static string | UnitEnum | null $navigationGroup = ReportLibraryNavigationGroup::Prospects;
 
     protected static ?int $navigationSort = 10;
 

@@ -34,59 +34,58 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Pages;
+namespace App\Enums;
 
-use AdvisingApp\Report\Abstract\ProspectReport;
-use AdvisingApp\Report\Filament\Widgets\ProspectCaseStats;
-use AdvisingApp\Report\Filament\Widgets\ProspectCaseTable;
-use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
-use App\Enums\Feature;
-use App\Filament\Clusters\ReportLibrary;
-use App\Filament\Clusters\ReportLibraryNavigationGroup;
-use Illuminate\Support\Facades\Gate;
-use UnitEnum;
+use Filament\Support\Contracts\Collapsible;
+use Filament\Support\Contracts\HasIcon;
+use Filament\Support\Contracts\HasLabel;
 
-class ProspectCaseReport extends ProspectReport
+enum NavigationGroup implements Collapsible, HasIcon, HasLabel
 {
-    protected static ?string $title = 'Cases';
+    case EnterpriseAi;
+    case Chatbots;
+    case Crm;
+    case PremiumFeatures;
+    case DataAndAnalytics;
+    case UserManagement;
+    case Settings;
+    case GlobalAdministration;
 
-    protected static ?string $cluster = ReportLibrary::class;
-
-    protected static string $routePath = 'prospect-case-report';
-
-    protected static string | UnitEnum | null $navigationGroup = ReportLibraryNavigationGroup::Prospects;
-
-    protected string $cacheTag = 'report-prospect-case';
-
-    protected static ?int $navigationSort = 130;
-
-    public static function canAccess(): bool
+    public function getLabel(): string
     {
-        return Gate::check(Feature::CaseManagement->getGateName()) && parent::canAccess();
+        return match ($this) {
+            self::EnterpriseAi => 'Enterprise AI',
+            self::Chatbots => 'Chatbots',
+            self::Crm => 'CRM',
+            self::PremiumFeatures => 'Premium Features',
+            self::DataAndAnalytics => 'Data and Analytics',
+            self::UserManagement => 'User Management',
+            self::Settings => 'Settings',
+            self::GlobalAdministration => 'Global Administration',
+        };
     }
 
-    public function getColumns(): int|array
+    public function getIcon(): string
     {
-        return [
-            'sm' => 12,
-            'md' => 12,
-            'lg' => 12,
-        ];
+        return match ($this) {
+            self::EnterpriseAi => 'heroicon-o-sparkles',
+            self::Chatbots => 'heroicon-o-bolt',
+            self::Crm => 'heroicon-o-academic-cap',
+            self::PremiumFeatures => 'heroicon-o-rocket-launch',
+            self::DataAndAnalytics => 'heroicon-o-circle-stack',
+            self::UserManagement => 'heroicon-o-users',
+            self::Settings => 'heroicon-o-wrench-screwdriver',
+            self::GlobalAdministration => 'heroicon-o-adjustments-vertical',
+        };
     }
 
-    public function getWidgets(): array
+    public function isCollapsible(): bool
     {
-        return [
-            RefreshWidget::make(['cacheTag' => $this->cacheTag]),
-            ProspectCaseStats::make(['cacheTag' => $this->cacheTag]),
-            ProspectCaseTable::make(['cacheTag' => $this->cacheTag]),
-        ];
+        return true;
     }
 
-    public function getWidgetData(): array
+    public function isCollapsed(): bool
     {
-        return [
-            'filters' => $this->filters,
-        ];
+        return true;
     }
 }

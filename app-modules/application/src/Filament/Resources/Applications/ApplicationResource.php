@@ -44,6 +44,7 @@ use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicat
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationWorkflows;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ViewApplication;
 use AdvisingApp\Application\Models\Application;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
@@ -53,7 +54,7 @@ class ApplicationResource extends Resource
 {
     protected static ?string $model = Application::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?int $navigationSort = 130;
 

@@ -34,14 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace App\Filament\Clusters;
 
-use App\Support\AbstractFeatureFlag;
+use Filament\Support\Contracts\HasLabel;
 
-class AiAssistantDtoRenameFeature extends AbstractFeatureFlag
+enum ReportLibraryNavigationGroup implements HasLabel
 {
-    public function resolve(mixed $scope): mixed
+    case EnterpriseAi;
+    case Prospects;
+    case Students;
+    case Users;
+    case ProjectManagement;
+
+    public function getLabel(): string
     {
-        return false;
+        return match ($this) {
+            self::EnterpriseAi => 'Enterprise AI',
+            self::Prospects => 'Prospects',
+            self::Students => 'Students',
+            self::Users => 'Users',
+            self::ProjectManagement => 'Project Management',
+        };
     }
 }

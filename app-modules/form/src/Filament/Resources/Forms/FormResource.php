@@ -46,6 +46,7 @@ use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageFormWorkflows;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\SubmissionOnScreenResponse;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ViewForm;
 use AdvisingApp\Form\Models\Form;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
@@ -55,7 +56,7 @@ class FormResource extends Resource
 {
     protected static ?string $model = Form::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?int $navigationSort = 120;
 

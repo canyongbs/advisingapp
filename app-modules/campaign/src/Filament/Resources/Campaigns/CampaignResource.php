@@ -42,6 +42,7 @@ use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\ListCampaigns;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\ViewCampaign;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\RelationManagers\CampaignActionsRelationManager;
 use AdvisingApp\Campaign\Models\Campaign;
+use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
 use UnitEnum;
 
@@ -49,7 +50,7 @@ class CampaignResource extends Resource
 {
     protected static ?string $model = Campaign::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?int $navigationSort = 50;
 

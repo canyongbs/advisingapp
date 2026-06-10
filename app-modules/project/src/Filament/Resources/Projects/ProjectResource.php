@@ -48,6 +48,7 @@ use AdvisingApp\Project\Filament\Resources\Projects\Pages\ManageProjectPipelines
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\ManageTasks;
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\ViewProject;
 use AdvisingApp\Project\Models\Project;
+use App\Enums\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
@@ -57,7 +58,7 @@ class ProjectResource extends Resource
 {
     protected static ?string $model = Project::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'CRM';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
     protected static ?int $navigationSort = 90;
 

@@ -53,6 +53,7 @@ use AdvisingApp\IntegrationTwilio\Actions\GetTwilioApiKey;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use App\Enums\Feature;
 use App\Enums\Integration;
+use App\Enums\NavigationGroup;
 use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Exception;
@@ -97,7 +98,7 @@ class UserChat extends Page implements HasForms, HasActions
 
     public array $conversationActiveUsers = [];
 
-    protected static string | UnitEnum | null $navigationGroup = 'Premium Features';
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::PremiumFeatures;
 
     protected static ?int $navigationSort = 10;
 

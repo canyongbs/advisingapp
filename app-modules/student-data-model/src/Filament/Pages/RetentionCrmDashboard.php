@@ -41,6 +41,7 @@ use AdvisingApp\Report\Abstract\StudentReport;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Clusters\ReportLibrary;
+use App\Filament\Clusters\ReportLibraryNavigationGroup;
 use App\Models\User;
 use BackedEnum;
 use Filament\Forms\Components\Select;
@@ -53,7 +54,7 @@ class RetentionCrmDashboard extends StudentReport
 {
     protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | UnitEnum | null $navigationGroup = 'Students';
+    protected static string | UnitEnum | null $navigationGroup = ReportLibraryNavigationGroup::Students;
 
     protected static ?int $navigationSort = 1;
 
