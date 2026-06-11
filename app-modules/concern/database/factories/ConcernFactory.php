@@ -56,14 +56,7 @@ class ConcernFactory extends Factory
             'concern_id' => function (array $attributes) {
                 $concernClass = Relation::getMorphedModel($attributes['concern_type']);
 
-                /** @var Student|Prospect $concernModel */
-                $concernModel = new $concernClass();
-
-                $concern = $concernClass === Student::class
-                  ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                  : $concernModel::factory()->create();
-
-                return $concern->getKey();
+                return $concernClass::factory()->create()->getKey();
             },
             'description' => $this->faker->sentence(),
             'severity' => $this->faker->randomElement(ConcernSeverity::cases()),

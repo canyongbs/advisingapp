@@ -41,13 +41,20 @@ use App\Events\UserRetentionCrmRestrictionSet;
 use App\Events\UserTeamChanged;
 use App\Models\User;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class UserObserver
 {
     public function saving(User $user): void
     {
         if ($user->isDirty('password')) {
-            $numPreviousPasswords = app(LocalPasswordSettings::class)->getNumPreviousPasswords();
+            try {
+                $numPreviousPasswords = DB::transaction(function () {
+                    return app(LocalPasswordSettings::class)->getNumPreviousPasswords();
+                });
+            } catch (\Throwable) {
+                $numPreviousPasswords = LocalPasswordSettings::DEFAULT_NUM_PREVIOUS_PASSWORDS;
+            }
 
             $passwordHistory = $user->password_history ?? [];
 

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Team\Database\Factories;
 
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Team\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -51,12 +50,5 @@ class TeamFactory extends Factory
             'name' => $this->faker->unique()->sentence(),
             'description' => $this->faker->sentence(),
         ];
-    }
-
-    public function configure(): TeamFactory|Factory
-    {
-        return $this->afterMaking(function (Team $team) {
-            $team->division()->associate($this->faker->randomElement([Division::inRandomOrder()->first(), null]));
-        });
     }
 }

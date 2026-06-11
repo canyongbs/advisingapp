@@ -60,16 +60,9 @@ class EngagementFactory extends Factory
                 (new Prospect())->getMorphClass(),
             ]),
             'recipient_id' => function (array $attributes) {
-                $senderClass = Relation::getMorphedModel($attributes['recipient_type']);
+                $recipientClass = Relation::getMorphedModel($attributes['recipient_type']);
 
-                /** @var Student|Prospect $senderModel */
-                $senderModel = new $senderClass();
-
-                $sender = $senderClass === Student::class
-                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                    : $senderModel::factory()->create();
-
-                return $sender->getKey();
+                return $recipientClass::factory()->create()->getKey();
             },
             'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->sentence]]]]],
             'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->paragraph]]]]],
@@ -82,7 +75,7 @@ class EngagementFactory extends Factory
     public function forStudent(): self
     {
         return $this->state([
-            'recipient_id' => Student::inRandomOrder()->first()->sisid ?? Student::factory(),
+            'recipient_id' => Student::factory(),
             'recipient_type' => (new Student())->getMorphClass(),
         ]);
     }

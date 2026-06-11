@@ -37,7 +37,6 @@
 namespace AdvisingApp\Division\Database\Factories;
 
 use AdvisingApp\Division\Models\Division;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -64,14 +63,6 @@ class DivisionFactory extends Factory
             return [
                 'is_default' => true,
             ];
-        });
-    }
-
-    public function configure(): DivisionFactory|Factory
-    {
-        return $this->afterMaking(function (Division $division) {
-            $division->createdBy()->associate($this->faker->randomElement([User::inRandomOrder()->first(), null]));
-            $division->lastUpdatedBy()->associate($this->faker->randomElement([User::inRandomOrder()->first(), null]));
         });
     }
 }

@@ -52,15 +52,15 @@ class CaseModelFactory extends Factory
     public function definition(): array
     {
         return [
-            'respondent_id' => Student::inRandomOrder()->first()->sisid ?? Student::factory(),
+            'respondent_id' => Student::factory(),
             'respondent_type' => function (array $attributes) {
                 return Student::find($attributes['respondent_id'])->getMorphClass();
             },
             'close_details' => $this->faker->sentence(),
             'res_details' => $this->faker->sentence(),
-            'division_id' => Division::inRandomOrder()->first()->id ?? Division::factory(),
-            'status_id' => CaseStatus::inRandomOrder()->first() ?? CaseStatus::factory(),
-            'priority_id' => CasePriority::inRandomOrder()->first() ?? CasePriority::factory(),
+            'division_id' => Division::factory(),
+            'status_id' => CaseStatus::factory(),
+            'priority_id' => CasePriority::factory(),
             'created_by_id' => User::factory(),
         ];
     }

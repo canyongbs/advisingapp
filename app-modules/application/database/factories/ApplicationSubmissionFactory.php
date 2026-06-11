@@ -57,14 +57,7 @@ class ApplicationSubmissionFactory extends Factory
             'author_id' => function (array $attributes) {
                 $authorClass = Relation::getMorphedModel($attributes['author_type']);
 
-                /** @var Student|Prospect $authorModel */
-                $authorModel = new $authorClass();
-
-                $author = $authorClass === Student::class
-                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                    : $authorModel::factory()->create();
-
-                return $author->getKey();
+                return $authorClass::factory()->create()->getKey();
             },
             'state_id' => ApplicationSubmissionState::factory(),
         ];

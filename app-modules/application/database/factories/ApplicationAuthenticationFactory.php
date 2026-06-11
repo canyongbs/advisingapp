@@ -57,16 +57,9 @@ class ApplicationAuthenticationFactory extends Factory
                 (new Prospect())->getMorphClass(),
             ]),
             'author_id' => function (array $attributes) {
-                $senderClass = Relation::getMorphedModel($attributes['author_type']);
+                $authorClass = Relation::getMorphedModel($attributes['author_type']);
 
-                /** @var Student|Prospect $senderModel */
-                $senderModel = new $senderClass();
-
-                $sender = $senderClass === Student::class
-                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                    : $senderModel::factory()->create();
-
-                return $sender->getKey();
+                return $authorClass::factory()->create()->getKey();
             },
             'code' => Hash::make((string) random_int(100000, 999999)),
             'application_id' => Application::factory(),

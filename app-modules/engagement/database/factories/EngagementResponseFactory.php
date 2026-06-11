@@ -59,14 +59,7 @@ class EngagementResponseFactory extends Factory
             'sender_id' => function (array $attributes) {
                 $senderClass = Relation::getMorphedModel($attributes['sender_type']);
 
-                /** @var Student|Prospect $senderModel */
-                $senderModel = new $senderClass();
-
-                $sender = $senderClass === Student::class
-                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                    : $senderModel::factory()->create();
-
-                return $sender->getKey();
+                return $senderClass::factory()->create()->getKey();
             },
             'sent_at' => $this->faker->dateTimeBetween('-1 year', '-1 day'),
             'type' => $this->faker->randomElement(EngagementResponseType::cases()),
