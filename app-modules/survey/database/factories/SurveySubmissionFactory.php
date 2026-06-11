@@ -41,7 +41,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Survey\Models\SurveySubmission;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * @extends Factory<SurveySubmission>
@@ -57,9 +56,10 @@ class SurveySubmissionFactory extends Factory
             'survey_id' => Survey::factory(),
             'author_type' => $this->faker->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
             'author_id' => function (array $attributes) {
-                $authorClass = Relation::getMorphedModel($attributes['author_type']);
-
-                return $authorClass::factory()->create()->getKey();
+                return match ($attributes['author_type']) {
+                    (new Student())->getMorphClass() => Student::factory()->create()->getKey(),
+                    default => Prospect::factory()->create()->getKey(),
+                };
             },
             'submitted_at' => now(),
         ];

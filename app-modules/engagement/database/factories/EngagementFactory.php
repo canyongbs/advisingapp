@@ -44,7 +44,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * @extends Factory<Engagement>
@@ -60,9 +59,10 @@ class EngagementFactory extends Factory
                 (new Prospect())->getMorphClass(),
             ]),
             'recipient_id' => function (array $attributes) {
-                $recipientClass = Relation::getMorphedModel($attributes['recipient_type']);
-
-                return $recipientClass::factory()->create()->getKey();
+                return match ($attributes['recipient_type']) {
+                    (new Student())->getMorphClass() => Student::factory()->create()->getKey(),
+                    default => Prospect::factory()->create()->getKey(),
+                };
             },
             'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->sentence]]]]],
             'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->paragraph]]]]],
