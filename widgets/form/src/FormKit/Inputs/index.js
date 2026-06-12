@@ -33,13 +33,25 @@
 */
 import { upload } from '@formkit/icons';
 import { createInput } from '@formkit/vue';
+import CheckboxWithOther from './CheckboxWithOther.vue';
 import OneTimePassword from './OneTimePassword.vue';
+import OtherOption from './OtherOption.vue';
+import RadioWithOther from './RadioWithOther.vue';
 import Signature from './Signature.vue';
 import Upload from './Upload.vue';
 
 export default {
+    checkboxWithOther: createInput(CheckboxWithOther, {
+        props: ['options', 'fieldLabel'],
+    }),
     otp: createInput(OneTimePassword, {
         props: ['digits'],
+    }),
+    otherOption: createInput(OtherOption, {
+        props: [],
+    }),
+    radioWithOther: createInput(RadioWithOther, {
+        props: ['options', 'fieldLabel'],
     }),
     signature: createInput(Signature, {
         props: [],

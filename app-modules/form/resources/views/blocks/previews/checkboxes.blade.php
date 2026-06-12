@@ -46,5 +46,13 @@
                 </div>
             </div>
         @endforeach
+        @if ($hasOtherOption ?? false)
+            <div class="flex items-center gap-2">
+                <div class="h-3 w-3 rounded border border-gray-500 flex-shrink-0"></div>
+                <div class="flex items-center border border-gray-400 rounded flex-1">
+                    <span class="px-3 py-1 text-sm text-gray-400">Other</span>
+                </div>
+            </div>
+        @endif
     </div>
 </x-form::blocks.field-wrapper>

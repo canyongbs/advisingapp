@@ -37,6 +37,25 @@
     import wizard from '../../form/src/FormKit/wizard';
     let { steps, visitedSteps, activeStep, setStep, wizardPlugin } = wizard();
 
+    function mergeOtherFieldsIntoCheckboxes(formData) {
+        const processed = {};
+        for (const [key, value] of Object.entries(formData)) {
+            if (Array.isArray(value)) {
+                const otherValue = formData[key + '_other'];
+                processed[key] = otherValue ? [...value, otherValue] : value;
+            } else if (value === '__other__') {
+                processed[key] = formData[key + '_other'] || '';
+            } else if (key.endsWith('_other') && formData[key.slice(0, -6)] !== undefined) {
+                // Skip — this _other companion key has already been consumed above.
+            } else if (value !== null && typeof value === 'object' && !Array.isArray(value)) {
+                processed[key] = mergeOtherFieldsIntoCheckboxes(value);
+            } else {
+                processed[key] = value;
+            }
+        }
+        return processed;
+    }
+
     const props = defineProps({
         entryUrl: {
             type: String,
@@ -84,7 +103,7 @@
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(data),
+                body: JSON.stringify(mergeOtherFieldsIntoCheckboxes(data)),
             })
                 .then((response) => response.json())
                 .then((json) => {

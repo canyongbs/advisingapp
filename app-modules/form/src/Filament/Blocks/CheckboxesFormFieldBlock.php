@@ -41,6 +41,7 @@ use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\TextInput;
@@ -62,6 +63,8 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
     public static function fields(): array
     {
         return [
+            Checkbox::make('hasOtherOption')
+                ->label('Include Other'),
             Repeater::make('options')
                 ->saveRelationshipsUsing(fn () => null)
                 ->table([
@@ -78,6 +81,19 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
 
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
+        $hasOtherOption = $field->config['hasOtherOption'] ?? false;
+
+        if ($hasOtherOption) {
+            return [
+                '$formkit' => 'checkboxWithOther',
+                'fieldLabel' => $field->label,
+                'validationLabel' => $field->label,
+                'name' => $field->getKey(),
+                ...($field->is_required ? ['validation' => 'required'] : []),
+                'options' => $field->config['options'],
+            ];
+        }
+
         return [
             '$formkit' => 'checkbox',
             'label' => $field->label,
@@ -90,6 +106,10 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
 
     public static function getValidationRules(SubmissibleField $field): array
     {
+        if ($field->config['hasOtherOption'] ?? false) {
+            return ['array'];
+        }
+
         /** @var array<int, array<string, string>>|array<string, string> */
         $options = $field->config['options'];
         $values = collect($options);
@@ -108,17 +128,33 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
 
     public static function getSubmissionState(SubmissibleField $field, mixed $response): array
     {
+        $hasOtherOption = $field->config['hasOtherOption'] ?? false;
         $options = collect($field->config['options']);
 
         if (isset($field->config['options'][0]) && is_array($field->config['options'][0])) {
             $options = $options->pluck('label', 'value');
         }
 
+        $responseArray = is_array($response) ? $response : [];
+        $optionKeysLower = $options->keys()->map(fn ($key) => strtolower($key));
+
+        $result = $options
+            ->mapWithKeys(fn ($label, $key) => [
+                $label => collect($responseArray)->contains(fn ($val) => strcasecmp($val, $key) === 0),
+            ])
+            ->toArray();
+
+        if ($hasOtherOption && is_array($response)) {
+            $otherValues = array_filter($response, fn ($val) => ! $optionKeysLower->contains(strtolower($val)));
+
+            foreach ($otherValues as $otherValue) {
+                $result['Other: ' . $otherValue] = true;
+            }
+        }
+
         return [
             ...parent::getSubmissionState($field, $response),
-            'response' => $options
-                ->mapWithKeys(fn ($label, $key) => [$label => in_array($key, $response)])
-                ->toArray(),
+            'response' => $result,
         ];
     }
 

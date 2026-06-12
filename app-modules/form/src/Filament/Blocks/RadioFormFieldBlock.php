@@ -41,6 +41,7 @@ use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\TextInput;
@@ -62,6 +63,8 @@ class RadioFormFieldBlock extends FormFieldBlock
     public static function fields(): array
     {
         return [
+            Checkbox::make('hasOtherOption')
+                ->label('Include Other'),
             Repeater::make('options')
                 ->saveRelationshipsUsing(fn () => null)
                 ->table([
@@ -78,6 +81,19 @@ class RadioFormFieldBlock extends FormFieldBlock
 
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
     {
+        $hasOtherOption = $field->config['hasOtherOption'] ?? false;
+
+        if ($hasOtherOption) {
+            return [
+                '$formkit' => 'radioWithOther',
+                'fieldLabel' => $field->label,
+                'validationLabel' => $field->label,
+                'name' => $field->getKey(),
+                ...($field->is_required ? ['validation' => 'required'] : []),
+                'options' => $field->config['options'],
+            ];
+        }
+
         return [
             '$formkit' => 'radio',
             'label' => $field->label,
@@ -90,6 +106,10 @@ class RadioFormFieldBlock extends FormFieldBlock
 
     public static function getValidationRules(SubmissibleField $field): array
     {
+        if ($field->config['hasOtherOption'] ?? false) {
+            return ['string'];
+        }
+
         /** @var array<int, array<string, string>>|array<string, string> */
         $options = $field->config['options'];
         $values = collect($options);
