@@ -15,7 +15,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor's trademarks is subject
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -32,7 +32,7 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import { ref, computed, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
 
     const props = defineProps({
         context: Object,
@@ -72,11 +72,7 @@
     <fieldset class="max-w-md border border-gray-400 rounded px-2 pb-1">
         <legend v-if="fieldLabel" class="font-bold text-sm">{{ fieldLabel }}</legend>
 
-        <div
-            v-for="option in normalizedOptions"
-            :key="option.value"
-            class="formkit-option"
-        >
+        <div v-for="option in normalizedOptions" :key="option.value" class="formkit-option">
             <label class="flex items-center mb-1 cursor-pointer">
                 <input
                     type="radio"
@@ -85,7 +81,9 @@
                     v-model="selectedValue"
                     class="absolute w-0 h-0 overflow-hidden opacity-0 pointer-events-none peer"
                 />
-                <span class="block relative h-5 w-5 mr-2 rounded-full bg-white bg-gradient-to-b from-transparent to-gray-200 border border-gray-400 peer-checked:border-primary-500">
+                <span
+                    class="block relative h-5 w-5 mr-2 rounded-full bg-white bg-gradient-to-b from-transparent to-gray-200 border border-gray-400 peer-checked:border-primary-500"
+                >
                     <span
                         v-if="selectedValue === option.value"
                         class="block absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 h-2.5 w-2.5 rounded-full bg-primary-500"
@@ -104,7 +102,9 @@
                     v-model="selectedValue"
                     class="absolute w-0 h-0 overflow-hidden opacity-0 pointer-events-none peer"
                 />
-                <span class="block relative h-5 w-5 mr-2 rounded-full bg-white bg-gradient-to-b from-transparent to-gray-200 border border-gray-400 peer-checked:border-primary-500 flex-shrink-0">
+                <span
+                    class="block relative h-5 w-5 mr-2 rounded-full bg-white bg-gradient-to-b from-transparent to-gray-200 border border-gray-400 peer-checked:border-primary-500 flex-shrink-0"
+                >
                     <span
                         v-if="selectedValue === '__other__'"
                         class="block absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 h-2.5 w-2.5 rounded-full bg-primary-500"

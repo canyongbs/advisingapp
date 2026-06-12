@@ -15,7 +15,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor's trademarks is subject
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -62,21 +62,12 @@
 <template>
     <div class="flex items-center mb-1">
         <label class="flex items-center cursor-pointer select-none mr-2 flex-shrink-0">
-            <input
-                type="checkbox"
-                v-model="isChecked"
-                class="sr-only"
-            />
+            <input type="checkbox" v-model="isChecked" class="sr-only" />
             <div
                 class="block relative h-5 w-5 rounded bg-white bg-gradient-to-b from-transparent to-gray-200 border flex-shrink-0 flex items-center justify-center"
                 :class="isChecked ? 'border-primary-500' : 'border-gray-400'"
             >
-                <svg
-                    v-if="isChecked"
-                    class="w-3 h-3 text-primary-500"
-                    viewBox="0 0 16 16"
-                    fill="currentColor"
-                >
+                <svg v-if="isChecked" class="w-3 h-3 text-primary-500" viewBox="0 0 16 16" fill="currentColor">
                     <path
                         fill-rule="evenodd"
                         d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"

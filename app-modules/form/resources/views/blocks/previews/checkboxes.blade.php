@@ -46,6 +46,7 @@
                 </div>
             </div>
         @endforeach
+
         @if ($hasOtherOption ?? false)
             <div class="flex items-center gap-2">
                 <div class="h-3 w-3 rounded border border-gray-500 flex-shrink-0"></div>

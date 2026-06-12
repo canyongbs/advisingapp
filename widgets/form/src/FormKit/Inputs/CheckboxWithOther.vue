@@ -15,7 +15,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor's trademarks is subject
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -32,7 +32,7 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import { ref, computed, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
 
     const props = defineProps({
         context: Object,
@@ -81,11 +81,7 @@
     <fieldset class="max-w-md border border-gray-400 rounded px-2 pb-1">
         <legend v-if="fieldLabel" class="font-bold text-sm">{{ fieldLabel }}</legend>
 
-        <div
-            v-for="option in normalizedOptions"
-            :key="option.value"
-            class="formkit-option"
-        >
+        <div v-for="option in normalizedOptions" :key="option.value" class="formkit-option">
             <label class="flex items-center mb-1 cursor-pointer">
                 <input
                     type="checkbox"
@@ -93,10 +89,17 @@
                     v-model="selectedValues"
                     class="absolute w-0 h-0 overflow-hidden opacity-0 pointer-events-none peer"
                 />
-                <span class="block relative h-5 w-5 mr-2 rounded bg-white bg-gradient-to-b from-transparent to-gray-200 border border-gray-400 peer-checked:border-primary-500 text-transparent peer-checked:text-primary-500">
-                    <span class="flex p-[3px] w-full h-full absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
+                <span
+                    class="block relative h-5 w-5 mr-2 rounded bg-white bg-gradient-to-b from-transparent to-gray-200 border border-gray-400 peer-checked:border-primary-500 text-transparent peer-checked:text-primary-500"
+                >
+                    <span
+                        class="flex p-[3px] w-full h-full absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2"
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
-                            <path fill-rule="evenodd" d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z" />
+                            <path
+                                fill-rule="evenodd"
+                                d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"
+                            />
                         </svg>
                     </span>
                 </span>
@@ -111,10 +114,17 @@
                     v-model="otherChecked"
                     class="absolute w-0 h-0 overflow-hidden opacity-0 pointer-events-none peer"
                 />
-                <span class="block relative h-5 w-5 mr-2 rounded bg-white bg-gradient-to-b from-transparent to-gray-200 border border-gray-400 peer-checked:border-primary-500 text-transparent peer-checked:text-primary-500 flex-shrink-0">
-                    <span class="flex p-[3px] w-full h-full absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2">
+                <span
+                    class="block relative h-5 w-5 mr-2 rounded bg-white bg-gradient-to-b from-transparent to-gray-200 border border-gray-400 peer-checked:border-primary-500 text-transparent peer-checked:text-primary-500 flex-shrink-0"
+                >
+                    <span
+                        class="flex p-[3px] w-full h-full absolute top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2"
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
-                            <path fill-rule="evenodd" d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z" />
+                            <path
+                                fill-rule="evenodd"
+                                d="M13.78 4.22a.75.75 0 010 1.06l-7.25 7.25a.75.75 0 01-1.06 0L2.22 9.28a.75.75 0 011.06-1.06L6 10.94l6.72-6.72a.75.75 0 011.06 0z"
+                            />
                         </svg>
                     </span>
                 </span>
