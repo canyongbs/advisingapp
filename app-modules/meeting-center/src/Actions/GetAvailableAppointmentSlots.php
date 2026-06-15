@@ -38,6 +38,7 @@ namespace AdvisingApp\MeetingCenter\Actions;
 
 use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use App\Features\WorkingHousFeature;
 use App\Models\User;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Builder;
@@ -200,10 +201,12 @@ class GetAvailableAppointmentSlots
             return $officeHours;
         }
 
-        $workingHours = $this->getHoursFromSettings($user->working_hours_are_enabled, $user->working_hours, $dayOfWeek);
+        if (! WorkingHousFeature::active()) {
+            $workingHours = $this->getHoursFromSettings($user->working_hours_are_enabled, $user->working_hours, $dayOfWeek);
 
-        if ($workingHours->isNotEmpty()) {
-            return $workingHours;
+            if ($workingHours->isNotEmpty()) {
+                return $workingHours;
+            }
         }
 
         return $this->getDefaultBusinessHours($dayOfWeek);
@@ -214,21 +217,8 @@ class GetAvailableAppointmentSlots
      */
     protected function getDefaultBusinessHours(string $dayOfWeek): Collection
     {
-        $weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
-
-        if (! in_array($dayOfWeek, $weekdays)) {
-            /** @var Collection<int, array<string, mixed>> */
-            return new Collection();
-        }
-
         /** @var Collection<int, array<string, mixed>> */
-        return new Collection([
-            [
-                'is_enabled' => true,
-                'starts_at' => '09:00',
-                'ends_at' => '17:00',
-            ],
-        ]);
+        return new Collection();
     }
 
     /**

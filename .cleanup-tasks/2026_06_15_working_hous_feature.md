@@ -11,4 +11,4 @@ created: 2026-06-15
 
 ## Additional Cleanup
 
-- Remove 'working_hours' from User Model.
+- Remove 'working_hours_are_enabled', 'are_working_hours_visible_on_profile', 'working_hours' from User Model.

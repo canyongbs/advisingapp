@@ -45,6 +45,8 @@ return new class () extends Migration {
     {
         DB::transaction(function () {
             Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('working_hours_are_enabled');
+                $table->dropColumn('are_working_hours_visible_on_profile');
                 $table->dropColumn('working_hours');
             });
 
@@ -58,6 +60,8 @@ return new class () extends Migration {
             WorkingHousFeature::deactivate();
 
             Schema::table('users', function (Blueprint $table) {
+                $table->boolean('working_hours_are_enabled')->default(false);
+                $table->boolean('are_working_hours_visible_on_profile')->default(false);
                 $table->jsonb('working_hours')->nullable();
             });
         });

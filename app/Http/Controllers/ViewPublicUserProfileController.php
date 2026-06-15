@@ -36,6 +36,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Features\WorkingHousFeature;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -50,7 +51,7 @@ class ViewPublicUserProfileController extends Controller
 
         $officeHours = $this->formatHours($user->office_hours);
 
-        $workingHours = $this->formatHours($user->working_hours);
+        $workingHours = ! WorkingHousFeature::active() ? $this->formatHours($user->working_hours) : collect();
 
         return view('user-profile-public', [
             'data' => [
@@ -73,10 +74,11 @@ class ViewPublicUserProfileController extends Controller
                     ? $officeHours
                     : false,
                 'appointments_are_restricted_to_existing_students' => $user->appointments_are_restricted_to_existing_students,
+            ] + (! WorkingHousFeature::active() ? [
                 'working_hours' => $user->working_hours_are_enabled && $user->are_working_hours_visible_on_profile && $workingHours->keys()->count()
                     ? $workingHours
                     : false,
-            ],
+            ] : []),
         ]);
     }
 

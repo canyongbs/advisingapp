@@ -48,7 +48,7 @@ use Mockery\MockInterface;
 use function Pest\Laravel\getJson;
 use function Pest\Laravel\postJson;
 
-$workingHours = [
+$officeHours = [
     'monday' => ['is_enabled' => true, 'starts_at' => '08:00', 'ends_at' => '20:00'],
     'tuesday' => ['is_enabled' => true, 'starts_at' => '08:00', 'ends_at' => '20:00'],
     'wednesday' => ['is_enabled' => true, 'starts_at' => '08:00', 'ends_at' => '20:00'],
@@ -77,23 +77,23 @@ beforeEach(function () {
     app()->instance(CalendarManager::class, $mockManager);
 });
 
-it('returns available slots for the current round robin member', function () use ($workingHours) {
+it('returns available slots for the current round robin member', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $memberA = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-a']))
         ->create([
             'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     $memberB = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-b']))
         ->create([
             'name' => 'Bob',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     BookingGroup::factory()
@@ -102,7 +102,7 @@ it('returns available slots for the current round robin member', function () use
         ->create([
             'slug' => 'rr-slots',
             'book_with' => BookingGroupBookWith::RoundRobin,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     $response = getJson(
@@ -119,12 +119,12 @@ it('returns available slots for the current round robin member', function () use
     expect($blocks[1])->toBe(['start' => '2026-04-07T08:00:00+00:00', 'end' => '2026-04-07T20:00:00+00:00']);
 });
 
-it('returns empty slots when no members have connected calendars', function () use ($workingHours) {
+it('returns empty slots when no members have connected calendars', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $member = User::factory()->create([
-        'working_hours_are_enabled' => true,
-        'working_hours' => $workingHours,
+        'office_hours_are_enabled' => true,
+        'office_hours' => $officeHours,
     ]);
 
     BookingGroup::factory()
@@ -132,7 +132,7 @@ it('returns empty slots when no members have connected calendars', function () u
         ->create([
             'slug' => 'rr-no-cal',
             'book_with' => BookingGroupBookWith::RoundRobin,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     $response = getJson(
@@ -143,12 +143,12 @@ it('returns empty slots when no members have connected calendars', function () u
     $response->assertJson(['blocks' => []]);
 });
 
-it('returns 422 when no members have connected calendars at booking time', function () use ($workingHours) {
+it('returns 422 when no members have connected calendars at booking time', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $member = User::factory()->create([
-        'working_hours_are_enabled' => true,
-        'working_hours' => $workingHours,
+        'office_hours_are_enabled' => true,
+        'office_hours' => $officeHours,
     ]);
 
     BookingGroup::factory()
@@ -156,7 +156,7 @@ it('returns 422 when no members have connected calendars at booking time', funct
         ->create([
             'slug' => 'rr-no-cal-book',
             'book_with' => BookingGroupBookWith::RoundRobin,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     $response = postJson(
@@ -176,7 +176,7 @@ it('returns 422 when no members have connected calendars at booking time', funct
     ]);
 });
 
-it('creates event on the round robin member calendar and advances cursor', function () use ($workingHours) {
+it('creates event on the round robin member calendar and advances cursor', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $memberA = User::factory()
@@ -184,8 +184,8 @@ it('creates event on the round robin member calendar and advances cursor', funct
         ->create([
             'name' => 'Alice',
             'email' => 'alice@example.com',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     $memberB = User::factory()
@@ -193,8 +193,8 @@ it('creates event on the round robin member calendar and advances cursor', funct
         ->create([
             'name' => 'Bob',
             'email' => 'bob@example.com',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     $bookingGroup = BookingGroup::factory()
@@ -203,7 +203,7 @@ it('creates event on the round robin member calendar and advances cursor', funct
         ->create([
             'slug' => 'rr-book-ok',
             'book_with' => BookingGroupBookWith::RoundRobin,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     $response = postJson(
@@ -239,23 +239,23 @@ it('creates event on the round robin member calendar and advances cursor', funct
     expect($bookingGroup->round_robin_last_assigned_id)->toBe($memberA->id);
 });
 
-it('returns 409 with fresh blocks when round robin member has a conflict', function () use ($workingHours) {
+it('returns 409 with fresh blocks when round robin member has a conflict', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $memberA = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-a']))
         ->create([
             'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     $memberB = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-b']))
         ->create([
             'name' => 'Bob',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     BookingGroup::factory()
@@ -264,7 +264,7 @@ it('returns 409 with fresh blocks when round robin member has a conflict', funct
         ->create([
             'slug' => 'rr-conflict',
             'book_with' => BookingGroupBookWith::RoundRobin,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     CalendarEvent::factory()->create([
@@ -300,31 +300,31 @@ it('returns 409 with fresh blocks when round robin member has a conflict', funct
     expect($blocks[3])->toBe(['start' => '2026-04-08T08:00:00+00:00', 'end' => '2026-04-08T20:00:00+00:00']);
 });
 
-it('cycles cursor through three members in alphabetical order', function () use ($workingHours) {
+it('cycles cursor through three members in alphabetical order', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
         ->create([
             'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     $bob = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
         ->create([
             'name' => 'Bob',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     $charlie = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-charlie']))
         ->create([
             'name' => 'Charlie',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     $bookingGroup = BookingGroup::factory()
@@ -334,7 +334,7 @@ it('cycles cursor through three members in alphabetical order', function () use 
         ->create([
             'slug' => 'rr-cycle',
             'book_with' => BookingGroupBookWith::RoundRobin,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     $response = postJson(
@@ -404,15 +404,15 @@ it('cycles cursor through three members in alphabetical order', function () use 
     expect(BookingGroupAppointment::where('booking_group_id', $bookingGroup->id)->count())->toBe(3);
 });
 
-it('rejects booking when a prior group appointment for the member conflicts', function () use ($workingHours) {
+it('rejects booking when a prior group appointment for the member conflicts', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $member = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-member']))
         ->create([
             'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     $bookingGroup = BookingGroup::factory()
@@ -420,7 +420,7 @@ it('rejects booking when a prior group appointment for the member conflicts', fu
         ->create([
             'slug' => 'rr-appt-conflict',
             'book_with' => BookingGroupBookWith::RoundRobin,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     BookingGroupAppointment::create([
@@ -456,31 +456,31 @@ it('rejects booking when a prior group appointment for the member conflicts', fu
     expect($blocks[2])->toBe(['start' => '2026-04-07T11:00:00+00:00', 'end' => '2026-04-07T20:00:00+00:00']);
 });
 
-it('returns fresh blocks from the next member on conflict', function () use ($workingHours) {
+it('returns fresh blocks from the next member on conflict', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
         ->create([
             'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     $bob = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
         ->create([
             'name' => 'Bob',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     $charlie = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-charlie']))
         ->create([
             'name' => 'Charlie',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     BookingGroup::factory()
@@ -490,7 +490,7 @@ it('returns fresh blocks from the next member on conflict', function () use ($wo
         ->create([
             'slug' => 'rr-next-member',
             'book_with' => BookingGroupBookWith::RoundRobin,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     CalendarEvent::factory()->create([
@@ -525,23 +525,23 @@ it('returns fresh blocks from the next member on conflict', function () use ($wo
     expect($blocks[2])->toBe(['start' => '2026-04-07T11:00:00+00:00', 'end' => '2026-04-07T20:00:00+00:00']);
 });
 
-it('only shows availability for the assigned member, not other members', function () use ($workingHours) {
+it('only shows availability for the assigned member, not other members', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
         ->create([
             'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     $bob = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
         ->create([
             'name' => 'Bob',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     BookingGroup::factory()
@@ -550,7 +550,7 @@ it('only shows availability for the assigned member, not other members', functio
         ->create([
             'slug' => 'rr-isolated-availability',
             'book_with' => BookingGroupBookWith::RoundRobin,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     for ($hour = 8; $hour < 18; $hour++) {
@@ -577,33 +577,31 @@ it('only shows availability for the assigned member, not other members', functio
     expect($blocks[1])->toBe(['start' => '2026-04-07T08:00:00+00:00', 'end' => '2026-04-07T20:00:00+00:00']);
 });
 
-$noWorkingHours = [
-    'monday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-    'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-    'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-    'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-    'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-    'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-    'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
-];
-
-it('skips member with no availability and shows next members slots', function () use ($workingHours, $noWorkingHours) {
+it('skips member with no availability and shows next members slots', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
         ->create([
             'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $noWorkingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
+
+    // Create a calendar event that covers the entire bookable window making Alice fully booked
+    CalendarEvent::factory()->create([
+        'calendar_id' => $alice->calendar->id,
+        'starts_at' => '2026-04-01 00:00:00',
+        'ends_at' => '2026-12-31 23:59:59',
+        'transparency' => 'busy',
+    ]);
 
     $bob = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
         ->create([
             'name' => 'Bob',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     $bookingGroup = BookingGroup::factory()
@@ -612,10 +610,10 @@ it('skips member with no availability and shows next members slots', function ()
         ->create([
             'slug' => 'rr-skip',
             'book_with' => BookingGroupBookWith::RoundRobin,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
-    // Alice resolves first (alphabetically) but has no working hours — zero availability
+    // Alice resolves first (alphabetically) but is fully booked — zero availability
     // Should skip to Bob and advance cursor past Alice
     $response = getJson(
         route('widgets.booking-page.group.api.available-slots', ['slug' => 'rr-skip', 'year' => 2026, 'month' => 4])
@@ -629,24 +627,38 @@ it('skips member with no availability and shows next members slots', function ()
     expect($bookingGroup->round_robin_last_assigned_id)->toBe($alice->id);
 });
 
-it('shows empty calendar when all members have no availability without advancing cursor', function () use ($noWorkingHours, $workingHours) {
+it('shows empty calendar when all members have no availability without advancing cursor', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
         ->create([
             'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $noWorkingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
+
+    CalendarEvent::factory()->create([
+        'calendar_id' => $alice->calendar->id,
+        'starts_at' => '2026-04-01 00:00:00',
+        'ends_at' => '2026-12-31 23:59:59',
+        'transparency' => 'busy',
+    ]);
 
     $bob = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
         ->create([
             'name' => 'Bob',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $noWorkingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
+
+    CalendarEvent::factory()->create([
+        'calendar_id' => $bob->calendar->id,
+        'starts_at' => '2026-04-01 00:00:00',
+        'ends_at' => '2026-12-31 23:59:59',
+        'transparency' => 'busy',
+    ]);
 
     $bookingGroup = BookingGroup::factory()
         ->hasAttached($alice, [], 'users')
@@ -654,7 +666,7 @@ it('shows empty calendar when all members have no availability without advancing
         ->create([
             'slug' => 'rr-all-empty',
             'book_with' => BookingGroupBookWith::RoundRobin,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     $response = getJson(
@@ -669,31 +681,45 @@ it('shows empty calendar when all members have no availability without advancing
     expect($bookingGroup->round_robin_last_assigned_id)->toBeNull();
 });
 
-it('skips multiple unavailable members to find one with availability', function () use ($workingHours, $noWorkingHours) {
+it('skips multiple unavailable members to find one with availability', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
         ->create([
             'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $noWorkingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
+
+    CalendarEvent::factory()->create([
+        'calendar_id' => $alice->calendar->id,
+        'starts_at' => '2026-04-01 00:00:00',
+        'ends_at' => '2026-12-31 23:59:59',
+        'transparency' => 'busy',
+    ]);
 
     $bob = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
         ->create([
             'name' => 'Bob',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $noWorkingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
+
+    CalendarEvent::factory()->create([
+        'calendar_id' => $bob->calendar->id,
+        'starts_at' => '2026-04-01 00:00:00',
+        'ends_at' => '2026-12-31 23:59:59',
+        'transparency' => 'busy',
+    ]);
 
     $charlie = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-charlie']))
         ->create([
             'name' => 'Charlie',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     $bookingGroup = BookingGroup::factory()
@@ -703,11 +729,11 @@ it('skips multiple unavailable members to find one with availability', function 
         ->create([
             'slug' => 'rr-skip-multi',
             'book_with' => BookingGroupBookWith::RoundRobin,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
-    // Alice resolves first, no availability → skip
-    // Bob resolves next, no availability → skip
+    // Alice resolves first, fully booked → skip
+    // Bob resolves next, fully booked → skip
     // Charlie resolves, has availability → use him
     $response = getJson(
         route('widgets.booking-page.group.api.available-slots', ['slug' => 'rr-skip-multi', 'year' => 2026, 'month' => 4])

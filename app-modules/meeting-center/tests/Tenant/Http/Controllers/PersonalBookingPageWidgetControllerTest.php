@@ -46,7 +46,7 @@ use Mockery\MockInterface;
 use function Pest\Laravel\getJson;
 use function Pest\Laravel\postJson;
 
-$workingHours = [
+$officeHours = [
     'monday' => ['is_enabled' => true, 'starts_at' => '08:00', 'ends_at' => '20:00'],
     'tuesday' => ['is_enabled' => true, 'starts_at' => '08:00', 'ends_at' => '20:00'],
     'wednesday' => ['is_enabled' => true, 'starts_at' => '08:00', 'ends_at' => '20:00'],
@@ -77,14 +77,14 @@ beforeEach(function () {
 
 // Minimum Lead Time - Available Slots Tests
 
-it('filters available slots within lead time window', function () use ($workingHours) {
+it('filters available slots within lead time window', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $user = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
         ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     PersonalBookingPage::factory()
@@ -115,14 +115,14 @@ it('filters available slots within lead time window', function () use ($workingH
 
 // Minimum Lead Time - Booking Validation Tests
 
-it('rejects booking within minimum lead time window', function () use ($workingHours) {
+it('rejects booking within minimum lead time window', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-03 10:00:00', 'UTC'));
 
     $user = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
         ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     PersonalBookingPage::factory()
@@ -149,14 +149,14 @@ it('rejects booking within minimum lead time window', function () use ($workingH
     expect($response->json('message'))->toContain('24 hours advance notice');
 });
 
-it('allows booking outside minimum lead time window', function () use ($workingHours) {
+it('allows booking outside minimum lead time window', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-03 10:00:00', 'UTC'));
 
     $user = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
         ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     PersonalBookingPage::factory()
@@ -184,14 +184,14 @@ it('allows booking outside minimum lead time window', function () use ($workingH
 
 // Maximum Lead Time Tests
 
-it('rejects booking beyond maximum lead time window', function () use ($workingHours) {
+it('rejects booking beyond maximum lead time window', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 10:00:00', 'UTC'));
 
     $user = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
         ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     PersonalBookingPage::factory()
@@ -218,14 +218,14 @@ it('rejects booking beyond maximum lead time window', function () use ($workingH
     expect($response->json('message'))->toContain('30 days in advance');
 });
 
-it('allows booking within maximum lead time window', function () use ($workingHours) {
+it('allows booking within maximum lead time window', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 10:00:00', 'UTC'));
 
     $user = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
         ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     PersonalBookingPage::factory()

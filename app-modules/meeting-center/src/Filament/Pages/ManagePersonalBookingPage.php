@@ -216,9 +216,14 @@ class ManagePersonalBookingPage extends ProfilePage
                             ->visible($hasCrmLicense)
                             ->schema([
                                 Toggle::make('office_hours_are_enabled')
-                                    ->label('Enable Personal Booking Availability')
+                                    ->label('Enable Personal Booking Availability Hours')
+                                    ->required()
                                     ->live()
+                                    ->validationMessages([
+                                        'accepted' => 'Personal Booking Availability hours must be enabled when booking page is enabled.',
+                                    ])
                                     ->rules([
+                                        fn (Get $get): string => $get('is_enabled') ? 'accepted' : '',
                                         function (Get $get) {
                                             return function (string $attribute, mixed $value, Closure $fail) use ($get) {
                                                 if (! $value) {
@@ -229,7 +234,7 @@ class ManagePersonalBookingPage extends ProfilePage
                                                 $officeHours = $get('office_hours');
 
                                                 if (empty($officeHours)) {
-                                                    $fail('At least one day must have office hours configured.');
+                                                    $fail('At least one day must have personal booking availability hours configured.');
 
                                                     return;
                                                 }
@@ -239,7 +244,7 @@ class ManagePersonalBookingPage extends ProfilePage
                                                     ->isNotEmpty();
 
                                                 if (! $hasAnyEnabledDay) {
-                                                    $fail('At least one day must have office hours configured.');
+                                                    $fail('At least one day must have personal booking availability hours configured.');
                                                 }
                                             };
                                         },
@@ -301,9 +306,11 @@ class ManagePersonalBookingPage extends ProfilePage
                 'default_appointment_duration' => $bookingPage->default_appointment_duration,
                 'minimum_booking_lead_time_hours' => $bookingPage->minimum_booking_lead_time_hours ?? 0,
                 'maximum_booking_lead_time_days' => $bookingPage->maximum_booking_lead_time_days ?? 0,
-                'working_hours_are_enabled' => $user->working_hours_are_enabled,
-                'are_working_hours_visible_on_profile' => $user->are_working_hours_visible_on_profile,
-                'working_hours' => $user->working_hours,
+                ...(! WorkingHousFeature::active() ? [
+                    'working_hours_are_enabled' => $user->working_hours_are_enabled,
+                    'are_working_hours_visible_on_profile' => $user->are_working_hours_visible_on_profile,
+                    'working_hours' => $user->working_hours,
+                ] : []),
                 'office_hours_are_enabled' => $user->office_hours_are_enabled,
                 'appointments_are_restricted_to_existing_students' => $user->appointments_are_restricted_to_existing_students,
                 'office_hours' => $user->office_hours,
@@ -319,9 +326,11 @@ class ManagePersonalBookingPage extends ProfilePage
             'default_appointment_duration' => 30,
             'minimum_booking_lead_time_hours' => 0,
             'maximum_booking_lead_time_days' => 0,
-            'working_hours_are_enabled' => $user->working_hours_are_enabled,
-            'are_working_hours_visible_on_profile' => $user->are_working_hours_visible_on_profile,
-            'working_hours' => $user->working_hours,
+            ...(! WorkingHousFeature::active() ? [
+                'working_hours_are_enabled' => $user->working_hours_are_enabled,
+                'are_working_hours_visible_on_profile' => $user->are_working_hours_visible_on_profile,
+                'working_hours' => $user->working_hours,
+            ] : []),
             'office_hours_are_enabled' => $user->office_hours_are_enabled,
             'appointments_are_restricted_to_existing_students' => $user->appointments_are_restricted_to_existing_students,
             'office_hours' => $user->office_hours,
@@ -345,9 +354,11 @@ class ManagePersonalBookingPage extends ProfilePage
         $bookingPage->save();
 
         $user->update([
-            'working_hours_are_enabled' => $data['working_hours_are_enabled'] ?? false,
-            'are_working_hours_visible_on_profile' => $data['are_working_hours_visible_on_profile'] ?? false,
-            'working_hours' => ! empty($data['working_hours']) ? DailyHoursRepeater::mutateDataBeforeSave($data['working_hours']) : ($data['working_hours'] ?? null),
+            ...(! WorkingHousFeature::active() ? [
+                'working_hours_are_enabled' => $data['working_hours_are_enabled'] ?? false,
+                'are_working_hours_visible_on_profile' => $data['are_working_hours_visible_on_profile'] ?? false,
+                'working_hours' => ! empty($data['working_hours']) ? DailyHoursRepeater::mutateDataBeforeSave($data['working_hours']) : ($data['working_hours'] ?? null),
+            ] : []),
             'office_hours_are_enabled' => $data['office_hours_are_enabled'] ?? false,
             'appointments_are_restricted_to_existing_students' => $data['appointments_are_restricted_to_existing_students'] ?? false,
             'office_hours' => ! empty($data['office_hours']) ? DailyHoursRepeater::mutateDataBeforeSave($data['office_hours']) : ($data['office_hours'] ?? null),
@@ -362,8 +373,13 @@ class ManagePersonalBookingPage extends ProfilePage
     protected function userHasHoursConfigured(User $user): bool
     {
         $hasOfficeHours = $user->office_hours_are_enabled && ! empty($user->office_hours);
-        $hasWorkingHours = $user->working_hours_are_enabled && ! empty($user->working_hours);
 
-        return $hasOfficeHours || $hasWorkingHours;
+        if (! WorkingHousFeature::active()) {
+            $hasWorkingHours = $user->working_hours_are_enabled && ! empty($user->working_hours);
+
+            return $hasOfficeHours || $hasWorkingHours;
+        }
+
+        return $hasOfficeHours;
     }
 }
