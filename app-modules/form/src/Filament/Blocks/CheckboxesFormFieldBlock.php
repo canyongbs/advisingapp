@@ -91,6 +91,7 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
                 'name' => $field->getKey(),
                 ...($field->is_required ? ['validation' => 'required'] : []),
                 'options' => $field->config['options'],
+                ...self::getDescriptionSectionsSchema($field, 'legend'),
             ];
         }
 
