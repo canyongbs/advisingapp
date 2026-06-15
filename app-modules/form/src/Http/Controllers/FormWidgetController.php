@@ -84,7 +84,9 @@ class FormWidgetController extends Controller
 
         return response()->json([
             'asset_url' => route('widgets.forms.asset'),
-            'entry' => route('widgets.forms.api.entry', ['form' => $form]),
+            'entry' => $request->boolean('preview')
+                ? route('forms.api.preview', ['form' => $form])
+                : route('widgets.forms.api.entry', ['form' => $form]),
             'js' => route('widgets.forms.asset', ['file' => $widgetEntry['file']]),
         ]);
     }
@@ -155,7 +157,7 @@ class FormWidgetController extends Controller
             [
                 'name' => $form->title,
                 'description' => $form->description,
-                'is_authenticated' => false,
+                'is_authenticated' => $form->is_authenticated,
                 'recaptcha_enabled' => false,
                 'schema' => $generateSchema($form),
                 'primary_color' => collect(Color::all()[$form->primary_color ?? 'blue'])

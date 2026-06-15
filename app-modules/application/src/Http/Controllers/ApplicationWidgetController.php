@@ -81,7 +81,9 @@ class ApplicationWidgetController extends Controller
 
         return response()->json([
             'asset_url' => route('widgets.applications.asset'),
-            'entry' => route('widgets.applications.api.entry', ['application' => $application]),
+            'entry' => $request->boolean('preview')
+                ? route('applications.api.preview', ['application' => $application])
+                : route('widgets.applications.api.entry', ['application' => $application]),
             'js' => route('widgets.applications.asset', ['file' => $widgetEntry['file']]),
         ]);
     }
