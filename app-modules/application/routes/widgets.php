@@ -74,6 +74,12 @@ Route::middleware([
                 Route::post('register', [ApplicationWidgetController::class, 'registerProspect'])
                     ->middleware(['signed'])
                     ->name('register-prospect');
+                Route::get('submissions/past-submissions', [ApplicationWidgetController::class, 'getPastSubmissions'])
+                    ->middleware(['signed'])
+                    ->name('get-past-submissions');
+                Route::get('submissions/{submission}', [ApplicationWidgetController::class, 'getSubmission'])
+                    ->middleware(['signed'])
+                    ->name('get-submission');
 
                 // Handle preflight CORS requests for all routes in this group
                 // MUST remain the last route in this group

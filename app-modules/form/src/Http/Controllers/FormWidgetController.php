@@ -38,6 +38,7 @@ namespace AdvisingApp\Form\Http\Controllers;
 
 use AdvisingApp\Form\Actions\CreateProspectFromSubmission;
 use AdvisingApp\Form\Actions\GenerateFormKitSchema;
+use AdvisingApp\Form\Actions\GenerateSubmissionViewData;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidator;
 use AdvisingApp\Form\Actions\ProcessSubmissionField;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
@@ -54,6 +55,7 @@ use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\FormVersioningFeature;
+use App\Features\PastSubmissionsFeature;
 use App\Features\PhoneNumberLookupFeature;
 use App\Http\Controllers\Controller;
 use Closure;
@@ -126,6 +128,7 @@ class FormWidgetController extends Controller
             'name' => $form->title,
             'description' => $form->description,
             'is_authenticated' => $form->is_authenticated,
+            'allow_view_past_submissions' => $form->is_authenticated && $form->allow_view_past_submissions,
             ...($form->is_authenticated ? [
                 'authentication_url' => URL::signedRoute(
                     name: 'widgets.forms.api.request-authentication',
@@ -144,14 +147,14 @@ class FormWidgetController extends Controller
             'schema' => $form->is_authenticated ? [] : $generateSchema($form),
             'primary_color' => collect(Color::all()[$form->primary_color ?? 'blue'])
                 ->map(Color::convertToRgb(...))
-                ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
+                ->map(fn(string $value): string => (string) str($value)->after('rgb(')->before(')'))
                 ->all(),
             'rounding' => $form->rounding,
             'on_screen_response' => $form->on_screen_response,
             'title_font_weight' => $form->title_font_weight,
             'title_color' => collect(Color::all()[$form->title_color ?? 'neutral'])
                 ->map(Color::convertToRgb(...))
-                ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
+                ->map(fn(string $value): string => (string) str($value)->after('rgb(')->before(')'))
                 ->all(),
         ]);
     }
@@ -167,14 +170,14 @@ class FormWidgetController extends Controller
                 'schema' => $generateSchema($form),
                 'primary_color' => collect(Color::all()[$form->primary_color ?? 'blue'])
                     ->map(Color::convertToRgb(...))
-                    ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
+                    ->map(fn(string $value): string => (string) str($value)->after('rgb(')->before(')'))
                     ->all(),
                 'rounding' => $form->rounding,
                 'on_screen_response' => $form->on_screen_response,
                 'title_font_weight' => $form->title_font_weight,
                 'title_color' => collect(Color::all()[$form->title_color ?? 'neutral'])
                     ->map(Color::convertToRgb(...))
-                    ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
+                    ->map(fn(string $value): string => (string) str($value)->after('rgb(')->before(')'))
                     ->all(),
             ]
         );
@@ -250,6 +253,26 @@ class FormWidgetController extends Controller
 
         assert($author instanceof Prospect || $author instanceof Student || $author === null);
 
+        $pastSubmissionsCount = 0;
+        $pastSubmissionsUrl = null;
+
+        if (PastSubmissionsFeature::active() && $form->allow_view_past_submissions && $author) {
+            $pastSubmissionsCount = $form->submissions()
+                ->submitted()
+                ->whereMorphedTo('author', $author)
+                ->count();
+
+            if ($pastSubmissionsCount > 0) {
+                $pastSubmissionsUrl = URL::signedRoute(
+                    name: 'widgets.forms.api.get-past-submissions',
+                    parameters: [
+                        'form' => $form,
+                        'authentication' => $authentication,
+                    ],
+                );
+            }
+        }
+
         return response()->json([
             'submission_url' => URL::signedRoute(
                 name: 'widgets.forms.api.submit',
@@ -259,6 +282,9 @@ class FormWidgetController extends Controller
                 ],
             ),
             'schema' => $generateSchema->withAuthor($author)($form),
+            'allow_view_past_submissions' => PastSubmissionsFeature::active() && $form->allow_view_past_submissions,
+            'past_submissions_count' => $pastSubmissionsCount,
+            'past_submissions_url' => $pastSubmissionsUrl,
         ]);
     }
 
@@ -446,6 +472,98 @@ class FormWidgetController extends Controller
                 ],
             ),
         ]);
+    }
+
+    public function getPastSubmissions(
+        Request $request,
+        Form $form,
+    ): JsonResponse {
+
+    if( ! PastSubmissionsFeature::active()) {
+        abort(Response::HTTP_FORBIDDEN);
+    }
+        $authentication = $request->query('authentication');
+
+        if (filled($authentication)) {
+            $authentication = FormAuthentication::findOrFail($authentication);
+        }
+
+        if (! $authentication || $authentication->isExpired()) {
+            abort(Response::HTTP_UNAUTHORIZED);
+        }
+
+        $author = $authentication->author;
+
+        assert($author instanceof Prospect || $author instanceof Student || $author === null);
+
+        if (! $form->allow_view_past_submissions || ! $author) {
+            return response()->json([
+                'past_submissions' => [],
+            ]);
+        }
+
+        $pastSubmissions = $form->submissions()
+            ->submitted()
+            ->whereMorphedTo('author', $author)
+            ->orderByDesc('submitted_at')
+            ->paginate($request->query('per_page', 10));
+
+        $items = $pastSubmissions->map(fn(FormSubmission $submission) => [
+            'id' => $submission->getKey(),
+            'submitted_at' => $submission->submitted_at->toIso8601String(),
+            'view_url' => URL::signedRoute(
+                name: 'widgets.forms.api.get-submission',
+                parameters: [
+                    'form' => $form,
+                    'submission' => $submission,
+                    'authentication' => $authentication,
+                ],
+            ),
+        ])->all();
+
+        return response()->json([
+            'past_submissions' => $items,
+            'meta' => [
+                'current_page' => $pastSubmissions->currentPage(),
+                'last_page' => $pastSubmissions->lastPage(),
+                'per_page' => $pastSubmissions->perPage(),
+                'total' => $pastSubmissions->total(),
+            ],
+        ]);
+    }
+
+    public function getSubmission(
+        GenerateSubmissionViewData $generateSubmissionViewData,
+        Form $form,
+        FormSubmission $submission,
+    ): JsonResponse {
+
+        if (! PastSubmissionsFeature::active()) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+        $authentication = request()->query('authentication');
+
+        if (filled($authentication)) {
+            $authentication = FormAuthentication::findOrFail($authentication);
+        }
+
+        if (! $authentication || $authentication->isExpired()) {
+            abort(Response::HTTP_UNAUTHORIZED);
+        }
+
+        abort_unless($submission->form_id === $form->getKey(), Response::HTTP_NOT_FOUND);
+
+        $author = $authentication->author;
+
+        abort_unless(
+            $submission->author_type === $author?->getMorphClass()
+                && $submission->author_id === $author?->getKey(),
+            Response::HTTP_FORBIDDEN,
+        );
+
+        return response()->json(
+            $generateSubmissionViewData($submission),
+        );
     }
 
     public function uploadFormFiles(Request $request): JsonResponse
