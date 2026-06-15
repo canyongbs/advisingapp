@@ -87,20 +87,20 @@ class EventRegistrationFormFactory extends Factory
                 $eventRegistrationForm->save();
             }
 
-            EventRegistrationFormSubmission::factory()
-                ->count(rand(1, 10))
-                ->create([
+            $submissionCount = rand(1, 10);
+
+            collect(range(1, $submissionCount))->each(function () use ($eventRegistrationForm) {
+                $attendee = EventAttendee::factory()->create([
+                    'event_id' => $eventRegistrationForm->event->getKey(),
+                ]);
+
+                $submission = EventRegistrationFormSubmission::factory()->create([
                     'form_id' => $eventRegistrationForm->getKey(),
-                ])
-                ->each(
-                    fn (EventRegistrationFormSubmission $eventRegistrationFormSubmission) => $eventRegistrationFormSubmission
-                        ->author()
-                        ->associate(EventAttendee::factory()->create([
-                            'status' => $eventRegistrationFormSubmission->attendee_status,
-                            'event_id' => $eventRegistrationForm->event->getKey(),
-                        ]))
-                        ->save()
-                );
+                    'event_attendee_id' => $attendee->getKey(),
+                ]);
+
+                $submission->author()->associate($attendee)->save();
+            });
         });
     }
 
