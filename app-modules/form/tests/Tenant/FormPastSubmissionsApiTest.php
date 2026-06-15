@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor's trademarks is subject
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -325,8 +325,7 @@ test('getPastSubmissions returns 401 with expired authentication', function () {
 
     // Expire the authentication
     FormAuthentication::withoutTimestamps(
-        fn() =>
-        FormAuthentication::where('id', $authentication->id)->update(['created_at' => now()->subDays(2)])
+        fn () => FormAuthentication::where('id', $authentication->id)->update(['created_at' => now()->subDays(2)])
     );
     $authentication->refresh();
 
@@ -404,8 +403,7 @@ test('getSubmission returns 401 with expired authentication', function () {
     $authentication->save();
 
     FormAuthentication::withoutTimestamps(
-        fn() =>
-        FormAuthentication::where('id', $authentication->id)->update(['created_at' => now()->subDays(2)])
+        fn () => FormAuthentication::where('id', $authentication->id)->update(['created_at' => now()->subDays(2)])
     );
     $authentication->refresh();
 

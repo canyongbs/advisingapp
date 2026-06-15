@@ -105,7 +105,7 @@ class Application extends Submissible implements HasMedia, HasRichContent
         'notify_to_subscribers' => 'boolean',
         'notify_via_app' => 'boolean',
         'notify_via_email' => 'boolean',
-        'allow_view_past_submissions' => 'boolean'
+        'allow_view_past_submissions' => 'boolean',
     ];
 
     public function setUpRichContent(): void

@@ -132,13 +132,13 @@ class ApplicationWidgetController extends Controller
                 ),
                 'primary_color' => collect(Color::all()[$application->primary_color ?? 'blue'])
                     ->map(Color::convertToRgb(...))
-                    ->map(fn(string $value): string => (string) str($value)->after('rgb(')->before(')'))
+                    ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
                     ->all(),
                 'rounding' => $application->rounding,
                 'title_font_weight' => $application->title_font_weight,
                 'title_color' => collect(Color::all()[$application->title_color ?? 'neutral'])
                     ->map(Color::convertToRgb(...))
-                    ->map(fn(string $value): string => (string) str($value)->after('rgb(')->before(')'))
+                    ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
                     ->all(),
             ],
         );
@@ -154,13 +154,13 @@ class ApplicationWidgetController extends Controller
                 'schema' => $generateSchema($application),
                 'primary_color' => collect(Color::all()[$application->primary_color ?? 'blue'])
                     ->map(Color::convertToRgb(...))
-                    ->map(fn(string $value): string => (string) str($value)->after('rgb(')->before(')'))
+                    ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
                     ->all(),
                 'rounding' => $application->rounding,
                 'title_font_weight' => $application->title_font_weight,
                 'title_color' => collect(Color::all()[$application->title_color ?? 'neutral'])
                     ->map(Color::convertToRgb(...))
-                    ->map(fn(string $value): string => (string) str($value)->after('rgb(')->before(')'))
+                    ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
                     ->all(),
             ],
         );
@@ -264,7 +264,7 @@ class ApplicationWidgetController extends Controller
                 ],
             ),
             'schema' => $generateSchema->withAuthor($author)($application),
-            'allow_view_past_submissions' => PastSubmissionsFeature::active() &&  $application->allow_view_past_submissions,
+            'allow_view_past_submissions' => PastSubmissionsFeature::active() && $application->allow_view_past_submissions,
             'past_submissions_count' => $pastSubmissionsCount,
             'past_submissions_url' => $pastSubmissionsUrl,
         ]);
@@ -463,7 +463,6 @@ class ApplicationWidgetController extends Controller
         Request $request,
         Application $application,
     ): JsonResponse {
-
         if (! PastSubmissionsFeature::active()) {
             abort(Response::HTTP_FORBIDDEN);
         }
@@ -492,7 +491,7 @@ class ApplicationWidgetController extends Controller
             ->orderByDesc('created_at')
             ->paginate($request->query('per_page', 10));
 
-        $items = $pastSubmissions->map(fn(ApplicationSubmission $submission) => [
+        $items = $pastSubmissions->map(fn (ApplicationSubmission $submission) => [
             'id' => $submission->getKey(),
             'submitted_at' => $submission->created_at->toIso8601String(),
             'view_url' => URL::signedRoute(
@@ -521,7 +520,6 @@ class ApplicationWidgetController extends Controller
         Application $application,
         ApplicationSubmission $submission,
     ): JsonResponse {
-
         if (! PastSubmissionsFeature::active()) {
             abort(Response::HTTP_FORBIDDEN);
         }

@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor's trademarks is subject
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Form\Actions;
 
-use AdvisingApp\Form\Models\Submission;
 use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Form\Models\Submission;
 
 class GenerateSubmissionViewData
 {
@@ -50,8 +50,8 @@ class GenerateSubmissionViewData
 
         $submittedAt = $submission->submitted_at ?? $submission->created_at;
 
-        $fieldResponses = fn(iterable $fields): array => collect($fields)
-            ->map(fn(SubmissibleField $field) => [
+        $fieldResponses = fn (iterable $fields): array => collect($fields)
+            ->map(fn (SubmissibleField $field) => [
                 'label' => $field->label,
                 'type' => $field->type,
                 'response' => $field->pivot?->response,
@@ -68,7 +68,7 @@ class GenerateSubmissionViewData
                     $stepFieldIds = $step->fields()->pluck('id')->all();
 
                     $submittedFields = $submission->fields
-                        ->filter(fn(SubmissibleField $field) => in_array($field->getKey(), $stepFieldIds));
+                        ->filter(fn (SubmissibleField $field) => in_array($field->getKey(), $stepFieldIds));
 
                     return [
                         'label' => $step->label,

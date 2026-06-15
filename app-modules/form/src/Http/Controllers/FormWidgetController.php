@@ -38,8 +38,8 @@ namespace AdvisingApp\Form\Http\Controllers;
 
 use AdvisingApp\Form\Actions\CreateProspectFromSubmission;
 use AdvisingApp\Form\Actions\GenerateFormKitSchema;
-use AdvisingApp\Form\Actions\GenerateSubmissionViewData;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidator;
+use AdvisingApp\Form\Actions\GenerateSubmissionViewData;
 use AdvisingApp\Form\Actions\ProcessSubmissionField;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Http\Requests\RegisterProspectRequest;
@@ -147,14 +147,14 @@ class FormWidgetController extends Controller
             'schema' => $form->is_authenticated ? [] : $generateSchema($form),
             'primary_color' => collect(Color::all()[$form->primary_color ?? 'blue'])
                 ->map(Color::convertToRgb(...))
-                ->map(fn(string $value): string => (string) str($value)->after('rgb(')->before(')'))
+                ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
                 ->all(),
             'rounding' => $form->rounding,
             'on_screen_response' => $form->on_screen_response,
             'title_font_weight' => $form->title_font_weight,
             'title_color' => collect(Color::all()[$form->title_color ?? 'neutral'])
                 ->map(Color::convertToRgb(...))
-                ->map(fn(string $value): string => (string) str($value)->after('rgb(')->before(')'))
+                ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
                 ->all(),
         ]);
     }
@@ -170,14 +170,14 @@ class FormWidgetController extends Controller
                 'schema' => $generateSchema($form),
                 'primary_color' => collect(Color::all()[$form->primary_color ?? 'blue'])
                     ->map(Color::convertToRgb(...))
-                    ->map(fn(string $value): string => (string) str($value)->after('rgb(')->before(')'))
+                    ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
                     ->all(),
                 'rounding' => $form->rounding,
                 'on_screen_response' => $form->on_screen_response,
                 'title_font_weight' => $form->title_font_weight,
                 'title_color' => collect(Color::all()[$form->title_color ?? 'neutral'])
                     ->map(Color::convertToRgb(...))
-                    ->map(fn(string $value): string => (string) str($value)->after('rgb(')->before(')'))
+                    ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
                     ->all(),
             ]
         );
@@ -478,10 +478,9 @@ class FormWidgetController extends Controller
         Request $request,
         Form $form,
     ): JsonResponse {
-
-    if( ! PastSubmissionsFeature::active()) {
-        abort(Response::HTTP_FORBIDDEN);
-    }
+        if (! PastSubmissionsFeature::active()) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
         $authentication = $request->query('authentication');
 
         if (filled($authentication)) {
@@ -508,7 +507,7 @@ class FormWidgetController extends Controller
             ->orderByDesc('submitted_at')
             ->paginate($request->query('per_page', 10));
 
-        $items = $pastSubmissions->map(fn(FormSubmission $submission) => [
+        $items = $pastSubmissions->map(fn (FormSubmission $submission) => [
             'id' => $submission->getKey(),
             'submitted_at' => $submission->submitted_at->toIso8601String(),
             'view_url' => URL::signedRoute(
@@ -537,7 +536,6 @@ class FormWidgetController extends Controller
         Form $form,
         FormSubmission $submission,
     ): JsonResponse {
-
         if (! PastSubmissionsFeature::active()) {
             abort(Response::HTTP_FORBIDDEN);
         }
