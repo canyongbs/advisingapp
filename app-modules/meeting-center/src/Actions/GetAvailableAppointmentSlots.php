@@ -206,8 +206,29 @@ class GetAvailableAppointmentSlots
             return $workingHours;
         }
 
+        return $this->getDefaultBusinessHours($dayOfWeek);
+    }
+
+    /**
+     * @return Collection<int, array<string, mixed>>
+     */
+    protected function getDefaultBusinessHours(string $dayOfWeek): Collection
+    {
+        $weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+
+        if (! in_array($dayOfWeek, $weekdays)) {
+            /** @var Collection<int, array<string, mixed>> */
+            return new Collection();
+        }
+
         /** @var Collection<int, array<string, mixed>> */
-        return new Collection();
+        return new Collection([
+            [
+                'is_enabled' => true,
+                'starts_at' => '09:00',
+                'ends_at' => '17:00',
+            ],
+        ]);
     }
 
     /**

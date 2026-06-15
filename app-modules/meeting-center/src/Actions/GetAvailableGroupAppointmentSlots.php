@@ -170,53 +170,11 @@ class GetAvailableGroupAppointmentSlots
             return [];
         }
 
-        // Intersect group hours with each member's personal hours
+        // Intersect group hours with each member's out of office status
         $intersectedBlocks = [['start' => $groupStart, 'end' => $groupEnd]];
 
         foreach ($members as $member) {
             if ($this->isOutOfOffice($member, $date)) {
-                return [];
-            }
-
-            $memberHours = $this->getMemberHoursForDay($member, $dayOfWeek);
-
-            if (empty($memberHours)) {
-                return [];
-            }
-
-            $memberBlocks = [];
-
-            foreach ($memberHours as $period) {
-                $startTime = $period['start'] ?? $period['starts_at'] ?? null;
-                $endTime = $period['end'] ?? $period['ends_at'] ?? null;
-
-                if (! is_string($startTime) || ! is_string($endTime)) {
-                    continue;
-                }
-
-                $blockStart = Carbon::parse("{$date->toDateString()} {$startTime}", 'UTC');
-                $blockEnd = Carbon::parse("{$date->toDateString()} {$endTime}", 'UTC');
-
-                if ($blockStart->gte($blockEnd)) {
-                    $startMinutesFromMidnight = (24 * 60) - ($blockStart->hour * 60 + $blockStart->minute);
-                    $endMinutesFromMidnight = $blockEnd->hour * 60 + $blockEnd->minute;
-
-                    if ($startMinutesFromMidnight <= $endMinutesFromMidnight) {
-                        $blockStart = $blockStart->copy()->subDay();
-                    } else {
-                        $blockEnd = $blockEnd->copy()->addDay();
-                    }
-                }
-
-                $memberBlocks[] = [
-                    'start' => $blockStart,
-                    'end' => $blockEnd,
-                ];
-            }
-
-            $intersectedBlocks = $this->intersectTwoBlockSets($intersectedBlocks, $memberBlocks);
-
-            if (empty($intersectedBlocks)) {
                 return [];
             }
         }
@@ -294,51 +252,6 @@ class GetAvailableGroupAppointmentSlots
         }
 
         return ['starts_at' => $startsAt, 'ends_at' => $endsAt];
-    }
-
-    /**
-     * @return array<int, array<string, mixed>>
-     */
-    protected function getMemberHoursForDay(User $member, string $dayOfWeek): array
-    {
-        $officeHours = $this->getHoursFromSettings($member->office_hours_are_enabled, $member->office_hours, $dayOfWeek);
-
-        if (! empty($officeHours)) {
-            return $officeHours;
-        }
-
-        return $this->getHoursFromSettings($member->working_hours_are_enabled, $member->working_hours, $dayOfWeek);
-    }
-
-    /**
-     * @param array<string, array<string, mixed>>|null $hoursSettings
-     *
-     * @return array<int, array<string, mixed>>
-     */
-    protected function getHoursFromSettings(bool $isEnabled, ?array $hoursSettings, string $dayOfWeek): array
-    {
-        if (! $isEnabled || $hoursSettings === null) {
-            return [];
-        }
-
-        $dayHours = $hoursSettings[$dayOfWeek] ?? [];
-
-        if (empty($dayHours)) {
-            return [];
-        }
-
-        if (isset($dayHours['enabled']) || isset($dayHours['is_enabled'])) {
-            if (! ($dayHours['enabled'] ?? $dayHours['is_enabled'] ?? false)) {
-                return [];
-            }
-
-            return [$dayHours];
-        }
-
-        return collect($dayHours)
-            ->filter(fn (array $period) => ($period['enabled'] ?? $period['is_enabled'] ?? false))
-            ->values()
-            ->all();
     }
 
     protected function isOutOfOffice(User $user, Carbon $date): bool
@@ -420,33 +333,6 @@ class GetAvailableGroupAppointmentSlots
                 ]);
             })
             ->get();
-    }
-
-    /**
-     * @param array<int, array{start: Carbon, end: Carbon}> $blocksA
-     * @param array<int, array{start: Carbon, end: Carbon}> $blocksB
-     *
-     * @return array<int, array{start: Carbon, end: Carbon}>
-     */
-    protected function intersectTwoBlockSets(array $blocksA, array $blocksB): array
-    {
-        $result = [];
-
-        foreach ($blocksA as $blockA) {
-            foreach ($blocksB as $blockB) {
-                $overlapStart = $blockA['start']->max($blockB['start']);
-                $overlapEnd = $blockA['end']->min($blockB['end']);
-
-                if ($overlapStart->lt($overlapEnd)) {
-                    $result[] = [
-                        'start' => $overlapStart->copy(),
-                        'end' => $overlapEnd->copy(),
-                    ];
-                }
-            }
-        }
-
-        return $result;
     }
 
     /**

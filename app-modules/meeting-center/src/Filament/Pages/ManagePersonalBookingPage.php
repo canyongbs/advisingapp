@@ -41,6 +41,7 @@ use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\CalendarEventRes
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use App\Enums\Feature;
+use App\Features\WorkingHousFeature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Pages\ProfilePage;
 use App\Models\User;
@@ -117,7 +118,7 @@ class ManagePersonalBookingPage extends ProfilePage
                     ->belowContent(
                         match (true) {
                             ! $hasCalendar && ! $bookingPageEnabled => 'This feature is only available if your Google or Outlook calendar is connected.',
-                            ! $hasHours => 'This feature requires you to configure your office hours or working hours first.',
+                            ! $hasHours => 'No office hours or working hours configured. Default business hours (Mon–Fri, 9 AM – 5 PM) will be used. Your actual calendar availability and out of office settings will still be respected.',
                             default => null,
                         }
                     )
@@ -210,12 +211,12 @@ class ManagePersonalBookingPage extends ProfilePage
                                     ])
                                     ->visible(fn (Get $get) => $get('working_hours_are_enabled')),
                             ])
-                            ->visible(fn (Get $get) => $get('is_enabled')),
-                        Section::make('Office Hours')
+                            ->visible(fn (Get $get) => !WorkingHousFeature::active() && $get('is_enabled')),
+                        Section::make('Personal Booking Availability')
                             ->visible($hasCrmLicense)
                             ->schema([
                                 Toggle::make('office_hours_are_enabled')
-                                    ->label('Enable Office Hours')
+                                    ->label('Enable Personal Booking Availability')
                                     ->live()
                                     ->rules([
                                         function (Get $get) {
