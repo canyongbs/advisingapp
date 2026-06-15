@@ -48,11 +48,7 @@ class UserObserver
     public function saving(User $user): void
     {
         if ($user->isDirty('password')) {
-            try {
-                $numPreviousPasswords = app(LocalPasswordSettings::class)->getNumPreviousPasswords();
-            } catch (Throwable) {
-                $numPreviousPasswords = LocalPasswordSettings::DEFAULT_NUM_PREVIOUS_PASSWORDS;
-            }
+            $numPreviousPasswords = app(LocalPasswordSettings::class)->getNumPreviousPasswords();
 
             $passwordHistory = $user->password_history ?? [];
 
