@@ -569,7 +569,7 @@
             </div>
 
             <div v-if="formSubmissionUrl" class="space-y-6">
-                <p v-if="formIsAuthenticated || !(props.preview === 'true' || props.preview === true)" class="text-sm">
+                <p v-if="formIsAuthenticated" class="text-sm">
                     Signed in as <strong>{{ authentication.email }}</strong>
                 </p>
 
