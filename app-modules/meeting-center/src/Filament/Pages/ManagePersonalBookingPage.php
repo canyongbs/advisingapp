@@ -211,7 +211,7 @@ class ManagePersonalBookingPage extends ProfilePage
                                     ])
                                     ->visible(fn (Get $get) => $get('working_hours_are_enabled')),
                             ])
-                            ->visible(fn (Get $get) => !WorkingHousFeature::active() && $get('is_enabled')),
+                            ->visible(fn (Get $get) => ! WorkingHousFeature::active() && $get('is_enabled')),
                         Section::make('Personal Booking Availability')
                             ->visible($hasCrmLicense)
                             ->schema([
