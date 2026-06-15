@@ -41,7 +41,6 @@ use App\Events\UserRetentionCrmRestrictionSet;
 use App\Events\UserTeamChanged;
 use App\Models\User;
 use Illuminate\Support\Carbon;
-use Throwable;
 
 class UserObserver
 {
