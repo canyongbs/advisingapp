@@ -51,7 +51,7 @@ class ViewPublicUserProfileController extends Controller
 
         $officeHours = $this->formatHours($user->office_hours);
 
-        $workingHours = ! WorkingHousFeature::active() ? $this->formatHours($user->working_hours) : collect();
+        $workingHours = ! WorkingHousFeature::active() ? $this->formatHours($user->working_hours) : collect(); /** @phpstan-ignore property.notFound */
 
         return view('user-profile-public', [
             'data' => [
@@ -75,6 +75,7 @@ class ViewPublicUserProfileController extends Controller
                     : false,
                 'appointments_are_restricted_to_existing_students' => $user->appointments_are_restricted_to_existing_students,
             ] + (! WorkingHousFeature::active() ? [
+                // @phpstan-ignore-next-line
                 'working_hours' => $user->working_hours_are_enabled && $user->are_working_hours_visible_on_profile && $workingHours->keys()->count()
                     ? $workingHours
                     : false,

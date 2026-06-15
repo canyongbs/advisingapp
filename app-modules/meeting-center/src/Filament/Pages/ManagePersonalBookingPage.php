@@ -307,9 +307,9 @@ class ManagePersonalBookingPage extends ProfilePage
                 'minimum_booking_lead_time_hours' => $bookingPage->minimum_booking_lead_time_hours ?? 0,
                 'maximum_booking_lead_time_days' => $bookingPage->maximum_booking_lead_time_days ?? 0,
                 ...(! WorkingHousFeature::active() ? [
-                    'working_hours_are_enabled' => $user->working_hours_are_enabled,
-                    'are_working_hours_visible_on_profile' => $user->are_working_hours_visible_on_profile,
-                    'working_hours' => $user->working_hours,
+                    'working_hours_are_enabled' => $user->working_hours_are_enabled, /** @phpstan-ignore property.notFound */
+                    'are_working_hours_visible_on_profile' => $user->are_working_hours_visible_on_profile, /** @phpstan-ignore property.notFound */
+                    'working_hours' => $user->working_hours, /** @phpstan-ignore property.notFound */
                 ] : []),
                 'office_hours_are_enabled' => $user->office_hours_are_enabled,
                 'appointments_are_restricted_to_existing_students' => $user->appointments_are_restricted_to_existing_students,
@@ -327,9 +327,9 @@ class ManagePersonalBookingPage extends ProfilePage
             'minimum_booking_lead_time_hours' => 0,
             'maximum_booking_lead_time_days' => 0,
             ...(! WorkingHousFeature::active() ? [
-                'working_hours_are_enabled' => $user->working_hours_are_enabled,
-                'are_working_hours_visible_on_profile' => $user->are_working_hours_visible_on_profile,
-                'working_hours' => $user->working_hours,
+                'working_hours_are_enabled' => $user->working_hours_are_enabled, /** @phpstan-ignore property.notFound */
+                'are_working_hours_visible_on_profile' => $user->are_working_hours_visible_on_profile, /** @phpstan-ignore property.notFound */
+                'working_hours' => $user->working_hours, /** @phpstan-ignore property.notFound */
             ] : []),
             'office_hours_are_enabled' => $user->office_hours_are_enabled,
             'appointments_are_restricted_to_existing_students' => $user->appointments_are_restricted_to_existing_students,
@@ -375,7 +375,7 @@ class ManagePersonalBookingPage extends ProfilePage
         $hasOfficeHours = $user->office_hours_are_enabled && ! empty($user->office_hours);
 
         if (! WorkingHousFeature::active()) {
-            $hasWorkingHours = $user->working_hours_are_enabled && ! empty($user->working_hours);
+            $hasWorkingHours = $user->working_hours_are_enabled && ! empty($user->working_hours); /** @phpstan-ignore property.notFound */
 
             return $hasOfficeHours || $hasWorkingHours;
         }

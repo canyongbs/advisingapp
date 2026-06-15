@@ -202,6 +202,7 @@ class GetAvailableAppointmentSlots
         }
 
         if (! WorkingHousFeature::active()) {
+            // @phpstan-ignore-next-line
             $workingHours = $this->getHoursFromSettings($user->working_hours_are_enabled, $user->working_hours, $dayOfWeek);
 
             if ($workingHours->isNotEmpty()) {
