@@ -170,17 +170,13 @@ class GetAvailableGroupAppointmentSlots
             return [];
         }
 
-        // Intersect group hours with each member's out of office status
-        $intersectedBlocks = [['start' => $groupStart, 'end' => $groupEnd]];
-
         foreach ($members as $member) {
             if ($this->isOutOfOffice($member, $date)) {
                 return [];
             }
         }
 
-        // Carve out busy periods from the intersected blocks
-        $availableBlocks = $intersectedBlocks;
+        $availableBlocks = [['start' => $groupStart, 'end' => $groupEnd]];
 
         foreach ($allBusyPeriods as $busy) {
             $availableBlocks = $this->splitBlocksAroundBusyPeriod($availableBlocks, $busy);

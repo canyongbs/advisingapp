@@ -258,6 +258,56 @@ it('allows booking within maximum lead time window', function () use ($officeHou
     $response->assertJsonFragment(['success' => true]);
 });
 
+// Out of Office Tests
+
+it('excludes days within out of office period from available slots', function () use ($officeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
+            'out_of_office_is_enabled' => true,
+            'out_of_office_starts_at' => Carbon::parse('2026-04-07 00:00:00', 'UTC'),
+            'out_of_office_ends_at' => Carbon::parse('2026-04-09 23:59:59', 'UTC'),
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create([
+            'slug' => 'test-ooo-slots',
+        ]);
+
+    $response = getJson(
+        route('widgets.booking-page.personal.api.available-slots', ['slug' => 'test-ooo-slots']) . '?year=2026&month=4'
+    );
+
+    $response->assertOk();
+
+    $blocks = collect($response->json('blocks'));
+
+    $oooBlocks = $blocks->filter(function (array $block) {
+        $start = Carbon::parse($block['start']);
+
+        return $start->between(
+            Carbon::parse('2026-04-07 00:00:00', 'UTC'),
+            Carbon::parse('2026-04-09 23:59:59', 'UTC'),
+        );
+    });
+
+    expect($oooBlocks)->toBeEmpty();
+
+    $nonOooBlocks = $blocks->filter(function (array $block) {
+        $start = Carbon::parse($block['start']);
+
+        return $start->isAfter(Carbon::parse('2026-04-09 23:59:59', 'UTC'));
+    });
+
+    expect($nonOooBlocks)->not->toBeEmpty();
+});
+
 it('rejects booking when user is out of office', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
@@ -354,6 +404,8 @@ it('allows booking outside the out of office window', function () use ($officeHo
     $response->assertStatus(201);
     $response->assertJsonFragment(['success' => true]);
 });
+
+// Office Hours Booking Validation Tests
 
 it('rejects booking on a day with office hours disabled', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
@@ -473,6 +525,8 @@ it('allows booking within office hours', function () use ($officeHours) {
     $response->assertStatus(201);
     $response->assertJsonFragment(['success' => true]);
 });
+
+// Calendar Event Transparency Tests
 
 it('rejects booking when a busy calendar event overlaps', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
