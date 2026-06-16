@@ -38,7 +38,6 @@ namespace AdvisingApp\MeetingCenter\Actions;
 
 use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
-use App\Features\WorkingHousFeature;
 use App\Models\User;
 use Carbon\CarbonPeriod;
 use Illuminate\Database\Eloquent\Builder;
@@ -199,15 +198,6 @@ class GetAvailableAppointmentSlots
 
         if ($officeHours->isNotEmpty()) {
             return $officeHours;
-        }
-
-        if (! WorkingHousFeature::active()) {
-            // @phpstan-ignore-next-line
-            $workingHours = $this->getHoursFromSettings($user->working_hours_are_enabled, $user->working_hours, $dayOfWeek);
-
-            if ($workingHours->isNotEmpty()) {
-                return $workingHours;
-            }
         }
 
         return $this->getDefaultBusinessHours($dayOfWeek);

@@ -36,7 +36,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Features\WorkingHousFeature;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -50,8 +49,6 @@ class ViewPublicUserProfileController extends Controller
         abort_unless($user->has_enabled_public_profile, Response::HTTP_NOT_FOUND);
 
         $officeHours = $this->formatHours($user->office_hours);
-
-        $workingHours = ! WorkingHousFeature::active() ? $this->formatHours($user->working_hours) : collect(); /** @phpstan-ignore property.notFound */
 
         return view('user-profile-public', [
             'data' => [
@@ -74,12 +71,7 @@ class ViewPublicUserProfileController extends Controller
                     ? $officeHours
                     : false,
                 'appointments_are_restricted_to_existing_students' => $user->appointments_are_restricted_to_existing_students,
-            ] + (! WorkingHousFeature::active() ? [
-                // @phpstan-ignore-next-line
-                'working_hours' => $user->working_hours_are_enabled && $user->are_working_hours_visible_on_profile && $workingHours->keys()->count()
-                    ? $workingHours
-                    : false,
-            ] : []),
+            ],
         ]);
     }
 
