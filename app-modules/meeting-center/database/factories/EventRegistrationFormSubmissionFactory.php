@@ -58,7 +58,9 @@ class EventRegistrationFormSubmissionFactory extends Factory
             'attendee_status' => $this->faker->randomElement(EventAttendeeStatus::class),
             'submitted_at' => $this->faker->dateTime(),
             'form_id' => EventRegistrationForm::factory(),
-            'event_attendee_id' => EventAttendee::factory(),
+            'event_attendee_id' => fn (array $attributes) => EventAttendee::factory()->state([
+                'event_id' => EventRegistrationForm::find($attributes['form_id'])?->event_id,
+            ])->create()->getKey(),
         ];
     }
 
