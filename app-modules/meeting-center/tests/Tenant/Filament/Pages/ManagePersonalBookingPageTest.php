@@ -258,7 +258,7 @@ it('validates default appointment duration is required when enabled', function (
         ->assertHasFormErrors(['default_appointment_duration' => 'required']);
 });
 
-it('validates office hours are required when booking page is enabled', function () {
+it('validates office hours must be enabled when booking page is enabled', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();
@@ -270,7 +270,7 @@ it('validates office hours are required when booking page is enabled', function 
             'is_enabled' => true,
             'slug' => 'test-slug',
             'default_appointment_duration' => 30,
-            'office_hours_are_enabled' => true,
+            'office_hours_are_enabled' => false,
             'office_hours' => [],
         ])
         ->call('save')
@@ -403,7 +403,7 @@ it('saves office hours configuration to user', function () {
     expect($user->office_hours['thursday']['is_enabled'] ?? false)->toBeFalse();
 });
 
-it('validates at least one day must have office hours when office hours enabled', function () {
+it('validates office hours must have at least one enabled day with times configured', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();
@@ -416,7 +416,15 @@ it('validates at least one day must have office hours when office hours enabled'
             'slug' => 'test-slug',
             'default_appointment_duration' => 30,
             'office_hours_are_enabled' => true,
-            'office_hours' => [],
+            'office_hours' => [
+                'monday' => ['is_enabled' => true, 'starts_at' => null, 'ends_at' => null],
+                'tuesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'wednesday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'thursday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'friday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            ],
         ])
         ->call('save')
         ->assertHasFormErrors(['office_hours_are_enabled']);
@@ -610,7 +618,7 @@ it('shows view booking page action when booking page is enabled', function () {
         ->assertActionVisible('view_booking_page');
 });
 
-it('can save booking page with multiple working hours per day', function () {
+it('can save booking page with office hours on multiple days', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();
