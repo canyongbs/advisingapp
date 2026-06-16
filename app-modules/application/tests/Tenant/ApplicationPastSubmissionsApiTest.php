@@ -308,7 +308,7 @@ test('getPastSubmissions returns 401 with expired authentication', function () {
     ]);
 
     ApplicationAuthentication::withoutTimestamps(
-        fn() => ApplicationAuthentication::where('id', $authentication->id)->update(['created_at' => now()->subDays(2)])
+        fn () => ApplicationAuthentication::where('id', $authentication->id)->update(['created_at' => now()->subDays(2)])
     );
     $authentication->refresh();
 
@@ -383,7 +383,7 @@ test('getSubmission returns 401 with expired authentication', function () {
     ]);
 
     ApplicationAuthentication::withoutTimestamps(
-        fn() => ApplicationAuthentication::where('id', $authentication->id)->update(['created_at' => now()->subDays(2)])
+        fn () => ApplicationAuthentication::where('id', $authentication->id)->update(['created_at' => now()->subDays(2)])
     );
     $authentication->refresh();
 

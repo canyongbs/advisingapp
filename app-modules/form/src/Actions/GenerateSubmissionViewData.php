@@ -120,15 +120,15 @@ class GenerateSubmissionViewData
 
         if (isset($node['children']) && is_array($node['children'])) {
             $node['children'] = array_values(array_filter(
-                array_map(fn(array|string $child): array|string => is_array($child) ? $this->disableSchema($child, $responses) : $child, $node['children']),
-                fn(array|string $child): bool => $child !== [],
+                array_map(fn (array|string $child): array|string => is_array($child) ? $this->disableSchema($child, $responses) : $child, $node['children']),
+                fn (array|string $child): bool => $child !== [],
             ));
         }
 
         if (isset($node['props']['children']) && is_array($node['props']['children'])) {
             $node['props']['children'] = array_values(array_filter(
-                array_map(fn(array|string $child): array|string => is_array($child) ? $this->disableSchema($child, $responses) : $child, $node['props']['children']),
-                fn(array|string $child): bool => $child !== [],
+                array_map(fn (array|string $child): array|string => is_array($child) ? $this->disableSchema($child, $responses) : $child, $node['props']['children']),
+                fn (array|string $child): bool => $child !== [],
             ));
         }
 
