@@ -258,7 +258,7 @@ it('validates default appointment duration is required when enabled', function (
         ->assertHasFormErrors(['default_appointment_duration' => 'required']);
 });
 
-it('validates working hours are required when booking page is enabled', function () {
+it('validates office hours are required when booking page is enabled', function () {
     $user = User::factory()->licensed(LicenseType::RetentionCrm)->create();
 
     Calendar::factory()->for($user)->create();

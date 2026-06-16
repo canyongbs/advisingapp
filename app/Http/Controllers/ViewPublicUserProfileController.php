@@ -83,7 +83,7 @@ class ViewPublicUserProfileController extends Controller
     private function formatHours(?array $hours): Collection
     {
         return collect($hours)
-            ->filter(fn ($data, $day) => data_get($data, 'enabled'))
+            ->filter(fn ($data, $day) => data_get($data, 'is_enabled'))
             ->mapWithKeys(fn ($data, $day) => [
                 $day => [
                     'starts_at' => data_get($data, 'starts_at'),

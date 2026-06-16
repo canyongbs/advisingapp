@@ -83,9 +83,9 @@ class ManagePersonalBookingPage extends ProfilePage
             Action::make('view_booking_page')
                 ->label('View Booking Page')
                 ->icon('heroicon-o-eye')
-                ->url(fn (): string => route('direct-booking.show', ['slug' => PersonalBookingPage::query()->whereBelongsTo($user)->first()->slug]))
+                ->url(fn (): string => route('direct-booking.show', ['slug' => PersonalBookingPage::query()->whereBelongsTo($user)->first()?->slug]))
                 ->openUrlInNewTab()
-                ->visible(fn (): bool => PersonalBookingPage::query()->whereBelongsTo($user)->first()->is_enabled ?? false),
+                ->visible(fn (): bool => PersonalBookingPage::query()->whereBelongsTo($user)->first()?->is_enabled ?? false),
         ];
     }
 
