@@ -81,7 +81,9 @@
 
 <template>
     <fieldset class="max-w-md border border-gray-400 rounded px-2 pb-1">
-        <legend v-if="fieldLabel" class="font-bold text-sm">{{ fieldLabel }}<span v-if="isRequired" class="ml-1 text-red-500">*</span></legend>
+        <legend v-if="fieldLabel" class="font-bold text-sm">
+            {{ fieldLabel }}<span v-if="isRequired" class="ml-1 text-red-500">*</span>
+        </legend>
         <div v-if="description" class="text-xs text-gray-500 mt-1 font-normal">{{ description }}</div>
 
         <div v-for="option in normalizedOptions" :key="option.value" class="formkit-option">
