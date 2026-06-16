@@ -117,7 +117,7 @@ class ManagePersonalBookingPage extends ProfilePage
                     ->belowContent(
                         match (true) {
                             ! $hasCalendar && ! $bookingPageEnabled => 'This feature is only available if your Google or Outlook calendar is connected.',
-                            ! $hasHours => 'This feature requires you to configure your personal booking availability hours first.',
+                            ! $hasHours => 'This feature requires you to configure your personal booking availability first.',
                             default => null,
                         }
                     )
@@ -164,11 +164,11 @@ class ManagePersonalBookingPage extends ProfilePage
                             ->visible($hasCrmLicense)
                             ->schema([
                                 Toggle::make('office_hours_are_enabled')
-                                    ->label('Enable Personal Booking Availability Hours')
+                                    ->label('Enable Personal Booking Availability')
                                     ->required()
                                     ->live()
                                     ->validationMessages([
-                                        'accepted' => 'Personal Booking Availability hours must be enabled when booking page is enabled.',
+                                        'accepted' => 'Personal Booking Availability must be enabled when booking page is enabled.',
                                     ])
                                     ->rules([
                                         fn (Get $get): string => $get('is_enabled') ? 'accepted' : '',
@@ -182,7 +182,7 @@ class ManagePersonalBookingPage extends ProfilePage
                                                 $officeHours = $get('office_hours');
 
                                                 if (empty($officeHours)) {
-                                                    $fail('At least one day must have personal booking availability hours configured.');
+                                                    $fail('At least one day must have personal booking availability configured.');
 
                                                     return;
                                                 }
@@ -192,7 +192,7 @@ class ManagePersonalBookingPage extends ProfilePage
                                                     ->isNotEmpty();
 
                                                 if (! $hasAnyEnabledDay) {
-                                                    $fail('At least one day must have personal booking availability hours configured.');
+                                                    $fail('At least one day must have personal booking availability configured.');
                                                 }
                                             };
                                         },
