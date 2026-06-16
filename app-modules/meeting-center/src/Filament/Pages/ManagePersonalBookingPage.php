@@ -118,7 +118,7 @@ class ManagePersonalBookingPage extends ProfilePage
                     ->belowContent(
                         match (true) {
                             ! $hasCalendar && ! $bookingPageEnabled => 'This feature is only available if your Google or Outlook calendar is connected.',
-                            ! $hasHours => 'No office hours or working hours configured. Default business hours (Mon–Fri, 9 AM – 5 PM) will be used. Your actual calendar availability and out of office settings will still be respected.',
+                            ! $hasHours => 'This feature requires you to configure your personal booking availability hours first.',
                             default => null,
                         }
                     )
