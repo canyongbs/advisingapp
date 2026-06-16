@@ -57,8 +57,8 @@ class GenerateSubmissionViewData
         // @phpstan-ignore-next-line property.notFound
         $submittedAt = $submission->submitted_at ?? $submission->created_at;
 
-        $fieldResponses = fn(iterable $fields): array => collect($fields)
-            ->map(fn(SubmissibleField $field) => [
+        $fieldResponses = fn (iterable $fields): array => collect($fields)
+            ->map(fn (SubmissibleField $field) => [
                 'label' => $field->label,
                 'type' => $field->type,
                 // @phpstan-ignore-next-line property.notFound
@@ -76,7 +76,7 @@ class GenerateSubmissionViewData
                     $stepFieldIds = $step->fields()->pluck('id')->all();
 
                     $submittedFields = $submission->fields
-                        ->filter(fn(SubmissibleField $field) => in_array($field->getKey(), $stepFieldIds));
+                        ->filter(fn (SubmissibleField $field) => in_array($field->getKey(), $stepFieldIds));
 
                     return [
                         'label' => $step->label,
