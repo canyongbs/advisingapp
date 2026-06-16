@@ -78,7 +78,7 @@ Route::middleware([
                     ->middleware(['signed'])
                     ->name('register-prospect');
                 Route::get('submissions/past-submissions', [FormWidgetController::class, 'getPastSubmissions'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed:page,per_page'])
                     ->name('get-past-submissions');
                 Route::get('submissions/{submission}', [FormWidgetController::class, 'getSubmission'])
                     ->middleware(['signed'])
