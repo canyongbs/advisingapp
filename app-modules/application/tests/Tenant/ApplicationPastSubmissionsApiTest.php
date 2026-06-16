@@ -88,7 +88,7 @@ test('authenticate returns past_submissions_count and url when toggle is on and 
 
     $prospect = Prospect::factory()->create();
 
-    $code = 123456;
+    $code = '123456';
 
     $authentication = ApplicationAuthentication::factory()->create([
         'application_id' => $application->id,
@@ -126,7 +126,7 @@ test('authenticate returns zero past_submissions_count when toggle is on but no 
 
     $prospect = Prospect::factory()->create();
 
-    $code = 123456;
+    $code = '123456';
 
     $authentication = ApplicationAuthentication::factory()->create([
         'application_id' => $application->id,
@@ -156,7 +156,7 @@ test('authenticate returns zero past_submissions_count when toggle is off', func
 
     $prospect = Prospect::factory()->create();
 
-    $code = 123456;
+    $code = '123456';
 
     $authentication = ApplicationAuthentication::factory()->create([
         'application_id' => $application->id,

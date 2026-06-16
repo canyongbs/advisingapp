@@ -36,24 +36,32 @@
 
 namespace AdvisingApp\Form\Actions;
 
+use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Form\Models\SubmissibleStep;
 use AdvisingApp\Form\Models\Submission;
 
 class GenerateSubmissionViewData
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function __invoke(Submission $submission): array
     {
+        /** @var Submissible $submissible */
         $submissible = $submission->submissible;
         $submission->loadMissing('fields');
 
         $authorEmail = $submission->author?->primaryEmailAddress?->address;
 
+        // @phpstan-ignore-next-line property.notFound
         $submittedAt = $submission->submitted_at ?? $submission->created_at;
 
-        $fieldResponses = fn (iterable $fields): array => collect($fields)
-            ->map(fn (SubmissibleField $field) => [
+        $fieldResponses = fn(iterable $fields): array => collect($fields)
+            ->map(fn(SubmissibleField $field) => [
                 'label' => $field->label,
                 'type' => $field->type,
+                // @phpstan-ignore-next-line property.notFound
                 'response' => $field->pivot?->response,
             ])
             ->values()
@@ -64,11 +72,11 @@ class GenerateSubmissionViewData
 
             $steps = $submissible->steps
                 ->sortBy('sort')
-                ->map(function ($step) use ($submission, $fieldResponses) {
+                ->map(function (SubmissibleStep $step) use ($submission, $fieldResponses) {
                     $stepFieldIds = $step->fields()->pluck('id')->all();
 
                     $submittedFields = $submission->fields
-                        ->filter(fn (SubmissibleField $field) => in_array($field->getKey(), $stepFieldIds));
+                        ->filter(fn(SubmissibleField $field) => in_array($field->getKey(), $stepFieldIds));
 
                     return [
                         'label' => $step->label,
