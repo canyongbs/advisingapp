@@ -38,7 +38,6 @@ namespace AdvisingApp\Form\Actions;
 
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
-use AdvisingApp\Form\Models\SubmissibleStep;
 use AdvisingApp\Form\Models\Submission;
 
 class GenerateSubmissionViewData
@@ -46,61 +45,93 @@ class GenerateSubmissionViewData
     /**
      * @return array<string, mixed>
      */
-    public function __invoke(Submission $submission): array
+    public function __invoke(Submission $submission, GenerateFormKitSchema $generateSchema): array
     {
         /** @var Submissible $submissible */
         $submissible = $submission->submissible;
         $submission->loadMissing('fields');
 
-        $authorEmail = $submission->author?->primaryEmailAddress?->address;
+        $author = $submission->author;
 
         // @phpstan-ignore-next-line property.notFound
         $submittedAt = $submission->submitted_at ?? $submission->created_at;
 
-        $fieldResponses = fn (iterable $fields): array => collect($fields)
-            ->map(fn (SubmissibleField $field) => [
-                'label' => $field->label,
-                'type' => $field->type,
-                // @phpstan-ignore-next-line property.notFound
-                'response' => $field->pivot?->response,
-            ])
-            ->values()
-            ->all();
+        $responses = $this->buildResponseMap($submission);
 
-        if ($submissible->is_wizard) {
-            $submissible->loadMissing('steps');
-
-            $steps = $submissible->steps
-                ->sortBy('sort')
-                ->map(function (SubmissibleStep $step) use ($submission, $fieldResponses) {
-                    $stepFieldIds = $step->fields()->pluck('id')->all();
-
-                    $submittedFields = $submission->fields
-                        ->filter(fn (SubmissibleField $field) => in_array($field->getKey(), $stepFieldIds));
-
-                    return [
-                        'label' => $step->label,
-                        'fields' => $fieldResponses($submittedFields),
-                    ];
-                })
-                ->values()
-                ->all();
-
-            return [
-                'id' => $submission->getKey(),
-                'submitted_at' => $submittedAt?->toIso8601String(),
-                'author_email' => $authorEmail,
-                'is_wizard' => true,
-                'steps' => $steps,
-            ];
-        }
+        $schema = $generateSchema->withAuthor($author)($submissible);
+        $schema = $this->disableSchema($schema, $responses);
 
         return [
             'id' => $submission->getKey(),
             'submitted_at' => $submittedAt?->toIso8601String(),
-            'author_email' => $authorEmail,
-            'is_wizard' => false,
-            'fields' => $fieldResponses($submission->fields),
+            'schema' => $schema,
         ];
+    }
+
+    /**
+     * Build a map of field ID => response value from the submission.
+     *
+     * @return array<string, mixed>
+     */
+    protected function buildResponseMap(Submission $submission): array
+    {
+        $map = [];
+
+        foreach ($submission->fields as $field) {
+            /** @var SubmissibleField $field */
+            // @phpstan-ignore-next-line property.notFound
+            $response = $field->pivot?->response;
+
+            $map[$field->getKey()] = $response;
+        }
+
+        return $map;
+    }
+
+    /**
+     * Recursively walk the FormKit schema tree, disabling all fields
+     * and injecting submission response values.
+     *
+     * @param array<string, mixed> $node
+     * @param array<string, mixed> $responses
+     *
+     * @return array<string, mixed>
+     */
+    protected function disableSchema(array $node, array $responses): array
+    {
+        if (isset($node['$formkit'])) {
+            $type = $node['$formkit'];
+
+            if ($type === 'submit') {
+                return [];
+            }
+
+            $node['disabled'] = true;
+            unset($node['validation']);
+
+            $name = $node['name'] ?? null;
+
+            if ($name && isset($responses[$name])) {
+                $value = $responses[$name];
+
+                $node['value'] = is_array($value) ? ($value[0] ?? '') : $value;
+            }
+        }
+
+        if (isset($node['children']) && is_array($node['children'])) {
+            $node['children'] = array_values(array_filter(
+                array_map(fn(array|string $child): array|string => is_array($child) ? $this->disableSchema($child, $responses) : $child, $node['children']),
+                fn(array|string $child): bool => $child !== [],
+            ));
+        }
+
+        if (isset($node['props']['children']) && is_array($node['props']['children'])) {
+            $node['props']['children'] = array_values(array_filter(
+                array_map(fn(array|string $child): array|string => is_array($child) ? $this->disableSchema($child, $responses) : $child, $node['props']['children']),
+                fn(array|string $child): bool => $child !== [],
+            ));
+        }
+
+        return $node;
     }
 }

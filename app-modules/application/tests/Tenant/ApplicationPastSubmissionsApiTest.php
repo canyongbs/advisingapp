@@ -308,7 +308,7 @@ test('getPastSubmissions returns 401 with expired authentication', function () {
     ]);
 
     ApplicationAuthentication::withoutTimestamps(
-        fn () => ApplicationAuthentication::where('id', $authentication->id)->update(['created_at' => now()->subDays(2)])
+        fn() => ApplicationAuthentication::where('id', $authentication->id)->update(['created_at' => now()->subDays(2)])
     );
     $authentication->refresh();
 
@@ -365,8 +365,7 @@ test('getSubmission returns submission detail data', function () {
 
     expect($response->json('id'))->toBe($submission->getKey());
     expect($response->json('submitted_at'))->not->toBeNull();
-    expect($response->json('is_wizard'))->toBeFalse();
-    expect($response->json('fields'))->toBeArray();
+    expect($response->json('schema'))->toBeArray();
 });
 
 test('getSubmission returns 401 with expired authentication', function () {
@@ -384,7 +383,7 @@ test('getSubmission returns 401 with expired authentication', function () {
     ]);
 
     ApplicationAuthentication::withoutTimestamps(
-        fn () => ApplicationAuthentication::where('id', $authentication->id)->update(['created_at' => now()->subDays(2)])
+        fn() => ApplicationAuthentication::where('id', $authentication->id)->update(['created_at' => now()->subDays(2)])
     );
     $authentication->refresh();
 
