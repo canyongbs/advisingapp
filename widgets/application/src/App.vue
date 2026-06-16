@@ -525,7 +525,7 @@
             </div>
 
             <div v-if="applicationSubmissionUrl" class="space-y-6">
-                <p v-if="!(props.preview === 'true' || props.preview === true)" class="text-sm">
+                <p v-if="authentication.email" class="text-sm">
                     Signed in as <strong>{{ authentication.email }}</strong>
                 </p>
 
