@@ -41,13 +41,13 @@ import Upload from './Upload.vue';
 
 export default {
     checkboxWithOther: createInput(CheckboxWithOther, {
-        props: ['options', 'fieldLabel'],
+        props: ['options', 'fieldLabel', 'description'],
     }),
     otp: createInput(OneTimePassword, {
         props: ['digits'],
     }),
     radioWithOther: createInput(RadioWithOther, {
-        props: ['options', 'fieldLabel'],
+        props: ['options', 'fieldLabel', 'description'],
     }),
     signature: createInput(Signature, {
         props: [],

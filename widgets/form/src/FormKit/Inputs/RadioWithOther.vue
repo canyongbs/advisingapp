@@ -39,6 +39,8 @@
     });
 
     const fieldLabel = computed(() => props.context.fieldLabel || props.context.label || '');
+    const description = computed(() => props.context.description || '');
+    const isRequired = computed(() => props.context.state?.required || false);
 
     const normalizedOptions = computed(() => {
         const opts = props.context.options || [];
@@ -70,7 +72,8 @@
 
 <template>
     <fieldset class="max-w-md border border-gray-400 rounded px-2 pb-1">
-        <legend v-if="fieldLabel" class="font-bold text-sm">{{ fieldLabel }}</legend>
+        <legend v-if="fieldLabel" class="font-bold text-sm">{{ fieldLabel }}<span v-if="isRequired" class="ml-1 text-red-500">*</span></legend>
+        <div v-if="description" class="text-xs text-gray-500 mt-1 font-normal">{{ description }}</div>
 
         <div v-for="option in normalizedOptions" :key="option.value" class="formkit-option">
             <label class="flex items-center mb-1 cursor-pointer">
