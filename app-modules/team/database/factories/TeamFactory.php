@@ -56,7 +56,7 @@ class TeamFactory extends Factory
     public function configure(): TeamFactory|Factory
     {
         return $this->afterCreating(function (Team $team) {
-            if ($this->faker->boolean()) {
+            if (! $team->division()->exists() && $this->faker->boolean()) {
                 $team->division()->associate(tap(Division::factory()->make())->save());
                 $team->save();
             }

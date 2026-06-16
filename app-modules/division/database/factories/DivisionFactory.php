@@ -70,8 +70,14 @@ class DivisionFactory extends Factory
     public function configure(): DivisionFactory|Factory
     {
         return $this->afterCreating(function (Division $division) {
-            $division->createdBy()->associate(User::factory()->create());
-            $division->lastUpdatedBy()->associate(User::factory()->create());
+            if (! $division->createdBy()->exists()) {
+                $division->createdBy()->associate(User::factory()->create());
+            }
+
+            if (! $division->lastUpdatedBy()->exists()) {
+                $division->lastUpdatedBy()->associate(User::factory()->create());
+            }
+
             $division->save();
         });
     }
