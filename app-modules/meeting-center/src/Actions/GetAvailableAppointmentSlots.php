@@ -200,12 +200,14 @@ class GetAvailableAppointmentSlots
             return $officeHours;
         }
 
-        $workingHours = $this->getHoursFromSettings($user->working_hours_are_enabled, $user->working_hours, $dayOfWeek);
+        return $this->getDefaultBusinessHours($dayOfWeek);
+    }
 
-        if ($workingHours->isNotEmpty()) {
-            return $workingHours;
-        }
-
+    /**
+     * @return Collection<int, array<string, mixed>>
+     */
+    protected function getDefaultBusinessHours(string $dayOfWeek): Collection
+    {
         /** @var Collection<int, array<string, mixed>> */
         return new Collection();
     }

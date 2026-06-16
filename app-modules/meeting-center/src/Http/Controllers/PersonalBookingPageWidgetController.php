@@ -222,13 +222,59 @@ class PersonalBookingPageWidgetController extends Controller
             }
         }
 
+        // Check if the user is out of office
+        if ($user->out_of_office_is_enabled && $user->out_of_office_starts_at && $user->out_of_office_ends_at) {
+            if ($startsAt->between($user->out_of_office_starts_at, $user->out_of_office_ends_at)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'This user is currently out of office. Please select another time.',
+                ], 422);
+            }
+        }
+
+        // Validate the booking time falls within the user's office hours
+        if ($user->office_hours_are_enabled && $user->office_hours) {
+            $dayOfWeek = strtolower($startsAt->format('l'));
+            $dayHours = $user->office_hours[$dayOfWeek] ?? null;
+
+            $isEnabled = $dayHours['is_enabled'] ?? $dayHours['enabled'] ?? false;
+
+            if (! $dayHours || ! $isEnabled) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'No availability for the selected day.',
+                ], 422);
+            }
+
+            $startTime = $dayHours['starts_at'] ?? $dayHours['start'] ?? null;
+            $endTime = $dayHours['ends_at'] ?? $dayHours['end'] ?? null;
+
+            if ($startTime && $endTime) {
+                $dayStart = Carbon::parse("{$startsAt->toDateString()} {$startTime}", 'UTC');
+                $dayEnd = Carbon::parse("{$startsAt->toDateString()} {$endTime}", 'UTC');
+
+                if ($startsAt->lt($dayStart) || $endsAt->gt($dayEnd)) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'The selected time is outside available booking hours.',
+                    ], 422);
+                }
+            }
+        }
+
         // Check if slot is still available using a database lock
         return DB::transaction(function () use ($user, $startsAt, $endsAt, $request) {
-            // Check for overlapping events
+            // Check for overlapping busy events (matching the same transparency filter used for available slots)
             $hasConflict = CalendarEvent::query()
                 ->where('calendar_id', $user->calendar->id)
                 ->where('starts_at', '<', $endsAt)
                 ->where('ends_at', '>', $startsAt)
+                ->whereIn('transparency', [
+                    EventTransparency::Busy->value,
+                    EventTransparency::Tentative->value,
+                    EventTransparency::OutOfOffice->value,
+                    EventTransparency::WorkingElsewhere->value,
+                ])
                 ->lockForUpdate()
                 ->exists();
 

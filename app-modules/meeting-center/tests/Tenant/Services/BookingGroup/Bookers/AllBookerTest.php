@@ -49,7 +49,7 @@ use Mockery\MockInterface;
 use function Pest\Laravel\getJson;
 use function Pest\Laravel\postJson;
 
-$workingHours = [
+$officeHours = [
     'monday' => ['is_enabled' => true, 'starts_at' => '08:00', 'ends_at' => '20:00'],
     'tuesday' => ['is_enabled' => true, 'starts_at' => '08:00', 'ends_at' => '20:00'],
     'wednesday' => ['is_enabled' => true, 'starts_at' => '08:00', 'ends_at' => '20:00'],
@@ -78,15 +78,12 @@ beforeEach(function () {
     app()->instance(CalendarManager::class, $mockManager);
 });
 
-it('filters available slots within lead time window', function () use ($workingHours) {
+it('filters available slots within lead time window', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'owner-slots']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
+        ->create();
 
     BookingGroup::factory()
         ->hasAttached($meetingOwner, [], 'users')
@@ -94,7 +91,7 @@ it('filters available slots within lead time window', function () use ($workingH
             'slug' => 'test-group-slots-lead',
             'minimum_booking_lead_time_hours' => 24,
             'meeting_owner_id' => $meetingOwner->id,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     $response = getJson(
@@ -114,20 +111,14 @@ it('filters available slots within lead time window', function () use ($workingH
     expect($blocks[4])->toBe(['start' => '2026-04-13T08:00:00+00:00', 'end' => '2026-04-13T20:00:00+00:00']);
 });
 
-it('rejects booking within effective lead time window', function () use ($workingHours) {
+it('rejects booking within effective lead time window', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'owner-calendar']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
+        ->create();
 
-    $member = User::factory()->create([
-        'working_hours_are_enabled' => true,
-        'working_hours' => $workingHours,
-    ]);
+    $member = User::factory()->create();
 
     // Member has 24h personal lead time
     PersonalBookingPage::factory()
@@ -141,7 +132,7 @@ it('rejects booking within effective lead time window', function () use ($workin
             'slug' => 'test-group-lead',
             'minimum_booking_lead_time_hours' => 6,
             'meeting_owner_id' => $meetingOwner->id,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     // Try to book 12 hours from now (within effective 24h lead time)
@@ -162,15 +153,12 @@ it('rejects booking within effective lead time window', function () use ($workin
     expect($response->json('message'))->toContain('24 hours advance notice');
 });
 
-it('allows booking outside effective lead time window', function () use ($workingHours) {
+it('allows booking outside effective lead time window', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'owner-calendar-ok']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
+        ->create();
 
     $bookingGroup = BookingGroup::factory()
         ->hasAttached($meetingOwner, [], 'users')
@@ -178,7 +166,7 @@ it('allows booking outside effective lead time window', function () use ($workin
             'slug' => 'test-group-lead-ok',
             'minimum_booking_lead_time_hours' => 6,
             'meeting_owner_id' => $meetingOwner->id,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     // Book 8 hours from now (outside 6h lead time)
@@ -204,20 +192,14 @@ it('allows booking outside effective lead time window', function () use ($workin
     ]);
 });
 
-it('rejects booking beyond effective maximum lead time', function () use ($workingHours) {
+it('rejects booking beyond effective maximum lead time', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'owner-calendar']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
+        ->create();
 
-    $member = User::factory()->create([
-        'working_hours_are_enabled' => true,
-        'working_hours' => $workingHours,
-    ]);
+    $member = User::factory()->create();
 
     // Member has 60-day personal max lead time (highest wins)
     PersonalBookingPage::factory()
@@ -231,7 +213,7 @@ it('rejects booking beyond effective maximum lead time', function () use ($worki
             'slug' => 'test-group-max-lead',
             'maximum_booking_lead_time_days' => 30,
             'meeting_owner_id' => $meetingOwner->id,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     // Try to book 75 days from now (beyond effective 60-day max lead time)
@@ -252,15 +234,12 @@ it('rejects booking beyond effective maximum lead time', function () use ($worki
     expect($response->json('message'))->toContain('60 days in advance');
 });
 
-it('allows booking within effective maximum lead time', function () use ($workingHours) {
+it('allows booking within effective maximum lead time', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'owner-calendar-ok']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
+        ->create();
 
     $bookingGroup = BookingGroup::factory()
         ->hasAttached($meetingOwner, [], 'users')
@@ -268,7 +247,7 @@ it('allows booking within effective maximum lead time', function () use ($workin
             'slug' => 'test-group-max-lead-ok',
             'maximum_booking_lead_time_days' => 90,
             'meeting_owner_id' => $meetingOwner->id,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     // Book 45 days from now (within 90-day max lead time) - pick a weekday
@@ -300,22 +279,16 @@ it('allows booking within effective maximum lead time', function () use ($workin
     ]);
 });
 
-it('rejects booking when a member has a calendar conflict', function () use ($workingHours) {
+it('rejects booking when a member has a calendar conflict', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'owner-calendar']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
+        ->create();
 
     $member = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'member-calendar']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
+        ->create();
 
     BookingGroup::factory()
         ->hasAttached($meetingOwner, [], 'users')
@@ -323,7 +296,7 @@ it('rejects booking when a member has a calendar conflict', function () use ($wo
         ->create([
             'slug' => 'test-conflict',
             'meeting_owner_id' => $meetingOwner->id,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     // Create a conflicting calendar event on the member's calendar
@@ -351,20 +324,16 @@ it('rejects booking when a member has a calendar conflict', function () use ($wo
     ]);
 });
 
-it('creates calendar event on meeting owner calendar with all members as attendees', function () use ($workingHours) {
+it('creates calendar event on meeting owner calendar with all members as attendees', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $meetingOwner = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'owner-calendar']))
         ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
             'email' => 'owner@example.com',
         ]);
 
     $member = User::factory()->create([
-        'working_hours_are_enabled' => true,
-        'working_hours' => $workingHours,
         'email' => 'member@example.com',
     ]);
 
@@ -374,7 +343,7 @@ it('creates calendar event on meeting owner calendar with all members as attende
         ->create([
             'slug' => 'test-success',
             'meeting_owner_id' => $meetingOwner->id,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     $response = postJson(
@@ -405,29 +374,20 @@ it('creates calendar event on meeting owner calendar with all members as attende
     expect($calendarEvent->attendees)->toContain('visitor@example.com');
 });
 
-it('rejects booking when any one of three members has a calendar conflict', function () use ($workingHours) {
+it('rejects booking when any one of three members has a calendar conflict', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $meetingOwner = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'owner-cal']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
+        ->create();
 
     $memberB = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'member-b-cal']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
+        ->create();
 
     $memberC = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'member-c-cal']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
+        ->create();
 
     BookingGroup::factory()
         ->hasAttached($meetingOwner, [], 'users')
@@ -436,7 +396,7 @@ it('rejects booking when any one of three members has a calendar conflict', func
         ->create([
             'slug' => 'test-three-member-conflict',
             'meeting_owner_id' => $meetingOwner->id,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     CalendarEvent::factory()->create([
@@ -463,22 +423,19 @@ it('rejects booking when any one of three members has a calendar conflict', func
     ]);
 });
 
-it('rejects booking when a prior group appointment exists at the same time', function () use ($workingHours) {
+it('rejects booking when a prior group appointment exists at the same time', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $meetingOwner = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'owner-cal']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
+        ->create();
 
     $bookingGroup = BookingGroup::factory()
         ->hasAttached($meetingOwner, [], 'users')
         ->create([
             'slug' => 'test-appt-conflict',
             'meeting_owner_id' => $meetingOwner->id,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     BookingGroupAppointment::create([
@@ -506,22 +463,19 @@ it('rejects booking when a prior group appointment exists at the same time', fun
     ]);
 });
 
-it('rejects booking when buffer time causes a conflict with a nearby event', function () use ($workingHours) {
+it('rejects booking when buffer time causes a conflict with a nearby event', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $meetingOwner = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'owner-cal']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
+        ->create();
 
     BookingGroup::factory()
         ->hasAttached($meetingOwner, [], 'users')
         ->create([
             'slug' => 'test-buffer-conflict',
             'meeting_owner_id' => $meetingOwner->id,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
             'is_default_appointment_buffer_enabled' => true,
             'default_appointment_buffer_before_duration' => 30,
             'default_appointment_buffer_after_duration' => 0,
@@ -551,20 +505,14 @@ it('rejects booking when buffer time causes a conflict with a nearby event', fun
     ]);
 });
 
-it('skips members without calendars during conflict detection', function () use ($workingHours) {
+it('skips members without calendars during conflict detection', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $meetingOwner = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'owner-cal']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
+        ->create();
 
-    $memberWithoutCalendar = User::factory()->create([
-        'working_hours_are_enabled' => true,
-        'working_hours' => $workingHours,
-    ]);
+    $memberWithoutCalendar = User::factory()->create();
 
     BookingGroup::factory()
         ->hasAttached($meetingOwner, [], 'users')
@@ -572,7 +520,7 @@ it('skips members without calendars during conflict detection', function () use 
         ->create([
             'slug' => 'test-no-calendar-member',
             'meeting_owner_id' => $meetingOwner->id,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     $response = postJson(
@@ -597,22 +545,19 @@ it('skips members without calendars during conflict detection', function () use 
     ]);
 });
 
-it('allows a second booking adjacent to the first without conflict', function () use ($workingHours) {
+it('allows a second booking adjacent to the first without conflict', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $meetingOwner = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'owner-cal']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
-        ]);
+        ->create();
 
     BookingGroup::factory()
         ->hasAttached($meetingOwner, [], 'users')
         ->create([
             'slug' => 'test-back-to-back',
             'meeting_owner_id' => $meetingOwner->id,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     $firstResponse = postJson(
@@ -649,6 +594,128 @@ it('allows a second booking adjacent to the first without conflict', function ()
     ]);
 
     expect(BookingGroupAppointment::count())->toBe(2);
+});
+
+it('excludes days when any member is out of office', function () use ($officeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
+
+    $meetingOwner = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'owner-cal']))
+        ->create();
+
+    $member = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'member-cal']))
+        ->create([
+            'out_of_office_is_enabled' => true,
+            'out_of_office_starts_at' => Carbon::parse('2026-04-07 00:00:00', 'UTC'),
+            'out_of_office_ends_at' => Carbon::parse('2026-04-07 23:59:59', 'UTC'),
+        ]);
+
+    BookingGroup::factory()
+        ->hasAttached($meetingOwner, [], 'users')
+        ->hasAttached($member, [], 'users')
+        ->create([
+            'slug' => 'test-ooo-slots',
+            'meeting_owner_id' => $meetingOwner->id,
+            'available_appointment_hours' => $officeHours,
+        ]);
+
+    $response = getJson(
+        route('widgets.booking-page.group.api.available-slots', ['slug' => 'test-ooo-slots']) . '?year=2026&month=4'
+    );
+
+    $response->assertOk();
+
+    $blocksData = $response->json('blocks');
+    assert(is_array($blocksData));
+    $blocks = collect($blocksData);
+
+    $apr7Blocks = $blocks->filter(fn (array $block) => str_contains($block['start'], '2026-04-07'));
+    expect($apr7Blocks)->toBeEmpty();
+
+    $apr8Blocks = $blocks->filter(fn (array $block) => str_contains($block['start'], '2026-04-08'));
+    expect($apr8Blocks)->not->toBeEmpty();
+});
+
+it('rejects booking when a member is out of office on the requested date', function () use ($officeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $meetingOwner = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'owner-cal']))
+        ->create();
+
+    $member = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'member-cal']))
+        ->create([
+            'out_of_office_is_enabled' => true,
+            'out_of_office_starts_at' => Carbon::parse('2026-04-07 00:00:00', 'UTC'),
+            'out_of_office_ends_at' => Carbon::parse('2026-04-07 23:59:59', 'UTC'),
+        ]);
+
+    BookingGroup::factory()
+        ->hasAttached($meetingOwner, [], 'users')
+        ->hasAttached($member, [], 'users')
+        ->create([
+            'slug' => 'test-ooo-book',
+            'meeting_owner_id' => $meetingOwner->id,
+            'available_appointment_hours' => $officeHours,
+        ]);
+
+    $response = postJson(
+        route('widgets.booking-page.group.api.book', ['slug' => 'test-ooo-book']),
+        [
+            'name' => 'Test Visitor',
+            'email' => 'visitor@example.com',
+            'starts_at' => Carbon::parse('2026-04-07 10:00:00', 'UTC')->toIso8601String(),
+            'ends_at' => Carbon::parse('2026-04-07 11:00:00', 'UTC')->toIso8601String(),
+        ]
+    );
+
+    $response->assertStatus(409);
+    $response->assertJson([
+        'success' => false,
+        'message' => 'This time slot is no longer available. Please select another time.',
+    ]);
+});
+
+it('does not use member personal booking availability for group booking slots', function () use ($officeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $member = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'member-cal']))
+        ->create([
+            'office_hours_are_enabled' => true,
+            'office_hours' => [
+                'monday' => ['is_enabled' => true, 'starts_at' => '10:00', 'ends_at' => '12:00'],
+                'tuesday' => ['is_enabled' => true, 'starts_at' => '10:00', 'ends_at' => '12:00'],
+                'wednesday' => ['is_enabled' => true, 'starts_at' => '10:00', 'ends_at' => '12:00'],
+                'thursday' => ['is_enabled' => true, 'starts_at' => '10:00', 'ends_at' => '12:00'],
+                'friday' => ['is_enabled' => true, 'starts_at' => '10:00', 'ends_at' => '12:00'],
+                'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+                'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+            ],
+        ]);
+
+    BookingGroup::factory()
+        ->hasAttached($member, [], 'users')
+        ->create([
+            'slug' => 'test-ignore-office-hours',
+            'available_appointment_hours' => $officeHours,
+        ]);
+
+    $response = getJson(
+        route('widgets.booking-page.group.api.available-slots', ['slug' => 'test-ignore-office-hours']) . '?year=2026&month=4'
+    );
+
+    $response->assertOk();
+
+    $blocksData = $response->json('blocks');
+    assert(is_array($blocksData));
+    $blocks = collect($blocksData);
+
+    $mondayBlock = $blocks->first(fn (array $block) => str_contains($block['start'], '2026-04-06T08:00'));
+    expect($mondayBlock)->not->toBeNull();
+    expect($mondayBlock['end'])->toBe('2026-04-06T20:00:00+00:00');
 });
 
 $bstHours = [
@@ -696,10 +763,7 @@ it('computes slots correctly for BST positive offset crossing midnight (23:00-07
 
     $member = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-bst']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $bstHours,
-        ]);
+        ->create();
 
     $bookingGroup = BookingGroup::factory()
         ->hasAttached($member, [], 'users')
@@ -729,10 +793,7 @@ it('does not produce Saturday slots when Saturday is disabled with BST offset', 
 
     $member = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-bst-sat']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $bstHours,
-        ]);
+        ->create();
 
     $bookingGroup = BookingGroup::factory()
         ->hasAttached($member, [], 'users')
@@ -758,10 +819,7 @@ it('computes slots correctly for HST negative offset crossing midnight (18:00-03
 
     $member = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-hst']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $hstHours,
-        ]);
+        ->create();
 
     $bookingGroup = BookingGroup::factory()
         ->hasAttached($member, [], 'users')
@@ -791,10 +849,7 @@ it('does not produce Saturday slots when Saturday is disabled with HST offset', 
 
     $member = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-hst-sat']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $hstHours,
-        ]);
+        ->create();
 
     $bookingGroup = BookingGroup::factory()
         ->hasAttached($member, [], 'users')
@@ -816,10 +871,7 @@ it('computes slots correctly for AEST large positive offset crossing midnight (2
 
     $member = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-aest']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $aestHours,
-        ]);
+        ->create();
 
     $bookingGroup = BookingGroup::factory()
         ->hasAttached($member, [], 'users')
@@ -844,10 +896,7 @@ it('computes slots correctly for NZST very large positive offset crossing midnig
 
     $member = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-nzst']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $nzstHours,
-        ]);
+        ->create();
 
     $bookingGroup = BookingGroup::factory()
         ->hasAttached($member, [], 'users')
@@ -867,10 +916,11 @@ it('computes slots correctly for NZST very large positive offset crossing midnig
     expect($mondayBlock['end'])->toBe('2026-04-06T05:00:00+00:00');
 });
 
-it('correctly intersects member hours that also cross midnight', function () use ($bstHours) {
+it('uses only group hours without intersecting member personal hours', function () use ($bstHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
 
-    // Group has wide hours (22:00-08:00 UTC) but member has narrower BST hours (23:00-07:00 UTC)
+    // Group has wide hours (22:00-08:00 UTC) and member has narrower BST hours (23:00-07:00 UTC)
+    // Group booking should only use group hours, not intersect with member hours
     $wideHours = [
         'monday' => ['is_enabled' => true, 'starts_at' => '22:00', 'ends_at' => '08:00'],
         'tuesday' => ['is_enabled' => true, 'starts_at' => '22:00', 'ends_at' => '08:00'],
@@ -884,8 +934,8 @@ it('correctly intersects member hours that also cross midnight', function () use
     $member = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-intersect']))
         ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $bstHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $bstHours,
         ]);
 
     $bookingGroup = BookingGroup::factory()
@@ -899,11 +949,11 @@ it('correctly intersects member hours that also cross midnight', function () use
 
     expect($blocks)->not->toBeEmpty();
 
-    // Group: Sun 22:00 to Mon 08:00, Member: Sun 23:00 to Mon 07:00
-    // Intersection should be Sun 23:00 to Mon 07:00 (the narrower member hours)
-    $mondayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-05T23:00'));
+    // Group hours 22:00-08:00 cross midnight, so for Monday: Sun Apr 5 22:00 to Mon Apr 6 08:00
+    // Member has narrower office_hours (23:00-07:00) but they should NOT be intersected
+    $mondayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-05T22:00'));
     expect($mondayBlock)->not->toBeNull();
-    expect($mondayBlock['end'])->toBe('2026-04-06T07:00:00+00:00');
+    expect($mondayBlock['end'])->toBe('2026-04-06T08:00:00+00:00');
 });
 
 it('produces correct number of weekday blocks with midnight-crossing hours', function () use ($bstHours) {
@@ -911,10 +961,7 @@ it('produces correct number of weekday blocks with midnight-crossing hours', fun
 
     $member = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-count']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $bstHours,
-        ]);
+        ->create();
 
     $bookingGroup = BookingGroup::factory()
         ->hasAttached($member, [], 'users')
@@ -929,7 +976,7 @@ it('produces correct number of weekday blocks with midnight-crossing hours', fun
     expect($blocks)->toHaveCount(22);
 });
 
-it('handles member hours crossing midnight with negative offset independently from group hours', function () use ($hstHours) {
+it('uses full group hours without intersecting member personal hours for non-crossing hours', function () use ($hstHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
 
     // Group has standard non-crossing hours that encompass the full day
@@ -944,11 +991,12 @@ it('handles member hours crossing midnight with negative offset independently fr
     ];
 
     // Member has HST hours that cross midnight (18:00-03:00 UTC)
+    // But group booking should NOT intersect with member personal hours
     $member = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-hst-member']))
         ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $hstHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $hstHours,
         ]);
 
     $bookingGroup = BookingGroup::factory()
@@ -962,9 +1010,8 @@ it('handles member hours crossing midnight with negative offset independently fr
 
     expect($blocks)->not->toBeEmpty();
 
-    // Group: Mon 00:00 to Mon 23:59, Member: Mon 18:00 to Tue 03:00
-    // Intersection: Mon 18:00 to Mon 23:59 (clamped by group end)
-    $mondayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-06T18:00'));
+    // Group hours 00:00-23:59 are used directly — member's narrower HST hours are NOT intersected
+    $mondayBlock = collect($blocks)->first(fn ($block) => str_contains($block['start'], '2026-04-06T00:00'));
     expect($mondayBlock)->not->toBeNull();
     expect($mondayBlock['end'])->toBe('2026-04-06T23:59:00+00:00');
 });
@@ -974,10 +1021,7 @@ it('does not produce slots outside the month boundary with midnight-crossing hou
 
     $member = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-boundary']))
-        ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $bstHours,
-        ]);
+        ->create();
 
     $bookingGroup = BookingGroup::factory()
         ->hasAttached($member, [], 'users')

@@ -83,7 +83,7 @@ class ManagePersonalBookingPage extends ProfilePage
             Action::make('view_booking_page')
                 ->label('View Booking Page')
                 ->icon('heroicon-o-eye')
-                ->url(fn (): string => route('direct-booking.show', ['slug' => PersonalBookingPage::query()->whereBelongsTo($user)->first()->slug]))
+                ->url(fn (): string => route('direct-booking.show', ['slug' => PersonalBookingPage::query()->whereBelongsTo($user)->first()?->slug]))
                 ->openUrlInNewTab()
                 ->visible(fn (): bool => PersonalBookingPage::query()->whereBelongsTo($user)->first()->is_enabled ?? false),
         ];
@@ -117,7 +117,7 @@ class ManagePersonalBookingPage extends ProfilePage
                     ->belowContent(
                         match (true) {
                             ! $hasCalendar && ! $bookingPageEnabled => 'This feature is only available if your Google or Outlook calendar is connected.',
-                            ! $hasHours => 'This feature requires you to configure your office hours or working hours first.',
+                            ! $hasHours => 'This feature requires you to configure your personal booking availability first.',
                             default => null,
                         }
                     )
@@ -160,64 +160,18 @@ class ManagePersonalBookingPage extends ProfilePage
                             ->minValue(0)
                             ->integer()
                             ->visible(fn (Get $get) => $get('is_enabled')),
-                        Section::make('Working Hours')
-                            ->visible($hasCrmLicense)
-                            ->schema([
-                                Toggle::make('working_hours_are_enabled')
-                                    ->label('Set Working Hours')
-                                    ->live()
-                                    ->required()
-                                    ->hint(fn (Get $get): string => $get('are_working_hours_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile')
-                                    ->validationMessages([
-                                        'accepted' => 'Working hours must be enabled when booking page is enabled.',
-                                    ])
-                                    ->rules([
-                                        fn (Get $get): string => $get('is_enabled') ? 'accepted' : '',
-                                        function (Get $get) {
-                                            return function (string $attribute, mixed $value, Closure $fail) use ($get) {
-                                                if (! $value) {
-                                                    return;
-                                                }
-
-                                                /** @var array<int, array<string, mixed>> $workingHours */
-                                                $workingHours = $get('working_hours');
-
-                                                if (empty($workingHours)) {
-                                                    $fail('At least one day must have working hours configured.');
-
-                                                    return;
-                                                }
-
-                                                $hasAnyEnabledDay = collect($workingHours)
-                                                    ->filter(fn ($day) => ($day['is_enabled'] ?? false) === true && ! empty($day['starts_at']) && ! empty($day['ends_at']))
-                                                    ->isNotEmpty();
-
-                                                if (! $hasAnyEnabledDay) {
-                                                    $fail('At least one day must have working hours configured.');
-                                                }
-                                            };
-                                        },
-                                    ]),
-                                Checkbox::make('are_working_hours_visible_on_profile')
-                                    ->label('Show Working Hours on profile')
-                                    ->visible(fn (Get $get) => $get('working_hours_are_enabled'))
-                                    ->live(),
-                                Section::make('Days')
-                                    ->schema([
-                                        DailyHoursRepeater::make('working_hours')
-                                            ->label('Days and Hours')
-                                            ->columnSpanFull(),
-                                    ])
-                                    ->visible(fn (Get $get) => $get('working_hours_are_enabled')),
-                            ])
-                            ->visible(fn (Get $get) => $get('is_enabled')),
-                        Section::make('Office Hours')
+                        Section::make('Personal Booking Availability')
                             ->visible($hasCrmLicense)
                             ->schema([
                                 Toggle::make('office_hours_are_enabled')
-                                    ->label('Enable Office Hours')
+                                    ->label('Enable Personal Booking Availability')
+                                    ->required()
                                     ->live()
+                                    ->validationMessages([
+                                        'accepted' => 'Personal Booking Availability must be enabled when booking page is enabled.',
+                                    ])
                                     ->rules([
+                                        fn (Get $get): string => $get('is_enabled') ? 'accepted' : '',
                                         function (Get $get) {
                                             return function (string $attribute, mixed $value, Closure $fail) use ($get) {
                                                 if (! $value) {
@@ -228,7 +182,7 @@ class ManagePersonalBookingPage extends ProfilePage
                                                 $officeHours = $get('office_hours');
 
                                                 if (empty($officeHours)) {
-                                                    $fail('At least one day must have office hours configured.');
+                                                    $fail('At least one day must have personal booking availability configured.');
 
                                                     return;
                                                 }
@@ -238,7 +192,7 @@ class ManagePersonalBookingPage extends ProfilePage
                                                     ->isNotEmpty();
 
                                                 if (! $hasAnyEnabledDay) {
-                                                    $fail('At least one day must have office hours configured.');
+                                                    $fail('At least one day must have personal booking availability configured.');
                                                 }
                                             };
                                         },
@@ -300,9 +254,6 @@ class ManagePersonalBookingPage extends ProfilePage
                 'default_appointment_duration' => $bookingPage->default_appointment_duration,
                 'minimum_booking_lead_time_hours' => $bookingPage->minimum_booking_lead_time_hours ?? 0,
                 'maximum_booking_lead_time_days' => $bookingPage->maximum_booking_lead_time_days ?? 0,
-                'working_hours_are_enabled' => $user->working_hours_are_enabled,
-                'are_working_hours_visible_on_profile' => $user->are_working_hours_visible_on_profile,
-                'working_hours' => $user->working_hours,
                 'office_hours_are_enabled' => $user->office_hours_are_enabled,
                 'appointments_are_restricted_to_existing_students' => $user->appointments_are_restricted_to_existing_students,
                 'office_hours' => $user->office_hours,
@@ -318,9 +269,6 @@ class ManagePersonalBookingPage extends ProfilePage
             'default_appointment_duration' => 30,
             'minimum_booking_lead_time_hours' => 0,
             'maximum_booking_lead_time_days' => 0,
-            'working_hours_are_enabled' => $user->working_hours_are_enabled,
-            'are_working_hours_visible_on_profile' => $user->are_working_hours_visible_on_profile,
-            'working_hours' => $user->working_hours,
             'office_hours_are_enabled' => $user->office_hours_are_enabled,
             'appointments_are_restricted_to_existing_students' => $user->appointments_are_restricted_to_existing_students,
             'office_hours' => $user->office_hours,
@@ -344,9 +292,6 @@ class ManagePersonalBookingPage extends ProfilePage
         $bookingPage->save();
 
         $user->update([
-            'working_hours_are_enabled' => $data['working_hours_are_enabled'] ?? false,
-            'are_working_hours_visible_on_profile' => $data['are_working_hours_visible_on_profile'] ?? false,
-            'working_hours' => ! empty($data['working_hours']) ? DailyHoursRepeater::mutateDataBeforeSave($data['working_hours']) : ($data['working_hours'] ?? null),
             'office_hours_are_enabled' => $data['office_hours_are_enabled'] ?? false,
             'appointments_are_restricted_to_existing_students' => $data['appointments_are_restricted_to_existing_students'] ?? false,
             'office_hours' => ! empty($data['office_hours']) ? DailyHoursRepeater::mutateDataBeforeSave($data['office_hours']) : ($data['office_hours'] ?? null),
@@ -361,8 +306,7 @@ class ManagePersonalBookingPage extends ProfilePage
     protected function userHasHoursConfigured(User $user): bool
     {
         $hasOfficeHours = $user->office_hours_are_enabled && ! empty($user->office_hours);
-        $hasWorkingHours = $user->working_hours_are_enabled && ! empty($user->working_hours);
 
-        return $hasOfficeHours || $hasWorkingHours;
+        return $hasOfficeHours;
     }
 }
