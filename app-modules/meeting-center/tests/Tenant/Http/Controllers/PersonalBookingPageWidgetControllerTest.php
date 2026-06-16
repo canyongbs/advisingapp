@@ -286,7 +286,9 @@ it('excludes days within out of office period from available slots', function ()
 
     $response->assertOk();
 
-    $blocks = collect($response->json('blocks'));
+    $blocksData = $response->json('blocks');
+    assert(is_array($blocksData));
+    $blocks = collect($blocksData);
 
     $oooBlocks = $blocks->filter(function (array $block) {
         $start = Carbon::parse($block['start']);

@@ -626,7 +626,9 @@ it('excludes days when any member is out of office', function () use ($officeHou
 
     $response->assertOk();
 
-    $blocks = collect($response->json('blocks'));
+    $blocksData = $response->json('blocks');
+    assert(is_array($blocksData));
+    $blocks = collect($blocksData);
 
     $apr7Blocks = $blocks->filter(fn (array $block) => str_contains($block['start'], '2026-04-07'));
     expect($apr7Blocks)->toBeEmpty();
@@ -707,7 +709,9 @@ it('does not use member personal booking availability for group booking slots', 
 
     $response->assertOk();
 
-    $blocks = collect($response->json('blocks'));
+    $blocksData = $response->json('blocks');
+    assert(is_array($blocksData));
+    $blocks = collect($blocksData);
 
     $mondayBlock = $blocks->first(fn (array $block) => str_contains($block['start'], '2026-04-06T08:00'));
     expect($mondayBlock)->not->toBeNull();

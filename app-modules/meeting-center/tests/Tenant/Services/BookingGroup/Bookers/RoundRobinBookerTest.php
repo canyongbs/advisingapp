@@ -731,7 +731,9 @@ it('skips member who is out of office in round robin rotation', function () use 
 
     $response->assertOk();
 
-    $blocks = collect($response->json('blocks'));
+    $blocksData = $response->json('blocks');
+    assert(is_array($blocksData));
+    $blocks = collect($blocksData);
 
     // Alice is first in rotation but OOO on Apr 7 — her slots should exclude that day
     $apr7Blocks = $blocks->filter(fn (array $block) => str_contains($block['start'], '2026-04-07'));

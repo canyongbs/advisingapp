@@ -815,7 +815,9 @@ it('excludes out of office days from resolved member available slots', function 
 
     $response->assertOk();
 
-    $blocks = collect($response->json('blocks'));
+    $blocksData = $response->json('blocks');
+    assert(is_array($blocksData));
+    $blocks = collect($blocksData);
 
     // Alice is resolved (least busy tiebreaker picks alphabetically), but OOO on Apr 7
     $apr7Blocks = $blocks->filter(fn (array $block) => str_contains($block['start'], '2026-04-07'));
