@@ -36,16 +36,20 @@
 
 namespace AdvisingApp\Application\Models;
 
+use AdvisingApp\Application\Observers\ApplicationObserver;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Enums\FontWeight;
 use App\Models\Media;
 use App\Models\User;
+use CanyonGBS\Common\Models\Concerns\CanBeArchived;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
@@ -57,8 +61,10 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 /**
  * @mixin IdeHelperApplication
  */
+#[ObservedBy([ApplicationObserver::class])]
 class Application extends Submissible implements HasMedia, HasRichContent
 {
+    use CanBeArchived;
     use HasRelationships;
 
     /** @use InteractsWithMedia<Media> */
@@ -83,6 +89,7 @@ class Application extends Submissible implements HasMedia, HasRichContent
         'notify_to_subscribers',
         'notify_via_app',
         'notify_via_email',
+        'root_id',
     ];
 
     protected $casts = [
@@ -154,5 +161,28 @@ class Application extends Submissible implements HasMedia, HasRichContent
         return $this->belongsToMany(User::class, 'application_notification_users', 'application_id', 'user_id')
             ->using(ApplicationNotificationUser::class)
             ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsTo<Application, $this>
+     */
+    public function rootApplication(): BelongsTo
+    {
+        return $this->belongsTo(Application::class, 'root_id');
+    }
+
+    /**
+     * @return HasMany<Application, $this>
+     */
+    public function versions(): HasMany
+    {
+        return $this->hasMany(Application::class, 'root_id', 'root_id');
+    }
+
+    public function latestVersion(): ?Application
+    {
+        return Application::query()->where('root_id', $this->root_id)
+            ->whereNull('archived_at')
+            ->first();
     }
 }

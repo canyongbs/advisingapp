@@ -36,13 +36,18 @@
 
 namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
 
+use AdvisingApp\Form\Actions\CreateFormVersion;
+use AdvisingApp\Form\Actions\SaveSubmissibleFieldsFromContent;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns\HasSharedFormConfiguration;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns\ValidatesProspectGenerationFields;
+use AdvisingApp\Form\Models\Form;
+use App\Features\FormVersioningFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
 
 class EditForm extends EditRecord
 {
@@ -54,10 +59,41 @@ class EditForm extends EditRecord
 
     protected static ?string $navigationLabel = 'Edit';
 
+    /** @var array<string, mixed>|null */
+    protected ?array $versioningFormData = null;
+
     public function form(Schema $schema): Schema
     {
         return $schema
             ->components($this->fields());
+    }
+
+    protected function beforeSave(): void
+    {
+        if (FormVersioningFeature::active()) {
+            $this->versioningFormData = $this->data;
+        }
+    }
+
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        if (! FormVersioningFeature::active()) {
+            return parent::handleRecordUpdate($record, $data);
+        }
+
+        /** @var Form $record */
+        $newVersion = app(CreateFormVersion::class)->execute($record, $data);
+
+        $this->record = $newVersion;
+
+        app(SaveSubmissibleFieldsFromContent::class)->execute($newVersion, $this->versioningFormData);
+
+        return $newVersion;
+    }
+
+    protected function getRedirectUrl(): ?string
+    {
+        return FormResource::getUrl('view', ['record' => $this->record]);
     }
 
     protected function getFormActions(): array
