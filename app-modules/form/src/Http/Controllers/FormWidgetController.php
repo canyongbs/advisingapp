@@ -257,7 +257,15 @@ class FormWidgetController extends Controller
         $pastSubmissionsUrl = null;
 
         if (PastSubmissionsFeature::active() && $form->allow_view_past_submissions && $author) {
-            $pastSubmissionsCount = $form->submissions()
+            $pastSubmissionsCount = FormSubmission::query()
+                ->when(
+                    FormVersioningFeature::active(),
+                    fn ($query) => $query->whereHas(
+                        'submissible',
+                        fn ($query) => $query->withoutGlobalScopes()->where('root_id', $form->root_id),
+                    ),
+                    fn ($query) => $query->where('form_id', $form->getKey()),
+                )
                 ->submitted()
                 ->whereMorphedTo('author', $author)
                 ->count();
@@ -501,7 +509,15 @@ class FormWidgetController extends Controller
             ]);
         }
 
-        $pastSubmissions = $form->submissions()
+        $pastSubmissions = FormSubmission::query()
+            ->when(
+                FormVersioningFeature::active(),
+                fn ($query) => $query->whereHas(
+                    'submissible',
+                    fn ($query) => $query->withoutGlobalScopes()->where('root_id', $form->root_id),
+                ),
+                fn ($query) => $query->where('form_id', $form->getKey()),
+            )
             ->submitted()
             ->whereMorphedTo('author', $author)
             ->orderByDesc('submitted_at')
@@ -551,7 +567,12 @@ class FormWidgetController extends Controller
             abort(Response::HTTP_UNAUTHORIZED);
         }
 
-        abort_unless($submission->form_id === $form->getKey(), Response::HTTP_NOT_FOUND);
+        abort_unless(
+            FormVersioningFeature::active()
+                ? $submission->submissible()->withoutGlobalScopes()->value('root_id') === $form->root_id
+                : $submission->form_id === $form->getKey(),
+            Response::HTTP_NOT_FOUND,
+        );
 
         $author = $authentication->author;
 

@@ -240,7 +240,15 @@ class ApplicationWidgetController extends Controller
         $pastSubmissionsUrl = null;
 
         if (PastSubmissionsFeature::active() && $application->allow_view_past_submissions && $author) {
-            $pastSubmissionsCount = $application->submissions()
+            $pastSubmissionsCount = ApplicationSubmission::query()
+                ->when(
+                    FormVersioningFeature::active(),
+                    fn ($query) => $query->whereHas(
+                        'submissible',
+                        fn ($query) => $query->withoutGlobalScopes()->where('root_id', $application->root_id),
+                    ),
+                    fn ($query) => $query->where('application_id', $application->getKey()),
+                )
                 ->whereMorphedTo('author', $author)
                 ->count();
 
@@ -471,7 +479,15 @@ class ApplicationWidgetController extends Controller
             ]);
         }
 
-        $pastSubmissions = $application->submissions()
+        $pastSubmissions = ApplicationSubmission::query()
+            ->when(
+                FormVersioningFeature::active(),
+                fn ($query) => $query->whereHas(
+                    'submissible',
+                    fn ($query) => $query->withoutGlobalScopes()->where('root_id', $application->root_id),
+                ),
+                fn ($query) => $query->where('application_id', $application->getKey()),
+            )
             ->whereMorphedTo('author', $author)
             ->orderByDesc('created_at')
             ->paginate(min((int) $request->query('per_page', 10), 50));
@@ -521,7 +537,12 @@ class ApplicationWidgetController extends Controller
             abort(Response::HTTP_UNAUTHORIZED);
         }
 
-        abort_unless($submission->application_id === $application->getKey(), Response::HTTP_NOT_FOUND);
+        abort_unless(
+            FormVersioningFeature::active()
+                ? $submission->submissible()->withoutGlobalScopes()->value('root_id') === $application->root_id
+                : $submission->application_id === $application->getKey(),
+            Response::HTTP_NOT_FOUND,
+        );
 
         $author = $authentication->author;
 
