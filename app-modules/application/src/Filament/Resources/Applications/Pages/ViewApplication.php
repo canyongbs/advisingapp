@@ -40,6 +40,7 @@ use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
+use App\Features\PastSubmissionsFeature;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Repeater;
@@ -86,6 +87,10 @@ class ViewApplication extends ViewRecord
                             ->boolean(),
                         IconEntry::make('is_wizard')
                             ->label('Multi-step form')
+                            ->boolean(),
+                        IconEntry::make('allow_view_past_submissions')
+                            ->label('Allow View Past Submissions')
+                            ->visible(fn (): bool => PastSubmissionsFeature::active())
                             ->boolean(),
                     ]),
                 Section::make('Fields')

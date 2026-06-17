@@ -40,6 +40,7 @@ use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Models\Form;
+use App\Features\PastSubmissionsFeature;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Repeater;
@@ -83,6 +84,10 @@ class ViewForm extends ViewRecord
                             ->badge(),
                         IconEntry::make('is_authenticated')
                             ->label('Is Authenticated')
+                            ->boolean(),
+                        IconEntry::make('allow_view_past_submissions')
+                            ->label('Allow View Past Submissions')
+                            ->visible(fn (): bool => PastSubmissionsFeature::active())
                             ->boolean(),
                         IconEntry::make('generate_prospects')
                             ->label('Generate Prospects')
