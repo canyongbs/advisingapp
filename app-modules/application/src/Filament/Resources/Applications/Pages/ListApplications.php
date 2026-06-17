@@ -39,6 +39,8 @@ namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 use AdvisingApp\Application\Actions\DuplicateApplication;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationSubmission;
+use App\Features\FormVersioningFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -51,6 +53,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class ListApplications extends ListRecords
@@ -62,13 +65,26 @@ class ListApplications extends ListRecords
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                $submissionsCountQuery = FormVersioningFeature::active()
+                    ? ApplicationSubmission::query()
+                        ->join('applications as version_applications', 'application_submissions.application_id', '=', 'version_applications.id')
+                        ->whereColumn('version_applications.root_id', 'applications.root_id')
+                        ->selectRaw('count(*)')
+                    : ApplicationSubmission::query()
+                        ->whereColumn('application_id', 'applications.id')
+                        ->selectRaw('count(*)');
+
+                $query->addSelect([
+                    'submissions_count' => $submissionsCountQuery,
+                ]);
+            })
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name')
                     ->description(fn (Application $record) => $record->title),
                 TextColumn::make('submissions_count')
-                    ->label('Submissions')
-                    ->counts('submissions'),
+                    ->label('Submissions'),
                 TextColumn::make('created_at')
                     ->label('Created')
                     ->date()

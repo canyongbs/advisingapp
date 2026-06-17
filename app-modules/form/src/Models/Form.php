@@ -82,6 +82,7 @@ class Form extends Submissible
         'notify_via_app',
         'notify_via_email',
         'root_id',
+        'allow_view_past_submissions',
     ];
 
     protected $casts = [
@@ -98,6 +99,7 @@ class Form extends Submissible
         'notify_to_subscribers' => 'boolean',
         'notify_via_app' => 'boolean',
         'notify_via_email' => 'boolean',
+        'allow_view_past_submissions' => 'boolean',
     ];
 
     /**

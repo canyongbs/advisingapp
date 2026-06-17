@@ -42,6 +42,7 @@ use AdvisingApp\Application\Models\ApplicationAuthentication;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
+use AdvisingApp\Form\Actions\GenerateSubmissionViewData;
 use AdvisingApp\Form\Actions\ProcessSubmissionField;
 use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Http\Requests\RegisterProspectRequestForApplication;
@@ -52,6 +53,7 @@ use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\FormVersioningFeature;
+use App\Features\PastSubmissionsFeature;
 use App\Features\PhoneNumberLookupFeature;
 use App\Http\Controllers\Controller;
 use Closure;
@@ -123,6 +125,7 @@ class ApplicationWidgetController extends Controller
             [
                 'name' => $application->title,
                 'description' => $application->description,
+                'allow_view_past_submissions' => PastSubmissionsFeature::active() && $application->allow_view_past_submissions,
                 'authentication_url' => URL::signedRoute(
                     name: 'widgets.applications.api.request-authentication',
                     parameters: ['application' => $application],
@@ -233,6 +236,33 @@ class ApplicationWidgetController extends Controller
 
         assert($author instanceof Prospect || $author instanceof Student || $author === null);
 
+        $pastSubmissionsCount = 0;
+        $pastSubmissionsUrl = null;
+
+        if (PastSubmissionsFeature::active() && $application->allow_view_past_submissions && $author) {
+            $pastSubmissionsCount = ApplicationSubmission::query()
+                ->when(
+                    FormVersioningFeature::active(),
+                    fn ($query) => $query->whereHas(
+                        'submissible',
+                        fn ($query) => $query->withoutGlobalScopes()->where('root_id', $application->root_id),
+                    ),
+                    fn ($query) => $query->where('application_id', $application->getKey()),
+                )
+                ->whereMorphedTo('author', $author)
+                ->count();
+
+            if ($pastSubmissionsCount > 0) {
+                $pastSubmissionsUrl = URL::signedRoute(
+                    name: 'widgets.applications.api.get-past-submissions',
+                    parameters: [
+                        'application' => $application,
+                        'authentication' => $authentication,
+                    ],
+                );
+            }
+        }
+
         return response()->json([
             'submission_url' => URL::signedRoute(
                 name: 'widgets.applications.api.submit',
@@ -242,6 +272,9 @@ class ApplicationWidgetController extends Controller
                 ],
             ),
             'schema' => $generateSchema->withAuthor($author)($application),
+            'allow_view_past_submissions' => PastSubmissionsFeature::active() && $application->allow_view_past_submissions,
+            'past_submissions_count' => $pastSubmissionsCount,
+            'past_submissions_url' => $pastSubmissionsUrl,
         ]);
     }
 
@@ -417,6 +450,111 @@ class ApplicationWidgetController extends Controller
                 ],
             ),
         ]);
+    }
+
+    public function getPastSubmissions(
+        Request $request,
+        Application $application,
+    ): JsonResponse {
+        if (! PastSubmissionsFeature::active()) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+        $authentication = $request->query('authentication');
+
+        if (filled($authentication)) {
+            $authentication = ApplicationAuthentication::findOrFail($authentication);
+        }
+
+        if (! $authentication || $authentication->isExpired()) {
+            abort(Response::HTTP_UNAUTHORIZED);
+        }
+
+        $author = $authentication->author;
+
+        assert($author instanceof Prospect || $author instanceof Student || $author === null);
+
+        if (! $application->allow_view_past_submissions || ! $author) {
+            return response()->json([
+                'past_submissions' => [],
+            ]);
+        }
+
+        $pastSubmissions = ApplicationSubmission::query()
+            ->when(
+                FormVersioningFeature::active(),
+                fn ($query) => $query->whereHas(
+                    'submissible',
+                    fn ($query) => $query->withoutGlobalScopes()->where('root_id', $application->root_id),
+                ),
+                fn ($query) => $query->where('application_id', $application->getKey()),
+            )
+            ->whereMorphedTo('author', $author)
+            ->orderByDesc('created_at')
+            ->paginate(min((int) $request->query('per_page', 10), 50));
+
+        $items = $pastSubmissions->map(fn (ApplicationSubmission $submission) => [
+            'id' => $submission->getKey(),
+            'submitted_at' => $submission->created_at->toIso8601String(),
+            'view_url' => URL::signedRoute(
+                name: 'widgets.applications.api.get-submission',
+                parameters: [
+                    'application' => $application,
+                    'submission' => $submission,
+                    'authentication' => $authentication,
+                ],
+            ),
+        ])->all();
+
+        return response()->json([
+            'past_submissions' => $items,
+            'meta' => [
+                'current_page' => $pastSubmissions->currentPage(),
+                'last_page' => $pastSubmissions->lastPage(),
+                'per_page' => $pastSubmissions->perPage(),
+                'total' => $pastSubmissions->total(),
+            ],
+        ]);
+    }
+
+    public function getSubmission(
+        Request $request,
+        GenerateSubmissionViewData $generateSubmissionViewData,
+        GenerateFormKitSchema $generateSchema,
+        Application $application,
+        ApplicationSubmission $submission,
+    ): JsonResponse {
+        if (! PastSubmissionsFeature::active()) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
+        $authentication = $request->query('authentication');
+
+        if (filled($authentication)) {
+            $authentication = ApplicationAuthentication::findOrFail($authentication);
+        }
+
+        if (! $authentication || $authentication->isExpired()) {
+            abort(Response::HTTP_UNAUTHORIZED);
+        }
+
+        abort_unless(
+            FormVersioningFeature::active()
+                ? $submission->submissible()->withoutGlobalScopes()->value('root_id') === $application->root_id
+                : $submission->application_id === $application->getKey(),
+            Response::HTTP_NOT_FOUND,
+        );
+
+        $author = $authentication->author;
+
+        abort_unless(
+            $submission->author_type === $author?->getMorphClass()
+                && $submission->author_id === $author?->getKey(),
+            Response::HTTP_FORBIDDEN,
+        );
+
+        return response()->json(
+            $generateSubmissionViewData($submission, $generateSchema),
+        );
     }
 
     private function resolveToLatestVersion(Application $application): Application

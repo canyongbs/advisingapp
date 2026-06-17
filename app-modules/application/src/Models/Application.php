@@ -90,6 +90,7 @@ class Application extends Submissible implements HasMedia, HasRichContent
         'notify_via_app',
         'notify_via_email',
         'root_id',
+        'allow_view_past_submissions',
     ];
 
     protected $casts = [
@@ -104,6 +105,7 @@ class Application extends Submissible implements HasMedia, HasRichContent
         'notify_to_subscribers' => 'boolean',
         'notify_via_app' => 'boolean',
         'notify_via_email' => 'boolean',
+        'allow_view_past_submissions' => 'boolean',
     ];
 
     public function setUpRichContent(): void
