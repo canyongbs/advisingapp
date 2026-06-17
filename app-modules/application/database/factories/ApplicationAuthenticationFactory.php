@@ -41,7 +41,6 @@ use AdvisingApp\Application\Models\ApplicationAuthentication;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Hash;
 
 /**
@@ -57,16 +56,10 @@ class ApplicationAuthenticationFactory extends Factory
                 (new Prospect())->getMorphClass(),
             ]),
             'author_id' => function (array $attributes) {
-                $senderClass = Relation::getMorphedModel($attributes['author_type']);
-
-                /** @var Student|Prospect $senderModel */
-                $senderModel = new $senderClass();
-
-                $sender = $senderClass === Student::class
-                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                    : $senderModel::factory()->create();
-
-                return $sender->getKey();
+                return match ($attributes['author_type']) {
+                    (new Student())->getMorphClass() => Student::factory()->create()->getKey(),
+                    default => Prospect::factory()->create()->getKey(),
+                };
             },
             'code' => Hash::make((string) random_int(100000, 999999)),
             'application_id' => Application::factory(),
