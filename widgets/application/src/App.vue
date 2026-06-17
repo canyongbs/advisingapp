@@ -614,14 +614,14 @@
                             <button
                                 @click="loadPastSubmissions(1)"
                                 :disabled="isLoadingSubmissions"
-                                class="flex-1 h-11 px-5 rounded-[--rounding] border-2 border-[rgb(var(--primary-600))] text-[rgb(var(--primary-600))] text-sm font-semibold whitespace-nowrap hover:bg-[rgb(var(--primary-50))] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                class="flex-1 h-11 px-5 rounded border-2 border-primary-600 text-primary-600 text-sm font-semibold whitespace-nowrap hover:bg-primary-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 <span v-if="isLoadingSubmissions">Loading…</span>
                                 <span v-else>View Past Submissions</span>
                             </button>
                             <button
                                 @click="startNewSubmission"
-                                class="flex-1 h-11 px-5 rounded-[--rounding] bg-[rgb(var(--primary-600))] text-white text-sm font-semibold whitespace-nowrap hover:bg-[rgb(var(--primary-700))] transition-colors"
+                                class="flex-1 h-11 px-5 rounded bg-primary-600 text-white text-sm font-semibold whitespace-nowrap hover:bg-primary-700 transition-colors"
                             >
                                 New Submission
                             </button>
@@ -634,7 +634,7 @@
                     <div class="flex items-center justify-between">
                         <button
                             @click="backToSplash"
-                            class="inline-flex items-center gap-1.5 text-sm font-medium text-[rgb(var(--primary-600))] hover:text-[rgb(var(--primary-800))] cursor-pointer transition-colors"
+                            class="inline-flex items-center gap-1.5 text-sm font-medium text-primary-600 hover:text-primary-800 cursor-pointer transition-colors"
                         >
                             <ArrowLeftIcon class="w-4 h-4" />
                             Back
@@ -650,7 +650,7 @@
                     <div v-else-if="pastSubmissions.length === 0" class="py-8 text-center text-sm text-gray-500">
                         No past submissions found.
                     </div>
-                    <div v-else class="overflow-hidden rounded-[--rounding] border border-gray-200 not-prose">
+                    <div v-else class="overflow-hidden rounded border border-gray-200 not-prose">
                         <table class="w-full text-sm border-collapse">
                             <thead>
                                 <tr class="bg-gray-50 border-b border-gray-200 text-left">
@@ -669,7 +669,7 @@
                                         'transition-colors',
                                         isLoadingSubmission
                                             ? 'opacity-60 cursor-not-allowed'
-                                            : 'cursor-pointer hover:bg-[rgb(var(--primary-50))]',
+                                            : 'cursor-pointer hover:bg-primary-50',
                                     ]"
                                 >
                                     <td class="px-4 py-3 text-gray-700">
@@ -715,16 +715,14 @@
                 <div v-else-if="currentView === 'submission'" class="space-y-4 not-prose">
                     <button
                         @click="backToTable"
-                        class="inline-flex items-center gap-1.5 text-sm font-medium text-[rgb(var(--primary-600))] hover:text-[rgb(var(--primary-800))] cursor-pointer transition-colors"
+                        class="inline-flex items-center gap-1.5 text-sm font-medium text-primary-600 hover:text-primary-800 cursor-pointer transition-colors"
                     >
                         <ArrowLeftIcon class="w-4 h-4" />
                         Back to Submissions
                     </button>
                     <div v-if="isLoadingSubmission" class="py-8 text-center text-sm text-gray-500">Loading…</div>
                     <div v-else-if="currentSubmission" class="space-y-4">
-                        <div
-                            class="rounded-[--rounding] bg-[rgb(var(--primary-50))] border border-[rgb(var(--primary-200))] px-4 py-3 text-sm text-[rgb(var(--primary-900))]"
-                        >
+                        <div class="rounded bg-primary-50 border border-primary-200 px-4 py-3 text-sm text-primary-900">
                             This application was submitted by <strong>{{ authentication.email }}</strong> on
                             {{ formatSubmissionDateTime(currentSubmission.submitted_at) }}.
                         </div>
