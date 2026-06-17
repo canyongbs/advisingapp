@@ -444,21 +444,6 @@ class ApplicationWidgetController extends Controller
         ]);
     }
 
-    private function resolveToLatestVersion(Application $application): Application
-    {
-        if (! FormVersioningFeature::active()) {
-            return $application;
-        }
-
-        if (! $application->isArchived()) {
-            return $application;
-        }
-
-        return Application::query()->where('root_id', $application->root_id)
-            ->whereNull('archived_at')
-            ->first() ?? $application;
-    }
-
     public function getPastSubmissions(
         Request $request,
         Application $application,
@@ -548,5 +533,20 @@ class ApplicationWidgetController extends Controller
         return response()->json(
             $generateSubmissionViewData($submission, $generateSchema),
         );
+    }
+
+    private function resolveToLatestVersion(Application $application): Application
+    {
+        if (! FormVersioningFeature::active()) {
+            return $application;
+        }
+
+        if (! $application->isArchived()) {
+            return $application;
+        }
+
+        return Application::query()->where('root_id', $application->root_id)
+            ->whereNull('archived_at')
+            ->first() ?? $application;
     }
 }
