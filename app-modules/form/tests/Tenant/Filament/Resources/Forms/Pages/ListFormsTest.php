@@ -84,3 +84,62 @@ it('will not duplicate form submissions if they exist', function () {
 
     expect($duplicatedForm->submissions()->count())->toBe(0);
 });
+
+it('displays the correct submissions count for a form', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    FormSubmission::factory()->count(5)->create([
+        'form_id' => $form->id,
+        'submitted_at' => now(),
+    ]);
+
+    livewire(ListForms::class)
+        ->assertTableColumnStateSet('submissions_count', 5, $form);
+});
+
+it('displays the correct submissions count across all versions', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    FormSubmission::factory()->count(3)->create([
+        'form_id' => $form->id,
+        'submitted_at' => now(),
+    ]);
+
+    $archivedVersion = Form::factory()->create([
+        'root_id' => $form->root_id,
+        'archived_at' => now(),
+    ]);
+
+    FormSubmission::factory()->count(4)->create([
+        'form_id' => $archivedVersion->id,
+        'submitted_at' => now(),
+    ]);
+
+    livewire(ListForms::class)
+        ->assertTableColumnStateSet('submissions_count', 7, $form);
+});
+
+it('does not count submissions from unrelated forms in the submissions count', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    FormSubmission::factory()->count(2)->create([
+        'form_id' => $form->id,
+        'submitted_at' => now(),
+    ]);
+
+    $unrelatedForm = Form::factory()->create();
+
+    FormSubmission::factory()->count(10)->create([
+        'form_id' => $unrelatedForm->id,
+        'submitted_at' => now(),
+    ]);
+
+    livewire(ListForms::class)
+        ->assertTableColumnStateSet('submissions_count', 2, $form);
+});
