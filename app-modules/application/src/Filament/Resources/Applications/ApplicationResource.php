@@ -45,6 +45,7 @@ use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicat
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ViewApplication;
 use AdvisingApp\Application\Models\Application;
 use App\Enums\NavigationGroup;
+use App\Features\FormVersioningFeature;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
@@ -70,7 +71,13 @@ class ApplicationResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->with(['fields']);
+        $query = parent::getEloquentQuery()->with(['fields']);
+
+        if (FormVersioningFeature::active()) {
+            $query->whereNull('archived_at');
+        }
+
+        return $query;
     }
 
     public static function getRecordSubNavigation(Page $page): array

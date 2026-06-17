@@ -36,14 +36,15 @@
 
 namespace AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns;
 
+use AdvisingApp\Form\Actions\SaveSubmissibleFieldsFromContent;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Models\Form;
-use AdvisingApp\Form\Models\FormField;
 use AdvisingApp\Form\Models\FormStep;
 use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 use App\Enums\FontWeight;
+use App\Features\FormVersioningFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Closure;
 use Filament\Forms\Components\Repeater;
@@ -57,7 +58,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 trait HasSharedFormConfiguration
 {
@@ -68,7 +68,7 @@ trait HasSharedFormConfiguration
                 ->required()
                 ->string()
                 ->maxLength(255)
-                ->unique(ignoreRecord: true)
+                ->unique(modifyRuleUsing: fn ($rule) => FormVersioningFeature::active() ? $rule->whereNull('archived_at') : $rule, ignoreRecord: true)
                 ->autocomplete(false)
                 ->columnSpanFull()
                 ->helperText('The name of this form will only display for form administrators.'),
@@ -116,7 +116,7 @@ trait HasSharedFormConfiguration
             Toggle::make('is_wizard')
                 ->label('Multi-step form')
                 ->live()
-                ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists())
+                ->disabled(fn (?Form $record) => ! FormVersioningFeature::active() && $record?->submissions()->submitted()->exists())
                 ->columnStart(1),
             Toggle::make('recaptcha_enabled')
                 ->label('Enable reCAPTCHA')
@@ -145,8 +145,8 @@ trait HasSharedFormConfiguration
                             },
                         ]),
                 ])
-                ->hidden(fn (Get $get) => $get('is_wizard'))
-                ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists()),
+                ->disabled(fn (?Form $record) => ! FormVersioningFeature::active() && $record?->submissions()->submitted()->exists())
+                ->hidden(fn (Get $get) => $get('is_wizard')),
             Repeater::make('steps')
                 ->schema([
                     TextInput::make('label')
@@ -164,8 +164,15 @@ trait HasSharedFormConfiguration
                 ->addActionLabel('New step')
                 ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
                 ->visible(fn (Get $get) => $get('is_wizard'))
-                ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists())
+                ->disabled(fn (?Form $record) => ! FormVersioningFeature::active() && $record?->submissions()->submitted()->exists())
                 ->relationship()
+                ->saveRelationshipsUsing(static function (Repeater $component): void {
+                    if (FormVersioningFeature::active() && ! $component->getRecord()->wasRecentlyCreated) {
+                        return;
+                    }
+
+                    $component->saveToRelationship();
+                })
                 ->orderColumn('sort')
                 ->columnSpanFull()
                 ->validationAttribute('steps')
@@ -217,28 +224,17 @@ trait HasSharedFormConfiguration
                     return;
                 }
 
+                if (FormVersioningFeature::active() && ! $record->wasRecentlyCreated) {
+                    return;
+                }
+
                 $form = $record instanceof Form ? $record : $record->submissible;
                 $formStep = $record instanceof FormStep ? $record : null;
 
-                FormField::query()
-                    ->whereBelongsTo($form, 'submissible')
-                    ->when($formStep, fn (EloquentBuilder $query) => $query->whereBelongsTo($formStep, 'step'))
-                    ->delete();
-
-                $content = $component->getState();
-
-                if (is_string($content)) {
-                    $content = json_decode($content, true);
-                }
-
-                if (! is_array($content)) {
-                    $content = [];
-                }
-
-                $content['content'] = $this->saveFieldsFromComponents(
+                $content = app(SaveSubmissibleFieldsFromContent::class)->replaceFieldsForRecord(
                     $form,
-                    $content['content'] ?? [],
                     $formStep,
+                    $component->getState(),
                 );
 
                 $record->content = $content;
@@ -249,46 +245,6 @@ trait HasSharedFormConfiguration
             ->dehydrated(false)
             ->columnSpanFull()
             ->extraInputAttributes(['style' => 'min-height: 12rem;']);
-    }
-
-    public function saveFieldsFromComponents(Form $form, array $components, ?FormStep $formStep): array
-    {
-        foreach ($components as $componentKey => $component) {
-            if (array_key_exists('content', $component)) {
-                $components[$componentKey]['content'] = $this->saveFieldsFromComponents($form, $component['content'], $formStep);
-
-                continue;
-            }
-
-            if (($component['type'] ?? null) !== 'customBlock') {
-                continue;
-            }
-
-            $componentAttributes = $component['attrs'] ?? [];
-            $config = $componentAttributes['config'] ?? [];
-
-            $id = $config['fieldId'] ?? null;
-            unset($config['fieldId']);
-
-            $label = $config['label'] ?? null;
-            unset($config['label']);
-
-            $isRequired = $config['isRequired'] ?? null;
-            unset($config['isRequired']);
-
-            /** @var FormField $field */
-            $field = $form->fields()->findOrNew($id);
-            $field->step()->associate($formStep);
-            $field->label = $label ?? $componentAttributes['id'];
-            $field->is_required = $isRequired ?? false;
-            $field->type = $componentAttributes['id'];
-            $field->config = $config;
-            $field->save();
-
-            $components[$componentKey]['attrs']['config']['fieldId'] = $field->id;
-        }
-
-        return $components;
     }
 
     protected function afterCreate(): void

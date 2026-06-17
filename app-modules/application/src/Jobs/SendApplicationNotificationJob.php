@@ -41,6 +41,7 @@ use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Notifications\ApplicationSubmissionNotification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\FormVersioningFeature;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -68,28 +69,32 @@ class SendApplicationNotificationJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $users = $this->application->notificationUsers;
+        $application = FormVersioningFeature::active()
+            ? ($this->application->latestVersion() ?? $this->application)
+            : $this->application;
+
+        $users = $application->notificationUsers;
 
         $author = $this->submission->author;
 
-        if ($this->application->notify_to_care_team && ($author instanceof Student || $author instanceof Prospect)) {
+        if ($application->notify_to_care_team && ($author instanceof Student || $author instanceof Prospect)) {
             $users = $users->merge($author->careTeam);
         }
 
-        if ($this->application->notify_to_subscribers && ($author instanceof Student || $author instanceof Prospect)) {
+        if ($application->notify_to_subscribers && ($author instanceof Student || $author instanceof Prospect)) {
             $users = $users->merge($author->subscribedUsers);
         }
 
         $users = $users->unique('id');
 
-        if ($users->isNotEmpty() && ($this->application->notify_via_app || $this->application->notify_via_email)) {
+        if ($users->isNotEmpty() && ($application->notify_via_app || $application->notify_via_email)) {
             $channels = match (true) {
-                $this->application->notify_via_email && $this->application->notify_via_app => ['mail', 'database'],
-                $this->application->notify_via_email => ['mail'],
+                $application->notify_via_email && $application->notify_via_app => ['mail', 'database'],
+                $application->notify_via_email => ['mail'],
                 default => ['database'],
             };
 
-            Notification::send($users, new ApplicationSubmissionNotification($this->application, $this->submission, $channels));
+            Notification::send($users, new ApplicationSubmissionNotification($application, $this->submission, $channels));
         }
     }
 }

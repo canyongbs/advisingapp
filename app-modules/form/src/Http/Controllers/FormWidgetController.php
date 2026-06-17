@@ -53,6 +53,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\FormVersioningFeature;
 use App\Features\PhoneNumberLookupFeature;
 use App\Http\Controllers\Controller;
 use Closure;
@@ -75,6 +76,8 @@ class FormWidgetController extends Controller
 {
     public function assets(Request $request, Form $form): JsonResponse
     {
+        $form = $this->resolveToLatestVersion($form);
+
         // Read the Vite manifest to determine the correct asset paths
         $manifestPath = public_path('storage/widgets/forms/.vite/manifest.json');
         /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
@@ -117,6 +120,8 @@ class FormWidgetController extends Controller
 
     public function view(GenerateFormKitSchema $generateSchema, Form $form): JsonResponse
     {
+        $form = $this->resolveToLatestVersion($form);
+
         return response()->json([
             'name' => $form->title,
             'description' => $form->description,
@@ -460,5 +465,20 @@ class FormWidgetController extends Controller
                 now()->addMinute(),
             ),
         ]);
+    }
+
+    private function resolveToLatestVersion(Form $form): Form
+    {
+        if (! FormVersioningFeature::active()) {
+            return $form;
+        }
+
+        if (! $form->isArchived()) {
+            return $form;
+        }
+
+        return Form::query()->where('root_id', $form->root_id)
+            ->whereNull('archived_at')
+            ->first() ?? $form;
     }
 }
