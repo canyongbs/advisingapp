@@ -139,6 +139,8 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     protected $hidden = [
         'remember_token',
+        'multifactor_secret',
+        'multifactor_recovery_codes',
         'password',
         'password_history',
         'password_last_updated_at',
