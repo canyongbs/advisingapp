@@ -32,6 +32,7 @@
 </COPYRIGHT>
 -->
 <script setup>
+    import { ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
     import { defineProps, reactive, ref } from 'vue';
     import asteriskPlugin from '../../form/src/FormKit/asterisk.js';
     import wizard from '../../form/src/FormKit/wizard';
@@ -113,6 +114,18 @@
     const applicationTitleFontWeight = ref('');
     const schema = ref([]);
 
+    const allowViewPastSubmissions = ref(false);
+    const pastSubmissionsCount = ref(0);
+    const pastSubmissionsUrl = ref(null);
+
+    const currentView = ref('form');
+    const pastSubmissions = ref([]);
+    const pastSubmissionsMeta = ref(null);
+    const pastSubmissionsCurrentPage = ref(1);
+    const isLoadingSubmissions = ref(false);
+    const isLoadingSubmission = ref(false);
+    const currentSubmission = ref(null);
+
     const authentication = ref({
         code: null,
         email: null,
@@ -122,6 +135,63 @@
         url: null,
         registrationAllowed: false,
     });
+
+    function formatSubmissionDateTime(isoString) {
+        if (!isoString) return '';
+        return new Date(isoString).toLocaleString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true,
+        });
+    }
+
+    async function loadPastSubmissions(page = 1) {
+        isLoadingSubmissions.value = true;
+        try {
+            const url = new URL(pastSubmissionsUrl.value);
+            url.searchParams.set('page', page);
+            url.searchParams.set('per_page', 10);
+            const response = await fetch(url.toString(), { headers: { Accept: 'application/json' } });
+            const json = await response.json();
+            pastSubmissions.value = json.past_submissions ?? [];
+            pastSubmissionsMeta.value = json.meta ?? null;
+            pastSubmissionsCurrentPage.value = page;
+            currentView.value = 'table';
+        } catch (e) {
+            console.error('Error loading past submissions', e);
+        } finally {
+            isLoadingSubmissions.value = false;
+        }
+    }
+
+    async function loadSubmission(viewUrl) {
+        isLoadingSubmission.value = true;
+        try {
+            const response = await fetch(viewUrl, { headers: { Accept: 'application/json' } });
+            const json = await response.json();
+            currentSubmission.value = json;
+            currentView.value = 'submission';
+        } catch (e) {
+            console.error('Error loading submission', e);
+        } finally {
+            isLoadingSubmission.value = false;
+        }
+    }
+
+    function startNewSubmission() {
+        currentView.value = 'form';
+    }
+
+    function backToTable() {
+        currentView.value = 'table';
+    }
+
+    function backToSplash() {
+        currentView.value = 'splash';
+    }
 
     fetch(props.entryUrl)
         .then((response) => response.json())
@@ -248,6 +318,14 @@
 
                     applicationSubmissionUrl.value = json.submission_url;
                     schema.value = json.schema;
+
+                    allowViewPastSubmissions.value = json.allow_view_past_submissions ?? false;
+                    pastSubmissionsCount.value = json.past_submissions_count ?? 0;
+                    pastSubmissionsUrl.value = json.past_submissions_url ?? null;
+
+                    if (allowViewPastSubmissions.value && pastSubmissionsCount.value > 0) {
+                        currentView.value = 'splash';
+                    }
                 })
                 .catch((error) => {
                     node.setErrors([error]);
@@ -378,6 +456,7 @@
             </div>
 
             <h1
+                v-if="applicationName"
                 :style="{
                     fontWeight: applicationTitleFontWeight,
                     color: `rgb(${applicationTitleColor[900]})`,
@@ -386,7 +465,7 @@
                 {{ applicationName }}
             </h1>
 
-            <p>
+            <p v-if="applicationDescription">
                 {{ applicationDescription }}
             </p>
 
@@ -525,11 +604,150 @@
             </div>
 
             <div v-if="applicationSubmissionUrl" class="space-y-6">
-                <p v-if="authentication.email" class="text-sm">
-                    Signed in as <strong>{{ authentication.email }}</strong>
-                </p>
+                <div v-if="currentView === 'splash'" class="py-4 not-prose">
+                    <p v-if="authentication.email" class="text-sm text-gray-500 mb-6">
+                        Signed in as <strong class="font-semibold text-gray-800">{{ authentication.email }}</strong>
+                    </p>
+                    <div class="flex flex-col items-center gap-5">
+                        <h2 class="text-base font-semibold text-gray-800">What would you like to do?</h2>
+                        <div class="flex flex-col sm:flex-row gap-3 w-full max-w-sm">
+                            <button
+                                @click="loadPastSubmissions(1)"
+                                :disabled="isLoadingSubmissions"
+                                class="flex-1 h-11 px-5 rounded-[--rounding] border-2 border-[rgb(var(--primary-600))] text-[rgb(var(--primary-600))] text-sm font-semibold whitespace-nowrap hover:bg-[rgb(var(--primary-50))] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                <span v-if="isLoadingSubmissions">Loading…</span>
+                                <span v-else>View Past Submissions</span>
+                            </button>
+                            <button
+                                @click="startNewSubmission"
+                                class="flex-1 h-11 px-5 rounded-[--rounding] bg-[rgb(var(--primary-600))] text-white text-sm font-semibold whitespace-nowrap hover:bg-[rgb(var(--primary-700))] transition-colors"
+                            >
+                                New Submission
+                            </button>
+                        </div>
+                    </div>
+                </div>
 
-                <FormKitSchema :schema="schema" :data="data" />
+                <!-- Past submissions table -->
+                <div v-else-if="currentView === 'table'" class="space-y-4 not-prose">
+                    <div class="flex items-center justify-between">
+                        <button
+                            @click="backToSplash"
+                            class="inline-flex items-center gap-1.5 text-sm font-medium text-[rgb(var(--primary-600))] hover:text-[rgb(var(--primary-800))] cursor-pointer transition-colors"
+                        >
+                            <ArrowLeftIcon class="w-4 h-4" />
+                            Back
+                        </button>
+                        <p class="text-sm text-gray-500">
+                            Signed in as <strong class="font-semibold text-gray-700">{{ authentication.email }}</strong>
+                        </p>
+                    </div>
+                    <h2 class="text-base font-semibold text-gray-800">Past Submissions</h2>
+                    <div v-if="isLoadingSubmissions" class="py-8 text-center text-sm text-gray-500">
+                        Loading submissions…
+                    </div>
+                    <div v-else-if="pastSubmissions.length === 0" class="py-8 text-center text-sm text-gray-500">
+                        No past submissions found.
+                    </div>
+                    <div v-else class="overflow-hidden rounded-[--rounding] border border-gray-200 not-prose">
+                        <table class="w-full text-sm border-collapse">
+                            <thead>
+                                <tr class="bg-gray-50 border-b border-gray-200 text-left">
+                                    <th class="px-4 py-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">
+                                        Date Submitted
+                                    </th>
+                                    <th class="px-4 py-3 w-24"></th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr
+                                    v-for="submission in pastSubmissions"
+                                    :key="submission.id"
+                                    @click="!isLoadingSubmission && loadSubmission(submission.view_url)"
+                                    :class="[
+                                        'transition-colors',
+                                        isLoadingSubmission
+                                            ? 'opacity-60 cursor-not-allowed'
+                                            : 'cursor-pointer hover:bg-[rgb(var(--primary-50))]',
+                                    ]"
+                                >
+                                    <td class="px-4 py-3 text-gray-700">
+                                        {{ formatSubmissionDateTime(submission.submitted_at) }}
+                                    </td>
+                                    <td class="px-4 py-3 text-right">
+                                        <ChevronRightIcon class="w-4 h-4 text-gray-400 ml-auto" />
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <!-- Pagination -->
+                        <div
+                            v-if="pastSubmissionsMeta && pastSubmissionsMeta.last_page > 1"
+                            class="flex items-center justify-between px-4 py-3 border-t border-gray-200 bg-gray-50"
+                        >
+                            <button
+                                @click="loadPastSubmissions(pastSubmissionsCurrentPage - 1)"
+                                :disabled="pastSubmissionsCurrentPage <= 1 || isLoadingSubmissions"
+                                class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded border border-gray-300 text-gray-600 disabled:opacity-40 hover:bg-white transition-colors"
+                            >
+                                <ChevronLeftIcon class="w-3 h-3" />
+                                Previous
+                            </button>
+                            <span class="text-xs text-gray-500">
+                                Page {{ pastSubmissionsCurrentPage }} of {{ pastSubmissionsMeta.last_page }}
+                            </span>
+                            <button
+                                @click="loadPastSubmissions(pastSubmissionsCurrentPage + 1)"
+                                :disabled="
+                                    pastSubmissionsCurrentPage >= pastSubmissionsMeta.last_page || isLoadingSubmissions
+                                "
+                                class="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium rounded border border-gray-300 text-gray-600 disabled:opacity-40 hover:bg-white transition-colors"
+                            >
+                                Next
+                                <ChevronRightIcon class="w-3 h-3" />
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Read-only submission detail -->
+                <div v-else-if="currentView === 'submission'" class="space-y-4 not-prose">
+                    <button
+                        @click="backToTable"
+                        class="inline-flex items-center gap-1.5 text-sm font-medium text-[rgb(var(--primary-600))] hover:text-[rgb(var(--primary-800))] cursor-pointer transition-colors"
+                    >
+                        <ArrowLeftIcon class="w-4 h-4" />
+                        Back to Submissions
+                    </button>
+                    <div v-if="isLoadingSubmission" class="py-8 text-center text-sm text-gray-500">Loading…</div>
+                    <div v-else-if="currentSubmission" class="space-y-4">
+                        <div
+                            class="rounded-[--rounding] bg-[rgb(var(--primary-50))] border border-[rgb(var(--primary-200))] px-4 py-3 text-sm text-[rgb(var(--primary-900))]"
+                        >
+                            This application was submitted by <strong>{{ authentication.email }}</strong> on
+                            {{ formatSubmissionDateTime(currentSubmission.submitted_at) }}.
+                        </div>
+
+                        <FormKitSchema
+                            v-if="currentSubmission.schema"
+                            :schema="currentSubmission.schema"
+                            :data="data"
+                        />
+                    </div>
+                </div>
+
+                <!-- Normal new submission form -->
+                <div v-else class="space-y-6">
+                    <p
+                        v-if="authentication.email && !(props.preview === 'true' || props.preview === true)"
+                        class="text-sm"
+                    >
+                        Signed in as <strong>{{ authentication.email }}</strong>
+                    </p>
+
+                    <FormKitSchema :schema="schema" :data="data" />
+                </div>
             </div>
         </div>
 

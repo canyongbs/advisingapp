@@ -114,7 +114,7 @@ class GenerateSubmissionViewData
             if ($name && isset($responses[$name])) {
                 $value = $responses[$name];
 
-                $node['value'] = is_array($value) ? ($value[0] ?? '') : $value;
+                $node['value'] = $value;
             }
         }
 
