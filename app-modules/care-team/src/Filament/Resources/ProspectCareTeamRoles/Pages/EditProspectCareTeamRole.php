@@ -88,6 +88,20 @@ class EditProspectCareTeamRole extends EditRecord
             ]);
     }
 
+    protected function beforeSave(): void
+    {
+        /** @var CareTeamRole $record */
+        $record = $this->record;
+
+        if ($this->data['is_default'] ?? false) {
+            CareTeamRole::query()
+                ->where('id', '!=', $record->getKey())
+                ->where('type', CareTeamRoleType::Prospect)
+                ->where('is_default', true)
+                ->update(['is_default' => false]);
+        }
+    }
+
     protected function getHeaderActions(): array
     {
         return [

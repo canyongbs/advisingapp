@@ -97,6 +97,7 @@ class CreateStudentCareTeamRole extends CreateRecord
         if ($record['is_default']) {
             CareTeamRole::query()
                 ->where('is_default', true)
+                ->where('type', CareTeamRoleType::Student)
                 ->update(['is_default' => false]);
         }
     }

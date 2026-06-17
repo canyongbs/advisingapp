@@ -93,6 +93,7 @@ class CreateProspectCareTeamRole extends CreateRecord
         if ($record['is_default']) {
             CareTeamRole::query()
                 ->where('is_default', true)
+                ->where('type', CareTeamRoleType::Prospect)
                 ->update(['is_default' => false]);
         }
     }
