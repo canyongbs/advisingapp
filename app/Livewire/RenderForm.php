@@ -41,6 +41,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
@@ -48,6 +49,7 @@ class RenderForm extends Component implements HasForms, HasActions
 {
     use InteractsWithActions;
     use InteractsWithForms;
+    use RestrictsFileUploadsToSchemaComponents;
 
     public bool $show = true;
 
