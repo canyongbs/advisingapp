@@ -125,6 +125,15 @@ class EditApplication extends EditRecord
 
     private function copyMedia(Application $oldVersion, Application $newVersion): void
     {
+        if ($newVersion->is_wizard) {
+            $this->copyStepMedia($oldVersion, $newVersion);
+        } else {
+            $this->copyApplicationMedia($oldVersion, $newVersion);
+        }
+    }
+
+    private function copyApplicationMedia(Application $oldVersion, Application $newVersion): void
+    {
         $media = $oldVersion->getMedia('content');
 
         if ($media->isEmpty()) {
@@ -138,14 +147,37 @@ class EditApplication extends EditRecord
             $uuidMap[$item->uuid] = $newMedia->uuid;
         }
 
-        if ($newVersion->is_wizard) {
-            foreach ($newVersion->steps as $step) {
-                $step->content = $this->remapMediaUuids($step->content, $uuidMap);
-                $step->save();
+        $newVersion->content = $this->remapMediaUuids($newVersion->content, $uuidMap);
+        $newVersion->save();
+    }
+
+    private function copyStepMedia(Application $oldVersion, Application $newVersion): void
+    {
+        $oldSteps = $oldVersion->steps()->orderBy('sort')->get();
+        $newSteps = $newVersion->steps()->orderBy('sort')->get();
+
+        foreach ($oldSteps as $index => $oldStep) {
+            $newStep = $newSteps[$index] ?? null;
+
+            if (! $newStep) {
+                continue;
             }
-        } else {
-            $newVersion->content = $this->remapMediaUuids($newVersion->content, $uuidMap);
-            $newVersion->save();
+
+            $media = $oldStep->getMedia('content');
+
+            if ($media->isEmpty()) {
+                continue;
+            }
+
+            $uuidMap = [];
+
+            foreach ($media as $item) {
+                $newMedia = $item->copy($newStep, 'content', 's3-public');
+                $uuidMap[$item->uuid] = $newMedia->uuid;
+            }
+
+            $newStep->content = $this->remapMediaUuids($newStep->content, $uuidMap);
+            $newStep->save();
         }
     }
 
