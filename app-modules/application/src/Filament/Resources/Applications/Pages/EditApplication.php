@@ -94,6 +94,35 @@ class EditApplication extends EditRecord
         });
     }
 
+    protected function getRedirectUrl(): ?string
+    {
+        return ApplicationResource::getUrl('view', ['record' => $this->record]);
+    }
+
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getSaveFormAction()
+                ->label('Save')
+                ->formId('form'),
+            DeleteAction::make(),
+            $this->getCancelFormAction()
+                ->url(fn () => ApplicationResource::getUrl('view', ['record' => $this->record])),
+        ];
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            $this->getSaveFormAction()
+                ->label('Save')
+                ->formId('form'),
+            DeleteAction::make(),
+            $this->getCancelFormAction()
+                ->url(fn () => ApplicationResource::getUrl('view', ['record' => $this->record])),
+        ];
+    }
+
     private function copyMedia(Application $oldVersion, Application $newVersion): void
     {
         $media = $oldVersion->getMedia('content');
@@ -123,6 +152,7 @@ class EditApplication extends EditRecord
     /**
      * @param array<string, mixed>|null $content
      * @param array<string, string> $uuidMap
+     *
      * @return array<string, mixed>|null
      */
     private function remapMediaUuids(?array $content, array $uuidMap): ?array
@@ -135,34 +165,5 @@ class EditApplication extends EditRecord
         $json = str_replace(array_keys($uuidMap), array_values($uuidMap), $json);
 
         return json_decode($json, true);
-    }
-
-    protected function getRedirectUrl(): ?string
-    {
-        return ApplicationResource::getUrl('view', ['record' => $this->record]);
-    }
-
-    protected function getFormActions(): array
-    {
-        return [
-            $this->getSaveFormAction()
-                ->label('Save')
-                ->formId('form'),
-            DeleteAction::make(),
-            $this->getCancelFormAction()
-                ->url(fn () => ApplicationResource::getUrl('view', ['record' => $this->record])),
-        ];
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            $this->getSaveFormAction()
-                ->label('Save')
-                ->formId('form'),
-            DeleteAction::make(),
-            $this->getCancelFormAction()
-                ->url(fn () => ApplicationResource::getUrl('view', ['record' => $this->record])),
-        ];
     }
 }
