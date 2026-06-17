@@ -47,6 +47,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class EditApplication extends EditRecord
 {
@@ -80,13 +81,60 @@ class EditApplication extends EditRecord
         }
 
         /** @var Application $record */
-        $newVersion = app(CreateApplicationVersion::class)->execute($record, $data);
+        return DB::transaction(function () use ($record, $data) {
+            $newVersion = app(CreateApplicationVersion::class)->execute($record, $data);
 
-        $this->record = $newVersion;
+            $this->record = $newVersion;
 
-        app(SaveSubmissibleFieldsFromContent::class)->execute($newVersion, $this->versioningFormData);
+            app(SaveSubmissibleFieldsFromContent::class)->execute($newVersion, $this->versioningFormData);
 
-        return $newVersion;
+            $this->copyMedia($record, $newVersion);
+
+            return $newVersion;
+        });
+    }
+
+    private function copyMedia(Application $oldVersion, Application $newVersion): void
+    {
+        $media = $oldVersion->getMedia('content');
+
+        if ($media->isEmpty()) {
+            return;
+        }
+
+        $uuidMap = [];
+
+        foreach ($media as $item) {
+            $newMedia = $item->copy($newVersion, 'content', 's3-public');
+            $uuidMap[$item->uuid] = $newMedia->uuid;
+        }
+
+        if ($newVersion->is_wizard) {
+            foreach ($newVersion->steps as $step) {
+                $step->content = $this->remapMediaUuids($step->content, $uuidMap);
+                $step->save();
+            }
+        } else {
+            $newVersion->content = $this->remapMediaUuids($newVersion->content, $uuidMap);
+            $newVersion->save();
+        }
+    }
+
+    /**
+     * @param array<string, mixed>|null $content
+     * @param array<string, string> $uuidMap
+     * @return array<string, mixed>|null
+     */
+    private function remapMediaUuids(?array $content, array $uuidMap): ?array
+    {
+        if (! $content) {
+            return $content;
+        }
+
+        $json = json_encode($content);
+        $json = str_replace(array_keys($uuidMap), array_values($uuidMap), $json);
+
+        return json_decode($json, true);
     }
 
     protected function getRedirectUrl(): ?string

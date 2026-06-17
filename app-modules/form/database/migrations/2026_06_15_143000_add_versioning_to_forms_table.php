@@ -45,7 +45,7 @@ return new class () extends Migration {
     {
         DB::transaction(function () {
             Schema::table('forms', function (Blueprint $table) {
-                $table->uuid('root_id')->nullable()->after('id');
+                $table->uuid('root_id')->nullable();
                 $table->timestamp('archived_at')->nullable();
             });
 

@@ -48,6 +48,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class EditForm extends EditRecord
 {
@@ -82,13 +83,15 @@ class EditForm extends EditRecord
         }
 
         /** @var Form $record */
-        $newVersion = app(CreateFormVersion::class)->execute($record, $data);
+        return DB::transaction(function () use ($record, $data) {
+            $newVersion = app(CreateFormVersion::class)->execute($record, $data);
 
-        $this->record = $newVersion;
+            $this->record = $newVersion;
 
-        app(SaveSubmissibleFieldsFromContent::class)->execute($newVersion, $this->versioningFormData);
+            app(SaveSubmissibleFieldsFromContent::class)->execute($newVersion, $this->versioningFormData);
 
-        return $newVersion;
+            return $newVersion;
+        });
     }
 
     protected function getRedirectUrl(): ?string
