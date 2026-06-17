@@ -80,7 +80,7 @@ class ViewForm extends ViewRecord
                             ->label('Embed Enabled')
                             ->boolean(),
                         TextEntry::make('allowed_domains')
-                            ->visible(fn(Form $record) => $record->embed_enabled)
+                            ->visible(fn (Form $record) => $record->embed_enabled)
                             ->badge(),
                         IconEntry::make('is_authenticated')
                             ->label('Is Authenticated')
@@ -111,7 +111,7 @@ class ViewForm extends ViewRecord
                             ->columnSpanFull()
                             ->extraInputAttributes(['style' => 'min-height: 12rem;']),
                     ])
-                    ->hidden(fn(Form $record) => $record->is_wizard)
+                    ->hidden(fn (Form $record) => $record->is_wizard)
                     ->disabled(),
                 Repeater::make('steps')
                     ->schema([
@@ -133,8 +133,8 @@ class ViewForm extends ViewRecord
                             ->extraInputAttributes(['style' => 'min-height: 12rem;']),
                     ])
                     ->addActionLabel('New step')
-                    ->itemLabel(fn(array $state): ?string => $state['label'] ?? null)
-                    ->visible(fn(Form $record) => $record->is_wizard)
+                    ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
+                    ->visible(fn (Form $record) => $record->is_wizard)
                     ->disabled()
                     ->relationship()
                     ->orderColumn('sort')
@@ -143,9 +143,9 @@ class ViewForm extends ViewRecord
                     ->schema([
                         TextEntry::make('title_font_weight'),
                         ColorEntry::make('title_color')
-                            ->state(fn(Form $record): ?string => $record->title_color ? Color::convertToRgb(Color::all()[$record->title_color][600]) : null),
+                            ->state(fn (Form $record): ?string => $record->title_color ? Color::convertToRgb(Color::all()[$record->title_color][600]) : null),
                         ColorEntry::make('primary_color')
-                            ->state(fn(Form $record): ?string => $record->primary_color ? Color::convertToRgb(Color::all()[$record->primary_color][600]) : null),
+                            ->state(fn (Form $record): ?string => $record->primary_color ? Color::convertToRgb(Color::all()[$record->primary_color][600]) : null),
                         TextEntry::make('rounding'),
                     ])
                     ->columns(),
@@ -158,10 +158,10 @@ class ViewForm extends ViewRecord
             Action::make('preview')
                 ->label('Preview')
                 ->icon('heroicon-o-eye')
-                ->url(fn(Form $form) => route('forms.preview', $form))
+                ->url(fn (Form $form) => route('forms.preview', $form))
                 ->openUrlInNewTab(),
             Action::make('view')
-                ->url(fn(Form $form) => route('forms.show', ['form' => $form]))
+                ->url(fn (Form $form) => route('forms.show', ['form' => $form]))
                 ->icon('heroicon-m-arrow-top-right-on-square')
                 ->openUrlInNewTab(),
             Action::make('embed_snippet')
@@ -182,7 +182,7 @@ class ViewForm extends ViewRecord
                                 return str($state)->markdown()->toHtmlString();
                             })
                             ->copyable()
-                            ->copyableState(fn(Form $form) => resolve(GenerateSubmissibleEmbedCode::class)->handle($form))
+                            ->copyableState(fn (Form $form) => resolve(GenerateSubmissibleEmbedCode::class)->handle($form))
                             ->copyMessage('Copied!')
                             ->copyMessageDuration(1500)
                             ->extraAttributes(['class' => 'embed-code-snippet']),
@@ -190,7 +190,7 @@ class ViewForm extends ViewRecord
                 )
                 ->modalSubmitAction(false)
                 ->modalCancelActionLabel('Close')
-                ->hidden(fn(Form $form) => ! $form->embed_enabled),
+                ->hidden(fn (Form $form) => ! $form->embed_enabled),
             DeleteAction::make(),
         ];
     }
