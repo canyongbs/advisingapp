@@ -47,6 +47,7 @@ use AdvisingApp\Form\Filament\Resources\Forms\Pages\SubmissionOnScreenResponse;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ViewForm;
 use AdvisingApp\Form\Models\Form;
 use App\Enums\NavigationGroup;
+use App\Features\FormVersioningFeature;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
@@ -72,7 +73,13 @@ class FormResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->with(['fields']);
+        $query = parent::getEloquentQuery()->with(['fields']);
+
+        if (FormVersioningFeature::active()) {
+            $query->whereNull('archived_at');
+        }
+
+        return $query;
     }
 
     public static function getRecordSubNavigation(Page $page): array

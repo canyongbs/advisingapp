@@ -34,48 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Notifications;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Form\Models\Form;
-use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\FormVersioningFeature;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Notification;
-
-class FormSubmissionAutoReplyNotification extends Notification implements ShouldQueue
-{
-    use Queueable;
-
-    public function __construct(
-        public FormSubmission $submission
-    ) {}
-
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return ['mail'];
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('working_hours_are_enabled');
+            $table->dropColumn('are_working_hours_visible_on_profile');
+            $table->dropColumn('working_hours');
+        });
     }
 
-    public function toMail(object $notifiable): MailMessage
+    public function down(): void
     {
-        /** @var Form $form */
-        $form = $this->submission->submissible;
-
-        if (FormVersioningFeature::active()) {
-            $form = $form->latestVersion() ?? $form;
-        }
-
-        /** @var Student|Prospect|null $author */
-        $author = $this->submission->author;
-
-        return MailMessage::make()
-            ->subject($form->emailAutoReply->getSubject($author))
-            ->content($form->emailAutoReply->getBody($author));
+        Schema::table('users', function (Blueprint $table) {
+            $table->boolean('working_hours_are_enabled')->default(false);
+            $table->boolean('are_working_hours_visible_on_profile')->default(false);
+            $table->jsonb('working_hours')->nullable();
+        });
     }
-}
+};

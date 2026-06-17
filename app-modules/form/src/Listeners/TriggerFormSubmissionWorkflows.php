@@ -43,6 +43,7 @@ use AdvisingApp\Workflow\Models\WorkflowRun;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use AdvisingApp\Workflow\Models\WorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
+use App\Features\FormVersioningFeature;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Support\Facades\DB;
@@ -55,6 +56,10 @@ class TriggerFormSubmissionWorkflows implements ShouldQueueAfterCommit
         $form = $event->submission->submissible;
 
         assert($form instanceof Form);
+
+        if (FormVersioningFeature::active()) {
+            $form = $form->latestVersion() ?? $form;
+        }
 
         if (is_null($event->submission->author)) {
             // If the submission has no author, we cannot trigger workflows.

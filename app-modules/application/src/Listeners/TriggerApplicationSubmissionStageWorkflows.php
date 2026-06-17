@@ -47,6 +47,7 @@ use AdvisingApp\Workflow\Models\WorkflowRun;
 use AdvisingApp\Workflow\Models\WorkflowRunStep;
 use AdvisingApp\Workflow\Models\WorkflowStep;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
+use App\Features\FormVersioningFeature;
 use Carbon\Carbon;
 use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 use Illuminate\Support\Facades\DB;
@@ -85,6 +86,10 @@ class TriggerApplicationSubmissionStageWorkflows implements ShouldQueueAfterComm
 
         if (! $application instanceof Application) {
             return;
+        }
+
+        if (FormVersioningFeature::active()) {
+            $application = $application->latestVersion() ?? $application;
         }
 
         $application->loadMissing('workflowTriggers.workflow.workflowSteps.currentDetails');

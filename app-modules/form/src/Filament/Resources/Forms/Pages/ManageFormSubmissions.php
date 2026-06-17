@@ -42,6 +42,7 @@ use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Tables\Filters\FormSubmissionStatusFilter;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
+use App\Features\FormVersioningFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Carbon\CarbonInterface;
 use Filament\Actions\Action;
@@ -56,6 +57,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -72,7 +74,19 @@ class ManageFormSubmissions extends ManageRelatedRecords
 
     public function table(Table $table): Table
     {
+        $owner = $this->getOwnerRecord();
+        assert($owner instanceof Form);
+
         return $table
+            ->query(
+                FormVersioningFeature::active()
+                    ? FormSubmission::query()
+                        ->whereHas(
+                            'submissible',
+                            fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $owner->root_id),
+                        )
+                    : $owner->submissions()->getQuery()
+            )
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('status')
@@ -106,13 +120,21 @@ class ManageFormSubmissions extends ManageRelatedRecords
             ->headerActions([
                 Action::make('export')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->action(function () {
-                        $filename = str("form-submissions-{$this->getOwnerRecord()->name}-")
+                    ->action(function () use ($owner) {
+                        $filename = str("form-submissions-{$owner->name}-")
                             ->append(now()->format('Y-m-d-Hisv'))
                             ->slug()
                             ->append('.csv');
 
-                        return Excel::download(new FormSubmissionExport($this->getOwnerRecord()->submissions), $filename);
+                        $query = FormVersioningFeature::active()
+                            ? FormSubmission::query()
+                                ->whereHas(
+                                    'submissible',
+                                    fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $owner->root_id),
+                                )
+                            : $owner->submissions()->getQuery();
+
+                        return Excel::download(new FormSubmissionExport($query->get()), $filename);
                     }),
             ])
             ->recordActions([
@@ -158,9 +180,22 @@ class ManageFormSubmissions extends ManageRelatedRecords
         /** @var Form $ownerRecord */
         $formSubmissionsCount = Cache::tags('{form-submission-count}')
             ->remember(
-                "form-submission-count-{$ownerRecord->getKey()}",
+                FormVersioningFeature::active()
+                    ? "form-submission-count-{$ownerRecord->root_id}"
+                    : "form-submission-count-{$ownerRecord->id}",
                 now()->addMinutes(5),
-                fn (): int => $ownerRecord->submissions()->count(),
+                function () use ($ownerRecord): int {
+                    if (FormVersioningFeature::active()) {
+                        return FormSubmission::query()
+                            ->whereHas(
+                                'submissible',
+                                fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $ownerRecord->root_id),
+                            )
+                            ->count();
+                    }
+
+                    return $ownerRecord->submissions()->count();
+                },
             );
 
         $item->badge((string) $formSubmissionsCount);

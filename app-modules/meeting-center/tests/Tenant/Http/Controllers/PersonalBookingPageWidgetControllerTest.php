@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\Calendar;
@@ -46,7 +47,7 @@ use Mockery\MockInterface;
 use function Pest\Laravel\getJson;
 use function Pest\Laravel\postJson;
 
-$workingHours = [
+$officeHours = [
     'monday' => ['is_enabled' => true, 'starts_at' => '08:00', 'ends_at' => '20:00'],
     'tuesday' => ['is_enabled' => true, 'starts_at' => '08:00', 'ends_at' => '20:00'],
     'wednesday' => ['is_enabled' => true, 'starts_at' => '08:00', 'ends_at' => '20:00'],
@@ -77,14 +78,14 @@ beforeEach(function () {
 
 // Minimum Lead Time - Available Slots Tests
 
-it('filters available slots within lead time window', function () use ($workingHours) {
+it('filters available slots within lead time window', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
 
     $user = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
         ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     PersonalBookingPage::factory()
@@ -115,14 +116,14 @@ it('filters available slots within lead time window', function () use ($workingH
 
 // Minimum Lead Time - Booking Validation Tests
 
-it('rejects booking within minimum lead time window', function () use ($workingHours) {
+it('rejects booking within minimum lead time window', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-03 10:00:00', 'UTC'));
 
     $user = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
         ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     PersonalBookingPage::factory()
@@ -149,14 +150,14 @@ it('rejects booking within minimum lead time window', function () use ($workingH
     expect($response->json('message'))->toContain('24 hours advance notice');
 });
 
-it('allows booking outside minimum lead time window', function () use ($workingHours) {
+it('allows booking outside minimum lead time window', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-03 10:00:00', 'UTC'));
 
     $user = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
         ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     PersonalBookingPage::factory()
@@ -184,14 +185,14 @@ it('allows booking outside minimum lead time window', function () use ($workingH
 
 // Maximum Lead Time Tests
 
-it('rejects booking beyond maximum lead time window', function () use ($workingHours) {
+it('rejects booking beyond maximum lead time window', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 10:00:00', 'UTC'));
 
     $user = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
         ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     PersonalBookingPage::factory()
@@ -218,14 +219,14 @@ it('rejects booking beyond maximum lead time window', function () use ($workingH
     expect($response->json('message'))->toContain('30 days in advance');
 });
 
-it('allows booking within maximum lead time window', function () use ($workingHours) {
+it('allows booking within maximum lead time window', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 10:00:00', 'UTC'));
 
     $user = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
         ->create([
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
         ]);
 
     PersonalBookingPage::factory()
@@ -255,4 +256,386 @@ it('allows booking within maximum lead time window', function () use ($workingHo
 
     $response->assertStatus(201);
     $response->assertJsonFragment(['success' => true]);
+});
+
+// Out of Office Tests
+
+it('excludes days within out of office period from available slots', function () use ($officeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC')); // Monday
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
+            'out_of_office_is_enabled' => true,
+            'out_of_office_starts_at' => Carbon::parse('2026-04-07 00:00:00', 'UTC'),
+            'out_of_office_ends_at' => Carbon::parse('2026-04-09 23:59:59', 'UTC'),
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create([
+            'slug' => 'test-ooo-slots',
+        ]);
+
+    $response = getJson(
+        route('widgets.booking-page.personal.api.available-slots', ['slug' => 'test-ooo-slots']) . '?year=2026&month=4'
+    );
+
+    $response->assertOk();
+
+    $blocksData = $response->json('blocks');
+    assert(is_array($blocksData));
+    $blocks = collect($blocksData);
+
+    $oooBlocks = $blocks->filter(function (array $block) {
+        $start = Carbon::parse($block['start']);
+
+        return $start->between(
+            Carbon::parse('2026-04-07 00:00:00', 'UTC'),
+            Carbon::parse('2026-04-09 23:59:59', 'UTC'),
+        );
+    });
+
+    expect($oooBlocks)->toBeEmpty();
+
+    $nonOooBlocks = $blocks->filter(function (array $block) {
+        $start = Carbon::parse($block['start']);
+
+        return $start->isAfter(Carbon::parse('2026-04-09 23:59:59', 'UTC'));
+    });
+
+    expect($nonOooBlocks)->not->toBeEmpty();
+});
+
+it('rejects booking when user is out of office', function () use ($officeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
+            'out_of_office_is_enabled' => true,
+            'out_of_office_starts_at' => Carbon::parse('2026-04-06 00:00:00', 'UTC'),
+            'out_of_office_ends_at' => Carbon::parse('2026-04-10 23:59:59', 'UTC'),
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create(['slug' => 'test-ooo']);
+
+    $response = postJson(
+        route('widgets.booking-page.personal.api.book', ['slug' => 'test-ooo']),
+        [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'starts_at' => Carbon::parse('2026-04-07 10:00:00', 'UTC')->toIso8601String(),
+            'ends_at' => Carbon::parse('2026-04-07 11:00:00', 'UTC')->toIso8601String(),
+        ]
+    );
+
+    $response->assertStatus(422);
+    $response->assertJsonFragment(['success' => false]);
+    expect($response->json('message'))->toContain('out of office');
+});
+
+it('allows booking when user out of office is disabled', function () use ($officeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
+            'out_of_office_is_enabled' => false,
+            'out_of_office_starts_at' => Carbon::parse('2026-04-06 00:00:00', 'UTC'),
+            'out_of_office_ends_at' => Carbon::parse('2026-04-10 23:59:59', 'UTC'),
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create(['slug' => 'test-ooo-disabled']);
+
+    $response = postJson(
+        route('widgets.booking-page.personal.api.book', ['slug' => 'test-ooo-disabled']),
+        [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'starts_at' => Carbon::parse('2026-04-07 10:00:00', 'UTC')->toIso8601String(),
+            'ends_at' => Carbon::parse('2026-04-07 11:00:00', 'UTC')->toIso8601String(),
+        ]
+    );
+
+    $response->assertStatus(201);
+    $response->assertJsonFragment(['success' => true]);
+});
+
+it('allows booking outside the out of office window', function () use ($officeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
+            'out_of_office_is_enabled' => true,
+            'out_of_office_starts_at' => Carbon::parse('2026-04-06 00:00:00', 'UTC'),
+            'out_of_office_ends_at' => Carbon::parse('2026-04-08 23:59:59', 'UTC'),
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create(['slug' => 'test-ooo-after']);
+
+    $response = postJson(
+        route('widgets.booking-page.personal.api.book', ['slug' => 'test-ooo-after']),
+        [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'starts_at' => Carbon::parse('2026-04-09 10:00:00', 'UTC')->toIso8601String(),
+            'ends_at' => Carbon::parse('2026-04-09 11:00:00', 'UTC')->toIso8601String(),
+        ]
+    );
+
+    $response->assertStatus(201);
+    $response->assertJsonFragment(['success' => true]);
+});
+
+// Office Hours Booking Validation Tests
+
+it('rejects booking on a day with office hours disabled', function () use ($officeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create(['slug' => 'test-day-disabled']);
+
+    $response = postJson(
+        route('widgets.booking-page.personal.api.book', ['slug' => 'test-day-disabled']),
+        [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'starts_at' => Carbon::parse('2026-04-11 10:00:00', 'UTC')->toIso8601String(),
+            'ends_at' => Carbon::parse('2026-04-11 11:00:00', 'UTC')->toIso8601String(),
+        ]
+    );
+
+    $response->assertStatus(422);
+    $response->assertJsonFragment(['success' => false]);
+    expect($response->json('message'))->toContain('No availability for the selected day');
+});
+
+it('rejects booking outside office hours on an enabled day', function () use ($officeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create(['slug' => 'test-outside-hours']);
+
+    $response = postJson(
+        route('widgets.booking-page.personal.api.book', ['slug' => 'test-outside-hours']),
+        [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'starts_at' => Carbon::parse('2026-04-07 06:00:00', 'UTC')->toIso8601String(),
+            'ends_at' => Carbon::parse('2026-04-07 07:00:00', 'UTC')->toIso8601String(),
+        ]
+    );
+
+    $response->assertStatus(422);
+    $response->assertJsonFragment(['success' => false]);
+    expect($response->json('message'))->toContain('outside available booking hours');
+});
+
+it('rejects booking that extends past office hours end time', function () use ($officeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create(['slug' => 'test-past-end']);
+
+    $response = postJson(
+        route('widgets.booking-page.personal.api.book', ['slug' => 'test-past-end']),
+        [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'starts_at' => Carbon::parse('2026-04-07 19:30:00', 'UTC')->toIso8601String(),
+            'ends_at' => Carbon::parse('2026-04-07 20:30:00', 'UTC')->toIso8601String(),
+        ]
+    );
+
+    $response->assertStatus(422);
+    $response->assertJsonFragment(['success' => false]);
+    expect($response->json('message'))->toContain('outside available booking hours');
+});
+
+it('allows booking within office hours', function () use ($officeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create(['slug' => 'test-within-hours']);
+
+    $response = postJson(
+        route('widgets.booking-page.personal.api.book', ['slug' => 'test-within-hours']),
+        [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'starts_at' => Carbon::parse('2026-04-07 10:00:00', 'UTC')->toIso8601String(),
+            'ends_at' => Carbon::parse('2026-04-07 11:00:00', 'UTC')->toIso8601String(),
+        ]
+    );
+
+    $response->assertStatus(201);
+    $response->assertJsonFragment(['success' => true]);
+});
+
+// Calendar Event Transparency Tests
+
+it('rejects booking when a busy calendar event overlaps', function () use ($officeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create(['slug' => 'test-busy-conflict']);
+
+    CalendarEvent::factory()->create([
+        'calendar_id' => $user->calendar->id,
+        'starts_at' => Carbon::parse('2026-04-07 10:00:00', 'UTC'),
+        'ends_at' => Carbon::parse('2026-04-07 11:00:00', 'UTC'),
+        'transparency' => EventTransparency::Busy->value,
+    ]);
+
+    $response = postJson(
+        route('widgets.booking-page.personal.api.book', ['slug' => 'test-busy-conflict']),
+        [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'starts_at' => Carbon::parse('2026-04-07 10:00:00', 'UTC')->toIso8601String(),
+            'ends_at' => Carbon::parse('2026-04-07 11:00:00', 'UTC')->toIso8601String(),
+        ]
+    );
+
+    $response->assertStatus(409);
+    $response->assertJsonFragment(['success' => false]);
+    expect($response->json('message'))->toContain('already been booked');
+});
+
+it('allows booking when only a free calendar event overlaps', function () use ($officeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create(['slug' => 'test-free-no-conflict']);
+
+    CalendarEvent::factory()->create([
+        'calendar_id' => $user->calendar->id,
+        'starts_at' => Carbon::parse('2026-04-07 10:00:00', 'UTC'),
+        'ends_at' => Carbon::parse('2026-04-07 11:00:00', 'UTC'),
+        'transparency' => EventTransparency::Free->value,
+    ]);
+
+    $response = postJson(
+        route('widgets.booking-page.personal.api.book', ['slug' => 'test-free-no-conflict']),
+        [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'starts_at' => Carbon::parse('2026-04-07 10:00:00', 'UTC')->toIso8601String(),
+            'ends_at' => Carbon::parse('2026-04-07 11:00:00', 'UTC')->toIso8601String(),
+        ]
+    );
+
+    $response->assertStatus(201);
+    $response->assertJsonFragment(['success' => true]);
+});
+
+it('rejects booking when an out of office calendar event overlaps', function () use ($officeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create(['slug' => 'test-ooo-event-conflict']);
+
+    CalendarEvent::factory()->create([
+        'calendar_id' => $user->calendar->id,
+        'starts_at' => Carbon::parse('2026-04-07 10:00:00', 'UTC'),
+        'ends_at' => Carbon::parse('2026-04-07 11:00:00', 'UTC'),
+        'transparency' => EventTransparency::OutOfOffice->value,
+    ]);
+
+    $response = postJson(
+        route('widgets.booking-page.personal.api.book', ['slug' => 'test-ooo-event-conflict']),
+        [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'starts_at' => Carbon::parse('2026-04-07 10:00:00', 'UTC')->toIso8601String(),
+            'ends_at' => Carbon::parse('2026-04-07 11:00:00', 'UTC')->toIso8601String(),
+        ]
+    );
+
+    $response->assertStatus(409);
+    $response->assertJsonFragment(['success' => false]);
+    expect($response->json('message'))->toContain('already been booked');
 });

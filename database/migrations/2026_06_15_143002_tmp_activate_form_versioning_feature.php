@@ -34,48 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Notifications;
-
-use AdvisingApp\Form\Models\Form;
-use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\FormVersioningFeature;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Notification;
+use Illuminate\Database\Migrations\Migration;
 
-class FormSubmissionAutoReplyNotification extends Notification implements ShouldQueue
-{
-    use Queueable;
-
-    public function __construct(
-        public FormSubmission $submission
-    ) {}
-
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return ['mail'];
+        FormVersioningFeature::activate();
     }
 
-    public function toMail(object $notifiable): MailMessage
+    public function down(): void
     {
-        /** @var Form $form */
-        $form = $this->submission->submissible;
-
-        if (FormVersioningFeature::active()) {
-            $form = $form->latestVersion() ?? $form;
-        }
-
-        /** @var Student|Prospect|null $author */
-        $author = $this->submission->author;
-
-        return MailMessage::make()
-            ->subject($form->emailAutoReply->getSubject($author))
-            ->content($form->emailAutoReply->getBody($author));
+        FormVersioningFeature::deactivate();
     }
-}
+};

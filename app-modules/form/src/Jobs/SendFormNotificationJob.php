@@ -41,6 +41,7 @@ use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Form\Notifications\FormSubmissionNotification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\FormVersioningFeature;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -68,28 +69,32 @@ class SendFormNotificationJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $users = $this->form->notificationUsers;
+        $form = FormVersioningFeature::active()
+            ? ($this->form->latestVersion() ?? $this->form)
+            : $this->form;
+
+        $users = $form->notificationUsers;
 
         $author = $this->submission->author;
 
-        if ($this->form->notify_to_care_team && ($author instanceof Student || $author instanceof Prospect)) {
+        if ($form->notify_to_care_team && ($author instanceof Student || $author instanceof Prospect)) {
             $users = $users->merge($author->careTeam);
         }
 
-        if ($this->form->notify_to_subscribers && ($author instanceof Student || $author instanceof Prospect)) {
+        if ($form->notify_to_subscribers && ($author instanceof Student || $author instanceof Prospect)) {
             $users = $users->merge($author->subscribedUsers);
         }
 
         $users = $users->unique('id');
 
-        if ($users->isNotEmpty() && ($this->form->notify_via_app || $this->form->notify_via_email)) {
+        if ($users->isNotEmpty() && ($form->notify_via_app || $form->notify_via_email)) {
             $channels = match (true) {
-                $this->form->notify_via_email && $this->form->notify_via_app => ['mail', 'database'],
-                $this->form->notify_via_email => ['mail'],
+                $form->notify_via_email && $form->notify_via_app => ['mail', 'database'],
+                $form->notify_via_email => ['mail'],
                 default => ['database'],
             };
 
-            Notification::send($users, new FormSubmissionNotification($this->form, $this->submission, $channels));
+            Notification::send($users, new FormSubmissionNotification($form, $this->submission, $channels));
         }
     }
 }
