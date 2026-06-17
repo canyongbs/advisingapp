@@ -505,7 +505,7 @@ class FormWidgetController extends Controller
             ->submitted()
             ->whereMorphedTo('author', $author)
             ->orderByDesc('submitted_at')
-            ->paginate($request->query('per_page', 10));
+            ->paginate(min((int) $request->query('per_page', 10), 50));
 
         $items = $pastSubmissions->map(fn (FormSubmission $submission) => [
             'id' => $submission->getKey(),
@@ -532,6 +532,7 @@ class FormWidgetController extends Controller
     }
 
     public function getSubmission(
+        Request $request,
         GenerateSubmissionViewData $generateSubmissionViewData,
         GenerateFormKitSchema $generateSchema,
         Form $form,
@@ -540,7 +541,7 @@ class FormWidgetController extends Controller
         if (! PastSubmissionsFeature::active()) {
             abort(Response::HTTP_FORBIDDEN);
         }
-        $authentication = request()->query('authentication');
+        $authentication = $request->query('authentication');
 
         if (filled($authentication)) {
             $authentication = FormAuthentication::findOrFail($authentication);

@@ -474,7 +474,7 @@ class ApplicationWidgetController extends Controller
         $pastSubmissions = $application->submissions()
             ->whereMorphedTo('author', $author)
             ->orderByDesc('created_at')
-            ->paginate($request->query('per_page', 10));
+            ->paginate(min((int) $request->query('per_page', 10), 50));
 
         $items = $pastSubmissions->map(fn (ApplicationSubmission $submission) => [
             'id' => $submission->getKey(),
@@ -501,6 +501,7 @@ class ApplicationWidgetController extends Controller
     }
 
     public function getSubmission(
+        Request $request,
         GenerateSubmissionViewData $generateSubmissionViewData,
         GenerateFormKitSchema $generateSchema,
         Application $application,
@@ -510,7 +511,7 @@ class ApplicationWidgetController extends Controller
             abort(Response::HTTP_FORBIDDEN);
         }
 
-        $authentication = request()->query('authentication');
+        $authentication = $request->query('authentication');
 
         if (filled($authentication)) {
             $authentication = ApplicationAuthentication::findOrFail($authentication);
