@@ -41,8 +41,10 @@ use AdvisingApp\Form\Observers\FormObserver;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Enums\FontWeight;
 use App\Models\User;
+use CanyonGBS\Common\Models\Concerns\CanBeArchived;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
@@ -56,6 +58,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 #[ObservedBy([FormObserver::class])]
 class Form extends Submissible
 {
+    use CanBeArchived;
     use HasRelationships;
 
     protected $fillable = [
@@ -78,6 +81,8 @@ class Form extends Submissible
         'notify_to_subscribers',
         'notify_via_app',
         'notify_via_email',
+        'root_id',
+        'allow_view_past_submissions',
     ];
 
     protected $casts = [
@@ -94,6 +99,7 @@ class Form extends Submissible
         'notify_to_subscribers' => 'boolean',
         'notify_via_app' => 'boolean',
         'notify_via_email' => 'boolean',
+        'allow_view_past_submissions' => 'boolean',
     ];
 
     /**
@@ -152,5 +158,28 @@ class Form extends Submissible
         return $this->belongsToMany(User::class, 'form_notification_users', 'form_id', 'user_id')
             ->using(FormNotificationUser::class)
             ->withTimestamps();
+    }
+
+    /**
+     * @return BelongsTo<Form, $this>
+     */
+    public function rootForm(): BelongsTo
+    {
+        return $this->belongsTo(Form::class, 'root_id');
+    }
+
+    /**
+     * @return HasMany<Form, $this>
+     */
+    public function versions(): HasMany
+    {
+        return $this->hasMany(Form::class, 'root_id', 'root_id');
+    }
+
+    public function latestVersion(): ?Form
+    {
+        return Form::query()->where('root_id', $this->root_id)
+            ->whereNull('archived_at')
+            ->first();
     }
 }

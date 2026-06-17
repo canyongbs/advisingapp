@@ -34,12 +34,18 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\ListApplications;
+use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\seed;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 // TODO: Write ListApplications tests
 //test('The correct details are displayed on the ListApplications page', function () {});
@@ -88,4 +94,54 @@ test('ListApplications is gated with proper feature access control', function ()
         ->get(
             ApplicationResource::getUrl('index')
         )->assertSuccessful();
+});
+
+test('submissions count displays the correct count for an application', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+
+    $expectedCount = $application->submissions()->count();
+
+    expect($expectedCount)->toBeGreaterThan(0);
+
+    livewire(ListApplications::class)
+        ->assertTableColumnStateSet('submissions_count', $expectedCount, $application);
+});
+
+test('submissions count includes submissions across all versions', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+
+    $existingCount = $application->submissions()->count();
+
+    $archivedVersion = Application::factory()->create([
+        'root_id' => $application->root_id,
+        'archived_at' => now(),
+    ]);
+
+    $archivedCount = $archivedVersion->submissions()->count();
+
+    livewire(ListApplications::class)
+        ->assertTableColumnStateSet('submissions_count', $existingCount + $archivedCount, $application);
+});
+
+test('submissions count does not include submissions from unrelated applications', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+
+    $expectedCount = $application->submissions()->count();
+
+    $unrelatedApplication = Application::factory()->create();
+
+    livewire(ListApplications::class)
+        ->assertTableColumnStateSet('submissions_count', $expectedCount, $application);
 });

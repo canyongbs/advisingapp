@@ -42,7 +42,6 @@ use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * @extends Factory<EngagementResponse>
@@ -57,16 +56,10 @@ class EngagementResponseFactory extends Factory
                 (new Prospect())->getMorphClass(),
             ]),
             'sender_id' => function (array $attributes) {
-                $senderClass = Relation::getMorphedModel($attributes['sender_type']);
-
-                /** @var Student|Prospect $senderModel */
-                $senderModel = new $senderClass();
-
-                $sender = $senderClass === Student::class
-                    ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                    : $senderModel::factory()->create();
-
-                return $sender->getKey();
+                return match ($attributes['sender_type']) {
+                    (new Student())->getMorphClass() => Student::factory()->create()->getKey(),
+                    default => Prospect::factory()->create()->getKey(),
+                };
             },
             'sent_at' => $this->faker->dateTimeBetween('-1 year', '-1 day'),
             'type' => $this->faker->randomElement(EngagementResponseType::cases()),

@@ -37,11 +37,23 @@
 namespace AdvisingApp\Form\Observers;
 
 use AdvisingApp\Form\Models\Form;
+use App\Features\FormVersioningFeature;
 
 class FormObserver
 {
+    public function creating(Form $form): void
+    {
+        if (FormVersioningFeature::active() && $form->getAttribute('root_id') === null) {
+            $form->root_id = $form->id;
+        }
+    }
+
     public function created(Form $form): void
     {
+        if ($form->root_id !== $form->id) {
+            return;
+        }
+
         $form->emailAutoReply()->create();
     }
 }

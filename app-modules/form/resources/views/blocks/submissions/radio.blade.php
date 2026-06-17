@@ -39,9 +39,32 @@
                 ->pluck('label', 'value')
                 ->all()
             : $options;
+
+        $hasOtherOption = $hasOtherOption ?? false;
+        $displayValue = null;
+
+        if (filled($response ?? null)) {
+            // Try exact match first
+            $displayValue = $normalizedOptions[$response] ?? null;
+
+            // Fall back to case-insensitive match
+            if ($displayValue === null) {
+                foreach ($normalizedOptions as $value => $optionLabel) {
+                    if (strcasecmp($value, $response) === 0) {
+                        $displayValue = $optionLabel;
+                        break;
+                    }
+                }
+            }
+
+            // If still no match and hasOtherOption, show as Other
+            if ($displayValue === null && $hasOtherOption) {
+                $displayValue = 'Other: ' . $response;
+            }
+        }
     @endphp
 
-    {{ $normalizedOptions[$response ?? null] ?? null }}
+    {{ $displayValue }}
     @if (blank($response ?? null))
         <span class="text-gray-500">No response</span>
     @endif

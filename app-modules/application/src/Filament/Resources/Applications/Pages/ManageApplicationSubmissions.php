@@ -39,8 +39,10 @@ namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 use AdvisingApp\Application\Exports\ApplicationSubmissionExport;
 use AdvisingApp\Application\Filament\Resources\Applications\Actions\ApplicationAdmissionActions;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
+use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use App\Features\FormVersioningFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
@@ -118,7 +120,19 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
 
     public function table(Table $table): Table
     {
+        $owner = $this->getOwnerRecord();
+        assert($owner instanceof Application);
+
         return $table
+            ->query(
+                FormVersioningFeature::active()
+                    ? ApplicationSubmission::query()
+                        ->whereHas(
+                            'submissible',
+                            fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $owner->root_id),
+                        )
+                    : $owner->submissions()->getQuery()
+            )
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('created_at')
@@ -156,13 +170,21 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
             ->headerActions([
                 Action::make('export')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->action(function () {
-                        $filename = str("application-submissions-{$this->getOwnerRecord()->name}-")
+                    ->action(function () use ($owner) {
+                        $filename = str("application-submissions-{$owner->name}-")
                             ->append(now()->format('Y-m-d-Hisv'))
                             ->slug()
                             ->append('.csv');
 
-                        return Excel::download(new ApplicationSubmissionExport($this->getOwnerRecord()->submissions), $filename);
+                        $query = FormVersioningFeature::active()
+                            ? ApplicationSubmission::query()
+                                ->whereHas(
+                                    'submissible',
+                                    fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $owner->root_id),
+                                )
+                            : $owner->submissions()->getQuery();
+
+                        return Excel::download(new ApplicationSubmissionExport($query->get()), $filename);
                     }),
             ])
             ->recordActions([
@@ -222,11 +244,25 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
 
         $ownerRecord = $urlParameters['record'];
 
+        /** @var Application $ownerRecord */
         $applicationSubmissionsCount = Cache::tags('{application-submission-count}')
             ->remember(
-                "application-submission-count-{$ownerRecord->getKey()}",
+                FormVersioningFeature::active()
+                    ? "application-submission-count-{$ownerRecord->root_id}"
+                    : "application-submission-count-{$ownerRecord->id}",
                 now()->addMinutes(5),
-                fn (): int => $ownerRecord->submissions()->count(),
+                function () use ($ownerRecord): int {
+                    if (FormVersioningFeature::active()) {
+                        return ApplicationSubmission::query()
+                            ->whereHas(
+                                'submissible',
+                                fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $ownerRecord->root_id),
+                            )
+                            ->count();
+                    }
+
+                    return $ownerRecord->submissions()->count();
+                },
             );
 
         $item->badge((string) $applicationSubmissionsCount);

@@ -37,7 +37,9 @@ import Rating from './Rating.vue';
 import Slider from './Slider.vue';
 
 export default {
+    checkboxWithOther: inputs.checkboxWithOther,
     otp: inputs.otp,
+    radioWithOther: inputs.radioWithOther,
     slider: createInput(Slider, {
         props: [],
     }),

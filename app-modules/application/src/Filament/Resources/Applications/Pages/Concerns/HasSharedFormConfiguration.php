@@ -37,13 +37,15 @@
 namespace AdvisingApp\Application\Filament\Resources\Applications\Pages\Concerns;
 
 use AdvisingApp\Application\Models\Application;
-use AdvisingApp\Application\Models\ApplicationField;
 use AdvisingApp\Application\Models\ApplicationStep;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Form\Actions\SaveSubmissibleFieldsFromContent;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Rules\IsDomain;
 use App\Enums\FontWeight;
+use App\Features\FormVersioningFeature;
+use App\Features\PastSubmissionsFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
@@ -56,7 +58,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 trait HasSharedFormConfiguration
 {
@@ -67,7 +68,7 @@ trait HasSharedFormConfiguration
                 ->required()
                 ->string()
                 ->maxLength(255)
-                ->unique(ignoreRecord: true)
+                ->unique(modifyRuleUsing: fn ($rule) => FormVersioningFeature::active() ? $rule->whereNull('archived_at') : $rule, ignoreRecord: true)
                 ->autocomplete(false)
                 ->columnSpanFull()
                 ->helperText('The name of this application will only display for form administrators.'),
@@ -103,18 +104,22 @@ trait HasSharedFormConfiguration
             Toggle::make('is_wizard')
                 ->label('Multi-step form')
                 ->live()
-                ->disabled(fn (?Application $record) => $record?->submissions()->exists()),
+                ->disabled(fn (?Application $record) => ! FormVersioningFeature::active() && $record?->submissions()->exists()),
             Toggle::make('should_generate_prospects')
                 ->label('Generate Prospects')
                 ->helperText('If enabled, a request to submit by an unknown prospect will result in a new prospect being created.')
                 ->disabled(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm))
                 ->hintIcon(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm) ? 'heroicon-m-lock-closed' : null),
+            Toggle::make('allow_view_past_submissions')
+                ->label('Allow viewing past submissions')
+                ->visible(fn (): bool => PastSubmissionsFeature::active())
+                ->helperText('If enabled, students and prospects can view their past submissions on this form.'),
             Section::make('Fields')
                 ->schema([
                     $this->fieldBuilder(),
                 ])
-                ->hidden(fn (Get $get) => $get('is_wizard'))
-                ->disabled(fn (?Application $record) => $record?->submissions()->exists()),
+                ->disabled(fn (?Application $record) => ! FormVersioningFeature::active() && $record?->submissions()->exists())
+                ->hidden(fn (Get $get) => $get('is_wizard')),
             Repeater::make('steps')
                 ->schema([
                     TextInput::make('label')
@@ -129,8 +134,15 @@ trait HasSharedFormConfiguration
                 ->addActionLabel('New step')
                 ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
                 ->visible(fn (Get $get) => $get('is_wizard'))
-                ->disabled(fn (?Application $record) => $record?->submissions()->exists())
+                ->disabled(fn (?Application $record) => ! FormVersioningFeature::active() && $record?->submissions()->exists())
                 ->relationship()
+                ->saveRelationshipsUsing(static function (Repeater $component): void {
+                    if (FormVersioningFeature::active() && ! $component->getRecord()->wasRecentlyCreated) {
+                        return;
+                    }
+
+                    $component->saveToRelationship();
+                })
                 ->orderColumn('sort')
                 ->columnSpanFull(),
             Section::make('Appearance')
@@ -168,28 +180,17 @@ trait HasSharedFormConfiguration
                     return;
                 }
 
+                if (FormVersioningFeature::active() && ! $record->wasRecentlyCreated) {
+                    return;
+                }
+
                 $application = $record instanceof Application ? $record : $record->submissible;
                 $applicationStep = $record instanceof ApplicationStep ? $record : null;
 
-                ApplicationField::query()
-                    ->whereBelongsTo($application, 'submissible')
-                    ->when($applicationStep, fn (EloquentBuilder $query) => $query->whereBelongsTo($applicationStep, 'step'))
-                    ->delete();
-
-                $content = $component->getState();
-
-                if (is_string($content)) {
-                    $content = json_decode($content, true);
-                }
-
-                if (! is_array($content)) {
-                    $content = [];
-                }
-
-                $content['content'] = $this->saveFieldsFromComponents(
+                $content = app(SaveSubmissibleFieldsFromContent::class)->replaceFieldsForRecord(
                     $application,
-                    $content['content'] ?? [],
                     $applicationStep,
+                    $component->getState(),
                 );
 
                 $record->content = $content;
@@ -202,46 +203,6 @@ trait HasSharedFormConfiguration
             ->dehydrated(false)
             ->columnSpanFull()
             ->extraInputAttributes(['style' => 'min-height: 12rem;']);
-    }
-
-    public function saveFieldsFromComponents(Application $application, array $components, ?ApplicationStep $applicationStep): array
-    {
-        foreach ($components as $componentKey => $component) {
-            if (array_key_exists('content', $component)) {
-                $components[$componentKey]['content'] = $this->saveFieldsFromComponents($application, $component['content'], $applicationStep);
-
-                continue;
-            }
-
-            if (($component['type'] ?? null) !== 'customBlock') {
-                continue;
-            }
-
-            $componentAttributes = $component['attrs'] ?? [];
-            $config = $componentAttributes['config'] ?? [];
-
-            $id = $config['fieldId'] ?? null;
-            unset($config['fieldId']);
-
-            $label = $config['label'] ?? null;
-            unset($config['label']);
-
-            $isRequired = $config['isRequired'] ?? null;
-            unset($config['isRequired']);
-
-            /** @var ApplicationField $field */
-            $field = $application->fields()->findOrNew($id);
-            $field->step()->associate($applicationStep);
-            $field->label = $label ?? $componentAttributes['id'];
-            $field->is_required = $isRequired ?? false;
-            $field->type = $componentAttributes['id'];
-            $field->config = $config;
-            $field->save();
-
-            $components[$componentKey]['attrs']['config']['fieldId'] = $field->id;
-        }
-
-        return $components;
     }
 
     protected function afterCreate(): void

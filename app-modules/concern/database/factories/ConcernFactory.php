@@ -42,7 +42,6 @@ use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
  * @extends Factory<Concern>
@@ -54,16 +53,10 @@ class ConcernFactory extends Factory
         return [
             'concern_type' => $this->faker->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
             'concern_id' => function (array $attributes) {
-                $concernClass = Relation::getMorphedModel($attributes['concern_type']);
-
-                /** @var Student|Prospect $concernModel */
-                $concernModel = new $concernClass();
-
-                $concern = $concernClass === Student::class
-                  ? Student::inRandomOrder()->first() ?? Student::factory()->create()
-                  : $concernModel::factory()->create();
-
-                return $concern->getKey();
+                return match ($attributes['concern_type']) {
+                    (new Student())->getMorphClass() => Student::factory()->create()->getKey(),
+                    default => Prospect::factory()->create()->getKey(),
+                };
             },
             'description' => $this->faker->sentence(),
             'severity' => $this->faker->randomElement(ConcernSeverity::cases()),

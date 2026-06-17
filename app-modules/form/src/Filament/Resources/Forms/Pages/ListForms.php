@@ -40,6 +40,8 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Actions\DuplicateForm;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Form\Models\FormSubmission;
+use App\Features\FormVersioningFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
@@ -53,6 +55,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class ListForms extends ListRecords
@@ -64,13 +67,26 @@ class ListForms extends ListRecords
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                $submissionsCountQuery = FormVersioningFeature::active()
+                    ? FormSubmission::query()
+                        ->join('forms as version_forms', 'form_submissions.form_id', '=', 'version_forms.id')
+                        ->whereColumn('version_forms.root_id', 'forms.root_id')
+                        ->selectRaw('count(*)')
+                    : FormSubmission::query()
+                        ->whereColumn('form_id', 'forms.id')
+                        ->selectRaw('count(*)');
+
+                $query->addSelect([
+                    'submissions_count' => $submissionsCountQuery,
+                ]);
+            })
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('name')
                     ->description(fn (Form $record) => $record->title),
                 TextColumn::make('submissions_count')
                     ->label('Submissions')
-                    ->counts('submissions')
                     ->default(0),
             ])
             ->recordActions([

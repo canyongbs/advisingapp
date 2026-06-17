@@ -159,7 +159,7 @@ class EducatableNameFormFieldBlock extends FormFieldBlock
                     '$formkit' => 'text',
                     'name' => 'preferred',
                     'label' => $preferredNameLabel,
-                    'value' => $author->preferred ?? '',
+                    'value' => $author !== null ? ($author->preferred ?? '') : '',
                     ...($disabled ? ['disabled' => true] : []),
                     ...($preferredNameRequired ? ['validation' => 'required'] : []),
                 ],

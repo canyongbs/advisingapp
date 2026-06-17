@@ -69,9 +69,16 @@ class DivisionFactory extends Factory
 
     public function configure(): DivisionFactory|Factory
     {
-        return $this->afterMaking(function (Division $division) {
-            $division->createdBy()->associate($this->faker->randomElement([User::inRandomOrder()->first(), null]));
-            $division->lastUpdatedBy()->associate($this->faker->randomElement([User::inRandomOrder()->first(), null]));
+        return $this->afterCreating(function (Division $division) {
+            if (! $division->createdBy()->exists()) {
+                $division->createdBy()->associate(User::factory()->create());
+            }
+
+            if (! $division->lastUpdatedBy()->exists()) {
+                $division->lastUpdatedBy()->associate(User::factory()->create());
+            }
+
+            $division->save();
         });
     }
 }
