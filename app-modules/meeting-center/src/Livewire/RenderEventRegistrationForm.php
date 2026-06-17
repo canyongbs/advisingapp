@@ -41,6 +41,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Illuminate\Contracts\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
@@ -49,6 +50,7 @@ class RenderEventRegistrationForm extends Component implements HasForms, HasActi
 {
     use InteractsWithActions;
     use InteractsWithForms;
+    use RestrictsFileUploadsToSchemaComponents;
 
     public bool $showRegistrationModal = false;
 
