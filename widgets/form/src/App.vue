@@ -97,8 +97,10 @@
                 recaptchaToken = await getRecaptchaToken(formRecaptchaKey.value);
             }
 
+            const submissionData = { ...data };
+
             if (recaptchaToken !== null) {
-                data['recaptcha-token'] = recaptchaToken;
+                submissionData['recaptcha-token'] = recaptchaToken;
             }
 
             fetch(formSubmissionUrl.value, {
@@ -107,7 +109,7 @@
                     Accept: 'application/json',
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify(data),
+                body: JSON.stringify(submissionData),
             })
                 .then((response) => response.json())
                 .then((json) => {
