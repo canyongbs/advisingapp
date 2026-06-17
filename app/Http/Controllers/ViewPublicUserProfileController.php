@@ -50,8 +50,6 @@ class ViewPublicUserProfileController extends Controller
 
         $officeHours = $this->formatHours($user->office_hours);
 
-        $workingHours = $this->formatHours($user->working_hours);
-
         return view('user-profile-public', [
             'data' => [
                 'avatar_url' => $user->getFilamentAvatarUrl(),
@@ -73,9 +71,6 @@ class ViewPublicUserProfileController extends Controller
                     ? $officeHours
                     : false,
                 'appointments_are_restricted_to_existing_students' => $user->appointments_are_restricted_to_existing_students,
-                'working_hours' => $user->working_hours_are_enabled && $user->are_working_hours_visible_on_profile && $workingHours->keys()->count()
-                    ? $workingHours
-                    : false,
             ],
         ]);
     }
@@ -88,7 +83,7 @@ class ViewPublicUserProfileController extends Controller
     private function formatHours(?array $hours): Collection
     {
         return collect($hours)
-            ->filter(fn ($data, $day) => data_get($data, 'enabled'))
+            ->filter(fn ($data, $day) => data_get($data, 'is_enabled'))
             ->mapWithKeys(fn ($data, $day) => [
                 $day => [
                     'starts_at' => data_get($data, 'starts_at'),

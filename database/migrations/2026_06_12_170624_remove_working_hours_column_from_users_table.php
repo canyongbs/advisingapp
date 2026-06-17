@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,19 +33,27 @@
 
 </COPYRIGHT>
 */
-import { createInput } from '@formkit/vue';
-import inputs from '../../../../form/src/FormKit/Inputs/index';
-import Rating from './Rating.vue';
-import Slider from './Slider.vue';
 
-export default {
-    checkboxWithOther: inputs.checkboxWithOther,
-    otp: inputs.otp,
-    radioWithOther: inputs.radioWithOther,
-    slider: createInput(Slider, {
-        props: [],
-    }),
-    rating: createInput(Rating, {
-        props: [],
-    }),
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('working_hours_are_enabled');
+            $table->dropColumn('are_working_hours_visible_on_profile');
+            $table->dropColumn('working_hours');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('users', function (Blueprint $table) {
+            $table->boolean('working_hours_are_enabled')->default(false);
+            $table->boolean('are_working_hours_visible_on_profile')->default(false);
+            $table->jsonb('working_hours')->nullable();
+        });
+    }
 };

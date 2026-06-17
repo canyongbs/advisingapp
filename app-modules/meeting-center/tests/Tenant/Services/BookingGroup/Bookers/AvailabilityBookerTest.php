@@ -48,7 +48,7 @@ use Mockery\MockInterface;
 use function Pest\Laravel\getJson;
 use function Pest\Laravel\postJson;
 
-$workingHours = [
+$officeHours = [
     'monday' => ['is_enabled' => true, 'starts_at' => '08:00', 'ends_at' => '20:00'],
     'tuesday' => ['is_enabled' => true, 'starts_at' => '08:00', 'ends_at' => '20:00'],
     'wednesday' => ['is_enabled' => true, 'starts_at' => '08:00', 'ends_at' => '20:00'],
@@ -77,23 +77,19 @@ beforeEach(function () {
     app()->instance(CalendarManager::class, $mockManager);
 });
 
-it('returns available slots for the member with fewest meeting hours', function () use ($workingHours) {
+it('returns available slots for the member with fewest meeting hours', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
         ->create([
             'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     $bob = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
         ->create([
             'name' => 'Bob',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     // Alice has 4 hours of meetings, Bob has 1 hour — Bob is most available
@@ -117,7 +113,7 @@ it('returns available slots for the member with fewest meeting hours', function 
         ->create([
             'slug' => 'avail-slots',
             'book_with' => BookingGroupBookWith::Availability,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     $response = getJson(
@@ -135,20 +131,17 @@ it('returns available slots for the member with fewest meeting hours', function 
     expect($blocks[2])->toBe(['start' => '2026-04-07T11:00:00+00:00', 'end' => '2026-04-07T20:00:00+00:00']);
 });
 
-it('returns empty slots when no members have connected calendars', function () use ($workingHours) {
+it('returns empty slots when no members have connected calendars', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
-    $member = User::factory()->create([
-        'working_hours_are_enabled' => true,
-        'working_hours' => $workingHours,
-    ]);
+    $member = User::factory()->create();
 
     BookingGroup::factory()
         ->hasAttached($member, [], 'users')
         ->create([
             'slug' => 'avail-no-cal',
             'book_with' => BookingGroupBookWith::Availability,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     $response = getJson(
@@ -159,20 +152,17 @@ it('returns empty slots when no members have connected calendars', function () u
     $response->assertJson(['blocks' => []]);
 });
 
-it('returns 422 when no members have connected calendars at booking time', function () use ($workingHours) {
+it('returns 422 when no members have connected calendars at booking time', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
-    $member = User::factory()->create([
-        'working_hours_are_enabled' => true,
-        'working_hours' => $workingHours,
-    ]);
+    $member = User::factory()->create();
 
     BookingGroup::factory()
         ->hasAttached($member, [], 'users')
         ->create([
             'slug' => 'avail-no-cal-book',
             'book_with' => BookingGroupBookWith::Availability,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     $response = postJson(
@@ -192,23 +182,19 @@ it('returns 422 when no members have connected calendars at booking time', funct
     ]);
 });
 
-it('books on the least busy member calendar and advances cursor', function () use ($workingHours) {
+it('books on the least busy member calendar and advances cursor', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
         ->create([
             'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     $bob = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
         ->create([
             'name' => 'Bob',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     // Alice has 8 hours of meetings, Bob has 2 — Bob is most available
@@ -232,7 +218,7 @@ it('books on the least busy member calendar and advances cursor', function () us
         ->create([
             'slug' => 'avail-book',
             'book_with' => BookingGroupBookWith::Availability,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     $response = postJson(
@@ -264,31 +250,25 @@ it('books on the least busy member calendar and advances cursor', function () us
     expect($bookingGroup->round_robin_last_assigned_id)->toBe($bob->id);
 });
 
-it('uses round robin tiebreaker when members have equal meeting hours', function () use ($workingHours) {
+it('uses round robin tiebreaker when members have equal meeting hours', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
         ->create([
             'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     $bob = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
         ->create([
             'name' => 'Bob',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     $charlie = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-charlie']))
         ->create([
             'name' => 'Charlie',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     // All three have exactly 2 hours of meetings — tied
@@ -320,7 +300,7 @@ it('uses round robin tiebreaker when members have equal meeting hours', function
         ->create([
             'slug' => 'avail-tie',
             'book_with' => BookingGroupBookWith::Availability,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     // First booking: no cursor, goes to Alice (first alphabetically among tied)
@@ -359,23 +339,19 @@ it('uses round robin tiebreaker when members have equal meeting hours', function
     expect($appointment2->meeting_owner_id)->toBe($bob->id);
 });
 
-it('returns 409 with fresh blocks when resolved member has a conflict', function () use ($workingHours) {
+it('returns 409 with fresh blocks when resolved member has a conflict', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
         ->create([
             'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     $bob = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
         ->create([
             'name' => 'Bob',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     // Bob has more hours, so Alice resolves as most available
@@ -400,7 +376,7 @@ it('returns 409 with fresh blocks when resolved member has a conflict', function
         ->create([
             'slug' => 'avail-conflict',
             'book_with' => BookingGroupBookWith::Availability,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     $response = postJson(
@@ -421,23 +397,19 @@ it('returns 409 with fresh blocks when resolved member has a conflict', function
     expect($response->json('blocks'))->toHaveCount(20);
 });
 
-it('returns 409 with fresh blocks when all members have conflicts', function () use ($workingHours) {
+it('returns 409 with fresh blocks when all members have conflicts', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
         ->create([
             'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     $bob = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
         ->create([
             'name' => 'Bob',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     // Both have conflicts at the requested time
@@ -461,7 +433,7 @@ it('returns 409 with fresh blocks when all members have conflicts', function () 
         ->create([
             'slug' => 'avail-all-conflict',
             'book_with' => BookingGroupBookWith::Availability,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     $response = postJson(
@@ -489,31 +461,25 @@ it('returns 409 with fresh blocks when all members have conflicts', function () 
     expect($blocks[2])->toBe(['start' => '2026-04-07T11:00:00+00:00', 'end' => '2026-04-07T20:00:00+00:00']);
 });
 
-it('assigns member with fewer calendar hours over member with more', function () use ($workingHours) {
+it('assigns member with fewer calendar hours over member with more', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
         ->create([
             'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     $bob = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
         ->create([
             'name' => 'Bob',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     $charlie = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-charlie']))
         ->create([
             'name' => 'Charlie',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     // Alice: 10 hours, Bob: 3 hours, Charlie: 6 hours
@@ -545,7 +511,7 @@ it('assigns member with fewer calendar hours over member with more', function ()
         ->create([
             'slug' => 'avail-hours',
             'book_with' => BookingGroupBookWith::Availability,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     $response = postJson(
@@ -569,23 +535,19 @@ it('assigns member with fewer calendar hours over member with more', function ()
     expect($appointment->meeting_owner_id)->toBe($bob->id);
 });
 
-it('only counts busy transparency events toward meeting hours', function () use ($workingHours) {
+it('only counts busy transparency events toward meeting hours', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
         ->create([
             'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     $bob = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
         ->create([
             'name' => 'Bob',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     // Alice has 4 hours of "free" events — should NOT count
@@ -610,7 +572,7 @@ it('only counts busy transparency events toward meeting hours', function () use 
         ->create([
             'slug' => 'avail-free',
             'book_with' => BookingGroupBookWith::Availability,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
         ]);
 
     $response = postJson(
@@ -630,23 +592,19 @@ it('only counts busy transparency events toward meeting hours', function () use 
     expect($appointment->meeting_owner_id)->toBe($alice->id);
 });
 
-it('uses min lead time as availability window start', function () use ($workingHours) {
+it('uses min lead time as availability window start', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
         ->create([
             'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     $bob = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
         ->create([
             'name' => 'Bob',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     // Alice has 2h of meetings BEFORE the min lead time window (within 48h from now)
@@ -674,7 +632,7 @@ it('uses min lead time as availability window start', function () use ($workingH
         ->create([
             'slug' => 'avail-min-lead',
             'book_with' => BookingGroupBookWith::Availability,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
             'minimum_booking_lead_time_hours' => 48,
         ]);
 
@@ -695,23 +653,19 @@ it('uses min lead time as availability window start', function () use ($workingH
     expect($appointment->meeting_owner_id)->toBe($alice->id);
 });
 
-it('uses max lead time as availability window end', function () use ($workingHours) {
+it('uses max lead time as availability window end', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
         ->create([
             'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     $bob = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
         ->create([
             'name' => 'Bob',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     // Alice has 2h of meetings BEYOND the max lead time (30 days)
@@ -739,7 +693,7 @@ it('uses max lead time as availability window end', function () use ($workingHou
         ->create([
             'slug' => 'avail-max-lead',
             'book_with' => BookingGroupBookWith::Availability,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
             'maximum_booking_lead_time_days' => 30,
         ]);
 
@@ -760,23 +714,19 @@ it('uses max lead time as availability window end', function () use ($workingHou
     expect($appointment->meeting_owner_id)->toBe($alice->id);
 });
 
-it('uses both min and max lead time to bound the availability window', function () use ($workingHours) {
+it('uses both min and max lead time to bound the availability window', function () use ($officeHours) {
     Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
 
     $alice = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
         ->create([
             'name' => 'Alice',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     $bob = User::factory()
         ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
         ->create([
             'name' => 'Bob',
-            'working_hours_are_enabled' => true,
-            'working_hours' => $workingHours,
         ]);
 
     // Alice has events OUTSIDE the window (before min lead time AND after max lead time)
@@ -810,7 +760,7 @@ it('uses both min and max lead time to bound the availability window', function 
         ->create([
             'slug' => 'avail-both-lead',
             'book_with' => BookingGroupBookWith::Availability,
-            'available_appointment_hours' => $workingHours,
+            'available_appointment_hours' => $officeHours,
             'minimum_booking_lead_time_hours' => 24,
             'maximum_booking_lead_time_days' => 14,
         ]);
@@ -830,4 +780,50 @@ it('uses both min and max lead time to bound the availability window', function 
     // Alice has 0h in window (both events outside), Bob has 3h — Alice is most available
     $appointment = BookingGroupAppointment::where('booking_group_id', $bookingGroup->id)->first();
     expect($appointment->meeting_owner_id)->toBe($alice->id);
+});
+
+it('excludes out of office days from resolved member available slots', function () use ($officeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $alice = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-alice']))
+        ->create([
+            'name' => 'Alice',
+            'out_of_office_is_enabled' => true,
+            'out_of_office_starts_at' => Carbon::parse('2026-04-07 00:00:00', 'UTC'),
+            'out_of_office_ends_at' => Carbon::parse('2026-04-07 23:59:59', 'UTC'),
+        ]);
+
+    $bob = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'cal-bob']))
+        ->create([
+            'name' => 'Bob',
+        ]);
+
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($alice, [], 'users')
+        ->hasAttached($bob, [], 'users')
+        ->create([
+            'slug' => 'avail-ooo',
+            'book_with' => BookingGroupBookWith::Availability,
+            'available_appointment_hours' => $officeHours,
+        ]);
+
+    $response = getJson(
+        route('widgets.booking-page.group.api.available-slots', ['slug' => 'avail-ooo']) . '?year=2026&month=4'
+    );
+
+    $response->assertOk();
+
+    $blocksData = $response->json('blocks');
+    assert(is_array($blocksData));
+    $blocks = collect($blocksData);
+
+    // Alice is resolved (least busy tiebreaker picks alphabetically), but OOO on Apr 7
+    $apr7Blocks = $blocks->filter(fn (array $block) => str_contains($block['start'], '2026-04-07'));
+    expect($apr7Blocks)->toBeEmpty();
+
+    // Other days should still have slots
+    $apr8Blocks = $blocks->filter(fn (array $block) => str_contains($block['start'], '2026-04-08'));
+    expect($apr8Blocks)->not->toBeEmpty();
 });
