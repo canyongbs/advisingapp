@@ -43,6 +43,7 @@ use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Settings\CollegeBrandingSettings;
 use Carbon\Carbon;
 use Filament\Support\Colors\Color;
@@ -232,34 +233,13 @@ class PersonalBookingPageWidgetController extends Controller
             }
         }
 
-        // Validate the booking time falls within the user's office hours
-        if ($user->office_hours_are_enabled && $user->office_hours) {
-            $dayOfWeek = strtolower($startsAt->format('l'));
-            $dayHours = $user->office_hours[$dayOfWeek] ?? null;
-
-            $isEnabled = $dayHours['is_enabled'] ?? $dayHours['enabled'] ?? false;
-
-            if (! $dayHours || ! $isEnabled) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'No availability for the selected day.',
-                ], 422);
-            }
-
-            $startTime = $dayHours['starts_at'] ?? $dayHours['start'] ?? null;
-            $endTime = $dayHours['ends_at'] ?? $dayHours['end'] ?? null;
-
-            if ($startTime && $endTime) {
-                $dayStart = Carbon::parse("{$startsAt->toDateString()} {$startTime}", 'UTC');
-                $dayEnd = Carbon::parse("{$startsAt->toDateString()} {$endTime}", 'UTC');
-
-                if ($startsAt->lt($dayStart) || $endsAt->gt($dayEnd)) {
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'The selected time is outside available booking hours.',
-                    ], 422);
-                }
-            }
+        // Validate the booking time falls within available slots
+        // (reuses GetAvailableAppointmentSlots which already handles midnight-crossing office hours)
+        if (! $this->slotIsAvailable($user, $bookingPage, $startsAt, $endsAt)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The selected time is outside available booking hours.',
+            ], 422);
         }
 
         // Check if slot is still available using a database lock
@@ -308,6 +288,28 @@ class PersonalBookingPageWidgetController extends Controller
                     'ends_at' => $event->ends_at->toIso8601String(),
                 ],
             ], 201);
+        });
+    }
+
+    protected function slotIsAvailable(
+        User $user,
+        PersonalBookingPage $bookingPage,
+        Carbon $startsAt,
+        Carbon $endsAt,
+    ): bool {
+        $availableBlocks = app(GetAvailableAppointmentSlots::class)(
+            $user,
+            $startsAt->year,
+            $startsAt->month,
+            $bookingPage->minimum_booking_lead_time_hours ?? 0,
+            $bookingPage->maximum_booking_lead_time_days ?? 0,
+        );
+
+        return collect($availableBlocks)->contains(function (array $block) use ($startsAt, $endsAt) {
+            $blockStart = Carbon::parse($block['start']);
+            $blockEnd = Carbon::parse($block['end']);
+
+            return $startsAt->gte($blockStart) && $endsAt->lte($blockEnd);
         });
     }
 }
