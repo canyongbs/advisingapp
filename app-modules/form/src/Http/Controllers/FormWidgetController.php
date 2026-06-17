@@ -128,7 +128,7 @@ class FormWidgetController extends Controller
             'name' => $form->title,
             'description' => $form->description,
             'is_authenticated' => $form->is_authenticated,
-            'allow_view_past_submissions' => $form->is_authenticated && $form->allow_view_past_submissions,
+            'allow_view_past_submissions' => PastSubmissionsFeature::active() && $form->is_authenticated && $form->allow_view_past_submissions,
             ...($form->is_authenticated ? [
                 'authentication_url' => URL::signedRoute(
                     name: 'widgets.forms.api.request-authentication',

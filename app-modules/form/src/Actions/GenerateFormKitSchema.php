@@ -255,7 +255,7 @@ class GenerateFormKitSchema
                         'children' => [
                             [
                                 '$formkit' => 'button',
-                                'disabled' => '$activeStep === "' . ($submissible->steps->first()?->label ?? '') . '"',
+                                'disabled' => '$activeStep === "' . ($submissible->steps->first()->label ?? '') . '"',
                                 'onClick' => '$setStep(-1)',
                                 'children' => 'Previous Step',
                             ],
@@ -263,7 +263,7 @@ class GenerateFormKitSchema
                                 '$el' => 'div',
                                 'attrs' => [
                                     'style' => [
-                                        'if' => '$activeStep === "' . ($submissible->steps->last()?->label ?? '') . '"',
+                                        'if' => '$activeStep === "' . ($submissible->steps->last()->label ?? '') . '"',
                                         'then' => 'display: none;',
                                     ],
                                 ],
@@ -279,7 +279,7 @@ class GenerateFormKitSchema
                                 '$el' => 'div',
                                 'attrs' => [
                                     'style' => [
-                                        'if' => '$activeStep !== "' . ($submissible->steps->last()?->label ?? '') . '"',
+                                        'if' => '$activeStep !== "' . ($submissible->steps->last()->label ?? '') . '"',
                                         'then' => 'display: none;',
                                     ],
                                 ],

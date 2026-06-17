@@ -125,7 +125,7 @@ class ApplicationWidgetController extends Controller
             [
                 'name' => $application->title,
                 'description' => $application->description,
-                'allow_view_past_submissions' => $application->allow_view_past_submissions,
+                'allow_view_past_submissions' => PastSubmissionsFeature::active() && $application->allow_view_past_submissions,
                 'authentication_url' => URL::signedRoute(
                     name: 'widgets.applications.api.request-authentication',
                     parameters: ['application' => $application],
