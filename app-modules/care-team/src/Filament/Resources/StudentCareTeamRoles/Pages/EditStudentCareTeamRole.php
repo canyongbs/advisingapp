@@ -73,7 +73,7 @@ class EditStudentCareTeamRole extends EditRecord
 
                         $currentDefault = CareTeamRole::query()
                             ->where('is_default', true)
-                            ->where('type', CareTeamRoleType::Prospect)
+                            ->where('type', CareTeamRoleType::Student)
                             ->value('name');
 
                         if (blank($currentDefault)) {
@@ -86,6 +86,20 @@ class EditStudentCareTeamRole extends EditRecord
                     ->columnStart(1)
                     ->live(),
             ]);
+    }
+
+    protected function beforeSave(): void
+    {
+        /** @var CareTeamRole $record */
+        $record = $this->record;
+
+        if ($this->data['is_default'] ?? false) {
+            CareTeamRole::query()
+                ->where('id', '!=', $record->getKey())
+                ->where('type', CareTeamRoleType::Student)
+                ->where('is_default', true)
+                ->update(['is_default' => false]);
+        }
     }
 
     protected function getHeaderActions(): array
