@@ -45,7 +45,6 @@
         "@tiptap/pm": "^2.2.1",
         "@tiptap/starter-kit": "^2.2.1",
         "@tiptap/suggestion": "^2.2.1",
-        "@twilio/conversations": "^2.5.0",
         "@vitejs/plugin-vue": "^6.0.3",
         "alpinejs": "^3.13.2",
         "axios": "^1.16.0",
