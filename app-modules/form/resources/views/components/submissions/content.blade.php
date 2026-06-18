@@ -48,39 +48,6 @@
 
     $content['content'] = app(InjectSubmissionStateIntoTipTapContent::class)($submission, $content['content'], $blocks);
 
-    // Detect format: customBlock (RichEditor) or tiptapBlock (legacy TipTap)
-    $detectBlockType = function (array $nodes) use (&$detectBlockType): ?string {
-        foreach ($nodes as $node) {
-            if (! is_array($node)) {
-                continue;
-            }
-
-            $type = $node['type'] ?? null;
-
-            if ($type === 'customBlock') {
-                return 'customBlock';
-            }
-
-            if ($type === 'tiptapBlock') {
-                return 'tiptapBlock';
-            }
-
-            if (! empty($node['content']) && is_array($node['content'])) {
-                $found = $detectBlockType($node['content']);
-
-                if ($found !== null) {
-                    return $found;
-                }
-            }
-        }
-
-        return null;
-    };
-
-    $detectedType = $detectBlockType($content['content'] ?? []);
-    $usesRichEditor = $detectedType === 'customBlock';
-    $usesLegacyTipTap = $detectedType === 'tiptapBlock';
-
     $sanitizeSubmissionHtml = function (string $html): string {
         $config = app(HtmlSanitizerConfig::class)
             ->allowElement('svg', ['xmlns', 'fill', 'viewBox', 'stroke-width', 'stroke', 'aria-hidden', 'class', 'data-slot'])
@@ -90,14 +57,9 @@
     };
 @endphp
 
-<div class="prose max-w-none dark:prose-invert">
+<div class="fi-prose">
     @if (! empty($content['content']))
-        @if (! $usesRichEditor && $usesLegacyTipTap)
-            {{-- Legacy TipTap format (Events, Case Forms — until migrated to RichEditor) --}}
-            {!! tiptap_converter()->blocks($blocks)->asHTML($content) !!}
-        @else
-            {!! $sanitizeSubmissionHtml( RichContentRenderer::make($content)->customBlocks(array_values($blocks))->toUnsafeHtml(),) !!}
-        @endif
+        {!! $sanitizeSubmissionHtml(RichContentRenderer::make($content)->customBlocks(array_values($blocks))->toUnsafeHtml()) !!}
     @else
         This submission has no content.
     @endif

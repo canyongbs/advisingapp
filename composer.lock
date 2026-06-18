@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "90bdb929bdabba7562d1b03a806269b3",
+    "content-hash": "19f363f021ea8340d1403ee9cde35828",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -2207,82 +2207,6 @@
                 "source": "https://github.com/canyongbs/common/tree/2.18.0"
             },
             "time": "2026-06-10T17:31:10+00:00"
-        },
-        {
-            "name": "canyongbs/filament-tiptap-editor",
-            "version": "2.3.10",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/canyongbs/filament-tiptap-editor.git",
-                "reference": "470f576548bc427a3a1889ebd28d5494019162bd"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/filament-tiptap-editor/zipball/470f576548bc427a3a1889ebd28d5494019162bd",
-                "reference": "470f576548bc427a3a1889ebd28d5494019162bd",
-                "shasum": ""
-            },
-            "require": {
-                "filament/filament": "^4.0",
-                "php": "^8.2",
-                "spatie/laravel-package-tools": "^1.9.2",
-                "ueberdosis/tiptap-php": "^2.0"
-            },
-            "require-dev": {
-                "awcodes/html-faker": "^0.4.0",
-                "laravel/pint": "^1.0",
-                "orchestra/testbench": "^10.0",
-                "pestphp/pest": "^3.0",
-                "pestphp/pest-plugin-laravel": "^3.0",
-                "pestphp/pest-plugin-livewire": "^3.0",
-                "spatie/laravel-medialibrary": "^11.0"
-            },
-            "type": "package",
-            "extra": {
-                "aliases": {
-                    "TiptapConverter": "FilamentTiptapEditor\\Facades\\TiptapConverter"
-                },
-                "laravel": {
-                    "providers": [
-                        "FilamentTiptapEditor\\FilamentTiptapEditorServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/helpers.php"
-                ],
-                "psr-4": {
-                    "FilamentTiptapEditor\\": "src/",
-                    "FilamentTiptapEditor\\Tests\\": "tests/src",
-                    "FilamentTiptapEditor\\Tests\\Database\\Factories\\": "tests/database/factories"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Adam Weston",
-                    "email": "awcodes1@gmail.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A Tiptap integration for Filament Admin/Forms.",
-            "keywords": [
-                "editor",
-                "filament",
-                "framework",
-                "laravel",
-                "tiptap",
-                "wysiwyg"
-            ],
-            "support": {
-                "issues": "https://github.com/canyongbs/filament-tiptap-editor/issues",
-                "source": "https://github.com/canyongbs/filament-tiptap-editor/tree/2.3.10"
-            },
-            "time": "2026-06-10T13:50:01+00:00"
         },
         {
             "name": "canyongbs/model-state-machine",

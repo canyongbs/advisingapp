@@ -36,6 +36,54 @@
     use AdvisingApp\Notification\Enums\NotificationChannel;
     use AdvisingApp\Engagement\Models\EngagementBatch;
     use Carbon\Carbon;
+    use Filament\Forms\Components\RichEditor\RichContentRenderer;
+    use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+
+    // During campaign creation the body's images are pending uploads held on the Livewire
+    // component (not yet persisted as media), so RichContentRenderer cannot resolve them by id.
+    // Inject each pending upload's temporary URL into its image node and clear the id, which
+    // makes RichContentRenderer keep that src instead of overwriting it with a null lookup.
+    $resolvePendingImages = function (mixed $content, array $pendingAttachments) use (&$resolvePendingImages): mixed {
+        if (! is_array($content) || empty($content['content']) || ! is_array($content['content'])) {
+            return $content;
+        }
+
+        foreach ($content['content'] as $index => $node) {
+            if (! is_array($node)) {
+                continue;
+            }
+
+            if (($node['type'] ?? null) === 'image') {
+                $file = ($id = $node['attrs']['id'] ?? null) !== null ? ($pendingAttachments[$id] ?? null) : null;
+
+                if ($file instanceof TemporaryUploadedFile) {
+                    try {
+                        $content['content'][$index]['attrs']['src'] = $file->temporaryUrl();
+                        $content['content'][$index]['attrs']['id'] = null;
+                    } catch (Throwable $exception) {
+                        // Not previewable (e.g. a non-image attachment); leave the node untouched.
+                    }
+                }
+
+                continue;
+            }
+
+            $content['content'][$index] = $resolvePendingImages($node, $pendingAttachments);
+        }
+
+        return $content;
+    };
+
+    $bodyContent = $action['body'];
+
+    if (is_string($bodyContent)) {
+        $bodyContent = json_decode($bodyContent, associative: true) ?? $bodyContent;
+    }
+
+    $bodyContent = $resolvePendingImages(
+        $bodyContent,
+        $this->componentFileAttachments['data']['actions'][$actionIndex]['data']['body'] ?? [],
+    );
 @endphp
 
 <x-filament::fieldset>
@@ -60,7 +108,7 @@
             <div class="flex flex-col pt-3">
                 <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Subject</dt>
                 <dd class="text-sm font-semibold">
-                    {!! EngagementBatch::renderWithMergeTags(tiptap_converter()->asHTML($action['subject'])) !!}
+                    {!! EngagementBatch::renderWithMergeTags(RichContentRenderer::make($action['subject'])->toHtml()) !!}
                 </dd>
             </div>
         @endif
@@ -71,7 +119,7 @@
                 <dd
                     class="prose dark:prose-invert prose-h1:my-4 prose-h1:text-3xl prose-h1:font-bold prose-h2:my-4 prose-h2:text-2xl prose-h3:my-4 prose-h3:text-xl prose-h4:my-4 prose-h4:text-lg prose-h5:my-4 prose-h5:text-base prose-h5:font-medium prose-h6:my-4 prose-h6:text-sm prose-h6:font-medium prose-hr:my-4"
                 >
-                    {!! EngagementBatch::renderWithMergeTags(tiptap_converter()->asHTML($action['body'], newImages: $this->componentFileAttachments['data']['actions'][$actionIndex]['data']['body'] ?? [])) !!}
+                    {!! EngagementBatch::renderWithMergeTags(RichContentRenderer::make($bodyContent)->fileAttachmentsDisk('s3-public')->fileAttachmentsVisibility('public')->toHtml()) !!}
                 </dd>
             </div>
         @endif

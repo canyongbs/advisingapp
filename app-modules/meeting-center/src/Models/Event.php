@@ -39,6 +39,9 @@ namespace AdvisingApp\MeetingCenter\Models;
 use App\Models\BaseModel;
 use App\Models\Media;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
+use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
+use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
+use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -48,13 +51,14 @@ use Spatie\MediaLibrary\InteractsWithMedia;
 /**
  * @mixin IdeHelperEvent
  */
-class Event extends BaseModel implements HasMedia
+class Event extends BaseModel implements HasMedia, HasRichContent
 {
     use SoftDeletes;
     use HasUserSaveTracking;
 
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+    use InteractsWithRichContent;
 
     protected $fillable = [
         'title',
@@ -72,6 +76,13 @@ class Event extends BaseModel implements HasMedia
         'ends_at' => 'datetime',
         'description' => 'array',
     ];
+
+    public function setUpRichContent(): void
+    {
+        $this->registerRichContent('description')
+            ->fileAttachmentsDisk('s3-public')
+            ->fileAttachmentProvider(SpatieMediaLibraryFileAttachmentProvider::make());
+    }
 
     public function registerMediaCollections(): void
     {
