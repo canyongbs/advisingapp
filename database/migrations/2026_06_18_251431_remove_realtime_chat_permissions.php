@@ -42,9 +42,9 @@ return new class () extends Migration {
     use CanModifyPermissions;
 
     /**
-     * @var array<string, string> $permissions
+     * @var array<string, string> $permissionsToDelete
      */
-    private array $permissions = [
+    private array $permissionsToDelete = [
         'realtime_chat.view-any' => 'Realtime Chat',
         'realtime_chat.*.view' => 'Realtime Chat',
     ];
@@ -61,7 +61,7 @@ return new class () extends Migration {
     {
         collect($this->guards)
             ->each(function (string $guard) {
-                $this->deletePermissions(array_keys($this->permissions), $guard);
+                $this->deletePermissions(array_keys($this->permissionsToDelete), $guard);
             });
 
         DB::table('permission_groups')
@@ -75,7 +75,7 @@ return new class () extends Migration {
     {
         collect($this->guards)
             ->each(function (string $guard) {
-                $this->createPermissions($this->permissions, $guard);
+                $this->createPermissions($this->permissionsToDelete, $guard);
             });
     }
 };
