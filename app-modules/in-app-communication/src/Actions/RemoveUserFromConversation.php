@@ -61,8 +61,8 @@ class RemoveUserFromConversation
                 ->users($user->id)
                 ->userConversations($conversation->sid)
                 ->delete();
-        } catch (Exception $e) {
-            report($e);
+        } catch (Exception $exception) {
+            report($exception);
 
             return false;
         }

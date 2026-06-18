@@ -47,5 +47,5 @@ class IntegrationGoogleAnalyticsServiceProvider extends ServiceProvider
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationGoogleAnalyticsPlugin()));
     }
 
-    public function boot() {}
+    public function boot(): void {}
 }
