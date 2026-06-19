@@ -71,7 +71,7 @@ class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationAwsSesEventHandlingPlugin()));
     }
 
-    public function boot()
+    public function boot(): void
     {
         Relation::morphMap([]);
 

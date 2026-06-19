@@ -41,10 +41,16 @@ use Illuminate\Support\Facades\DB;
 return new class () extends Migration {
     use CanModifyPermissions;
 
+    /**
+     * @var array<string, string> $permissionsToDelete
+     */
     private array $permissionsToDelete = [
         'realtime_chat.*.view' => 'Realtime Chat',
     ];
 
+    /**
+     * @var array<string> $guards
+     */
     private array $guards = [
         'api',
     ];
