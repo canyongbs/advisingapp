@@ -169,7 +169,7 @@ class BulkCreateInteractionAction
                     });
 
                     DB::commit();
-                } catch (Exception $exce) {
+                } catch (Exception $exception) {
                     DB::rollBack();
                     Notification::make()
                         ->title('Something went wrong')

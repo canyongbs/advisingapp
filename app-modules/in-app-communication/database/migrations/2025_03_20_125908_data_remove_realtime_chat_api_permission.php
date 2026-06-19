@@ -42,7 +42,7 @@ return new class () extends Migration {
     use CanModifyPermissions;
 
     /**
-     * @var array<string> $permissionsToDelete
+     * @var array<string, string> $permissionsToDelete
      */
     private array $permissionsToDelete = [
         'realtime_chat.*.view' => 'Realtime Chat',
