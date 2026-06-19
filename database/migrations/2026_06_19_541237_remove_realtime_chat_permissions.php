@@ -38,6 +38,10 @@ use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * Remove realtime chat permissions and permission group
+ * after the in-app-communication module was deleted.
+ */
 return new class () extends Migration {
     use CanModifyPermissions;
 
