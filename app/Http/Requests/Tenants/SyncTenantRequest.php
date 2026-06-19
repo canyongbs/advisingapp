@@ -66,7 +66,6 @@ class SyncTenantRequest extends FormRequest
             'addons.resourceHub' => ['required', 'boolean'],
             'addons.supportPrograms' => ['required', 'boolean'],
             'addons.eventManagement' => ['required', 'boolean'],
-            'addons.realtimeChat' => ['required', 'boolean'],
             'addons.mobileApps' => ['required', 'boolean'],
             'addons.scheduleAndAppointments' => ['required', 'boolean'],
             'addons.researchAdvisor' => ['required', 'boolean'],

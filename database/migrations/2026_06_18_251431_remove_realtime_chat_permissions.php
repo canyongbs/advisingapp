@@ -34,41 +34,48 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\InAppCommunication\Actions;
+use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
-use AdvisingApp\InAppCommunication\Models\TwilioConversation;
-use App\Models\User;
-use Exception;
-use Twilio\Rest\Client;
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-class RemoveUserFromConversation
-{
-    public function __construct(
-        public Client $twilioClient,
-    ) {}
+    /**
+     * @var array<string, string> $permissionsToDelete
+     */
+    private array $permissionsToDelete = [
+        'realtime_chat.view-any' => 'Realtime Chat',
+        'realtime_chat.*.view' => 'Realtime Chat',
+    ];
 
-    public function __invoke(User $user, TwilioConversation $conversation): bool
+    /**
+     * @var array<string> $guards
+     */
+    private array $guards = [
+        'web',
+        'api',
+    ];
+
+    public function up(): void
     {
-        throw_unless(
-            $conversation->participants()->whereKey($user)->exists(),
-            new Exception('User is not a participant in the channel.')
-        );
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $this->deletePermissions(array_keys($this->permissionsToDelete), $guard);
+            });
 
-        try {
-            $this->twilioClient
-                ->conversations
-                ->v1
-                ->users($user->id)
-                ->userConversations($conversation->sid)
-                ->delete();
-        } catch (Exception $e) {
-            report($e);
-
-            return false;
-        }
-
-        $conversation->participants()->detach($user);
-
-        return true;
+        DB::table('permission_groups')
+            ->whereIn('name', [
+                'Realtime Chat',
+            ])
+            ->delete();
     }
-}
+
+    public function down(): void
+    {
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $this->createPermissions($this->permissionsToDelete, $guard);
+            });
+    }
+};

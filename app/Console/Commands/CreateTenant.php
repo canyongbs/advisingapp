@@ -141,7 +141,6 @@ class CreateTenant extends Command
                     resourceHub: true,
                     supportPrograms: true,
                     eventManagement: true,
-                    realtimeChat: true,
                     mobileApps: true,
                     scheduleAndAppointments: true,
                     projectManagement: true,

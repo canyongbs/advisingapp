@@ -51,7 +51,6 @@ class LicenseAddonsData extends Data
         public bool $resourceHub = false,
         public bool $supportPrograms = false,
         public bool $eventManagement = false,
-        public bool $realtimeChat = false,
         public bool $mobileApps = false,
         public bool $scheduleAndAppointments = false,
         public bool $employeeAdvisors = false,
