@@ -162,7 +162,8 @@ class ManageFormSubmissions extends ManageRelatedRecords
 
                             return Excel::download(new FormSubmissionExport($records), $filename);
                         }),
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorizeIndividualRecords('delete'),
                 ]),
             ]);
     }

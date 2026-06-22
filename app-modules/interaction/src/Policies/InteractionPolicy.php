@@ -117,6 +117,14 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['interaction.*.delete'],
+            denyResponse: 'You do not have permission to delete any interaction.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Interaction $interaction): Response
     {
         if (! $authenticatable->can('view', $interaction->interactable)) {
@@ -129,6 +137,14 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['interaction.*.restore'],
+            denyResponse: 'You do not have permission to restore any interaction.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Interaction $interaction): Response
     {
         if (! $authenticatable->can('view', $interaction->interactable)) {
@@ -138,6 +154,14 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
         return $authenticatable->canOrElse(
             abilities: ['interaction.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this interaction.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['interaction.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any interaction.'
         );
     }
 }

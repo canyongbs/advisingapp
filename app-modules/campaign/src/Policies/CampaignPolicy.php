@@ -117,6 +117,14 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['campaign.*.delete'],
+            denyResponse: 'You do not have permission to delete any campaign.'
+        );
+    }
+
     public function archive(Authenticatable $authenticatable, Campaign $campaign): Response
     {
         if ($authenticatable->cannot('view', $campaign->group)) {
@@ -141,6 +149,14 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['campaign.*.restore'],
+            denyResponse: 'You do not have permission to restore any campaign.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Campaign $campaign): Response
     {
         if ($authenticatable->cannot('view', $campaign->group)) {
@@ -150,6 +166,14 @@ class CampaignPolicy implements PerformsChecksBeforeAuthorization
         return $authenticatable->canOrElse(
             abilities: ['campaign.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this campaign.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['campaign.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any campaign.'
         );
     }
 }

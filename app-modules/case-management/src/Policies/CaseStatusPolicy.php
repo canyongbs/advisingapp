@@ -102,11 +102,27 @@ class CaseStatusPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['settings.*.delete'],
+            denyResponse: 'You do not have permissions to delete any case status.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, CaseStatus $caseStatus): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['settings.*.restore'],
             denyResponse: 'You do not have permissions to restore this case status.'
+        );
+    }
+
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['settings.*.restore'],
+            denyResponse: 'You do not have permissions to restore any case status.'
         );
     }
 
@@ -119,6 +135,14 @@ class CaseStatusPolicy
         return $authenticatable->canOrElse(
             abilities: ['settings.*.force-delete'],
             denyResponse: 'You do not have permissions to force delete this case status.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['settings.*.force-delete'],
+            denyResponse: 'You do not have permissions to force delete any case status.'
         );
     }
 

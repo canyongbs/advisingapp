@@ -107,11 +107,27 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.delete',
+            denyResponse: 'You do not have permissions to delete any resource hub category.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, ResourceHubCategory $resourceHubCategory): Response
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.*.restore',
             denyResponse: 'You do not have permission to restore this resource hub category.'
+        );
+    }
+
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.restore',
+            denyResponse: 'You do not have permission to restore any resource hub category.'
         );
     }
 
@@ -124,6 +140,14 @@ class ResourceHubCategoryPolicy implements PerformsChecksBeforeAuthorization
         return $authenticatable->canOrElse(
             abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this resource hub category.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.force-delete',
+            denyResponse: 'You do not have permission to permanently delete any resource hub category.'
         );
     }
 

@@ -115,7 +115,8 @@ class LegacyAiMessageLogResource extends Resource
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorizeIndividualRecords('delete'),
                     ExportBulkAction::make()
                         ->exporter(AssistantUtilizationExporter::class),
                 ]),

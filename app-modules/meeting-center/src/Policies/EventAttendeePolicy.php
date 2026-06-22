@@ -103,6 +103,14 @@ class EventAttendeePolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['event_attendee.*.delete'],
+            denyResponse: 'You do not have permissions to delete any event attendee.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, EventAttendee $eventAttendee): Response
     {
         return $authenticatable->canOrElse(
@@ -111,11 +119,27 @@ class EventAttendeePolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['event_attendee.*.restore'],
+            denyResponse: 'You do not have permissions to restore any event attendee.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, EventAttendee $eventAttendee): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['event_attendee.*.force-delete'],
             denyResponse: 'You do not have permissions to permanently delete this event attendee.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['event_attendee.*.force-delete'],
+            denyResponse: 'You do not have permissions to permanently delete any event attendee.'
         );
     }
 

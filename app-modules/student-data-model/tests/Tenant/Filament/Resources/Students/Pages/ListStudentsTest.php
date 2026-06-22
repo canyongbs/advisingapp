@@ -42,6 +42,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Models\User;
 use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteBulkAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -100,6 +101,28 @@ it('renders the CreateAction based on proper access', function () {
     livewire(ListStudents::class)
         ->assertOk()
         ->assertActionVisible(CreateAction::class);
+});
+
+it('the delete bulk action is gated by the delete permission', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    $user->givePermissionTo('student.view-any');
+
+    $studentSettings = app(ManageStudentConfigurationSettings::class);
+    $studentSettings->is_enabled = true;
+    $studentSettings->save();
+
+    actingAs($user);
+
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
+
+    $user->givePermissionTo('student.*.delete');
+
+    livewire(ListStudents::class)
+        ->assertOk()
+        ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
 it('can filter students by concerns', function () {

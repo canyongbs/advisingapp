@@ -36,9 +36,12 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\EngagementFileResource;
+use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\Pages\ListEngagementFiles;
 use App\Models\User;
+use Filament\Actions\DeleteBulkAction;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
 // TODO: Add tests for the ListEngagementFiles
 //test('The correct details are displayed on the ListEngagementFiles page', function () {});
@@ -61,4 +64,25 @@ test('ListEngagementFiles is gated with proper access control', function () {
         ->get(
             EngagementFileResource::getUrl('index')
         )->assertSuccessful();
+});
+
+it('hides the delete bulk action for users without the delete permission', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('engagement_file.view-any');
+
+    actingAs($user);
+
+    livewire(ListEngagementFiles::class)
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
+});
+
+it('shows the delete bulk action for users with the delete permission', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('engagement_file.view-any');
+    $user->givePermissionTo('engagement_file.*.delete');
+
+    actingAs($user);
+
+    livewire(ListEngagementFiles::class)
+        ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

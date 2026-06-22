@@ -95,6 +95,14 @@ class DataAdvisorPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['ai-data-advisors.*.delete'],
+            denyResponse: 'You do not have permission to delete any data advisor.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, DataAdvisor $dataAdvisor): Response
     {
         return $authenticatable->canOrElse(
@@ -103,11 +111,27 @@ class DataAdvisorPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['ai-data-advisors.*.restore'],
+            denyResponse: 'You do not have permission to restore any data advisor.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, DataAdvisor $dataAdvisor): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['ai-data-advisors.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this data advisor.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['ai-data-advisors.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any data advisor.'
         );
     }
 

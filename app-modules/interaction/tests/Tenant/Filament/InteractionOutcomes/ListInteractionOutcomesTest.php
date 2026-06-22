@@ -40,6 +40,7 @@ use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomes\InteractionOu
 use AdvisingApp\Interaction\Filament\Resources\InteractionOutcomes\Pages\ListInteractionOutcomes;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use App\Models\User;
+use Filament\Actions\DeleteBulkAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -75,4 +76,18 @@ test('it can filter by interactable type', function () {
         ->filterTable('interactable_type', InteractableType::Prospect->value)
         ->assertCanSeeTableRecords($prospectOutcomes)
         ->assertCanNotSeeTableRecords($studentOutcomes);
+});
+
+test('the delete bulk action is gated by the delete permission', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('settings.view-any');
+    actingAs($user);
+
+    livewire(ListInteractionOutcomes::class)
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
+
+    $user->givePermissionTo('settings.*.delete');
+
+    livewire(ListInteractionOutcomes::class)
+        ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

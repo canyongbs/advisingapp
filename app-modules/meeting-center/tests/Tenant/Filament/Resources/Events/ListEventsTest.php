@@ -34,13 +34,61 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ListEvents;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
+use App\Models\User;
+use App\Settings\LicenseSettings;
+use Filament\Actions\DeleteBulkAction;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
+
+function listEventsTestUser(): User
+{
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->eventManagement = true;
+    $settings->save();
+
+    return User::factory()->licensed(LicenseType::cases())->create();
+}
+
+it('the delete bulk action is gated by the delete permission', function () {
+    $user = listEventsTestUser();
+    $user->givePermissionTo('event.view-any');
+
+    actingAs($user);
+
+    livewire(ListEvents::class)
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
+
+    $user->givePermissionTo('event.*.delete');
+
+    livewire(ListEvents::class)
+        ->assertTableBulkActionVisible(DeleteBulkAction::class);
+});
+
+it('the duplicate action is gated by the create permission', function () {
+    $user = listEventsTestUser();
+    $user->givePermissionTo('event.view-any');
+
+    actingAs($user);
+
+    $event = Event::factory()->create(['starts_at' => now()->addWeek()]);
+
+    livewire(ListEvents::class)
+        ->removeTableFilter('pastEvents')
+        ->assertTableActionHidden('Duplicate', $event);
+
+    $user->givePermissionTo('event.create');
+
+    livewire(ListEvents::class)
+        ->removeTableFilter('pastEvents')
+        ->assertTableActionVisible('Duplicate', $event);
+});
 
 it('can duplicate a event its registration form its steps and its fields', function () {
     asSuperAdmin();

@@ -82,6 +82,14 @@ class NotificationSettingPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.delete',
+            denyResponse: 'You do not have permission to delete any notification setting.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, NotificationSetting $notificationSetting): Response
     {
         return $authenticatable->canOrElse(
@@ -90,11 +98,27 @@ class NotificationSettingPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.restore',
+            denyResponse: 'You do not have permission to restore any notification setting.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, NotificationSetting $notificationSetting): Response
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this notification setting.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.force-delete',
+            denyResponse: 'You do not have permission to permanently delete any notification setting.'
         );
     }
 }

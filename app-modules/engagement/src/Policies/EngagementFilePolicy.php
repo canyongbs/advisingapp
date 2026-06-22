@@ -91,6 +91,14 @@ class EngagementFilePolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['engagement_file.*.delete'],
+            denyResponse: 'You do not have permissions to delete any engagement file.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, EngagementFile $engagementFile): Response
     {
         return $authenticatable->canOrElse(
@@ -99,11 +107,27 @@ class EngagementFilePolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['engagement_file.*.restore'],
+            denyResponse: 'You do not have permissions to restore any engagement file.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, EngagementFile $engagementFile): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['engagement_file.*.force-delete'],
             denyResponse: 'You do not have permissions to force delete this engagement file.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['engagement_file.*.force-delete'],
+            denyResponse: 'You do not have permissions to force delete any engagement file.'
         );
     }
 }

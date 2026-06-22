@@ -100,6 +100,14 @@ class EmployeeAdvisorQuestionPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['assistant_custom.*.delete'],
+            denyResponse: 'You do not have permission to delete any Employee Advisor Question.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
@@ -108,11 +116,27 @@ class EmployeeAdvisorQuestionPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['assistant_custom.*.restore'],
+            denyResponse: 'You do not have permission to restore any Employee Advisor Question.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['assistant_custom.*.force-delete'],
             denyResponse: 'You do not have permission to force-delete this Employee Advisor Question.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['assistant_custom.*.force-delete'],
+            denyResponse: 'You do not have permission to force-delete any Employee Advisor Question.'
         );
     }
 }

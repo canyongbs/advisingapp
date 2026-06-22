@@ -111,7 +111,8 @@ class CasePrioritiesRelationManager extends RelationManager
                 DeleteAction::make(),
             ])
             ->groupedBulkActions([
-                DeleteBulkAction::make(),
+                DeleteBulkAction::make()
+                    ->authorizeIndividualRecords('delete'),
             ]);
     }
 }

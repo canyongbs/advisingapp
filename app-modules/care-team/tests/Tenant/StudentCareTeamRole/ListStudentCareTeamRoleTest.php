@@ -40,6 +40,7 @@ use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
 use App\Models\User;
+use Filament\Actions\DeleteBulkAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -92,4 +93,22 @@ test('The correct details are displayed on the ListStudentCareTeamRole page', fu
                 $careTeamRole
             )
     );
+});
+
+test('the delete bulk action is gated by the delete permission', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    $user->givePermissionTo('settings.view-any');
+
+    actingAs($user);
+
+    livewire(ListStudentCareTeamRoles::class)
+        ->assertOk()
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
+
+    $user->givePermissionTo('settings.*.delete');
+
+    livewire(ListStudentCareTeamRoles::class)
+        ->assertOk()
+        ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

@@ -94,6 +94,14 @@ class CustomerAdvisorCategoryPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.delete' : 'qna_advisor.*.delete'],
+            denyResponse: 'You do not have permission to delete any Customer Advisor Category.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
@@ -102,11 +110,27 @@ class CustomerAdvisorCategoryPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.restore' : 'qna_advisor.*.restore'],
+            denyResponse: 'You do not have permission to restore any Customer Advisor Category.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['customer_advisor.*.force-delete'],
             denyResponse: 'You do not have permission to force-delete this Customer Advisor Category.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.force-delete' : 'qna_advisor.*.force-delete'],
+            denyResponse: 'You do not have permission to force-delete any Customer Advisor Category.'
         );
     }
 }

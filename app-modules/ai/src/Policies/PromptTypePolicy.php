@@ -124,6 +124,14 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['settings.*.delete'],
+            denyResponse: 'You do not have permission to delete any prompt type.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, PromptType $promptType): Response
     {
         if ($authenticatable->isAiAdmin()) {
@@ -133,6 +141,14 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
         return $authenticatable->canOrElse(
             abilities: ['settings.*.restore'],
             denyResponse: 'You do not have permission to restore this prompt type.'
+        );
+    }
+
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['settings.*.restore'],
+            denyResponse: 'You do not have permission to restore any prompt type.'
         );
     }
 
@@ -149,6 +165,14 @@ class PromptTypePolicy implements PerformsChecksBeforeAuthorization
         return $authenticatable->canOrElse(
             abilities: ['settings.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this prompt type.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['settings.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any prompt type.'
         );
     }
 }

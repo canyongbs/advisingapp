@@ -87,6 +87,14 @@ class ApplicationPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function replicate(Authenticatable $authenticatable, Application $application): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'application.create',
+            denyResponse: 'You do not have permission to duplicate this application.'
+        );
+    }
+
     public function update(Authenticatable $authenticatable, Application $application): Response
     {
         return $authenticatable->canOrElse(
@@ -103,6 +111,14 @@ class ApplicationPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['application.*.delete'],
+            denyResponse: 'You do not have permission to delete any application.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Application $application): Response
     {
         return $authenticatable->canOrElse(
@@ -111,11 +127,27 @@ class ApplicationPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['application.*.restore'],
+            denyResponse: 'You do not have permission to restore any application.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Application $application): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['application.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this application.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['application.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any application.'
         );
     }
 

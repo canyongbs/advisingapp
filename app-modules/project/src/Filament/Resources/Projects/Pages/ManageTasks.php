@@ -283,6 +283,7 @@ class ManageTasks extends ManageRelatedRecords
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
+                        ->authorizeIndividualRecords('delete')
                         ->authorize(fn () => auth()->user()->can('update', $this->getOwnerRecord())),
                 ]),
             ]);

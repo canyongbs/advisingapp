@@ -102,6 +102,14 @@ class SlaPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['settings.*.delete'],
+            denyResponse: 'You do not have permission to delete any SLA.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Sla $sla): Response
     {
         return $authenticatable->canOrElse(
@@ -110,11 +118,27 @@ class SlaPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['settings.*.restore'],
+            denyResponse: 'You do not have permission to restore any SLA.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Sla $sla): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['settings.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this SLA.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['settings.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any SLA.'
         );
     }
 

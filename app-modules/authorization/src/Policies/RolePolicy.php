@@ -86,6 +86,14 @@ class RolePolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['role.*.delete'],
+            denyResponse: 'You do not have permission to delete any role.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Role $role): Response
     {
         return $authenticatable->canOrElse(
@@ -94,11 +102,27 @@ class RolePolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['role.*.restore'],
+            denyResponse: 'You do not have permission to restore any role.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Role $role): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['role.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this role.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['role.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any role.'
         );
     }
 }

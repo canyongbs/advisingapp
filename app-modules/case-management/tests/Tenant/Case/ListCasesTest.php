@@ -42,6 +42,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Actions\DeleteBulkAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -146,4 +147,22 @@ test('ListCases is gated with proper feature access control', function () {
         ->get(
             CaseResource::getUrl()
         )->assertSuccessful();
+});
+
+test('the delete bulk action is gated by the delete permission', function () {
+    $user = User::factory()->licensed([Student::getLicenseType(), Prospect::getLicenseType()])->create();
+
+    $user->givePermissionTo('case.view-any');
+
+    actingAs($user);
+
+    livewire(ListCases::class)
+        ->assertOk()
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
+
+    $user->givePermissionTo('case.*.delete');
+
+    livewire(ListCases::class)
+        ->assertOk()
+        ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

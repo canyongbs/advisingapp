@@ -116,7 +116,8 @@ class EnrollmentSemesterResource extends Resource
             ->paginated([50, 100, 500, 1000])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorizeIndividualRecords('delete'),
                 ]),
             ]);
     }

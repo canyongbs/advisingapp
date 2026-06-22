@@ -117,6 +117,14 @@ class ProjectPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'project.*.delete',
+            denyResponse: 'You do not have permission to delete any project.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Project $project): Response
     {
         if (! auth()->user()->isSuperAdmin()) {
@@ -136,6 +144,14 @@ class ProjectPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'project.*.restore',
+            denyResponse: 'You do not have permission to restore any project.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Project $project): Response
     {
         if (! auth()->user()->isSuperAdmin()) {
@@ -152,6 +168,14 @@ class ProjectPolicy
         return $authenticatable->canOrElse(
             abilities: 'project.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this project.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'project.*.force-delete',
+            denyResponse: 'You do not have permission to permanently delete any project.'
         );
     }
 

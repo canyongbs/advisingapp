@@ -87,6 +87,14 @@ class ResourceHubArticlePolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function replicate(Authenticatable $authenticatable, ResourceHubArticle $resourceHubArticle): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'resource_hub_article.create',
+            denyResponse: 'You do not have permission to duplicate this resource hub article.'
+        );
+    }
+
     public function update(Authenticatable $authenticatable, ResourceHubArticle $resourceHubArticle): Response
     {
         return $authenticatable->canOrElse(
@@ -103,6 +111,14 @@ class ResourceHubArticlePolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['resource_hub_article.*.delete'],
+            denyResponse: 'You do not have permissions to delete any resource hub article.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, ResourceHubArticle $resourceHubArticle): Response
     {
         return $authenticatable->canOrElse(
@@ -111,11 +127,27 @@ class ResourceHubArticlePolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['resource_hub_article.*.restore'],
+            denyResponse: 'You do not have permissions to restore any resource hub article.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, ResourceHubArticle $resourceHubArticle): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['resource_hub_article.*.force-delete'],
             denyResponse: 'You do not have permissions to force delete this resource hub article.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['resource_hub_article.*.force-delete'],
+            denyResponse: 'You do not have permissions to force delete any resource hub article.'
         );
     }
 

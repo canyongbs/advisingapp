@@ -87,6 +87,14 @@ class FormPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function replicate(Authenticatable $authenticatable, Form $form): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'form.create',
+            denyResponse: 'You do not have permission to duplicate this form.'
+        );
+    }
+
     public function update(Authenticatable $authenticatable, Form $form): Response
     {
         return $authenticatable->canOrElse(
@@ -103,6 +111,14 @@ class FormPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['form.*.delete'],
+            denyResponse: 'You do not have permission to delete any form.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Form $form): Response
     {
         return $authenticatable->canOrElse(
@@ -111,11 +127,27 @@ class FormPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['form.*.restore'],
+            denyResponse: 'You do not have permission to restore any form.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Form $form): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['form.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this form.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['form.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any form.'
         );
     }
 

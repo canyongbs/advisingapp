@@ -40,8 +40,11 @@ use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Team\Models\Team;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Actions\DeleteBulkAction;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertNotSoftDeleted;
+use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
@@ -199,6 +202,51 @@ it('does not list projects to unauthorized auditor users', function () {
         ->assertCountTableRecords(5)
         ->assertCanSeeTableRecords($authorizedProjects)
         ->assertCanNotSeeTableRecords($unauthorizedProjects);
+});
+
+it('the delete bulk action is gated by the delete permission', function () {
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('project.view-any');
+    $user->givePermissionTo('project.*.view');
+
+    actingAs($user);
+
+    livewire(ListProjects::class)
+        ->assertOk()
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
+
+    $user->givePermissionTo('project.*.delete');
+
+    livewire(ListProjects::class)
+        ->assertOk()
+        ->assertTableBulkActionVisible(DeleteBulkAction::class);
+});
+
+it('the delete bulk action only deletes the records the user is authorized to delete', function () {
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('project.view-any');
+    $user->givePermissionTo('project.*.view');
+    $user->givePermissionTo('project.*.delete');
+
+    actingAs($user);
+
+    // The user is a manager of this project, so they can both view and delete it.
+    $deletable = Project::factory()->for(User::factory(), 'createdBy')->create();
+    $deletable->managerUsers()->attach($user);
+
+    // The user is only an auditor of this project, so they can view it but the
+    // delete() policy denies them — authorizeIndividualRecords('delete') must skip it.
+    $protected = Project::factory()->for(User::factory(), 'createdBy')->create();
+    $protected->auditorUsers()->attach($user);
+
+    livewire(ListProjects::class)
+        ->assertCanSeeTableRecords([$deletable, $protected])
+        ->callTableBulkAction(DeleteBulkAction::class, [$deletable, $protected]);
+
+    assertSoftDeleted($deletable);
+    assertNotSoftDeleted($protected);
 });
 
 it('does not list projects to unauthorized auditor teams', function () {
