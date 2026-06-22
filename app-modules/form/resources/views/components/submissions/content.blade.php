@@ -59,7 +59,7 @@
 
 <div class="fi-prose">
     @if (! empty($content['content']))
-        {!! $sanitizeSubmissionHtml(RichContentRenderer::make($content)->customBlocks(array_values($blocks))->toUnsafeHtml()) !!}
+        {!! $sanitizeSubmissionHtml( RichContentRenderer::make($content)->customBlocks(array_values($blocks))->toUnsafeHtml(),) !!}
     @else
         This submission has no content.
     @endif

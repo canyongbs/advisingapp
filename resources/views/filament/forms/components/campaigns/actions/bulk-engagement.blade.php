@@ -54,7 +54,7 @@
             }
 
             if (($node['type'] ?? null) === 'image') {
-                $file = ($id = $node['attrs']['id'] ?? null) !== null ? ($pendingAttachments[$id] ?? null) : null;
+                $file = ($id = $node['attrs']['id'] ?? null) !== null ? $pendingAttachments[$id] ?? null : null;
 
                 if ($file instanceof TemporaryUploadedFile) {
                     try {
@@ -80,10 +80,7 @@
         $bodyContent = json_decode($bodyContent, associative: true) ?? $bodyContent;
     }
 
-    $bodyContent = $resolvePendingImages(
-        $bodyContent,
-        $this->componentFileAttachments['data']['actions'][$actionIndex]['data']['body'] ?? [],
-    );
+    $bodyContent = $resolvePendingImages($bodyContent, $this->componentFileAttachments['data']['actions'][$actionIndex]['data']['body'] ?? []);
 @endphp
 
 <x-filament::fieldset>
@@ -119,7 +116,7 @@
                 <dd
                     class="prose dark:prose-invert prose-h1:my-4 prose-h1:text-3xl prose-h1:font-bold prose-h2:my-4 prose-h2:text-2xl prose-h3:my-4 prose-h3:text-xl prose-h4:my-4 prose-h4:text-lg prose-h5:my-4 prose-h5:text-base prose-h5:font-medium prose-h6:my-4 prose-h6:text-sm prose-h6:font-medium prose-hr:my-4"
                 >
-                    {!! EngagementBatch::renderWithMergeTags(RichContentRenderer::make($bodyContent)->fileAttachmentsDisk('s3-public')->fileAttachmentsVisibility('public')->toHtml()) !!}
+                    {!! EngagementBatch::renderWithMergeTags( RichContentRenderer::make($bodyContent)->fileAttachmentsDisk('s3-public')->fileAttachmentsVisibility('public')->toHtml(),) !!}
                 </dd>
             </div>
         @endif

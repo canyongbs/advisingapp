@@ -58,6 +58,7 @@ class Event extends BaseModel implements HasMedia, HasRichContent
 
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
+
     use InteractsWithRichContent;
 
     protected $fillable = [
