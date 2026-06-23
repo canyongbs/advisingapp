@@ -218,12 +218,22 @@ trait CanManageEducatableTasks
                 TaskViewAction::make(),
                 EditAction::make(),
                 DissociateAction::make()
+                    ->authorize(function (): bool {
+                        $ownerRecord = $this->getRecord();
+
+                        return auth()->user()->can('create', [Task::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
+                    })
                     ->using(fn (Task $task) => $task->concern()->dissociate()->save()),
             ])
             ->recordUrl(null)
             ->toolbarActions([
                 BulkActionGroup::make([
                     DissociateBulkAction::make()
+                        ->authorize(function (): bool {
+                            $ownerRecord = $this->getRecord();
+
+                            return auth()->user()->can('create', [Task::class, $ownerRecord instanceof Prospect ? $ownerRecord : null]);
+                        })
                         ->using(function (Collection $selectedRecords) {
                             $selectedRecords->each(
                                 fn (Task $selectedRecord) => $selectedRecord->concern()->dissociate()->save()

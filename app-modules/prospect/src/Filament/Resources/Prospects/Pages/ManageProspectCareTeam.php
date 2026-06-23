@@ -37,6 +37,7 @@
 namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Pages;
 
 use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberToEducatableAttachAction;
+use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\Concerns\HasProspectHeader;
@@ -94,6 +95,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
             ])
             ->recordActions([
                 DetachAction::make()
+                    ->authorize(fn (): bool => auth()->user()->can('deleteAny', CareTeam::class))
                     ->label('Remove')
                     ->modalHeading(function (User $record) {
                         /** @var Prospect $prospect */
@@ -112,6 +114,7 @@ class ManageProspectCareTeam extends ManageRelatedRecords
             ->toolbarActions([
                 BulkActionGroup::make([
                     DetachBulkAction::make()
+                        ->authorize(fn (): bool => auth()->user()->can('deleteAny', CareTeam::class))
                         ->label('Remove selected')
                         ->modalHeading(function () {
                             /** @var Prospect $prospect */

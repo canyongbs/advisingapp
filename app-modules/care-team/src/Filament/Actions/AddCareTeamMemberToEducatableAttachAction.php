@@ -63,7 +63,8 @@ class AddCareTeamMemberToEducatableAttachAction extends AttachAction
     {
         parent::setUp();
 
-        $this->label('New')
+        $this->authorize(fn (): bool => auth()->user()->can('create', CareTeam::class))
+            ->label('New')
             ->slideOver()
             ->modalHeading(fn () => "Add Users to {$this->getLivewire()->getOwnerRecord()->display_name}'s Care Team")
             ->modalSubmitActionLabel('Add')
