@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,14 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\Ai\Database\Factories;
 
-use App\Support\AbstractFeatureFlag;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisorFile;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class RenameQnaAdvisorsFeature extends AbstractFeatureFlag
+/**
+ * @extends Factory<CustomerAdvisorFile>
+ */
+class CustomerAdvisorFileFactory extends Factory
 {
-    public function resolve(mixed $scope): mixed
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        return false;
+        return [
+            'name' => $this->faker->word() . '.pdf',
+            'mime_type' => 'application/pdf',
+            'advisor_id' => CustomerAdvisor::factory(),
+            'parsing_results' => null,
+        ];
     }
 }

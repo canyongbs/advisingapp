@@ -37,7 +37,6 @@
 namespace AdvisingApp\Ai\Settings;
 
 use AdvisingApp\Ai\Enums\AiModel;
-use App\Features\RenameQnaAdvisorsFeature;
 use Spatie\LaravelSettings\Settings;
 
 class AiCustomerAdvisorSettings extends Settings
@@ -54,6 +53,6 @@ class AiCustomerAdvisorSettings extends Settings
 
     public static function group(): string
     {
-        return RenameQnaAdvisorsFeature::active() ? 'ai-customer-advisor' : 'ai-qna-advisor';
+        return 'ai-customer-advisor';
     }
 }

@@ -61,6 +61,8 @@ class UploadAssistantFilesToVectorStore implements ShouldQueue, TenantAware, Sho
      */
     public $tries = 15;
 
+    public $uniqueFor = 900;
+
     public function __construct(
         protected AiAssistant $assistant,
     ) {}
