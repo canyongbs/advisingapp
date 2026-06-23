@@ -39,7 +39,6 @@ use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\EditCustomerAdvisor
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Tests\RequestFactories\CustomerAdvisorRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Storage;
@@ -73,7 +72,7 @@ test('Edit Customer Advisor is gated with proper access control', function () {
     ])
         ->assertForbidden();
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.*.update']);
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update']);
 
     actingAs($user)
         ->get(
@@ -96,7 +95,7 @@ test('can edit Customer Advisor', function () {
 
     $customerAdvisor = CustomerAdvisor::factory()->create();
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.*.update']);
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update']);
 
     actingAs($user);
 
@@ -141,7 +140,7 @@ test('Edit Customer Advisor validates the inputs', function (CustomerAdvisorRequ
 
     actingAs($user);
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.*.update']);
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update']);
 
     $customerAdvisor = CustomerAdvisor::factory()->create();
 
@@ -189,9 +188,9 @@ test('archive action visible when Customer Advisor is not archived', function ()
 
     $customerAdvisor = CustomerAdvisor::factory()->create();
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.view-any' : 'qna_advisor.view-any');
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.view' : 'qna_advisor.*.view');
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.update' : 'qna_advisor.*.update');
+    $user->givePermissionTo('customer_advisor.view-any');
+    $user->givePermissionTo('customer_advisor.*.view');
+    $user->givePermissionTo('customer_advisor.*.update');
 
     actingAs($user);
 
@@ -216,9 +215,9 @@ test('restore action visible when Customer Advisor is archived', function () {
         'archived_at' => now(),
     ])->create();
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.view-any' : 'qna_advisor.view-any');
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.view' : 'qna_advisor.*.view');
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.update' : 'qna_advisor.*.update');
+    $user->givePermissionTo('customer_advisor.view-any');
+    $user->givePermissionTo('customer_advisor.*.view');
+    $user->givePermissionTo('customer_advisor.*.update');
 
     actingAs($user);
 

@@ -34,21 +34,15 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Models\CustomerAdvisorFile;
-use AdvisingApp\Ai\Models\CustomerAdvisorLink;
-use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
-use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
-use AdvisingApp\Ai\Models\CustomerAdvisorThread;
-use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\Engagement;
-use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 // Add tests for migration files here
 
@@ -101,106 +95,198 @@ test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements
     );
 });
 
-describe('2026_05_12_222040_rename_qna_advisors_table_and_columns_to_customer_advisors', function () {
-    it('properly updates existing qna advisors and related models', function () {
+describe('2026_06_23_143052_tmp_data_convert_legacy_qna_advisor_morph_types_to_customer_advisor', function () {
+    $migrationPath = 'app-modules/ai/database/migrations/2026_06_23_143052_tmp_data_convert_legacy_qna_advisor_morph_types_to_customer_advisor.php';
+
+    it('converts legacy qna_advisor morph types in audits table', function () use ($migrationPath) {
         isolatedMigration(
-            '2026_05_12_222040_rename_qna_advisors_table_and_columns_to_customer_advisors',
-            function () {
-                // Setup data
-                $user = User::factory()->create();
+            '2026_06_23_143052_tmp_data_convert_legacy_qna_advisor_morph_types_to_customer_advisor',
+            function () use ($migrationPath) {
+                $advisor = CustomerAdvisor::factory()->createQuietly();
 
-                $user->givePermissionTo('qna_advisor.view-any');
-                $user->givePermissionTo('qna_advisor.create');
-                $user->givePermissionTo('qna_advisor.*.delete');
-                $user->givePermissionTo('qna_advisor.*.force-delete');
-                $user->givePermissionTo('qna_advisor.*.restore');
-                $user->givePermissionTo('qna_advisor.*.update');
-                $user->givePermissionTo('qna_advisor.*.view');
-                $user->givePermissionTo('qna_advisor_embed.view-any');
-                $user->givePermissionTo('qna_advisor_embed.*.view');
+                $auditId = (string) Str::uuid();
+                DB::table('audits')->insert([
+                    'id' => $auditId,
+                    'event' => 'created',
+                    'auditable_type' => 'qna_advisor',
+                    'auditable_id' => $advisor->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
-                $advisor = CustomerAdvisor::factory()->create();
-                $category = CustomerAdvisorCategory::factory()->for($advisor, 'customerAdvisor')->create();
-                $link = CustomerAdvisorLink::factory()->create();
-                $message = CustomerAdvisorMessage::factory()->create();
-                $question = CustomerAdvisorQuestion::factory()->create();
-                $thread = CustomerAdvisorThread::factory()->create();
+                $migrate = Artisan::call('migrate', ['--path' => $migrationPath]);
 
-                $file = new CustomerAdvisorFile();
-                $file->advisor()->associate($advisor);
-
-                $settings = app(AiCustomerAdvisorSettings::class);
-                $settings->preselected_model = AiModel::Test;
-                $settings->instructions = 'Test instructions';
-                $settings->background_information = 'Test background information';
-                $settings->restrictions = 'Test restrictions';
-                $settings->save();
-
-                expect($advisor->getTable())->toBe('qna_advisors');
-                expect($category->getTable())->toBe('qna_advisor_categories');
-                expect($file->getTable())->toBe('qna_advisor_files');
-                expect($link->getTable())->toBe('qna_advisor_links');
-                expect($message->getTable())->toBe('qna_advisor_messages');
-                expect($question->getTable())->toBe('qna_advisor_questions');
-                expect($thread->getTable())->toBe('qna_advisor_threads');
-
-                expect($category->customerAdvisor->getKey())->toBe($advisor->getKey());
-
-                expect(DB::table('permission_groups')->where('name', 'QnA Advisor')->exists())->toBeTrue();
-                expect(DB::table('permission_groups')->where('name', 'QnA Advisor Embed')->exists())->toBeTrue();
-
-                expect(DB::table('settings')->where('group', 'ai-qna-advisor')->exists())->toBeTrue();
-
-                // Run migration
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/ai/database/migrations/2026_05_12_222040_rename_qna_advisors_table_and_columns_to_customer_advisors.php']);
-
-                // Verify changes
                 expect($migrate)->toBe(Command::SUCCESS);
 
-                expect($advisor->getTable())->toBe('customer_advisors');
-                expect($category->getTable())->toBe('customer_advisor_categories');
-                expect($file->getTable())->toBe('customer_advisor_files');
-                expect($link->getTable())->toBe('customer_advisor_links');
-                expect($message->getTable())->toBe('customer_advisor_messages');
-                expect($question->getTable())->toBe('customer_advisor_questions');
-                expect($thread->getTable())->toBe('customer_advisor_threads');
+                $audit = DB::table('audits')->where('id', $auditId)->first();
+                expect($audit->auditable_type)->toBe('customer_advisor');
+            }
+        );
+    });
 
-                expect($category->customerAdvisor->getKey())->toBe($advisor->getKey());
+    it('converts legacy qna_advisor_category morph types in audits table', function () use ($migrationPath) {
+        isolatedMigration(
+            '2026_06_23_143052_tmp_data_convert_legacy_qna_advisor_morph_types_to_customer_advisor',
+            function () use ($migrationPath) {
+                $category = CustomerAdvisorCategory::factory()->createQuietly();
 
-                $user->refresh();
+                $auditId = (string) Str::uuid();
+                DB::table('audits')->insert([
+                    'id' => $auditId,
+                    'event' => 'created',
+                    'auditable_type' => 'qna_advisor_category',
+                    'auditable_id' => $category->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
 
-                expect($user->hasPermissionTo('qna_advisor.view-any'))->toBeFalse();
-                expect($user->hasPermissionTo('qna_advisor.create'))->toBeFalse();
-                expect($user->hasPermissionTo('qna_advisor.*.delete'))->toBeFalse();
-                expect($user->hasPermissionTo('qna_advisor.*.force-delete'))->toBeFalse();
-                expect($user->hasPermissionTo('qna_advisor.*.restore'))->toBeFalse();
-                expect($user->hasPermissionTo('qna_advisor.*.update'))->toBeFalse();
-                expect($user->hasPermissionTo('qna_advisor.*.view'))->toBeFalse();
-                expect($user->hasPermissionTo('qna_advisor_embed.view-any'))->toBeFalse();
-                expect($user->hasPermissionTo('qna_advisor_embed.*.view'))->toBeFalse();
+                $migrate = Artisan::call('migrate', ['--path' => $migrationPath]);
 
-                expect($user->hasPermissionTo('customer_advisor.view-any'))->toBeTrue();
-                expect($user->hasPermissionTo('customer_advisor.create'))->toBeTrue();
-                expect($user->hasPermissionTo('customer_advisor.*.delete'))->toBeTrue();
-                expect($user->hasPermissionTo('customer_advisor.*.force-delete'))->toBeTrue();
-                expect($user->hasPermissionTo('customer_advisor.*.restore'))->toBeTrue();
-                expect($user->hasPermissionTo('customer_advisor.*.update'))->toBeTrue();
-                expect($user->hasPermissionTo('customer_advisor.*.view'))->toBeTrue();
-                expect($user->hasPermissionTo('customer_advisor_embed.view-any'))->toBeTrue();
-                expect($user->hasPermissionTo('customer_advisor_embed.*.view'))->toBeTrue();
+                expect($migrate)->toBe(Command::SUCCESS);
 
-                expect($settings->preselected_model)->toBe(AiModel::Test);
-                expect($settings->instructions)->toBe('Test instructions');
-                expect($settings->background_information)->toBe('Test background information');
-                expect($settings->restrictions)->toBe('Test restrictions');
+                $audit = DB::table('audits')->where('id', $auditId)->first();
+                expect($audit->auditable_type)->toBe('customer_advisor_category');
+            }
+        );
+    });
 
-                expect(DB::table('permission_groups')->where('name', 'Customer Advisor')->exists())->toBeTrue();
-                expect(DB::table('permission_groups')->where('name', 'Customer Advisor Embed')->exists())->toBeTrue();
-                expect(DB::table('permission_groups')->where('name', 'QnA Advisor')->exists())->toBeFalse();
-                expect(DB::table('permission_groups')->where('name', 'QnA Advisor Embed')->exists())->toBeFalse();
+    it('converts legacy qna_advisor morph types in media table', function () use ($migrationPath) {
+        isolatedMigration(
+            '2026_06_23_143052_tmp_data_convert_legacy_qna_advisor_morph_types_to_customer_advisor',
+            function () use ($migrationPath) {
+                $advisor = CustomerAdvisor::factory()->createQuietly();
 
-                expect(DB::table('settings')->where('group', 'ai-customer-advisor')->exists())->toBeTrue();
-                expect(DB::table('settings')->where('group', 'ai-qna-advisor')->exists())->toBeFalse();
+                DB::table('media')->insert([
+                    'model_type' => 'qna_advisor',
+                    'model_id' => $advisor->id,
+                    'collection_name' => 'avatar',
+                    'name' => 'test',
+                    'file_name' => 'test.png',
+                    'disk' => 'local',
+                    'size' => 1024,
+                    'manipulations' => '[]',
+                    'custom_properties' => '[]',
+                    'generated_conversions' => '[]',
+                    'responsive_images' => '[]',
+                ]);
+
+                $mediaId = DB::table('media')->where('model_id', $advisor->id)->value('id');
+
+                $migrate = Artisan::call('migrate', ['--path' => $migrationPath]);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                $media = DB::table('media')->where('id', $mediaId)->first();
+                expect($media->model_type)->toBe('customer_advisor');
+            }
+        );
+    });
+
+    it('converts legacy qna_advisor_file morph types in open_ai_vector_stores table', function () use ($migrationPath) {
+        isolatedMigration(
+            '2026_06_23_143052_tmp_data_convert_legacy_qna_advisor_morph_types_to_customer_advisor',
+            function () use ($migrationPath) {
+                $file = CustomerAdvisorFile::factory()->createQuietly();
+
+                $vectorStoreId = (string) Str::uuid();
+                DB::table('open_ai_vector_stores')->insert([
+                    'id' => $vectorStoreId,
+                    'file_type' => 'qna_advisor_file',
+                    'file_id' => $file->id,
+                    'deployment_hash' => 'test-hash',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                $migrate = Artisan::call('migrate', ['--path' => $migrationPath]);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                $vectorStore = DB::table('open_ai_vector_stores')->where('id', $vectorStoreId)->first();
+                expect($vectorStore->file_type)->toBe('customer_advisor_file');
+            }
+        );
+    });
+
+    it('converts legacy qna_advisor morph types in open_ai_vector_stores context column', function () use ($migrationPath) {
+        isolatedMigration(
+            '2026_06_23_143052_tmp_data_convert_legacy_qna_advisor_morph_types_to_customer_advisor',
+            function () use ($migrationPath) {
+                $advisor = CustomerAdvisor::factory()->createQuietly();
+                $file = CustomerAdvisorFile::factory()->createQuietly();
+
+                $vectorStoreId = (string) Str::uuid();
+                DB::table('open_ai_vector_stores')->insert([
+                    'id' => $vectorStoreId,
+                    'file_type' => 'customer_advisor_file',
+                    'file_id' => $file->id,
+                    'context_type' => 'qna_advisor',
+                    'context_id' => $advisor->id,
+                    'deployment_hash' => 'test-hash',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                $migrate = Artisan::call('migrate', ['--path' => $migrationPath]);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                $vectorStore = DB::table('open_ai_vector_stores')->where('id', $vectorStoreId)->first();
+                expect($vectorStore->context_type)->toBe('customer_advisor');
+            }
+        );
+    });
+
+    it('does not modify rows that already have customer_advisor morph types', function () use ($migrationPath) {
+        isolatedMigration(
+            '2026_06_23_143052_tmp_data_convert_legacy_qna_advisor_morph_types_to_customer_advisor',
+            function () use ($migrationPath) {
+                $advisor = CustomerAdvisor::factory()->createQuietly();
+
+                $auditId = (string) Str::uuid();
+                DB::table('audits')->insert([
+                    'id' => $auditId,
+                    'event' => 'created',
+                    'auditable_type' => 'customer_advisor',
+                    'auditable_id' => $advisor->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                $migrate = Artisan::call('migrate', ['--path' => $migrationPath]);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                $audit = DB::table('audits')->where('id', $auditId)->first();
+                expect($audit->auditable_type)->toBe('customer_advisor');
+            }
+        );
+    });
+
+    it('can be rolled back', function () use ($migrationPath) {
+        isolatedMigration(
+            '2026_06_23_143052_tmp_data_convert_legacy_qna_advisor_morph_types_to_customer_advisor',
+            function () use ($migrationPath) {
+                $advisor = CustomerAdvisor::factory()->createQuietly();
+
+                $auditId = (string) Str::uuid();
+                DB::table('audits')->insert([
+                    'id' => $auditId,
+                    'event' => 'created',
+                    'auditable_type' => 'qna_advisor',
+                    'auditable_id' => $advisor->id,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                Artisan::call('migrate', ['--path' => $migrationPath]);
+
+                $rollback = Artisan::call('migrate:rollback', ['--path' => $migrationPath]);
+
+                expect($rollback)->toBe(Command::SUCCESS);
+
+                $audit = DB::table('audits')->where('id', $auditId)->first();
+                expect($audit->auditable_type)->toBe('qna_advisor');
             }
         );
     });

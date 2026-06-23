@@ -37,7 +37,6 @@
 namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Observers\CustomerAdvisorQuestionObserver;
-use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -62,11 +61,5 @@ class CustomerAdvisorQuestion extends BaseModel implements Auditable
     public function category(): BelongsTo
     {
         return $this->belongsTo(CustomerAdvisorCategory::class, 'category_id');
-    }
-
-    // TODO: Cleanup Task - RenameQnaAdvisorsFeature, remove the getTable() method
-    public function getTable()
-    {
-        return RenameQnaAdvisorsFeature::active() ? 'customer_advisor_questions' : 'qna_advisor_questions';
     }
 }

@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\CreateCustomerAdvis
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Tests\RequestFactories\CustomerAdvisorRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Storage;
@@ -73,7 +72,7 @@ test('Create Customer Advisor is gated with proper access control', function () 
     livewire(CreateCustomerAdvisor::class)
         ->assertForbidden();
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.create'] : ['qna_advisor.view-any', 'qna_advisor.create']);
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.create']);
 
     actingAs($user)
         ->get(
@@ -94,7 +93,7 @@ test('can create Customer Advisor', function () {
 
     assertDatabaseCount(CustomerAdvisor::class, 0);
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.create'] : ['qna_advisor.view-any', 'qna_advisor.create']);
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.create']);
 
     actingAs($user);
 
