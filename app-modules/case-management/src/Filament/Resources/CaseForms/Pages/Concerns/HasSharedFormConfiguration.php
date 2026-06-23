@@ -40,11 +40,13 @@ use AdvisingApp\CaseManagement\Models\CaseForm;
 use AdvisingApp\CaseManagement\Models\CaseFormField;
 use AdvisingApp\CaseManagement\Models\CaseFormStep;
 use AdvisingApp\Form\Enums\Rounding;
-use AdvisingApp\Form\Filament\Blocks\Legacy\DefaultFieldBlockRegistry;
+use AdvisingApp\Form\Filament\Blocks\DefaultFieldBlockRegistry;
 use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
@@ -53,7 +55,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 trait HasSharedFormConfiguration
@@ -145,19 +146,24 @@ trait HasSharedFormConfiguration
         ];
     }
 
-    public function fieldBuilder(): TiptapEditor
+    public function fieldBuilder(): RichEditor
     {
-        return TiptapEditor::make('content')
-            ->blocks(DefaultFieldBlockRegistry::get())
-            ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
+        return RichEditor::make('content')
+            ->json()
+            ->customBlocks(DefaultFieldBlockRegistry::get())
+            ->toolbarButtons([
+                ['bold', 'italic', 'link'],
+                [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                ['small'],
+                ['grid', 'customBlocks'],
+            ])
+            ->activePanel('customBlocks')
             ->placeholder('Drag blocks here to build your case form')
             ->hiddenLabel()
-            ->saveRelationshipsUsing(function (TiptapEditor $component, CaseForm | CaseFormStep $record) {
+            ->saveRelationshipsUsing(function (RichEditor $component, CaseForm | CaseFormStep $record) {
                 if ($component->isDisabled()) {
                     return;
                 }
-
-                $record->wasRecentlyCreated && $component->processImages();
 
                 $caseForm = $record instanceof CaseForm ? $record : $record->submissible;
                 $caseFormStep = $record instanceof CaseFormStep ? $record : null;
@@ -167,10 +173,14 @@ trait HasSharedFormConfiguration
                     ->when($caseFormStep, fn (EloquentBuilder $query) => $query->whereBelongsTo($caseFormStep, 'step'))
                     ->delete();
 
-                $content = [];
+                $content = $component->getState();
 
-                if (filled($component->getState())) {
-                    $content = $component->decodeBlocks($component->getJSON(decoded: true));
+                if (is_string($content)) {
+                    $content = json_decode($content, true);
+                }
+
+                if (! is_array($content)) {
+                    $content = [];
                 }
 
                 $content['content'] = $this->saveFieldsFromComponents(
@@ -181,6 +191,8 @@ trait HasSharedFormConfiguration
 
                 $record->content = $content;
                 $record->save();
+
+                $component->state($content);
             })
             ->dehydrated(false)
             ->columnSpanFull()
@@ -196,37 +208,32 @@ trait HasSharedFormConfiguration
                 continue;
             }
 
-            if ($component['type'] !== 'tiptapBlock') {
+            if (($component['type'] ?? null) !== 'customBlock') {
                 continue;
             }
 
             $componentAttributes = $component['attrs'] ?? [];
+            $config = $componentAttributes['config'] ?? [];
 
-            if (array_key_exists('id', $componentAttributes)) {
-                $id = $componentAttributes['id'] ?? null;
-                unset($componentAttributes['id']);
-            }
+            $id = $config['fieldId'] ?? null;
+            unset($config['fieldId']);
 
-            if (array_key_exists('label', $componentAttributes['data'])) {
-                $label = $componentAttributes['data']['label'] ?? null;
-                unset($componentAttributes['data']['label']);
-            }
+            $label = $config['label'] ?? null;
+            unset($config['label']);
 
-            if (array_key_exists('isRequired', $componentAttributes['data'])) {
-                $isRequired = $componentAttributes['data']['isRequired'] ?? null;
-                unset($componentAttributes['data']['isRequired']);
-            }
+            $isRequired = $config['isRequired'] ?? null;
+            unset($config['isRequired']);
 
             /** @var CaseFormField $field */
-            $field = $caseForm->fields()->findOrNew($id ?? null);
+            $field = $caseForm->fields()->findOrNew($id);
             $field->step()->associate($caseFormStep);
-            $field->label = $label ?? $componentAttributes['type'];
+            $field->label = $label ?? $componentAttributes['id'];
             $field->is_required = $isRequired ?? false;
-            $field->type = $componentAttributes['type'];
-            $field->config = $componentAttributes['data'];
+            $field->type = $componentAttributes['id'];
+            $field->config = $config;
             $field->save();
 
-            $components[$componentKey]['attrs']['id'] = $field->id;
+            $components[$componentKey]['attrs']['config']['fieldId'] = $field->id;
         }
 
         return $components;

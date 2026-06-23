@@ -79,14 +79,15 @@ class EventRegistrationFormStepFactory extends Factory
                 'step_id' => $eventRegistrationFormStep->getKey(),
             ])
             ->map(fn (EventRegistrationFormField $field) => [
-                'type' => 'tiptapBlock',
+                'type' => 'customBlock',
                 'attrs' => [
-                    'type' => $field->type,
-                    'data' => [
+                    'config' => [
+                        'fieldId' => $field->getKey(),
                         'label' => $field->label,
                         'isRequired' => $field->is_required,
+                        ...$field->config,
                     ],
-                    'id' => $field->getKey(),
+                    'id' => $field->type,
                 ],
             ])
             ->toArray();

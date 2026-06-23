@@ -64,7 +64,6 @@ use Filament\Support\Assets\Js;
 use Filament\Support\Enums\Width;
 use Filament\Tables\Columns\Column;
 use Filament\View\PanelsRenderHook;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -94,13 +93,6 @@ class AdminPanelProvider extends PanelProvider
         Column::configureUsing(fn ($column) => $column->translateLabel());
         ExportAction::configureUsing(fn (ExportAction $action) => $action->maxRows(100000));
         ImportAction::configureUsing(fn (ImportAction $action) => $action->maxRows(100000));
-        TiptapEditor::configureUsing(fn (TiptapEditor $editor) => $editor->gridLayouts([
-            'two-columns',
-            'three-columns',
-            'four-columns',
-            'asymmetric-left-thirds',
-            'asymmetric-right-thirds',
-        ]));
     }
 
     public function panel(Panel $panel): Panel

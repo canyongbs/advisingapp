@@ -36,6 +36,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use Tiptap\Editor;
 
 return new class () extends Migration {
     public function up(): void
@@ -53,8 +54,7 @@ return new class () extends Migration {
                 DB::table('engagements')
                     ->where('id', $engagement->id)
                     ->update([
-                        'body' => tiptap_converter()
-                            ->getEditor()
+                        'body' => (new Editor())
                             ->setContent($body)
                             ->getJSON(),
                         'updated_at' => now(),
@@ -69,7 +69,7 @@ return new class () extends Migration {
             ->whereNot('body', 'like', '%"type":"mergeTag"%')
             ->where('body', 'like', '%"type":"hardBreak"%')
             ->eachById(function ($engagement) {
-                $text = str(tiptap_converter()->getEditor()->setContent($engagement->body)->getText())
+                $text = str((new Editor())->setContent($engagement->body)->getText())
                     ->replace("\n\n\n\n\n\n", "\n")
                     ->toString();
 

@@ -61,17 +61,11 @@ class ViewEvent extends ViewRecord
                         TextEntry::make('description')
                             ->label('Description')
                             ->state(function (Event $record): string {
-                                $description = $record->description;
-
-                                if (empty($description)) {
+                                if (blank($record->description)) {
                                     return '-';
                                 }
 
-                                if (isset($description['type']) && isset($description['content'])) {
-                                    return tiptap_converter()->record($record, attribute: 'description')->asHTML($description);
-                                }
-
-                                return '-';
+                                return $record->getRichContentAttribute('description')?->toHtml() ?? '-';
                             })
                             ->html()
                             ->columnSpanFull(),
