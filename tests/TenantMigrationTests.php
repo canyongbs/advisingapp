@@ -310,25 +310,83 @@ test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements
     isolatedMigration(
         '2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements_table',
         function () {
-            $action = CampaignAction::factory()->createQuietly();
-
-            $engagementWithSource = Engagement::factory()->createQuietly([
-                'campaign_action_id' => $action->id,
+            $userId = (string) Str::uuid();
+            DB::table('users')->insert([
+                'id' => $userId,
+                'name' => 'Test User',
+                'email' => 'test-engagement-migration@example.com',
+                'password' => bcrypt('password'),
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
-            $engagementWithoutSource = Engagement::factory()->createQuietly([
+            $actionId = (string) Str::uuid();
+            $campaignId = (string) Str::uuid();
+            DB::table('campaigns')->insert([
+                'id' => $campaignId,
+                'name' => 'Test Campaign',
+                'enabled' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            DB::table('campaign_actions')->insert([
+                'id' => $actionId,
+                'campaign_id' => $campaignId,
+                'type' => 'engagement',
+                'data' => json_encode([]),
+                'execute_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $recipientId = (string) Str::uuid();
+            DB::table('prospects')->insert([
+                'id' => $recipientId,
+                'first_name' => 'Test',
+                'last_name' => 'Prospect',
+                'full_name' => 'Test Prospect',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $engagementWithSourceId = (string) Str::uuid();
+            DB::table('engagements')->insert([
+                'id' => $engagementWithSourceId,
+                'user_id' => $userId,
+                'recipient_type' => 'prospect',
+                'recipient_id' => $recipientId,
+                'subject' => json_encode(['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test']]]]]),
+                'body' => json_encode(['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test body']]]]]),
+                'channel' => 'email',
+                'campaign_action_id' => $actionId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $engagementWithoutSourceId = (string) Str::uuid();
+            DB::table('engagements')->insert([
+                'id' => $engagementWithoutSourceId,
+                'user_id' => $userId,
+                'recipient_type' => 'prospect',
+                'recipient_id' => $recipientId,
+                'subject' => json_encode(['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test']]]]]),
+                'body' => json_encode(['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test body']]]]]),
+                'channel' => 'email',
                 'campaign_action_id' => null,
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
 
             $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements_table.php']);
 
             expect($migrate)->toBe(Command::SUCCESS);
 
-            $withSource = DB::table('engagements')->where('id', $engagementWithSource->id)->first();
+            $withSource = DB::table('engagements')->where('id', $engagementWithSourceId)->first();
 
-            expect($withSource->source_id)->toBe($action->id); /** @phpstan-ignore-line */
+            expect($withSource->source_id)->toBe($actionId); /** @phpstan-ignore-line */
             expect($withSource->source_type)->toBe('campaign_action'); /** @phpstan-ignore-line */
-            $withoutSource = DB::table('engagements')->where('id', $engagementWithoutSource->id)->first();
+            $withoutSource = DB::table('engagements')->where('id', $engagementWithoutSourceId)->first();
 
             expect($withoutSource->source_id)->toBeNull(); /** @phpstan-ignore-line */
             expect($withoutSource->source_type)->toBeNull(); /** @phpstan-ignore-line */
