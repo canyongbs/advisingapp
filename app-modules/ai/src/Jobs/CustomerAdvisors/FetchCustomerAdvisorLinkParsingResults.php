@@ -59,7 +59,7 @@ class FetchCustomerAdvisorLinkParsingResults implements ShouldQueue, TenantAware
 
     public int $timeout = 600;
 
-    public $uniqueFor = 900;
+    public int $uniqueFor = 900;
 
     public function __construct(
         protected CustomerAdvisorLink $link,

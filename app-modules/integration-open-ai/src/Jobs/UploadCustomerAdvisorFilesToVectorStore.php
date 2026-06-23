@@ -61,7 +61,7 @@ class UploadCustomerAdvisorFilesToVectorStore implements ShouldQueue, TenantAwar
      */
     public $tries = 15;
 
-    public $uniqueFor = 900;
+    public int $uniqueFor = 900;
 
     public function __construct(
         protected CustomerAdvisor $advisor,

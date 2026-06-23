@@ -35,10 +35,12 @@
 */
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
+    /** @var list<array{string, string}> */
     protected array $morphColumns = [
         ['audits', 'auditable_type'],
         ['media', 'model_type'],
@@ -113,7 +115,7 @@ return new class () extends Migration {
         foreach ($lockConfigs as $config) {
             DB::table($config['table'])
                 ->select($config['key_column'])
-                ->chunkById(100, function ($records) use ($config) {
+                ->chunkById(100, function (Collection $records) use ($config) {
                     foreach ($records as $record) {
                         $lockKey = "laravel_unique_job:{$config['job_class']}:{$record->id}";
 
