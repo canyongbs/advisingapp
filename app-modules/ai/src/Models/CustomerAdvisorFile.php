@@ -119,5 +119,4 @@ class CustomerAdvisorFile extends BaseModel implements AiFile, HasMedia
     {
         return $this->morphMany(OpenAiVectorStore::class, 'file');
     }
-
 }

@@ -79,5 +79,4 @@ class CustomerAdvisorMessage extends BaseModel
     {
         return $this->morphTo('author');
     }
-
 }

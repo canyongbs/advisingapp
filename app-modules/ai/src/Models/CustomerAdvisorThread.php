@@ -99,5 +99,4 @@ class CustomerAdvisorThread extends BaseModel
     {
         return $this->belongsTo(Interaction::class);
     }
-
 }

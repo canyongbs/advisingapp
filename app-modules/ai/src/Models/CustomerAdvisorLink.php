@@ -111,5 +111,4 @@ class CustomerAdvisorLink extends BaseModel implements AiFile, Auditable
     {
         return $this->morphMany(OpenAiVectorStore::class, 'file');
     }
-
 }
