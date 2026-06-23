@@ -34,18 +34,11 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Models\CustomerAdvisorFile;
-use AdvisingApp\Ai\Models\CustomerAdvisorLink;
-use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
-use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
-use AdvisingApp\Ai\Models\CustomerAdvisorThread;
-use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\Engagement;
-use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;

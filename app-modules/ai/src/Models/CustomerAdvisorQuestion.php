@@ -62,5 +62,4 @@ class CustomerAdvisorQuestion extends BaseModel implements Auditable
     {
         return $this->belongsTo(CustomerAdvisorCategory::class, 'category_id');
     }
-
 }
