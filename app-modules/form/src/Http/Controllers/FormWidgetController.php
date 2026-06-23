@@ -56,7 +56,6 @@ use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\FormVersioningFeature;
 use App\Features\PastSubmissionsFeature;
-use App\Features\PhoneNumberLookupFeature;
 use App\Http\Controllers\Controller;
 use Closure;
 use Filament\Support\Colors\Color;
@@ -439,7 +438,6 @@ class FormWidgetController extends Controller
             $phoneNumber = $prospect->phoneNumbers()->create([
                 'number' => $data['mobile'],
                 'type' => 'Mobile',
-                ...(! PhoneNumberLookupFeature::active() ? ['can_receive_sms' => true] : []),
             ]);
             $prospect->primaryPhoneNumber()->associate($phoneNumber);
 

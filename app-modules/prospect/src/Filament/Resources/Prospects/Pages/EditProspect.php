@@ -45,7 +45,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\DataTransferObjects\AutocompletedAddress;
-use App\Features\PhoneNumberLookupFeature;
 use App\Filament\Forms\Components\AddressInput;
 use App\Filament\Forms\Components\UserSelect;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
@@ -54,7 +53,6 @@ use DefStudio\SearchableInput\DTO\SearchResult;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -197,11 +195,6 @@ class EditProspect extends EditRecord
                                         'Home',
                                         'Work',
                                     ]),
-                                Checkbox::make('can_receive_sms')
-                                    ->label('Can receive SMS messages')
-                                    ->columnSpanFull()
-                                    ->default(true)
-                                    ->visible(fn (): bool => ! PhoneNumberLookupFeature::active()),
                             ])
                             ->orderColumn('order')
                             ->itemLabel(fn (Repeater $component, Schema $schema): ?string => (Arr::first($component->getChildComponentContainers())->getStatePath() === $schema->getStatePath()) ? 'Primary phone number' : 'Additional phone number')

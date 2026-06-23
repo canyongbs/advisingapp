@@ -43,7 +43,6 @@ use AdvisingApp\StudentDataModel\Exceptions\PhoneNumberLookupInvalidNumber;
 use AdvisingApp\StudentDataModel\Exceptions\PhoneNumberLookupRateLimited;
 use AdvisingApp\StudentDataModel\Jobs\Middleware\SkipWhilePhoneNumberLookupIsRateLimited;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
-use App\Features\PhoneNumberLookupFeature;
 use Illuminate\Support\Facades\Cache;
 
 use function Pest\Laravel\travelTo;
@@ -62,8 +61,6 @@ function fakeTelnyxLookup(array $data, int $status = 200, array $responseHeaders
 }
 
 beforeEach(function () {
-    PhoneNumberLookupFeature::activate();
-
     $settings = app(TwilioSettings::class);
     $settings->provider = SmsMessagingProvider::Telnyx;
     $settings->telnyx_api_key = 'test-telnyx-api-key';
@@ -236,16 +233,6 @@ it('reports as not configured when Telnyx is not the selected provider', functio
     $settings = app(TwilioSettings::class);
     $settings->is_enabled = true;
     $settings->provider = SmsMessagingProvider::Twilio;
-    $settings->save();
-
-    expect(app(PhoneNumberLookupService::class)->isConfigured())->toBeFalse();
-});
-
-it('reports as not configured when the phone number lookup feature is disabled', function () {
-    PhoneNumberLookupFeature::deactivate();
-
-    $settings = app(TwilioSettings::class);
-    $settings->is_enabled = true;
     $settings->save();
 
     expect(app(PhoneNumberLookupService::class)->isConfigured())->toBeFalse();

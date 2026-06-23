@@ -38,7 +38,6 @@ namespace AdvisingApp\Prospect\Database\Factories;
 
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
-use App\Features\PhoneNumberLookupFeature;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -55,32 +54,21 @@ class ProspectPhoneNumberFactory extends Factory
             'number' => $this->faker->phoneNumber(),
             'ext' => null,
             'type' => $this->faker->randomElement(['Mobile', 'Home', 'Work']),
-            ...(! PhoneNumberLookupFeature::active() ? [
-                'can_receive_sms' => $this->faker->boolean(),
-            ] : []),
         ];
     }
 
     public function canNotReceiveSms(): Factory
     {
-        if (PhoneNumberLookupFeature::active()) {
-            return $this->afterCreating(function (ProspectPhoneNumber $phoneNumber): void {
-                PhoneNumberLookup::factory()->invalid()->create(['number' => $phoneNumber->number]);
-            });
-        }
-
-        return $this->state(['can_receive_sms' => false]);
+        return $this->afterCreating(function (ProspectPhoneNumber $phoneNumber): void {
+            PhoneNumberLookup::factory()->invalid()->create(['number' => $phoneNumber->number]);
+        });
     }
 
     public function canReceiveSms(): Factory
     {
-        if (PhoneNumberLookupFeature::active()) {
-            return $this->afterCreating(function (ProspectPhoneNumber $phoneNumber): void {
-                PhoneNumberLookup::factory()->mobile()->create(['number' => $phoneNumber->number]);
-            });
-        }
-
-        return $this->state(['can_receive_sms' => true]);
+        return $this->afterCreating(function (ProspectPhoneNumber $phoneNumber): void {
+            PhoneNumberLookup::factory()->mobile()->create(['number' => $phoneNumber->number]);
+        });
     }
 
     public function withExtension(): Factory

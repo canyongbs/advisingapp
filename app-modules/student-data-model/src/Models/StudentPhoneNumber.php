@@ -41,7 +41,6 @@ use AdvisingApp\StudentDataModel\Enums\PhoneHealthStatus;
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 use AdvisingApp\StudentDataModel\Models\Concerns\IsTextable;
 use AdvisingApp\StudentDataModel\Observers\StudentPhoneNumberObserver;
-use App\Features\PhoneNumberLookupFeature;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
@@ -64,12 +63,7 @@ class StudentPhoneNumber extends BaseModel implements Auditable
         'number',
         'ext',
         'type',
-        'can_receive_sms',
         'order',
-    ];
-
-    protected $casts = [
-        'can_receive_sms' => 'boolean',
     ];
 
     /**
@@ -113,15 +107,10 @@ class StudentPhoneNumber extends BaseModel implements Auditable
         if ($this->smsOptOut()->exists()) {
             return PhoneHealthStatus::OptedOut;
         }
+        $hasTextableLookup = $this->phoneNumberLookup()
+            ->whereIn('status', PhoneNumberLookupStatus::textableStatuses())
+            ->exists();
 
-        if (PhoneNumberLookupFeature::active()) {
-            $hasTextableLookup = $this->phoneNumberLookup()
-                ->whereIn('status', PhoneNumberLookupStatus::textableStatuses())
-                ->exists();
-
-            return $hasTextableLookup ? PhoneHealthStatus::Healthy : PhoneHealthStatus::NoSmsCapability;
-        }
-
-        return $this->can_receive_sms ? PhoneHealthStatus::Healthy : PhoneHealthStatus::NoSmsCapability;
+        return $hasTextableLookup ? PhoneHealthStatus::Healthy : PhoneHealthStatus::NoSmsCapability;
     }
 }
