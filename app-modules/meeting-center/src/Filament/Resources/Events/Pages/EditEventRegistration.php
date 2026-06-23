@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 
-use AdvisingApp\Form\Filament\Blocks\Legacy\FormFieldBlockRegistry;
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
@@ -44,6 +44,8 @@ use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
@@ -53,7 +55,6 @@ use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 class EditEventRegistration extends EditRecord
@@ -126,19 +127,24 @@ class EditEventRegistration extends EditRecord
         ]);
     }
 
-    public function fieldBuilder(): TiptapEditor
+    public function fieldBuilder(): RichEditor
     {
-        return TiptapEditor::make('content')
-            ->blocks(FormFieldBlockRegistry::getForEvents())
-            ->tools(['bold', 'italic', 'small', '|', 'heading', 'bullet-list', 'ordered-list', 'hr', '|', 'link', 'grid', 'blocks'])
+        return RichEditor::make('content')
+            ->json()
+            ->customBlocks(FormFieldBlockRegistry::getForEvents())
+            ->toolbarButtons([
+                ['bold', 'italic', 'link'],
+                [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                ['small'],
+                ['grid', 'customBlocks'],
+            ])
+            ->activePanel('customBlocks')
             ->placeholder('Drag blocks here to build your form')
             ->hiddenLabel()
-            ->saveRelationshipsUsing(function (TiptapEditor $component, EventRegistrationForm | EventRegistrationFormStep $record) {
+            ->saveRelationshipsUsing(function (RichEditor $component, EventRegistrationForm | EventRegistrationFormStep $record) {
                 if ($component->isDisabled()) {
                     return;
                 }
-
-                $record->wasRecentlyCreated && $component->processImages();
 
                 $form = $record instanceof EventRegistrationForm ? $record : $record->submissible;
                 assert($form instanceof EventRegistrationForm);
@@ -149,10 +155,14 @@ class EditEventRegistration extends EditRecord
                     ->when($formStep, fn (EloquentBuilder $query) => $query->whereBelongsTo($formStep, 'step'))
                     ->delete();
 
-                $content = [];
+                $content = $component->getState();
 
-                if (filled($component->getState())) {
-                    $content = $component->decodeBlocks($component->getJSON(decoded: true));
+                if (is_string($content)) {
+                    $content = json_decode($content, true);
+                }
+
+                if (! is_array($content)) {
+                    $content = [];
                 }
 
                 $content['content'] = $this->saveFieldsFromComponents(
@@ -163,6 +173,8 @@ class EditEventRegistration extends EditRecord
 
                 $record->content = $content;
                 $record->save();
+
+                $component->state($content);
             })
             ->dehydrated(false)
             ->columnSpanFull()
@@ -183,37 +195,32 @@ class EditEventRegistration extends EditRecord
                 continue;
             }
 
-            if ($component['type'] !== 'tiptapBlock') {
+            if (($component['type'] ?? null) !== 'customBlock') {
                 continue;
             }
 
             $componentAttributes = $component['attrs'] ?? [];
+            $config = $componentAttributes['config'] ?? [];
 
-            if (array_key_exists('id', $componentAttributes)) {
-                $id = $componentAttributes['id'] ?? null;
-                unset($componentAttributes['id']);
-            }
+            $id = $config['fieldId'] ?? null;
+            unset($config['fieldId']);
 
-            if (array_key_exists('label', $componentAttributes['data'])) {
-                $label = $componentAttributes['data']['label'] ?? null;
-                unset($componentAttributes['data']['label']);
-            }
+            $label = $config['label'] ?? null;
+            unset($config['label']);
 
-            if (array_key_exists('isRequired', $componentAttributes['data'])) {
-                $isRequired = $componentAttributes['data']['isRequired'] ?? null;
-                unset($componentAttributes['data']['isRequired']);
-            }
+            $isRequired = $config['isRequired'] ?? null;
+            unset($config['isRequired']);
 
             /** @var EventRegistrationFormField $field */
-            $field = $form->fields()->findOrNew($id ?? null);
+            $field = $form->fields()->findOrNew($id);
             $field->step()->associate($eventRegistrationFormStep);
-            $field->label = $label ?? $componentAttributes['type'];
+            $field->label = $label ?? $componentAttributes['id'];
             $field->is_required = $isRequired ?? false;
-            $field->type = $componentAttributes['type'];
-            $field->config = $componentAttributes['data'];
+            $field->type = $componentAttributes['id'];
+            $field->config = $config;
             $field->save();
 
-            $components[$componentKey]['attrs']['id'] = $field->id;
+            $components[$componentKey]['attrs']['config']['fieldId'] = $field->id;
         }
 
         return $components;

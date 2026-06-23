@@ -38,9 +38,8 @@ namespace AdvisingApp\Form\Actions;
 
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\CaseManagement\Models\CaseForm;
+use AdvisingApp\Form\Filament\Blocks\DefaultFieldBlockRegistry;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
-use AdvisingApp\Form\Filament\Blocks\Legacy\DefaultFieldBlockRegistry as LegacyDefaultFieldBlockRegistry;
-use AdvisingApp\Form\Filament\Blocks\Legacy\FormFieldBlockRegistry as LegacyFormFieldBlockRegistry;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
@@ -54,8 +53,8 @@ class ResolveBlockRegistry
         return match ($submissible::class) {
             Form::class, Application::class => FormFieldBlockRegistry::keyByType(),
             Survey::class => SurveyFieldBlockRegistry::keyByType(),
-            EventRegistrationForm::class => LegacyFormFieldBlockRegistry::keyByTypeForEvents(),
-            CaseForm::class => LegacyDefaultFieldBlockRegistry::keyByType(),
+            EventRegistrationForm::class => FormFieldBlockRegistry::keyByTypeForEvents(),
+            CaseForm::class => DefaultFieldBlockRegistry::keyByType(),
         };
     }
 }
