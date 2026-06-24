@@ -85,6 +85,7 @@ class ListBasicNeedsCategories extends ListRecords
             ->toolbarActions([
                 BulkActionGroup::make([
                     BulkAction::make('delete')
+                        ->authorize(fn (): bool => auth()->user()->can('settings.*.delete'))
                         ->requiresConfirmation()
                         ->color('danger')
                         ->icon('heroicon-s-trash')

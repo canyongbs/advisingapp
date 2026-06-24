@@ -104,6 +104,7 @@ class ListInteractionInitiatives extends ListRecords
                                     ->label('Enabled')
                                     ->live()
                                     ->afterStateUpdated(function (bool $state): void {
+                                        abort_unless(auth()->user()?->can('settings.*.update') ?? false, 403);
                                         $settings = $this->getSettings();
                                         $settings->is_initiative_enabled = $state;
                                         $settings->save();
@@ -123,6 +124,7 @@ class ListInteractionInitiatives extends ListRecords
                                     ->live()
                                     ->visible(fn (Get $get) => $get('is_initiative_enabled'))
                                     ->afterStateUpdated(function (bool $state): void {
+                                        abort_unless(auth()->user()?->can('settings.*.update') ?? false, 403);
                                         $settings = $this->getSettings();
                                         $settings->is_initiative_required = $state;
                                         $settings->save();
@@ -140,6 +142,7 @@ class ListInteractionInitiatives extends ListRecords
                             ]),
                     ]),
             ])
+            ->disabled(! auth()->user()->can('settings.*.update'))
             ->statePath('data');
     }
 
