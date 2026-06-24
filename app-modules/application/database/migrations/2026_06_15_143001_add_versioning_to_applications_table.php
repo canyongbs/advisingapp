@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\FormVersioningFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -50,9 +49,6 @@ return new class () extends Migration {
                 $table->timestamp('archived_at')->nullable();
             });
 
-            // TODO: Cleanup Task - FormVersioningFeature - This backfill can be removed once all environments have run this migration
-            DB::statement('UPDATE applications SET root_id = id WHERE root_id IS NULL');
-
             Schema::table('applications', function (Blueprint $table) {
                 $table->uuid('root_id')->nullable(false)->change();
                 $table->foreign('root_id')->references('id')->on('applications');
@@ -63,23 +59,17 @@ return new class () extends Migration {
                 $table->dropUnique(['name']);
                 $table->uniqueIndex(['name'])->where(fn (Builder $condition) => $condition->whereNull('archived_at'));
             });
-
-            FormVersioningFeature::activate();
         });
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            FormVersioningFeature::deactivate();
-
-            Schema::table('applications', function (Blueprint $table) {
-                $table->dropIndex('applications_name_unique_index');
-                $table->unique('name');
-                $table->dropForeign(['root_id']);
-                $table->dropIndex(['root_id']);
-                $table->dropColumn(['root_id', 'archived_at']);
-            });
+        Schema::table('applications', function (Blueprint $table) {
+            $table->dropIndex('applications_name_unique_index');
+            $table->unique('name');
+            $table->dropForeign(['root_id']);
+            $table->dropIndex(['root_id']);
+            $table->dropColumn(['root_id', 'archived_at']);
         });
     }
 };

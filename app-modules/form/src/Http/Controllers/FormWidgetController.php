@@ -54,7 +54,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\FormVersioningFeature;
 use App\Features\PastSubmissionsFeature;
 use App\Http\Controllers\Controller;
 use Closure;
@@ -257,13 +256,9 @@ class FormWidgetController extends Controller
 
         if (PastSubmissionsFeature::active() && $form->allow_view_past_submissions && $author) {
             $pastSubmissionsCount = FormSubmission::query()
-                ->when(
-                    FormVersioningFeature::active(),
-                    fn ($query) => $query->whereHas(
-                        'submissible',
-                        fn ($query) => $query->withoutGlobalScopes()->where('root_id', $form->root_id),
-                    ),
-                    fn ($query) => $query->where('form_id', $form->getKey()),
+                ->whereHas(
+                    'submissible',
+                    fn ($query) => $query->withoutGlobalScopes()->where('root_id', $form->root_id),
                 )
                 ->submitted()
                 ->whereMorphedTo('author', $author)
@@ -508,13 +503,9 @@ class FormWidgetController extends Controller
         }
 
         $pastSubmissions = FormSubmission::query()
-            ->when(
-                FormVersioningFeature::active(),
-                fn ($query) => $query->whereHas(
-                    'submissible',
-                    fn ($query) => $query->withoutGlobalScopes()->where('root_id', $form->root_id),
-                ),
-                fn ($query) => $query->where('form_id', $form->getKey()),
+            ->whereHas(
+                'submissible',
+                fn ($query) => $query->withoutGlobalScopes()->where('root_id', $form->root_id),
             )
             ->submitted()
             ->whereMorphedTo('author', $author)
@@ -566,9 +557,7 @@ class FormWidgetController extends Controller
         }
 
         abort_unless(
-            FormVersioningFeature::active()
-                ? $submission->submissible()->withoutGlobalScopes()->value('root_id') === $form->root_id
-                : $submission->form_id === $form->getKey(),
+            $submission->submissible()->withoutGlobalScopes()->value('root_id') === $form->root_id,
             Response::HTTP_NOT_FOUND,
         );
 
@@ -606,10 +595,6 @@ class FormWidgetController extends Controller
 
     private function resolveToLatestVersion(Form $form): Form
     {
-        if (! FormVersioningFeature::active()) {
-            return $form;
-        }
-
         if (! $form->isArchived()) {
             return $form;
         }

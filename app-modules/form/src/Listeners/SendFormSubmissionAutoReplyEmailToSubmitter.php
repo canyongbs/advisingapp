@@ -41,7 +41,6 @@ use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Notifications\FormSubmissionAutoReplyNotification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\FormVersioningFeature;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class SendFormSubmissionAutoReplyEmailToSubmitter implements ShouldQueue
@@ -58,9 +57,7 @@ class SendFormSubmissionAutoReplyEmailToSubmitter implements ShouldQueue
         /** @var Form $form */
         $form = $event->submission->submissible;
 
-        if (FormVersioningFeature::active()) {
-            $form = $form->latestVersion() ?? $form;
-        }
+        $form = $form->latestVersion() ?? $form;
 
         if (! $form->emailAutoReply?->is_enabled) {
             return;

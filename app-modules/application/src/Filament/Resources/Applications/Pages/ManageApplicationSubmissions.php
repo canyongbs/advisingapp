@@ -42,7 +42,6 @@ use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use App\Features\FormVersioningFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
@@ -125,13 +124,11 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
 
         return $table
             ->query(
-                FormVersioningFeature::active()
-                    ? ApplicationSubmission::query()
-                        ->whereHas(
-                            'submissible',
-                            fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $owner->root_id),
-                        )
-                    : $owner->submissions()->getQuery()
+                ApplicationSubmission::query()
+                    ->whereHas(
+                        'submissible',
+                        fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $owner->root_id),
+                    )
             )
             ->columns([
                 IdColumn::make(),
@@ -176,13 +173,11 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                             ->slug()
                             ->append('.csv');
 
-                        $query = FormVersioningFeature::active()
-                            ? ApplicationSubmission::query()
-                                ->whereHas(
-                                    'submissible',
-                                    fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $owner->root_id),
-                                )
-                            : $owner->submissions()->getQuery();
+                        $query = ApplicationSubmission::query()
+                            ->whereHas(
+                                'submissible',
+                                fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $owner->root_id),
+                            );
 
                         return Excel::download(new ApplicationSubmissionExport($query->get()), $filename);
                     }),
@@ -247,21 +242,15 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
         /** @var Application $ownerRecord */
         $applicationSubmissionsCount = Cache::tags('{application-submission-count}')
             ->remember(
-                FormVersioningFeature::active()
-                    ? "application-submission-count-{$ownerRecord->root_id}"
-                    : "application-submission-count-{$ownerRecord->id}",
+                "application-submission-count-{$ownerRecord->root_id}",
                 now()->addMinutes(5),
                 function () use ($ownerRecord): int {
-                    if (FormVersioningFeature::active()) {
-                        return ApplicationSubmission::query()
-                            ->whereHas(
-                                'submissible',
-                                fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $ownerRecord->root_id),
-                            )
-                            ->count();
-                    }
-
-                    return $ownerRecord->submissions()->count();
+                    return ApplicationSubmission::query()
+                        ->whereHas(
+                            'submissible',
+                            fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $ownerRecord->root_id),
+                        )
+                        ->count();
                 },
             );
 
