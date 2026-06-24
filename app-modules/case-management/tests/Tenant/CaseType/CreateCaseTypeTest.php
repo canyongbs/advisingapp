@@ -69,7 +69,7 @@ test('A successful action on the CreateCaseType page', function () {
     assertDatabaseHas(CaseType::class, $editRequest);
 });
 
-test('CreateCaseType requires valid data', function ($data, $errors) {
+test('CreateCaseType requires valid data', function (CreateCaseTypeRequestFactory $data, array $errors) {
     asSuperAdmin();
 
     livewire(CreateCaseType::class)

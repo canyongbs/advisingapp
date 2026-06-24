@@ -132,7 +132,7 @@ class CaseBlock extends CampaignActionBlock
                     }
 
                     $managers = User::query()
-                        ->whereHas('team.manageableCaseTypes', fn ($q) => $q->where('case_types.id', $caseTypeId))
+                        ->whereHas('team.manageableCaseTypes', fn ($query) => $query->where('case_types.id', $caseTypeId))
                         ->pluck('name', 'id')
                         ->toArray();
 

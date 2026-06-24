@@ -40,6 +40,7 @@ use AdvisingApp\Authorization\Models\License;
 use App\Models\Authenticatable;
 use App\Settings\LicenseSettings;
 use Filament\Support\Contracts\HasLabel;
+use Illuminate\Database\Eloquent\Builder;
 
 enum LicenseType: string implements HasLabel
 {
@@ -82,7 +83,7 @@ enum LicenseType: string implements HasLabel
     public function getSeatsInUse(): int
     {
         return License::query()
-            ->whereDoesntHave('user', function ($query) {
+            ->whereDoesntHave('user', function (Builder $query) {
                 $query->role([
                     Authenticatable::SUPER_ADMIN_ROLE,
                     Authenticatable::PARTNER_ADMIN_ROLE,

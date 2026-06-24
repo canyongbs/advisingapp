@@ -106,10 +106,10 @@ class RecordUserUniqueLoginTrackedEvent implements ShouldQueue
             ]);
 
             DB::commit();
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             DB::rollBack();
 
-            throw $e;
+            throw $exception;
         }
     }
 }

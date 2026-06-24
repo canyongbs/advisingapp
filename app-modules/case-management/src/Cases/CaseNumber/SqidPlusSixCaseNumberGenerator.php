@@ -61,7 +61,7 @@ class SqidPlusSixCaseNumberGenerator implements CaseNumberGenerator
         $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
         $randomString = '';
 
-        for ($i = 0; $i < $length; $i++) {
+        for ($index = 0; $index < $length; $index++) {
             $randomString .= $characters[rand(0, strlen($characters) - 1)];
         }
 

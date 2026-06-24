@@ -140,7 +140,7 @@ class CampaignActionsRelationManager extends RelationManager
                     ->modalSubmitActionLabel('Cancel Step')
                     ->modalCancelActionLabel('Go Back')
                     ->hidden(fn (CampaignAction $record) => $record->cancelled_at !== null || $record->hasBeenExecuted())
-                    ->action(function ($record) {
+                    ->action(function (CampaignAction $record) {
                         $record->cancelled_at = now();
                         $record->save();
 

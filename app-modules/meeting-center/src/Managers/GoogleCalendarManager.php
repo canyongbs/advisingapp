@@ -283,7 +283,7 @@ class GoogleCalendarManager implements CalendarInterface
             $calendar->oauth_token_expires_at = Carbon::parse((int) $token['created'] + (int) $token['expires_in']);
             $calendar->oauth_refresh_token = $token['refresh_token'];
             $calendar->save();
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $calendar->update([
                 'oauth_token' => null,
                 'oauth_refresh_token' => null,
@@ -292,7 +292,7 @@ class GoogleCalendarManager implements CalendarInterface
 
             $calendar->user->notify(new CalendarRequiresReconnectNotification($calendar));
 
-            throw new CouldNotRefreshToken(message: $e->getMessage(), previous: $e);
+            throw new CouldNotRefreshToken(message: $exception->getMessage(), previous: $exception);
         }
 
         return $calendar;
@@ -315,7 +315,7 @@ class GoogleCalendarManager implements CalendarInterface
         $attendees = collect($event->attendees)
             // If you add yourself as an attendee you end up with a weird duplicate event on the calendar...
             ->reject(fn (string $email): bool => $email === $event->calendar->provider_email)
-            ->map(function ($email) {
+            ->map(function (string $email) {
                 $attendee = new EventAttendee();
                 $attendee->setEmail($email);
 

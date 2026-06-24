@@ -118,7 +118,7 @@ class MultifactorAuthenticationManagement extends Component implements HasAction
                     ->numeric()
                     ->required(),
             ])
-            ->action(function ($data, $action, $livewire) {
+            ->action(function (array $data, Action $action, self $livewire) {
                 if (! app(MultifactorService::class)->verify(code: $data['code'])) {
                     $livewire->addError('mountedActionsData.0.code', 'The code you have entered is invalid.');
                     $action->halt();

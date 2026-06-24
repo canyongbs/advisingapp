@@ -51,7 +51,7 @@ it('modifies the SendQueuedNotifications job properly', function () {
     freezeTime(function () use ($recipient, $notification) {
         $recipient->notify($notification);
 
-        Queue::assertPushed(SendQueuedNotifications::class, function ($job) use ($recipient, $notification) {
+        Queue::assertPushed(SendQueuedNotifications::class, function (SendQueuedNotifications $job) use ($recipient, $notification) {
             return $job->notification::class === $notification::class
                 && $job->notifiables->count() === 1
                 && $job->notifiables->first()->is($recipient)

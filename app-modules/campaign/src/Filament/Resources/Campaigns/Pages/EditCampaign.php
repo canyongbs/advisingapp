@@ -46,6 +46,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 
 class EditCampaign extends EditRecord
 {
@@ -63,7 +64,7 @@ class EditCampaign extends EditRecord
                     ->label('Population Group')
                     ->options(function () {
                         return Group::query()
-                            ->whereHas('user', function ($query) {
+                            ->whereHas('user', function (Builder $query) {
                                 $query->whereKey(auth()->id())->orWhereRelation('team.users', 'id', auth()->id());
                             })
                             ->pluck('name', 'id');
