@@ -143,7 +143,6 @@ it('can create a student with an address', function () {
                 $uuid => [
                     'number' => '+15555551234',
                     'type' => 'Mobile',
-                    'can_receive_sms' => true,
                     'sms_opt_out_phone_number' => false,
                 ],
             ],

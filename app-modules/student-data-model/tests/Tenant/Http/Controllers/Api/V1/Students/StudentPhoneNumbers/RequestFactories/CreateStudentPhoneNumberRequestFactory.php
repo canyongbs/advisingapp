@@ -46,7 +46,6 @@ class CreateStudentPhoneNumberRequestFactory extends RequestFactory
             'number' => $this->faker->phoneNumber(),
             'ext' => $this->faker->optional()->randomNumber(3, true),
             'type' => $this->faker->optional()->randomElement(['Mobile', 'Home', 'Work']),
-            'can_receive_sms' => $this->faker->boolean(),
         ], filled(...));
     }
 }

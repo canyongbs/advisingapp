@@ -40,7 +40,6 @@ use AdvisingApp\StudentDataModel\Actions\CreateStudentPhoneNumber;
 use AdvisingApp\StudentDataModel\DataTransferObjects\CreateStudentPhoneNumberData;
 use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentPhoneNumberResource;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\PhoneNumberLookupFeature;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -62,9 +61,6 @@ class CreateStudentPhoneNumberController
             'type' => ['sometimes', 'max:255'],
             'order' => ['sometimes', 'integer'],
             'ext' => ['sometimes', 'integer'],
-            ...(! PhoneNumberLookupFeature::active() ? [
-                'can_receive_sms' => ['sometimes', 'boolean'],
-            ] : []),
         ]);
         $studentPhoneNumber = $createStudentPhoneNumber->execute($student, CreateStudentPhoneNumberData::from($data));
 

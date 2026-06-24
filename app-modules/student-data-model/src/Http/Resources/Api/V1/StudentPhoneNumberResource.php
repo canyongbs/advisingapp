@@ -59,7 +59,6 @@ class StudentPhoneNumberResource extends JsonResource
             'type' => $this->resource->type,
             'order' => $this->resource->order,
             'ext' => $this->resource->ext,
-            'can_receive_sms' => $this->resource->can_receive_sms,
         ];
     }
 }

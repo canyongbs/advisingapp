@@ -45,7 +45,6 @@ use AdvisingApp\StudentDataModel\Exceptions\PhoneNumberLookupInvalidNumber;
 use AdvisingApp\StudentDataModel\Exceptions\PhoneNumberLookupRateLimited;
 use AdvisingApp\StudentDataModel\Jobs\Middleware\SkipWhilePhoneNumberLookupIsRateLimited;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
-use App\Features\PhoneNumberLookupFeature;
 use Illuminate\Support\Facades\Cache;
 use InvalidArgumentException;
 use RuntimeException;
@@ -63,10 +62,6 @@ class TelnyxPhoneNumberLookupService implements PhoneNumberLookupService
 
     public function isConfigured(): bool
     {
-        if (! PhoneNumberLookupFeature::active()) {
-            return false;
-        }
-
         $settings = app(TwilioSettings::class);
 
         // Lookups must not run while messaging is disabled, and demo mode

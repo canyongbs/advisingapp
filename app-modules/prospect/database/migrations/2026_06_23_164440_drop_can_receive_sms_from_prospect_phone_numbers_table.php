@@ -34,14 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use App\Support\AbstractFeatureFlag;
-
-class PhoneNumberLookupFeature extends AbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
+return new class () extends Migration {
+    public function up(): void
     {
-        return false;
+        Schema::table('prospect_phone_numbers', function (Blueprint $table) {
+            $table->dropColumn('can_receive_sms');
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('prospect_phone_numbers', function (Blueprint $table) {
+            $table->boolean('can_receive_sms')->default(false);
+        });
+    }
+};

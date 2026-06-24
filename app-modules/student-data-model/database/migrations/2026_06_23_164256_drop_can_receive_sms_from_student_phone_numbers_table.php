@@ -34,45 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Database\Factories;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
-use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends Factory<ProspectPhoneNumber>
- */
-class ProspectPhoneNumberFactory extends Factory
-{
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'number' => $this->faker->phoneNumber(),
-            'ext' => null,
-            'type' => $this->faker->randomElement(['Mobile', 'Home', 'Work']),
-        ];
-    }
-
-    public function canNotReceiveSms(): Factory
-    {
-        return $this->afterCreating(function (ProspectPhoneNumber $phoneNumber): void {
-            PhoneNumberLookup::factory()->invalid()->create(['number' => $phoneNumber->number]);
+        Schema::table('student_phone_numbers', function (Blueprint $table) {
+            $table->dropColumn('can_receive_sms');
         });
     }
 
-    public function canReceiveSms(): Factory
+    public function down(): void
     {
-        return $this->afterCreating(function (ProspectPhoneNumber $phoneNumber): void {
-            PhoneNumberLookup::factory()->mobile()->create(['number' => $phoneNumber->number]);
+        Schema::table('student_phone_numbers', function (Blueprint $table) {
+            $table->boolean('can_receive_sms')->default(false);
         });
     }
-
-    public function withExtension(): Factory
-    {
-        return $this->state(fn () => ['ext' => $this->faker->randomNumber()]);
-    }
-}
+};

@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Models\Scopes;
 
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
-use App\Features\PhoneNumberLookupFeature;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -54,13 +53,9 @@ class Textable
     {
         $query->whereDoesntHave('smsOptOut')->whereDoesntHave('bounced');
 
-        if (PhoneNumberLookupFeature::active()) {
-            return $query->whereHas(
-                'phoneNumberLookup',
-                fn (Builder $lookup) => $lookup->whereIn('status', PhoneNumberLookupStatus::textableStatuses()),
-            );
-        }
-
-        return $query->where('can_receive_sms', true);
+        return $query->whereHas(
+            'phoneNumberLookup',
+            fn (Builder $lookup) => $lookup->whereIn('status', PhoneNumberLookupStatus::textableStatuses()),
+        );
     }
 }

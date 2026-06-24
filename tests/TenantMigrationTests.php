@@ -312,12 +312,49 @@ test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements
         function () {
             $action = CampaignAction::factory()->createQuietly();
 
+            // Create a prospect directly to avoid triggering ProspectFactory's
+            // afterCreating callback which creates PhoneNumberLookup records
+            // (the phone_number_lookups table does not yet exist at this migration point).
+            $prospectId = (string) Str::uuid();
+            $statusId = (string) Str::uuid();
+            DB::table('prospect_statuses')->insertOrIgnore([
+                'id' => $statusId,
+                'classification' => 'new',
+                'name' => 'New',
+                'color' => 'primary',
+                'sort' => 1,
+                'is_system_protected' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            $sourceId = (string) Str::uuid();
+            DB::table('prospect_sources')->insertOrIgnore([
+                'id' => $sourceId,
+                'name' => 'Test Source',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            DB::table('prospects')->insert([
+                'id' => $prospectId,
+                'status_id' => $statusId,
+                'source_id' => $sourceId,
+                'first_name' => 'Test',
+                'last_name' => 'Prospect',
+                'full_name' => 'Test Prospect',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
             $engagementWithSource = Engagement::factory()->createQuietly([
                 'campaign_action_id' => $action->id,
+                'recipient_type' => 'prospect',
+                'recipient_id' => $prospectId,
             ]);
 
             $engagementWithoutSource = Engagement::factory()->createQuietly([
                 'campaign_action_id' => null,
+                'recipient_type' => 'prospect',
+                'recipient_id' => $prospectId,
             ]);
 
             $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements_table.php']);

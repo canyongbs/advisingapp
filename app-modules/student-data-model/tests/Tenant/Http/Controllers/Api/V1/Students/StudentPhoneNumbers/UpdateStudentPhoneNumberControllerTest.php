@@ -38,7 +38,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\StudentPhoneNumbers\RequestFactories\UpdateStudentPhoneNumberRequestFactory;
-use App\Features\PhoneNumberLookupFeature;
 use App\Models\SystemUser;
 use Laravel\Sanctum\Sanctum;
 
@@ -151,57 +150,3 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
     '`order` is integer' => [['order' => 'not-an-integer'], 'order', 'The order must be an integer.'],
     '`ext` is integer' => [['ext' => 'not-an-integer'], 'ext', 'The ext must be an integer.'],
 ]);
-
-// TODO: When the PhoneNumberLookupFeature is removed, delete this test
-// case entirely. The `can_receive_sms` column and its validation rule are
-// both being dropped at the same time (per the cleanup task), so there's
-// nothing left to validate.
-it('validates can_receive_sms as boolean when the PhoneNumberLookupFeature is inactive (legacy gate)', function () {
-    PhoneNumberLookupFeature::deactivate();
-
-    $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
-    $studentConfigurationSettings->is_enabled = true;
-    $studentConfigurationSettings->save();
-
-    $user = SystemUser::factory()->create();
-    $user->givePermissionTo(['student.view-any', 'student.*.update']);
-    Sanctum::actingAs($user, ['api']);
-
-    $student = Student::factory()->create();
-    $studentPhoneNumber = StudentPhoneNumber::factory()
-        ->for($student)
-        ->create();
-    $requestData = UpdateStudentPhoneNumberRequestFactory::new()->create(['can_receive_sms' => 'not-boolean']);
-
-    $response = patchJson(route('api.v1.students.phone-numbers.update', ['student' => $student, 'studentPhoneNumber' => $studentPhoneNumber], false), $requestData);
-    $response->assertUnprocessable();
-    $response->assertJsonValidationErrors([
-        'can_receive_sms' => ['The can receive sms field must be true or false.'],
-    ]);
-});
-
-// TODO: When the PhoneNumberLookupFeature is removed, delete this test
-// case — it only exists to cover the feature-on branch during the
-// dual-mode rollout.
-it('does not validate can_receive_sms when the PhoneNumberLookupFeature is active (new gate)', function () {
-    $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
-    $studentConfigurationSettings->is_enabled = true;
-    $studentConfigurationSettings->save();
-
-    $user = SystemUser::factory()->create();
-    $user->givePermissionTo(['student.view-any', 'student.*.update']);
-    Sanctum::actingAs($user, ['api']);
-
-    $student = Student::factory()->create();
-    $studentPhoneNumber = StudentPhoneNumber::factory()
-        ->for($student)
-        ->create();
-    $requestData = UpdateStudentPhoneNumberRequestFactory::new()->create([
-        'number' => '+15551234567',
-        'can_receive_sms' => 'not-boolean',
-    ]);
-
-    $response = patchJson(route('api.v1.students.phone-numbers.update', ['student' => $student, 'studentPhoneNumber' => $studentPhoneNumber], false), $requestData);
-    $response->assertSuccessful();
-    $response->assertJsonMissingValidationErrors(['can_receive_sms']);
-});
