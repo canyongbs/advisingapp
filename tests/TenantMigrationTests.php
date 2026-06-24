@@ -34,9 +34,6 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Models\CustomerAdvisor;
-use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
-use AdvisingApp\Ai\Models\CustomerAdvisorFile;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
