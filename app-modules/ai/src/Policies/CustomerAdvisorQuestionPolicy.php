@@ -97,7 +97,7 @@ class CustomerAdvisorQuestionPolicy
     public function deleteAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.delete' : 'qna_advisor.*.delete'],
+            abilities: ['customer_advisor.*.delete'],
             denyResponse: 'You do not have permission to delete any Customer Advisor Question.'
         );
     }
@@ -113,7 +113,7 @@ class CustomerAdvisorQuestionPolicy
     public function restoreAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.restore' : 'qna_advisor.*.restore'],
+            abilities: ['customer_advisor.*.restore'],
             denyResponse: 'You do not have permission to restore any Customer Advisor Question.'
         );
     }
@@ -129,7 +129,7 @@ class CustomerAdvisorQuestionPolicy
     public function forceDeleteAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.force-delete' : 'qna_advisor.*.force-delete'],
+            abilities: ['customer_advisor.*.force-delete'],
             denyResponse: 'You do not have permission to force-delete any Customer Advisor Question.'
         );
     }
