@@ -57,7 +57,15 @@ class SendAdvisorMessageController
         ]);
 
         if ($request->query('preview')) {
-            $aiService = $advisor->getAiServiceModel()->getService();
+            $aiModel = $advisor->getAiServiceModel();
+
+            if (! $aiModel) {
+                return response()->json([
+                    'message' => 'No AI model is configured for this advisor.',
+                ], 422);
+            }
+
+            $aiService = $aiModel->getService();
 
             try {
                 return response()->stream(
