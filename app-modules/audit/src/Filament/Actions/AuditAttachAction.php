@@ -37,6 +37,7 @@
 namespace AdvisingApp\Audit\Filament\Actions;
 
 use Filament\Actions\AttachAction;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use OwenIt\Auditing\Contracts\Auditable;
 
@@ -46,7 +47,7 @@ class AuditAttachAction extends AttachAction
     {
         parent::setUp();
 
-        $this->using(function ($data, $record, BelongsToMany $relationship) {
+        $this->using(function (array $data, Model $record, BelongsToMany $relationship) {
             /** @var Auditable $parent */
             $parent = $relationship->getParent();
 

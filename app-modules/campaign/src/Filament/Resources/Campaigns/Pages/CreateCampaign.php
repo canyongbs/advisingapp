@@ -44,6 +44,7 @@ use AdvisingApp\Group\Models\Group;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -106,7 +107,7 @@ class CreateCampaign extends CreateRecord
                         ->label('Population Group')
                         ->options(function () {
                             return Group::query()
-                                ->whereHas('user', function ($query) {
+                                ->whereHas('user', function (EloquentBuilder $query) {
                                     $query->whereKey(auth()->id())->orWhereRelation('team.users', 'id', auth()->id());
                                 })
                                 ->pluck('name', 'id');

@@ -91,7 +91,7 @@ test('A successful action on the CreateStudentCareTeamRole page', function () {
     assertDatabaseHas(CareTeamRole::class, $createRequest);
 });
 
-test('CreateStudentCareTeamRole requires valid data', function ($data, $errors) {
+test('CreateStudentCareTeamRole requires valid data', function (CreateCareTeamRoleRequestFactory $data, array $errors) {
     asSuperAdmin();
 
     $createRequest = CreateCareTeamRoleRequestFactory::new($data)->create();

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\CaseManagement\Actions;
 
+use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 use AdvisingApp\Form\Models\Submissible;
 
@@ -43,7 +44,7 @@ class GenerateCaseFormKitSchema extends GenerateFormKitSchema
 {
     public function __invoke(Submissible $submissible): array
     {
-        $priorities = $submissible->type->priorities->map(function ($priority) {
+        $priorities = $submissible->type->priorities->map(function (CasePriority $priority) {
             return [
                 'label' => $priority->name,
                 'value' => $priority->id,

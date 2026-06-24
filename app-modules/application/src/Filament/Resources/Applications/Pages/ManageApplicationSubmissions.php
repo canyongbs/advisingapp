@@ -57,6 +57,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
+use Illuminate\Support\Collection;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -225,7 +226,7 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                 BulkActionGroup::make([
                     BulkAction::make('Export')
                         ->icon('heroicon-o-arrow-down-tray')
-                        ->action(function ($records) {
+                        ->action(function (Collection $records) {
                             $filename = str("selected-application-submissions-{$this->getOwnerRecord()->name}-")
                                 ->append(now()->format('Y-m-d-Hisv'))
                                 ->slug()

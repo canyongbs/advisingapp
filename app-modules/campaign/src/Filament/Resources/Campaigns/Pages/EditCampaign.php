@@ -42,6 +42,7 @@ use AdvisingApp\Group\Models\Group;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
@@ -63,7 +64,7 @@ class EditCampaign extends EditRecord
                     ->label('Population Group')
                     ->options(function () {
                         return Group::query()
-                            ->whereHas('user', function ($query) {
+                            ->whereHas('user', function (Builder $query) {
                                 $query->whereKey(auth()->id())->orWhereRelation('team.users', 'id', auth()->id());
                             })
                             ->pluck('name', 'id');
