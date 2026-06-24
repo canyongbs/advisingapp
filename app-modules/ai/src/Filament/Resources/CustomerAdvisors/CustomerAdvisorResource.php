@@ -49,7 +49,6 @@ use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\PreviewCustomerAdvi
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\ViewCustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use App\Enums\NavigationGroup;
-use App\Features\RenameQnaAdvisorsFeature;
 use Filament\Pages\Page;
 use Filament\Resources\Resource;
 use Override;
@@ -70,7 +69,7 @@ class CustomerAdvisorResource extends Resource
     #[Override]
     public static function canAccess(): bool
     {
-        return RenameQnaAdvisorsFeature::active() ? (auth()->user()->can('customer_advisor.view-any') && parent::canAccess()) : parent::canAccess();
+        return auth()->user()->can('customer_advisor.view-any') && parent::canAccess();
     }
 
     public static function getPages(): array

@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Actions\GenerateCustomerAdvisorWidgetEmbedCode;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Form\Rules\IsDomain;
-use App\Features\RenameQnaAdvisorsFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -78,8 +77,8 @@ class CustomerAdvisorEmbed extends EditRecord
 
         assert($user instanceof User);
 
-        return $user->can(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_embed.view-any' : 'qna_advisor_embed.view-any')
-            && $user->can(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_embed.*.view' : 'qna_advisor_embed.*.view')
+        return $user->can('customer_advisor_embed.view-any')
+            && $user->can('customer_advisor_embed.*.view')
             && parent::canAccess($parameters);
     }
 

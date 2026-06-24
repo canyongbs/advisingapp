@@ -34,14 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\Ai\Database\Factories;
 
-use App\Support\AbstractFeatureFlag;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisorFile;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class RenameQnaAdvisorsFeature extends AbstractFeatureFlag
+/**
+ * @extends Factory<CustomerAdvisorFile>
+ */
+class CustomerAdvisorFileFactory extends Factory
 {
-    public function resolve(mixed $scope): mixed
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
-        return false;
+        return [
+            'name' => $this->faker->word() . '.pdf',
+            'mime_type' => 'application/pdf',
+            'advisor_id' => CustomerAdvisor::factory(),
+            'parsing_results' => null,
+        ];
     }
 }

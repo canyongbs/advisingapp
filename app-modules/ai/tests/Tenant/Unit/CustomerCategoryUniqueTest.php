@@ -36,33 +36,20 @@
 
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
-use App\Features\RenameQnaAdvisorsFeature;
 use Illuminate\Database\UniqueConstraintViolationException;
 
 it('does not allow duplicate category names for the same advisor', function () {
     $customerAdvisor = CustomerAdvisor::factory()->create();
 
-    // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, the state can be defined inline again
-    $state = RenameQnaAdvisorsFeature::active() ? [
+    CustomerAdvisorCategory::factory()->state([
         'customer_advisor_id' => $customerAdvisor->getKey(),
         'name' => 'Admissions',
-    ] :
-    [
-        'qna_advisor_id' => $customerAdvisor->getKey(),
-        'name' => 'Admissions',
-    ];
-    CustomerAdvisorCategory::factory()->state($state)->create();
+    ])->create();
 
-    // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, the state can be defined inline again
-    $state = RenameQnaAdvisorsFeature::active() ? [
+    CustomerAdvisorCategory::factory()->state([
         'customer_advisor_id' => $customerAdvisor->getKey(),
         'name' => 'Admissions',
-    ] :
-    [
-        'qna_advisor_id' => $customerAdvisor->getKey(),
-        'name' => 'Admissions',
-    ];
-    CustomerAdvisorCategory::factory()->state($state)->create();
+    ])->create();
 })->throws(UniqueConstraintViolationException::class);
 
 it('allow duplicate category names for the different advisor', function () {
