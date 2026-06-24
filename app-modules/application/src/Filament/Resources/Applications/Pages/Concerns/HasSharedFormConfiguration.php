@@ -44,7 +44,6 @@ use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Rules\IsDomain;
 use App\Enums\FontWeight;
-use App\Features\PastSubmissionsFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
@@ -111,7 +110,6 @@ trait HasSharedFormConfiguration
                 ->hintIcon(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm) ? 'heroicon-m-lock-closed' : null),
             Toggle::make('allow_view_past_submissions')
                 ->label('Allow viewing past submissions')
-                ->visible(fn (): bool => PastSubmissionsFeature::active())
                 ->helperText('If enabled, students and prospects can view their past submissions on this form.'),
             Section::make('Fields')
                 ->schema([

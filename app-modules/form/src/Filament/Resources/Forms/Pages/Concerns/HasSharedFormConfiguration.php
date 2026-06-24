@@ -44,7 +44,6 @@ use AdvisingApp\Form\Models\FormStep;
 use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 use App\Enums\FontWeight;
-use App\Features\PastSubmissionsFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Closure;
 use Filament\Forms\Components\Repeater;
@@ -110,7 +109,7 @@ trait HasSharedFormConfiguration
             Toggle::make('allow_view_past_submissions')
                 ->label('Allow viewing past submissions')
                 ->helperText('If enabled, students and prospects can view their past submissions on this form.')
-                ->visible(fn (Get $get) => PastSubmissionsFeature::active() && $get('is_authenticated')),
+                ->visible(fn (Get $get) => $get('is_authenticated')),
             Toggle::make('generate_prospects')
                 ->label('Generate Prospects')
                 ->helperText('If enabled, the system will check the primary email address submitted on the form and create a prospect if no match is found.')

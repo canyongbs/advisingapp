@@ -52,7 +52,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\PastSubmissionsFeature;
 use App\Http\Controllers\Controller;
 use Closure;
 use Filament\Support\Colors\Color;
@@ -123,7 +122,7 @@ class ApplicationWidgetController extends Controller
             [
                 'name' => $application->title,
                 'description' => $application->description,
-                'allow_view_past_submissions' => PastSubmissionsFeature::active() && $application->allow_view_past_submissions,
+                'allow_view_past_submissions' => $application->allow_view_past_submissions,
                 'authentication_url' => URL::signedRoute(
                     name: 'widgets.applications.api.request-authentication',
                     parameters: ['application' => $application],
@@ -237,7 +236,7 @@ class ApplicationWidgetController extends Controller
         $pastSubmissionsCount = 0;
         $pastSubmissionsUrl = null;
 
-        if (PastSubmissionsFeature::active() && $application->allow_view_past_submissions && $author) {
+        if ($application->allow_view_past_submissions && $author) {
             $pastSubmissionsCount = ApplicationSubmission::query()
                 ->whereHas(
                     'submissible',
@@ -266,7 +265,7 @@ class ApplicationWidgetController extends Controller
                 ],
             ),
             'schema' => $generateSchema->withAuthor($author)($application),
-            'allow_view_past_submissions' => PastSubmissionsFeature::active() && $application->allow_view_past_submissions,
+            'allow_view_past_submissions' => $application->allow_view_past_submissions,
             'past_submissions_count' => $pastSubmissionsCount,
             'past_submissions_url' => $pastSubmissionsUrl,
         ]);
@@ -449,9 +448,6 @@ class ApplicationWidgetController extends Controller
         Request $request,
         Application $application,
     ): JsonResponse {
-        if (! PastSubmissionsFeature::active()) {
-            abort(Response::HTTP_FORBIDDEN);
-        }
         $authentication = $request->query('authentication');
 
         if (filled($authentication)) {
@@ -512,10 +508,6 @@ class ApplicationWidgetController extends Controller
         Application $application,
         ApplicationSubmission $submission,
     ): JsonResponse {
-        if (! PastSubmissionsFeature::active()) {
-            abort(Response::HTTP_FORBIDDEN);
-        }
-
         $authentication = $request->query('authentication');
 
         if (filled($authentication)) {
