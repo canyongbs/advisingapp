@@ -101,6 +101,7 @@ class ListRoles extends ListRecords
             ])
             ->recordActions([
                 Action::make('duplicateRole')
+                    ->authorize(fn (): bool => auth()->user()->can('role.create'))
                     ->label('Duplicate')
                     ->icon('heroicon-o-document-duplicate')
                     ->requiresConfirmation()

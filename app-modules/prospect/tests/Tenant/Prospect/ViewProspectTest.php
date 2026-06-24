@@ -87,6 +87,7 @@ test('convert action visible when prospect is not converted to student', functio
 
     $user->givePermissionTo('prospect.view-any');
     $user->givePermissionTo('prospect.*.view');
+    $user->givePermissionTo('prospect.*.update');
 
     actingAs($user);
 
@@ -107,6 +108,7 @@ test('disassociate student action visible when prospect is converted to student'
 
     $user->givePermissionTo('prospect.view-any');
     $user->givePermissionTo('prospect.*.view');
+    $user->givePermissionTo('prospect.*.update');
 
     actingAs($user);
 
@@ -123,6 +125,7 @@ test('convert prospect to student', function () {
 
     $user->givePermissionTo('prospect.view-any');
     $user->givePermissionTo('prospect.*.view');
+    $user->givePermissionTo('prospect.*.update');
 
     actingAs($user);
 
@@ -166,6 +169,7 @@ test('disassociate student from prospect', function () {
 
     $user->givePermissionTo('prospect.view-any');
     $user->givePermissionTo('prospect.*.view');
+    $user->givePermissionTo('prospect.*.update');
 
     actingAs($user);
 

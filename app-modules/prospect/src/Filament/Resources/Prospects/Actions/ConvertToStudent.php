@@ -54,6 +54,7 @@ class ConvertToStudent extends Action
         parent::setUp();
 
         $this
+            ->authorize(fn (): bool => auth()->user()->can('prospect.*.update'))
             ->modalHeading('Convert Prospect to Student')
             ->modalWidth(Width::ExtraLarge)
             ->modalSubmitActionLabel('Convert')

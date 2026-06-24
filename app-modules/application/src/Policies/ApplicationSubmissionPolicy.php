@@ -34,51 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Actions;
+namespace AdvisingApp\Application\Policies;
 
-use AdvisingApp\Prospect\Enums\SystemProspectClassification;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Prospect\Models\ProspectStatus;
-use Filament\Actions\Action;
-use Filament\Notifications\Notification;
+use AdvisingApp\Application\Models\ApplicationSubmission;
+use App\Models\Authenticatable;
+use Illuminate\Auth\Access\Response;
 
-class DisassociateStudent extends Action
+class ApplicationSubmissionPolicy
 {
-    protected function setUp(): void
+    public function update(Authenticatable $authenticatable, ApplicationSubmission $applicationSubmission): Response
     {
-        parent::setUp();
-
-        $this
-            ->authorize(fn (): bool => auth()->user()->can('prospect.*.update'))
-            ->modalHeading('Disassociate Prospect from Student?')
-            ->requiresConfirmation()
-            ->color('danger')
-            ->modalSubmitActionLabel('Yes')
-            ->action(function (Prospect $record) {
-                /** @var Prospect $record */
-                $record->student()->dissociate();
-
-                $record->status()->associate(
-                    ProspectStatus::query()
-                        ->where('classification', SystemProspectClassification::New)
-                        ->where('name', 'New')
-                        ->where('is_system_protected', true)
-                        ->firstOrFail()
-                );
-
-                $record->save();
-
-                $this->dispatch('reload-prospect');
-
-                Notification::make()
-                    ->title('Prospect disassociated from Student')
-                    ->success()
-                    ->send();
-            });
+        return $authenticatable->canOrElse(
+            abilities: ['application.*.update'],
+            denyResponse: 'You do not have permission to update this application submission.'
+        );
     }
 
-    public static function getDefaultName(): ?string
+    public function delete(Authenticatable $authenticatable, ApplicationSubmission $applicationSubmission): Response
     {
-        return 'disassociate';
+        return $authenticatable->canOrElse(
+            abilities: ['application.*.update'],
+            denyResponse: 'You do not have permission to delete this application submission.'
+        );
+    }
+
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['application.*.update'],
+            denyResponse: 'You do not have permission to delete application submissions.'
+        );
     }
 }
