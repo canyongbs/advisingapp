@@ -79,7 +79,7 @@ test('A successful action on the EditCaseStatus page', function () {
     assertEquals($editRequest['color'], $caseStatus->fresh()->color);
 });
 
-test('EditCaseStatus requires valid data', function ($data, $errors) {
+test('EditCaseStatus requires valid data', function (EditCaseStatusRequestFactory $data, array $errors) {
     asSuperAdmin();
 
     $caseStatus = CaseStatus::factory()->create();

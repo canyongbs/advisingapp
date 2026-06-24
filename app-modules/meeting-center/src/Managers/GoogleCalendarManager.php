@@ -315,7 +315,7 @@ class GoogleCalendarManager implements CalendarInterface
         $attendees = collect($event->attendees)
             // If you add yourself as an attendee you end up with a weird duplicate event on the calendar...
             ->reject(fn (string $email): bool => $email === $event->calendar->provider_email)
-            ->map(function ($email) {
+            ->map(function (string $email) {
                 $attendee = new EventAttendee();
                 $attendee->setEmail($email);
 

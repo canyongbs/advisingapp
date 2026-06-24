@@ -58,6 +58,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -158,7 +159,7 @@ class ManageFormSubmissions extends ManageRelatedRecords
                 BulkActionGroup::make([
                     BulkAction::make('Export')
                         ->icon('heroicon-o-arrow-down-tray')
-                        ->action(function ($records) {
+                        ->action(function (Collection $records) {
                             $filename = str("selected-form-submissions-{$this->getOwnerRecord()->name}-")
                                 ->append(now()->format('Y-m-d-Hisv'))
                                 ->slug()

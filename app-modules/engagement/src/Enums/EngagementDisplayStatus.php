@@ -40,6 +40,8 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Enums\SmsMessageEventType;
+use AdvisingApp\Notification\Models\EmailMessageEvent;
+use AdvisingApp\Notification\Models\SmsMessageEvent;
 use Exception;
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasLabel;
@@ -113,7 +115,7 @@ enum EngagementDisplayStatus implements HasLabel, HasColor
 
         $events = $engagement->latestEmailMessage?->events()->orderBy('occurred_at', 'asc')->get();
 
-        $events?->each(function ($event) use (&$status) {
+        $events?->each(function (EmailMessageEvent $event) use (&$status) {
             match ($event->type) {
                 // This is needed due to a bug where sometimes the Dispatched event isn't saved
                 // until some of the other external events have already come in
@@ -157,7 +159,7 @@ enum EngagementDisplayStatus implements HasLabel, HasColor
 
         $events = $engagement->latestSmsMessage?->events()->orderBy('occurred_at', 'asc')->get();
 
-        $events?->each(function ($event) use (&$status) {
+        $events?->each(function (SmsMessageEvent $event) use (&$status) {
             match ($event->type) {
                 // This is needed due to a bug where sometimes the Dispatched event isn't saved
                 // until some of the other external events have already come in

@@ -54,7 +54,7 @@ class UnmatchedInboundCommunicationFactory extends Factory
     {
         return [
             'type' => $this->faker->randomElement(EngagementResponseType::cases()),
-            'sender' => function ($attributes) {
+            'sender' => function (array $attributes) {
                 /** @var EngagementResponseType $type */
                 $type = $attributes['type'];
 
@@ -64,7 +64,7 @@ class UnmatchedInboundCommunicationFactory extends Factory
                 };
             },
             'occurred_at' => now(),
-            'subject' => function ($attributes) {
+            'subject' => function (array $attributes) {
                 /** @var EngagementResponseType $type */
                 $type = $attributes['type'];
 

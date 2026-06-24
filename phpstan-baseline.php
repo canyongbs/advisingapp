@@ -1902,78 +1902,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/case-management/tests/Tenant/Case/CaseNumberTest.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/tests/Tenant/CaseStatus/CreateCaseStatusTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$errors of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/tests/Tenant/CaseStatus/CreateCaseStatusTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/tests/Tenant/CaseStatus/EditCaseStatusTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$errors of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/tests/Tenant/CaseStatus/EditCaseStatusTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/tests/Tenant/CaseType/CreateCaseTypeTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$errors of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/tests/Tenant/CaseType/CreateCaseTypeTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/tests/Tenant/CaseType/EditCaseTypeTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$errors of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/tests/Tenant/CaseType/EditCaseTypeTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/tests/Tenant/CaseUpdate/CreateCaseUpdateTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$errors of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/tests/Tenant/CaseUpdate/CreateCaseUpdateTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/tests/Tenant/CaseUpdate/EditCaseUpdateTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$errors of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/tests/Tenant/CaseUpdate/EditCaseUpdateTest.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\|AdvisingApp\\\\StudentDataModel\\\\Models\\\\Student\\:\\:\\$full\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
@@ -2070,22 +1998,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/division/src/Models/Division.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$attributes of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/engagement/database/factories/UnmatchedInboundCommunicationFactory.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Schema\\\\ForeignKeyDefinition\\:\\:unique\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/database/migrations/2023_08_17_183840_create_engagement_deliverables_table.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$engagement of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/engagement/database/migrations/2024_06_07_234752_data_fix_engagement_bodies.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Schema\\\\ForeignKeyDefinition\\:\\:unique\\(\\)\\.$#',
@@ -2116,12 +2032,6 @@ $ignoreErrors[] = [
     'identifier' => 'assign.propertyType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Actions/CreateEngagementBatch.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$event of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/engagement/src/Enums/EngagementDisplayStatus.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Actions\\\\BulkDraftWithAiAction\\:\\:getMergeTags\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -2254,12 +2164,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.property',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Jobs/ProcessSesS3InboundEmail.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$communications of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Jobs/UnmatchedInboundCommunicationsJob.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:orderedEngagements\\(\\)\\.$#',
@@ -3038,12 +2942,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$submissions\\.$#',
     'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/ManageFormSubmissions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$records of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/ManageFormSubmissions.php',
 ];
@@ -3834,12 +3732,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/integration-twilio/tests/Fixtures/ClientMock.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$request of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-twilio/tests/Tenant/Feature/Http/Middleware/LogTwilioRequestTest.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\StudentDataModel\\\\Models\\\\PhoneNumberLookup\\:\\:\\$carrier_name\\.$#',
     'identifier' => 'property.notFound',
     'count' => 3,
@@ -4290,12 +4182,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/meeting-center/src/Managers/GoogleCalendarManager.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$email of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Managers/GoogleCalendarManager.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Unable to resolve the template type TKey in call to function collect$#',
     'identifier' => 'argument.templateType',
     'count' => 1,
@@ -4451,24 +4337,7 @@ $ignoreErrors[] = [
     'count' => 1,
     'path' => __DIR__ . '/app-modules/multifactor-authentication/src/Livewire/MultifactorAuthenticationManagement.php',
 ];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/multifactor-authentication/src/Livewire/MultifactorAuthenticationManagement.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$action of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/multifactor-authentication/src/Livewire/MultifactorAuthenticationManagement.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#3 \\$livewire of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/multifactor-authentication/src/Livewire/MultifactorAuthenticationManagement.php',
-];
+
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\MultifactorAuthentication\\\\Providers\\\\MultifactorAuthenticationServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
@@ -4776,12 +4645,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/notification/tests/Fixtures/TestDatabaseNotification.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$job of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/notification/tests/Tenant/Notifications/ChannelManagerTest.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$query of class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany constructor expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TRelatedModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
@@ -4846,18 +4709,6 @@ $ignoreErrors[] = [
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/portal/src/Http/Controllers/ResourceHub/ResourceHubPortalRequestAuthenticationController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$category of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/portal/src/Http/Controllers/ResourceHub/ResourceHubPortalSearchController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$item of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/portal/src/Http/Controllers/ResourceHub/ResourceHubPortalSearchController.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Portal\\\\Http\\\\Requests\\\\ResourceHubPortalAuthenticationRequest\\:\\:rules\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -5020,18 +4871,6 @@ $ignoreErrors[] = [
     'identifier' => 'booleanNot.alwaysFalse',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Actions/ConvertToStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Actions/ConvertToStudent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/Actions/DisassociateStudent.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Anonymous function never returns null so it can be removed from the return type\\.$#',
@@ -5332,54 +5171,6 @@ $ignoreErrors[] = [
     'identifier' => 'method.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/prospect/tests/Tenant/Prospect/RequestFactories/CreateProspectRequestFactory.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/tests/Tenant/ProspectSource/CreateProspectSourceTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$errors of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/tests/Tenant/ProspectSource/CreateProspectSourceTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/tests/Tenant/ProspectSource/EditProspectSourceTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$errors of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/tests/Tenant/ProspectSource/EditProspectSourceTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/tests/Tenant/ProspectStatus/CreateProspectStatusTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$errors of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/tests/Tenant/ProspectStatus/CreateProspectStatusTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/tests/Tenant/ProspectStatus/EditProspectStatusTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$errors of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/tests/Tenant/ProspectStatus/EditProspectStatusTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$money of static method Cknow\\\\Money\\\\Money\\:\\:parseByDecimal\\(\\) expects string, float given\\.$#',

@@ -41,6 +41,7 @@ use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\UnmatchedInboundCommunication;
+use Illuminate\Database\Eloquent\Collection;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -56,7 +57,7 @@ class UnmatchedInboundCommunicationsJob implements ShouldQueue
     public function handle(): void
     {
         UnmatchedInboundCommunication::query()
-            ->chunkById(100, function ($communications) {
+            ->chunkById(100, function (Collection $communications) {
                 foreach ($communications as $communication) {
                     match ($communication->type) {
                         EngagementResponseType::Email => $this->processEmail($communication),

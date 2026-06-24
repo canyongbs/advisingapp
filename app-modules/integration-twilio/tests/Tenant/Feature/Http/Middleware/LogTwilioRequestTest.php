@@ -52,7 +52,7 @@ it('will create an inbound webhook with the correct source and event the twilio 
 
     $middleware = new LogTwilioRequest(app(StoreInboundWebhook::class));
 
-    $middleware->handle($request, function ($request) {
+    $middleware->handle($request, function (Request $request) {
         return response()->json();
     });
 

@@ -64,7 +64,7 @@ class ConvertToStudent extends Action
                     ->label('Select Student')
                     ->searchable(),
             ])
-            ->action(function ($data, Prospect $record, Page $livewire) {
+            ->action(function (array $data, Prospect $record, Page $livewire) {
                 /** @var Student $student */
                 $student = Student::find($data['student_id']);
 

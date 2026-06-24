@@ -36,6 +36,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
+use stdClass;
 use Tiptap\Editor;
 
 return new class () extends Migration {
@@ -44,7 +45,7 @@ return new class () extends Migration {
         DB::table('engagements')
             ->whereNotNull('body')
             ->whereJsonDoesntContainKey('body->type')
-            ->eachById(function ($engagement) {
+            ->eachById(function (stdClass $engagement) {
                 $body = str($engagement->body)
                     ->replace(['\r\n', '\r', '\n'], '<br><br>')
                     ->toString();
@@ -68,7 +69,7 @@ return new class () extends Migration {
             ->whereNotNull('body')
             ->whereNot('body', 'like', '%"type":"mergeTag"%')
             ->where('body', 'like', '%"type":"hardBreak"%')
-            ->eachById(function ($engagement) {
+            ->eachById(function (stdClass $engagement) {
                 $text = str((new Editor())->setContent($engagement->body)->getText())
                     ->replace("\n\n\n\n\n\n", "\n")
                     ->toString();

@@ -75,7 +75,7 @@ test('A successful action on the EditCaseType page', function () {
     assertEquals($editRequest['name'], $caseType->fresh()->name);
 });
 
-test('EditCaseType requires valid data', function ($data, $errors) {
+test('EditCaseType requires valid data', function (EditCaseTypeRequestFactory $data, array $errors) {
     asSuperAdmin();
 
     $caseType = CaseType::factory()->create();
