@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Policies;
 
+use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Concerns\PerformsLicenseChecks;
 use App\Enums\Feature;
@@ -78,6 +79,10 @@ class CustomerAdvisorPolicy
 
     public function create(Authenticatable $authenticatable): Response
     {
+        if (empty(AiModelApplicabilityFeature::CustomerAdvisor->getModels())) {
+            return Response::deny('No AI models are configured for Customer Advisors.');
+        }
+
         return $authenticatable->canOrElse(
             abilities: 'customer_advisor.create',
             denyResponse: 'You do not have permission to create Customer Advisors.'

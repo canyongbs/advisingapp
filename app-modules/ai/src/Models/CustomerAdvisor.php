@@ -194,7 +194,7 @@ class CustomerAdvisor extends BaseModel implements HasMedia, Auditable
             ->all();
     }
 
-    public function getAiServiceModel(): AiModel
+    public function getAiServiceModel(): ?AiModel
     {
         $settings = app(AiCustomerAdvisorSettings::class);
 
