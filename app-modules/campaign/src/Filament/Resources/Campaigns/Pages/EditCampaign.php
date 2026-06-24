@@ -42,11 +42,11 @@ use AdvisingApp\Group\Models\Group;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 
 class EditCampaign extends EditRecord
 {
