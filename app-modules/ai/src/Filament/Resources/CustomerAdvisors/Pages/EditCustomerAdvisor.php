@@ -168,6 +168,7 @@ class EditCustomerAdvisor extends EditRecord
     {
         return [
             Action::make('archive')
+                ->authorize(fn (CustomerAdvisor $record): bool => auth()->user()->can('delete', $record))
                 ->color('danger')
                 ->action(function () {
                     /** @var CustomerAdvisor $customerAdvisor */
@@ -182,6 +183,7 @@ class EditCustomerAdvisor extends EditRecord
                 })
                 ->hidden(fn (CustomerAdvisor $record): bool => (bool) $record->archived_at),
             Action::make('restore')
+                ->authorize(fn (CustomerAdvisor $record): bool => auth()->user()->can('restore', $record))
                 ->action(function () {
                     /** @var CustomerAdvisor $customerAdvisor */
                     $customerAdvisor = $this->getRecord();

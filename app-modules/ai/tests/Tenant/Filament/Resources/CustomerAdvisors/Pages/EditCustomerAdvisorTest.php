@@ -191,6 +191,7 @@ test('archive action visible when Customer Advisor is not archived', function ()
     $user->givePermissionTo('customer_advisor.view-any');
     $user->givePermissionTo('customer_advisor.*.view');
     $user->givePermissionTo('customer_advisor.*.update');
+    $user->givePermissionTo('customer_advisor.*.delete');
 
     actingAs($user);
 
@@ -218,6 +219,7 @@ test('restore action visible when Customer Advisor is archived', function () {
     $user->givePermissionTo('customer_advisor.view-any');
     $user->givePermissionTo('customer_advisor.*.view');
     $user->givePermissionTo('customer_advisor.*.update');
+    $user->givePermissionTo('customer_advisor.*.restore');
 
     actingAs($user);
 

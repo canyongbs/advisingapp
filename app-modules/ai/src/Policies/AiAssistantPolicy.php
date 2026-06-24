@@ -106,22 +106,34 @@ class AiAssistantPolicy
 
     public function delete(Authenticatable $authenticatable, AiAssistant $aiAssistant): Response
     {
-        return Response::deny('AI Assistants cannot be deleted.');
+        return $authenticatable->canOrElse(
+            abilities: ['assistant_custom.*.delete'],
+            denyResponse: 'You do not have permission to delete this AI Assistant.'
+        );
     }
 
     public function deleteAny(Authenticatable $authenticatable): Response
     {
-        return Response::deny('AI Assistants cannot be deleted.');
+        return $authenticatable->canOrElse(
+            abilities: ['assistant_custom.*.delete'],
+            denyResponse: 'You do not have permission to delete any AI Assistant.'
+        );
     }
 
     public function restore(Authenticatable $authenticatable, AiAssistant $aiAssistant): Response
     {
-        return Response::deny('AI Assistants cannot be restored.');
+        return $authenticatable->canOrElse(
+            abilities: ['assistant_custom.*.restore'],
+            denyResponse: 'You do not have permission to restore this AI Assistant.'
+        );
     }
 
     public function restoreAny(Authenticatable $authenticatable): Response
     {
-        return Response::deny('AI Assistants cannot be restored.');
+        return $authenticatable->canOrElse(
+            abilities: ['assistant_custom.*.restore'],
+            denyResponse: 'You do not have permission to restore any AI Assistant.'
+        );
     }
 
     public function forceDelete(Authenticatable $authenticatable, AiAssistant $aiAssistant): Response

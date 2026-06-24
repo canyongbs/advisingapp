@@ -89,6 +89,14 @@ class InteractionPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function import(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'interaction.import',
+            denyResponse: 'You do not have permission to import interactions.',
+        );
+    }
+
     public function update(Authenticatable $authenticatable, Interaction $interaction): Response
     {
         if ($interaction->interactable_type === (new Prospect())->getMorphClass() && filled($interaction->interactable->student_id)) {
