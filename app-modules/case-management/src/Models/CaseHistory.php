@@ -147,7 +147,7 @@ class CaseHistory extends BaseModel implements ProvidesATimeline
                         // This is to overcome an issue that comes from an incorrect type when trying to find a prospect or student with the wrong data type
                         try {
                             $found = $educatableClass::find($value[$key]);
-                        } catch (Exception $e) {
+                        } catch (Exception $exception) {
                         }
 
                         if (! is_null($found)) {

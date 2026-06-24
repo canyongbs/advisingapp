@@ -99,7 +99,7 @@ class ListBasicNeedsCategories extends ListRecords
                                 try {
                                     $record->delete();
                                     $successfullyDeleted++;
-                                } catch (SoftDeleteContraintViolationException $e) {
+                                } catch (SoftDeleteContraintViolationException $exception) {
                                     $unsuccessfullyDeleted++;
                                 }
                             }

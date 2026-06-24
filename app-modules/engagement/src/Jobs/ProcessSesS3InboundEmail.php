@@ -275,16 +275,16 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                 });
             });
         } catch (
-            UnableToRetrieveContentFromSesS3EmailPayload | SesS3InboundSpamOrVirusDetected | UnableToDetectTenantFromSesS3EmailPayload $e
+            UnableToRetrieveContentFromSesS3EmailPayload | SesS3InboundSpamOrVirusDetected | UnableToDetectTenantFromSesS3EmailPayload $exception
         ) {
             DB::rollBack();
 
             // Instantly fail for this exception
-            $this->fail($e);
-        } catch (Throwable $e) {
+            $this->fail($exception);
+        } catch (Throwable $exception) {
             DB::rollBack();
 
-            throw $e;
+            throw $exception;
         }
     }
 

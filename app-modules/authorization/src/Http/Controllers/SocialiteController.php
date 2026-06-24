@@ -127,12 +127,12 @@ class SocialiteController extends Controller
                 } else {
                     throw new InvalidUserAvatarMimeType($mimeType, $user);
                 }
-            } catch (RequestException $e) {
-                if (! str_contains($e->getMessage(), 'Microsoft.Fast.Profile.Core.Exception.ImageNotFoundException')) {
-                    report($e);
+            } catch (RequestException $exception) {
+                if (! str_contains($exception->getMessage(), 'Microsoft.Fast.Profile.Core.Exception.ImageNotFoundException')) {
+                    report($exception);
                 }
-            } catch (Throwable $e) {
-                report($e);
+            } catch (Throwable $exception) {
+                report($exception);
             }
         }
 

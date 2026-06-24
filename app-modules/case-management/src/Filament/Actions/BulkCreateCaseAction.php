@@ -128,7 +128,7 @@ class BulkCreateCaseAction
                         }
 
                         $managers = User::query()
-                            ->whereHas('team.manageableCaseTypes', fn ($q) => $q->where('case_types.id', $caseTypeId))
+                            ->whereHas('team.manageableCaseTypes', fn ($query) => $query->where('case_types.id', $caseTypeId))
                             ->pluck('name', 'id')
                             ->toArray();
 
@@ -182,8 +182,8 @@ class BulkCreateCaseAction
                     });
 
                     DB::commit();
-                } catch (Exception $e) {
-                    report($e);
+                } catch (Exception $exception) {
+                    report($exception);
                     DB::rollBack();
                     Notification::make()
                         ->title('Something went wrong')

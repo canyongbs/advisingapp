@@ -384,10 +384,10 @@ class FormWidgetController extends Controller
             SendFormNotificationJob::dispatch($form, $submission)->afterCommit();
 
             DB::commit();
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             DB::rollBack();
 
-            report($e);
+            report($exception);
 
             return response()->json([
                 'errors' => ['An error occurred while submitting this form.'],

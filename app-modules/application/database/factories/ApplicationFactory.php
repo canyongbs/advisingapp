@@ -85,7 +85,7 @@ class ApplicationFactory extends Factory
             }
 
             if ($application->submissions()->doesntExist()) {
-                for ($i = 0; $i < rand(1, 3); $i++) {
+                for ($index = 0; $index < rand(1, 3); $index++) {
                     $submission = $application->submissions()->create();
 
                     foreach ($application->fields as $field) {

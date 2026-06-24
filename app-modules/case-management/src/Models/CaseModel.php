@@ -117,7 +117,7 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
                 DB::beginTransaction();
 
                 $save = parent::save($options);
-            } catch (UniqueConstraintViolationException $e) {
+            } catch (UniqueConstraintViolationException $exception) {
                 $attempts++;
                 $save = false;
 
@@ -129,7 +129,7 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
 
                 if ($attempts >= 3) {
                     throw new CaseNumberExceededReRollsException(
-                        previous: $e,
+                        previous: $exception,
                     );
                 }
 
