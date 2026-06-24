@@ -40,12 +40,9 @@ use AdvisingApp\StudentDataModel\Jobs\LookupPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use App\Features\PhoneNumberLookupFeature;
 use Illuminate\Support\Facades\Bus;
 
 beforeEach(function () {
-    PhoneNumberLookupFeature::activate();
-
     $settings = app(TwilioSettings::class);
     $settings->is_enabled = true;
     $settings->provider = SmsMessagingProvider::Telnyx;

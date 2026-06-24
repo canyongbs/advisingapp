@@ -33,7 +33,7 @@
 --}}
 @use('AdvisingApp\ResourceHub\Actions\GenerateTableOfContents')
 <div class="mt-2 rounded p-4">
-    <div class="prose mt-2 max-w-full dark:prose-invert">
+    <div class="fi-prose mt-2 max-w-full">
         @if ($state = $getState())
             @php
                 $record = $getRecord();

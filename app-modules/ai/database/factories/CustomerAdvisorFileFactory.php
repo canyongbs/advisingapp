@@ -34,40 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Blocks\Legacy;
+namespace AdvisingApp\Ai\Database\Factories;
 
-use AdvisingApp\Form\Models\Submissible;
-use AdvisingApp\Form\Models\SubmissibleField;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisorFile;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class TextInputFormFieldBlock extends FormFieldBlock
+/**
+ * @extends Factory<CustomerAdvisorFile>
+ */
+class CustomerAdvisorFileFactory extends Factory
 {
-    public ?string $icon = 'heroicon-m-minus';
-
-    public static function type(): string
-    {
-        return 'text_input';
-    }
-
-    public function fields(): array
-    {
-        return [];
-    }
-
-    public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
+    /**
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
+     */
+    public function definition(): array
     {
         return [
-            '$formkit' => 'text',
-            'label' => $field->label,
-            'name' => $field->getKey(),
-            ...($field->is_required ? ['validation' => 'required'] : []),
-            ...self::getDescriptionSectionsSchema($field),
+            'name' => $this->faker->word() . '.pdf',
+            'mime_type' => 'application/pdf',
+            'advisor_id' => CustomerAdvisor::factory(),
+            'parsing_results' => null,
         ];
-    }
-
-    public static function getValidationRules(SubmissibleField $field): array
-    {
-        return ['string', 'max:255'];
     }
 }

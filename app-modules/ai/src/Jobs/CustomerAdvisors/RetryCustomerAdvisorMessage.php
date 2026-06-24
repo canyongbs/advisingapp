@@ -95,8 +95,22 @@ class RetryCustomerAdvisorMessage implements ShouldQueue
         $message->request = $this->request;
         $message->save();
 
+        $aiModel = $this->advisor->getAiServiceModel();
+
+        if (! $aiModel) {
+            event(new CustomerAdvisorMessageChunk(
+                $this->advisor,
+                $this->thread,
+                content: '',
+                isComplete: false,
+                error: 'No AI model is configured for this advisor.',
+            ));
+
+            return;
+        }
+
         try {
-            $aiService = $this->advisor->getAiServiceModel()->getService();
+            $aiService = $aiModel->getService();
 
             $files = [
                 ...$this->advisor->files()->whereNotNull('parsing_results')->get()->all(),

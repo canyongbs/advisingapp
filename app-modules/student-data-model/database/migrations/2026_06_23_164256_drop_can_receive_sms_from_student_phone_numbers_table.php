@@ -34,44 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Blocks\Legacy;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Form\Models\Submissible;
-use AdvisingApp\Form\Models\SubmissibleField;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-
-class AgreementFormFieldBlock extends FormFieldBlock
-{
-    public string $preview = 'form::blocks.previews.agreement';
-
-    public string $rendered = 'form::blocks.submissions.agreement';
-
-    public ?string $icon = 'heroicon-m-check-circle';
-
-    public static function type(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'agreement';
+        Schema::table('student_phone_numbers', function (Blueprint $table) {
+            $table->dropColumn('can_receive_sms');
+        });
     }
 
-    public function fields(): array
+    public function down(): void
     {
-        return [];
+        Schema::table('student_phone_numbers', function (Blueprint $table) {
+            $table->boolean('can_receive_sms')->default(false);
+        });
     }
-
-    public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
-    {
-        return [
-            '$formkit' => 'checkbox',
-            'label' => $field->label,
-            'name' => $field->getKey(),
-            ...($field->is_required ? ['validation' => 'required'] : []),
-            ...self::getDescriptionSectionsSchema($field),
-        ];
-    }
-
-    public static function getValidationRules(SubmissibleField $field): array
-    {
-        return ['boolean'];
-    }
-}
+};

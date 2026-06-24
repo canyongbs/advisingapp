@@ -61,13 +61,21 @@ class UploadCustomerAdvisorFilesToVectorStore implements ShouldQueue, TenantAwar
      */
     public $tries = 15;
 
+    public int $uniqueFor = 900;
+
     public function __construct(
         protected CustomerAdvisor $advisor,
     ) {}
 
     public function handle(): void
     {
-        $service = $this->advisor->model->getService();
+        $aiModel = $this->advisor->getAiServiceModel();
+
+        if (! $aiModel) {
+            return;
+        }
+
+        $service = $aiModel->getService();
 
         if (! ($service instanceof BaseOpenAiService)) {
             return;

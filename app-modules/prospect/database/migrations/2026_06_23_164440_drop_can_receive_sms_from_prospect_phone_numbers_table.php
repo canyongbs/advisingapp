@@ -34,51 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Blocks\Legacy;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Form\Models\Submissible;
-use AdvisingApp\Form\Models\SubmissibleField;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Forms\Components\KeyValue;
-
-class SelectFormFieldBlock extends FormFieldBlock
-{
-    public string $rendered = 'form::blocks.submissions.select';
-
-    public ?string $icon = 'heroicon-m-queue-list';
-
-    public static function type(): string
+return new class () extends Migration {
+    public function up(): void
     {
-        return 'select';
+        Schema::table('prospect_phone_numbers', function (Blueprint $table) {
+            $table->dropColumn('can_receive_sms');
+        });
     }
 
-    public function fields(): array
+    public function down(): void
     {
-        return [
-            KeyValue::make('options')
-                ->keyLabel('Value')
-                ->valueLabel('Label'),
-        ];
+        Schema::table('prospect_phone_numbers', function (Blueprint $table) {
+            $table->boolean('can_receive_sms')->default(false);
+        });
     }
-
-    public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
-    {
-        return [
-            '$formkit' => 'select',
-            'label' => $field->label,
-            'name' => $field->getKey(),
-            ...($field->is_required ? ['validation' => 'required'] : []),
-            'options' => $field->config['options'],
-            ...self::getDescriptionSectionsSchema($field),
-        ];
-    }
-
-    public static function getValidationRules(SubmissibleField $field): array
-    {
-        return [
-            'string',
-            'in:' . collect($field->config['options'])->keys()->join(','),
-        ];
-    }
-}
+};

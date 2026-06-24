@@ -34,7 +34,7 @@ jobs:
         steps:
             - name: Checkout code | Internal
               if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'dependabot[bot]' }}
-              uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+              uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
               with:
                   ref: ${{ github.head_ref }}
                   token: ${{ secrets.PAT }} # zizmor: ignore[secrets-outside-env]
@@ -42,7 +42,7 @@ jobs:
 
             - name: Checkout code | External
               if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name != github.repository || github.event.pull_request.user.login == 'dependabot[bot]' }}
-              uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+              uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
               with:
                   ref: ${{ github.head_ref }}
                   persist-credentials: false
@@ -90,7 +90,7 @@ jobs:
             - run: npm install
 
             - name: Set up Ruby
-              uses: ruby/setup-ruby@12fd324f1d0b43274fdc8130f6980590a667c455 # v1.312.0
+              uses: ruby/setup-ruby@89f90524b88a01fe6e0b732220432cc6142926af # v1.313.0
 
             - name: Run Ruby Script
               run: ruby ./copyright.rb
@@ -206,7 +206,7 @@ jobs:
                   coverage: none
                   extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
 
-            - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+            - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
               with:
                   fetch-depth: 0
                   fetch-tags: true
@@ -328,7 +328,7 @@ jobs:
                   coverage: none
                   extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
 
-            - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+            - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
               with:
                   fetch-depth: 0
                   fetch-tags: true
@@ -393,7 +393,7 @@ jobs:
             options: -u 1001:0 --group-add 1000 --group-add 12021 --group-add 127
 
         steps:
-            - uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10 # v6.0.3
+            - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
               with:
                   show-progress: false
                   persist-credentials: false

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e3526f43747fb9deb3f0bec480aa3c68",
+    "content-hash": "10ed9b1a7fb7d7a7e29c31d565c5efaa",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -2174,93 +2174,17 @@
             "time": "2026-06-10T17:31:10+00:00"
         },
         {
-            "name": "canyongbs/filament-tiptap-editor",
-            "version": "2.3.10",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/canyongbs/filament-tiptap-editor.git",
-                "reference": "470f576548bc427a3a1889ebd28d5494019162bd"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/filament-tiptap-editor/zipball/470f576548bc427a3a1889ebd28d5494019162bd",
-                "reference": "470f576548bc427a3a1889ebd28d5494019162bd",
-                "shasum": ""
-            },
-            "require": {
-                "filament/filament": "^4.0",
-                "php": "^8.2",
-                "spatie/laravel-package-tools": "^1.9.2",
-                "ueberdosis/tiptap-php": "^2.0"
-            },
-            "require-dev": {
-                "awcodes/html-faker": "^0.4.0",
-                "laravel/pint": "^1.0",
-                "orchestra/testbench": "^10.0",
-                "pestphp/pest": "^3.0",
-                "pestphp/pest-plugin-laravel": "^3.0",
-                "pestphp/pest-plugin-livewire": "^3.0",
-                "spatie/laravel-medialibrary": "^11.0"
-            },
-            "type": "package",
-            "extra": {
-                "aliases": {
-                    "TiptapConverter": "FilamentTiptapEditor\\Facades\\TiptapConverter"
-                },
-                "laravel": {
-                    "providers": [
-                        "FilamentTiptapEditor\\FilamentTiptapEditorServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "files": [
-                    "src/helpers.php"
-                ],
-                "psr-4": {
-                    "FilamentTiptapEditor\\": "src/",
-                    "FilamentTiptapEditor\\Tests\\": "tests/src",
-                    "FilamentTiptapEditor\\Tests\\Database\\Factories\\": "tests/database/factories"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Adam Weston",
-                    "email": "awcodes1@gmail.com",
-                    "role": "Developer"
-                }
-            ],
-            "description": "A Tiptap integration for Filament Admin/Forms.",
-            "keywords": [
-                "editor",
-                "filament",
-                "framework",
-                "laravel",
-                "tiptap",
-                "wysiwyg"
-            ],
-            "support": {
-                "issues": "https://github.com/canyongbs/filament-tiptap-editor/issues",
-                "source": "https://github.com/canyongbs/filament-tiptap-editor/tree/2.3.10"
-            },
-            "time": "2026-06-10T13:50:01+00:00"
-        },
-        {
             "name": "canyongbs/model-state-machine",
-            "version": "2.0.6",
+            "version": "2.0.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/model-state-machine.git",
-                "reference": "a1bfcfda2d0acf451941fba6b6c00e6bfe67c62c"
+                "reference": "dea30eaf49f410f1408c22e18849615076b464a8"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/model-state-machine/zipball/a1bfcfda2d0acf451941fba6b6c00e6bfe67c62c",
-                "reference": "a1bfcfda2d0acf451941fba6b6c00e6bfe67c62c",
+                "url": "https://api.github.com/repos/canyongbs/model-state-machine/zipball/dea30eaf49f410f1408c22e18849615076b464a8",
+                "reference": "dea30eaf49f410f1408c22e18849615076b464a8",
                 "shasum": ""
             },
             "require": {
@@ -2319,9 +2243,9 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/model-state-machine/issues",
-                "source": "https://github.com/canyongbs/model-state-machine/tree/2.0.6"
+                "source": "https://github.com/canyongbs/model-state-machine/tree/2.0.7"
             },
-            "time": "2026-04-14T14:38:00+00:00"
+            "time": "2026-06-22T13:33:09+00:00"
         },
         {
             "name": "carbonphp/carbon-doctrine-types",

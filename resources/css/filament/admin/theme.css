@@ -32,7 +32,6 @@
 </COPYRIGHT>
 */
 @import '../../../../vendor/filament/filament/resources/css/theme.css';
-@import '../../../../vendor/canyongbs/filament-tiptap-editor/resources/css/plugin.css';
 @import 'tippy.js/dist/tippy.css';
 
 @config '../../../../tailwind.config.js';
@@ -75,74 +74,6 @@
 
 .embed-code-snippet code {
     @apply text-wrap;
-}
-
-/* TipTap rendering */
-
-.tiptap-rendered-content {
-    .filament-tiptap-grid {
-        @apply grid gap-6;
-    }
-
-    .filament-tiptap-grid[type='asymetric-left-thirds'],
-    .filament-tiptap-grid[type='asymetric-right-thirds'] {
-        @apply grid-cols-1 md:grid-cols-3;
-    }
-
-    .filament-tiptap-grid[type='asymetric-left-thirds'] > .filament-tiptap-grid__column:first-child,
-    .filament-tiptap-grid[type='asymetric-right-thirds'] > .filament-tiptap-grid__column:last-child {
-        @apply md:col-span-2;
-    }
-
-    .filament-tiptap-grid[type='asymetric-left-fourths'],
-    .filament-tiptap-grid[type='asymetric-right-fourths'] {
-        @apply grid-cols-1 md:grid-cols-4;
-    }
-
-    .filament-tiptap-grid[type='asymetric-left-fourths'] > .filament-tiptap-grid__column:first-child,
-    .filament-tiptap-grid[type='asymetric-right-fourths'] > .filament-tiptap-grid__column:last-child {
-        @apply md:col-span-3;
-    }
-
-    .filament-tiptap-grid[type='responsive'] {
-        @apply grid-cols-1;
-
-        &[cols='2'] {
-            @apply md:grid-cols-2;
-        }
-
-        &[cols='3'] {
-            @apply md:grid-cols-3;
-        }
-
-        &[cols='4'] {
-            @apply md:grid-cols-4;
-        }
-
-        &[cols='5'] {
-            @apply md:grid-cols-5;
-        }
-    }
-
-    .filament-tiptap-grid[type='fixed'] {
-        @apply grid-cols-1;
-
-        &[cols='2'] {
-            @apply grid-cols-2;
-        }
-
-        &[cols='3'] {
-            @apply grid-cols-3;
-        }
-
-        &[cols='4'] {
-            @apply grid-cols-4;
-        }
-
-        &[cols='5'] {
-            @apply grid-cols-5;
-        }
-    }
 }
 
 .fi-sidebar-group-label {
@@ -294,73 +225,7 @@
     @apply mb-16;
 }
 
-/* Rich editor content styles */
-.prose .grid-layout {
-    @apply grid grid-cols-1 gap-4;
-
-    &[data-from-breakpoint='default'] {
-        @apply grid-cols-(--cols);
-
-        & > .grid-layout-col {
-            @apply col-(--col-span);
-        }
-    }
-
-    &[data-from-breakpoint='sm'] {
-        @apply sm:grid-cols-(--cols);
-
-        & > .grid-layout-col {
-            @apply sm:col-(--col-span);
-        }
-    }
-
-    &[data-from-breakpoint='md'] {
-        @apply md:grid-cols-(--cols);
-
-        & > .grid-layout-col {
-            @apply md:col-(--col-span);
-        }
-    }
-
-    &[data-from-breakpoint='lg'] {
-        @apply lg:grid-cols-(--cols);
-
-        & > .grid-layout-col {
-            @apply lg:col-(--col-span);
-        }
-    }
-
-    &[data-from-breakpoint='xl'] {
-        @apply xl:grid-cols-(--cols);
-
-        & > .grid-layout-col {
-            @apply xl:col-(--col-span);
-        }
-    }
-
-    &[data-from-breakpoint='2xl'] {
-        @apply 2xl:grid-cols-(--cols);
-
-        & > .grid-layout-col {
-            @apply 2xl:col-(--col-span);
-        }
-    }
-
-    & > .grid-layout-col {
-        margin-top: 0;
-        min-width: 0;
-    }
-}
-
-.prose .color {
-    color: var(--color);
-}
-
-.prose .lead {
-    font-size: var(--text-base);
-}
-
-.prose details {
+.fi-prose details {
     @apply rounded-lg border border-gray-200 my-4;
 
     & > summary {
@@ -411,10 +276,6 @@
 
 .def-fo-searchable-input-dropdown-list-item {
     @apply dark:hover:bg-white/10 dark:active:bg-white/20;
-}
-
-span[data-type='mergeTag'] {
-    @apply my-0 inline-block whitespace-nowrap bg-transparent dark:bg-transparent px-0 py-0 mx-0 rounded-none;
 }
 
 .fi-datetime-description {

@@ -36,10 +36,10 @@
 
 namespace AdvisingApp\Ai\Policies;
 
+use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Concerns\PerformsLicenseChecks;
 use App\Enums\Feature;
-use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Support\Facades\Gate;
@@ -64,7 +64,7 @@ class CustomerAdvisorPolicy
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: RenameQnaAdvisorsFeature::active() ? 'customer_advisor.view-any' : 'qna_advisor.view-any',
+            abilities: 'customer_advisor.view-any',
             denyResponse: 'You do not have permission to view Customer Advisors.'
         );
     }
@@ -72,15 +72,19 @@ class CustomerAdvisorPolicy
     public function view(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.view' : 'qna_advisor.*.view'],
+            abilities: ['customer_advisor.*.view'],
             denyResponse: 'You do not have permission to view this Customer Advisor.'
         );
     }
 
     public function create(Authenticatable $authenticatable): Response
     {
+        if (empty(AiModelApplicabilityFeature::CustomerAdvisor->getModels())) {
+            return Response::deny('No AI models are configured for Customer Advisors.');
+        }
+
         return $authenticatable->canOrElse(
-            abilities: RenameQnaAdvisorsFeature::active() ? 'customer_advisor.create' : 'qna_advisor.create',
+            abilities: 'customer_advisor.create',
             denyResponse: 'You do not have permission to create Customer Advisors.'
         );
     }
@@ -88,7 +92,7 @@ class CustomerAdvisorPolicy
     public function update(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.update' : 'qna_advisor.*.update'],
+            abilities: ['customer_advisor.*.update'],
             denyResponse: 'You do not have permission to update this Customer Advisor.'
         );
     }

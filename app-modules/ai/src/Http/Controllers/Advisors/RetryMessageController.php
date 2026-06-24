@@ -72,7 +72,7 @@ class RetryMessageController
                     ),
                     'ip' => request()->ip(),
                 ],
-                files: AiMessageFile::query()->whereKey($request->validated('files'))->get()->all(),
+                files: AiMessageFile::query()->whereKey($request->validated('files'))->get(),
                 hasImageGeneration: $request->validated('has_image_generation') ?? false,
             ))->onConnection('background');
 

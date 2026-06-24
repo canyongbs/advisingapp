@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -79,11 +78,5 @@ class CustomerAdvisorMessage extends BaseModel
     public function author(): MorphTo
     {
         return $this->morphTo('author');
-    }
-
-    // TODO: Cleanup Task - RenameQnaAdvisorsFeature, remove the getTable() method
-    public function getTable()
-    {
-        return RenameQnaAdvisorsFeature::active() ? 'customer_advisor_messages' : 'qna_advisor_messages';
     }
 }

@@ -167,6 +167,17 @@ class GetAvailableAppointmentSlots
                 $start = Carbon::parse("{$date->toDateString()} {$startTime}", 'UTC');
                 $end = Carbon::parse("{$date->toDateString()} {$endTime}", 'UTC');
 
+                if ($start->gte($end)) {
+                    $startMinutesFromMidnight = (24 * 60) - ($start->hour * 60 + $start->minute);
+                    $endMinutesFromMidnight = $end->hour * 60 + $end->minute;
+
+                    if ($startMinutesFromMidnight <= $endMinutesFromMidnight) {
+                        $start = $start->copy()->subDay();
+                    } else {
+                        $end = $end->copy()->addDay();
+                    }
+                }
+
                 return $this->carveOutBusyPeriods($start, $end, $busyPeriods);
             })
             ->filter(fn (array $block) => $block['end']->isAfter($now))

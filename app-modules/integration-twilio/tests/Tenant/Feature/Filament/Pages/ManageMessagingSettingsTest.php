@@ -38,16 +38,11 @@ use AdvisingApp\IntegrationTwilio\Filament\Pages\ManageMessagingSettings;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Enums\SmsMessagingProvider;
 use AdvisingApp\StudentDataModel\Jobs\QueuePhoneNumberLookups;
-use App\Features\PhoneNumberLookupFeature;
 use App\Models\User;
 use Illuminate\Support\Facades\Bus;
 
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
-
-beforeEach(function () {
-    PhoneNumberLookupFeature::activate();
-});
 
 it('triggers a phone number lookup scan when messaging is turned on', function () {
     asSuperAdmin(User::factory()->create());

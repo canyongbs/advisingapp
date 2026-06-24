@@ -49,6 +49,5 @@ class CreateStudentPhoneNumberData extends Data
         public string|Optional|null $type,
         public int|Optional|null $order,
         public int|Optional|null $ext,
-        public bool $canReceiveSms = false,
     ) {}
 }

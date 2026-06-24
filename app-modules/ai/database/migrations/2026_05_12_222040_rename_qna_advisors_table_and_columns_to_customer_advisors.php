@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\RenameQnaAdvisorsFeature;
 use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
@@ -98,16 +97,12 @@ return new class () extends Migration {
                 'QnA Advisor' => 'Customer Advisor',
                 'QnA Advisor Embed' => 'Customer Advisor Embed',
             ]);
-
-            RenameQnaAdvisorsFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            RenameQnaAdvisorsFeature::deactivate();
-
             Schema::rename('customer_advisor_categories', 'qna_advisor_categories');
             Schema::rename('customer_advisor_files', 'qna_advisor_files');
             Schema::rename('customer_advisor_links', 'qna_advisor_links');
