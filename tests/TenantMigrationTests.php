@@ -41,7 +41,6 @@ use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\MeetingCenter\Models\Event as MeetingCenterEvent;
-use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
