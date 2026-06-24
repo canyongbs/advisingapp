@@ -166,7 +166,7 @@ it('can edit a record', function () use ($licenses, $permissions) {
     );
 });
 
-it('validates the inputs', function ($data, $errors) use ($licenses, $permissions) {
+it('validates the inputs', function (EditAiAssistantRequestFactory $data, array $errors) use ($licenses, $permissions) {
     Storage::fake('s3');
 
     actingAs(user(

@@ -46,7 +46,7 @@ use function Pest\Laravel\post;
 use function Pest\Laravel\withoutMiddleware;
 use function Tests\loadFixtureFromModule;
 
-it('will dispatch the correct job for in inbound twilio webhook', function ($job, $event, $payload) {
+it('will dispatch the correct job for in inbound twilio webhook', function (string $job, string $event, string $payload) {
     Queue::fake();
     withoutMiddleware();
 

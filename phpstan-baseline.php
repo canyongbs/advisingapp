@@ -258,42 +258,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/CreateThreadTest.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Filament/Resources/AiAssistantResource/CreateAiAssistantTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$errors of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Filament/Resources/AiAssistantResource/CreateAiAssistantTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$data of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Filament/Resources/AiAssistantResource/EditAiAssistantTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$errors of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Filament/Resources/AiAssistantResource/EditAiAssistantTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$properties of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Filament/Resources/AiAssistantResource/RequestFactories/CreateAiAssistantRequestFactory.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$properties of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Filament/Resources/AiAssistantResource/RequestFactories/EditAiAssistantRequestFactory.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Cannot call method getKey\\(\\) on array\\<int, string\\>\\|Pest\\\\Expectation\\<array\\<int, string\\>\\|string\\>\\|Pest\\\\Expectations\\\\EachExpectation\\<array\\<int, string\\>\\|string\\>\\|Pest\\\\Expectations\\\\HigherOrderExpectation\\<Pest\\\\Expectation\\<array\\<int, string\\>\\|string\\>, array\\<int, string\\>\\|string\\|null\\>\\|Pest\\\\Expectations\\\\OppositeExpectation\\<array\\<int, string\\>\\|string\\>\\|string\\.$#',
     'identifier' => 'method.nonObject',
     'count' => 2,
@@ -4008,24 +3972,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/integration-twilio/tests/Fixtures/ClientMock.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$job of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-twilio/tests/Tenant/Feature/Http/Controllers/TwilioInboundWebhookControllerTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$event of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-twilio/tests/Tenant/Feature/Http/Controllers/TwilioInboundWebhookControllerTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#3 \\$payload of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-twilio/tests/Tenant/Feature/Http/Controllers/TwilioInboundWebhookControllerTest.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$request of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
@@ -7058,6 +7004,12 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$q of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/Authenticatable.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Parameter name "\\$q" is shorter than minimum length of 3 characters\\.$#',
+    'identifier' => 'MeliorStan.shortVariable',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/Authenticatable.php',
 ];

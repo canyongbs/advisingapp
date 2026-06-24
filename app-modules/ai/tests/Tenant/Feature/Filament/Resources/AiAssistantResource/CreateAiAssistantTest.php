@@ -152,7 +152,7 @@ it('can create a record', function () use ($licenses, $permissions) {
     );
 });
 
-it('validates the inputs', function ($data, $errors) use ($licenses, $permissions) {
+it('validates the inputs', function (CreateAiAssistantRequestFactory $data, array $errors) use ($licenses, $permissions) {
     Storage::fake('s3');
 
     actingAs(user(
