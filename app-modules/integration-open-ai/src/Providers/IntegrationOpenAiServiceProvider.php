@@ -51,7 +51,7 @@ class IntegrationOpenAiServiceProvider extends ServiceProvider
         Panel::configureUsing(fn (Panel $panel) => $panel->getId() !== 'admin' || $panel->plugin(new IntegrationOpenAiPlugin()));
     }
 
-    public function boot()
+    public function boot(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../../config/integration-open-ai.php', 'integration-open-ai');
 

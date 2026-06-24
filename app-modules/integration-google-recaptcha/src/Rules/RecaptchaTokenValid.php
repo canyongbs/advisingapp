@@ -66,7 +66,7 @@ class RecaptchaTokenValid implements ValidationRule
             if ($response->json('score') < 0.5) {
                 $fail('The recaptcha score was too low.');
             }
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             $fail('The recaptcha token was invalid.');
         }
     }

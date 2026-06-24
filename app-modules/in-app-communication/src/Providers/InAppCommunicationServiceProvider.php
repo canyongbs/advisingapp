@@ -49,7 +49,7 @@ class InAppCommunicationServiceProvider extends ServiceProvider
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new InAppCommunicationPlugin()));
     }
 
-    public function boot()
+    public function boot(): void
     {
         Relation::morphMap([
             'twilio_conversation' => TwilioConversation::class,

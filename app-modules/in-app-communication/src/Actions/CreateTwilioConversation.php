@@ -103,8 +103,8 @@ class CreateTwilioConversation
                         'type' => $type->value,
                     ]),
                 ]);
-        } catch (Exception $e) {
-            report($e);
+        } catch (Exception $exception) {
+            report($exception);
 
             return null;
         }

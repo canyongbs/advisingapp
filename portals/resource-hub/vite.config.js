@@ -47,7 +47,7 @@ export default defineConfig({
     },
     build: {
         manifest: true,
-        rollupOptions: {
+        rolldownOptions: {
             input: {
                 portal: resolve(__dirname, './src/portal.js'),
                 loader: resolve(__dirname, './src/loader.js'),

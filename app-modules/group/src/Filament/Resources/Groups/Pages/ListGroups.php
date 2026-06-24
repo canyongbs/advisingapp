@@ -130,8 +130,8 @@ class ListGroups extends ListRecords
                             $this->authorize('delete', $record);
                             // Let Filament handle the default success notification
                             $record->delete();
-                        } catch (AuthorizationException $e) {
-                            $action->failureNotificationTitle($e->getMessage())->sendFailureNotification();
+                        } catch (AuthorizationException $exception) {
+                            $action->failureNotificationTitle($exception->getMessage())->sendFailureNotification();
                         }
                     }),
             ])

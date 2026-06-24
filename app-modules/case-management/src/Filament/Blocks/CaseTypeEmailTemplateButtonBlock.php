@@ -36,29 +36,26 @@
 
 namespace AdvisingApp\CaseManagement\Filament\Blocks;
 
+use Filament\Actions\Action;
+use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Component;
-use FilamentTiptapEditor\TiptapBlock;
 
-class CaseTypeEmailTemplateButtonBlock extends TiptapBlock
+class CaseTypeEmailTemplateButtonBlock extends RichContentCustomBlock
 {
-    public string $preview = 'case-management::blocks.previews.case-link';
-
-    public string $rendered = 'case-management::blocks.rendered.case-link';
-
-    public ?string $icon = null;
-
-    public ?string $label = 'Case Link Button';
-
-    public string $width = 'md';
-
-    /**
-     * @return array<int, Component>
-     */
-    public function getFormSchema(): array
+    public static function getId(): string
     {
-        return [
+        return 'caseTypeEmailTemplateButtonBlock';
+    }
+
+    public static function getLabel(): string
+    {
+        return 'Case Link Button';
+    }
+
+    public static function configureEditorAction(Action $action): Action
+    {
+        return $action->schema([
             TextInput::make('label')
                 ->label('Button Label')
                 ->required()
@@ -75,6 +72,16 @@ class CaseTypeEmailTemplateButtonBlock extends TiptapBlock
                 ->default('center')
                 ->required()
                 ->placeholder('Enter the button alignment (e.g. left, right, center)'),
-        ];
+        ]);
+    }
+
+    public static function toPreviewHtml(array $config): ?string
+    {
+        return view('case-management::blocks.previews.case-link', $config)->render();
+    }
+
+    public static function toHtml(array $config, array $data): ?string
+    {
+        return view('case-management::blocks.rendered.case-link', $config)->render();
     }
 }

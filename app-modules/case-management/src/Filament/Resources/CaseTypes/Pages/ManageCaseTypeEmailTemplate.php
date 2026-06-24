@@ -44,11 +44,12 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\CaseTypeResource;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\TiptapEditor;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Locked;
 use UnitEnum;
@@ -130,46 +131,51 @@ class ManageCaseTypeEmailTemplate extends EditRecord
         $this->getSavedNotification()->send();
     }
 
-    /** @return array<int, TiptapEditor> */
+    /** @return array<int, RichEditor> */
     protected function getEmailTemplateFormSchema(CaseTypeEmailTemplateRole $role): array
     {
+        $subjectMergeTags = [
+            'contact name',
+            'case number',
+            'created date',
+            'updated date',
+            'status',
+            'assigned staff name',
+            'type',
+        ];
+
+        $bodyMergeTags = [
+            ...$subjectMergeTags,
+            'description',
+        ];
+
         return [
-            TiptapEditor::make('subject')
+            RichEditor::make('subject')
                 ->label('Subject')
+                ->json()
+                ->toolbarButtons([])
                 ->placeholder('Enter the email subject here...')
-                ->extraInputAttributes(['style' => 'min-height: 2rem; overflow-y:none;'])
-                ->disableToolbarMenus()
-                ->mergeTags([
-                    'contact name',
-                    'case number',
-                    'created date',
-                    'updated date',
-                    'status',
-                    'assigned staff name',
-                    'type',
-                ])
-                ->showMergeTagsInBlocksPanel(false)
+                ->mergeTags($subjectMergeTags)
                 ->helperText('You may use “merge tags” to substitute information about a case into your subject line. Insert a “{{“ in the subject line field to see a list of available merge tags'),
 
-            TiptapEditor::make('body')
+            RichEditor::make('body')
                 ->label('Body')
-                ->profile('email_template')
-                ->placeholder('Enter the email body here...')
-                ->extraInputAttributes(['style' => 'min-height: 12rem;'])
-                ->mergeTags([
-                    'contact name',
-                    'case number',
-                    'created date',
-                    'updated date',
-                    'status',
-                    'assigned staff name',
-                    'description',
-                    'type',
+                ->json()
+                ->toolbarButtons([
+                    ['bold', 'italic', 'link'],
+                    [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                    ['small'],
+                    ['customBlocks'],
+                    ['mergeTags'],
                 ])
-                ->blocks([
+                ->activePanel('mergeTags')
+                ->placeholder('Enter the email body here...')
+                ->mergeTags($bodyMergeTags)
+                ->customBlocks([
                     CaseTypeEmailTemplateButtonBlock::class,
                     SurveyResponseEmailTemplateTakeSurveyButtonBlock::class,
                 ])
+                ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                 ->columnSpanFull(),
         ];
     }

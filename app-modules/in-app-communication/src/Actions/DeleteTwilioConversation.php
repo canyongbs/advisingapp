@@ -62,8 +62,8 @@ class DeleteTwilioConversation
                 ->update([
                     'state' => 'closed',
                 ]);
-        } catch (Exception $e) {
-            report($e);
+        } catch (Exception $exception) {
+            report($exception);
 
             return false;
         }

@@ -436,7 +436,7 @@ it('rejects booking on a day with office hours disabled', function () use ($offi
 
     $response->assertStatus(422);
     $response->assertJsonFragment(['success' => false]);
-    expect($response->json('message'))->toContain('No availability for the selected day');
+    expect($response->json('message'))->toContain('The selected time is outside available booking hours');
 });
 
 it('rejects booking outside office hours on an enabled day', function () use ($officeHours) {
@@ -562,9 +562,9 @@ it('rejects booking when a busy calendar event overlaps', function () use ($offi
         ]
     );
 
-    $response->assertStatus(409);
+    $response->assertStatus(422);
     $response->assertJsonFragment(['success' => false]);
-    expect($response->json('message'))->toContain('already been booked');
+    expect($response->json('message'))->toContain('The selected time is outside available booking hours');
 });
 
 it('allows booking when only a free calendar event overlaps', function () use ($officeHours) {
@@ -635,7 +635,168 @@ it('rejects booking when an out of office calendar event overlaps', function () 
         ]
     );
 
-    $response->assertStatus(409);
+    $response->assertStatus(422);
     $response->assertJsonFragment(['success' => false]);
-    expect($response->json('message'))->toContain('already been booked');
+    expect($response->json('message'))->toContain('The selected time is outside available booking hours');
+});
+
+// Midnight-Crossing Office Hours Tests (non-UTC timezones)
+
+$bstOfficeHours = [
+    'monday' => ['is_enabled' => true, 'starts_at' => '23:00', 'ends_at' => '07:00'],
+    'tuesday' => ['is_enabled' => true, 'starts_at' => '23:00', 'ends_at' => '07:00'],
+    'wednesday' => ['is_enabled' => true, 'starts_at' => '23:00', 'ends_at' => '07:00'],
+    'thursday' => ['is_enabled' => true, 'starts_at' => '23:00', 'ends_at' => '07:00'],
+    'friday' => ['is_enabled' => true, 'starts_at' => '23:00', 'ends_at' => '07:00'],
+    'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+    'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+];
+
+$hstOfficeHours = [
+    'monday' => ['is_enabled' => true, 'starts_at' => '18:00', 'ends_at' => '03:00'],
+    'tuesday' => ['is_enabled' => true, 'starts_at' => '18:00', 'ends_at' => '03:00'],
+    'wednesday' => ['is_enabled' => true, 'starts_at' => '18:00', 'ends_at' => '03:00'],
+    'thursday' => ['is_enabled' => true, 'starts_at' => '18:00', 'ends_at' => '03:00'],
+    'friday' => ['is_enabled' => true, 'starts_at' => '18:00', 'ends_at' => '03:00'],
+    'saturday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+    'sunday' => ['is_enabled' => false, 'starts_at' => null, 'ends_at' => null],
+];
+
+it('produces available slots when office hours cross midnight UTC (BST positive offset)', function () use ($bstOfficeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'office_hours_are_enabled' => true,
+            'office_hours' => $bstOfficeHours,
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create([
+            'slug' => 'test-bst-crossing',
+        ]);
+
+    $response = getJson(
+        route('widgets.booking-page.personal.api.available-slots', ['slug' => 'test-bst-crossing']) . '?year=2026&month=4'
+    );
+
+    $response->assertOk();
+
+    /** @var array<int, array{start: string, end: string}> $blocksData */
+    $blocksData = $response->json('blocks');
+    $blocks = collect($blocksData);
+
+    expect($blocks)->not->toBeEmpty();
+
+    // Monday Apr 6: hours cross midnight, should produce Sun Apr 5 23:00 to Mon Apr 6 07:00
+    $mondayBlock = $blocks->first(fn (array $block) => str_contains($block['start'], '2026-04-05T23:00'));
+    expect($mondayBlock)->not->toBeNull();
+    expect($mondayBlock['end'])->toBe('2026-04-06T07:00:00+00:00');
+});
+
+it('produces available slots when office hours cross midnight UTC (HST negative offset)', function () use ($hstOfficeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'office_hours_are_enabled' => true,
+            'office_hours' => $hstOfficeHours,
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create([
+            'slug' => 'test-hst-crossing',
+        ]);
+
+    $response = getJson(
+        route('widgets.booking-page.personal.api.available-slots', ['slug' => 'test-hst-crossing']) . '?year=2026&month=4'
+    );
+
+    $response->assertOk();
+
+    /** @var array<int, array{start: string, end: string}> $blocksData */
+    $blocksData = $response->json('blocks');
+    $blocks = collect($blocksData);
+
+    expect($blocks)->not->toBeEmpty();
+
+    // Monday Apr 6: hours 18:00 to 03:00 next day
+    $mondayBlock = $blocks->first(fn (array $block) => str_contains($block['start'], '2026-04-06T18:00'));
+    expect($mondayBlock)->not->toBeNull();
+    expect($mondayBlock['end'])->toBe('2026-04-07T03:00:00+00:00');
+});
+
+it('does not produce Saturday slots when Saturday is disabled with midnight-crossing hours', function () use ($bstOfficeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-01 00:00:00', 'UTC'));
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'office_hours_are_enabled' => true,
+            'office_hours' => $bstOfficeHours,
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create([
+            'slug' => 'test-bst-no-saturday',
+        ]);
+
+    $response = getJson(
+        route('widgets.booking-page.personal.api.available-slots', ['slug' => 'test-bst-no-saturday']) . '?year=2026&month=4'
+    );
+
+    $response->assertOk();
+
+    /** @var array<int, array{start: string, end: string}> $blocksData */
+    $blocksData = $response->json('blocks');
+    $blocks = collect($blocksData);
+
+    // Saturday is disabled, so no block should represent Saturday (Fri 23:00 to Sat 07:00)
+    $saturdayBlocks = $blocks->filter(function (array $block) {
+        $end = Carbon::parse($block['end']);
+
+        return $end->isSaturday() && $end->hour === 7;
+    });
+
+    expect($saturdayBlocks)->toBeEmpty();
+});
+
+it('allows booking within midnight-crossing office hours', function () use ($bstOfficeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'office_hours_are_enabled' => true,
+            'office_hours' => $bstOfficeHours,
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create([
+            'slug' => 'test-bst-book',
+        ]);
+
+    // Book at 00:00-00:30 UTC on Tuesday Apr 7 (within Mon 23:00 - Tue 07:00 window)
+    $response = postJson(
+        route('widgets.booking-page.personal.api.book', ['slug' => 'test-bst-book']),
+        [
+            'name' => 'Test User',
+            'email' => 'test@example.com',
+            'starts_at' => Carbon::parse('2026-04-07 00:00:00', 'UTC')->toIso8601String(),
+            'ends_at' => Carbon::parse('2026-04-07 00:30:00', 'UTC')->toIso8601String(),
+        ]
+    );
+
+    $response->assertStatus(201);
+    $response->assertJsonFragment(['success' => true]);
 });

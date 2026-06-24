@@ -47,7 +47,7 @@ export default defineConfig({
     },
     build: {
         manifest: true,
-        rollupOptions: {
+        rolldownOptions: {
             input: {
                 widget: resolve(__dirname, './src/widget.js'),
                 loader: resolve(__dirname, './src/loader.js'),
