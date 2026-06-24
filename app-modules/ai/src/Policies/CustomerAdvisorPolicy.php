@@ -99,34 +99,22 @@ class CustomerAdvisorPolicy
 
     public function delete(Authenticatable $authenticatable): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: ['customer_advisor.*.delete'],
-            denyResponse: 'You do not have permission to delete this Customer Advisor.'
-        );
+        return Response::deny('Customer Advisor cannot be deleted.');
     }
 
     public function deleteAny(Authenticatable $authenticatable): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: ['customer_advisor.*.delete'],
-            denyResponse: 'You do not have permission to delete any Customer Advisor.'
-        );
+        return Response::deny('Customer Advisor cannot be deleted.');
     }
 
     public function restore(Authenticatable $authenticatable): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: ['customer_advisor.*.restore'],
-            denyResponse: 'You do not have permission to restore this Customer Advisor.'
-        );
+        return Response::deny('Customer Advisor cannot be restored.');
     }
 
     public function restoreAny(Authenticatable $authenticatable): Response
     {
-        return $authenticatable->canOrElse(
-            abilities: ['customer_advisor.*.restore'],
-            denyResponse: 'You do not have permission to restore any Customer Advisor.'
-        );
+        return Response::deny('Customer Advisor cannot be restored.');
     }
 
     public function forceDelete(Authenticatable $authenticatable): Response
