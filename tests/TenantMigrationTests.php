@@ -36,6 +36,7 @@
 
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\MeetingCenter\Models\Event as MeetingCenterEvent;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
@@ -309,39 +310,34 @@ test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements
     isolatedMigration(
         '2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements_table',
         function () {
-            $userId = (string) Str::uuid();
-            DB::table('users')->insert([
-                'id' => $userId,
-                'name' => 'Test User',
-                'email' => 'test-engagement-migration@example.com',
-                'password' => bcrypt('password'),
+            $action = CampaignAction::factory()->createQuietly();
+
+            // Create a prospect directly to avoid triggering ProspectFactory's
+            // afterCreating callback which creates PhoneNumberLookup records
+            // (the phone_number_lookups table does not yet exist at this migration point).
+            $prospectId = (string) Str::uuid();
+            $statusId = (string) Str::uuid();
+            DB::table('prospect_statuses')->insertOrIgnore([
+                'id' => $statusId,
+                'classification' => 'new',
+                'name' => 'New',
+                'color' => 'primary',
+                'sort' => 1,
+                'is_system_protected' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-
-            $actionId = (string) Str::uuid();
-            $campaignId = (string) Str::uuid();
-            DB::table('campaigns')->insert([
-                'id' => $campaignId,
-                'name' => 'Test Campaign',
-                'enabled' => true,
+            $sourceId = (string) Str::uuid();
+            DB::table('prospect_sources')->insertOrIgnore([
+                'id' => $sourceId,
+                'name' => 'Test Source',
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
-
-            DB::table('campaign_actions')->insert([
-                'id' => $actionId,
-                'campaign_id' => $campaignId,
-                'type' => 'engagement',
-                'data' => json_encode([]),
-                'execute_at' => now(),
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-            $recipientId = (string) Str::uuid();
             DB::table('prospects')->insert([
-                'id' => $recipientId,
+                'id' => $prospectId,
+                'status_id' => $statusId,
+                'source_id' => $sourceId,
                 'first_name' => 'Test',
                 'last_name' => 'Prospect',
                 'full_name' => 'Test Prospect',
@@ -349,43 +345,27 @@ test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements
                 'updated_at' => now(),
             ]);
 
-            $engagementWithSourceId = (string) Str::uuid();
-            DB::table('engagements')->insert([
-                'id' => $engagementWithSourceId,
-                'user_id' => $userId,
+            $engagementWithSource = Engagement::factory()->createQuietly([
+                'campaign_action_id' => $action->id,
                 'recipient_type' => 'prospect',
-                'recipient_id' => $recipientId,
-                'subject' => json_encode(['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test']]]]]),
-                'body' => json_encode(['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test body']]]]]),
-                'channel' => 'email',
-                'campaign_action_id' => $actionId,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'recipient_id' => $prospectId,
             ]);
 
-            $engagementWithoutSourceId = (string) Str::uuid();
-            DB::table('engagements')->insert([
-                'id' => $engagementWithoutSourceId,
-                'user_id' => $userId,
-                'recipient_type' => 'prospect',
-                'recipient_id' => $recipientId,
-                'subject' => json_encode(['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test']]]]]),
-                'body' => json_encode(['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Test body']]]]]),
-                'channel' => 'email',
+            $engagementWithoutSource = Engagement::factory()->createQuietly([
                 'campaign_action_id' => null,
-                'created_at' => now(),
-                'updated_at' => now(),
+                'recipient_type' => 'prospect',
+                'recipient_id' => $prospectId,
             ]);
 
             $migrate = Artisan::call('migrate', ['--path' => 'app-modules/engagement/database/migrations/2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements_table.php']);
 
             expect($migrate)->toBe(Command::SUCCESS);
 
-            $withSource = DB::table('engagements')->where('id', $engagementWithSourceId)->first();
+            $withSource = DB::table('engagements')->where('id', $engagementWithSource->id)->first();
 
-            expect($withSource->source_id)->toBe($actionId); /** @phpstan-ignore-line */
+            expect($withSource->source_id)->toBe($action->id); /** @phpstan-ignore-line */
             expect($withSource->source_type)->toBe('campaign_action'); /** @phpstan-ignore-line */
-            $withoutSource = DB::table('engagements')->where('id', $engagementWithoutSourceId)->first();
+            $withoutSource = DB::table('engagements')->where('id', $engagementWithoutSource->id)->first();
 
             expect($withoutSource->source_id)->toBeNull(); /** @phpstan-ignore-line */
             expect($withoutSource->source_type)->toBeNull(); /** @phpstan-ignore-line */
