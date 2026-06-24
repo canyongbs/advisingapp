@@ -62,7 +62,7 @@
         "canyon-gbs/stock-media": "*",
         "canyon-gbs/workflow": "*",
         "canyongbs/common": "^2.18.0",
-        "canyongbs/model-state-machine": "^2.0.7",
+        "canyongbs/model-state-machine": "^2.0.8",
         "cknow/laravel-money": "^8.1",
         "composer/composer": "^2.7",
         "dedoc/scramble": "^0.12.23",
