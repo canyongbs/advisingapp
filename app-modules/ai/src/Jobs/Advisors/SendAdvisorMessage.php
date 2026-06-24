@@ -50,6 +50,7 @@ use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\Ai\Support\StreamingChunks\Thinking;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
@@ -68,13 +69,13 @@ class SendAdvisorMessage implements ShouldQueue
 
     /**
      * @param array<string, mixed> $request
-     * @param array<AiMessageFile> $files
+     * @param Collection<int, AiMessageFile> $files
      */
     public function __construct(
         protected AiThread $thread,
         protected string | Prompt $content,
         protected array $request = [],
-        protected array $files = [],
+        protected Collection $files = new Collection(),
         protected bool $hasImageGeneration = false,
     ) {}
 
@@ -124,7 +125,7 @@ class SendAdvisorMessage implements ShouldQueue
         try {
             $stream = $aiService->sendMessage(
                 message: $message,
-                files: $this->files,
+                files: $this->files->all(),
                 hasImageGeneration: $this->hasImageGeneration,
             );
         } catch (Throwable $exception) {
