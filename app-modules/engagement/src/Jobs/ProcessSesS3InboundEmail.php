@@ -44,7 +44,6 @@ use AdvisingApp\Engagement\Exceptions\UnableToRetrieveContentFromSesS3EmailPaylo
 use AdvisingApp\Engagement\Models\UnmatchedInboundCommunication;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\MediaCreatedByFeature;
 use App\Models\Tenant;
 use Aws\Crypto\KmsMaterialsProviderV3;
 use Aws\Kms\KmsClient;
@@ -148,7 +147,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                                             ->setFileName($attachment->getFilename())
                                             ->toMediaCollection('inline_attachments');
 
-                                        if (MediaCreatedByFeature::active() && is_null($media->created_by_id)) {
+                                        if (is_null($media->created_by_id)) {
                                             $media->createdBy()->associate($student);
                                             $media->saveQuietly();
                                         }
@@ -161,7 +160,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                                         ->setFileName($attachment->getFilename())
                                         ->toMediaCollection('attachments');
 
-                                    if (MediaCreatedByFeature::active() && is_null($media->created_by_id)) {
+                                    if (is_null($media->created_by_id)) {
                                         $media->createdBy()->associate($student);
                                         $media->saveQuietly();
                                     }
@@ -246,7 +245,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                                         ->setFileName($attachment->getFilename())
                                         ->toMediaCollection('inline_attachments');
 
-                                    if (MediaCreatedByFeature::active() && is_null($media->created_by_id)) {
+                                    if (is_null($media->created_by_id)) {
                                         $media->createdBy()->associate($prospect);
                                         $media->saveQuietly();
                                     }
@@ -259,7 +258,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                                     ->setFileName($attachment->getFilename())
                                     ->toMediaCollection('attachments');
 
-                                if (MediaCreatedByFeature::active() && is_null($media->created_by_id)) {
+                                if (is_null($media->created_by_id)) {
                                     $media->createdBy()->associate($prospect);
                                     $media->saveQuietly();
                                 }
