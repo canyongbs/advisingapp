@@ -42,7 +42,6 @@ use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Tables\Filters\FormSubmissionStatusFilter;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
-use App\Features\FormVersioningFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Carbon\CarbonInterface;
 use Filament\Actions\Action;
@@ -79,13 +78,11 @@ class ManageFormSubmissions extends ManageRelatedRecords
 
         return $table
             ->query(
-                FormVersioningFeature::active()
-                    ? FormSubmission::query()
-                        ->whereHas(
-                            'submissible',
-                            fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $owner->root_id),
-                        )
-                    : $owner->submissions()->getQuery()
+                FormSubmission::query()
+                    ->whereHas(
+                        'submissible',
+                        fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $owner->root_id),
+                    )
             )
             ->columns([
                 IdColumn::make(),
@@ -126,13 +123,11 @@ class ManageFormSubmissions extends ManageRelatedRecords
                             ->slug()
                             ->append('.csv');
 
-                        $query = FormVersioningFeature::active()
-                            ? FormSubmission::query()
-                                ->whereHas(
-                                    'submissible',
-                                    fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $owner->root_id),
-                                )
-                            : $owner->submissions()->getQuery();
+                        $query = FormSubmission::query()
+                            ->whereHas(
+                                'submissible',
+                                fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $owner->root_id),
+                            );
 
                         return Excel::download(new FormSubmissionExport($query->get()), $filename);
                     }),
@@ -180,21 +175,15 @@ class ManageFormSubmissions extends ManageRelatedRecords
         /** @var Form $ownerRecord */
         $formSubmissionsCount = Cache::tags('{form-submission-count}')
             ->remember(
-                FormVersioningFeature::active()
-                    ? "form-submission-count-{$ownerRecord->root_id}"
-                    : "form-submission-count-{$ownerRecord->id}",
+                "form-submission-count-{$ownerRecord->root_id}",
                 now()->addMinutes(5),
                 function () use ($ownerRecord): int {
-                    if (FormVersioningFeature::active()) {
-                        return FormSubmission::query()
-                            ->whereHas(
-                                'submissible',
-                                fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $ownerRecord->root_id),
-                            )
-                            ->count();
-                    }
-
-                    return $ownerRecord->submissions()->count();
+                    return FormSubmission::query()
+                        ->whereHas(
+                            'submissible',
+                            fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $ownerRecord->root_id),
+                        )
+                        ->count();
                 },
             );
 
