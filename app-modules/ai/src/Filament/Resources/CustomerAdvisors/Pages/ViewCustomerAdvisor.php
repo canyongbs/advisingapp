@@ -92,7 +92,7 @@ class ViewCustomerAdvisor extends ViewRecord
                                     ->html()
                                     ->extraAttributes(['class' => 'overflow-auto'])
                                     ->state(fn (CustomerAdvisor $record): string => new HtmlString(
-                                        '<pre>' . app(GetCustomerAdvisorInstructions::class)->execute($record) . '</pre>'
+                                        '<pre>' . e(app(GetCustomerAdvisorInstructions::class)->execute($record)) . '</pre>'
                                     )),
                             ]),
                         Tab::make('Rendered')
