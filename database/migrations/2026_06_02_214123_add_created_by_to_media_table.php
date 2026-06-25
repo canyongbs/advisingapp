@@ -34,35 +34,25 @@
 </COPYRIGHT>
 */
 
-use App\Features\MediaCreatedByFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('media', function (Blueprint $table) {
-                $table->string('created_by_type')->nullable();
-                $table->string('created_by_id')->nullable();
-                $table->index(['created_by_type', 'created_by_id']);
-            });
-
-            MediaCreatedByFeature::activate();
+        Schema::table('media', function (Blueprint $table) {
+            $table->string('created_by_type')->nullable();
+            $table->string('created_by_id')->nullable();
+            $table->index(['created_by_type', 'created_by_id']);
         });
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            MediaCreatedByFeature::deactivate();
-
-            Schema::table('media', function (Blueprint $table) {
-                $table->dropIndex(['created_by_type', 'created_by_id']);
-                $table->dropColumn(['created_by_type', 'created_by_id']);
-            });
+        Schema::table('media', function (Blueprint $table) {
+            $table->dropIndex(['created_by_type', 'created_by_id']);
+            $table->dropColumn(['created_by_type', 'created_by_id']);
         });
     }
 };

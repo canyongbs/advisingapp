@@ -52,6 +52,7 @@ use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Support\Enums\Width;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 
@@ -106,7 +107,7 @@ class CreateCampaign extends CreateRecord
                         ->label('Population Group')
                         ->options(function () {
                             return Group::query()
-                                ->whereHas('user', function ($query) {
+                                ->whereHas('user', function (EloquentBuilder $query) {
                                     $query->whereKey(auth()->id())->orWhereRelation('team.users', 'id', auth()->id());
                                 })
                                 ->pluck('name', 'id');

@@ -74,7 +74,7 @@ it('Check total users with unique login event type', function () {
     User::factory()->count($userCount)->create()->each(function ($user) use (&$logins) {
         $randomLogins = rand(1, 10);
 
-        for ($i = 0; $i < $randomLogins; $i++) {
+        for ($index = 0; $index < $randomLogins; $index++) {
             dispatch(new RecordUserUniqueLoginTrackedEvent(
                 occurredAt: now(),
                 user: $user,

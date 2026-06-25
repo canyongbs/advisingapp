@@ -85,7 +85,7 @@ class BulkGroupAction
                             )
                     );
                     DB::commit();
-                } catch (Exception $e) {
+                } catch (Exception $exception) {
                     DB::rollBack();
                     Notification::make()
                         ->title('Could not save group')

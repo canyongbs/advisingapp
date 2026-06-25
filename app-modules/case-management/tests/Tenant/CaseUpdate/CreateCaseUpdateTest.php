@@ -79,7 +79,7 @@ test('A successful action on the CreateCaseUpdate page', function () {
         ->toEqual($request->get('case_model_id'));
 });
 
-test('CreateCaseUpdate requires valid data', function ($data, $errors) {
+test('CreateCaseUpdate requires valid data', function (CreateCaseUpdateRequestFactory $data, array $errors) {
     asSuperAdmin();
 
     livewire(CreateCaseUpdate::class)

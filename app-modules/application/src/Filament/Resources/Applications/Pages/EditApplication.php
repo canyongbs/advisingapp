@@ -41,7 +41,6 @@ use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\Concerns\HasSharedFormConfiguration;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Form\Actions\SaveSubmissibleFieldsFromContent;
-use App\Features\FormVersioningFeature;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
@@ -69,17 +68,11 @@ class EditApplication extends EditRecord
 
     protected function beforeSave(): void
     {
-        if (FormVersioningFeature::active()) {
-            $this->versioningFormData = $this->data;
-        }
+        $this->versioningFormData = $this->data;
     }
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        if (! FormVersioningFeature::active()) {
-            return parent::handleRecordUpdate($record, $data);
-        }
-
         /** @var Application $record */
         return DB::transaction(function () use ($record, $data) {
             $newVersion = app(CreateApplicationVersion::class)->execute($record, $data);

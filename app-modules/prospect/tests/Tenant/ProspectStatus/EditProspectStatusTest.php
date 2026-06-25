@@ -78,7 +78,7 @@ test('A successful action on the EditProspectStatus page', function () {
     assertEquals($editRequest['color'], $prospectStatus->fresh()->color->value);
 });
 
-test('EditProspectStatus requires valid data', function ($data, $errors) {
+test('EditProspectStatus requires valid data', function (EditProspectStatusRequestFactory $data, array $errors) {
     asSuperAdmin();
 
     $prospectStatus = ProspectStatus::factory()->create();

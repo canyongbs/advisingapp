@@ -90,7 +90,7 @@ $setUp = function (
     return ['user' => $user, 'records' => $records, 'licenseTypes' => $licenseTypes];
 };
 
-it('will assign licenses to users', function ($licenseType) use ($setUp) {
+it('will assign licenses to users', function (LicenseType $licenseType) use ($setUp) {
     ['records' => $records, 'licenseTypes' => $licenseTypes] = $setUp(licenseTypes: $licenseType);
 
     livewire(ListUsers::class)

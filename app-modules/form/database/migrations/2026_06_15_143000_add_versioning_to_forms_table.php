@@ -49,9 +49,6 @@ return new class () extends Migration {
                 $table->timestamp('archived_at')->nullable();
             });
 
-            // TODO: Cleanup Task - FormVersioningFeature - This backfill can be removed once all environments have run this migration
-            DB::statement('UPDATE forms SET root_id = id WHERE root_id IS NULL');
-
             Schema::table('forms', function (Blueprint $table) {
                 $table->uuid('root_id')->nullable(false)->change();
                 $table->foreign('root_id')->references('id')->on('forms');

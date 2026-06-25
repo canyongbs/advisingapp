@@ -74,7 +74,7 @@ test('A successful action on the EditCaseUpdate page', function () {
         ->toEqual($request->get('case_model_id'));
 });
 
-test('EditCaseUpdate requires valid data', function ($data, $errors) {
+test('EditCaseUpdate requires valid data', function (EditCaseUpdateRequestFactory $data, array $errors) {
     $caseUpdate = CaseUpdate::factory()->create();
 
     asSuperAdmin();

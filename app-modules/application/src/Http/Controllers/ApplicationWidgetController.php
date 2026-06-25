@@ -52,8 +52,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\FormVersioningFeature;
-use App\Features\PastSubmissionsFeature;
 use App\Http\Controllers\Controller;
 use Closure;
 use Filament\Support\Colors\Color;
@@ -124,7 +122,7 @@ class ApplicationWidgetController extends Controller
             [
                 'name' => $application->title,
                 'description' => $application->description,
-                'allow_view_past_submissions' => PastSubmissionsFeature::active() && $application->allow_view_past_submissions,
+                'allow_view_past_submissions' => $application->allow_view_past_submissions,
                 'authentication_url' => URL::signedRoute(
                     name: 'widgets.applications.api.request-authentication',
                     parameters: ['application' => $application],
@@ -238,15 +236,11 @@ class ApplicationWidgetController extends Controller
         $pastSubmissionsCount = 0;
         $pastSubmissionsUrl = null;
 
-        if (PastSubmissionsFeature::active() && $application->allow_view_past_submissions && $author) {
+        if ($application->allow_view_past_submissions && $author) {
             $pastSubmissionsCount = ApplicationSubmission::query()
-                ->when(
-                    FormVersioningFeature::active(),
-                    fn ($query) => $query->whereHas(
-                        'submissible',
-                        fn ($query) => $query->withoutGlobalScopes()->where('root_id', $application->root_id),
-                    ),
-                    fn ($query) => $query->where('application_id', $application->getKey()),
+                ->whereHas(
+                    'submissible',
+                    fn ($query) => $query->withoutGlobalScopes()->where('root_id', $application->root_id),
                 )
                 ->whereMorphedTo('author', $author)
                 ->count();
@@ -271,7 +265,7 @@ class ApplicationWidgetController extends Controller
                 ],
             ),
             'schema' => $generateSchema->withAuthor($author)($application),
-            'allow_view_past_submissions' => PastSubmissionsFeature::active() && $application->allow_view_past_submissions,
+            'allow_view_past_submissions' => $application->allow_view_past_submissions,
             'past_submissions_count' => $pastSubmissionsCount,
             'past_submissions_url' => $pastSubmissionsUrl,
         ]);
@@ -454,9 +448,6 @@ class ApplicationWidgetController extends Controller
         Request $request,
         Application $application,
     ): JsonResponse {
-        if (! PastSubmissionsFeature::active()) {
-            abort(Response::HTTP_FORBIDDEN);
-        }
         $authentication = $request->query('authentication');
 
         if (filled($authentication)) {
@@ -478,13 +469,9 @@ class ApplicationWidgetController extends Controller
         }
 
         $pastSubmissions = ApplicationSubmission::query()
-            ->when(
-                FormVersioningFeature::active(),
-                fn ($query) => $query->whereHas(
-                    'submissible',
-                    fn ($query) => $query->withoutGlobalScopes()->where('root_id', $application->root_id),
-                ),
-                fn ($query) => $query->where('application_id', $application->getKey()),
+            ->whereHas(
+                'submissible',
+                fn ($query) => $query->withoutGlobalScopes()->where('root_id', $application->root_id),
             )
             ->whereMorphedTo('author', $author)
             ->orderByDesc('created_at')
@@ -521,10 +508,6 @@ class ApplicationWidgetController extends Controller
         Application $application,
         ApplicationSubmission $submission,
     ): JsonResponse {
-        if (! PastSubmissionsFeature::active()) {
-            abort(Response::HTTP_FORBIDDEN);
-        }
-
         $authentication = $request->query('authentication');
 
         if (filled($authentication)) {
@@ -536,9 +519,7 @@ class ApplicationWidgetController extends Controller
         }
 
         abort_unless(
-            FormVersioningFeature::active()
-                ? $submission->submissible()->withoutGlobalScopes()->value('root_id') === $application->root_id
-                : $submission->application_id === $application->getKey(),
+            $submission->submissible()->withoutGlobalScopes()->value('root_id') === $application->root_id,
             Response::HTTP_NOT_FOUND,
         );
 
@@ -557,10 +538,6 @@ class ApplicationWidgetController extends Controller
 
     private function resolveToLatestVersion(Application $application): Application
     {
-        if (! FormVersioningFeature::active()) {
-            return $application;
-        }
-
         if (! $application->isArchived()) {
             return $application;
         }

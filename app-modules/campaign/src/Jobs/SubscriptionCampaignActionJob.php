@@ -90,12 +90,12 @@ class SubscriptionCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             $this->actionEducatable->markSucceeded();
 
             DB::commit();
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             DB::rollBack();
 
             $this->actionEducatable->markFailed();
 
-            throw $e;
+            throw $exception;
         }
     }
 }
