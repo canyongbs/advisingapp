@@ -60,7 +60,7 @@ class GenerateTableOfContents
             $prev <= $item['level'] ?: $result .= str_repeat('</ul>', $prev - $item['level']);
             $prev >= $item['level'] ?: $result .= '<ul>';
 
-            $result .= '<li><a href="#' . $item['id'] . '">' . e($item['text']) . '</a></li>';
+            $result .= '<li><a href="#' . e($item['id']) . '">' . e($item['text']) . '</a></li>';
 
             $prev = $item['level'];
         }
