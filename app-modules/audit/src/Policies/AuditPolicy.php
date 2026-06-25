@@ -82,6 +82,14 @@ class AuditPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['audit.*.delete'],
+            denyResponse: 'You do not have permission to delete any audit.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Audit $audit): Response
     {
         return $authenticatable->canOrElse(
@@ -90,11 +98,27 @@ class AuditPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['audit.*.restore'],
+            denyResponse: 'You do not have permission to restore any audit.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Audit $audit): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['audit.*.force-delete'],
             denyResponse: 'You do not have permission to force delete this audit.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['audit.*.force-delete'],
+            denyResponse: 'You do not have permission to force delete any audit.'
         );
     }
 }

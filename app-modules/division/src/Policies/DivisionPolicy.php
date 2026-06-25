@@ -82,6 +82,14 @@ class DivisionPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['division.*.delete'],
+            denyResponse: 'You do not have permission to delete any division.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Division $division): Response
     {
         return $authenticatable->canOrElse(
@@ -90,11 +98,27 @@ class DivisionPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['division.*.restore'],
+            denyResponse: 'You do not have permission to restore any division.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Division $division): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['division.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this division.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['division.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any division.'
         );
     }
 }

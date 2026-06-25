@@ -82,6 +82,7 @@ trait CanManageEducatableCareTeam
             ])
             ->recordActions([
                 DetachAction::make()
+                    ->authorize(fn (): bool => auth()->user()->can('deleteAny', CareTeam::class))
                     ->label('Remove')
                     ->modalHeading(function (User $record) {
                         /** @var Student $student */
@@ -100,6 +101,7 @@ trait CanManageEducatableCareTeam
             ->toolbarActions([
                 BulkActionGroup::make([
                     DetachBulkAction::make()
+                        ->authorize(fn (): bool => auth()->user()->can('deleteAny', CareTeam::class))
                         ->label('Remove selected')
                         ->modalHeading(function () {
                             /** @var Student $student */

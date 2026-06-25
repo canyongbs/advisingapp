@@ -78,6 +78,7 @@ trait CanManageEducatableSubscriptions
             ])
             ->headerActions([
                 AttachAction::make()
+                    ->authorize(fn (): bool => auth()->user()->can('create', Subscription::class))
                     ->label('New')
                     ->modalHeading(function () {
                         /** @var Student $student */
@@ -105,6 +106,7 @@ trait CanManageEducatableSubscriptions
             ])
             ->recordActions([
                 DetachAction::make()
+                    ->authorize(fn (): bool => auth()->user()->can('deleteAny', Subscription::class))
                     ->label('Unsubscribe')
                     ->modalHeading(function (User $record) {
                         /** @var Student $student */
@@ -123,6 +125,7 @@ trait CanManageEducatableSubscriptions
             ->toolbarActions([
                 BulkActionGroup::make([
                     DetachBulkAction::make()
+                        ->authorize(fn (): bool => auth()->user()->can('deleteAny', Subscription::class))
                         ->label('Unsubscribe selected')
                         ->modalHeading(function () {
                             /** @var Student $student */

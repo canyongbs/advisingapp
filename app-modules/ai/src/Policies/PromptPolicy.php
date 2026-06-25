@@ -108,6 +108,14 @@ class PromptPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['prompt.*.delete'],
+            denyResponse: 'You do not have permission to delete any prompt.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Prompt $prompt): Response
     {
         return $authenticatable->canOrElse(
@@ -116,11 +124,27 @@ class PromptPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['prompt.*.restore'],
+            denyResponse: 'You do not have permission to restore any prompt.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Prompt $prompt): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['prompt.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this prompt.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['prompt.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any prompt.'
         );
     }
 }

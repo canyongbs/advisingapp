@@ -82,6 +82,14 @@ class LicensePolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['license.*.delete'],
+            denyResponse: 'You do not have permission to delete any license.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, License $license): Response
     {
         return $authenticatable->canOrElse(
@@ -90,11 +98,27 @@ class LicensePolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['license.*.restore'],
+            denyResponse: 'You do not have permission to restore any license.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, License $license): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['license.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this license.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['license.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any license.'
         );
     }
 }

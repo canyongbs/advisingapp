@@ -82,6 +82,14 @@ class CareTeamPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['care_team.*.delete'],
+            denyResponse: 'You do not have permission to delete any care team.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, CareTeam $careTeam): Response
     {
         return $authenticatable->canOrElse(
@@ -90,11 +98,27 @@ class CareTeamPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['care_team.*.restore'],
+            denyResponse: 'You do not have permission to restore any care team.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, CareTeam $careTeam): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['care_team.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this care team.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['care_team.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any care team.'
         );
     }
 }

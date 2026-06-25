@@ -46,6 +46,7 @@ use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Repeater;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
@@ -183,4 +184,24 @@ it('can attach users with care team roles to a prospect', function () {
     expect($prospect->careTeam->pluck('id'))->toContain($user2->getKey());
     expect(CareTeam::where('user_id', $user1->getKey())->where('educatable_id', $prospect->getKey())->first()->care_team_role_id)->toBe($careTeamRole1->getKey());
     expect(CareTeam::where('user_id', $user2->getKey())->where('educatable_id', $prospect->getKey())->first()->care_team_role_id)->toBe($careTeamRole2->getKey());
+});
+
+it('gates the care team attach action behind the care_team.create permission', function () {
+    $student = Student::factory()->create();
+
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.*.view');
+    $user->givePermissionTo('care_team.view-any');
+
+    actingAs($user);
+
+    // Can reach the care team page (view + care_team.view-any) but cannot add members without create.
+    livewire(ManageStudentCareTeam::class, ['record' => $student->getKey()])
+        ->assertActionHidden(TestAction::make('attach')->table());
+
+    $user->givePermissionTo('care_team.create');
+
+    livewire(ManageStudentCareTeam::class, ['record' => $student->getKey()])
+        ->assertActionVisible(TestAction::make('attach')->table());
 });

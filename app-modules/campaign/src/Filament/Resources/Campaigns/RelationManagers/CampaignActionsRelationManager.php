@@ -98,6 +98,7 @@ class CampaignActionsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Action::make('create')
+                    ->authorize(fn (): bool => auth()->user()->can('update', $campaign))
                     ->slideOver()
                     ->label('New')
                     ->modalHeading('Create Journey Steps')
@@ -174,7 +175,8 @@ class CampaignActionsRelationManager extends RelationManager
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorizeIndividualRecords('delete'),
                 ])
                     ->hidden(fn () => $campaign->hasBeenExecuted() === true),
             ]);

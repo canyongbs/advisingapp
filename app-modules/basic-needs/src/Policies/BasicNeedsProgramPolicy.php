@@ -100,6 +100,14 @@ class BasicNeedsProgramPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['support_program.*.delete'],
+            denyResponse: 'You do not have permission to delete any basic needs program.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
@@ -108,11 +116,27 @@ class BasicNeedsProgramPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['support_program.*.restore'],
+            denyResponse: 'You do not have permission to restore any basic needs program.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['support_program.*.force-delete'],
             denyResponse: 'You do not have permission to force delete this basic needs program.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['support_program.*.force-delete'],
+            denyResponse: 'You do not have permission to force delete any basic needs program.'
         );
     }
 

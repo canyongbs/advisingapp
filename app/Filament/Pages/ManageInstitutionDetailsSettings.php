@@ -96,6 +96,25 @@ class ManageInstitutionDetailsSettings extends SettingsPage
                         InstitutionDetailsSettings::getSettingsPropertyModel('institution.light_logo'),
                     )
                     ->columnSpanFull(),
-            ]);
+            ])
+            ->disabled(! auth()->user()->can('product_admin.*.update'));
+    }
+
+    public function save(): void
+    {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return;
+        }
+
+        parent::save();
+    }
+
+    public function getFormActions(): array
+    {
+        if (! auth()->user()->can('product_admin.*.update')) {
+            return [];
+        }
+
+        return parent::getFormActions();
     }
 }

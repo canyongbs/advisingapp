@@ -68,6 +68,7 @@ it('disables initiative setting from the initiatives list page', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo([
         'settings.view-any',
+        'settings.*.update',
     ]);
 
     actingAs($user);
@@ -89,6 +90,7 @@ it('makes driver optional from the drivers list page', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo([
         'settings.view-any',
+        'settings.*.update',
     ]);
 
     actingAs($user);
@@ -106,6 +108,7 @@ it('persists settings across different list pages', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo([
         'settings.view-any',
+        'settings.*.update',
     ]);
 
     actingAs($user);

@@ -74,6 +74,7 @@ class ListConcernStatuses extends ListRecords
             ])
             ->defaultSort('order')
             ->reorderable('order')
+            ->authorizeReorder(fn (): bool => auth()->user()->can('settings.*.update'))
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),

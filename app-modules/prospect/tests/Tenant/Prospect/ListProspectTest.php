@@ -49,6 +49,7 @@ use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use Filament\Actions\DeleteBulkAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -381,4 +382,22 @@ it('renders the bulk create case action based on proper access', function () {
     livewire(ListProspects::class)
         ->assertOk()
         ->assertTableBulkActionVisible('createCase');
+});
+
+test('the delete bulk action is gated by the delete permission', function () {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+
+    $user->givePermissionTo('prospect.view-any');
+
+    actingAs($user);
+
+    livewire(ListProspects::class)
+        ->assertOk()
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
+
+    $user->givePermissionTo('prospect.*.delete');
+
+    livewire(ListProspects::class)
+        ->assertOk()
+        ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

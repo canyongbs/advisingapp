@@ -35,11 +35,14 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Pages\ListResourceHubStatuses;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Actions\DeleteBulkAction;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
 
 // TODO: Write ListResourceHubStatuses tests
 //test('The correct details are displayed on the ListResourceHubStatuses page', function () {});
@@ -118,4 +121,22 @@ test('ListResourceHubStatus is gated with proper license access control', functi
         ->get(
             ResourceHubStatusResource::getUrl('index')
         )->assertSuccessful();
+});
+
+test('The DeleteBulkAction is hidden without the delete permission and visible with it', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+
+    $user->givePermissionTo('settings.view-any');
+
+    actingAs($user);
+
+    livewire(ListResourceHubStatuses::class)
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
+
+    $user->givePermissionTo('settings.*.delete');
+
+    actingAs($user);
+
+    livewire(ListResourceHubStatuses::class)
+        ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

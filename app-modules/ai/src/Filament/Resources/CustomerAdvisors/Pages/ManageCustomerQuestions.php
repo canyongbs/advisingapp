@@ -153,7 +153,8 @@ class ManageCustomerQuestions extends ManageRelatedRecords
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorizeIndividualRecords('delete'),
                 ]),
             ])
             ->emptyStateHeading('No Customer Advisor Questions Found')

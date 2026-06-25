@@ -107,11 +107,27 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.delete',
+            denyResponse: 'You do not have permission to delete any resource hub status.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, ResourceHubStatus $resourceHubStatus): Response
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.*.restore',
             denyResponse: 'You do not have permission to restore this resource hub status.'
+        );
+    }
+
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.restore',
+            denyResponse: 'You do not have permission to restore any resource hub status.'
         );
     }
 
@@ -124,6 +140,14 @@ class ResourceHubStatusPolicy implements PerformsChecksBeforeAuthorization
         return $authenticatable->canOrElse(
             abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this resource hub status.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.force-delete',
+            denyResponse: 'You do not have permission to permanently delete any resource hub status.'
         );
     }
 

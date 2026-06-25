@@ -107,6 +107,7 @@ class WorkflowStepsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Action::make('create')
+                    ->authorize(fn (): bool => auth()->user()->can('update', $workflow->workflowTrigger->related))
                     ->label('New Step')
                     ->slideOver()
                     ->modalHeading('Create Workflow Steps')
@@ -214,7 +215,8 @@ class WorkflowStepsRelationManager extends RelationManager
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorizeIndividualRecords('delete'),
                 ]),
             ]);
     }

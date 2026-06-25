@@ -109,12 +109,27 @@ class AiAssistantPolicy
         return Response::deny('AI Assistants cannot be deleted.');
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return Response::deny('AI Assistants cannot be deleted.');
+    }
+
     public function restore(Authenticatable $authenticatable, AiAssistant $aiAssistant): Response
     {
         return Response::deny('AI Assistants cannot be restored.');
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return Response::deny('AI Assistants cannot be restored.');
+    }
+
     public function forceDelete(Authenticatable $authenticatable, AiAssistant $aiAssistant): Response
+    {
+        return Response::deny('AI Assistants cannot be permanently deleted.');
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
     {
         return Response::deny('AI Assistants cannot be permanently deleted.');
     }

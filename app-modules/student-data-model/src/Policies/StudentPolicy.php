@@ -104,6 +104,18 @@ class StudentPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('Student data configuration is not enabled.');
+        }
+
+        return $authenticatable->canOrElse(
+            abilities: 'student.*.delete',
+            denyResponse: 'You do not have permission to delete any student.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Student $student): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
@@ -116,6 +128,18 @@ class StudentPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('Student data configuration is not enabled.');
+        }
+
+        return $authenticatable->canOrElse(
+            abilities: 'student.*.restore',
+            denyResponse: 'You do not have permission to restore any student.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Student $student): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
@@ -125,6 +149,18 @@ class StudentPolicy
         return $authenticatable->canOrElse(
             abilities: 'student.*.force-delete',
             denyResponse: 'You do not have permission to force delete this student.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('Student data configuration is not enabled.');
+        }
+
+        return $authenticatable->canOrElse(
+            abilities: 'student.*.force-delete',
+            denyResponse: 'You do not have permission to force delete any student.'
         );
     }
 

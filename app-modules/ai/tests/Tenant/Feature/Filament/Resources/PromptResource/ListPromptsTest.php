@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Team\Models\Team;
 use App\Models\Authenticatable;
+use Filament\Actions\DeleteBulkAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
@@ -104,6 +105,32 @@ it('can list records', function () use ($licenses, $permissions) {
         ->assertSuccessful()
         ->assertCountTableRecords($records->count())
         ->assertCanSeeTableRecords($records);
+});
+
+it('hides the bulk delete action from a user who is not a super admin', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: [...$permissions, 'prompt.*.delete']
+    ));
+
+    Prompt::factory()->count(2)->create();
+
+    livewire(ListPrompts::class)
+        ->assertSuccessful()
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
+});
+
+it('shows the bulk delete action to a super admin', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    )->assignRole(Authenticatable::SUPER_ADMIN_ROLE));
+
+    Prompt::factory()->count(2)->create();
+
+    livewire(ListPrompts::class)
+        ->assertSuccessful()
+        ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
 it('Filter prompts based on Smart', function () use ($licenses, $permissions) {

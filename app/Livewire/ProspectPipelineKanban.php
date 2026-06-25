@@ -116,6 +116,13 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
 
     public function moveProspect(Pipeline $pipeline, string $educatableId, string $fromStage = '', string $toStage = ''): JsonResponse
     {
+        if (! auth()->user()?->can('update', $pipeline)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have permission to move records in this pipeline.',
+            ], ResponseAlias::HTTP_FORBIDDEN);
+        }
+
         try {
             $educatableType = $pipeline->group->model;
 

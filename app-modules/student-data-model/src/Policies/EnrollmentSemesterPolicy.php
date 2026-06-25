@@ -82,6 +82,14 @@ class EnrollmentSemesterPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['settings.*.delete'],
+            denyResponse: 'You do not have permission to delete any enrollment semester.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, EnrollmentSemester $enrollmentSemester): Response
     {
         return $authenticatable->canOrElse(
@@ -90,11 +98,27 @@ class EnrollmentSemesterPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['settings.*.restore'],
+            denyResponse: 'You do not have permission to restore any enrollment semester.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, EnrollmentSemester $enrollmentSemester): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['settings.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this enrollment semester.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['settings.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any enrollment semester.'
         );
     }
 }

@@ -111,7 +111,8 @@ class ListForms extends ListRecords
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorizeIndividualRecords('delete'),
                 ]),
             ]);
     }
@@ -120,6 +121,7 @@ class ListForms extends ListRecords
     {
         return [
             Action::make('create')
+                ->authorize('create', Form::class)
                 ->label('New')
                 ->requiresConfirmation()
                 ->modalHeading('Create New Form')
