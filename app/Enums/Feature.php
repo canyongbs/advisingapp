@@ -56,6 +56,8 @@ enum Feature: string
 
     case EventManagement = 'event-management';
 
+    case RealtimeChat = 'realtime-chat';
+
     case MobileApps = 'mobile-apps';
 
     case ScheduleAndAppointments = 'schedule-and-appointments';
