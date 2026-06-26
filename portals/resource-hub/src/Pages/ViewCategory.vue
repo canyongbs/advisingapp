@@ -237,7 +237,7 @@
                 {
                     name: category.value.parentCategory.name,
                     route: 'view-category',
-                    params: { categorySlug: category.value.parentCategory.slug },
+                    params: { categoryId: category.value.parentCategory.id },
                 },
             ];
         }
@@ -277,23 +277,23 @@
 
         const { get } = consumer();
 
-        await get(props.apiUrl + '/categories/' + route.params.categorySlug, {
+        await get(props.apiUrl + '/categories/' + route.params.categoryId, {
             page: page,
             filter: filter.value,
         }).then((response) => {
-            if (route.params.categorySlug && route.params.parentCategorySlug) {
+            if (route.params.categoryId && route.params.parentCategoryId) {
                 router.replace({
                     name: 'view-subcategory',
                     params: {
-                        parentCategorySlug: response.data.category.parentCategory.slug,
-                        categorySlug: response.data.category.slug,
+                        parentCategoryId: response.data.category.parentCategory.id,
+                        categoryId: response.data.category.id,
                     },
                     query: { ...route.query },
                 });
-            } else if (route.params.categorySlug) {
+            } else if (route.params.categoryId) {
                 router.replace({
                     name: 'view-category',
-                    params: { categorySlug: response.data.category.slug },
+                    params: { categoryId: response.data.category.id },
                     query: { ...route.query },
                 });
             }

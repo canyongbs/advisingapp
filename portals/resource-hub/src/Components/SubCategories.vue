@@ -46,12 +46,12 @@
     <div class="grid gap-3 md:grid-cols-2">
         <CategoryCard
             v-for="subCategory in subCategories"
-            :key="subCategory.slug"
+            :key="subCategory.id"
             :to="{
                 name: 'view-subcategory',
                 params: {
-                    parentCategorySlug: subCategory.parentCategory.slug,
-                    categorySlug: subCategory.slug,
+                    parentCategoryId: subCategory.parentCategory.id,
+                    categoryId: subCategory.id,
                 },
             }"
             :icon="subCategory.icon"

@@ -66,17 +66,17 @@ customElements.define(
                         component: () => import('./Pages/Home.vue'),
                     },
                     {
-                        path: baseUrl + '/categories/:categorySlug',
+                        path: baseUrl + '/categories/:categoryId',
                         name: 'view-category',
                         component: () => import('./Pages/ViewCategory.vue'),
                     },
                     {
-                        path: baseUrl + '/categories/:parentCategorySlug/:categorySlug',
+                        path: baseUrl + '/categories/:parentCategoryId/:categoryId',
                         name: 'view-subcategory',
                         component: () => import('./Pages/ViewCategory.vue'),
                     },
                     {
-                        path: baseUrl + '/categories/:categorySlug/articles/:articleId',
+                        path: baseUrl + '/categories/:categoryId/articles/:articleId',
                         name: 'view-article',
                         component: () => import('./Pages/ViewArticle.vue'),
                     },
@@ -96,6 +96,6 @@ customElements.define(
 
             return () => h(App, props);
         },
-        props: ['url', 'userAuthenticationUrl', 'accessUrl', 'searchUrl', 'appUrl', 'apiUrl', 'tags'],
+        props: ['url', 'userAuthenticationUrl', 'accessUrl', 'searchUrl', 'appUrl', 'apiUrl', 'tags', 'cssUrl', 'appTitle'],
     }),
 );

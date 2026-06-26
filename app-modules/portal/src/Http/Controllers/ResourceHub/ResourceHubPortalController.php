@@ -37,6 +37,7 @@
 namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
 use AdvisingApp\Portal\Settings\PortalSettings;
+use AdvisingApp\Theme\Settings\ThemeSettings;
 use App\Http\Controllers\Controller;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
@@ -44,6 +45,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Vite;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ResourceHubPortalController extends Controller
@@ -99,6 +101,18 @@ class ResourceHubPortalController extends Controller
     {
         $settings = resolve(PortalSettings::class);
 
+        $portalLogo = $settings->getSettingsPropertyModel('portal.logo')->getFirstMedia('logo');
+
+        if (! $portalLogo) {
+            $themeSettings = resolve(ThemeSettings::class);
+            $brandingProperty = $themeSettings::getSettingsPropertyModel('theme.is_logo_active');
+            $portalLogo = $themeSettings->is_logo_active ? $brandingProperty->getFirstMedia('logo') : null;
+        }
+
+        $headerLogo = $portalLogo
+            ? $portalLogo->getTemporaryUrl(expiration: now()->addMinutes(5))
+            : url(Vite::asset('resources/images/default-logo-light-201124.svg'));
+
         return response()->json([
             'primary_color' => collect(Color::all()[$settings->resource_hub_portal_primary_color->value ?? 'blue'])
                 ->map(Color::convertToRgb(...))
@@ -112,6 +126,9 @@ class ResourceHubPortalController extends Controller
             'search_url' => URL::signedRoute(name: 'portals.resource-hub.api.search'),
             'app_url' => config('app.url'),
             'api_url' => route('portals.resource-hub.api.assets'),
+            'app_name' => config('app.name'),
+            'header_logo' => $headerLogo,
+            'footer_logo' => url(Vite::asset('resources/images/canyon-logo-light.svg')),
         ]);
     }
 }

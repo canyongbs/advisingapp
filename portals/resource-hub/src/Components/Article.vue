@@ -48,7 +48,7 @@
         :to="{
             name: 'view-article',
             params: {
-                categorySlug: article.categorySlug,
+                categoryId: article.categoryId,
                 articleId: article.id,
             },
         }"

@@ -83,7 +83,7 @@
                 breadcrumbsList.push({
                     name: parentCategory.value.name,
                     route: 'view-category',
-                    params: { categorySlug: parentCategory.value.slug },
+                    params: { categoryId: parentCategory.value.id },
                 });
             }
 
@@ -91,8 +91,8 @@
                 name: category.value.name,
                 route: parentCategory.value ? 'view-subcategory' : 'view-category',
                 params: parentCategory.value
-                    ? { parentCategorySlug: parentCategory.value.slug, subCategorySlug: category.value.slug }
-                    : { categorySlug: category.value.slug },
+                    ? { parentCategoryId: parentCategory.value.id, categoryId: category.value.id }
+                    : { categoryId: category.value.id },
             });
 
             return breadcrumbsList;
@@ -122,14 +122,14 @@
     function getData() {
         loading.value = true;
 
-        get(props.apiUrl + '/categories/' + route.params.categorySlug + '/articles/' + route.params.articleId)
+        get(props.apiUrl + '/categories/' + route.params.categoryId + '/articles/' + route.params.articleId)
             .then((response) => {
                 if (response.data) {
-                    if (response.data.category.slug !== route.params.categorySlug) {
+                    if (response.data.category.id !== route.params.categoryId) {
                         router.replace({
                             name: 'view-article',
                             params: {
-                                categorySlug: response.data.category.slug,
+                                categoryId: response.data.category.id,
                                 articleId: route.params.articleId,
                             },
                         });

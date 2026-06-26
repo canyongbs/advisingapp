@@ -158,8 +158,8 @@
         <ResourceList v-if="searchResults.data.categories.length > 0" heading="Categories">
             <ResourceListItem
                 v-for="category in searchResults.data.categories"
-                :key="category.slug"
-                :to="{ name: 'view-category', params: { categorySlug: category.slug } }"
+                :key="category.id"
+                :to="{ name: 'view-category', params: { categoryId: category.id } }"
             >
                 <template #primary>{{ category.name }}</template>
             </ResourceListItem>

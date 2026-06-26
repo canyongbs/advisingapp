@@ -54,8 +54,8 @@
         <div class="grid gap-3 md:grid-cols-2">
             <CategoryCard
                 v-for="category in categories"
-                :key="category.slug"
-                :to="{ name: 'view-category', params: { categorySlug: category.slug } }"
+                :key="category.id"
+                :to="{ name: 'view-category', params: { categoryId: category.id } }"
                 :icon="category.icon"
                 :name="category.name"
                 :description="category.description"
