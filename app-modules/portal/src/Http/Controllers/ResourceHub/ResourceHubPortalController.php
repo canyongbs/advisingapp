@@ -54,7 +54,7 @@ class ResourceHubPortalController extends Controller
     {
         // Read the Vite manifest to determine the correct asset paths
         $manifestPath = public_path('storage/portals/resource-hub/.vite/manifest.json');
-        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool, css?: list<string>}> $manifest */
         $manifest = json_decode(File::get($manifestPath), true, 512, JSON_THROW_ON_ERROR);
 
         $portalEntry = $manifest['src/portal.js'];
