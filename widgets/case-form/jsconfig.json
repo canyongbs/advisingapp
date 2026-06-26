@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["src/*"],
+            "@common/*": ["../../vendor/canyongbs/common/resources/js/components/*"]
+        }
+    },
+    "include": ["src/**/*"]
+}

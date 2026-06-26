@@ -32,15 +32,23 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import AppLoading from '@/Components/AppLoading.vue';
-    import Breadcrumbs from '@/Components/Breadcrumbs.vue';
-    import { consumer } from '@/Services/Consumer.js';
-    import { ChevronLeftIcon, ChevronRightIcon, XMarkIcon } from '@heroicons/vue/20/solid/index.js';
-    import { Bars3Icon } from '@heroicons/vue/24/outline/index.js';
-    import { defineProps, ref, watch } from 'vue';
-    import { useRoute } from 'vue-router';
+    import { DocumentTextIcon } from '@heroicons/vue/24/outline';
+    import { computed, defineProps, ref, watch } from 'vue';
+    import { useRoute, useRouter } from 'vue-router';
+    import AppLoading from '../Components/AppLoading.vue';
+    import Article from '../Components/Article.vue';
+    import Breadcrumbs from '../Components/Breadcrumbs.vue';
+    import HeroSearch from '../Components/HeroSearch.vue';
+    import Page from '../Components/Page.vue';
+    import Pagination from '../Components/Pagination.vue';
+    import SearchResults from '../Components/SearchResults.vue';
+    import SubCategories from '../Components/SubCategories.vue';
+    import Subheading from '../Components/Subheading.vue';
+    import Tabs from '../Components/Tabs.vue';
+    import { consumer } from '../Services/Consumer.js';
 
     const route = useRoute();
+    const router = useRouter();
 
     const props = defineProps({
         searchUrl: {
@@ -55,11 +63,19 @@
             type: Object,
             required: true,
         },
+        tags: {
+            type: Object,
+            required: true,
+        },
     });
 
     const loadingResults = ref(true);
+    const loadingeSearchResults = ref(true);
     const category = ref(null);
     const articles = ref(null);
+    const searchQuery = ref('');
+    const searchResults = ref(null);
+    const selectedTags = ref([]);
     const currentPage = ref(1);
     const nextPageUrl = ref(null);
     const prevPageUrl = ref(null);
@@ -67,231 +83,320 @@
     const totalArticles = ref(0);
     const fromArticle = ref(0);
     const toArticle = ref(0);
+    const filter = ref('');
+    const fromSearch = ref(false);
+
+    const filterTabs = [
+        { label: 'All Articles', value: 'all-articles' },
+        { label: 'Featured', value: 'featured' },
+        { label: 'Most Viewed', value: 'most-viewed' },
+    ];
+
+    const debounceSearch = debounce((value, page = 1) => {
+        const { post } = consumer();
+
+        fromSearch.value = true;
+
+        if (!value && selectedTags.value.length < 1) {
+            searchQuery.value = null;
+            searchResults.value = null;
+            return;
+        }
+
+        loadingeSearchResults.value = true;
+
+        post(props.searchUrl, {
+            search: JSON.stringify(value),
+            tags: selectedTags.value.join(','),
+            filter: filter.value,
+            page: page,
+        }).then((response) => {
+            searchResults.value = response.data;
+            loadingeSearchResults.value = false;
+            setPagination(response.data.data.articles.meta);
+        });
+    }, 500);
+
+    const setPagination = (pagination) => {
+        currentPage.value = pagination.current_page;
+        prevPageUrl.value = pagination.prev_page_url;
+        nextPageUrl.value = pagination.next_page_url;
+        lastPage.value = pagination.last_page;
+        totalArticles.value = pagination.total;
+        fromArticle.value = pagination.from;
+        toArticle.value = pagination.to;
+    };
+
+    watch(
+        () => [searchQuery.value, [...selectedTags.value]],
+        ([newSearch, newTags]) => {
+            const urlSearch = route.query.search || '';
+            const urlTags = route.query.tags ? route.query.tags.split(',') : [];
+
+            const isSearchChanged = newSearch !== urlSearch;
+            const isTagsChanged = newTags.length !== urlTags.length || newTags.some((tag, i) => tag !== urlTags[i]);
+
+            if (isSearchChanged || isTagsChanged) {
+                fromSearch.value = !!(newSearch || newTags.length);
+
+                router.push({
+                    name: route.name,
+                    params: route.params,
+                    query: {
+                        ...route.query,
+                        page: 1,
+                        search: newSearch || undefined,
+                        tags: newTags.join(',') || undefined,
+                        filter: filter.value || undefined,
+                    },
+                });
+
+                debounceSearch(newSearch, 1);
+            }
+        },
+        { immediate: false },
+    );
+
+    function debounce(func, delay) {
+        let timerId;
+        return function (...args) {
+            if (timerId) {
+                clearTimeout(timerId);
+            }
+            timerId = setTimeout(() => {
+                func(...args);
+            }, delay);
+        };
+    }
+
+    function toggleTag(tag) {
+        if (selectedTags.value.includes(tag)) {
+            selectedTags.value = selectedTags.value.filter((t) => t !== tag);
+        } else {
+            selectedTags.value = [...selectedTags.value, tag];
+        }
+    }
+
+    const fetchNextPage = () => {
+        if (currentPage.value < lastPage.value) {
+            const newPage = currentPage.value + 1;
+            fetchPage(newPage);
+        }
+    };
+
+    const fetchPreviousPage = () => {
+        if (currentPage.value > 1) {
+            const newPage = currentPage.value - 1;
+            fetchPage(newPage);
+        }
+    };
+
+    const fetchPage = (page) => {
+        if (page === currentPage.value) return;
+
+        router.push({
+            name: route.name,
+            params: route.params,
+            query: {
+                ...route.query,
+                page,
+                search: searchQuery.value || undefined,
+                tags: selectedTags.value.join(',') || undefined,
+                filter: filter.value || undefined,
+            },
+        });
+    };
+
+    const changeFilter = (value) => {
+        filter.value = value;
+
+        filterRouteChange();
+    };
+
+    const changeSearchFilter = (value) => {
+        filter.value = value;
+        filterRouteChange();
+        debounceSearch(searchQuery.value);
+    };
+
+    const filterRouteChange = () => {
+        router.push({
+            name: route.name,
+            params: route.params,
+            query: {
+                ...route.query,
+                page: 1,
+                filter: filter.value,
+            },
+        });
+    };
+
+    const breadcrumbs = computed(() => {
+        if (category.value.parentCategory) {
+            return [
+                {
+                    name: category.value.parentCategory.name,
+                    route: 'view-category',
+                    params: { categorySlug: category.value.parentCategory.slug },
+                },
+            ];
+        }
+
+        return [];
+    });
 
     watch(
         route,
-        async function (newRouteValue) {
-            await getData();
+        async (newRoute) => {
+            const page = parseInt(newRoute.query.page) || 1;
+            const search = newRoute.query.search || '';
+            const tags = newRoute.query.tags ? newRoute.query.tags.split(',') : [];
+            const appliedFilter = newRoute.query.filter || '';
+            const isSearchMode = !!search || tags.length > 0;
+
+            currentPage.value = page;
+            searchQuery.value = search;
+
+            selectedTags.value.splice(0, selectedTags.value.length, ...tags);
+
+            filter.value = appliedFilter;
+            fromSearch.value = isSearchMode;
+            await getData(page);
         },
-        {
-            immediate: true,
-        },
+        { immediate: true },
     );
 
-    const fetchNextPage = () => {
-        currentPage.value = currentPage.value !== lastPage.value ? currentPage.value + 1 : lastPage.value;
-        getData(currentPage.value);
-    };
-    const fetchPreviousPage = () => {
-        currentPage.value = currentPage.value !== 1 ? currentPage.value - 1 : 1;
-        getData(currentPage.value);
-    };
-    const fetchPage = (page) => {
-        currentPage.value = page;
-        getData(currentPage.value);
-    };
-    const visiblePages = () => {
-        const range = 2;
-        const start = Math.max(currentPage.value - range, 1);
-        const end = Math.min(currentPage.value + range, lastPage.value);
-        return Array.from({ length: end - start + 1 }, (_, i) => i + start);
-    };
-
     async function getData(page = 1) {
+        if (fromSearch.value) {
+            loadingResults.value = false;
+            debounceSearch(searchQuery.value, page);
+            return;
+        }
+
         loadingResults.value = true;
 
         const { get } = consumer();
 
-        await get(props.apiUrl + '/categories/' + route.params.categoryId, { page: page }).then((response) => {
+        await get(props.apiUrl + '/categories/' + route.params.categorySlug, {
+            page: page,
+            filter: filter.value,
+        }).then((response) => {
+            if (route.params.categorySlug && route.params.parentCategorySlug) {
+                router.replace({
+                    name: 'view-subcategory',
+                    params: {
+                        parentCategorySlug: response.data.category.parentCategory.slug,
+                        categorySlug: response.data.category.slug,
+                    },
+                    query: { ...route.query },
+                });
+            } else if (route.params.categorySlug) {
+                router.replace({
+                    name: 'view-category',
+                    params: { categorySlug: response.data.category.slug },
+                    query: { ...route.query },
+                });
+            }
+
             category.value = response.data.category;
             articles.value = response.data.articles.data;
-            currentPage.value = response.data.articles.current_page;
-            prevPageUrl.value = response.data.articles.prev_page_url;
-            nextPageUrl.value = response.data.articles.next_page_url;
-            lastPage.value = response.data.articles.last_page;
-            totalArticles.value = response.data.articles.total;
-            fromArticle.value = response.data.articles.from;
-            toArticle.value = response.data.articles.to;
+            setPagination(response.data.articles);
             loadingResults.value = false;
         });
     }
 </script>
 
 <template>
-    <div class="flex flex-col bg-gray-50">
-        <div class="sticky top-0 z-40 bg-gray-50 lg:hidden">
-            <button class="w-full p-3" type="button" @click="$emit('sidebarOpened')">
-                <span class="sr-only">Open sidebar</span>
+    <Page>
+        <template #heading> Need help? </template>
 
-                <Bars3Icon class="h-6 w-6 text-gray-900"></Bars3Icon>
-            </button>
+        <template #description> Search our resource hub for advice and answers </template>
+
+        <template #belowHeaderContent>
+            <HeroSearch v-model="searchQuery" :tags="tags" :selectedTags="selectedTags" @toggle-tag="toggleTag" />
+        </template>
+
+        <template #breadcrumbs>
+            <Breadcrumbs
+                :currentCrumb="category.name"
+                :breadcrumbs="breadcrumbs"
+                v-if="!loadingResults && !(searchQuery || selectedTags.length > 0)"
+            />
+        </template>
+
+        <div v-if="loadingResults">
+            <AppLoading />
         </div>
-
-        <div class="w-full px-6">
-            <div class="max-w-screen-xl flex flex-col gap-y-6 mx-auto py-8">
-                <div v-if="loadingResults">
-                    <AppLoading />
+        <div v-else>
+            <main class="flex flex-col gap-8">
+                <div v-if="searchQuery || selectedTags.length > 0" class="flex flex-col gap-6">
+                    <SearchResults
+                        :searchQuery="searchQuery"
+                        :searchResults="searchResults"
+                        :loadingResults="loadingeSearchResults"
+                        @change-filter="changeSearchFilter"
+                        :selected-filter="filter"
+                        :currentPage="currentPage"
+                        :lastPage="lastPage"
+                        :fromItem="fromArticle"
+                        :toItem="toArticle"
+                        :totalItems="totalArticles"
+                        @fetchNextPage="fetchNextPage"
+                        @fetchPreviousPage="fetchPreviousPage"
+                        @fetchPage="fetchPage"
+                    >
+                    </SearchResults>
                 </div>
-                <div v-else>
-                    <main class="flex flex-col gap-8">
-                        <Breadcrumbs currentCrumb="Categories"></Breadcrumbs>
-
-                        <div class="flex flex-col gap-6">
-                            <h2 class="text-2xl font-bold text-primary-950">
-                                {{ category.name }}
-                            </h2>
-
-                            <div
-                                class="flex flex-col divide-y divide-gray-200 ring-1 ring-black/5 shadow-xs px-3 pt-3 pb-1 rounded bg-white"
-                            >
-                                <h3 class="text-lg font-semibold text-gray-800 px-3 pt-1 pb-3">
-                                    Articles ({{ totalArticles }})
-                                </h3>
-
-                                <div v-if="articles.length > 0">
-                                    <ul role="list" class="divide-y divide-gray-200">
-                                        <li v-for="article in articles" :key="article.id">
-                                            <router-link
-                                                :to="{
-                                                    name: 'view-article',
-                                                    params: { categoryId: article.categoryId, articleId: article.id },
-                                                }"
-                                                class="group p-3 flex items-start text-sm font-medium text-gray-700"
-                                            >
-                                                <h4>
-                                                    {{ article.name }}
-                                                </h4>
-
-                                                <ChevronRightIcon
-                                                    class="opacity-0 h-5 w-5 text-primary-600 transition-all group-hover:translate-x-2 group-hover:opacity-100"
-                                                />
-                                            </router-link>
-                                        </li>
-                                    </ul>
-                                    <div
-                                        class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 sm:px-6"
-                                    >
-                                        <div class="flex flex-1 justify-between sm:hidden">
-                                            <button
-                                                type="button"
-                                                class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                                                :disabled="currentPage === 1"
-                                                @click="fetchPreviousPage"
-                                            >
-                                                Previous
-                                            </button>
-                                            <button
-                                                type="button"
-                                                class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                                                :disabled="currentPage === lastPage"
-                                                @click="fetchNextPage"
-                                            >
-                                                Next
-                                            </button>
-                                        </div>
-                                        <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-                                            <div>
-                                                <p class="text-sm text-gray-700">
-                                                    Showing
-                                                    {{ ' ' }}
-                                                    <span class="font-medium">{{ fromArticle }}</span>
-                                                    {{ ' ' }}
-                                                    to
-                                                    {{ ' ' }}
-                                                    <span class="font-medium">{{ toArticle }}</span>
-                                                    {{ ' ' }}
-                                                    of
-                                                    {{ ' ' }}
-                                                    <span class="font-medium">{{ totalArticles }}</span>
-                                                    {{ ' ' }}
-                                                    results
-                                                </p>
-                                            </div>
-                                            <div>
-                                                <nav
-                                                    class="isolate inline-flex -space-x-px rounded-md shadow-xs"
-                                                    aria-label="Pagination"
-                                                >
-                                                    <button
-                                                        type="button"
-                                                        class="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                                                        :disabled="currentPage === 1"
-                                                        @click="fetchPreviousPage"
-                                                    >
-                                                        <span class="sr-only">Previous</span>
-                                                        <ChevronLeftIcon class="h-5 w-5" aria-hidden="true" />
-                                                    </button>
-
-                                                    <!-- First Page Button -->
-                                                    <button
-                                                        v-if="currentPage > 4"
-                                                        class="relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                                        :class="
-                                                            currentPage === 1
-                                                                ? 'bg-indigo-600 text-white'
-                                                                : 'bg-white-500 text-black border border-gray-300'
-                                                        "
-                                                        @click="fetchPage(1)"
-                                                    >
-                                                        1
-                                                    </button>
-                                                    <span v-if="currentPage > 4">...</span>
-
-                                                    <!-- Page Numbers -->
-                                                    <button
-                                                        v-for="page in visiblePages()"
-                                                        :key="page"
-                                                        @click="fetchPage(page)"
-                                                        aria-current="page {{ page }} {{ currentPage }}"
-                                                        class="relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                                        :class="
-                                                            page === currentPage
-                                                                ? 'bg-indigo-600 text-white'
-                                                                : 'bg-white-500 text-black border border-gray-300'
-                                                        "
-                                                        :disabled="page === currentPage"
-                                                    >
-                                                        {{ page }}
-                                                    </button>
-
-                                                    <span v-if="currentPage < lastPage - 3">...</span>
-                                                    <button
-                                                        v-if="currentPage < lastPage - 3"
-                                                        class="relative z-10 inline-flex items-center px-4 py-2 text-sm font-semibold focus:z-20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                                                        :class="
-                                                            currentPage === lastPage
-                                                                ? 'bg-indigo-600 text-white'
-                                                                : 'bg-white-500 text-black border border-gray-300'
-                                                        "
-                                                        @click="fetchPage(lastPage)"
-                                                    >
-                                                        {{ lastPage }}
-                                                    </button>
-
-                                                    <button
-                                                        type="button"
-                                                        class="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
-                                                        :disabled="currentPage === lastPage"
-                                                        @click="fetchNextPage"
-                                                    >
-                                                        <span class="sr-only">Next </span>
-                                                        <ChevronRightIcon class="h-5 w-5" aria-hidden="true" />
-                                                    </button>
-                                                </nav>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div v-else class="p-3 flex items-start gap-2">
-                                    <XMarkIcon class="h-5 w-5 text-gray-400" />
-
-                                    <p class="text-gray-600 text-sm font-medium">No articles found in this category.</p>
-                                </div>
-                            </div>
+                <div v-else class="flex flex-col gap-6">
+                    <div class="flex flex-col gap-4">
+                        <div class="flex flex-col gap-1">
+                            <Subheading :title="category.name" />
+                            <p v-if="category.description" class="text-sm text-gray-500">{{ category.description }}</p>
                         </div>
-                    </main>
+                        <SubCategories
+                            v-if="category.subCategories.length > 0"
+                            :subCategories="category.subCategories"
+                        ></SubCategories>
+                        <div class="flex flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">
+                            <Tabs
+                                :tabs="filterTabs"
+                                :modelValue="filter || 'all-articles'"
+                                @update:modelValue="changeFilter"
+                                :contained="true"
+                            />
+
+                            <div v-if="articles.length > 0">
+                                <ul role="list" class="divide-y">
+                                    <li v-for="article in articles" :key="article.id">
+                                        <Article :article="article" />
+                                    </li>
+                                </ul>
+                                <Pagination
+                                    :currentPage="currentPage"
+                                    :lastPage="lastPage"
+                                    :fromItem="fromArticle"
+                                    :toItem="toArticle"
+                                    :totalItems="totalArticles"
+                                    @fetchNextPage="fetchNextPage"
+                                    @fetchPreviousPage="fetchPreviousPage"
+                                    @fetchPage="fetchPage"
+                                />
+                            </div>
+                            <section v-else class="px-6 py-4 flex items-start gap-x-4">
+                                <div class="flex size-12 items-center justify-center rounded-full bg-gray-100">
+                                    <DocumentTextIcon class="size-6 text-gray-400" />
+                                </div>
+
+                                <div class="flex-1">
+                                    <h4 class="text-base font-semibold leading-6 text-gray-950">No articles found</h4>
+
+                                    <p class="mt-1 text-sm text-gray-500">No articles found in this category.</p>
+                                </div>
+                            </section>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </main>
         </div>
-    </div>
+    </Page>
 </template>

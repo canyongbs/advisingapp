@@ -1,4 +1,4 @@
-<!--
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
@@ -30,27 +30,36 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
--->
-<script setup>
-    import SidebarContent from '@/Components/SidebarContent.vue';
-    import { defineProps } from 'vue';
+*/
+.p-iftalabel {
+    @apply block relative;
+}
 
-    defineProps({
-        categories: {
-            type: Object,
-            default: {},
-        },
-        apiUrl: {
-            type: String,
-            required: true,
-        },
-    });
-</script>
+.p-iftalabel label {
+    @apply absolute pointer-events-none top-2 transition-all ease-out duration-200 leading-none text-xs font-medium inset-s-3 text-surface-500 dark:text-surface-400;
+}
 
-<template>
-    <div class="hidden h-full lg:flex lg:w-72 lg:flex-col flex-shrink-0">
-        <div class="flex flex-col grow overflow-y-auto bg-white ring-1 ring-black/5 mr-px shadow-xs">
-            <SidebarContent :categories="categories" :api-url="apiUrl"></SidebarContent>
-        </div>
-    </div>
-</template>
+.p-iftalabel .p-inputtext,
+.p-iftalabel .p-textarea,
+.p-iftalabel .p-select-label,
+.p-iftalabel .p-multiselect-label,
+.p-iftalabel .p-autocomplete-input-multiple,
+.p-iftalabel .p-cascadeselect-label,
+.p-iftalabel .p-treeselect-label {
+    @apply pt-6 pb-2;
+}
+
+.p-iftalabel:has(.p-invalid) label {
+    @apply text-red-400 dark:text-red-300;
+}
+
+.p-iftalabel:has(input:focus) label,
+.p-iftalabel:has(input:-webkit-autofill) label,
+.p-iftalabel:has(textarea:focus) label,
+.p-iftalabel:has(.p-inputwrapper-focus) label {
+    @apply text-primary;
+}
+
+.p-iftalabel .p-inputicon {
+    @apply top-6 translate-y-1/4 mt-0;
+}

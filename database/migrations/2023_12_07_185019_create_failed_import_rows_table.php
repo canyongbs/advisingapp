@@ -38,12 +38,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
     public function up(): void
     {
         Schema::create('failed_import_rows', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
+            // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('data');
             $table->foreignUuid('import_id')->constrained()->cascadeOnDelete();
             $table->text('validation_error')->nullable();
