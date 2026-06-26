@@ -73,34 +73,38 @@
         },
         searchUrl: {
             type: String,
-            required: true,
+            default: null,
         },
         apiUrl: {
             type: String,
-            required: true,
+            default: null,
         },
         accessUrl: {
             type: String,
-            required: true,
+            default: null,
         },
         userAuthenticationUrl: {
             type: String,
-            required: true,
+            default: null,
         },
         appUrl: {
             type: String,
-            required: true,
+            default: null,
         },
         appTitle: {
             type: String,
-            required: true,
+            default: null,
         },
         cssUrl: {
             type: String,
-            required: true,
             default: null,
         },
     });
+
+    const searchUrl = ref(props.searchUrl);
+    const apiUrl = ref(props.apiUrl);
+    const userAuthenticationUrl = ref(props.userAuthenticationUrl);
+    const appUrl = ref(props.appUrl);
 
     const errorLoading = ref(false);
     const loading = ref(true);
@@ -201,7 +205,7 @@
         const { token } = event.detail ?? {};
         if (!token) return;
         await useTokenStore().setToken(token);
-        const isAuth = await determineIfUserIsAuthenticated(props.userAuthenticationUrl);
+        const isAuth = await determineIfUserIsAuthenticated(userAuthenticationUrl.value);
         if (isAuth) {
             userIsAuthenticated.value = true;
             await getKnowledgeManagementPortal();
@@ -234,10 +238,9 @@
     });
 
     onMounted(async () => {
-        await determineIfUserIsAuthenticated(props.userAuthenticationUrl).then((response) => {
-            userIsAuthenticated.value = response;
-        });
-        document.title = props.appTitle;
+        if (props.appTitle) {
+            document.title = props.appTitle;
+        }
     });
 
     watch(
@@ -246,7 +249,11 @@
             await getKnowledgeManagementPortal().then(async () => {
                 const { requiresAuthentication } = useAuthStore();
 
-                if (userIsAuthenticated.value || !requiresAuthentication) {
+                if (userAuthenticationUrl.value) {
+                    userIsAuthenticated.value = await determineIfUserIsAuthenticated(userAuthenticationUrl.value);
+                }
+
+                if (userIsAuthenticated.value || !requiresAuthentication.value) {
                     await getData();
                     return;
                 }
@@ -278,6 +285,19 @@
 
                 if (response.error) {
                     throw new Error(response.error);
+                }
+
+                if (response.data.search_url) {
+                    searchUrl.value = response.data.search_url;
+                }
+                if (response.data.api_url) {
+                    apiUrl.value = response.data.api_url;
+                }
+                if (response.data.user_authentication_url) {
+                    userAuthenticationUrl.value = response.data.user_authentication_url;
+                }
+                if (response.data.app_url) {
+                    appUrl.value = response.data.app_url;
                 }
 
                 const { setRequiresAuthentication } = useAuthStore();
@@ -391,24 +411,14 @@
     }
 
     async function getData() {
-        await Promise.all([getResourceHubPortalCategories(), getTags(), getServiceRequests()])
-            .then((responses) => {
+        await getResourceHubPortalCategories()
+            .then((response) => {
                 errorLoading.value = false;
 
-                if (responses[0].error) {
-                    throw new Error(responses[0].error);
+                if (response.error) {
+                    throw new Error(response.error);
                 }
-                categories.value = responses[0];
-
-                if (responses[1].error) {
-                    throw new Error(responses[1].error);
-                }
-                tags.value = responses[1];
-
-                if (responses[2].error) {
-                    throw new Error(responses[2].error);
-                }
-                serviceRequests.value = responses[2];
+                categories.value = response;
 
                 loading.value = false;
             })
@@ -421,7 +431,7 @@
     async function getResourceHubPortalCategories() {
         const { get } = consumer();
 
-        return get(`${props.apiUrl}/categories`).then((response) => {
+        return get(`${apiUrl.value}/categories`).then((response) => {
             if (response.error) {
                 throw new Error(response.error);
             }
@@ -433,7 +443,7 @@
     async function getServiceRequests() {
         const { get } = consumer();
 
-        return get(`${props.apiUrl}/service-requests`).then((response) => {
+        return get(`${apiUrl.value}/service-requests`).then((response) => {
             if (response.error) {
                 throw new Error(response.error);
             }
@@ -445,7 +455,7 @@
     async function getTags() {
         const { get } = consumer();
 
-        return get(`${props.apiUrl}/tags`).then((response) => {
+        return get(`${apiUrl.value}/tags`).then((response) => {
             if (response.error) {
                 throw new Error(response.error);
             }
@@ -621,7 +631,7 @@
         }"
     >
         <div>
-            <link rel="stylesheet" v-bind:href="cssUrl" />
+            <link rel="stylesheet" v-bind:href="props.cssUrl" />
         </div>
         <div v-if="loading">
             <AppLoading />

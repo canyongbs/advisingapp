@@ -52,6 +52,7 @@ export default defineConfig({
                         ? 'advising-app-resource-hub-portal.js'
                         : 'advising-app-resource-hub-portal-app-[hash].js';
                 },
+                chunkFileNames: 'advising-app-resource-hub-portal-chunk-[hash].js',
                 assetFileNames: 'advising-app-resource-hub-portal-[hash].css',
             },
         },

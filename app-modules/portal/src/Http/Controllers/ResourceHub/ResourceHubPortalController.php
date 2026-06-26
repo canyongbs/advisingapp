@@ -61,6 +61,7 @@ class ResourceHubPortalController extends Controller
             'asset_url' => route('portals.resource-hub.asset'),
             'entry' => URL::signedRoute('portals.resource-hub.api.entry'),
             'js' => route('portals.resource-hub.asset', ['file' => $portalEntry['file']]),
+            'css' => isset($portalEntry['css'][0]) ? route('portals.resource-hub.asset', ['file' => $portalEntry['css'][0]]) : null,
         ]);
     }
 
@@ -73,6 +74,12 @@ class ResourceHubPortalController extends Controller
         abort_if(! $disk->exists($path), 404, 'File not found.');
 
         $mimeType = $disk->mimeType($path);
+
+        if (str_ends_with($file, '.js')) {
+            $mimeType = 'application/javascript';
+        } elseif (str_ends_with($file, '.css')) {
+            $mimeType = 'text/css';
+        }
 
         $stream = $disk->readStream($path);
 

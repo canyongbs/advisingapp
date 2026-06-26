@@ -38,7 +38,7 @@
     if (!portalEmbedElement) return;
 
     // Get the resources URL from the element
-    const resourcesUrl = portalEmbedElement.getAttribute('resources-url');
+    const resourcesUrl = portalEmbedElement.getAttribute('url');
     if (!resourcesUrl) return;
 
     // Fetch the latest resource URLs
@@ -48,6 +48,11 @@
             // Apply the CSS URL as an attribute to the portal embed
             if (resources.css) {
                 portalEmbedElement.setAttribute('css-url', resources.css);
+            }
+
+            // Pass the entry URL so the portal app can fetch config
+            if (resources.entry) {
+                portalEmbedElement.setAttribute('url', resources.entry);
             }
 
             // Load the JS
