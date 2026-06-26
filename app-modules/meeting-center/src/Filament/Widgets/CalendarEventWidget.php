@@ -73,6 +73,22 @@ class CalendarEventWidget extends FullCalendarWidget
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    public function config(): array
+    {
+        return [
+            'initialView' => 'dayGridMonth',
+
+            'headerToolbar' => [
+                'left' => 'prev,next today',
+                'center' => 'title',
+                'right' => 'dayGridMonth,timeGridWeek,timeGridDay',
+            ],
+        ];
+    }
+
+    /**
      * @return array<int, mixed>
      */
     protected function headerActions(): array
