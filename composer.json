@@ -126,6 +126,7 @@
         "doctrine/dbal": "^4.2.3",
         "friendsofphp/php-cs-fixer": "^3.60",
         "larastan/larastan": "^3.0",
+        "laravel/boost": "^2.4",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^8.1",
         "pestphp/pest": "^4.3.2",
