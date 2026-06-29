@@ -36,9 +36,6 @@
 
 namespace App\Enums;
 
-/**
- * Mirrors the reduced subscription status pushed from Olympus. Default is Active.
- */
 enum TenantSubscriptionStatus: string
 {
     case Active = 'active';
