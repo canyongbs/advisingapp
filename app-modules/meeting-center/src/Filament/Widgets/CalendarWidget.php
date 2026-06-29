@@ -72,6 +72,13 @@ class CalendarWidget extends FullCalendarWidget
                 'center' => 'title',
                 'right' => 'dayGridMonth,timeGridWeek,timeGridDay',
             ],
+
+            'buttonText' => [
+                'today' => 'Today',
+                'dayGridMonth' => 'Month',
+                'timeGridWeek' => 'Week',
+                'timeGridDay' => 'Day',
+            ],
         ];
     }
 
