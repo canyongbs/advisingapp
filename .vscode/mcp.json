@@ -1,0 +1,15 @@
+{
+    "servers": {
+        "laravel-boost": {
+            "command": "${userHome}/.pls/bin/pls",
+            "args": [
+                "exec",
+                "-T",
+                "app",
+                "php",
+                "artisan",
+                "boost:mcp"
+            ]
+        }
+    }
+}
