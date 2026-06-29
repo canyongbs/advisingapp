@@ -51,9 +51,9 @@ use Illuminate\Notifications\SendQueuedNotifications;
 use Illuminate\Queue\CallQueuedClosure;
 use Spatie\Multitenancy\Actions\ForgetCurrentTenantAction;
 use Spatie\Multitenancy\Actions\MakeQueueTenantAwareAction;
+use App\Multitenancy\TenantFinder\SubscriptionAwareDomainTenantFinder;
 use Spatie\Multitenancy\Actions\MakeTenantCurrentAction;
 use Spatie\Multitenancy\Actions\MigrateTenantAction;
-use Spatie\Multitenancy\TenantFinder\DomainTenantFinder;
 
 return [
     /*
@@ -63,7 +63,7 @@ return [
      * This class should extend `Spatie\Multitenancy\TenantFinder\TenantFinder`
      *
      */
-    'tenant_finder' => DomainTenantFinder::class,
+    'tenant_finder' => SubscriptionAwareDomainTenantFinder::class,
 
     /*
      * These fields are used by tenant:artisan command to match one or more tenant.

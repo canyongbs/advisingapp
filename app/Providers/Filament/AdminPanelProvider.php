@@ -183,10 +183,12 @@ class AdminPanelProvider extends PanelProvider
                         return $themeSettings->is_support_url_enabled && ! empty($themeSettings->support_url);
                     }),
             ])
-            ->colors(fn (ThemeSettings $themeSettings): array => array_merge(config('default-colors'), $themeSettings->color_overrides))
+            ->colors(fn (ThemeSettings $themeSettings): array => Tenant::current()
+                ? array_merge(config('default-colors'), $themeSettings->color_overrides)
+                : config('default-colors'))
             ->renderHook(
                 'panels::head.end',
-                fn (ThemeSettings $themeSettings) => ($themeSettings->url) ? view('filament.layout.theme', ['url' => $themeSettings->url]) : null,
+                fn (ThemeSettings $themeSettings) => (Tenant::current() && $themeSettings->url) ? view('filament.layout.theme', ['url' => $themeSettings->url]) : null,
             )
             ->bootUsing(function (Panel $panel) {
                 if (! Tenant::current()) {
@@ -205,6 +207,18 @@ class AdminPanelProvider extends PanelProvider
                     }
 
                     return new HtmlString(Blade::render('<livewire:branding-bar />'));
+                },
+            )
+            ->renderHook(
+                PanelsRenderHook::TOPBAR_AFTER,
+                function (): ?Htmlable {
+                    $tenant = Tenant::current();
+
+                    if (! $tenant?->subscription_status?->showsExpirationBanner()) {
+                        return null;
+                    }
+
+                    return new HtmlString(Blade::render('<livewire:subscription-expired-banner />'));
                 },
             )
             ->renderHook(

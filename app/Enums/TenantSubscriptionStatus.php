@@ -34,17 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
-
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
-use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
+namespace App\Enums;
 
 /**
- * @mixin IdeHelperLandlordSettingsProperty
+ * Mirrors the reduced subscription status pushed from Olympus. Default is Active.
  */
-class LandlordSettingsProperty extends BaseSettingsProperty
+enum TenantSubscriptionStatus: string
 {
-    use HasUuids;
-    use UsesLandlordConnection;
+    case Active = 'active';
+
+    case ExpiredPeriod1 = 'expired_period_1';
+
+    case ExpiredPeriod2 = 'expired_period_2';
+
+    case Expired = 'expired';
+
+    /**
+     * Whether the expiration warning banner should be shown for this status.
+     */
+    public function showsExpirationBanner(): bool
+    {
+        return $this === self::ExpiredPeriod2;
+    }
+
+    /**
+     * Whether the tenant should be fully inaccessible for this status.
+     */
+    public function isInaccessible(): bool
+    {
+        return $this === self::Expired;
+    }
 }

@@ -41,9 +41,11 @@ use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
 use App\DataTransferObjects\LicenseManagement\LicenseData;
 use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
 use App\DataTransferObjects\LicenseManagement\LicenseSubscriptionData;
+use App\Enums\TenantSubscriptionStatus;
 use App\Http\Requests\Tenants\SyncTenantRequest;
 use App\Jobs\UpdateTenantLicenseData;
 use App\Models\Tenant;
+use App\Settings\TenantExpirationSettings;
 use Illuminate\Http\JsonResponse;
 
 class SyncTenantController
@@ -58,6 +60,17 @@ class SyncTenantController
         );
 
         dispatch_sync(new UpdateTenantLicenseData($tenant, $licenseData));
+
+        if (filled($subscriptionStatus = $request->validated('subscriptionStatus'))) {
+            $tenant->subscription_status = TenantSubscriptionStatus::from($subscriptionStatus);
+            $tenant->save();
+        }
+
+        if (filled($bannerText = $request->validated('expirationBannerText'))) {
+            $settings = app(TenantExpirationSettings::class);
+            $settings->period_2_banner_text = $bannerText;
+            $settings->save();
+        }
 
         $tenant->execute(function () use ($request) {
             app(SyncTenantSmartPrompts::class)->execute($request);
