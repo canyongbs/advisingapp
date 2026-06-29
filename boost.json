@@ -4,7 +4,7 @@
     ],
     "cloud": false,
     "guidelines": true,
-    "mcp": false,
+    "mcp": true,
     "nightwatch": false,
     "packages": [
         "filament/filament",
