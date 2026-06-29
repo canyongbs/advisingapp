@@ -37,6 +37,7 @@
 declare(strict_types = 1);
 
 use App\Rector\AddInteractsWithMediaUseTagRector;
+use CanyonGBS\Common\Rector\CommonSetList;
 use Rector\Config\RectorConfig;
 
 require_once __DIR__ . '/rector-rules/AddInteractsWithMediaUseTagRector.php';
@@ -49,6 +50,10 @@ return static function (RectorConfig $rectorConfig): void {
 
     $rectorConfig->skip([
         __DIR__ . '/app-modules/*/vendor',
+    ]);
+
+    $rectorConfig->sets([
+        CommonSetList::COMMON,
     ]);
 
     $rectorConfig->rule(AddInteractsWithMediaUseTagRector::class);

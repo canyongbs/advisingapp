@@ -32,10 +32,15 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import { defineProps } from 'vue';
+    import CategoryCard from './CategoryCard.vue';
+    import Subheading from './Subheading.vue';
 
     defineProps({
         categories: {
+            type: Object,
+            required: true,
+        },
+        serviceRequests: {
             type: Object,
             required: true,
         },
@@ -43,44 +48,18 @@
 </script>
 
 <template>
-    <div
-        class="overflow-hidden rounded bg-gray-200 shadow-xs ring-1 ring-black/5 sm:grid sm:grid-cols-2 sm:gap-px sm:divide-y-0"
-    >
-        <div
-            v-for="(category, categoryId) in categories"
-            :key="category.id"
-            class="group relative bg-white p-6 focus-within:bg-gray-50"
-        >
-            <span
-                v-if="category.icon"
-                v-html="category.icon"
-                class="pointer-events-none absolute top-6 text-primary-700"
-                aria-hidden="true"
-            >
-            </span>
-            <div class="mt-8">
-                <h3 class="text-base font-semibold leading-6 text-gray-900">
-                    <router-link :to="{ name: 'view-category', params: { categoryId: category.id } }">
-                        <span class="absolute inset-0" aria-hidden="true" />
-                        {{ category.name }}
-                    </router-link>
-                </h3>
-                <p class="mt-2 text-sm text-gray-500">
-                    {{ category.description }}
-                </p>
-            </div>
-            <span
-                class="pointer-events-none absolute right-6 top-6 text-gray-300 transition group-hover:text-primary-500"
-                aria-hidden="true"
-            >
-                <svg class="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M20 4h1a1 1 0 00-1-1v1zm-1 12a1 1 0 102 0h-2zM8 3a1 1 0 000 2V3zM3.293 19.293a1 1 0 101.414 1.414l-1.414-1.414zM19 4v12h2V4h-2zm1-1H8v2h12V3zm-.707.293l-16 16 1.414 1.414 16-16-1.414-1.414z"
-                    />
-                </svg>
-            </span>
-        </div>
+    <div class="flex flex-col gap-4">
+        <Subheading title="Article Categories" />
 
-        <div v-show="categories.length % 2 === 1" class="hidden sm:block bg-white"></div>
+        <div class="grid gap-3 md:grid-cols-2">
+            <CategoryCard
+                v-for="category in categories"
+                :key="category.id"
+                :to="{ name: 'view-category', params: { categoryId: category.id } }"
+                :icon="category.icon"
+                :name="category.name"
+                :description="category.description"
+            />
+        </div>
     </div>
 </template>

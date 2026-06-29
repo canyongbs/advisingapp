@@ -46,6 +46,7 @@
 @plugin "@formkit/themes/tailwindcss";
 
 @source "./FormKit/theme.js";
+@source "../../../vendor/canyongbs/common/resources/js/components/**/*.vue";
 
 @custom-variant dark (&:where(.dark, .dark *));
 

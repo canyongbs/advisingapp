@@ -1,0 +1,117 @@
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS Inc.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+.p-checkbox {
+    @apply relative inline-flex select-none w-5 h-5 align-bottom;
+}
+
+.p-checkbox-input {
+    @apply cursor-pointer disabled:cursor-default appearance-none absolute inset-s-0 top-0 w-full h-full m-0 p-0 opacity-0 z-10
+        border border-transparent rounded-sm;
+}
+
+.p-checkbox-box {
+    @apply flex justify-center items-center rounded-sm w-5 h-5
+        border border-surface-300 dark:border-surface-700
+        bg-surface-0 dark:bg-surface-950
+        transition-colors duration-200
+        shadow-[0_1px_2px_0_rgba(18,18,23,0.05)];
+}
+
+.p-checkbox-icon {
+    @apply text-surface-700 dark:text-surface-0
+        text-sm w-3.5 h-3.5
+        transition-colors duration-200;
+}
+
+.p-checkbox:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-box {
+    @apply border-surface-400 dark:border-surface-600;
+}
+
+.p-checkbox-checked .p-checkbox-box {
+    @apply border-primary bg-primary;
+}
+
+.p-checkbox-checked .p-checkbox-icon {
+    @apply text-primary-contrast;
+}
+
+.p-checkbox-checked:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-box {
+    @apply bg-primary-emphasis border-primary-emphasis;
+}
+
+.p-checkbox-checked:not(.p-disabled):has(.p-checkbox-input:hover) .p-checkbox-icon {
+    @apply text-primary-contrast;
+}
+
+.p-checkbox:not(.p-disabled):has(.p-checkbox-input:focus-visible) .p-checkbox-box {
+    @apply outline-solid outline-1 outline-offset-2 outline-primary;
+}
+
+.p-checkbox.p-invalid > .p-checkbox-box {
+    @apply border-red-400 dark:border-red-300;
+}
+
+.p-checkbox.p-variant-filled .p-checkbox-box {
+    @apply bg-surface-50 dark:bg-surface-800;
+}
+
+.p-checkbox.p-disabled {
+    @apply opacity-100;
+}
+
+.p-checkbox.p-disabled .p-checkbox-box {
+    @apply bg-surface-200 dark:bg-surface-400 border-surface-300 dark:border-surface-700;
+}
+
+.p-checkbox.p-disabled .p-checkbox-box .p-checkbox-icon {
+    @apply text-surface-700 dark:text-surface-900;
+}
+
+.p-checkbox-sm,
+.p-checkbox-sm .p-checkbox-box {
+    @apply w-4 h-4;
+}
+
+.p-checkbox-sm .p-checkbox-icon {
+    @apply w-3 h-3;
+}
+
+.p-checkbox-lg,
+.p-checkbox-lg .p-checkbox-box {
+    @apply w-6 h-6;
+}
+
+.p-checkbox-lg .p-checkbox-icon {
+    @apply w-4 h-4;
+}

@@ -32,46 +32,46 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import SidebarContent from '@/Components/SidebarContent.vue';
-    import { defineProps } from 'vue';
+    import { computed } from 'vue';
+    import BaseCard from './BaseCard.vue';
 
-    defineProps({
-        categories: {
-            type: Object,
-            default: {},
-        },
-        apiUrl: {
+    const props = defineProps({
+        label: {
             type: String,
             required: true,
         },
+        value: {
+            type: [Number, String],
+            required: true,
+        },
+        tone: {
+            type: String,
+            default: 'neutral',
+            validator: (v) => ['neutral', 'warning', 'success', 'danger'].includes(v),
+        },
+    });
+
+    const toneConfig = computed(() => {
+        const map = {
+            neutral: { bg: 'bg-white', labelColor: 'text-gray-500', valueColor: 'text-gray-900' },
+            warning: { bg: 'bg-orange-50', labelColor: 'text-orange-600', valueColor: 'text-orange-600' },
+            success: { bg: 'bg-green-50', labelColor: 'text-green-600', valueColor: 'text-green-700' },
+            danger: { bg: 'bg-red-50', labelColor: 'text-red-600', valueColor: 'text-red-600' },
+        };
+        return map[props.tone] ?? map.neutral;
     });
 </script>
 
 <template>
-    <div class="relative z-50 lg:hidden" role="dialog" aria-modal="true">
-        <div class="fixed inset-0 bg-gray-900/80"></div>
-        <div class="fixed inset-0 flex">
-            <div class="relative mr-16 flex w-full max-w-xs flex-1">
-                <div class="absolute left-full top-0 flex w-16 justify-center pt-5">
-                    <button type="button" class="-m-2.5 p-2.5" @click="$emit('sidebarClosed')">
-                        <span class="sr-only">Close sidebar</span>
-                        <svg
-                            class="h-6 w-6 text-white"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                            aria-hidden="true"
-                        >
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-
-                <div class="flex grow flex-col overflow-y-auto bg-white">
-                    <SidebarContent :categories="categories" :api-url="apiUrl"></SidebarContent>
-                </div>
+    <BaseCard :bg="toneConfig.bg">
+        <div class="flex items-start justify-between gap-3">
+            <div>
+                <p class="mb-1 text-xs font-semibold" :class="toneConfig.labelColor">{{ label }}</p>
+                <p class="text-4xl font-semibold leading-none tabular-nums" :class="toneConfig.valueColor">
+                    {{ value }}
+                </p>
             </div>
+            <slot name="icon" />
         </div>
-    </div>
+    </BaseCard>
 </template>

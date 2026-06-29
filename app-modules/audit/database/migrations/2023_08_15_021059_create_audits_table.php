@@ -53,7 +53,9 @@ class CreateAuditsTable extends Migration
             $table->string('event');
             $table->string('auditable_type');
             $table->string('auditable_id');
+            // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('old_values')->nullable();
+            // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('new_values')->nullable();
             $table->text('url')->nullable();
             $table->ipAddress('ip_address')->nullable();

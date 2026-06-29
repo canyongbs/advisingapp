@@ -39,6 +39,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Spatie\Health\ResultStores\EloquentHealthResultStore;
 
+/** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
     public function up(): void
     {
@@ -52,6 +53,7 @@ return new class () extends Migration {
             $table->string('status');
             $table->text('notification_message')->nullable();
             $table->string('short_summary')->nullable();
+            // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('meta');
             $table->timestamp('ended_at');
             $table->uuid('batch');

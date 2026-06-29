@@ -1,0 +1,117 @@
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS Inc.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+.p-dock {
+    @apply absolute z-10 flex justify-center items-center pointer-events-none;
+}
+
+.p-dock-list-container {
+    @apply flex pointer-events-auto bg-white/10 border border-white/10 p-2 rounded-xl;
+}
+
+.p-dock-list {
+    @apply m-0 p-0 list-none flex items-center justify-center outline-hidden;
+}
+
+.p-dock-item {
+    @apply transition-all duration-200 ease-[cubic-bezier(0.4,0,0.2,1)] will-change-transform p-2 rounded-md
+        focus-visible:outline-solid focus-visible:outline-1 focus-visible:outline-offset-2 focus-visible:outline-primary;
+}
+
+.p-dock-item-link {
+    @apply flex flex-col items-center justify-center relative cursor-default w-12 h-12;
+}
+
+.p-dock-top {
+    @apply inset-s-0 top-0 w-full;
+}
+
+.p-dock-top .p-dock-item {
+    @apply origin-[center_top];
+}
+
+.p-dock-bottom {
+    @apply inset-s-0 bottom-0 w-full;
+}
+
+.p-dock-bottom .p-dock-item {
+    @apply origin-[center_bottom];
+}
+
+.p-dock-right {
+    @apply inset-e-0 top-0 h-full;
+}
+
+.p-dock-right .p-dock-item {
+    @apply origin-[center_right];
+}
+
+.p-dock-right .p-dock-list {
+    @apply flex-col;
+}
+
+.p-dock-left {
+    @apply inset-s-0 top-0 h-full;
+}
+
+.p-dock-left .p-dock-item {
+    @apply origin-[center_left];
+}
+
+.p-dock-left .p-dock-list {
+    @apply flex-col;
+}
+
+.p-dock-mobile.p-dock-top .p-dock-list-container,
+.p-dock-mobile.p-dock-bottom .p-dock-list-container {
+    @apply overflow-x-auto w-full;
+}
+
+.p-dock-mobile.p-dock-top .p-dock-list-container .p-dock-list,
+.p-dock-mobile.p-dock-bottom .p-dock-list-container .p-dock-list {
+    @apply mt-0 mx-auto;
+}
+
+.p-dock-mobile.p-dock-left .p-dock-list-container,
+.p-dock-mobile.p-dock-right .p-dock-list-container {
+    @apply overflow-y-auto h-full;
+}
+
+.p-dock-mobile.p-dock-left .p-dock-list-container .p-dock-list,
+.p-dock-mobile.p-dock-right .p-dock-list-container .p-dock-list {
+    @apply mt-auto mx-0;
+}
+
+.p-dock-mobile .p-dock-list .p-dock-item {
+    @apply transform-none m-0;
+}

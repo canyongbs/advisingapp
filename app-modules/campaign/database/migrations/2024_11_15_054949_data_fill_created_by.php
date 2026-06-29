@@ -38,6 +38,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
+/** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
     public function up(): void
     {
