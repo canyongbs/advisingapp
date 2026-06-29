@@ -40,7 +40,7 @@ use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Form\Models\Submission;
 
-class InjectSubmissionStateIntoTipTapContent
+class InjectSubmissionStateIntoContent
 {
     public function __invoke(Submission $submission, array $content, array $blocks): array
     {
@@ -72,20 +72,14 @@ class InjectSubmissionStateIntoTipTapContent
         $componentType = $component['type'] ?? null;
         $componentAttributes = $component['attrs'] ?? [];
 
-        // Support both new RichEditor (customBlock) and legacy TipTap (tiptapBlock) formats
-        if ($componentType === 'customBlock') {
-            $config = $componentAttributes['config'] ?? [];
-            $fieldId = $config['fieldId'] ?? null;
-            $blockType = $componentAttributes['id'] ?? null;
-            $stateKey = 'config';
-        } elseif ($componentType === 'tiptapBlock') {
-            $config = $componentAttributes['data'] ?? [];
-            $fieldId = $componentAttributes['id'] ?? null;
-            $blockType = $componentAttributes['type'] ?? null;
-            $stateKey = 'data';
-        } else {
+        if ($componentType !== 'customBlock') {
             return $component;
         }
+
+        $config = $componentAttributes['config'] ?? [];
+        $fieldId = $config['fieldId'] ?? null;
+        $blockType = $componentAttributes['id'] ?? null;
+        $stateKey = 'config';
 
         if (blank($fieldId) || blank($blocks[$blockType] ?? null)) {
             return $component;

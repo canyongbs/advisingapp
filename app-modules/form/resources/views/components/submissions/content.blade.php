@@ -39,14 +39,14 @@
 
 @php
     use AdvisingApp\Form\Actions\ResolveBlockRegistry;
-    use AdvisingApp\Form\Actions\InjectSubmissionStateIntoTipTapContent;
+    use AdvisingApp\Form\Actions\InjectSubmissionStateIntoContent;
     use Filament\Forms\Components\RichEditor\RichContentRenderer;
     use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
     use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
 
     $blocks = app(ResolveBlockRegistry::class)($submission->submissible);
 
-    $content['content'] = app(InjectSubmissionStateIntoTipTapContent::class)($submission, $content['content'], $blocks);
+    $content['content'] = app(InjectSubmissionStateIntoContent::class)($submission, $content['content'], $blocks);
 
     $sanitizeSubmissionHtml = function (string $html): string {
         $config = app(HtmlSanitizerConfig::class)
