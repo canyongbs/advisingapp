@@ -63,8 +63,8 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': resolve(__dirname, 'src'),
-      '@common-components': resolve(__dirname, '../../resources/js/components'),
-      '@common': resolve(__dirname, '../../vendor/canyongbs/common/resources/js/components'),
+            '@common-components': resolve(__dirname, '../../resources/js/components'),
+            '@common': resolve(__dirname, '../../vendor/canyongbs/common/resources/js/components'),
         },
     },
     define: { 'process.env.NODE_ENV': '"production"' },

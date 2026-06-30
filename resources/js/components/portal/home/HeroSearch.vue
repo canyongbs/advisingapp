@@ -63,7 +63,9 @@
         </button>
     </div>
 
-    <div class="bg-[linear-gradient(to_right_bottom,rgba(var(--primary-500),1),rgba(var(--primary-800),1))] w-full px-6">
+    <div
+        class="bg-[linear-gradient(to_right_bottom,rgba(var(--primary-500),1),rgba(var(--primary-800),1))] w-full px-6"
+    >
         <div class="max-w-screen-xl flex flex-col gap-y-6 mx-auto py-8">
             <div class="flex flex-col gap-y-1 text-left">
                 <h3 class="text-3xl font-semibold text-white">Need help?</h3>

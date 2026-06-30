@@ -96,17 +96,17 @@ customElements.define(
 
             return () => h(App, props);
         },
-    props: [
-      'url',
-      'entryUrl',
-      'userAuthenticationUrl',
-      'accessUrl',
-      'searchUrl',
-      'appUrl',
-      'apiUrl',
-      'tags',
-      'cssUrl',
-      'appTitle',
-    ],
+        props: [
+            'url',
+            'entryUrl',
+            'userAuthenticationUrl',
+            'accessUrl',
+            'searchUrl',
+            'appUrl',
+            'apiUrl',
+            'tags',
+            'cssUrl',
+            'appTitle',
+        ],
     }),
 );
