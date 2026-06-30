@@ -38,6 +38,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
     public function up(): void
     {
@@ -46,11 +47,13 @@ return new class () extends Migration {
 
             $table->foreignUuid('event_id')->constrained('events')->cascadeOnDelete();
             $table->boolean('embed_enabled')->default(false);
+            // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('allowed_domains')->nullable();
             $table->string('primary_color')->nullable();
             $table->string('rounding')->nullable();
             $table->boolean('is_wizard')->default(false);
             $table->boolean('recaptcha_enabled')->default(false);
+            // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('content')->nullable();
 
             $table->timestamps();

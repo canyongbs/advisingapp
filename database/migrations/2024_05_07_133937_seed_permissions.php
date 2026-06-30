@@ -39,6 +39,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
+/** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
     use CanModifyPermissions;
 

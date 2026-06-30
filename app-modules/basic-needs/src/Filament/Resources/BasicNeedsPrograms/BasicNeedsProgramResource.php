@@ -58,7 +58,7 @@ class BasicNeedsProgramResource extends Resource
 
     protected static ?int $navigationSort = 110;
 
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::ResourceHub;
 
     protected static ?string $recordTitleAttribute = 'name';
 

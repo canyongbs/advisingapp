@@ -33,14 +33,12 @@
 */
 import { genesisIcons } from '@formkit/icons';
 import { generateClasses } from '@formkit/themes';
-import inputs from '../../../widgets/form/src/FormKit/Inputs/index.js';
-import theme from '../../../widgets/form/src/FormKit/theme.js';
+import theme from './FormKit/theme.js';
 
 export default {
     icons: {
         ...genesisIcons,
     },
-    inputs,
     config: {
         classes: generateClasses(theme),
     },

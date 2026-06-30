@@ -1,0 +1,85 @@
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS Inc.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+.p-divider-horizontal {
+    @apply flex w-full relative items-center my-4 mx-0 py-0 px-4
+        before:absolute before:block before:top-1/2 before:inset-s-0 before:w-full
+        before:border-t before:border-surface-200 dark:before:border-surface-700;
+}
+
+.p-divider-horizontal .p-divider-content {
+    @apply py-0 px-2;
+}
+
+.p-divider-vertical {
+    @apply min-h-full flex relative justify-center my-0 mx-4 py-2 px-0
+        before:absolute before:block before:top-0 before:inset-s-1/2 before:h-full
+        before:border-s before:border-surface-200 dark:before:border-surface-700;
+}
+
+.p-divider.p-divider-vertical .p-divider-content {
+    @apply py-2 px-0;
+}
+
+.p-divider-content {
+    @apply z-10 bg-surface-0 dark:bg-surface-900 text-surface-700 dark:text-surface-0;
+}
+
+.p-divider-solid.p-divider-horizontal:before {
+    @apply border-solid;
+}
+
+.p-divider-solid.p-divider-vertical:before {
+    @apply border-solid;
+}
+
+.p-divider-dashed.p-divider-horizontal:before {
+    @apply border-dashed;
+}
+
+.p-divider-dashed.p-divider-vertical:before {
+    @apply border-dashed;
+}
+
+.p-divider-dotted.p-divider-horizontal:before {
+    @apply border-dotted;
+}
+
+.p-divider-dotted.p-divider-vertical:before {
+    @apply border-dotted;
+}
+
+.p-divider-left:dir(rtl),
+.p-divider-right:dir(rtl) {
+    @apply flex-row-reverse;
+}

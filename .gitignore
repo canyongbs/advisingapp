@@ -19,7 +19,8 @@ npm-debug.log
 yarn-error.log
 /.fleet
 /.idea
-/.vscode
+/.vscode/*
+!/.vscode/mcp.json
 public/css/
 public/fonts/
 public/js/

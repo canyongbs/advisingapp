@@ -36,7 +36,6 @@ import { ref } from 'vue';
 
 export const useAuthStore = defineStore('auth', () => {
     const user = ref(null);
-    const portalRequiresAuthentication = ref(false);
 
     async function setUser(userToSet) {
         user.value = userToSet;
@@ -50,12 +49,14 @@ export const useAuthStore = defineStore('auth', () => {
         user.value = null;
     }
 
-    async function setPortalRequiresAuthentication(value) {
-        portalRequiresAuthentication.value = value;
+    const requiresAuthentication = ref(false);
+
+    async function getRequiresAuthentication() {
+        return requiresAuthentication.value;
     }
 
-    async function getPortalRequiresAuthentication() {
-        return portalRequiresAuthentication.value;
+    async function setRequiresAuthentication(value) {
+        requiresAuthentication.value = value;
     }
 
     return {
@@ -63,8 +64,8 @@ export const useAuthStore = defineStore('auth', () => {
         getUser,
         setUser,
         removeUser,
-        portalRequiresAuthentication,
-        setPortalRequiresAuthentication,
-        getPortalRequiresAuthentication,
+        requiresAuthentication,
+        getRequiresAuthentication,
+        setRequiresAuthentication,
     };
 });

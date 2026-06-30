@@ -60,6 +60,8 @@ class SyncCalendarPeriod implements ShouldQueue, ShouldBeUnique
 
     public int $maxExceptions = 3;
 
+    public int $uniqueFor = 7200;
+
     public function __construct(
         public Calendar $calendar,
         public Carbon $start,

@@ -64,9 +64,9 @@
             return;
         }
 
-        loadingResults.value = true;
-
         const { post } = consumer();
+
+        loadingResults.value = true;
 
         post(props.searchUrl, {
             body: JSON.stringify({ search: value }),
@@ -91,6 +91,7 @@
             }, delay);
         };
     }
+
 </script>
 
 <template>

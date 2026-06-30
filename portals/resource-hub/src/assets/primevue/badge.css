@@ -1,0 +1,82 @@
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS Inc.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+.p-badge {
+    @apply inline-flex items-center justify-center rounded-md
+        py-0 px-2 text-xs font-bold min-w-6 h-6
+        bg-primary text-primary-contrast;
+}
+
+.p-badge-dot {
+    @apply min-w-2 h-2 rounded-full p-0;
+}
+
+.p-badge-circle {
+    @apply p-0 rounded-full;
+}
+
+.p-badge-secondary {
+    @apply bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-300;
+}
+
+.p-badge-success {
+    @apply bg-green-500 dark:bg-green-400 text-white dark:text-green-950;
+}
+
+.p-badge-info {
+    @apply bg-sky-500 dark:bg-sky-400 text-white dark:text-sky-950;
+}
+
+.p-badge-warn {
+    @apply bg-orange-500 dark:bg-orange-400 text-white dark:text-orange-950;
+}
+
+.p-badge-danger {
+    @apply bg-red-500 dark:bg-red-400 text-white dark:text-red-950;
+}
+
+.p-badge-contrast {
+    @apply bg-surface-950 dark:bg-white text-white dark:text-surface-950;
+}
+
+.p-badge-sm {
+    @apply text-[0.625rem] min-w-5 h-5;
+}
+
+.p-badge-lg {
+    @apply text-sm min-w-7 h-7;
+}
+
+.p-badge-xl {
+    @apply text-base min-w-8 h-8;
+}

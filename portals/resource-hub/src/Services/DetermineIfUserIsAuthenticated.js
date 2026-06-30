@@ -31,14 +31,27 @@
 
 </COPYRIGHT>
 */
-import { consumer } from './Consumer.js';
+import axios from '../Globals/Axios.js';
+import { useAuthStore } from '../Stores/auth.js';
+import { useTokenStore } from '../Stores/token.js';
 
 async function determineIfUserIsAuthenticated(endpoint) {
-    const { get } = consumer();
+    const { getToken } = useTokenStore();
+    let token = await getToken();
 
-    return await get(endpoint)
+    return await axios
+        .get(endpoint, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
         .then((response) => {
-            return response.status === 200;
+            const isAuthenticated = response.status === 200;
+
+            if (isAuthenticated) {
+                const { setUser } = useAuthStore();
+                setUser(response.data);
+            }
+
+            return isAuthenticated;
         })
         .catch((error) => {
             return false;

@@ -1,0 +1,117 @@
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS Inc.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+@import './inputtext.css';
+
+.p-inputnumber {
+    @apply inline-flex relative;
+}
+
+.p-inputnumber-button {
+    @apply flex items-center justify-center grow-0 shrink-0 basis-auto cursor-pointer w-10
+        bg-transparent enabled:hover:bg-surface-100 enabled:active:bg-surface-200
+        border border-surface-300 enabled:hover:border-surface-300 enabled:active:border-surface-300
+        text-surface-400 enabled:hover:text-surface-500 enabled:active:text-surface-600
+        dark:bg-transparent dark:enabled:hover:bg-surface-800 dark:enabled:active:bg-surface-700
+        dark:border-surface-700 dark:enabled:hover:border-surface-700 dark:enabled:active:border-surface-700
+        dark:text-surface-400 dark:enabled:hover:text-surface-300 dark:enabled:active:text-surface-200
+        transition-colors duration-200;
+}
+
+.p-inputnumber-stacked .p-inputnumber-button {
+    @apply relative flex-auto border-none;
+}
+
+.p-inputnumber-stacked .p-inputnumber-button-group {
+    @apply flex flex-col absolute top-px end-px h-[calc(100%-2px)] z-10;
+}
+
+.p-inputnumber-stacked .p-inputnumber-increment-button {
+    @apply p-0 rounded-tr-[5px];
+}
+
+.p-inputnumber-stacked .p-inputnumber-decrement-button {
+    @apply p-0 rounded-br-[5px];
+}
+
+.p-inputnumber-horizontal .p-inputnumber-increment-button {
+    @apply order-3 rounded-e-md border-s-0;
+}
+
+.p-inputnumber-horizontal .p-inputnumber-input {
+    @apply order-2 rounded-none;
+}
+
+.p-inputnumber-horizontal .p-inputnumber-decrement-button {
+    @apply order-1 rounded-s-md border-r-0;
+}
+
+.p-floatlabel:has(.p-inputnumber-horizontal) label {
+    @apply ms-10;
+}
+
+.p-inputnumber-vertical {
+    @apply flex-col;
+}
+
+.p-inputnumber-vertical .p-inputnumber-button {
+    @apply py-2;
+}
+
+.p-inputnumber-vertical .p-inputnumber-increment-button {
+    @apply order-1 rounded-ss-md rounded-se-md w-full border-b-0;
+}
+
+.p-inputnumber-vertical .p-inputnumber-input {
+    @apply order-2 rounded-none text-center;
+}
+
+.p-inputnumber-vertical .p-inputnumber-decrement-button {
+    @apply order-3 rounded-ee-md rounded-es-md w-full border-t-0;
+}
+
+.p-inputnumber-input {
+    @apply flex-auto;
+}
+
+.p-inputnumber-fluid {
+    @apply w-full;
+}
+
+.p-inputnumber-fluid .p-inputnumber-input {
+    @apply w-[1%];
+}
+
+.p-inputnumber-fluid.p-inputnumber-vertical .p-inputnumber-input {
+    @apply w-full;
+}
