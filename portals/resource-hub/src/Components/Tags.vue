@@ -37,7 +37,7 @@
     defineProps({
         tags: {
             type: Array,
-            required: true,
+            default: () => [],
         },
         featured: {
             type: Boolean,

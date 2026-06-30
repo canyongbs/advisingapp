@@ -232,7 +232,7 @@
     };
 
     const breadcrumbs = computed(() => {
-        if (category.value.parentCategory) {
+        if (category.value?.parentCategory) {
             return [
                 {
                     name: category.value.parentCategory.name,
@@ -280,29 +280,34 @@
         await get(props.apiUrl + '/categories/' + route.params.categoryId, {
             page: page,
             filter: filter.value,
-        }).then((response) => {
-            if (route.params.categoryId && route.params.parentCategoryId) {
-                router.replace({
-                    name: 'view-subcategory',
-                    params: {
-                        parentCategoryId: response.data.category.parentCategory.id,
-                        categoryId: response.data.category.id,
-                    },
-                    query: { ...route.query },
-                });
-            } else if (route.params.categoryId) {
-                router.replace({
-                    name: 'view-category',
-                    params: { categoryId: response.data.category.id },
-                    query: { ...route.query },
-                });
-            }
+        })
+            .then((response) => {
+                if (route.params.categoryId && route.params.parentCategoryId) {
+                    router.replace({
+                        name: 'view-subcategory',
+                        params: {
+                            parentCategoryId: response.data.category.parentCategory.id,
+                            categoryId: response.data.category.id,
+                        },
+                        query: { ...route.query },
+                    });
+                } else if (route.params.categoryId) {
+                    router.replace({
+                        name: 'view-category',
+                        params: { categoryId: response.data.category.id },
+                        query: { ...route.query },
+                    });
+                }
 
-            category.value = response.data.category;
-            articles.value = response.data.articles.data;
-            setPagination(response.data.articles);
-            loadingResults.value = false;
-        });
+                category.value = response.data.category;
+                articles.value = response.data.articles.data;
+                setPagination(response.data.articles);
+                loadingResults.value = false;
+            })
+            .catch((error) => {
+                console.error('Error loading category:', error);
+                loadingResults.value = false;
+            });
     }
 </script>
 
@@ -318,16 +323,16 @@
 
         <template #breadcrumbs>
             <Breadcrumbs
-                :currentCrumb="category.name"
+                :currentCrumb="category?.name"
                 :breadcrumbs="breadcrumbs"
-                v-if="!loadingResults && !(searchQuery || selectedTags.length > 0)"
+                v-if="!loadingResults && category && !(searchQuery || selectedTags.length > 0)"
             />
         </template>
 
         <div v-if="loadingResults">
             <AppLoading />
         </div>
-        <div v-else>
+        <div v-else-if="category">
             <main class="flex flex-col gap-8">
                 <div v-if="searchQuery || selectedTags.length > 0" class="flex flex-col gap-6">
                     <SearchResults
@@ -354,7 +359,7 @@
                             <p v-if="category.description" class="text-sm text-gray-500">{{ category.description }}</p>
                         </div>
                         <SubCategories
-                            v-if="category.subCategories.length > 0"
+                            v-if="category.subCategories?.length > 0"
                             :subCategories="category.subCategories"
                         ></SubCategories>
                         <div class="flex flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">
@@ -365,7 +370,7 @@
                                 :contained="true"
                             />
 
-                            <div v-if="articles.length > 0">
+                            <div v-if="articles?.length > 0">
                                 <ul role="list" class="divide-y">
                                     <li v-for="article in articles" :key="article.id">
                                         <Article :article="article" />
