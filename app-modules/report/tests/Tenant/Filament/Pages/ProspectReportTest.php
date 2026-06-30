@@ -46,43 +46,43 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
 it('is gated with proper access control', function () {
-  $user = User::factory()->create();
+    $user = User::factory()->create();
 
-  actingAs($user);
+    actingAs($user);
 
-  get(ProspectReport::getUrl())->assertForbidden();
+    get(ProspectReport::getUrl())->assertForbidden();
 
-  $user->grantLicense(LicenseType::RecruitmentCrm);
+    $user->grantLicense(LicenseType::RecruitmentCrm);
 
-  $user->refresh();
+    $user->refresh();
 
-  get(ProspectReport::getUrl())->assertForbidden();
+    get(ProspectReport::getUrl())->assertForbidden();
 
-  ReportUserAccess::factory()->create([
-    'report_key' => ReportAccessKey::ProspectReport->value,
-    'user_id' => $user->getKey(),
-  ]);
+    ReportUserAccess::factory()->create([
+        'report_key' => ReportAccessKey::ProspectReport->value,
+        'user_id' => $user->getKey(),
+    ]);
 
-  get(ProspectReport::getUrl())->assertSuccessful();
+    get(ProspectReport::getUrl())->assertSuccessful();
 });
 
 it('grants access to a user belonging to a team that has been granted access', function () {
-  $team = Team::factory()->create();
+    $team = Team::factory()->create();
 
-  $user = User::factory()->create(['team_id' => $team->getKey()]);
+    $user = User::factory()->create(['team_id' => $team->getKey()]);
 
-  $user->grantLicense(LicenseType::RecruitmentCrm);
+    $user->grantLicense(LicenseType::RecruitmentCrm);
 
-  $user->refresh();
+    $user->refresh();
 
-  actingAs($user);
+    actingAs($user);
 
-  get(ProspectReport::getUrl())->assertForbidden();
+    get(ProspectReport::getUrl())->assertForbidden();
 
-  ReportTeamAccess::factory()->create([
-    'report_key' => ReportAccessKey::ProspectReport->value,
-    'team_id' => $team->getKey(),
-  ]);
+    ReportTeamAccess::factory()->create([
+        'report_key' => ReportAccessKey::ProspectReport->value,
+        'team_id' => $team->getKey(),
+    ]);
 
-  get(ProspectReport::getUrl())->assertSuccessful();
+    get(ProspectReport::getUrl())->assertSuccessful();
 });

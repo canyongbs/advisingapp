@@ -37,7 +37,7 @@
 use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
 use Illuminate\Database\Migrations\Migration;
 
-return new class() extends Migration {
+return new class () extends Migration {
     use CanModifyPermissions;
 
     private array $guards = [
@@ -48,7 +48,7 @@ return new class() extends Migration {
     public function up(): void
     {
         collect($this->guards)
-            ->each(fn(string $guard) => $this->renamePermissions(['report-library.view-any' => 'reporting.view-any'], $guard));
+            ->each(fn (string $guard) => $this->renamePermissions(['report-library.view-any' => 'reporting.view-any'], $guard));
 
         $this->renamePermissionGroups(['Report Library' => 'Reporting']);
     }
@@ -56,7 +56,7 @@ return new class() extends Migration {
     public function down(): void
     {
         collect($this->guards)
-            ->each(fn(string $guard) => $this->renamePermissions(['reporting.view-any' => 'report-library.view-any'], $guard));
+            ->each(fn (string $guard) => $this->renamePermissions(['reporting.view-any' => 'report-library.view-any'], $guard));
 
         $this->renamePermissionGroups(['Reporting' => 'Report Library']);
     }

@@ -49,56 +49,56 @@ use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
 it('renders all students correctly in the retention dashboard', function () {
-  $allStudents = Student::factory()->has(
-    Task::factory()->state(['status' => TaskStatus::Pending, 'is_confidential' => false]),
-    'tasks'
-  )->count(2)->create();
+    $allStudents = Student::factory()->has(
+        Task::factory()->state(['status' => TaskStatus::Pending, 'is_confidential' => false]),
+        'tasks'
+    )->count(2)->create();
 
-  $user = User::factory()->licensed(Student::getLicenseType())->create();
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
 
-  actingAs($user);
+    actingAs($user);
 
-  $studentsWithSubscription = Student::factory()->has(
-    Subscription::factory()->state([
-      'user_id' => $user->getKey(),
-    ]),
-    'subscriptions'
-  )->count(2)->create();
+    $studentsWithSubscription = Student::factory()->has(
+        Subscription::factory()->state([
+            'user_id' => $user->getKey(),
+        ]),
+        'subscriptions'
+    )->count(2)->create();
 
-  $careTeamRole = CareTeamRole::factory()->create();
+    $careTeamRole = CareTeamRole::factory()->create();
 
-  $studentsWithCareTeam = Student::factory()
-    ->hasAttached(
-      $user,
-      ['care_team_role_id' => $careTeamRole->getKey()],
-      'careTeam'
-    )
-    ->count(1)
-    ->create();
+    $studentsWithCareTeam = Student::factory()
+        ->hasAttached(
+            $user,
+            ['care_team_role_id' => $careTeamRole->getKey()],
+            'careTeam'
+        )
+        ->count(1)
+        ->create();
 
-  livewire(StudentsActionCenterWidget::class)
-    ->assertSuccessful()
-    ->assertCanSeeTableRecords(
-      $allStudents
-        ->merge($studentsWithSubscription)
-        ->merge($studentsWithCareTeam)
-    );
+    livewire(StudentsActionCenterWidget::class)
+        ->assertSuccessful()
+        ->assertCanSeeTableRecords(
+            $allStudents
+                ->merge($studentsWithSubscription)
+                ->merge($studentsWithCareTeam)
+        );
 });
 
 it('is gated with proper access control', function () {
-  $user = User::factory()->create();
+    $user = User::factory()->create();
 
-  actingAs($user);
+    actingAs($user);
 
-  get(RetentionCrmDashboard::getUrl())->assertForbidden();
+    get(RetentionCrmDashboard::getUrl())->assertForbidden();
 
-  $user->grantLicense(LicenseType::RetentionCrm);
+    $user->grantLicense(LicenseType::RetentionCrm);
 
-  $user->refresh();
+    $user->refresh();
 
-  get(RetentionCrmDashboard::getUrl())->assertForbidden();
+    get(RetentionCrmDashboard::getUrl())->assertForbidden();
 
-  $user->givePermissionTo('reporting.view-any');
+    $user->givePermissionTo('reporting.view-any');
 
-  get(RetentionCrmDashboard::getUrl())->assertSuccessful();
+    get(RetentionCrmDashboard::getUrl())->assertSuccessful();
 });

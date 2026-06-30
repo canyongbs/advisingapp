@@ -46,43 +46,43 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
 it('is gated with proper access control', function () {
-  $user = User::factory()->create();
+    $user = User::factory()->create();
 
-  actingAs($user);
+    actingAs($user);
 
-  get(InstitutionalAdvisorReport::getUrl())->assertForbidden();
+    get(InstitutionalAdvisorReport::getUrl())->assertForbidden();
 
-  $user->grantLicense(LicenseType::ConversationalAi);
+    $user->grantLicense(LicenseType::ConversationalAi);
 
-  $user->refresh();
+    $user->refresh();
 
-  get(InstitutionalAdvisorReport::getUrl())->assertForbidden();
+    get(InstitutionalAdvisorReport::getUrl())->assertForbidden();
 
-  ReportUserAccess::factory()->create([
-    'report_key' => ReportAccessKey::InstitutionalAdvisorReport->value,
-    'user_id' => $user->getKey(),
-  ]);
+    ReportUserAccess::factory()->create([
+        'report_key' => ReportAccessKey::InstitutionalAdvisorReport->value,
+        'user_id' => $user->getKey(),
+    ]);
 
-  get(InstitutionalAdvisorReport::getUrl())->assertSuccessful();
+    get(InstitutionalAdvisorReport::getUrl())->assertSuccessful();
 });
 
 it('grants access to a user belonging to a team that has been granted access', function () {
-  $team = Team::factory()->create();
+    $team = Team::factory()->create();
 
-  $user = User::factory()->create(['team_id' => $team->getKey()]);
+    $user = User::factory()->create(['team_id' => $team->getKey()]);
 
-  $user->grantLicense(LicenseType::ConversationalAi);
+    $user->grantLicense(LicenseType::ConversationalAi);
 
-  $user->refresh();
+    $user->refresh();
 
-  actingAs($user);
+    actingAs($user);
 
-  get(InstitutionalAdvisorReport::getUrl())->assertForbidden();
+    get(InstitutionalAdvisorReport::getUrl())->assertForbidden();
 
-  ReportTeamAccess::factory()->create([
-    'report_key' => ReportAccessKey::InstitutionalAdvisorReport->value,
-    'team_id' => $team->getKey(),
-  ]);
+    ReportTeamAccess::factory()->create([
+        'report_key' => ReportAccessKey::InstitutionalAdvisorReport->value,
+        'team_id' => $team->getKey(),
+    ]);
 
-  get(InstitutionalAdvisorReport::getUrl())->assertSuccessful();
+    get(InstitutionalAdvisorReport::getUrl())->assertSuccessful();
 });

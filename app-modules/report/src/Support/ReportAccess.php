@@ -92,8 +92,8 @@ class ReportAccess
         $teamUserIds = $teamIds->isEmpty()
             ? collect()
             : User::query()
-            ->whereIn('team_id', $teamIds)
-            ->pluck('id');
+                ->whereIn('team_id', $teamIds)
+                ->pluck('id');
 
         return $directUserIds
             ->merge($teamUserIds)

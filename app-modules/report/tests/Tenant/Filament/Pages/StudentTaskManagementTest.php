@@ -46,43 +46,43 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
 it('is gated with proper access control', function () {
-  $user = User::factory()->create();
+    $user = User::factory()->create();
 
-  actingAs($user);
+    actingAs($user);
 
-  get(StudentTaskManagement::getUrl())->assertForbidden();
+    get(StudentTaskManagement::getUrl())->assertForbidden();
 
-  $user->grantLicense(LicenseType::RetentionCrm);
+    $user->grantLicense(LicenseType::RetentionCrm);
 
-  $user->refresh();
+    $user->refresh();
 
-  get(StudentTaskManagement::getUrl())->assertForbidden();
+    get(StudentTaskManagement::getUrl())->assertForbidden();
 
-  ReportUserAccess::factory()->create([
-    'report_key' => ReportAccessKey::StudentTaskManagement->value,
-    'user_id' => $user->getKey(),
-  ]);
+    ReportUserAccess::factory()->create([
+        'report_key' => ReportAccessKey::StudentTaskManagement->value,
+        'user_id' => $user->getKey(),
+    ]);
 
-  get(StudentTaskManagement::getUrl())->assertSuccessful();
+    get(StudentTaskManagement::getUrl())->assertSuccessful();
 });
 
 it('grants access to a user belonging to a team that has been granted access', function () {
-  $team = Team::factory()->create();
+    $team = Team::factory()->create();
 
-  $user = User::factory()->create(['team_id' => $team->getKey()]);
+    $user = User::factory()->create(['team_id' => $team->getKey()]);
 
-  $user->grantLicense(LicenseType::RetentionCrm);
+    $user->grantLicense(LicenseType::RetentionCrm);
 
-  $user->refresh();
+    $user->refresh();
 
-  actingAs($user);
+    actingAs($user);
 
-  get(StudentTaskManagement::getUrl())->assertForbidden();
+    get(StudentTaskManagement::getUrl())->assertForbidden();
 
-  ReportTeamAccess::factory()->create([
-    'report_key' => ReportAccessKey::StudentTaskManagement->value,
-    'team_id' => $team->getKey(),
-  ]);
+    ReportTeamAccess::factory()->create([
+        'report_key' => ReportAccessKey::StudentTaskManagement->value,
+        'team_id' => $team->getKey(),
+    ]);
 
-  get(StudentTaskManagement::getUrl())->assertSuccessful();
+    get(StudentTaskManagement::getUrl())->assertSuccessful();
 });

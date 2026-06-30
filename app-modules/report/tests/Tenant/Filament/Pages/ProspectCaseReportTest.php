@@ -47,57 +47,57 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
 it('is gated with proper access control', function () {
-  $settings = app(LicenseSettings::class);
-  $user = User::factory()->create();
+    $settings = app(LicenseSettings::class);
+    $user = User::factory()->create();
 
-  $settings->data->addons->caseManagement = false;
-  $settings->save();
+    $settings->data->addons->caseManagement = false;
+    $settings->save();
 
-  actingAs($user);
+    actingAs($user);
 
-  get(ProspectCaseReport::getUrl())->assertForbidden();
+    get(ProspectCaseReport::getUrl())->assertForbidden();
 
-  $user->grantLicense(LicenseType::RecruitmentCrm);
+    $user->grantLicense(LicenseType::RecruitmentCrm);
 
-  $user->refresh();
+    $user->refresh();
 
-  get(ProspectCaseReport::getUrl())->assertForbidden();
+    get(ProspectCaseReport::getUrl())->assertForbidden();
 
-  ReportUserAccess::factory()->create([
-    'report_key' => ReportAccessKey::ProspectCaseReport->value,
-    'user_id' => $user->getKey(),
-  ]);
+    ReportUserAccess::factory()->create([
+        'report_key' => ReportAccessKey::ProspectCaseReport->value,
+        'user_id' => $user->getKey(),
+    ]);
 
-  get(ProspectCaseReport::getUrl())->assertForbidden();
+    get(ProspectCaseReport::getUrl())->assertForbidden();
 
-  $settings->data->addons->caseManagement = true;
-  $settings->save();
+    $settings->data->addons->caseManagement = true;
+    $settings->save();
 
-  get(ProspectCaseReport::getUrl())->assertSuccessful();
+    get(ProspectCaseReport::getUrl())->assertSuccessful();
 });
 
 it('grants access to a user belonging to a team that has been granted access', function () {
-  $settings = app(LicenseSettings::class);
+    $settings = app(LicenseSettings::class);
 
-  $settings->data->addons->caseManagement = true;
-  $settings->save();
+    $settings->data->addons->caseManagement = true;
+    $settings->save();
 
-  $team = Team::factory()->create();
+    $team = Team::factory()->create();
 
-  $user = User::factory()->create(['team_id' => $team->getKey()]);
+    $user = User::factory()->create(['team_id' => $team->getKey()]);
 
-  $user->grantLicense(LicenseType::RecruitmentCrm);
+    $user->grantLicense(LicenseType::RecruitmentCrm);
 
-  $user->refresh();
+    $user->refresh();
 
-  actingAs($user);
+    actingAs($user);
 
-  get(ProspectCaseReport::getUrl())->assertForbidden();
+    get(ProspectCaseReport::getUrl())->assertForbidden();
 
-  ReportTeamAccess::factory()->create([
-    'report_key' => ReportAccessKey::ProspectCaseReport->value,
-    'team_id' => $team->getKey(),
-  ]);
+    ReportTeamAccess::factory()->create([
+        'report_key' => ReportAccessKey::ProspectCaseReport->value,
+        'team_id' => $team->getKey(),
+    ]);
 
-  get(ProspectCaseReport::getUrl())->assertSuccessful();
+    get(ProspectCaseReport::getUrl())->assertSuccessful();
 });

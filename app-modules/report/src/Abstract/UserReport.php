@@ -45,15 +45,15 @@ use UnitEnum;
 
 abstract class UserReport extends Dashboard
 {
-  protected static ?string $cluster = ReportLibrary::class;
+    protected static ?string $cluster = ReportLibrary::class;
 
-  protected static string | UnitEnum | null $navigationGroup = ReportLibraryNavigationGroup::Users;
+    protected static string | UnitEnum | null $navigationGroup = ReportLibraryNavigationGroup::Users;
 
-  public static function canAccess(): bool
-  {
-    /** @var User $user */
-    $user = auth()->user();
+    public static function canAccess(): bool
+    {
+        /** @var User $user */
+        $user = auth()->user();
 
-    return ReportAccess::userCanAccessPage(static::class, $user);
-  }
+        return ReportAccess::userCanAccessPage(static::class, $user);
+    }
 }

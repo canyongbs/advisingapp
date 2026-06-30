@@ -47,57 +47,57 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
 it('is gated with proper access control', function () {
-  $settings = app(LicenseSettings::class);
-  $user = User::factory()->create();
+    $settings = app(LicenseSettings::class);
+    $user = User::factory()->create();
 
-  $settings->data->addons->researchAdvisor = false;
-  $settings->save();
+    $settings->data->addons->researchAdvisor = false;
+    $settings->save();
 
-  actingAs($user);
+    actingAs($user);
 
-  get(ResearchAdvisorReport::getUrl())->assertForbidden();
+    get(ResearchAdvisorReport::getUrl())->assertForbidden();
 
-  $user->grantLicense(LicenseType::ConversationalAi);
+    $user->grantLicense(LicenseType::ConversationalAi);
 
-  $user->refresh();
+    $user->refresh();
 
-  get(ResearchAdvisorReport::getUrl())->assertForbidden();
+    get(ResearchAdvisorReport::getUrl())->assertForbidden();
 
-  ReportUserAccess::factory()->create([
-    'report_key' => ReportAccessKey::ResearchAdvisorReport->value,
-    'user_id' => $user->getKey(),
-  ]);
+    ReportUserAccess::factory()->create([
+        'report_key' => ReportAccessKey::ResearchAdvisorReport->value,
+        'user_id' => $user->getKey(),
+    ]);
 
-  get(ResearchAdvisorReport::getUrl())->assertForbidden();
+    get(ResearchAdvisorReport::getUrl())->assertForbidden();
 
-  $settings->data->addons->researchAdvisor = true;
-  $settings->save();
+    $settings->data->addons->researchAdvisor = true;
+    $settings->save();
 
-  get(ResearchAdvisorReport::getUrl())->assertSuccessful();
+    get(ResearchAdvisorReport::getUrl())->assertSuccessful();
 });
 
 it('grants access to a user belonging to a team that has been granted access', function () {
-  $settings = app(LicenseSettings::class);
+    $settings = app(LicenseSettings::class);
 
-  $settings->data->addons->researchAdvisor = true;
-  $settings->save();
+    $settings->data->addons->researchAdvisor = true;
+    $settings->save();
 
-  $team = Team::factory()->create();
+    $team = Team::factory()->create();
 
-  $user = User::factory()->create(['team_id' => $team->getKey()]);
+    $user = User::factory()->create(['team_id' => $team->getKey()]);
 
-  $user->grantLicense(LicenseType::ConversationalAi);
+    $user->grantLicense(LicenseType::ConversationalAi);
 
-  $user->refresh();
+    $user->refresh();
 
-  actingAs($user);
+    actingAs($user);
 
-  get(ResearchAdvisorReport::getUrl())->assertForbidden();
+    get(ResearchAdvisorReport::getUrl())->assertForbidden();
 
-  ReportTeamAccess::factory()->create([
-    'report_key' => ReportAccessKey::ResearchAdvisorReport->value,
-    'team_id' => $team->getKey(),
-  ]);
+    ReportTeamAccess::factory()->create([
+        'report_key' => ReportAccessKey::ResearchAdvisorReport->value,
+        'team_id' => $team->getKey(),
+    ]);
 
-  get(ResearchAdvisorReport::getUrl())->assertSuccessful();
+    get(ResearchAdvisorReport::getUrl())->assertSuccessful();
 });
