@@ -32,38 +32,19 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import { ArrowRightEndOnRectangleIcon, ArrowRightStartOnRectangleIcon, PlusIcon } from '@heroicons/vue/20/solid';
-    import {
-        ClipboardDocumentListIcon,
-        CubeIcon,
-        DocumentTextIcon,
-        HomeIcon,
-        ShieldExclamationIcon,
-        SignalIcon,
-        WrenchScrewdriverIcon,
-    } from '@heroicons/vue/24/outline';
+    import { ArrowRightEndOnRectangleIcon, ArrowRightStartOnRectangleIcon } from '@heroicons/vue/20/solid';
+    import { HomeIcon } from '@heroicons/vue/24/outline';
     import { storeToRefs } from 'pinia';
-    import { computed, ref } from 'vue';
+    import { ref } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
     import { consumer } from '../Services/Consumer.js';
     import { useAuthStore } from '../Stores/auth.js';
-    import { useFeatureStore } from '../Stores/feature.js';
     import { globalSearchQuery } from '../Stores/globalState.js';
     import { useTokenStore } from '../Stores/token.js';
 
     const route = useRoute();
     const router = useRouter();
     const { user, requiresAuthentication } = storeToRefs(useAuthStore());
-    const {
-        hasServiceManagement,
-        hasAssets,
-        hasLicense,
-        hasTasks,
-        isStatusEnabled,
-        isAdvisoryEnabled,
-        isAssetEnabled,
-        isLicenseEnabled,
-    } = storeToRefs(useFeatureStore());
 
     const { removeToken } = useTokenStore();
 
@@ -105,51 +86,7 @@
             routeName: 'home',
             icon: HomeIcon,
         },
-        {
-            label: 'Service',
-            routeName: 'service',
-            icon: WrenchScrewdriverIcon,
-            visible: computed(() => hasServiceManagement.value && user.value !== null),
-            command: () => router.push({ name: 'service' }),
-        },
-        {
-            label: 'Status',
-            routeName: 'status',
-            icon: SignalIcon,
-            visible: computed(() => isStatusEnabled.value && user.value !== null),
-            command: () => router.push({ name: 'status' }),
-        },
-        {
-            label: 'Advisories',
-            routeName: 'advisories',
-            icon: ShieldExclamationIcon,
-            visible: computed(() => isAdvisoryEnabled.value && user.value !== null),
-            command: () => router.push({ name: 'advisories' }),
-        },
-        {
-            label: 'Assets',
-            routeName: 'assets',
-            icon: CubeIcon,
-            visible: computed(() => isAssetEnabled.value && hasAssets.value && user.value !== null),
-            command: () => router.push({ name: 'assets' }),
-        },
-        {
-            label: 'Licenses',
-            routeName: 'licenses',
-            icon: DocumentTextIcon,
-            visible: computed(() => isLicenseEnabled.value && hasLicense.value && user.value !== null),
-            command: () => router.push({ name: 'licenses' }),
-        },
-        {
-            label: 'Tasks',
-            routeName: 'tasks',
-            icon: ClipboardDocumentListIcon,
-            visible: computed(() => hasTasks.value && user.value !== null),
-            command: () => router.push({ name: 'tasks' }),
-        },
     ]);
-
-    const visibleMenuItems = computed(() => menuItems.value.filter((item) => item.visible !== false));
 
     const onSearch = () => {
         router.push({ name: 'home', query: { search: globalSearchQuery.value } });
@@ -183,18 +120,8 @@
         </header>
 
         <nav class="flex grow flex-col gap-y-7 overflow-x-hidden overflow-y-auto px-4 py-4">
-            <router-link
-                v-if="hasServiceManagement && user"
-                :to="{ name: 'create-service-request' }"
-                @click="sidebarOpen = false"
-                class="relative inline-grid grid-flow-col items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium outline-none transition duration-75 bg-brand-600 text-white hover:bg-brand-500 focus-visible:ring-2 focus-visible:ring-brand-500/50"
-            >
-                <PlusIcon class="size-5" />
-                New Request
-            </router-link>
-
             <ul class="flex flex-col gap-y-1">
-                <li v-for="item in visibleMenuItems" :key="item.label">
+                <li v-for="item in menuItems" :key="item.label">
                     <router-link :to="{ name: item.routeName }" custom v-slot="{ navigate, isActive, isExactActive }">
                         <a
                             @click="
@@ -260,7 +187,7 @@
 
             <!-- Nav items (desktop) -->
             <ul class="ms-4 me-4 hidden items-center gap-x-2 xl:my-2 xl:flex xl:flex-wrap xl:gap-y-1">
-                <li v-for="item in visibleMenuItems" :key="item.label">
+                <li v-for="item in menuItems" :key="item.label">
                     <router-link :to="{ name: item.routeName }" custom v-slot="{ navigate, isActive, isExactActive }">
                         <a
                             @click="navigate"
@@ -315,18 +242,8 @@
                     </div>
                 </form>
 
-                <!-- New Request -->
-                <router-link
-                    v-if="hasServiceManagement && user"
-                    :to="{ name: 'create-service-request' }"
-                    class="relative hidden sm:inline-grid grid-flow-col items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium outline-none transition duration-75 bg-white text-gray-950 ring-1 ring-gray-950/10 hover:bg-gray-50 focus-visible:ring-2"
-                >
-                    <PlusIcon class="size-5" />
-                    New Request
-                </router-link>
-
                 <!-- Sign in / Sign out -->
-                <div v-if="requiresAuthentication || hasServiceManagement">
+                <div v-if="requiresAuthentication">
                     <button
                         v-if="user"
                         type="button"

@@ -1,4 +1,4 @@
-/*
+<!--
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
@@ -30,16 +30,19 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-import preset from './tailwind.config.preset.js';
+-->
+<script setup>
+    defineProps({
+        title: {
+            type: String,
+            default: '',
+        },
+    });
+</script>
 
-export default {
-    presets: [preset],
-  content: [
-    './src/**/*.vue',
-    './src/**/*.js',
-    '../../resources/js/components/**/*.vue',
-    '../../resources/js/components/**/*.js',
-    '../../vendor/canyongbs/common/resources/js/components/**/*.vue',
-  ],
-};
+<template>
+    <h2 class="text-xl font-medium text-gray-950">
+        <template v-if="$slots.default"><slot /></template>
+        <template v-else>{{ title }}</template>
+    </h2>
+</template>

@@ -40,10 +40,6 @@
             type: Object,
             required: true,
         },
-        serviceRequests: {
-            type: Object,
-            required: true,
-        },
     });
 </script>
 

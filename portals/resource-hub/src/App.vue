@@ -424,6 +424,7 @@
             })
             .catch((error) => {
                 errorLoading.value = true;
+                loading.value = false;
                 console.error(`Resource Hub Portal Embed ${error}`);
             });
     }
@@ -622,7 +623,7 @@
             '--primary-800': portalPrimaryColor[800],
             '--primary-900': portalPrimaryColor[900],
             '--primary-950': portalPrimaryColor[950],
-            '--primary-on-color': primaryOnColor.value,
+            '--primary-on-color': primaryOnColor,
             '--rounding-sm': portalRounding.sm,
             '--rounding': portalRounding.default,
             '--rounding-md': portalRounding.md,
