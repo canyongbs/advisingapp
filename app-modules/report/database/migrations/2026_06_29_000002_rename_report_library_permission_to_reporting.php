@@ -34,37 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Abstract;
+use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
-use AdvisingApp\Report\Support\ReportAccess;
-use App\Models\User;
-use Filament\Pages\Dashboard;
+return new class() extends Migration {
+    use CanModifyPermissions;
 
-abstract class StudentReport extends Dashboard implements HasGroupModel
-{
-  use HasFiltersForm;
+    private array $guards = [
+        'web',
+        'api',
+    ];
 
-  protected string $view = 'report::filament.pages.report';
+    public function up(): void
+    {
+        collect($this->guards)
+            ->each(fn(string $guard) => $this->renamePermissions(['report-library.view-any' => 'reporting.view-any'], $guard));
 
-  public function persistsFiltersInSession(): bool
-  {
-    return false;
-  }
+        $this->renamePermissionGroups(['Report Library' => 'Reporting']);
+    }
 
-  public static function canAccess(): bool
-  {
-    /** @var User $user */
-    $user = auth()->user();
+    public function down(): void
+    {
+        collect($this->guards)
+            ->each(fn(string $guard) => $this->renamePermissions(['reporting.view-any' => 'report-library.view-any'], $guard));
 
-    return $user->hasLicense(LicenseType::RetentionCrm) && ReportAccess::userCanAccessPage(static::class, $user);
-  }
-
-  public function groupModel(): ?GroupModel
-  {
-    return GroupModel::Student;
-  }
-}
+        $this->renamePermissionGroups(['Reporting' => 'Report Library']);
+    }
+};

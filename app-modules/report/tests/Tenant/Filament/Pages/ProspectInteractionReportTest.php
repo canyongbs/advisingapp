@@ -35,26 +35,54 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Filament\Pages\ProspectInteractionReport;
+use AdvisingApp\Report\Models\ReportTeamAccess;
+use AdvisingApp\Report\Models\ReportUserAccess;
+use AdvisingApp\Team\Models\Team;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
 it('is gated with proper access control', function () {
-    $user = User::factory()->create();
+  $user = User::factory()->create();
 
-    actingAs($user);
+  actingAs($user);
 
-    get(ProspectInteractionReport::getUrl())->assertForbidden();
+  get(ProspectInteractionReport::getUrl())->assertForbidden();
 
-    $user->grantLicense(LicenseType::RecruitmentCrm);
+  $user->grantLicense(LicenseType::RecruitmentCrm);
 
-    $user->refresh();
+  $user->refresh();
 
-    get(ProspectInteractionReport::getUrl())->assertForbidden();
+  get(ProspectInteractionReport::getUrl())->assertForbidden();
 
-    $user->givePermissionTo('report-library.view-any');
+  ReportUserAccess::factory()->create([
+    'report_key' => ReportAccessKey::ProspectInteractionReport->value,
+    'user_id' => $user->getKey(),
+  ]);
 
-    get(ProspectInteractionReport::getUrl())->assertSuccessful();
+  get(ProspectInteractionReport::getUrl())->assertSuccessful();
+});
+
+it('grants access to a user belonging to a team that has been granted access', function () {
+  $team = Team::factory()->create();
+
+  $user = User::factory()->create(['team_id' => $team->getKey()]);
+
+  $user->grantLicense(LicenseType::RecruitmentCrm);
+
+  $user->refresh();
+
+  actingAs($user);
+
+  get(ProspectInteractionReport::getUrl())->assertForbidden();
+
+  ReportTeamAccess::factory()->create([
+    'report_key' => ReportAccessKey::ProspectInteractionReport->value,
+    'team_id' => $team->getKey(),
+  ]);
+
+  get(ProspectInteractionReport::getUrl())->assertSuccessful();
 });

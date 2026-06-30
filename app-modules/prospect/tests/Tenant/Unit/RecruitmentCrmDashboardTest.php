@@ -171,7 +171,7 @@ it('is gated with proper access control', function () {
 
     get(RecruitmentCrmDashboard::getUrl())->assertForbidden();
 
-    $user->givePermissionTo('report-library.view-any');
+    $user->givePermissionTo('reporting.view-any');
 
     get(RecruitmentCrmDashboard::getUrl())->assertSuccessful();
 });

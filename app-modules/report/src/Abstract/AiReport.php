@@ -38,22 +38,24 @@ namespace AdvisingApp\Report\Abstract;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
+use AdvisingApp\Report\Support\ReportAccess;
+use App\Models\User;
 use BackedEnum;
 use Filament\Pages\Dashboard;
 
 abstract class AiReport extends Dashboard
 {
-    use HasFiltersForm;
+  use HasFiltersForm;
 
-    protected string $view = 'report::filament.pages.report';
+  protected string $view = 'report::filament.pages.report';
 
-    protected static string | BackedEnum | null $navigationIcon = '';
+  protected static string | BackedEnum | null $navigationIcon = '';
 
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
+  public static function canAccess(): bool
+  {
+    /** @var User $user */
+    $user = auth()->user();
 
-        return $user->hasLicense(LicenseType::ConversationalAi) && $user->can('report-library.view-any');
-    }
+    return $user->hasLicense(LicenseType::ConversationalAi) && ReportAccess::userCanAccessPage(static::class, $user);
+  }
 }

@@ -34,37 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Abstract;
+namespace AdvisingApp\Report\Models;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
-use AdvisingApp\Report\Support\ReportAccess;
-use App\Models\User;
-use Filament\Pages\Dashboard;
+use AdvisingApp\Team\Models\Team;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-abstract class StudentReport extends Dashboard implements HasGroupModel
+/**
+ * @mixin IdeHelperReportTeamAccess
+ */
+class ReportTeamAccess extends BaseModel
 {
-  use HasFiltersForm;
+    protected $table = 'report_team_access';
 
-  protected string $view = 'report::filament.pages.report';
+    protected $fillable = [
+        'report_key',
+        'team_id',
+    ];
 
-  public function persistsFiltersInSession(): bool
-  {
-    return false;
-  }
-
-  public static function canAccess(): bool
-  {
-    /** @var User $user */
-    $user = auth()->user();
-
-    return $user->hasLicense(LicenseType::RetentionCrm) && ReportAccess::userCanAccessPage(static::class, $user);
-  }
-
-  public function groupModel(): ?GroupModel
-  {
-    return GroupModel::Student;
-  }
+    /**
+     * @return BelongsTo<Team, $this>
+     */
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
+    }
 }

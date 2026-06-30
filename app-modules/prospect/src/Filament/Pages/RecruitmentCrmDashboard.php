@@ -51,58 +51,66 @@ use UnitEnum;
 
 class RecruitmentCrmDashboard extends ProspectReport
 {
-    protected static ?string $cluster = ReportLibrary::class;
+  protected static ?string $cluster = ReportLibrary::class;
 
-    protected static string | UnitEnum | null $navigationGroup = ReportLibraryNavigationGroup::Prospects;
+  protected static string | UnitEnum | null $navigationGroup = ReportLibraryNavigationGroup::Prospects;
 
-    protected static ?int $navigationSort = 10;
+  protected static ?int $navigationSort = 10;
 
-    protected static ?string $navigationLabel = 'Action Center';
+  protected static ?string $navigationLabel = 'Action Center';
 
-    protected static ?string $title = 'Action Center';
+  protected static ?string $title = 'Action Center';
 
-    protected static string $routePath = 'recruitment-crm-dashboard';
+  protected static string $routePath = 'recruitment-crm-dashboard';
 
-    protected static string | BackedEnum | null $navigationIcon = '';
+  protected static string | BackedEnum | null $navigationIcon = '';
 
-    #[Url]
-    public string $activeTab = ActionCenterTab::Subscribed->value;
+  #[Url]
+  public string $activeTab = ActionCenterTab::Subscribed->value;
 
-    protected string $cacheTag = 'report-prospect-action-center';
+  protected string $cacheTag = 'report-prospect-action-center';
 
-    public static function shouldRegisterNavigation(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
+  public static function shouldRegisterNavigation(): bool
+  {
+    /** @var User $user */
+    $user = auth()->user();
 
-        return $user->hasLicense(Prospect::getLicenseType());
+    return $user->hasLicense(Prospect::getLicenseType());
+  }
+
+  public static function canAccess(): bool
+  {
+    /** @var User $user */
+    $user = auth()->user();
+
+    return $user->hasLicense(Prospect::getLicenseType()) && $user->can('reporting.view-any');
+  }
+
+  public function mount(): void
+  {
+    /** @var User $user */
+    $user = auth()->user();
+
+    abort_unless($user->hasLicense(Prospect::getLicenseType()), Response::HTTP_FORBIDDEN);
+
+    if (! ActionCenterTab::tryFrom($this->activeTab)) {
+      $this->redirect(static::getUrl(['tab' => ActionCenterTab::Subscribed->value]), navigate: true);
     }
+  }
 
-    public function mount(): void
-    {
-        /** @var User $user */
-        $user = auth()->user();
+  public function getWidgets(): array
+  {
+    return [
+      ProspectStats::make(),
+      ProspectsActionCenterWidget::make(),
+    ];
+  }
 
-        abort_unless($user->hasLicense(Prospect::getLicenseType()), Response::HTTP_FORBIDDEN);
-
-        if (! ActionCenterTab::tryFrom($this->activeTab)) {
-            $this->redirect(static::getUrl(['tab' => ActionCenterTab::Subscribed->value]), navigate: true);
-        }
-    }
-
-    public function getWidgets(): array
-    {
-        return [
-            ProspectStats::make(),
-            ProspectsActionCenterWidget::make(),
-        ];
-    }
-
-    public function getWidgetData(): array
-    {
-        return [
-            'filters' => $this->filters,
-            'activeTab' => $this->activeTab,
-        ];
-    }
+  public function getWidgetData(): array
+  {
+    return [
+      'filters' => $this->filters,
+      'activeTab' => $this->activeTab,
+    ];
+  }
 }

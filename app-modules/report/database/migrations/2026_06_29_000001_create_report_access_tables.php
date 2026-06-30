@@ -34,37 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Abstract;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
-use AdvisingApp\Report\Support\ReportAccess;
-use App\Models\User;
-use Filament\Pages\Dashboard;
+return new class() extends Migration {
+    public function up(): void
+    {
+        Schema::create('report_user_access', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('report_key')->index();
+            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            $table->timestamps();
 
-abstract class StudentReport extends Dashboard implements HasGroupModel
-{
-  use HasFiltersForm;
+            $table->unique(['report_key', 'user_id']);
+        });
 
-  protected string $view = 'report::filament.pages.report';
+        Schema::create('report_team_access', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('report_key')->index();
+            $table->foreignUuid('team_id')->constrained('teams')->cascadeOnDelete();
+            $table->timestamps();
 
-  public function persistsFiltersInSession(): bool
-  {
-    return false;
-  }
+            $table->unique(['report_key', 'team_id']);
+        });
+    }
 
-  public static function canAccess(): bool
-  {
-    /** @var User $user */
-    $user = auth()->user();
-
-    return $user->hasLicense(LicenseType::RetentionCrm) && ReportAccess::userCanAccessPage(static::class, $user);
-  }
-
-  public function groupModel(): ?GroupModel
-  {
-    return GroupModel::Student;
-  }
-}
+    public function down(): void
+    {
+        Schema::dropIfExists('report_user_access');
+        Schema::dropIfExists('report_team_access');
+    }
+};

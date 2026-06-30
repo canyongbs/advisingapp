@@ -34,55 +34,70 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Enums\LicenseType;
+namespace AdvisingApp\Report\Support;
+
 use AdvisingApp\Report\Enums\ReportAccessKey;
-use AdvisingApp\Report\Filament\Pages\StudentDeliverabilityReport;
 use AdvisingApp\Report\Models\ReportTeamAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
-use AdvisingApp\Team\Models\Team;
 use App\Models\User;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Laravel\get;
+class ReportAccess
+{
+    public static function userCanAccessPage(string $pageClass, User $user): bool
+    {
+        $key = ReportAccessKey::fromPageClass($pageClass);
 
-it('is gated with proper access control', function () {
-  $user = User::factory()->create();
+        if ($key === null) {
+            return false;
+        }
 
-  actingAs($user);
+        return static::userCanAccess($key, $user);
+    }
 
-  get(StudentDeliverabilityReport::getUrl())->assertForbidden();
+    public static function userCanAccess(ReportAccessKey $key, User $user): bool
+    {
+        $hasDirectAccess = ReportUserAccess::query()
+            ->where('report_key', $key->value)
+            ->where('user_id', $user->getKey())
+            ->exists();
 
-  $user->grantLicense(LicenseType::RetentionCrm);
+        if ($hasDirectAccess) {
+            return true;
+        }
 
-  $user->refresh();
+        if (blank($user->team_id)) {
+            return false;
+        }
 
-  get(StudentDeliverabilityReport::getUrl())->assertForbidden();
+        return ReportTeamAccess::query()
+            ->where('report_key', $key->value)
+            ->where('team_id', $user->team_id)
+            ->exists();
+    }
 
-  ReportUserAccess::factory()->create([
-    'report_key' => ReportAccessKey::StudentDeliverabilityReport->value,
-    'user_id' => $user->getKey(),
-  ]);
+    /**
+     * The number of distinct users that have access to the report, counting both
+     * direct user assignments and members of assigned teams (deduplicated).
+     */
+    public static function accessCount(ReportAccessKey $key): int
+    {
+        $directUserIds = ReportUserAccess::query()
+            ->where('report_key', $key->value)
+            ->pluck('user_id');
 
-  get(StudentDeliverabilityReport::getUrl())->assertSuccessful();
-});
+        $teamIds = ReportTeamAccess::query()
+            ->where('report_key', $key->value)
+            ->pluck('team_id');
 
-it('grants access to a user belonging to a team that has been granted access', function () {
-  $team = Team::factory()->create();
+        $teamUserIds = $teamIds->isEmpty()
+            ? collect()
+            : User::query()
+            ->whereIn('team_id', $teamIds)
+            ->pluck('id');
 
-  $user = User::factory()->create(['team_id' => $team->getKey()]);
-
-  $user->grantLicense(LicenseType::RetentionCrm);
-
-  $user->refresh();
-
-  actingAs($user);
-
-  get(StudentDeliverabilityReport::getUrl())->assertForbidden();
-
-  ReportTeamAccess::factory()->create([
-    'report_key' => ReportAccessKey::StudentDeliverabilityReport->value,
-    'team_id' => $team->getKey(),
-  ]);
-
-  get(StudentDeliverabilityReport::getUrl())->assertSuccessful();
-});
+        return $directUserIds
+            ->merge($teamUserIds)
+            ->unique()
+            ->count();
+    }
+}
