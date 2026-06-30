@@ -33,10 +33,10 @@
 -->
 <script setup>
     import { consumer } from '@/Services/Consumer.js';
-    import { defineProps, ref, watch } from 'vue';
     import HelpCenter from '@common-components/portal/home/HelpCenter.vue';
     import HeroSearch from '@common-components/portal/home/HeroSearch.vue';
     import SearchResults from '@common-components/portal/home/SearchResults.vue';
+    import { defineProps, ref, watch } from 'vue';
 
     const props = defineProps({
         searchUrl: {
@@ -91,7 +91,6 @@
             }, delay);
         };
     }
-
 </script>
 
 <template>

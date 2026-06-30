@@ -32,9 +32,9 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import SearchLoading from './SearchLoading.vue';
     import { ChevronRightIcon, XMarkIcon } from '@heroicons/vue/20/solid';
     import { defineProps } from 'vue';
+    import SearchLoading from './SearchLoading.vue';
 
     defineProps({
         searchQuery: {
