@@ -75,6 +75,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': resolve(__dirname, 'src'),
+            '@common-components': resolve(__dirname, '../../resources/js/components'),
         },
     },
     define: { 'process.env.NODE_ENV': '"production"' },

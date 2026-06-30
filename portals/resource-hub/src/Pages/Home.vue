@@ -33,10 +33,10 @@
 -->
 <script setup>
     import { consumer } from '@/Services/Consumer.js';
-    import { Bars3Icon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
     import { defineProps, ref, watch } from 'vue';
-    import HelpCenter from '../Components/HelpCenter.vue';
-    import SearchResults from '../Components/SearchResults.vue';
+    import HelpCenter from '@common-components/portal/home/HelpCenter.vue';
+    import HeroSearch from '@common-components/portal/home/HeroSearch.vue';
+    import SearchResults from '@common-components/portal/home/SearchResults.vue';
 
     const props = defineProps({
         searchUrl: {
@@ -95,42 +95,7 @@
 
 <template>
     <div class="flex flex-col bg-gray-50">
-        <div class="sticky top-0 z-40 bg-gray-50 lg:hidden">
-            <button class="w-full p-3" type="button" @click="$emit('sidebarOpened')">
-                <span class="sr-only">Open sidebar</span>
-
-                <Bars3Icon class="h-6 w-6 text-gray-900"></Bars3Icon>
-            </button>
-        </div>
-
-        <div
-            class="bg-[linear-gradient(to_right_bottom,rgba(var(--primary-500),1),rgba(var(--primary-800),1))] w-full px-6"
-        >
-            <div class="max-w-screen-xl flex flex-col gap-y-6 mx-auto py-8">
-                <div class="flex flex-col gap-y-1 text-left">
-                    <h3 class="text-3xl font-semibold text-white">Need help?</h3>
-                    <p class="text-primary-100">Search our resource hub for advice and answers</p>
-                </div>
-
-                <form action="#" method="GET">
-                    <label for="search" class="sr-only">Search</label>
-
-                    <div class="relative rounded">
-                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                            <MagnifyingGlassIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-                        </div>
-
-                        <input
-                            type="search"
-                            v-model="searchQuery"
-                            id="search"
-                            placeholder="Search for articles and categories"
-                            class="block w-full rounded border-0 py-3 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-2-- sm:text-sm sm:leading-6"
-                        />
-                    </div>
-                </form>
-            </div>
-        </div>
+        <HeroSearch v-model="searchQuery" @sidebar-opened="$emit('sidebarOpened')"></HeroSearch>
         <main class="px-6">
             <div class="max-w-screen-xl flex flex-col gap-y-6 mx-auto py-8">
                 <SearchResults
