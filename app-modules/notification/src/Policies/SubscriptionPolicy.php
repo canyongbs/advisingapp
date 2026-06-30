@@ -102,6 +102,14 @@ class SubscriptionPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['subscription.*.delete'],
+            denyResponse: 'You do not have permission to delete any subscription.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Subscription $subscription): Response
     {
         $licenseType = $this->getSubscribableLicenseType($subscription);
@@ -116,6 +124,14 @@ class SubscriptionPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['subscription.*.restore'],
+            denyResponse: 'You do not have permission to restore any subscription.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Subscription $subscription): Response
     {
         $licenseType = $this->getSubscribableLicenseType($subscription);
@@ -127,6 +143,14 @@ class SubscriptionPolicy
         return $authenticatable->canOrElse(
             abilities: ['subscription.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this subscription.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['subscription.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any subscription.'
         );
     }
 

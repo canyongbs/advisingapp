@@ -49,6 +49,7 @@ return new class () extends Migration {
         Schema::table('assistant_chat_messages', function (Blueprint $table) {
             $table->string('message_id')->nullable();
             $table->string('run_id')->nullable();
+            // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('file_ids')->nullable();
         });
     }

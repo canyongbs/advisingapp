@@ -87,6 +87,14 @@ class SurveyPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function replicate(Authenticatable $authenticatable, Survey $survey): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'survey.create',
+            denyResponse: 'You do not have permission to duplicate this survey.'
+        );
+    }
+
     public function update(Authenticatable $authenticatable, Survey $survey): Response
     {
         return $authenticatable->canOrElse(
@@ -103,6 +111,14 @@ class SurveyPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['survey.*.delete'],
+            denyResponse: 'You do not have permission to delete any survey.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Survey $survey): Response
     {
         return $authenticatable->canOrElse(
@@ -111,11 +127,27 @@ class SurveyPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['survey.*.restore'],
+            denyResponse: 'You do not have permission to restore any survey.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Survey $survey): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['survey.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this survey.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['survey.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any survey.'
         );
     }
 

@@ -95,6 +95,14 @@ class BookingGroupPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['group_appointment.*.delete'],
+            denyResponse: 'You do not have permissions to delete any booking group.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, BookingGroup $bookingGroup): Response
     {
         return $authenticatable->canOrElse(
@@ -103,11 +111,27 @@ class BookingGroupPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['group_appointment.*.restore'],
+            denyResponse: 'You do not have permissions to restore any booking group.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, BookingGroup $bookingGroup): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['group_appointment.*.force-delete'],
             denyResponse: 'You do not have permissions to force delete this booking group.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['group_appointment.*.force-delete'],
+            denyResponse: 'You do not have permissions to force delete any booking group.'
         );
     }
 

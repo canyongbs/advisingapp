@@ -38,6 +38,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
     public function up(): void
     {
@@ -45,6 +46,7 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
 
             $table->text('label');
+            // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('content')->nullable();
             $table->foreignUuid('form_id')->constrained()->cascadeOnDelete();
             $table->integer('sort');

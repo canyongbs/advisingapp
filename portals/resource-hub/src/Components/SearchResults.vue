@@ -32,9 +32,17 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import SearchLoading from '@/Components/SearchLoading.vue';
-    import { ChevronRightIcon, XMarkIcon } from '@heroicons/vue/20/solid';
+    import { DocumentTextIcon, FolderIcon } from '@heroicons/vue/24/outline';
     import { defineProps } from 'vue';
+    import Article from './Article.vue';
+    import Pagination from './Pagination.vue';
+    import ResourceList from './ResourceList.vue';
+    import ResourceListItem from './ResourceListItem.vue';
+    import SearchLoading from './SearchLoading.vue';
+    import Subheading from './Subheading.vue';
+    import Tabs from './Tabs.vue';
+
+    const emit = defineEmits(['fetchNextPage', 'fetchPreviousPage', 'fetchPage', 'change-filter']);
 
     defineProps({
         searchQuery: {
@@ -49,7 +57,51 @@
             type: Boolean,
             required: true,
         },
+        selectedFilter: {
+            type: String,
+            default: '',
+        },
+        currentPage: {
+            type: Number,
+            required: true,
+        },
+        lastPage: {
+            type: Number,
+            required: true,
+        },
+        fromItem: {
+            type: Number,
+            required: true,
+        },
+        toItem: {
+            type: Number,
+            required: true,
+        },
+        totalItems: {
+            type: Number,
+            required: true,
+        },
     });
+
+    const filterTabs = [
+        { label: 'All Articles', value: 'all-articles' },
+        { label: 'Featured', value: 'featured' },
+        { label: 'Most Viewed', value: 'most-viewed' },
+    ];
+
+    const updateFilter = (value) => {
+        emit('change-filter', value);
+    };
+
+    function fetchNextPage() {
+        emit('fetchNextPage');
+    }
+    function fetchPreviousPage() {
+        emit('fetchPreviousPage');
+    }
+    function fetchPage(page) {
+        emit('fetchPage', page);
+    }
 </script>
 
 <template>
@@ -58,73 +110,71 @@
     </div>
 
     <div v-if="!loadingResults && searchResults?.data" class="flex flex-col gap-6">
-        <h3 class="text-2xl font-bold text-primary-950">
-            Search results: <span class="font-normal">{{ searchQuery }}</span>
-        </h3>
+        <Subheading>
+            Search results<template v-if="searchQuery">
+                for <span class="text-gray-500">&ldquo;{{ searchQuery }}&rdquo;</span></template
+            >
+        </Subheading>
 
-        <div
-            class="flex flex-col divide-y divide-gray-200 ring-1 ring-black/5 shadow-xs px-3 pt-3 pb-1 rounded bg-white"
-        >
-            <h4 class="text-lg font-semibold text-gray-800 px-3 pt-1 pb-3">
-                Articles ({{ searchResults.data.articles.length }})
-            </h4>
+        <div class="flex flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">
+            <Tabs
+                :tabs="filterTabs"
+                :modelValue="selectedFilter || 'all-articles'"
+                @update:modelValue="updateFilter"
+                :contained="true"
+            />
 
-            <div v-if="searchResults.data.articles.length > 0">
-                <ul role="list" class="divide-y divide-gray-200">
-                    <li v-for="article in searchResults.data.articles" :key="article.id">
-                        <router-link
-                            :to="{
-                                name: 'view-article',
-                                params: { categoryId: article.categoryId, articleId: article.id },
-                            }"
-                            class="group p-3 flex items-start text-sm font-medium text-gray-700"
-                        >
-                            <h5>
-                                {{ article.name }}
-                            </h5>
-
-                            <ChevronRightIcon
-                                class="opacity-0 h-5 w-5 text-primary-600 transition-all group-hover:translate-x-2 group-hover:opacity-100"
-                            />
-                        </router-link>
+            <div v-if="searchResults.data.articles.data.length > 0">
+                <ul role="list" class="divide-y">
+                    <li v-for="article in searchResults.data.articles.data" :key="article.id">
+                        <Article :article="article" />
                     </li>
                 </ul>
+                <Pagination
+                    :currentPage="currentPage"
+                    :lastPage="lastPage"
+                    :fromItem="fromItem"
+                    :toItem="toItem"
+                    :totalItems="totalItems"
+                    @fetchNextPage="fetchNextPage"
+                    @fetchPreviousPage="fetchPreviousPage"
+                    @fetchPage="fetchPage"
+                />
             </div>
-            <div v-else class="p-3 flex items-start gap-2">
-                <XMarkIcon class="h-5 w-5 text-gray-400" />
 
-                <p class="text-gray-600 text-sm font-medium">No articles found that match this search.</p>
-            </div>
+            <section v-else class="px-6 py-4 flex items-start gap-x-4">
+                <div class="flex size-12 items-center justify-center rounded-full bg-gray-100">
+                    <DocumentTextIcon class="size-6 text-gray-400" />
+                </div>
+
+                <div class="flex-1">
+                    <h4 class="text-base font-semibold leading-6 text-gray-950">No articles found</h4>
+
+                    <p class="mt-1 text-sm text-gray-500">No articles match your current search criteria.</p>
+                </div>
+            </section>
         </div>
 
-        <div
-            class="flex flex-col divide-y divide-gray-200 ring-1 ring-black/5 shadow-xs px-3 pt-3 pb-1 rounded bg-white"
-        >
-            <h4 class="text-lg font-semibold text-gray-800 px-3 pt-1 pb-3">Categories</h4>
+        <ResourceList v-if="searchResults.data.categories.length > 0" heading="Categories">
+            <ResourceListItem
+                v-for="category in searchResults.data.categories"
+                :key="category.id"
+                :to="{ name: 'view-category', params: { categoryId: category.id } }"
+            >
+                <template #primary>{{ category.name }}</template>
+            </ResourceListItem>
+        </ResourceList>
 
-            <div v-if="searchResults.data.categories.length > 0">
-                <ul role="list" class="divide-y divide-gray-200">
-                    <li v-for="category in searchResults.data.categories" :key="category.id">
-                        <router-link
-                            :to="{ name: 'view-category', params: { categoryId: category.id } }"
-                            class="group p-3 flex items-start text-sm font-medium text-gray-700"
-                        >
-                            <h5>
-                                {{ category.name }}
-                            </h5>
-
-                            <ChevronRightIcon
-                                class="opacity-0 h-5 w-5 text-primary-600 transition-all group-hover:translate-x-2 group-hover:opacity-100"
-                            />
-                        </router-link>
-                    </li>
-                </ul>
+        <section v-else class="rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 px-6 py-4 flex items-start gap-x-4">
+            <div class="flex size-12 items-center justify-center rounded-full bg-gray-100">
+                <FolderIcon class="size-6 text-gray-400" />
             </div>
-            <div v-else class="p-3 flex items-start gap-2">
-                <XMarkIcon class="h-5 w-5 text-gray-400" />
 
-                <p class="text-gray-600 text-sm font-medium">No categories found that match this search.</p>
+            <div class="flex-1">
+                <h4 class="text-base font-semibold leading-6 text-gray-950">No categories found</h4>
+
+                <p class="mt-1 text-sm text-gray-500">No categories match your current search criteria.</p>
             </div>
-        </div>
+        </section>
     </div>
 </template>

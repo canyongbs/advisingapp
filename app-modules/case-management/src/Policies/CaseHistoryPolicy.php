@@ -102,6 +102,14 @@ class CaseHistoryPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['case_history.*.delete'],
+            denyResponse: 'You do not have permissions to delete any case history.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, CaseHistory $caseHistory): Response
     {
         return $authenticatable->canOrElse(
@@ -110,11 +118,27 @@ class CaseHistoryPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['case_history.*.restore'],
+            denyResponse: 'You do not have permissions to restore any case history.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, CaseHistory $caseHistory): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['case_history.*.force-delete'],
             denyResponse: 'You do not have permissions to force delete this case history.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['case_history.*.force-delete'],
+            denyResponse: 'You do not have permissions to force delete any case history.'
         );
     }
 

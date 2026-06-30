@@ -97,6 +97,14 @@ class InteractionRelationPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.delete',
+            denyResponse: 'You do not have permission to delete any interaction relation.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, InteractionRelation $relation): Response
     {
         return $authenticatable->canOrElse(
@@ -105,11 +113,27 @@ class InteractionRelationPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.restore',
+            denyResponse: 'You do not have permission to restore any interaction relation.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, InteractionRelation $relation): Response
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this interaction relation.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.force-delete',
+            denyResponse: 'You do not have permission to permanently delete any interaction relation.'
         );
     }
 }

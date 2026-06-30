@@ -94,6 +94,14 @@ class CustomerAdvisorQuestionPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['customer_advisor.*.delete'],
+            denyResponse: 'You do not have permission to delete any Customer Advisor Question.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
@@ -102,11 +110,27 @@ class CustomerAdvisorQuestionPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['customer_advisor.*.restore'],
+            denyResponse: 'You do not have permission to restore any Customer Advisor Question.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['customer_advisor.*.force-delete'],
             denyResponse: 'You do not have permission to force-delete this Customer Advisor Question.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['customer_advisor.*.force-delete'],
+            denyResponse: 'You do not have permission to force-delete any Customer Advisor Question.'
         );
     }
 }

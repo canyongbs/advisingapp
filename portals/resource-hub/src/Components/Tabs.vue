@@ -1,0 +1,83 @@
+<!--
+<COPYRIGHT>
+
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS Inc.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+-->
+<script setup>
+    defineProps({
+        tabs: {
+            type: Array,
+            required: true,
+        },
+        modelValue: {
+            type: String,
+            required: true,
+        },
+        contained: {
+            type: Boolean,
+            default: false,
+        },
+    });
+
+    const emit = defineEmits(['update:modelValue']);
+</script>
+
+<template>
+    <nav
+        class="flex max-w-full gap-x-1 overflow-x-auto"
+        :class="
+            contained
+                ? 'border-b border-gray-200 px-3 py-2.5'
+                : 'rounded-xl bg-white p-2 shadow-sm ring-1 ring-gray-950/5'
+        "
+    >
+        <button
+            v-for="tab in tabs"
+            :key="tab.value"
+            type="button"
+            @click="emit('update:modelValue', tab.value)"
+            class="flex items-center justify-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium whitespace-nowrap transition duration-75 outline-none"
+            :class="modelValue === tab.value ? 'bg-gray-50' : 'hover:bg-gray-50 focus-visible:bg-gray-50'"
+        >
+            <component
+                v-if="tab.icon"
+                :is="tab.icon"
+                class="size-5 shrink-0 transition duration-75"
+                :class="modelValue === tab.value ? 'text-brand-600' : 'text-gray-400'"
+            />
+            <span
+                class="transition duration-75"
+                :class="modelValue === tab.value ? 'text-brand-700' : 'text-gray-500'"
+                >{{ tab.label }}</span
+            >
+        </button>
+    </nav>
+</template>

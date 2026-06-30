@@ -154,6 +154,46 @@ Setup is now complete.
 
 ---
 
+### Laravel Boost (MCP for AI tooling)
+
+This project ships with [Laravel Boost](https://github.com/laravel/boost) already configured. Boost runs as an
+[MCP](https://modelcontextprotocol.io/) server that gives AI assistants (e.g. GitHub Copilot in VS Code) project-aware
+tools such as database schema inspection, read-only database queries, documentation search, and more.
+
+The MCP configuration lives in the committed `.vscode/mcp.json` file, so there is **nothing to generate** — it works out
+of the box as long as `pls` is installed correctly. The configured command runs Boost _inside_ the `app` container:
+
+```jsonc
+{
+    "servers": {
+        "laravel-boost": {
+            "command": "${userHome}/.pls/bin/pls",
+            "args": ["exec", "-T", "app", "php", "artisan", "boost:mcp"],
+        },
+    },
+}
+```
+
+- `${userHome}` is resolved by VS Code, so the absolute path to `pls` works on both macOS and Linux.
+- `pls` must be installed at the default location (`~/.pls/bin/pls`) — see the
+  [pls installation guide](common/pls.md).
+- The `app` container must be running (`pls up -d`), since Boost executes inside it.
+
+#### Verifying it is running in VS Code
+
+1. Make sure the containers are up with `pls up -d`.
+2. Open the Command Palette (`Cmd+Shift+P` / `Ctrl+Shift+P`) and run **MCP: List Servers**.
+3. Select **laravel-boost**. If it is not already running, choose **Start Server** (you may be prompted to trust the
+   server the first time).
+4. Use **Show Output** on the server to confirm it started without errors.
+5. In Copilot Chat (Agent mode), open the tools picker — you should see the Boost tools (e.g. `database-schema`,
+   `database-query`, `search-docs`) listed and enabled.
+
+> Tip: If the server fails to start, confirm `~/.pls/bin/pls` exists and is on disk, that `pls up -d` has been run, and
+> that you can manually run `pls exec -T app php artisan boost:mcp` from the project root without errors.
+
+---
+
 ### Customizing container settings and Ports
 
 Within the `.env.example` (and within the `.env` after you copy it) should exist the following variables:

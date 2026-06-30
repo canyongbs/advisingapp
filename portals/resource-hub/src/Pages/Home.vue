@@ -32,11 +32,17 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import { consumer } from '@/Services/Consumer.js';
-    import { Bars3Icon, MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
-    import { defineProps, ref, watch } from 'vue';
+    import { defineProps, nextTick, onMounted, ref, watch } from 'vue';
+    import { useRoute, useRouter } from 'vue-router';
+    import Breadcrumbs from '../Components/Breadcrumbs.vue';
     import HelpCenter from '../Components/HelpCenter.vue';
+    import HeroSearch from '../Components/HeroSearch.vue';
+    import Page from '../Components/Page.vue';
     import SearchResults from '../Components/SearchResults.vue';
+    import { consumer } from '../Services/Consumer.js';
+    import { useAuthStore } from '../Stores/auth.js';
+    import { useFeatureStore } from '../Stores/feature.js';
+    import { globalSearchQuery } from '../Stores/globalState.js';
 
     const props = defineProps({
         searchUrl: {
@@ -51,14 +57,49 @@
             type: Object,
             required: true,
         },
+        serviceRequests: {
+            type: Object,
+            required: true,
+        },
+        tags: {
+            type: Object,
+            required: true,
+        },
     });
 
-    const searchQuery = ref(null);
+    const searchQuery = ref('');
     const loadingResults = ref(false);
     const searchResults = ref(null);
+    const selectedTags = ref([]);
+    const route = useRoute();
+    const router = useRouter();
+    const globalSearchInput = ref(null);
+    const filter = ref('');
+    const currentPage = ref(1);
+    const nextPageUrl = ref(null);
+    const prevPageUrl = ref(null);
+    const lastPage = ref(null);
+    const totalArticles = ref(0);
+    const fromArticle = ref(0);
+    const toArticle = ref(0);
 
-    const debounceSearch = debounce((value) => {
-        if (!value) {
+    const filterRouteChange = (page = currentPage.value || 1) => {
+        router.push({
+            name: route.name,
+            params: route.params,
+            query: {
+                ...route.query,
+                page: page,
+                search: searchQuery.value || undefined,
+                tags: selectedTags.value.join(',') || undefined,
+                filter: filter.value || route.query.filter || undefined,
+            },
+        });
+    };
+
+    const debounceSearch = debounce((value, page = 1) => {
+        const { post } = consumer();
+        if (!value && selectedTags.value.length < 1) {
             searchQuery.value = null;
             searchResults.value = null;
             return;
@@ -66,19 +107,119 @@
 
         loadingResults.value = true;
 
-        const { post } = consumer();
-
         post(props.searchUrl, {
-            body: JSON.stringify({ search: value }),
+            search: JSON.stringify(value),
+            tags: selectedTags.value.join(','),
+            filter: filter.value || route.query.filter || undefined,
+            page: page,
         }).then((response) => {
             searchResults.value = response.data;
             loadingResults.value = false;
+            setPagination(response.data.data.articles.meta);
         });
+        globalSearchQuery.value = '';
     }, 500);
 
-    watch(searchQuery, (value) => {
-        debounceSearch(value);
+    const { user } = useAuthStore();
+    const { hasServiceManagement } = useFeatureStore();
+
+    const setPagination = (pagination) => {
+        currentPage.value = pagination.current_page;
+        prevPageUrl.value = pagination.prev_page_url;
+        nextPageUrl.value = pagination.next_page_url;
+        lastPage.value = pagination.last_page;
+        totalArticles.value = pagination.total;
+        fromArticle.value = pagination.from;
+        toArticle.value = pagination.to;
+    };
+
+    watch(
+        () => route.query,
+        (newQuery) => {
+            const tags = newQuery.tags ? newQuery.tags.split(',') : [];
+
+            if (Object.keys(newQuery).length === 0) {
+                filter.value = '';
+                searchQuery.value = '';
+                selectedTags.value = [];
+            }
+
+            if (!newQuery.tags || tags.length === 0) {
+                selectedTags.value = [];
+            }
+
+            handleInitialQuery();
+        },
+    );
+
+    onMounted(() => {
+        handleInitialQuery({ setFocus: true });
     });
+
+    function handleInitialQuery({ setFocus = false } = {}) {
+        const search = route.query.search;
+        const tags = route.query.tags ? route.query.tags.split(',') : [];
+
+        if (search) {
+            currentPage.value = parseInt(route.query.page) || 1;
+            searchQuery.value = search;
+
+            if (setFocus) {
+                nextTick(() => {
+                    globalSearchInput.value?.focus();
+                });
+            }
+
+            debounceSearch(search, currentPage.value);
+        }
+
+        if (tags.length > 0) {
+            selectedTags.value = tags;
+            currentPage.value = parseInt(route.query.page) || 1;
+        }
+    }
+
+    watch(
+        () => [searchQuery.value, [...selectedTags.value]],
+        ([newSearch, newTags]) => {
+            const isSearchEmpty = !newSearch || newSearch.trim() === '';
+            const areTagsEmpty = newTags.length === 0;
+
+            if (isSearchEmpty && areTagsEmpty) {
+                router.push({
+                    name: route.name,
+                    params: route.params,
+                    query: {},
+                });
+                return;
+            }
+
+            const urlSearch = route.query.search || '';
+            const urlTags = route.query.tags ? route.query.tags.split(',') : [];
+
+            const isSearchChanged = newSearch !== urlSearch;
+            const isTagsChanged = newTags.length !== urlTags.length || newTags.some((tag, i) => tag !== urlTags[i]);
+            filter.value = route.query.filter || '';
+            if (isSearchChanged || isTagsChanged) {
+                router.push({
+                    name: route.name,
+                    params: route.params,
+                    query: {
+                        ...route.query,
+                        page: 1,
+                        search: newSearch || undefined,
+                        tags: newTags.join(',') || undefined,
+                        filter: filter.value || undefined,
+                    },
+                });
+
+                debounceSearch(newSearch, 1);
+            } else {
+                debounceSearch(searchQuery.value, route.query.page);
+            }
+        },
+        { immediate: false },
+    );
 
     function debounce(func, delay) {
         let timerId;
@@ -91,57 +232,75 @@
             }, delay);
         };
     }
+
+    function toggleTag(tag) {
+        if (selectedTags.value.includes(tag)) {
+            selectedTags.value = selectedTags.value.filter((t) => t !== tag);
+        } else {
+            selectedTags.value = [...selectedTags.value, tag];
+        }
+    }
+
+    const changeSearchFilter = (value) => {
+        filter.value = value;
+        filterRouteChange(1);
+        debounceSearch(searchQuery.value, 1);
+    };
+
+    const fetchNextPage = () => {
+        currentPage.value = currentPage.value !== lastPage.value ? currentPage.value + 1 : lastPage.value;
+        fetchPage(currentPage.value);
+    };
+
+    const fetchPreviousPage = () => {
+        currentPage.value = currentPage.value !== 1 ? currentPage.value - 1 : 1;
+        fetchPage(currentPage.value);
+    };
+
+    const fetchPage = (page) => {
+        filterRouteChange(page);
+        debounceSearch(searchQuery.value, page);
+    };
 </script>
 
 <template>
-    <div class="flex flex-col bg-gray-50">
-        <div class="sticky top-0 z-40 bg-gray-50 lg:hidden">
-            <button class="w-full p-3" type="button" @click="$emit('sidebarOpened')">
-                <span class="sr-only">Open sidebar</span>
+    <Page>
+        <template #heading> Need help? </template>
 
-                <Bars3Icon class="h-6 w-6 text-gray-900"></Bars3Icon>
-            </button>
-        </div>
+        <template #description> Search our resource hub for advice and answers </template>
 
-        <div
-            class="bg-[linear-gradient(to_right_bottom,rgba(var(--primary-500),1),rgba(var(--primary-800),1))] w-full px-6"
+        <template #breadcrumbs>
+            <Breadcrumbs currentCrumb="Home" />
+        </template>
+
+        <template #belowHeaderContent>
+            <HeroSearch
+                ref="globalSearchInput"
+                v-model="searchQuery"
+                :tags="tags"
+                :selectedTags="selectedTags"
+                @toggle-tag="toggleTag"
+            />
+        </template>
+
+        <SearchResults
+            v-if="searchQuery || selectedTags.length > 0"
+            :searchQuery="searchQuery"
+            :searchResults="searchResults"
+            :loadingResults="loadingResults"
+            @change-filter="changeSearchFilter"
+            :selected-filter="filter"
+            :currentPage="currentPage"
+            :lastPage="lastPage"
+            :fromItem="fromArticle"
+            :toItem="toArticle"
+            :totalItems="totalArticles"
+            @fetchNextPage="fetchNextPage"
+            @fetchPreviousPage="fetchPreviousPage"
+            @fetchPage="fetchPage"
         >
-            <div class="max-w-screen-xl flex flex-col gap-y-6 mx-auto py-8">
-                <div class="flex flex-col gap-y-1 text-left">
-                    <h3 class="text-3xl font-semibold text-white">Need help?</h3>
-                    <p class="text-primary-100">Search our resource hub for advice and answers</p>
-                </div>
+        </SearchResults>
 
-                <form action="#" method="GET">
-                    <label for="search" class="sr-only">Search</label>
-
-                    <div class="relative rounded">
-                        <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-4">
-                            <MagnifyingGlassIcon class="h-5 w-5 text-gray-400" aria-hidden="true" />
-                        </div>
-
-                        <input
-                            type="search"
-                            v-model="searchQuery"
-                            id="search"
-                            placeholder="Search for articles and categories"
-                            class="block w-full rounded border-0 py-3 pl-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-primary-2-- sm:text-sm sm:leading-6"
-                        />
-                    </div>
-                </form>
-            </div>
-        </div>
-        <main class="px-6">
-            <div class="max-w-screen-xl flex flex-col gap-y-6 mx-auto py-8">
-                <SearchResults
-                    v-if="searchQuery"
-                    :searchQuery="searchQuery"
-                    :searchResults="searchResults"
-                    :loadingResults="loadingResults"
-                ></SearchResults>
-
-                <HelpCenter v-else :categories="categories"></HelpCenter>
-            </div>
-        </main>
-    </div>
+        <HelpCenter v-else :categories="categories" :service-requests="serviceRequests"></HelpCenter>
+    </Page>
 </template>

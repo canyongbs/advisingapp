@@ -105,6 +105,18 @@ class EnrollmentPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('Student data configuration is not enabled.');
+        }
+
+        return $authenticatable->canOrElse(
+            abilities: 'enrollment.*.delete',
+            denyResponse: 'You do not have permission to delete any enrollment.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
@@ -117,6 +129,18 @@ class EnrollmentPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('Student data configuration is not enabled.');
+        }
+
+        return $authenticatable->canOrElse(
+            abilities: 'enrollment.*.update',
+            denyResponse: 'You do not have permission to restore any enrollment.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Enrollment $enrollment): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
@@ -126,6 +150,18 @@ class EnrollmentPolicy
         return $authenticatable->canOrElse(
             abilities: 'enrollment.*.force-delete',
             denyResponse: 'You do not have permission to force delete this enrollment.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('Student data configuration is not enabled.');
+        }
+
+        return $authenticatable->canOrElse(
+            abilities: 'enrollment.*.force-delete',
+            denyResponse: 'You do not have permission to force delete any enrollment.'
         );
     }
 

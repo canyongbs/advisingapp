@@ -151,7 +151,6 @@ trait HandlesCaseTemplateContent
     {
         return match ($block['type'] ?? null) {
             'customBlock' => $block['attrs']['id'] ?? null,
-            'tiptapBlock' => $block['attrs']['type'] ?? null,
             default => null,
         };
     }
@@ -165,8 +164,6 @@ trait HandlesCaseTemplateContent
     {
         if (($block['type'] ?? null) === 'customBlock') {
             $block['attrs']['config']['url'] = $url;
-        } elseif (($block['type'] ?? null) === 'tiptapBlock') {
-            $block['attrs']['data']['url'] = $url;
         }
 
         return $block;

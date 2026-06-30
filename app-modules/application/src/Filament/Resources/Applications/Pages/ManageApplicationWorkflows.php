@@ -153,6 +153,7 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
     public function getHeaderActions(): array
     {
         $action = Action::make('create')
+            ->authorize(fn (): bool => auth()->user()->can('update', $this->getOwnerRecord()))
             ->label('Create New Workflow')
             ->slideOver()
             ->modalHeading('Create New Workflow')

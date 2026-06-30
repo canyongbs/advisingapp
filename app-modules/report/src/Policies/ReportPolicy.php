@@ -112,6 +112,14 @@ class ReportPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['report.*.delete'],
+            denyResponse: 'You do not have permission to delete any report.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Report $report): Response
     {
         if (! $report->model->canBeAccessed($authenticatable)) {
@@ -124,6 +132,14 @@ class ReportPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['report.*.restore'],
+            denyResponse: 'You do not have permission to restore any report.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Report $report): Response
     {
         if (! $report->model->canBeAccessed($authenticatable)) {
@@ -133,6 +149,14 @@ class ReportPolicy implements PerformsChecksBeforeAuthorization
         return $authenticatable->canOrElse(
             abilities: ['report.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this report.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['report.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any report.'
         );
     }
 }

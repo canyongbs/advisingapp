@@ -100,6 +100,14 @@ class EmployeeAdvisorCategoryPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['assistant_custom.*.delete'],
+            denyResponse: 'You do not have permission to delete any Employee Advisor Category.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
@@ -108,11 +116,27 @@ class EmployeeAdvisorCategoryPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['assistant_custom.*.restore'],
+            denyResponse: 'You do not have permission to restore any Employee Advisor Category.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['assistant_custom.*.force-delete'],
             denyResponse: 'You do not have permission to force-delete this Employee Advisor Category.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['assistant_custom.*.force-delete'],
+            denyResponse: 'You do not have permission to force-delete any Employee Advisor Category.'
         );
     }
 }

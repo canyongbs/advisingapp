@@ -100,11 +100,27 @@ class ProspectStatusPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['settings.*.delete'],
+            denyResponse: 'You do not have permission to delete any prospect status.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, ProspectStatus $prospectStatus): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['settings.*.restore'],
             denyResponse: 'You do not have permission to restore prospect status.'
+        );
+    }
+
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['settings.*.restore'],
+            denyResponse: 'You do not have permission to restore any prospect status.'
         );
     }
 
@@ -117,6 +133,14 @@ class ProspectStatusPolicy
         return $authenticatable->canOrElse(
             abilities: ['settings.*.force-delete'],
             denyResponse: 'You do not have permission to force delete prospect status.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['settings.*.force-delete'],
+            denyResponse: 'You do not have permission to force delete any prospect status.'
         );
     }
 }

@@ -97,6 +97,14 @@ class InteractionStatusPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.delete',
+            denyResponse: 'You do not have permission to delete any interaction status.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
         return $authenticatable->canOrElse(
@@ -105,11 +113,27 @@ class InteractionStatusPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.restore',
+            denyResponse: 'You do not have permission to restore any interaction status.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, InteractionStatus $status): Response
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this interaction status.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.force-delete',
+            denyResponse: 'You do not have permission to permanently delete any interaction status.'
         );
     }
 }

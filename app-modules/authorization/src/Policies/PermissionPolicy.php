@@ -67,12 +67,27 @@ class PermissionPolicy
         return Response::deny('Permissions cannot be deleted.');
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return Response::deny('Permissions cannot be deleted.');
+    }
+
     public function restore(Authenticatable $authenticatable, Permission $permission): Response
     {
         return Response::deny('Permissions cannot be restored.');
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return Response::deny('Permissions cannot be restored.');
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Permission $permission): Response
+    {
+        return Response::deny('Permissions cannot be force deleted.');
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
     {
         return Response::deny('Permissions cannot be force deleted.');
     }

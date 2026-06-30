@@ -90,6 +90,14 @@ class UserPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['user.*.delete'],
+            denyResponse: 'You do not have permission to delete any user.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, User $model): Response
     {
         return $authenticatable->canOrElse(
@@ -98,11 +106,27 @@ class UserPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['user.*.restore'],
+            denyResponse: 'You do not have permission to restore any user.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, User $model): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['user.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this user.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['user.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any user.'
         );
     }
 

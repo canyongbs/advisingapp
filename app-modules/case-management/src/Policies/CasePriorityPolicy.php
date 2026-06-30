@@ -102,6 +102,14 @@ class CasePriorityPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['product_admin.*.delete'],
+            denyResponse: 'You do not have permissions to delete any case priority.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, CasePriority $casePriority): Response
     {
         return $authenticatable->canOrElse(
@@ -110,11 +118,27 @@ class CasePriorityPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['product_admin.*.restore'],
+            denyResponse: 'You do not have permissions to restore any case priority.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, CasePriority $casePriority): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['product_admin.*.force-delete'],
             denyResponse: 'You do not have permissions to force delete this case priority.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['product_admin.*.force-delete'],
+            denyResponse: 'You do not have permissions to force delete any case priority.'
         );
     }
 

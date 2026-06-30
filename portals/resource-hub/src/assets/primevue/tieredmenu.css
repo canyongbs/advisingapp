@@ -1,0 +1,138 @@
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS Inc.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+.p-tieredmenu {
+    @apply bg-surface-0 dark:bg-surface-900
+        text-surface-700 dark:text-surface-0
+        border border-surface-200 dark:border-surface-700
+        rounded-md min-w-52;
+}
+
+.p-tieredmenu-root-list,
+.p-tieredmenu-submenu {
+    @apply m-0 p-1 list-none outline-hidden flex flex-col gap-[2px];
+}
+
+.p-tieredmenu-submenu {
+    @apply absolute min-w-full z-10 rounded-md
+        bg-surface-0 dark:bg-surface-900
+        text-surface-700 dark:text-surface-0
+        border border-surface-200 dark:border-surface-700
+        shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1)];
+}
+
+.p-tieredmenu-item {
+    @apply relative;
+}
+
+.p-tieredmenu-item-content {
+    @apply transition-colors duration-200 rounded-sm text-surface-700 dark:text-surface-0;
+}
+
+.p-tieredmenu-item-link {
+    @apply cursor-pointer flex items-center no-underline overflow-hidden relative text-inherit
+        px-3 py-2 gap-2 select-none outline-hidden;
+}
+
+.p-tieredmenu-item-icon {
+    @apply text-surface-400 dark:text-surface-500;
+}
+
+.p-tieredmenu-submenu-icon {
+    @apply text-surface-400 dark:text-surface-500 ms-auto text-sm w-3.5 h-3.5;
+}
+
+.p-tieredmenu-item.p-focus > .p-tieredmenu-item-content {
+    @apply bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-0;
+}
+
+.p-tieredmenu-item.p-focus > .p-tieredmenu-item-content .p-tieredmenu-item-icon {
+    @apply text-surface-500 dark:text-surface-400;
+}
+
+.p-tieredmenu-item.p-focus > .p-tieredmenu-item-content .p-tieredmenu-submenu-icon {
+    @apply text-surface-500 dark:text-surface-400;
+}
+
+.p-tieredmenu-item:not(.p-disabled) > .p-tieredmenu-item-content:hover {
+    @apply bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-0;
+}
+
+.p-tieredmenu-item:not(.p-disabled) > .p-tieredmenu-item-content:hover .p-tieredmenu-item-icon {
+    @apply text-surface-500 dark:text-surface-400;
+}
+
+.p-tieredmenu-item:not(.p-disabled) > .p-tieredmenu-item-content:hover .p-tieredmenu-submenu-icon {
+    @apply text-surface-500 dark:text-surface-400;
+}
+
+.p-tieredmenu-item-active > .p-tieredmenu-item-content {
+    @apply bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-0;
+}
+
+.p-tieredmenu-item-active > .p-tieredmenu-item-content .p-tieredmenu-item-icon {
+    @apply text-surface-500 dark:text-surface-400;
+}
+
+.p-tieredmenu-item-active > .p-tieredmenu-item-content .p-tieredmenu-submenu-icon {
+    @apply text-surface-500 dark:text-surface-400;
+}
+
+.p-tieredmenu-separator {
+    @apply border-t border-surface-200 dark:border-surface-700;
+}
+
+.p-tieredmenu-overlay {
+    @apply shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-2px_rgba(0,0,0,0.1)];
+}
+
+.p-tieredmenu-enter-from,
+.p-tieredmenu-leave-active {
+    @apply opacity-0;
+}
+
+.p-tieredmenu-enter-active {
+    @apply transition-opacity duration-250;
+}
+
+.p-tieredmenu-mobile .p-tieredmenu-submenu {
+    @apply static shadow-none border-none ps-4 pe-0;
+}
+
+.p-tieredmenu-mobile .p-tieredmenu-submenu-icon {
+    @apply transition-transform duration-200 rotate-90;
+}
+
+.p-tieredmenu-mobile .p-tieredmenu-item-active > .p-tieredmenu-item-content .p-tieredmenu-submenu-icon {
+    @apply -rotate-90;
+}

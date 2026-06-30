@@ -38,6 +38,7 @@ use AdvisingApp\Ai\Filament\Resources\PromptTypes\Pages\ListPromptTypes;
 use AdvisingApp\Ai\Filament\Resources\PromptTypes\PromptTypeResource;
 use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use Filament\Actions\DeleteBulkAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
@@ -100,4 +101,30 @@ it('can list records', function () use ($licenses, $permissions) {
         ->assertSuccessful()
         ->assertCountTableRecords($records->count())
         ->assertCanSeeTableRecords($records);
+});
+
+it('hides the bulk delete action from a user without the delete permission', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    PromptType::factory()->count(2)->create();
+
+    livewire(ListPromptTypes::class)
+        ->assertSuccessful()
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
+});
+
+it('shows the bulk delete action to a user with the delete permission', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: [...$permissions, 'settings.*.delete']
+    ));
+
+    PromptType::factory()->count(2)->create();
+
+    livewire(ListPromptTypes::class)
+        ->assertSuccessful()
+        ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

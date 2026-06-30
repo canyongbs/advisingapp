@@ -268,7 +268,9 @@ class ListProspects extends ListRecords
                         BulkGroupAction::make(groupModel: GroupModel::Prospect),
                     ])->dropdown(false),
                     ActionGroup::make([
-                        DeleteBulkAction::make()->label('Delete'),
+                        DeleteBulkAction::make()
+                            ->authorizeIndividualRecords('delete')
+                            ->label('Delete'),
                     ])->dropdown(false),
                 ]),
             ]);

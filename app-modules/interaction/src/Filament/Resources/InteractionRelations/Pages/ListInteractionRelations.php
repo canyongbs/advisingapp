@@ -104,6 +104,7 @@ class ListInteractionRelations extends ListRecords
                                     ->label('Enabled')
                                     ->live()
                                     ->afterStateUpdated(function (bool $state): void {
+                                        abort_unless(auth()->user()?->can('settings.*.update') ?? false, 403);
                                         $settings = $this->getSettings();
                                         $settings->is_relation_enabled = $state;
                                         $settings->save();
@@ -123,6 +124,7 @@ class ListInteractionRelations extends ListRecords
                                     ->live()
                                     ->visible(fn (Get $get) => $get('is_relation_enabled'))
                                     ->afterStateUpdated(function (bool $state): void {
+                                        abort_unless(auth()->user()?->can('settings.*.update') ?? false, 403);
                                         $settings = $this->getSettings();
                                         $settings->is_relation_required = $state;
                                         $settings->save();
@@ -140,6 +142,7 @@ class ListInteractionRelations extends ListRecords
                             ]),
                     ]),
             ])
+            ->disabled(! auth()->user()->can('settings.*.update'))
             ->statePath('data');
     }
 
@@ -170,7 +173,8 @@ class ListInteractionRelations extends ListRecords
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorizeIndividualRecords('delete'),
                 ]),
             ])
             ->defaultGroup('interactable_type');

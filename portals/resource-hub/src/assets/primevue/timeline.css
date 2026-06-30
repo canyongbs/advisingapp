@@ -1,0 +1,146 @@
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS Inc.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+.p-timeline {
+    @apply flex flex-col grow;
+}
+
+.p-timeline-left .p-timeline-event-opposite {
+    @apply text-end;
+}
+
+.p-timeline-left .p-timeline-event-content {
+    @apply text-start;
+}
+
+.p-timeline-right .p-timeline-event {
+    @apply flex-row-reverse;
+}
+
+.p-timeline-right .p-timeline-event-opposite {
+    @apply text-start;
+}
+
+.p-timeline-right .p-timeline-event-content {
+    @apply text-end;
+}
+
+.p-timeline-vertical.p-timeline-alternate .p-timeline-event:nth-child(even) {
+    @apply flex-row-reverse;
+}
+
+.p-timeline-vertical.p-timeline-alternate .p-timeline-event:nth-child(odd) .p-timeline-event-opposite {
+    @apply text-end;
+}
+
+.p-timeline-vertical.p-timeline-alternate .p-timeline-event:nth-child(odd) .p-timeline-event-content {
+    @apply text-start;
+}
+
+.p-timeline-vertical.p-timeline-alternate .p-timeline-event:nth-child(even) .p-timeline-event-opposite {
+    @apply text-start;
+}
+
+.p-timeline-vertical.p-timeline-alternate .p-timeline-event:nth-child(even) .p-timeline-event-content {
+    @apply text-end;
+}
+
+.p-timeline-vertical .p-timeline-event-opposite,
+.p-timeline-vertical .p-timeline-event-content {
+    @apply py-0 px-4 leading-none;
+}
+
+.p-timeline-vertical .p-timeline-event-connector {
+    @apply w-[2px];
+}
+
+.p-timeline-event {
+    @apply flex relative min-h-20 last:min-h-0;
+}
+
+.p-timeline-event-opposite {
+    @apply flex-1;
+}
+
+.p-timeline-event-content {
+    @apply flex-1;
+}
+
+.p-timeline-event-separator {
+    @apply flex-none flex flex-col items-center;
+}
+
+.p-timeline-event-marker {
+    @apply inline-flex items-center justify-center relative self-baseline
+        border-2 rounded-full border-surface-200 dark:border-surface-700 w-4.5 h-4.5
+        bg-surface-0 dark:bg-surface-900
+        before:rounded-full before:w-1.5 before:h-1.5 before:bg-primary
+        after:absolute after:w-full after:h-full after:rounded-full after:shadow-[0px_0.5px_0px_0px_rgba(0,0,0,0.06),0px_1px_1px_0px_rgba(0,0,0,0.12)];
+}
+
+.p-timeline-event-connector {
+    @apply grow bg-surface-200 dark:bg-surface-700;
+}
+
+.p-timeline-horizontal {
+    @apply flex-row;
+}
+
+.p-timeline-horizontal .p-timeline-event {
+    @apply flex-col flex-1;
+}
+
+.p-timeline-horizontal .p-timeline-event:last-child {
+    @apply flex-none;
+}
+
+.p-timeline-horizontal .p-timeline-event-separator {
+    @apply flex-row;
+}
+
+.p-timeline-horizontal .p-timeline-event-connector {
+    @apply w-full h-[2px];
+}
+
+.p-timeline-horizontal .p-timeline-event-opposite,
+.p-timeline-horizontal .p-timeline-event-content {
+    @apply py-4 px-0;
+}
+
+.p-timeline-horizontal.p-timeline-alternate .p-timeline-event:nth-child(even) {
+    @apply flex-col-reverse;
+}
+
+.p-timeline-bottom .p-timeline-event {
+    @apply flex-col-reverse;
+}

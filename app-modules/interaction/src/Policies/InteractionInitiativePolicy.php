@@ -97,6 +97,14 @@ class InteractionInitiativePolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.delete',
+            denyResponse: 'You do not have permission to delete any interaction initiative.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, InteractionInitiative $initiative): Response
     {
         return $authenticatable->canOrElse(
@@ -105,11 +113,27 @@ class InteractionInitiativePolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.restore',
+            denyResponse: 'You do not have permission to restore any interaction initiative.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, InteractionInitiative $initiative): Response
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this interaction initiative.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.force-delete',
+            denyResponse: 'You do not have permission to permanently delete any interaction initiative.'
         );
     }
 }

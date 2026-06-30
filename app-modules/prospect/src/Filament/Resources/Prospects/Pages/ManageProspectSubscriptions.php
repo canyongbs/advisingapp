@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Prospect\Filament\Resources\Prospects\Pages;
 
+use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -88,6 +89,7 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
             ])
             ->headerActions([
                 AttachAction::make()
+                    ->authorize(fn (): bool => auth()->user()->can('create', Subscription::class))
                     ->label('New')
                     ->modalHeading(function () {
                         /** @var Prospect $prospect */
@@ -115,6 +117,7 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
             ])
             ->recordActions([
                 DetachAction::make()
+                    ->authorize(fn (): bool => auth()->user()->can('deleteAny', Subscription::class))
                     ->label('Unsubscribe')
                     ->modalHeading(function (User $record) {
                         /** @var Prospect $prospect */
@@ -133,6 +136,7 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
             ->toolbarActions([
                 BulkActionGroup::make([
                     DetachBulkAction::make()
+                        ->authorize(fn (): bool => auth()->user()->can('deleteAny', Subscription::class))
                         ->label('Unsubscribe selected')
                         ->modalHeading(function () {
                             /** @var Prospect $prospect */

@@ -41,11 +41,55 @@ use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Actions\DeleteBulkAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\seed;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
+
+function listApplicationsTestUser(): User
+{
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->onlineAdmissions = true;
+    $settings->save();
+
+    return User::factory()->licensed(LicenseType::cases())->create();
+}
+
+it('the delete bulk action is gated by the delete permission', function () {
+    $user = listApplicationsTestUser();
+    $user->givePermissionTo('application.view-any');
+
+    actingAs($user);
+
+    livewire(ListApplications::class)
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
+
+    $user->givePermissionTo('application.*.delete');
+
+    livewire(ListApplications::class)
+        ->assertTableBulkActionVisible(DeleteBulkAction::class);
+});
+
+it('the duplicate action is gated by the create permission', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    $user = listApplicationsTestUser();
+    $user->givePermissionTo('application.view-any');
+
+    actingAs($user);
+
+    $application = Application::factory()->create();
+
+    livewire(ListApplications::class)
+        ->assertTableActionHidden('Duplicate', $application);
+
+    $user->givePermissionTo('application.create');
+
+    livewire(ListApplications::class)
+        ->assertTableActionVisible('Duplicate', $application);
+});
 
 // TODO: Write ListApplications tests
 //test('The correct details are displayed on the ListApplications page', function () {});
