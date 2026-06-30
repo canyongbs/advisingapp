@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Authorization\Filament\Pages;
 
-use \Illuminate\Support\Collection;
 use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Models\ReportTeamAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
@@ -60,6 +59,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use UnitEnum;
 
