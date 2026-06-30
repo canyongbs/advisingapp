@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Authorization\Filament\Pages;
 
+use \Illuminate\Support\Collection;
 use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Models\ReportTeamAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
@@ -57,6 +58,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Str;
 use UnitEnum;
@@ -79,7 +81,6 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
 
     public static function canAccess(): bool
     {
-        /** @var User $user */
         $user = auth()->user();
 
         assert($user instanceof User);
@@ -95,7 +96,7 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
 
                 return collect(ReportAccessKey::cases())
                     ->filter(fn (ReportAccessKey $key): bool => $key->isAvailableForTenant())
-                    ->when(filled($search), function ($reports) use ($search) {
+                    ->when(filled($search), function (Collection $reports) use ($search) {
                         $needle = Str::lower($search);
 
                         return $reports->filter(
@@ -103,7 +104,7 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                                 || Str::contains(Str::lower($key->getCategory()), $needle)
                         );
                     })
-                    ->when(filled($categoryFilter), function ($reports) use ($categoryFilter) {
+                    ->when(filled($categoryFilter), function (Collection $reports) use ($categoryFilter) {
                         return $reports->filter(fn (ReportAccessKey $key): bool => $key->getCategory() === $categoryFilter);
                     })
                     ->mapWithKeys(fn (ReportAccessKey $key): array => [
@@ -159,7 +160,7 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                 Select::make('users')
                     ->label('Users')
                     ->multiple()
-                    ->searchable(function ($query, $search) {
+                    ->searchable(function (Builder $query, $search) {
                         if (blank($search)) {
                             return $query;
                         }
@@ -176,7 +177,7 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                 Select::make('teams')
                     ->label('Teams')
                     ->multiple()
-                    ->searchable(function ($query, $search) {
+                    ->searchable(function (Builder $query, $search) {
                         if (blank($search)) {
                             return $query;
                         }
