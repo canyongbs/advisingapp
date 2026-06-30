@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "715703e85be4a3c7bdaefbc4f9efb307",
+    "content-hash": "8658131104fe62284904bec34de3a8c8",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -1000,41 +1000,6 @@
                     "AdvisingApp\\Form\\Tests\\": "tests/",
                     "AdvisingApp\\Form\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\Form\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "canyon-gbs/advising-app-in-app-communication",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/in-app-communication",
-                "reference": "d06f6f29c97f1fcd4af7b6a69f8aec252d07a377"
-            },
-            "require": {
-                "filament/filament": "^4.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\InAppCommunication\\Providers\\InAppCommunicationServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\InAppCommunication\\": "src/",
-                    "AdvisingApp\\InAppCommunication\\Tests\\": "tests/",
-                    "AdvisingApp\\InAppCommunication\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\InAppCommunication\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

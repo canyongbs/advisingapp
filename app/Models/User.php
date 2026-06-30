@@ -52,8 +52,6 @@ use AdvisingApp\Consent\Models\Concerns\CanConsent;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagementBatches;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagements;
 use AdvisingApp\Group\Models\Group;
-use AdvisingApp\InAppCommunication\Models\TwilioConversation;
-use AdvisingApp\InAppCommunication\Models\TwilioConversationUser;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
@@ -240,28 +238,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function defaultAssistantChatFoldersHaveBeenCreated(): bool
     {
         return $this->default_assistant_chat_folders_created;
-    }
-
-    /**
-     * @return BelongsToMany<TwilioConversation, $this, covariant TwilioConversationUser, 'participant'>
-     */
-    public function conversations(): BelongsToMany
-    {
-        return $this->belongsToMany(TwilioConversation::class, 'twilio_conversation_user', 'user_id', 'conversation_sid')
-            ->withPivot([
-                'participant_sid',
-                'is_channel_manager',
-                'is_pinned',
-                'notification_preference',
-                'first_unread_message_sid',
-                'first_unread_message_at',
-                'last_unread_message_content',
-                'last_read_at',
-                'unread_messages_count',
-            ])
-            ->withTimestamps()
-            ->as('participant')
-            ->using(TwilioConversationUser::class);
     }
 
     /**
