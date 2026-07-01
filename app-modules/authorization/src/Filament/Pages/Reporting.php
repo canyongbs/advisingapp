@@ -93,19 +93,19 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                 $categoryFilter = $filters['category']['value'] ?? null;
 
                 return collect(ReportAccessKey::cases())
-                    ->filter(fn (ReportAccessKey $key): bool => $key->isAvailableForTenant())
+                    ->filter(fn(ReportAccessKey $key): bool => $key->isAvailableForTenant())
                     ->when(filled($search), function (Collection $reports) use ($search) {
                         $needle = Str::lower($search);
 
                         return $reports->filter(
-                            fn (ReportAccessKey $key): bool => Str::contains(Str::lower($key->getName()), $needle)
+                            fn(ReportAccessKey $key): bool => Str::contains(Str::lower($key->getName()), $needle)
                                 || Str::contains(Str::lower($key->getCategory()), $needle)
                         );
                     })
                     ->when(filled($categoryFilter), function (Collection $reports) use ($categoryFilter) {
-                        return $reports->filter(fn (ReportAccessKey $key): bool => $key->getCategory() === $categoryFilter);
+                        return $reports->filter(fn(ReportAccessKey $key): bool => $key->getCategory() === $categoryFilter);
                     })
-                    ->mapWithKeys(fn (ReportAccessKey $key): array => [
+                    ->mapWithKeys(fn(ReportAccessKey $key): array => [
                         $key->value => [
                             'report_key' => $key->value,
                             'name' => $key->getName(),
@@ -149,9 +149,9 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
             ->label('Manage')
             ->icon('heroicon-m-user-group')
             ->slideOver()
-            ->modalHeading(fn (array $record): string => "Manage Access: {$record['name']}")
+            ->modalHeading(fn(array $record): string => "Manage Access: {$record['name']}")
             ->modalDescription('Grant access to this report by assigning individual users and/or teams.')
-            ->fillForm(fn (array $record): array => [
+            ->fillForm(fn(array $record): array => [
                 'users' => ReportUserAccess::query()
                     ->where('report_key', $record['report_key'])
                     ->pluck('user_id')
@@ -167,20 +167,20 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                     ->multiple()
                     ->searchable()
                     ->options(
-                        fn (): array => $usersQuery
+                        fn(): array => $usersQuery
                             ->limit(50)
                             ->pluck('name', 'id')
                             ->all(),
                     )
                     ->getSearchResultsUsing(
-                        fn (string $search): array => $usersQuery
+                        fn(string $search): array => $usersQuery
                             ->where('name', 'ilike', "%{$search}%")
                             ->limit(50)
                             ->pluck('name', 'id')
                             ->all(),
                     )
                     ->getOptionLabelsUsing(
-                        fn (array $values): array => $usersQuery
+                        fn(array $values): array => $usersQuery
                             ->whereKey($values)
                             ->pluck('name', 'id')
                             ->all(),
@@ -190,20 +190,20 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                     ->multiple()
                     ->searchable()
                     ->options(
-                        fn (): array => $teamsQuery
+                        fn(): array => $teamsQuery
                             ->limit(50)
                             ->pluck('name', 'id')
                             ->all(),
                     )
                     ->getSearchResultsUsing(
-                        fn (string $search): array => $teamsQuery
+                        fn(string $search): array => $teamsQuery
                             ->where('name', 'ilike', "%{$search}%")
                             ->limit(50)
                             ->pluck('name', 'id')
                             ->all(),
                     )
                     ->getOptionLabelsUsing(
-                        fn (array $values): array => $teamsQuery
+                        fn(array $values): array => $teamsQuery
                             ->whereKey($values)
                             ->pluck('name', 'id')
                             ->all(),
@@ -214,6 +214,8 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
 
                 $this->syncUserAccess($reportKey, $data['users'] ?? []);
                 $this->syncTeamAccess($reportKey, $data['teams'] ?? []);
+
+                $this->resetTable();
 
                 Notification::make()
                     ->success()
@@ -228,11 +230,11 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
     protected function getCategoryOptions(): array
     {
         return collect(ReportAccessKey::cases())
-            ->filter(fn (ReportAccessKey $key): bool => $key->isAvailableForTenant())
-            ->map(fn (ReportAccessKey $key): string => $key->getCategory())
+            ->filter(fn(ReportAccessKey $key): bool => $key->isAvailableForTenant())
+            ->map(fn(ReportAccessKey $key): string => $key->getCategory())
             ->unique()
             ->sort()
-            ->mapWithKeys(fn (string $category): array => [$category => $category])
+            ->mapWithKeys(fn(string $category): array => [$category => $category])
             ->all();
     }
 

@@ -56,6 +56,10 @@ class ReportAccess
 
     public static function userCanAccess(ReportAccessKey $key, User $user): bool
     {
+        if ($user->isSuperAdmin() || $user->isPartnerAdmin()) {
+            return true;
+        }
+
         $hasDirectAccess = ReportUserAccess::query()
             ->where('report_key', $key->value)
             ->where('user_id', $user->getKey())

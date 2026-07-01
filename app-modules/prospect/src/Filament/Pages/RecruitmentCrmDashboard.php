@@ -78,14 +78,6 @@ class RecruitmentCrmDashboard extends ProspectReport
         return $user->hasLicense(Prospect::getLicenseType());
     }
 
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        return $user->hasLicense(Prospect::getLicenseType()) && $user->can('reporting.view-any');
-    }
-
     public function mount(): void
     {
         /** @var User $user */
