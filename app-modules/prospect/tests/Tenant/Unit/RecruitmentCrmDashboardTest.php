@@ -172,8 +172,7 @@ it('is gated with proper access control', function () {
     $user->refresh();
 
     get(RecruitmentCrmDashboard::getUrl())->assertForbidden();
-
-    $user->givePermissionTo('reporting.view-any');
+    
     ReportUserAccess::factory()->create([
         'report_key' => ReportAccessKey::ProspectActionCenter->value,
         'user_id' => $user->getKey(),

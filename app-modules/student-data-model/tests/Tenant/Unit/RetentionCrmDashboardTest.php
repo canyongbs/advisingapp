@@ -100,8 +100,6 @@ it('is gated with proper access control', function () {
 
     get(RetentionCrmDashboard::getUrl())->assertForbidden();
 
-    $user->givePermissionTo('reporting.view-any');
-
     ReportUserAccess::factory()->create([
         'report_key' => ReportAccessKey::StudentActionCenter->value,
         'user_id' => $user->getKey(),
