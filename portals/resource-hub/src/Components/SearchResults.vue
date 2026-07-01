@@ -33,13 +33,13 @@
 -->
 <script setup>
     import SearchLoading from '@common/portal/home/SearchLoading.vue';
+    import Subheading from '@common/portal/Subheading.vue';
     import { DocumentTextIcon, FolderIcon } from '@heroicons/vue/24/outline';
     import { defineProps } from 'vue';
     import Article from './Article.vue';
     import Pagination from './Pagination.vue';
     import ResourceList from './ResourceList.vue';
     import ResourceListItem from './ResourceListItem.vue';
-    import Subheading from '@common/portal/Subheading.vue';
     import Tabs from './Tabs.vue';
 
     const emit = defineEmits(['fetchNextPage', 'fetchPreviousPage', 'fetchPage', 'change-filter']);
