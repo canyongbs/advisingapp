@@ -37,6 +37,8 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Notification\Models\Subscription;
+use AdvisingApp\Report\Enums\ReportAccessKey;
+use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\StudentDataModel\Filament\Pages\RetentionCrmDashboard;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -99,6 +101,11 @@ it('is gated with proper access control', function () {
     get(RetentionCrmDashboard::getUrl())->assertForbidden();
 
     $user->givePermissionTo('reporting.view-any');
+
+    ReportUserAccess::factory()->create([
+        'report_key' => ReportAccessKey::StudentActionCenter->value,
+        'user_id' => $user->getKey(),
+    ]);
 
     get(RetentionCrmDashboard::getUrl())->assertSuccessful();
 });

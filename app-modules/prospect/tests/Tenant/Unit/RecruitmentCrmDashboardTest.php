@@ -41,6 +41,8 @@ use AdvisingApp\Prospect\Filament\Pages\RecruitmentCrmDashboard;
 use AdvisingApp\Prospect\Filament\Widgets\ProspectsActionCenterWidget;
 use AdvisingApp\Prospect\Filament\Widgets\ProspectStats;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Report\Enums\ReportAccessKey;
+use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
@@ -172,6 +174,10 @@ it('is gated with proper access control', function () {
     get(RecruitmentCrmDashboard::getUrl())->assertForbidden();
 
     $user->givePermissionTo('reporting.view-any');
+    ReportUserAccess::factory()->create([
+        'report_key' => ReportAccessKey::ProspectActionCenter->value,
+        'user_id' => $user->getKey(),
+    ]);
 
     get(RecruitmentCrmDashboard::getUrl())->assertSuccessful();
 });
