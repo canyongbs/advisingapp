@@ -69,7 +69,7 @@
         loadingResults.value = true;
 
         post(props.searchUrl, {
-            body: JSON.stringify({ search: value }),
+            search: JSON.stringify(value),
         }).then((response) => {
             searchResults.value = response.data;
             loadingResults.value = false;
@@ -77,6 +77,9 @@
     }, 500);
 
     watch(searchQuery, (value) => {
+        if (value) {
+            loadingResults.value = true;
+        }
         debounceSearch(value);
     });
 

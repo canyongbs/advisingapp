@@ -98,7 +98,6 @@ customElements.define(
         },
         props: [
             'url',
-            'entryUrl',
             'userAuthenticationUrl',
             'accessUrl',
             'searchUrl',

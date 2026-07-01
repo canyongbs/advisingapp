@@ -38,12 +38,12 @@
     import AppLoading from '../Components/AppLoading.vue';
     import Article from '../Components/Article.vue';
     import Breadcrumbs from '../Components/Breadcrumbs.vue';
-    import HeroSearch from '../Components/HeroSearch.vue';
+    import HeroSearch from '@common/portal/HeroSearch.vue';
     import Page from '../Components/Page.vue';
     import Pagination from '../Components/Pagination.vue';
     import SearchResults from '../Components/SearchResults.vue';
     import SubCategories from '../Components/SubCategories.vue';
-    import Subheading from '../Components/Subheading.vue';
+    import Subheading from '@common/portal/Subheading.vue';
     import Tabs from '../Components/Tabs.vue';
     import { consumer } from '../Services/Consumer.js';
 

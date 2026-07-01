@@ -39,7 +39,7 @@
     import Pagination from './Pagination.vue';
     import ResourceList from './ResourceList.vue';
     import ResourceListItem from './ResourceListItem.vue';
-    import Subheading from './Subheading.vue';
+    import Subheading from '@common/portal/Subheading.vue';
     import Tabs from './Tabs.vue';
 
     const emit = defineEmits(['fetchNextPage', 'fetchPreviousPage', 'fetchPage', 'change-filter']);
