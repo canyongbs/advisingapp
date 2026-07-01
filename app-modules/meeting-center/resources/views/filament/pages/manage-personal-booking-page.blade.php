@@ -40,8 +40,9 @@
     <form class="grid gap-y-6" wire:submit="save">
         {{ $this->form }}
 
-        <div class="fi-form-actions">
+        <div class="fi-form-actions flex gap-3">
             <x-filament::button type="submit">Save</x-filament::button>
+            <x-filament::button color="gray" wire:click="mount" type="button">Cancel</x-filament::button>
         </div>
     </form>
 </div>
