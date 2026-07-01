@@ -40,6 +40,7 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     use CanModifyPermissions;
 
+    /** @var array<string> */
     private array $guards = [
         'web',
         'api',
