@@ -45,7 +45,9 @@ return new class () extends Migration {
             $table->uuid('id')->primary();
 
             $table->string('event');
+            // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('old');
+            // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('new');
 
             $table->uuidMorphs('subject');

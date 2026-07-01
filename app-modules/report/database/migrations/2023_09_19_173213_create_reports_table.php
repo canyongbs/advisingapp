@@ -38,6 +38,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
     public function up(): void
     {
@@ -46,7 +47,9 @@ return new class () extends Migration {
 
             $table->string('name');
             $table->text('description')->nullable();
+            // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('filters')->nullable();
+            // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('columns');
             $table->string('model');
 

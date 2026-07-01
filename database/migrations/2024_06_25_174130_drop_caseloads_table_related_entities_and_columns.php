@@ -72,6 +72,7 @@ return new class () extends Migration {
 
             $table->string('name');
             $table->text('description')->nullable();
+            // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('filters')->nullable();
             $table->string('model');
             $table->string('type');

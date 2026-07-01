@@ -32,76 +32,254 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import AppLoading from '@/Components/AppLoading.vue';
-    import DesktopSidebar from '@/Components/DesktopSidebar.vue';
-    import MobileSidebar from '@/Components/MobileSidebar.vue';
-    import axios from '@/Globals/Axios.js';
-    import { consumer } from '@/Services/Consumer.js';
-    import determineIfUserIsAuthenticated from '@/Services/DetermineIfUserIsAuthenticated.js';
-    import getAppContext from '@/Services/GetAppContext.js';
-    import { useAuthStore } from '@/Stores/auth.js';
-    import { useTokenStore } from '@/Stores/token.js';
-    import { defineProps, onMounted, ref, watch } from 'vue';
-    import { useRoute } from 'vue-router';
+    import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+    import { RouterView, useRoute, useRouter } from 'vue-router';
+    import AppLoading from './Components/AppLoading.vue';
+    import Footer from './Components/Footer.vue';
+    import Header from './Components/Header.vue';
+    import axios from './Globals/Axios.js';
+    import Login from './Pages/Login.vue';
+    import { consumer } from './Services/Consumer.js';
+    import determineIfUserIsAuthenticated from './Services/DetermineIfUserIsAuthenticated.js';
+    import { useAuthStore } from './Stores/auth.js';
+    import { useFeatureStore } from './Stores/feature.js';
+    import { useTokenStore } from './Stores/token.js';
+
+    /**
+     * Computes a perceptually-correct contrast colour for text placed on top of
+     * a given sRGB background expressed as "R G B" space-separated integers.
+     * Returns '#111827' (near-black) for light palettes (yellow, lime, amber, etc.)
+     * and 'white' for dark palettes, so primary-variant button text is always readable
+     * regardless of which static primary colour the admin has configured.
+     */
+    function contrastOnColor(rgbString) {
+        const parts = String(rgbString ?? '')
+            .trim()
+            .split(/\s+/)
+            .map(Number);
+        if (parts.length !== 3 || parts.some((n) => isNaN(n))) return 'white';
+        const [r, g, b] = parts.map((c) => {
+            const s = c / 255;
+            return s <= 0.04045 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4);
+        });
+        const luminance = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        return luminance > 0.35 ? '#111827' : 'white';
+    }
 
     const props = defineProps({
-        entryUrl: {
+        url: {
             type: String,
             required: true,
         },
+        searchUrl: {
+            type: String,
+            default: null,
+        },
+        apiUrl: {
+            type: String,
+            default: null,
+        },
+        accessUrl: {
+            type: String,
+            default: null,
+        },
+        userAuthenticationUrl: {
+            type: String,
+            default: null,
+        },
+        appUrl: {
+            type: String,
+            default: null,
+        },
+        appTitle: {
+            type: String,
+            default: null,
+        },
+        cssUrl: {
+            type: String,
+            default: null,
+        },
     });
+
+    const searchUrl = ref(props.searchUrl);
+    const apiUrl = ref(props.apiUrl);
+    const userAuthenticationUrl = ref(props.userAuthenticationUrl);
+    const appUrl = ref(props.appUrl);
 
     const errorLoading = ref(false);
     const loading = ref(true);
-    const showMobileMenu = ref(false);
     const userIsAuthenticated = ref(false);
-    const portalRequiresAuthentication = ref(true);
+    const requiresAuthentication = ref(false);
+    const hasServiceManagement = ref(false);
+    const isStatusEnabled = ref(false);
+    const isAdvisoryEnabled = ref(false);
+    const isAssetEnabled = ref(false);
+    const isLicenseEnabled = ref(false);
+    const hasAssets = ref(false);
+    const hasLicense = ref(false);
+    const hasTasks = ref(false);
+    const showLogin = ref(false);
+
     const portalPrimaryColor = ref('');
     const portalRounding = ref('');
+
+    /** Contrast-safe text colour for primary-variant buttons (adapts to any static palette). */
+    const primaryOnColor = computed(() => contrastOnColor(portalPrimaryColor.value?.[500]));
     const categories = ref({});
-    const route = useRoute();
-    const appUrl = ref(null);
-    const apiUrl = ref(null);
-    const searchUrl = ref(null);
+    const serviceRequests = ref({});
+    const headerLogo = ref('');
+    const favicon = ref('');
+    const tags = ref({});
+    const appName = ref('');
+    const footerLogo = ref('');
 
     const authentication = ref({
         code: null,
         email: null,
         isRequested: false,
         requestedMessage: null,
-        accessUrl: null,
-        authCheckUrl: null,
         requestUrl: null,
         url: null,
+        registrationAllowed: false,
+    });
+
+    const route = useRoute();
+    const router = useRouter();
+
+    const assistantWidgetLoaderUrl = ref(null);
+    const assistantWidgetConfigUrl = ref(null);
+
+    const showSignIn = computed(() => {
+        return (
+            !userIsAuthenticated.value && (requiresAuthentication.value || showLogin.value || route.meta?.requiresAuth)
+        );
+    });
+
+    function loadAssistantWidget() {
+        if (!assistantWidgetLoaderUrl.value || !assistantWidgetConfigUrl.value) {
+            return;
+        }
+
+        if (document.getElementById('assistant-widget-root')) {
+            return;
+        }
+
+        const script = document.createElement('script');
+        script.src = assistantWidgetLoaderUrl.value;
+        script.setAttribute('data-config', assistantWidgetConfigUrl.value);
+        document.body.appendChild(script);
+
+        const observer = new MutationObserver(() => {
+            if (document.querySelector('assistant-widget-embed')) {
+                observer.disconnect();
+                updateWidgetServiceManagement();
+            }
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+    }
+
+    function updateWidgetServiceManagement() {
+        const widget = document.querySelector('assistant-widget-embed');
+        if (!widget) return;
+
+        if (hasServiceManagement.value && userIsAuthenticated.value) {
+            widget.setAttribute('portal-service-management', '');
+        } else {
+            widget.removeAttribute('portal-service-management');
+        }
+    }
+
+    watch([() => hasServiceManagement.value, () => userIsAuthenticated.value], updateWidgetServiceManagement, {
+        immediate: true,
+    });
+
+    function handleOpenServiceRequest() {
+        window.dispatchEvent(new CustomEvent('assistant:close'));
+        router.push({ name: 'create-service-request' });
+    }
+
+    window.addEventListener('assistant:open-service-request', handleOpenServiceRequest);
+
+    async function handleWidgetAuthenticated(event) {
+        const { token } = event.detail ?? {};
+        if (!token) return;
+        await useTokenStore().setToken(token);
+        const isAuth = await determineIfUserIsAuthenticated(userAuthenticationUrl.value);
+        if (isAuth) {
+            userIsAuthenticated.value = true;
+            await getKnowledgeManagementPortal();
+            await getData();
+        }
+    }
+
+    window.addEventListener('assistant-widget:authenticated', handleWidgetAuthenticated);
+
+    onUnmounted(() => {
+        window.removeEventListener('assistant:open-service-request', handleOpenServiceRequest);
+        window.removeEventListener('assistant-widget:authenticated', handleWidgetAuthenticated);
+    });
+
+    watch([showSignIn, assistantWidgetLoaderUrl], ([isSignIn]) => {
+        if (isSignIn) {
+            const widgetRoot = document.getElementById('assistant-widget-root');
+            if (widgetRoot) {
+                widgetRoot.style.display = 'none';
+            }
+        } else {
+            const widgetRoot = document.getElementById('assistant-widget-root');
+            if (widgetRoot) {
+                widgetRoot.style.display = '';
+                updateWidgetServiceManagement();
+            } else {
+                loadAssistantWidget();
+            }
+        }
     });
 
     onMounted(async () => {
-        await getResourceHubPortal().then(async () => {
-            const { isEmbeddedInAdvisingApp } = getAppContext(authentication.value.accessUrl);
-
-            if (isEmbeddedInAdvisingApp) {
-                await axios.get(appUrl.value + '/sanctum/csrf-cookie');
-            }
-
-            await determineIfUserIsAuthenticated(authentication.value.authCheckUrl).then((response) => {
-                userIsAuthenticated.value = response;
-            });
-
-            if (userIsAuthenticated.value || !portalRequiresAuthentication.value) {
-                await getResourceHubPortalCategories().then(() => {
-                    loading.value = false;
-                });
-
-                return;
-            }
-
-            loading.value = false;
-        });
+        if (props.appTitle) {
+            document.title = props.appTitle;
+        }
     });
 
-    async function getResourceHubPortal() {
+    watch(
+        route,
+        async () => {
+            await getKnowledgeManagementPortal().then(async () => {
+                const { requiresAuthentication } = useAuthStore();
+
+                if (userAuthenticationUrl.value) {
+                    userIsAuthenticated.value = await determineIfUserIsAuthenticated(userAuthenticationUrl.value);
+                }
+
+                if (userIsAuthenticated.value || !requiresAuthentication.value) {
+                    await getData();
+                    return;
+                }
+                loading.value = false;
+            });
+        },
+        {
+            immediate: true,
+        },
+    );
+
+    watch(favicon, async (newFavicon, oldFavicon) => {
+        if (newFavicon != oldFavicon) {
+            var link = document.querySelector("link[rel='icon']");
+            if (!link) {
+                link = document.createElement('link');
+                link.rel = 'icon';
+                document.getElementsByTagName('head')[0].appendChild(link);
+            }
+            link.href = favicon.value;
+        }
+    });
+
+    async function getKnowledgeManagementPortal() {
         await axios
-            .get(props.entryUrl)
+            .get(props.url)
             .then((response) => {
                 errorLoading.value = false;
 
@@ -109,20 +287,84 @@
                     throw new Error(response.error);
                 }
 
-                const { setPortalRequiresAuthentication } = useAuthStore();
+                if (response.data.search_url) {
+                    searchUrl.value = response.data.search_url;
+                }
+                if (response.data.api_url) {
+                    apiUrl.value = response.data.api_url;
+                }
+                if (response.data.user_authentication_url) {
+                    userAuthenticationUrl.value = response.data.user_authentication_url;
+                }
+                if (response.data.app_url) {
+                    appUrl.value = response.data.app_url;
+                }
+
+                const { setRequiresAuthentication } = useAuthStore();
+
+                const {
+                    setHasServiceManagement,
+                    setHasAssets,
+                    setHasLicense,
+                    setHasTasks,
+                    setIsStatusEnabled,
+                    setIsAdvisoryEnabled,
+                    setIsAssetEnabled,
+                    setIsLicenseEnabled,
+                } = useFeatureStore();
 
                 portalPrimaryColor.value = response.data.primary_color;
 
-                setPortalRequiresAuthentication(
-                    (portalRequiresAuthentication.value = response.data.requires_authentication),
-                );
+                headerLogo.value = response.data.header_logo;
+
+                favicon.value = response.data.favicon;
+
+                appName.value = response.data.app_name;
+
+                footerLogo.value = response.data.footer_logo;
+
+                setRequiresAuthentication(response.data.requires_authentication).then(() => {
+                    requiresAuthentication.value = response.data.requires_authentication;
+
+                    if (response.data.assistant_widget_loader_url && response.data.assistant_widget_config_url) {
+                        assistantWidgetLoaderUrl.value = response.data.assistant_widget_loader_url;
+                        assistantWidgetConfigUrl.value = response.data.assistant_widget_config_url;
+                    }
+                });
+
+                setHasServiceManagement(response.data.service_management_enabled).then(() => {
+                    hasServiceManagement.value = response.data.service_management_enabled;
+                });
+
+                setHasAssets(response.data.has_assets).then(() => {
+                    hasAssets.value = response.data.has_assets;
+                });
+
+                setHasLicense(response.data.has_license).then(() => {
+                    hasLicense.value = response.data.has_license;
+                });
+
+                setHasTasks(response.data.has_tasks).then(() => {
+                    hasTasks.value = response.data.has_tasks;
+                });
+
+                setIsStatusEnabled(response.data.service_monitoring_enabled).then(() => {
+                    isStatusEnabled.value = response.data.service_monitoring_enabled;
+                });
+
+                setIsAdvisoryEnabled(response.data.advisory_management_enabled).then(() => {
+                    isAdvisoryEnabled.value = response.data.advisory_management_enabled;
+                });
+
+                setIsAssetEnabled(response.data.asset_management_enabled).then(() => {
+                    isAssetEnabled.value = response.data.asset_management_enabled;
+                });
+
+                setIsLicenseEnabled(response.data.license_management_enabled).then(() => {
+                    isLicenseEnabled.value = response.data.license_management_enabled;
+                });
 
                 authentication.value.requestUrl = response.data.authentication_url ?? null;
-                authentication.value.authCheckUrl = response.data.user_authentication_url;
-                authentication.value.accessUrl = response.data.access_url;
-                appUrl.value = response.data.app_url;
-                apiUrl.value = response.data.api_url;
-                searchUrl.value = response.data.search_url;
 
                 portalRounding.value = {
                     none: {
@@ -164,45 +406,101 @@
             })
             .catch((error) => {
                 errorLoading.value = true;
-                console.error(`Help Center Embed ${error}`);
+                console.error(`Resource Hub Embed ${error}`);
             });
     }
 
-    async function getResourceHubPortalCategories() {
-        const { get } = consumer();
-
-        get(`${apiUrl.value}/categories`)
+    async function getData() {
+        await getResourceHubPortalCategories()
             .then((response) => {
                 errorLoading.value = false;
 
                 if (response.error) {
                     throw new Error(response.error);
                 }
+                categories.value = response;
 
-                categories.value = response.data;
+                loading.value = false;
             })
             .catch((error) => {
                 errorLoading.value = true;
-                console.error(`Help Center Embed ${error}`);
+                console.error(`Resource Hub Portal Embed ${error}`);
             });
     }
 
-    async function authenticate(formData, node) {
+    async function getResourceHubPortalCategories() {
+        const { get } = consumer();
+
+        return get(`${apiUrl.value}/categories`).then((response) => {
+            if (response.error) {
+                throw new Error(response.error);
+            }
+
+            return response.data;
+        });
+    }
+
+    async function getServiceRequests() {
+        const { get } = consumer();
+
+        return get(`${apiUrl.value}/service-requests`).then((response) => {
+            if (response.error) {
+                throw new Error(response.error);
+            }
+
+            return response.data;
+        });
+    }
+
+    async function getTags() {
+        const { get } = consumer();
+
+        return get(`${apiUrl.value}/tags`).then((response) => {
+            if (response.error) {
+                throw new Error(response.error);
+            }
+
+            return response.data;
+        });
+    }
+
+    async function authenticate(formData, node, done) {
         node.clearErrors();
 
         const { setToken } = useTokenStore();
+        const { setUser } = useAuthStore();
 
-        const { isEmbeddedInAdvisingApp } = getAppContext(authentication.value.accessUrl);
-
-        if (isEmbeddedInAdvisingApp) {
-            await axios.get(appUrl.value + '/sanctum/csrf-cookie');
-        }
+        const {
+            setHasServiceManagement,
+            setHasAssets,
+            setHasLicense,
+            setHasTasks,
+            setIsStatusEnabled,
+            setIsAdvisoryEnabled,
+            setIsAssetEnabled,
+            setIsLicenseEnabled,
+        } = useFeatureStore();
 
         if (authentication.value.isRequested) {
+            let data = {
+                code: formData.code,
+            };
+
+            if (authentication.value.registrationAllowed) {
+                data = {
+                    ...data,
+                    email: formData.email,
+                    first_name: formData.first_name,
+                    last_name: formData.last_name,
+                    preferred: formData.preferred,
+                    mobile: formData.mobile,
+                    phone: formData.phone,
+                    sms_opt_out: formData.sms_opt_out,
+                };
+            }
+
             axios
-                .post(authentication.value.url, {
-                    code: formData.code,
-                })
+                .post(authentication.value.url, data)
                 .then((response) => {
                     if (response.errors) {
                         node.setErrors([], response.errors);
@@ -215,21 +513,62 @@
 
                         authentication.value.isRequested = false;
                         authentication.value.requestedMessage = null;
+                        authentication.value.url = null;
+                        authentication.value.registrationAllowed = false;
 
                         return;
                     }
 
                     if (response.data.success === true) {
                         setToken(response.data.token);
+                        setUser(response.data.user);
+
+                        setHasServiceManagement(response.data.service_management_enabled).then(() => {
+                            hasServiceManagement.value = response.data.service_management_enabled;
+                        });
+
+                        setHasAssets(response.data.has_assets).then(() => {
+                            hasAssets.value = response.data.has_assets;
+                        });
+
+                        setHasLicense(response.data.has_license).then(() => {
+                            hasLicense.value = response.data.has_license;
+                        });
+
+                        setHasTasks(response.data.has_tasks).then(() => {
+                            hasTasks.value = response.data.has_tasks;
+                        });
+
+                        setIsStatusEnabled(response.data.service_monitoring_enabled).then(() => {
+                            isStatusEnabled.value = response.data.service_monitoring_enabled;
+                        });
+
+                        setIsAdvisoryEnabled(response.data.advisory_management_enabled).then(() => {
+                            isAdvisoryEnabled.value = response.data.advisory_management_enabled;
+                        });
+
+                        setIsAssetEnabled(response.data.asset_management_enabled).then(() => {
+                            isAssetEnabled.value = response.data.asset_management_enabled;
+                        });
+
+                        setIsLicenseEnabled(response.data.license_management_enabled).then(() => {
+                            isLicenseEnabled.value = response.data.license_management_enabled;
+                        });
+
+                        if (response.data.assistant_widget_loader_url && response.data.assistant_widget_config_url) {
+                            assistantWidgetLoaderUrl.value = response.data.assistant_widget_loader_url;
+                            assistantWidgetConfigUrl.value = response.data.assistant_widget_config_url;
+                        }
 
                         userIsAuthenticated.value = true;
 
-                        getResourceHubPortalCategories();
+                        getData();
                     }
                 })
                 .catch((error) => {
-                    node.setErrors([error]);
-                });
+                    node.setErrors([], error.response.data.errors);
+                })
+                .finally(() => done());
 
             return;
         }
@@ -237,15 +576,8 @@
         axios
             .post(authentication.value.requestUrl, {
                 email: formData.email,
-                isSpa: isEmbeddedInAdvisingApp,
             })
             .then((response) => {
-                if (response.errors) {
-                    node.setErrors([], response.errors);
-
-                    return;
-                }
-
                 if (!response.data.authentication_url) {
                     node.setErrors([response.data.message]);
 
@@ -257,18 +589,27 @@
                 authentication.value.url = response.data.authentication_url;
             })
             .catch((error) => {
-                node.setErrors([error]);
-            });
-    }
+                const status = error.response.status;
+                const data = error.response.data;
 
-    watch(route, () => {
-        showMobileMenu.value = !showMobileMenu;
-    });
+                if (status === 404 && data.registrationAllowed === true) {
+                    authentication.value.registrationAllowed = true;
+                    authentication.value.isRequested = true;
+                    authentication.value.requestedMessage = data.message;
+                    authentication.value.url = data.authentication_url;
+
+                    return;
+                }
+
+                node.setErrors([], data.errors);
+            })
+            .finally(() => done());
+    }
 </script>
 
 <template>
     <div
-        class="font-sans bg-gray-50 min-h-screen"
+        class="font-sans bg-gray-50 min-h-screen w-full max-w-full"
         :style="{
             '--primary-50': portalPrimaryColor[50],
             '--primary-100': portalPrimaryColor[100],
@@ -281,6 +622,7 @@
             '--primary-800': portalPrimaryColor[800],
             '--primary-900': portalPrimaryColor[900],
             '--primary-950': portalPrimaryColor[950],
+            '--primary-on-color': primaryOnColor.value,
             '--rounding-sm': portalRounding.sm,
             '--rounding': portalRounding.default,
             '--rounding-md': portalRounding.md,
@@ -288,77 +630,48 @@
             '--rounding-full': portalRounding.full,
         }"
     >
+        <div>
+            <link rel="stylesheet" v-bind:href="props.cssUrl" />
+        </div>
         <div v-if="loading">
             <AppLoading />
         </div>
 
         <div v-else>
-            <div
-                v-if="portalRequiresAuthentication === true && userIsAuthenticated === false"
-                class="bg-gradient flex flex-col items-center justify-center min-h-screen"
-            >
-                <div
-                    class="max-w-md w-full bg-white rounded ring-1 ring-black/5 shadow-xs px-8 pt-6 pb-4 flex flex-col gap-6 mx-4"
-                >
-                    <h1 class="text-primary-950 text-center text-2xl font-semibold">Log in to Help Center</h1>
+            <Login
+                v-if="!userIsAuthenticated && (requiresAuthentication || showLogin || route.meta.requiresAuth)"
+                v-model:authentication="authentication"
+                :requires-authentication="requiresAuthentication"
+                :header-logo="headerLogo"
+                :footer-logo="footerLogo"
+                @authenticate="authenticate"
+                @cancel="showLogin = false"
+            />
+            <div v-else class="min-h-screen flex flex-col">
+                <Header
+                    :api-url="apiUrl"
+                    @show-login="showLogin = true"
+                    :header-logo="headerLogo"
+                    :app-name="appName"
+                />
 
-                    <FormKit
-                        type="form"
-                        @submit="authenticate"
-                        v-model="authentication"
-                        :submit-label="authentication.isRequested ? 'Sign in' : 'Send login code'"
-                    >
-                        <FormKit
-                            type="email"
-                            label="Email address"
-                            name="email"
-                            validation="required|email"
-                            validation-visibility="submit"
-                            :disabled="authentication.isRequested"
-                        />
-
-                        <p v-if="authentication.requestedMessage" class="text-gray-700 font-medium text-xs my-3">
-                            {{ authentication.requestedMessage }}
-                        </p>
-
-                        <FormKit
-                            type="otp"
-                            digits="6"
-                            label="Enter the code here"
-                            name="code"
-                            validation="required"
-                            validation-visibility="submit"
-                            v-if="authentication.isRequested"
-                        />
-                    </FormKit>
-                </div>
-            </div>
-
-            <div v-else>
-                <div v-if="errorLoading" class="text-center">
-                    <h1 class="text-3xl font-bold text-red-500">Error loading the Help Center</h1>
-                    <p class="text-lg text-red-500">Please try again later</p>
-                </div>
-
-                <div v-else class="flex flex-row h-dvh overflow-hidden">
-                    <MobileSidebar
-                        v-if="showMobileMenu"
-                        @sidebar-closed="showMobileMenu = !showMobileMenu"
-                        :categories="categories"
-                        :api-url="apiUrl"
-                    />
-
-                    <DesktopSidebar :categories="categories" :api-url="apiUrl" />
-
-                    <div class="flex-1 min-w-0 overflow-y-auto">
-                        <RouterView
-                            @sidebar-opened="showMobileMenu = !showMobileMenu"
-                            :search-url="searchUrl"
-                            :api-url="apiUrl"
-                            :categories="categories"
-                        />
+                <main class="flex-1">
+                    <div v-if="errorLoading" class="text-center w-full">
+                        <h1 class="text-3xl font-bold text-red-500">Error Loading the Resource Hub</h1>
+                        <p class="text-lg text-red-500">Please try again later</p>
                     </div>
-                </div>
+
+                    <RouterView
+                        :search-url="searchUrl"
+                        :api-url="apiUrl"
+                        :categories="categories"
+                        :service-requests="serviceRequests"
+                        :tags="tags"
+                        v-else
+                    />
+                </main>
+
+                <Footer :logo="footerLogo"></Footer>
             </div>
         </div>
     </div>

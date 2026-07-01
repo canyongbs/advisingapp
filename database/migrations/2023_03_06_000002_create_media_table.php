@@ -38,6 +38,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/** @phpstan-ignore Common.migrationMissingDownMethod */
 class CreateMediaTable extends Migration
 {
     public function up(): void
@@ -54,9 +55,13 @@ class CreateMediaTable extends Migration
             $table->string('disk');
             $table->string('conversions_disk')->nullable();
             $table->unsignedBigInteger('size');
+            // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('manipulations');
+            // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('custom_properties');
+            // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('generated_conversions');
+            // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('responsive_images');
             $table->unsignedInteger('order_column')->nullable()->index();
 

@@ -31,47 +31,54 @@
 
 </COPYRIGHT>
 */
-import Home from '@/Pages/Home.vue';
-import ViewArticle from '@/Pages/ViewArticle.vue';
-import ViewCategory from '@/Pages/ViewCategory.vue';
-import styles from '@/portal.css?inline';
-import getAppContext from '@/Services/GetAppContext.js';
 import { defaultConfig, plugin } from '@formkit/vue';
 import { createPinia } from 'pinia';
+import PrimeVue from 'primevue/config';
 import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
-import { createMemoryHistory, createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory } from 'vue-router';
+import VueSignaturePad from 'vue-signature-pad';
 import App from './App.vue';
 import config from './formkit.config.js';
+import './portal.css';
+import getAppContext from './Services/GetAppContext.js';
 
 customElements.define(
     'resource-hub-portal-embed',
     defineCustomElement({
-        styles: [styles],
         setup(props) {
             const app = createApp();
             const pinia = createPinia();
 
             app.use(pinia);
+            app.use(VueSignaturePad);
+            app.use(PrimeVue, {
+                theme: 'none',
+            });
 
-            const { isEmbeddedInAdvisingApp, baseUrl } = getAppContext(props.accessUrl);
+            const { baseUrl } = getAppContext(props.accessUrl);
 
             const router = createRouter({
-                history: isEmbeddedInAdvisingApp ? createWebHistory() : createMemoryHistory(),
+                history: createWebHistory(),
                 routes: [
                     {
                         path: baseUrl + '/',
                         name: 'home',
-                        component: Home,
+                        component: () => import('./Pages/Home.vue'),
                     },
                     {
                         path: baseUrl + '/categories/:categoryId',
                         name: 'view-category',
-                        component: ViewCategory,
+                        component: () => import('./Pages/ViewCategory.vue'),
+                    },
+                    {
+                        path: baseUrl + '/categories/:parentCategoryId/:categoryId',
+                        name: 'view-subcategory',
+                        component: () => import('./Pages/ViewCategory.vue'),
                     },
                     {
                         path: baseUrl + '/categories/:categoryId/articles/:articleId',
                         name: 'view-article',
-                        component: ViewArticle,
+                        component: () => import('./Pages/ViewArticle.vue'),
                     },
                 ],
             });
@@ -89,6 +96,16 @@ customElements.define(
 
             return () => h(App, props);
         },
-        props: ['url', 'accessUrl'],
+        props: [
+            'url',
+            'userAuthenticationUrl',
+            'accessUrl',
+            'searchUrl',
+            'appUrl',
+            'apiUrl',
+            'tags',
+            'cssUrl',
+            'appTitle',
+        ],
     }),
 );

@@ -37,6 +37,7 @@
 namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
 use AdvisingApp\Portal\Settings\PortalSettings;
+use AdvisingApp\Theme\Settings\ThemeSettings;
 use App\Http\Controllers\Controller;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
@@ -44,6 +45,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Vite;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ResourceHubPortalController extends Controller
@@ -52,7 +54,7 @@ class ResourceHubPortalController extends Controller
     {
         // Read the Vite manifest to determine the correct asset paths
         $manifestPath = public_path('storage/portals/resource-hub/.vite/manifest.json');
-        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
+        /** @var array<string, array{file: string, name: string, src: string, isEntry: bool, css?: list<string>}> $manifest */
         $manifest = json_decode(File::get($manifestPath), true, 512, JSON_THROW_ON_ERROR);
 
         $portalEntry = $manifest['src/portal.js'];
@@ -61,6 +63,7 @@ class ResourceHubPortalController extends Controller
             'asset_url' => route('portals.resource-hub.asset'),
             'entry' => URL::signedRoute('portals.resource-hub.api.entry'),
             'js' => route('portals.resource-hub.asset', ['file' => $portalEntry['file']]),
+            'css' => isset($portalEntry['css'][0]) ? route('portals.resource-hub.asset', ['file' => $portalEntry['css'][0]]) : null,
         ]);
     }
 
@@ -73,6 +76,12 @@ class ResourceHubPortalController extends Controller
         abort_if(! $disk->exists($path), 404, 'File not found.');
 
         $mimeType = $disk->mimeType($path);
+
+        if (str_ends_with($file, '.js')) {
+            $mimeType = 'application/javascript';
+        } elseif (str_ends_with($file, '.css')) {
+            $mimeType = 'text/css';
+        }
 
         $stream = $disk->readStream($path);
 
@@ -92,6 +101,18 @@ class ResourceHubPortalController extends Controller
     {
         $settings = resolve(PortalSettings::class);
 
+        $portalLogo = $settings->getSettingsPropertyModel('portal.logo')->getFirstMedia('logo');
+
+        if (! $portalLogo) {
+            $themeSettings = resolve(ThemeSettings::class);
+            $brandingProperty = $themeSettings::getSettingsPropertyModel('theme.is_logo_active');
+            $portalLogo = $themeSettings->is_logo_active ? $brandingProperty->getFirstMedia('logo') : null;
+        }
+
+        $headerLogo = $portalLogo
+            ? $portalLogo->getTemporaryUrl(expiration: now()->addMinutes(5))
+            : url(Vite::asset('resources/images/default-logo-light-201124.svg'));
+
         return response()->json([
             'primary_color' => collect(Color::all()[$settings->resource_hub_portal_primary_color->value ?? 'blue'])
                 ->map(Color::convertToRgb(...))
@@ -105,6 +126,9 @@ class ResourceHubPortalController extends Controller
             'search_url' => URL::signedRoute(name: 'portals.resource-hub.api.search'),
             'app_url' => config('app.url'),
             'api_url' => route('portals.resource-hub.api.assets'),
+            'app_name' => config('app.name'),
+            'header_logo' => $headerLogo,
+            'footer_logo' => url(Vite::asset('resources/images/canyon-logo-light.svg')),
         ]);
     }
 }

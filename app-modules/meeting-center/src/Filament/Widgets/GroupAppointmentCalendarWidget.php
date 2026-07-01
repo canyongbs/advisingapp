@@ -113,6 +113,29 @@ class GroupAppointmentCalendarWidget extends FullCalendarWidget
     }
 
     /**
+     * @return array<string, mixed>
+     */
+    public function config(): array
+    {
+        return [
+            'initialView' => 'dayGridMonth',
+
+            'headerToolbar' => [
+                'left' => 'prev,next today',
+                'center' => 'title',
+                'right' => 'dayGridMonth,timeGridWeek,timeGridDay',
+            ],
+
+            'buttonText' => [
+                'today' => 'Today',
+                'dayGridMonth' => 'Month',
+                'timeGridWeek' => 'Week',
+                'timeGridDay' => 'Day',
+            ],
+        ];
+    }
+
+    /**
      * @return array<int, mixed>
      */
     protected function headerActions(): array
