@@ -87,6 +87,17 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
         return ReportingFeature::active() && $user->can('reporting.view-any');
     }
 
+    /**
+     * @return array<string>
+     */
+    public function getBreadcrumbs(): array
+    {
+        return [
+            static::getUrl() => 'Reporting',
+            '' => 'List',
+        ];
+    }
+
     public function table(Table $table): Table
     {
         return $table

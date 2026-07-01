@@ -38,12 +38,14 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Report\Enums\ReportAccessKey;
+use AdvisingApp\Report\Models\ReportTeamAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\StudentDataModel\Filament\Pages\RetentionCrmDashboard;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Team\Models\Team;
 use App\Features\ReportingFeature;
 use App\Models\User;
 
@@ -106,6 +108,29 @@ it('is gated with proper access control', function () {
     ReportUserAccess::factory()->create([
         'report_key' => ReportAccessKey::StudentActionCenter->value,
         'user_id' => $user->getKey(),
+    ]);
+
+    get(RetentionCrmDashboard::getUrl())->assertSuccessful();
+});
+
+it('grants access to a user belonging to a team that has been granted access', function () {
+    ReportingFeature::activate();
+
+    $team = Team::factory()->create();
+
+    $user = User::factory()->create(['team_id' => $team->getKey()]);
+
+    $user->grantLicense(LicenseType::RetentionCrm);
+
+    $user->refresh();
+
+    actingAs($user);
+
+    get(RetentionCrmDashboard::getUrl())->assertForbidden();
+
+    ReportTeamAccess::factory()->create([
+        'report_key' => ReportAccessKey::StudentActionCenter->value,
+        'team_id' => $team->getKey(),
     ]);
 
     get(RetentionCrmDashboard::getUrl())->assertSuccessful();
