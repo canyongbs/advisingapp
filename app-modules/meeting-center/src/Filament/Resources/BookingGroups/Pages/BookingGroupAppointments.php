@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 
+use AdvisingApp\MeetingCenter\Filament\Pages\SharedCalendar;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
@@ -60,6 +61,14 @@ class BookingGroupAppointments extends ManageRelatedRecords
     protected static ?string $title = 'Appointments';
 
     protected static ?int $navigationSort = 20;
+
+    public function getBreadcrumbs(): array
+    {
+        return [
+            SharedCalendar::getUrl() . '?view=settings' => 'Configuration',
+            ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
+        ];
+    }
 
     public function table(Table $table): Table
     {

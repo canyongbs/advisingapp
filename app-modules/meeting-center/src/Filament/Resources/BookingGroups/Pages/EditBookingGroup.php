@@ -37,6 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 
 use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
+use AdvisingApp\MeetingCenter\Filament\Pages\SharedCalendar;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\Team\Models\Team;
@@ -74,6 +75,14 @@ class EditBookingGroup extends EditRecord
     protected static ?string $navigationLabel = 'Group Configuration';
 
     protected static ?int $navigationSort = 10;
+
+    public function getBreadcrumbs(): array
+    {
+        return [
+            SharedCalendar::getUrl() . '?view=settings' => 'Configuration',
+            ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
+        ];
+    }
 
     public function form(Schema $schema): Schema
     {
