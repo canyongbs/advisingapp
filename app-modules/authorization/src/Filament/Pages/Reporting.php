@@ -95,11 +95,9 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                 return collect(ReportAccessKey::cases())
                     ->filter(fn (ReportAccessKey $key): bool => $key->isAvailableForTenant())
                     ->when(filled($search), function (Collection $reports) use ($search) {
-                        $needle = Str::lower($search);
-
                         return $reports->filter(
-                            fn (ReportAccessKey $key): bool => Str::contains(Str::lower($key->getName()), $needle)
-                                || Str::contains(Str::lower($key->getCategory()), $needle)
+                            fn (ReportAccessKey $key): bool => Str::contains(Str::lower($key->getName()), Str::lower($search))
+                                || Str::contains(Str::lower($key->getCategory()), Str::lower($search))
                         );
                     })
                     ->when(filled($categoryFilter), function (Collection $reports) use ($categoryFilter) {
@@ -210,10 +208,8 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                     ),
             ])
             ->action(function (array $record, array $data): void {
-                $reportKey = $record['report_key'];
-
-                $this->syncUserAccess($reportKey, $data['users'] ?? []);
-                $this->syncTeamAccess($reportKey, $data['teams'] ?? []);
+                $this->syncUserAccess($record['report_key'], $data['users'] ?? []);
+                $this->syncTeamAccess($record['report_key'], $data['teams'] ?? []);
 
                 $this->resetTable();
 

@@ -137,7 +137,7 @@ it('assigns users to a report through the manage action', function () {
     )->toBeTrue();
 });
 
-it('assigns departments to a report through the manage action', function () {
+it('assigns teams to a report through the manage action', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
 
