@@ -95,8 +95,6 @@ use AdvisingApp\Form\Models\SubmissibleStep;
 use AdvisingApp\Form\Models\Submission;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Group\Models\GroupSubject;
-use AdvisingApp\InAppCommunication\Models\TwilioConversation;
-use AdvisingApp\InAppCommunication\Models\TwilioConversationUser;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiResearchRequestVectorStore;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use AdvisingApp\Interaction\Models\Interaction;
@@ -365,8 +363,6 @@ return [
     Submission::class,
     Group::class,
     GroupSubject::class,
-    TwilioConversation::class,
-    TwilioConversationUser::class,
     OpenAiResearchRequestVectorStore::class,
     OpenAiVectorStore::class,
     Interaction::class,

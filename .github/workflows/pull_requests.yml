@@ -90,7 +90,7 @@ jobs:
             - run: npm install
 
             - name: Set up Ruby
-              uses: ruby/setup-ruby@89f90524b88a01fe6e0b732220432cc6142926af # v1.313.0
+              uses: ruby/setup-ruby@9eb537ca036ebaed86729dcb9309076e4c5c3b74 # v1.314.0
 
             - name: Run Ruby Script
               run: ruby ./copyright.rb
@@ -362,7 +362,7 @@ jobs:
               run: php artisan app:generate-helper-files
 
             - name: 'Restore result cache'
-              uses: actions/cache/restore@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+              uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
                   path: .cache/phpstan
                   key: 'linting-result-cache-${{ github.run_id }}'
@@ -373,7 +373,7 @@ jobs:
               run: ./vendor/bin/phpstan analyse --configuration phpstan-ci.neon --no-progress
 
             - name: 'Save result cache'
-              uses: actions/cache/save@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
+              uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               if: ${{ !cancelled() }}
               with:
                   path: .cache/phpstan
