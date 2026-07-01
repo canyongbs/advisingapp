@@ -33,7 +33,7 @@
 --}}
 
 <div
-    class="sticky top-16 z-10 flex h-10 items-center px-6 py-2 text-sm font-medium text-white"
+    class="branding-bar sticky top-16 z-10 flex h-10 items-center px-6 py-2 text-sm font-medium text-white"
     style="background-color: #d97706;"
 >
     {{ $bannerText }}
