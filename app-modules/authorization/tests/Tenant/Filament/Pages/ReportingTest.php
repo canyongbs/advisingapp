@@ -40,12 +40,17 @@ use AdvisingApp\Report\Models\ReportTeamAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\Report\Support\ReportAccess;
 use AdvisingApp\Team\Models\Team;
+use App\Features\ReportingFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
+
+beforeEach(function () {
+    ReportingFeature::activate();
+});
 
 it('cannot be accessed by a user without the reporting permission', function () {
     $user = User::factory()->create();
