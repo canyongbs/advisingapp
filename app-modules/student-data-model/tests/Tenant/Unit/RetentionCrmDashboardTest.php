@@ -44,6 +44,7 @@ use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
+use App\Features\ReportingFeature;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -88,6 +89,8 @@ it('renders all students correctly in the retention dashboard', function () {
 });
 
 it('is gated with proper access control', function () {
+    ReportingFeature::activate();
+
     $user = User::factory()->create();
 
     actingAs($user);

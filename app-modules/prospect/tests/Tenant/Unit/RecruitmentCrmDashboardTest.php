@@ -46,6 +46,7 @@ use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
+use App\Features\ReportingFeature;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -161,6 +162,8 @@ it('renders care team prospects correctly in the recruitment dashboard for the C
 });
 
 it('is gated with proper access control', function () {
+    ReportingFeature::activate();
+
     $user = User::factory()->create();
 
     actingAs($user);
