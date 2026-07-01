@@ -66,17 +66,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistants/Pages/EditAiAssistant.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @var above a method has no effect\\.$#',
-    'identifier' => 'varTag.misplaced',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistants/Pages/EditAiAssistant.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$records of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/PromptTypes/Pages/ListPromptTypes.php',
-];
+    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Prompt\\:\\:\\$my_upvotes_count\\.$#',
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Prompt\\:\\:\\$my_upvotes_count\\.$#',
     'identifier' => 'property.notFound',
@@ -318,23 +308,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/application/src/Actions/DuplicateApplication.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Actions\\\\DuplicateApplication\\:\\:replaceIdsInContent\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Actions/DuplicateApplication.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Actions\\\\DuplicateApplication\\:\\:replaceIdsInContent\\(\\) has parameter \\$content with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Actions/DuplicateApplication.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Actions\\\\DuplicateApplication\\:\\:replaceIdsInContent\\(\\) has parameter \\$fieldMap with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Actions/DuplicateApplication.php',
-];
+    'message' => '#^Method AdvisingApp\\\\Application\\\\Actions\\\\DuplicateApplication\\:\\:replicateFields\\(\\) has parameter \\$stepMap with no value type specified in iterable type array\\.$#',
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Application\\\\Actions\\\\DuplicateApplication\\:\\:replicateFields\\(\\) has parameter \\$stepMap with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
@@ -1264,12 +1238,6 @@ $ignoreErrors[] = [
     'identifier' => 'match.alwaysTrue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/campaign/tests/Tenant/Jobs/EngagementCampaignActionJobTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/care-team/src/Filament/Resources/ProspectCareTeamRoles/Pages/CreateProspectCareTeamRole.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
