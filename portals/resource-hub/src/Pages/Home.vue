@@ -33,9 +33,9 @@
 -->
 <script setup>
     import { consumer } from '@/Services/Consumer.js';
-    import HelpCenter from '@common-components/portal/home/HelpCenter.vue';
-    import HeroSearch from '@common-components/portal/home/HeroSearch.vue';
-    import SearchResults from '@common-components/portal/home/SearchResults.vue';
+    import HelpCenter from '@common/portal/home/HelpCenter.vue';
+    import HeroSearch from '@common/portal/home/HeroSearch.vue';
+    import SearchResults from '@common/portal/home/SearchResults.vue';
     import { defineProps, ref, watch } from 'vue';
 
     const props = defineProps({
