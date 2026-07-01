@@ -40,12 +40,15 @@ use AdvisingApp\Report\Filament\Pages\StudentTaskManagement;
 use AdvisingApp\Report\Models\ReportTeamAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\Team\Models\Team;
+use App\Features\ReportingFeature;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
 it('is gated with proper access control', function () {
+    ReportingFeature::activate();
+
     $user = User::factory()->create();
 
     actingAs($user);
