@@ -37,6 +37,7 @@
 namespace AdvisingApp\Report\Abstract;
 
 use AdvisingApp\Report\Support\ReportAccess;
+use App\Features\ReportingFeature;
 use App\Filament\Clusters\ReportLibrary;
 use App\Filament\Clusters\ReportLibraryNavigationGroup;
 use App\Models\User;
@@ -53,6 +54,10 @@ abstract class UserReport extends Dashboard
     {
         /** @var User $user */
         $user = auth()->user();
+
+        if (! ReportingFeature::active()) {
+            return $user->can('report-library.view-any');
+        }
 
         return ReportAccess::userCanAccessPage(static::class, $user);
     }

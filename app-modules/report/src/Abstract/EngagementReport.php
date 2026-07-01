@@ -39,6 +39,7 @@ namespace AdvisingApp\Report\Abstract;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
 use AdvisingApp\Report\Support\ReportAccess;
+use App\Features\ReportingFeature;
 use App\Models\User;
 use Filament\Pages\Dashboard;
 
@@ -52,6 +53,10 @@ abstract class EngagementReport extends Dashboard
     {
         /** @var User $user */
         $user = auth()->user();
+
+        if (! ReportingFeature::active()) {
+            return ($user->hasLicense(LicenseType::RetentionCrm) || $user->hasLicense(LicenseType::RecruitmentCrm)) && $user->can('report-library.view-any');
+        }
 
         return ($user->hasLicense(LicenseType::RetentionCrm) || $user->hasLicense(LicenseType::RecruitmentCrm)) && ReportAccess::userCanAccessPage(static::class, $user);
     }

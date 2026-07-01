@@ -42,6 +42,7 @@ use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\Report\Support\ReportAccess;
 use AdvisingApp\Team\Models\Team;
 use App\Enums\NavigationGroup;
+use App\Features\ReportingFeature;
 use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -83,7 +84,7 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
 
         assert($user instanceof User);
 
-        return $user->can('reporting.view-any');
+        return ReportingFeature::active() && $user->can('reporting.view-any');
     }
 
     public function table(Table $table): Table
