@@ -34,12 +34,73 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ListForms;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
+use App\Models\User;
+use App\Settings\LicenseSettings;
+use Filament\Actions\DeleteBulkAction;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
+
+function listFormsTestUser(): User
+{
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->onlineForms = true;
+    $settings->save();
+
+    return User::factory()->licensed(LicenseType::cases())->create();
+}
+
+it('the delete bulk action is gated by the delete permission', function () {
+    $user = listFormsTestUser();
+    $user->givePermissionTo('form.view-any');
+
+    actingAs($user);
+
+    livewire(ListForms::class)
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
+
+    $user->givePermissionTo('form.*.delete');
+
+    livewire(ListForms::class)
+        ->assertTableBulkActionVisible(DeleteBulkAction::class);
+});
+
+it('the create action is gated by the create permission', function () {
+    $user = listFormsTestUser();
+    $user->givePermissionTo('form.view-any');
+
+    actingAs($user);
+
+    livewire(ListForms::class)
+        ->assertActionHidden('create');
+
+    $user->givePermissionTo('form.create');
+
+    livewire(ListForms::class)
+        ->assertActionVisible('create');
+});
+
+it('the duplicate action is gated by the create permission', function () {
+    $user = listFormsTestUser();
+    $user->givePermissionTo('form.view-any');
+
+    actingAs($user);
+
+    $form = Form::factory()->create();
+
+    livewire(ListForms::class)
+        ->assertTableActionHidden('Duplicate', $form);
+
+    $user->givePermissionTo('form.create');
+
+    livewire(ListForms::class)
+        ->assertTableActionVisible('Duplicate', $form);
+});
 
 it('can duplicate a form its steps and its fields', function () {
     asSuperAdmin();

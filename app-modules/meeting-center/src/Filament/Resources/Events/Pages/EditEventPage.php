@@ -38,12 +38,12 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
+use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use FilamentTiptapEditor\Enums\TiptapOutput;
-use FilamentTiptapEditor\TiptapEditor;
 
 class EditEventPage extends EditRecord
 {
@@ -67,11 +67,20 @@ class EditEventPage extends EditRecord
                         ->maxSize(5120)
                         ->columnSpanFull(),
 
-                    TiptapEditor::make('description')
+                    RichEditor::make('description')
                         ->label('Description')
-                        ->profile('default')
-                        ->output(TiptapOutput::Json)
-                        ->disk('s3-public')
+                        ->json()
+                        ->fileAttachmentsDisk('s3-public')
+                        ->fileAttachmentsVisibility('public')
+                        ->resizableImages()
+                        ->toolbarButtons([
+                            ['bold', 'italic', 'link'],
+                            [ToolbarButtonGroup::make('Heading', ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])->textualButtons(), 'bulletList', 'orderedList', 'horizontalRule'],
+                            ['textColor', 'small'],
+                            ['attachFiles'],
+                            ['clearFormatting'],
+                            ['undo', 'redo'],
+                        ])
                         ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                         ->columnSpanFull(),
                 ]),

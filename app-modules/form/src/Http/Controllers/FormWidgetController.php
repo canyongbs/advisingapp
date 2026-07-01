@@ -54,9 +54,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\FormVersioningFeature;
-use App\Features\PastSubmissionsFeature;
-use App\Features\PhoneNumberLookupFeature;
 use App\Http\Controllers\Controller;
 use Closure;
 use Filament\Support\Colors\Color;
@@ -128,7 +125,7 @@ class FormWidgetController extends Controller
             'name' => $form->title,
             'description' => $form->description,
             'is_authenticated' => $form->is_authenticated,
-            'allow_view_past_submissions' => PastSubmissionsFeature::active() && $form->is_authenticated && $form->allow_view_past_submissions,
+            'allow_view_past_submissions' => $form->is_authenticated && $form->allow_view_past_submissions,
             ...($form->is_authenticated ? [
                 'authentication_url' => URL::signedRoute(
                     name: 'widgets.forms.api.request-authentication',
@@ -256,15 +253,11 @@ class FormWidgetController extends Controller
         $pastSubmissionsCount = 0;
         $pastSubmissionsUrl = null;
 
-        if (PastSubmissionsFeature::active() && $form->allow_view_past_submissions && $author) {
+        if ($form->allow_view_past_submissions && $author) {
             $pastSubmissionsCount = FormSubmission::query()
-                ->when(
-                    FormVersioningFeature::active(),
-                    fn ($query) => $query->whereHas(
-                        'submissible',
-                        fn ($query) => $query->withoutGlobalScopes()->where('root_id', $form->root_id),
-                    ),
-                    fn ($query) => $query->where('form_id', $form->getKey()),
+                ->whereHas(
+                    'submissible',
+                    fn ($query) => $query->withoutGlobalScopes()->where('root_id', $form->root_id),
                 )
                 ->submitted()
                 ->whereMorphedTo('author', $author)
@@ -290,7 +283,7 @@ class FormWidgetController extends Controller
                 ],
             ),
             'schema' => $generateSchema->withAuthor($author)($form),
-            'allow_view_past_submissions' => PastSubmissionsFeature::active() && $form->allow_view_past_submissions,
+            'allow_view_past_submissions' => $form->allow_view_past_submissions,
             'past_submissions_count' => $pastSubmissionsCount,
             'past_submissions_url' => $pastSubmissionsUrl,
         ]);
@@ -384,10 +377,10 @@ class FormWidgetController extends Controller
             SendFormNotificationJob::dispatch($form, $submission)->afterCommit();
 
             DB::commit();
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             DB::rollBack();
 
-            report($e);
+            report($exception);
 
             return response()->json([
                 'errors' => ['An error occurred while submitting this form.'],
@@ -439,7 +432,6 @@ class FormWidgetController extends Controller
             $phoneNumber = $prospect->phoneNumbers()->create([
                 'number' => $data['mobile'],
                 'type' => 'Mobile',
-                ...(! PhoneNumberLookupFeature::active() ? ['can_receive_sms' => true] : []),
             ]);
             $prospect->primaryPhoneNumber()->associate($phoneNumber);
 
@@ -486,9 +478,6 @@ class FormWidgetController extends Controller
         Request $request,
         Form $form,
     ): JsonResponse {
-        if (! PastSubmissionsFeature::active()) {
-            abort(Response::HTTP_FORBIDDEN);
-        }
         $authentication = $request->query('authentication');
 
         if (filled($authentication)) {
@@ -510,13 +499,9 @@ class FormWidgetController extends Controller
         }
 
         $pastSubmissions = FormSubmission::query()
-            ->when(
-                FormVersioningFeature::active(),
-                fn ($query) => $query->whereHas(
-                    'submissible',
-                    fn ($query) => $query->withoutGlobalScopes()->where('root_id', $form->root_id),
-                ),
-                fn ($query) => $query->where('form_id', $form->getKey()),
+            ->whereHas(
+                'submissible',
+                fn ($query) => $query->withoutGlobalScopes()->where('root_id', $form->root_id),
             )
             ->submitted()
             ->whereMorphedTo('author', $author)
@@ -554,9 +539,6 @@ class FormWidgetController extends Controller
         Form $form,
         FormSubmission $submission,
     ): JsonResponse {
-        if (! PastSubmissionsFeature::active()) {
-            abort(Response::HTTP_FORBIDDEN);
-        }
         $authentication = $request->query('authentication');
 
         if (filled($authentication)) {
@@ -568,9 +550,7 @@ class FormWidgetController extends Controller
         }
 
         abort_unless(
-            FormVersioningFeature::active()
-                ? $submission->submissible()->withoutGlobalScopes()->value('root_id') === $form->root_id
-                : $submission->form_id === $form->getKey(),
+            $submission->submissible()->withoutGlobalScopes()->value('root_id') === $form->root_id,
             Response::HTTP_NOT_FOUND,
         );
 
@@ -608,10 +588,6 @@ class FormWidgetController extends Controller
 
     private function resolveToLatestVersion(Form $form): Form
     {
-        if (! FormVersioningFeature::active()) {
-            return $form;
-        }
-
         if (! $form->isArchived()) {
             return $form;
         }

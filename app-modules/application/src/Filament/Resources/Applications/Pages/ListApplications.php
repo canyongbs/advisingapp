@@ -40,7 +40,6 @@ use AdvisingApp\Application\Actions\DuplicateApplication;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
-use App\Features\FormVersioningFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -66,14 +65,10 @@ class ListApplications extends ListRecords
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                $submissionsCountQuery = FormVersioningFeature::active()
-                    ? ApplicationSubmission::query()
-                        ->join('applications as version_applications', 'application_submissions.application_id', '=', 'version_applications.id')
-                        ->whereColumn('version_applications.root_id', 'applications.root_id')
-                        ->selectRaw('count(*)')
-                    : ApplicationSubmission::query()
-                        ->whereColumn('application_id', 'applications.id')
-                        ->selectRaw('count(*)');
+                $submissionsCountQuery = ApplicationSubmission::query()
+                    ->join('applications as version_applications', 'application_submissions.application_id', '=', 'version_applications.id')
+                    ->whereColumn('version_applications.root_id', 'applications.root_id')
+                    ->selectRaw('count(*)');
 
                 $query->addSelect([
                     'submissions_count' => $submissionsCountQuery,
@@ -117,7 +112,8 @@ class ListApplications extends ListRecords
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorizeIndividualRecords('delete'),
                 ]),
             ])
             ->defaultSort('created_at', 'desc');

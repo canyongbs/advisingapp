@@ -44,8 +44,6 @@ use AdvisingApp\Form\Models\FormStep;
 use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 use App\Enums\FontWeight;
-use App\Features\FormVersioningFeature;
-use App\Features\PastSubmissionsFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Closure;
 use Filament\Forms\Components\Repeater;
@@ -69,7 +67,7 @@ trait HasSharedFormConfiguration
                 ->required()
                 ->string()
                 ->maxLength(255)
-                ->unique(modifyRuleUsing: fn ($rule) => FormVersioningFeature::active() ? $rule->whereNull('archived_at') : $rule, ignoreRecord: true)
+                ->unique(modifyRuleUsing: fn ($rule) => $rule->whereNull('archived_at'), ignoreRecord: true)
                 ->autocomplete(false)
                 ->columnSpanFull()
                 ->helperText('The name of this form will only display for form administrators.'),
@@ -111,7 +109,7 @@ trait HasSharedFormConfiguration
             Toggle::make('allow_view_past_submissions')
                 ->label('Allow viewing past submissions')
                 ->helperText('If enabled, students and prospects can view their past submissions on this form.')
-                ->visible(fn (Get $get) => PastSubmissionsFeature::active() && $get('is_authenticated')),
+                ->visible(fn (Get $get) => $get('is_authenticated')),
             Toggle::make('generate_prospects')
                 ->label('Generate Prospects')
                 ->helperText('If enabled, the system will check the primary email address submitted on the form and create a prospect if no match is found.')
@@ -121,7 +119,7 @@ trait HasSharedFormConfiguration
             Toggle::make('is_wizard')
                 ->label('Multi-step form')
                 ->live()
-                ->disabled(fn (?Form $record) => ! FormVersioningFeature::active() && $record?->submissions()->submitted()->exists())
+                ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists())
                 ->columnStart(1),
             Toggle::make('recaptcha_enabled')
                 ->label('Enable reCAPTCHA')
@@ -150,7 +148,7 @@ trait HasSharedFormConfiguration
                             },
                         ]),
                 ])
-                ->disabled(fn (?Form $record) => ! FormVersioningFeature::active() && $record?->submissions()->submitted()->exists())
+                ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists())
                 ->hidden(fn (Get $get) => $get('is_wizard')),
             Repeater::make('steps')
                 ->schema([
@@ -169,10 +167,10 @@ trait HasSharedFormConfiguration
                 ->addActionLabel('New step')
                 ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
                 ->visible(fn (Get $get) => $get('is_wizard'))
-                ->disabled(fn (?Form $record) => ! FormVersioningFeature::active() && $record?->submissions()->submitted()->exists())
+                ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists())
                 ->relationship()
                 ->saveRelationshipsUsing(static function (Repeater $component): void {
-                    if (FormVersioningFeature::active() && ! $component->getRecord()->wasRecentlyCreated) {
+                    if (! $component->getRecord()->wasRecentlyCreated) {
                         return;
                     }
 
@@ -229,7 +227,7 @@ trait HasSharedFormConfiguration
                     return;
                 }
 
-                if (FormVersioningFeature::active() && ! $record->wasRecentlyCreated) {
+                if (! $record->wasRecentlyCreated) {
                     return;
                 }
 

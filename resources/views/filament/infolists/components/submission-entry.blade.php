@@ -36,7 +36,7 @@
     $submission = $getRecord()->caseFormSubmission;
 @endphp
 
-<div class="tiptap-rendered-content flex flex-col gap-6">
+<div class="flex flex-col gap-6">
     @if ($submission->submissible->is_wizard)
         @foreach ($submission->submissible->steps as $step)
             <x-filament::section>

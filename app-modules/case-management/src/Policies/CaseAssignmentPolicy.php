@@ -102,6 +102,14 @@ class CaseAssignmentPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['case_assignment.*.delete'],
+            denyResponse: 'You do not have permissions to delete any case assignment.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, CaseAssignment $caseAssignment): Response
     {
         return $authenticatable->canOrElse(
@@ -110,11 +118,27 @@ class CaseAssignmentPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['case_assignment.*.restore'],
+            denyResponse: 'You do not have permissions to restore any case assignment.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, CaseAssignment $caseAssignment): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['case_assignment.*.force-delete'],
             denyResponse: 'You do not have permissions to force delete this case assignment.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['case_assignment.*.force-delete'],
+            denyResponse: 'You do not have permissions to force delete any case assignment.'
         );
     }
 

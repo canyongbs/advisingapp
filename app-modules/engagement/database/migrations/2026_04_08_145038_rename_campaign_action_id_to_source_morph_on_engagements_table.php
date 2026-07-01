@@ -49,7 +49,7 @@ return new class () extends Migration {
             });
 
             Schema::table('engagements', function (Blueprint $table) {
-                $table->string('source_type')->nullable()->after('source_id');
+                $table->string('source_type')->nullable();
             });
 
             DB::table('engagements')

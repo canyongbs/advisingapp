@@ -82,11 +82,27 @@ class ExportPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'export_hub.delete',
+            denyResponse: 'You do not have permission to delete any export.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Export $export): Response
     {
         return $authenticatable->canOrElse(
             abilities: 'export_hub.restore',
             denyResponse: 'You do not have permission to restore this export.'
+        );
+    }
+
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'export_hub.restore',
+            denyResponse: 'You do not have permission to restore any export.'
         );
     }
 

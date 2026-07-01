@@ -38,16 +38,10 @@ import { defineConfig } from 'vite';
 
 export default defineConfig({
     plugins: [tailwindcss(), vue()],
-    experimental: {
-        renderBuiltUrl(filename) {
-            return {
-                runtime: `window.__VITE_RESOURCE_HUB_PORTAL_ASSET_URL__.replace(/\\/$/, '') + '/' + ${JSON.stringify(filename)}`,
-            };
-        },
-    },
+    base: '/portals/resource-hub/assets/',
     build: {
         manifest: true,
-        rollupOptions: {
+        rolldownOptions: {
             input: {
                 portal: resolve(__dirname, './src/portal.js'),
                 loader: resolve(__dirname, './src/loader.js'),
@@ -58,11 +52,8 @@ export default defineConfig({
                         ? 'advising-app-resource-hub-portal.js'
                         : 'advising-app-resource-hub-portal-app-[hash].js';
                 },
-                assetFileNames: (assetInfo) => {
-                    return '[name]-[hash][extname]';
-                },
-                // Place chunks directly in the root
-                chunkFileNames: '[name]-[hash].js',
+                chunkFileNames: 'advising-app-resource-hub-portal-chunk-[hash].js',
+                assetFileNames: 'advising-app-resource-hub-portal-[hash].css',
             },
         },
         outDir: resolve(__dirname, '../../storage/app/public/portals/resource-hub'),
@@ -72,6 +63,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': resolve(__dirname, 'src'),
+            '@common': resolve(__dirname, '../../vendor/canyongbs/common/resources/js/components'),
         },
     },
     define: { 'process.env.NODE_ENV': '"production"' },

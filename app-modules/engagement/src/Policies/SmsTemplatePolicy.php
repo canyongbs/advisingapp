@@ -93,6 +93,14 @@ class SmsTemplatePolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.delete',
+            denyResponse: 'You do not have permission to delete any sms template.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
         return $authenticatable->canOrElse(
@@ -101,11 +109,27 @@ class SmsTemplatePolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.restore',
+            denyResponse: 'You do not have permission to restore any sms template.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, SmsTemplate $smsTemplate): Response
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this sms template.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.force-delete',
+            denyResponse: 'You do not have permission to permanently delete any sms template.'
         );
     }
 }

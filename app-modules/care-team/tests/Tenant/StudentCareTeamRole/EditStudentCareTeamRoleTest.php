@@ -104,7 +104,7 @@ test('A successful action on the EditStudentCareTeamRole page', function () {
     assertEquals($editRequest['name'], $careTeamRole->fresh()->name);
 });
 
-test('EditStudentCareTeamRole requires valid data', function ($data, $errors) {
+test('EditStudentCareTeamRole requires valid data', function (EditCareTeamRoleRequestFactory $data, array $errors) {
     asSuperAdmin();
 
     $careTeamRole = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Student]);

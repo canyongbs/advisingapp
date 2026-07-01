@@ -102,6 +102,7 @@ class CasePrioritiesRelationManager extends RelationManager
             ])
             ->defaultSort('order')
             ->reorderable('order')
+            ->authorizeReorder(fn (): bool => auth()->user()->can('product_admin.*.update'))
             ->paginated(false)
             ->headerActions([
                 CreateAction::make(),
@@ -111,7 +112,8 @@ class CasePrioritiesRelationManager extends RelationManager
                 DeleteAction::make(),
             ])
             ->groupedBulkActions([
-                DeleteBulkAction::make(),
+                DeleteBulkAction::make()
+                    ->authorizeIndividualRecords('delete'),
             ]);
     }
 }

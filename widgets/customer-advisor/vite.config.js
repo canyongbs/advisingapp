@@ -47,7 +47,7 @@ export default defineConfig({
     },
     build: {
         manifest: true,
-        rollupOptions: {
+        rolldownOptions: {
             input: {
                 widget: resolve(__dirname, './src/widget.js'),
                 loader: resolve(__dirname, './src/loader.js'),
@@ -75,6 +75,7 @@ export default defineConfig({
     resolve: {
         alias: {
             '@': resolve(__dirname, 'src'),
+            '@common': resolve(__dirname, '../../vendor/canyongbs/common/resources/js/components'),
         },
     },
     define: { 'process.env.NODE_ENV': '"production"' },

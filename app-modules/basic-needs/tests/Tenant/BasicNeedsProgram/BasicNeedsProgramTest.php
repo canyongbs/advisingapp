@@ -337,6 +337,27 @@ it('can bulk delete basic needs programs', function () {
     }
 });
 
+it('hides the delete bulk action for users without the delete permission', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+    $user->givePermissionTo('support_program.view-any');
+
+    actingAs($user);
+
+    livewire(ListBasicNeedsPrograms::class)
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
+});
+
+it('shows the delete bulk action for users with the delete permission', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+    $user->givePermissionTo('support_program.view-any');
+    $user->givePermissionTo('support_program.*.delete');
+
+    actingAs($user);
+
+    livewire(ListBasicNeedsPrograms::class)
+        ->assertTableBulkActionVisible(DeleteBulkAction::class);
+});
+
 it('can filter basic needs program by `program category`', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $basicNeedsPrograms = BasicNeedsProgram::factory()->count(10)->create();

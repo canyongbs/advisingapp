@@ -41,7 +41,6 @@ use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use AdvisingApp\Ai\Observers\CustomerAdvisorObserver;
 use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\BaseModel;
 use App\Models\Media;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -108,7 +107,7 @@ class CustomerAdvisor extends BaseModel implements HasMedia, Auditable
      */
     public function categories(): HasMany
     {
-        return $this->hasMany(CustomerAdvisorCategory::class, RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id');
+        return $this->hasMany(CustomerAdvisorCategory::class, 'customer_advisor_id');
     }
 
     /**
@@ -119,7 +118,7 @@ class CustomerAdvisor extends BaseModel implements HasMedia, Auditable
         return $this->hasManyThrough(
             CustomerAdvisorQuestion::class,
             CustomerAdvisorCategory::class,
-            RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id',
+            'customer_advisor_id',
             'category_id',
             'id',
             'id'
@@ -195,13 +194,7 @@ class CustomerAdvisor extends BaseModel implements HasMedia, Auditable
             ->all();
     }
 
-    // TODO: Cleanup Task - RenameQnaAdvisorsFeature, remove the getTable() method
-    public function getTable()
-    {
-        return RenameQnaAdvisorsFeature::active() ? 'customer_advisors' : 'qna_advisors';
-    }
-
-    public function getAiServiceModel(): AiModel
+    public function getAiServiceModel(): ?AiModel
     {
         $settings = app(AiCustomerAdvisorSettings::class);
 

@@ -41,7 +41,6 @@ use AdvisingApp\StudentDataModel\DataTransferObjects\UpdateStudentPhoneNumberDat
 use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentPhoneNumberResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use App\Features\PhoneNumberLookupFeature;
 use App\Http\Controllers\Api\Concerns\CanIncludeRelationships;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
@@ -66,9 +65,6 @@ class UpdateStudentPhoneNumberController
             'type' => ['sometimes', 'max:255'],
             'order' => ['sometimes', 'integer'],
             'ext' => ['sometimes', 'integer'],
-            ...(! PhoneNumberLookupFeature::active() ? [
-                'can_receive_sms' => ['sometimes', 'boolean'],
-            ] : []),
         ]);
 
         $student = $updateStudentPhoneNumber->execute($studentPhoneNumber, UpdateStudentPhoneNumberData::from($data));

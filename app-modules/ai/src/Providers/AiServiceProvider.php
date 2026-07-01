@@ -103,11 +103,6 @@ class AiServiceProvider extends ServiceProvider
             'customer_advisor_file' => CustomerAdvisorFile::class,
             'customer_advisor_link' => CustomerAdvisorLink::class,
             'customer_advisor_question' => CustomerAdvisorQuestion::class,
-            'qna_advisor' => CustomerAdvisor::class, // LEGACY, kept for backwards compatability
-            'qna_advisor_category' => CustomerAdvisorCategory::class, // LEGACY, kept for backwards compatability
-            'qna_advisor_file' => CustomerAdvisorFile::class, // LEGACY, kept for backwards compatability
-            'qna_advisor_link' => CustomerAdvisorLink::class, // LEGACY, kept for backwards compatability
-            'qna_advisor_question' => CustomerAdvisorQuestion::class, // LEGACY, kept for backwards compatability
             'data_advisor' => DataAdvisor::class,
             'employee_advisor_category' => EmployeeAdvisorCategory::class,
             'employee_advisor_question' => EmployeeAdvisorQuestion::class,

@@ -75,6 +75,8 @@ class ApplicationSubmissionsChecklist extends Component implements HasForms, Has
 
     public function addChecklistItem(): void
     {
+        abort_unless(auth()->user()?->can('application.*.update') ?? false, 403);
+
         $this->validate(
             rules: [
                 'data.title' => ['required', 'string', 'max:255'],
@@ -108,6 +110,8 @@ class ApplicationSubmissionsChecklist extends Component implements HasForms, Has
 
     public function toggleItem(string $itemId): void
     {
+        abort_unless(auth()->user()?->can('application.*.update') ?? false, 403);
+
         $item = $this->applicationSubmission->checklistItems()->where('id', $itemId)->first();
 
         if ($item instanceof ApplicationSubmissionsChecklistItem) {
@@ -123,6 +127,8 @@ class ApplicationSubmissionsChecklist extends Component implements HasForms, Has
 
     public function deleteItem(string $itemId): void
     {
+        abort_unless(auth()->user()?->can('application.*.update') ?? false, 403);
+
         $this->applicationSubmission->checklistItems()->find($itemId)?->delete();
     }
 

@@ -36,30 +36,34 @@
 
 namespace AdvisingApp\CaseManagement\Notifications\Concerns;
 
-use AdvisingApp\CaseManagement\Actions\GenerateCaseTypeEmailTemplateContent;
-use AdvisingApp\CaseManagement\Actions\GenerateCaseTypeEmailTemplateSubject;
 use AdvisingApp\CaseManagement\Enums\CaseTypeEmailTemplateRole;
+use AdvisingApp\CaseManagement\Filament\Blocks\CaseTypeEmailTemplateButtonBlock;
+use AdvisingApp\CaseManagement\Filament\Blocks\SurveyResponseEmailTemplateTakeSurveyButtonBlock;
 use AdvisingApp\CaseManagement\Filament\Resources\Cases\CaseResource;
+use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 
 trait HandlesCaseTemplateContent
 {
     /**
      * @param string|array<string, mixed> $body
-     * @param ?CaseTypeEmailTemplateRole $urlType
      */
     public function getBody($body, ?CaseTypeEmailTemplateRole $urlType = null): HtmlString
     {
         if (is_array($body)) {
-            $body = $this->injectButtonUrlIntoTiptapContent($body, $urlType);
+            $body = $this->injectButtonUrlIntoBlocks($body, $urlType);
         }
 
-        return app(GenerateCaseTypeEmailTemplateContent::class)(
-            $body,
-            $this->getMergeData(),
-            $this->case,
-            'body',
-        );
+        $html = RichContentRenderer::make($body)
+            ->customBlocks([
+                CaseTypeEmailTemplateButtonBlock::class,
+                SurveyResponseEmailTemplateTakeSurveyButtonBlock::class,
+            ])
+            ->mergeTags($this->getMergeData())
+            ->toHtml();
+
+        return str($html)->sanitizeHtml()->toHtmlString();
     }
 
     /**
@@ -67,12 +71,16 @@ trait HandlesCaseTemplateContent
      */
     public function getSubject($subject): HtmlString
     {
-        return app(GenerateCaseTypeEmailTemplateSubject::class)(
-            $subject,
-            $this->getMergeData(),
-            $this->case,
-            'subject',
-        );
+        $html = RichContentRenderer::make($subject)
+            ->mergeTags($this->getMergeData())
+            ->toHtml();
+
+        $text = strip_tags($html);
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        $text = trim(preg_replace('/\s+/u', ' ', $text));
+        $text = Str::limit($text, 988, '');
+
+        return new HtmlString($text);
     }
 
     /**
@@ -94,44 +102,70 @@ trait HandlesCaseTemplateContent
 
     /**
      * @param array<string, mixed> $content
-     * @param ?CaseTypeEmailTemplateRole $urlType
      *
      * @return array<string, mixed>
      */
-    protected function injectButtonUrlIntoTiptapContent(array $content, ?CaseTypeEmailTemplateRole $urlType = null): array
+    protected function injectButtonUrlIntoBlocks(array $content, ?CaseTypeEmailTemplateRole $urlType = null): array
     {
         if (! isset($content['content']) || ! is_array($content['content'])) {
             return $content;
         }
 
         $content['content'] = array_map(function (mixed $block) use ($urlType) {
-            if (
-                $block['type'] === 'tiptapBlock' &&
-                ($block['attrs']['type'] ?? null) === 'caseTypeEmailTemplateButtonBlock'
-            ) {
-                $block['attrs']['data']['url'] = $urlType == CaseTypeEmailTemplateRole::Customer
+            if (! is_array($block)) {
+                return $block;
+            }
+
+            $blockId = $this->getBlockId($block);
+
+            if ($blockId === 'caseTypeEmailTemplateButtonBlock') {
+                $url = $urlType === CaseTypeEmailTemplateRole::Customer
                     ? null
                     // This can be restored if/when we add case management to the portal
                     // ? route('portal.case.show', $this->case)
                     : CaseResource::getUrl('view', [
                         'record' => $this->case,
                     ]);
+
+                $block = $this->setBlockConfigUrl($block, $url);
             }
 
-            if (
-                $block['type'] === 'tiptapBlock' &&
-                ($block['attrs']['type'] ?? null) === 'surveyResponseEmailTemplateTakeSurveyButtonBlock'
-            ) {
-                $block['attrs']['data']['url'] = route('feedback.case', $this->case);
+            if ($blockId === 'surveyResponseEmailTemplateTakeSurveyButtonBlock') {
+                $block = $this->setBlockConfigUrl($block, route('feedback.case', $this->case));
             }
 
             if (isset($block['content']) && is_array($block['content'])) {
-                $block = $this->injectButtonUrlIntoTiptapContent($block);
+                $block = $this->injectButtonUrlIntoBlocks($block);
             }
 
             return $block;
         }, $content['content']);
 
         return $content;
+    }
+
+    /**
+     * @param array<string, mixed> $block
+     */
+    protected function getBlockId(array $block): ?string
+    {
+        return match ($block['type'] ?? null) {
+            'customBlock' => $block['attrs']['id'] ?? null,
+            default => null,
+        };
+    }
+
+    /**
+     * @param array<string, mixed> $block
+     *
+     * @return array<string, mixed>
+     */
+    protected function setBlockConfigUrl(array $block, ?string $url): array
+    {
+        if (($block['type'] ?? null) === 'customBlock') {
+            $block['attrs']['config']['url'] = $url;
+        }
+
+        return $block;
     }
 }

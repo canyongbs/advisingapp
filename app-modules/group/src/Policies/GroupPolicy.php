@@ -121,6 +121,14 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['group.*.delete'],
+            denyResponse: 'You do not have permission to delete any group.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Group $group): Response
     {
         if (! $authenticatable->hasLicense($group->model->class()::getLicenseType())) {
@@ -130,6 +138,14 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
         return $authenticatable->canOrElse(
             abilities: ['group.*.restore'],
             denyResponse: 'You do not have permission to restore this group.'
+        );
+    }
+
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['group.*.restore'],
+            denyResponse: 'You do not have permission to restore any group.'
         );
     }
 
@@ -146,6 +162,14 @@ class GroupPolicy implements PerformsChecksBeforeAuthorization
         return $authenticatable->canOrElse(
             abilities: ['group.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this group.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['group.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any group.'
         );
     }
 }

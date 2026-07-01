@@ -45,6 +45,7 @@
 
 @source "../../form/src/FormKit/theme.js";
 @source "../../form/src/**/*.vue";
+@source "../../../vendor/canyongbs/common/resources/js/components/**/*.vue";
 
 @theme inline {
     --color-primary-50: rgba(var(--primary-50));

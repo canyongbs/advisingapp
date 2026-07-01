@@ -102,6 +102,14 @@ class CaseUpdatePolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['case_update.*.delete'],
+            denyResponse: 'You do not have permissions to delete any case update.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, CaseUpdate $caseUpdate): Response
     {
         return $authenticatable->canOrElse(
@@ -110,11 +118,27 @@ class CaseUpdatePolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['case_update.*.restore'],
+            denyResponse: 'You do not have permissions to restore any case update.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, CaseUpdate $caseUpdate): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['case_update.*.force-delete'],
             denyResponse: 'You do not have permissions to force delete this case update.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['case_update.*.force-delete'],
+            denyResponse: 'You do not have permissions to force delete any case update.'
         );
     }
 

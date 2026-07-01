@@ -37,13 +37,14 @@
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\ViewCustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
+use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 test('View Customer Advisor is gated with proper access control', function () {
     $settings = app(LicenseSettings::class);
@@ -63,8 +64,8 @@ test('View Customer Advisor is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.view-any' : 'qna_advisor.view-any');
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.view' : 'qna_advisor.*.view');
+    $user->givePermissionTo('customer_advisor.view-any');
+    $user->givePermissionTo('customer_advisor.*.view');
 
     actingAs($user)
         ->get(
@@ -85,8 +86,9 @@ test('archive action visible when Customer Advisor is not archived', function ()
 
     $customerAdvisor = CustomerAdvisor::factory()->create();
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.view-any' : 'qna_advisor.view-any');
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.view' : 'qna_advisor.*.view');
+    $user->givePermissionTo('customer_advisor.view-any');
+    $user->givePermissionTo('customer_advisor.*.view');
+    $user->givePermissionTo('customer_advisor.*.delete');
 
     actingAs($user);
 
@@ -111,8 +113,9 @@ test('restore action visible when Customer Advisor is archived', function () {
         'archived_at' => now(),
     ])->create();
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.view-any' : 'qna_advisor.view-any');
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.view' : 'qna_advisor.*.view');
+    $user->givePermissionTo('customer_advisor.view-any');
+    $user->givePermissionTo('customer_advisor.*.view');
+    $user->givePermissionTo('customer_advisor.*.restore');
 
     actingAs($user);
 
@@ -122,4 +125,26 @@ test('restore action visible when Customer Advisor is archived', function () {
         ->assertSuccessful()
         ->assertActionVisible('restore')
         ->assertActionHidden('archive');
+});
+
+test('generated instructions are escaped to prevent XSS', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->customerAdvisors = true;
+
+    $settings->save();
+
+    $advisorSettings = app(AiCustomerAdvisorSettings::class);
+    $advisorSettings->instructions = '<script>alert(1)</script>';
+    $advisorSettings->save();
+
+    $customerAdvisor = CustomerAdvisor::factory()->create();
+
+    asSuperAdmin();
+
+    livewire(ViewCustomerAdvisor::class, [
+        'record' => $customerAdvisor->getRouteKey(),
+    ])
+        ->assertSuccessful()
+        ->assertDontSeeHtml('<script>alert(1)</script>');
 });

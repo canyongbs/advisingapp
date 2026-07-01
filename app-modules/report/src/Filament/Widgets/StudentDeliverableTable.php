@@ -45,7 +45,6 @@ use AdvisingApp\StudentDataModel\Models\Scopes\HealthyEducatablePrimaryPhoneNumb
 use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\PhoneNumberLookupFeature;
 use Filament\Actions\ExportAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -145,15 +144,6 @@ class StudentDeliverableTable extends BaseWidget
                     ->trueColor('success')
                     ->falseColor('danger')
                     ->state(fn (Student $record) => filled($record->primaryPhoneNumber)),
-                IconColumn::make('can_receive_sms')
-                    ->label('SMS Capable')
-                    ->boolean()
-                    ->trueIcon('heroicon-o-check-circle')
-                    ->falseIcon('heroicon-o-x-circle')
-                    ->trueColor('success')
-                    ->falseColor('danger')
-                    ->visible(fn (): bool => ! PhoneNumberLookupFeature::active())
-                    ->state(fn (Student $record) => filled($record->primaryPhoneNumber?->number) && $record->primaryPhoneNumber->can_receive_sms),
                 IconColumn::make('is_textable')
                     ->label('SMS Capable')
                     ->boolean()
@@ -161,7 +151,6 @@ class StudentDeliverableTable extends BaseWidget
                     ->falseIcon('heroicon-o-x-circle')
                     ->trueColor('success')
                     ->falseColor('danger')
-                    ->visible(fn (): bool => PhoneNumberLookupFeature::active())
                     ->state(fn (Student $record) => $record->primaryPhoneNumber?->isTextable() ?? false),
                 IconColumn::make('smsOptOut')
                     ->label('SMS Opt Out')

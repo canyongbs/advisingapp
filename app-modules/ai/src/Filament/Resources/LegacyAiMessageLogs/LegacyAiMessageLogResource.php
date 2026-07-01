@@ -42,8 +42,6 @@ use AdvisingApp\Ai\Models\LegacyAiMessageLog;
 use App\Filament\Clusters\UsageAuditing;
 use App\Filament\Infolists\Components\CodeEntry;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ExportBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
@@ -111,11 +109,9 @@ class LegacyAiMessageLogResource extends Resource
             ])
             ->recordActions([
                 ViewAction::make()->slideOver(),
-                DeleteAction::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
                     ExportBulkAction::make()
                         ->exporter(AssistantUtilizationExporter::class),
                 ]),

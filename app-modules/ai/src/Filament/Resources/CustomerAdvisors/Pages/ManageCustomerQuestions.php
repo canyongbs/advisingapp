@@ -38,7 +38,6 @@ namespace AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
-use App\Features\RenameQnaAdvisorsFeature;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -75,7 +74,7 @@ class ManageCustomerQuestions extends ManageRelatedRecords
                     ->relationship('category', 'name', modifyQueryUsing: function (Builder $query) {
                         /** @var CustomerAdvisor $advisor */
                         $advisor = $this->getOwnerRecord();
-                        $query->where(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id', $advisor->getKey());
+                        $query->where('customer_advisor_id', $advisor->getKey());
                     })
                     ->required()
                     ->preload()
@@ -138,7 +137,7 @@ class ManageCustomerQuestions extends ManageRelatedRecords
                     ->relationship('category', 'name', modifyQueryUsing: function (Builder $query) {
                         /** @var CustomerAdvisor $customerAdvisor */
                         $customerAdvisor = $this->getOwnerRecord();
-                        $query->where(RenameQnaAdvisorsFeature::active() ? 'customer_advisor_id' : 'qna_advisor_id', $customerAdvisor->getKey());
+                        $query->where('customer_advisor_id', $customerAdvisor->getKey());
                     })
                     ->multiple()
                     ->preload()
@@ -154,7 +153,8 @@ class ManageCustomerQuestions extends ManageRelatedRecords
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorizeIndividualRecords('delete'),
                 ]),
             ])
             ->emptyStateHeading('No Customer Advisor Questions Found')

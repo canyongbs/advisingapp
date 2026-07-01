@@ -105,6 +105,18 @@ class ProgramPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('Student data configuration is not enabled.');
+        }
+
+        return $authenticatable->canOrElse(
+            abilities: 'program.*.delete',
+            denyResponse: 'You do not have permission to delete any program.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Program $program): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
@@ -117,6 +129,18 @@ class ProgramPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('Student data configuration is not enabled.');
+        }
+
+        return $authenticatable->canOrElse(
+            abilities: 'program.*.restore',
+            denyResponse: 'You do not have permission to restore any program.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Program $program): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
@@ -125,7 +149,19 @@ class ProgramPolicy
 
         return $authenticatable->canOrElse(
             abilities: 'program.*.force-delete',
-            denyResponse: 'You do not have permission to force delete this student.'
+            denyResponse: 'You do not have permission to force delete this program.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('Student data configuration is not enabled.');
+        }
+
+        return $authenticatable->canOrElse(
+            abilities: 'program.*.force-delete',
+            denyResponse: 'You do not have permission to force delete any program.'
         );
     }
 

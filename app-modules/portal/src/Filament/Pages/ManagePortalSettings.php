@@ -108,11 +108,6 @@ class ManagePortalSettings extends SettingsPage
                             ->label('Applications'),
                         Toggle::make('has_message_center')
                             ->label('Message Center'),
-                        Toggle::make('has_user_chat')
-                            ->label('Realtime Chat')
-                            ->disabled(! Gate::check(Feature::RealtimeChat->getGateName()))
-                            ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
-                            ->hintIconTooltip('Realtime Chat is not a part of your current subscription.'),
                         Toggle::make('has_care_team')
                             ->label('Care Team'),
                         Toggle::make('has_performance_alerts')

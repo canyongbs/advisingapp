@@ -105,6 +105,18 @@ class HoldPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('Student data configuration is not enabled.');
+        }
+
+        return $authenticatable->canOrElse(
+            abilities: 'hold.*.delete',
+            denyResponse: 'You do not have permission to delete any hold.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Hold $hold): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
@@ -117,6 +129,18 @@ class HoldPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('Student data configuration is not enabled.');
+        }
+
+        return $authenticatable->canOrElse(
+            abilities: 'hold.*.restore',
+            denyResponse: 'You do not have permission to restore any hold.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Hold $hold): Response
     {
         if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
@@ -126,6 +150,18 @@ class HoldPolicy
         return $authenticatable->canOrElse(
             abilities: 'hold.*.force-delete',
             denyResponse: 'You do not have permission to force delete this hold.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
+            return Response::deny('Student data configuration is not enabled.');
+        }
+
+        return $authenticatable->canOrElse(
+            abilities: 'hold.*.force-delete',
+            denyResponse: 'You do not have permission to force delete any hold.'
         );
     }
 

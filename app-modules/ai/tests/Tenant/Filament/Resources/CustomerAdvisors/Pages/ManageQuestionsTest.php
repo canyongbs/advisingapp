@@ -41,7 +41,6 @@ use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
 use AdvisingApp\Ai\Tests\RequestFactories\CustomerAdvisorQuestionRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
@@ -73,7 +72,7 @@ test('Create Customer Advisor Question is gated with proper access control', fun
     livewire(ManageCustomerQuestions::class, ['record' => $customerAdvisor->getKey()])
         ->assertForbidden();
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.create']);
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
 
     actingAs($user)
         ->get(
@@ -94,7 +93,7 @@ test('can create Customer Advisor Question', function () {
 
     $customerAdvisor = CustomerAdvisor::factory()->create();
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.create']);
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
 
     $customerAdvisorQuestion = collect(CustomerAdvisorQuestionRequestFactory::new()->create());
 
@@ -121,7 +120,7 @@ test('Create Customer Advisor Question validates the inputs', function (Customer
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.create']);
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
 
     $customerAdvisor = CustomerAdvisor::factory()->create();
 
@@ -175,14 +174,12 @@ test('can edit Customer Advisor Question', function () {
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.*.update']);
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update']);
 
     $customerAdvisor = CustomerAdvisor::factory()->create();
 
-    // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, the state can be defined inline again
-    $state = RenameQnaAdvisorsFeature::active() ? ['customer_advisor_id' => $customerAdvisor->getKey()] : ['qna_advisor_id' => $customerAdvisor->getKey()];
     $customerAdvisorQuestion = CustomerAdvisorQuestion::factory()->state([
-        'category_id' => CustomerAdvisorCategory::factory()->state($state),
+        'category_id' => CustomerAdvisorCategory::factory()->state(['customer_advisor_id' => $customerAdvisor->getKey()]),
     ])->create();
 
     $request = collect(CustomerAdvisorQuestionRequestFactory::new()->create());
@@ -208,14 +205,12 @@ test('Edit Customer Advisor Question validates the inputs', function (CustomerAd
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.*.update']);
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update']);
 
     $customerAdvisor = CustomerAdvisor::factory()->create();
 
-    // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, the state can be defined inline again
-    $state = RenameQnaAdvisorsFeature::active() ? ['customer_advisor_id' => $customerAdvisor->getKey()] : ['qna_advisor_id' => $customerAdvisor->getKey()];
     $customerAdvisorQuestion = CustomerAdvisorQuestion::factory()->state([
-        'category_id' => CustomerAdvisorCategory::factory()->state($state),
+        'category_id' => CustomerAdvisorCategory::factory()->state(['customer_advisor_id' => $customerAdvisor->getKey()]),
     ])->create();
 
     $request = CustomerAdvisorQuestionRequestFactory::new($data)->create();

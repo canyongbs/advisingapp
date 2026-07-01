@@ -80,6 +80,7 @@ class ListProspectStatuses extends ListRecords
             ])
             ->defaultSort('sort')
             ->reorderable('sort')
+            ->authorizeReorder(fn (): bool => auth()->user()->can('settings.*.update'))
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),

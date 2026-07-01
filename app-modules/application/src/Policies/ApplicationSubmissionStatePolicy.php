@@ -104,6 +104,14 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.delete',
+            denyResponse: 'You do not have permission to delete any state.'
+        );
+    }
+
     public function archive(Authenticatable $authenticatable, ApplicationSubmissionState $model): Response
     {
         return $authenticatable->canOrElse(
@@ -120,6 +128,14 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.restore',
+            denyResponse: 'You do not have permission to restore any state.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, ApplicationSubmissionState $model): Response
     {
         if ($model->submissions()->exists()) {
@@ -129,6 +145,14 @@ class ApplicationSubmissionStatePolicy implements PerformsChecksBeforeAuthorizat
         return $authenticatable->canOrElse(
             abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permission to permanently delete this state.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.force-delete',
+            denyResponse: 'You do not have permission to permanently delete any state.'
         );
     }
 

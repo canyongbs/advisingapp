@@ -60,7 +60,6 @@ use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\EngagementTimeline;
-use App\Features\PhoneNumberLookupFeature;
 use App\Models\BaseModel;
 use App\Models\Media;
 use App\Models\User;
@@ -394,7 +393,6 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         $phoneNumber = $recipient->phoneNumbers->firstWhere('number', $route)
             ?? $recipient->phoneNumbers()->make([
                 'number' => $route,
-                ...(! PhoneNumberLookupFeature::active() ? ['can_receive_sms' => true] : []),
             ]);
 
         assert($phoneNumber instanceof StudentPhoneNumber || $phoneNumber instanceof ProspectPhoneNumber);

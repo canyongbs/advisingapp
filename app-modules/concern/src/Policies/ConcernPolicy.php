@@ -113,6 +113,14 @@ class ConcernPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['concern.*.delete'],
+            denyResponse: 'You do not have permission to delete any concern.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Concern $concern): Response
     {
         if (! $authenticatable->hasLicense($concern->concern?->getLicenseType())) {
@@ -125,6 +133,14 @@ class ConcernPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['concern.*.restore'],
+            denyResponse: 'You do not have permission to restore any concern.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Concern $concern): Response
     {
         if (! $authenticatable->hasLicense($concern->concern?->getLicenseType())) {
@@ -134,6 +150,14 @@ class ConcernPolicy
         return $authenticatable->canOrElse(
             abilities: ['concern.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this concern.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['concern.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any concern.'
         );
     }
 }

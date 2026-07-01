@@ -49,7 +49,13 @@ class GenerateCustomerAdvisorIntroductoryMessage
             return $advisor->introductory_message ?? null;
         }
 
-        $aiService = $advisor->model->getService();
+        $aiModel = $advisor->getAiServiceModel();
+
+        if (! $aiModel) {
+            return null;
+        }
+
+        $aiService = $aiModel->getService();
 
         return $aiService->complete(
             prompt: $this->buildContext($advisor, $author),

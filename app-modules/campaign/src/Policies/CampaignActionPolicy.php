@@ -81,6 +81,14 @@ class CampaignActionPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['journey_step.*.delete'],
+            denyResponse: 'You do not have permission to delete any journey step.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
@@ -89,11 +97,27 @@ class CampaignActionPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['journey_step.*.restore'],
+            denyResponse: 'You do not have permission to restore any journey step.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['journey_step.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this journey step.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['journey_step.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any journey step.'
         );
     }
 }

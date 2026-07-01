@@ -72,7 +72,7 @@ test('A successful action on the EditProspectSource page', function () {
     assertEquals($editRequest['name'], $prospectSource->fresh()->name);
 });
 
-test('EditProspectSource requires valid data', function ($data, $errors) {
+test('EditProspectSource requires valid data', function (EditProspectSourceRequestFactory $data, array $errors) {
     asSuperAdmin();
 
     $prospectSource = ProspectSource::factory()->create();

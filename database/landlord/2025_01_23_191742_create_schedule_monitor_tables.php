@@ -38,6 +38,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/** @phpstan-ignore Common.migrationMissingDownMethod */
 class CreateScheduleMonitorTables extends Migration
 {
     public function up(): void
@@ -75,6 +76,7 @@ class CreateScheduleMonitorTables extends Migration
 
             $table->string('type');
 
+            // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('meta')->nullable();
 
             $table->timestamps();

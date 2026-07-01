@@ -104,11 +104,27 @@ class ProjectMilestoneStatusPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.delete',
+            denyResponse: 'You do not have permissions to delete any project milestone status.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, ProjectMilestoneStatus $projectMilestoneStatus): Response
     {
         return $authenticatable->canOrElse(
             abilities: 'settings.*.restore',
             denyResponse: 'You do not have permissions to restore this project milestone status.'
+        );
+    }
+
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.restore',
+            denyResponse: 'You do not have permissions to restore any project milestone status.'
         );
     }
 
@@ -121,6 +137,14 @@ class ProjectMilestoneStatusPolicy implements PerformsChecksBeforeAuthorization
         return $authenticatable->canOrElse(
             abilities: 'settings.*.force-delete',
             denyResponse: 'You do not have permissions to force delete this project milestone status.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'settings.*.force-delete',
+            denyResponse: 'You do not have permissions to force delete any project milestone status.'
         );
     }
 

@@ -41,6 +41,12 @@ use App\Models\FailedImportRow;
 use App\Models\Import;
 use App\Models\User;
 use App\Settings\DisplaySettings;
+use Filament\Actions\AssociateAction;
+use Filament\Actions\AttachAction;
+use Filament\Actions\DetachAction;
+use Filament\Actions\DetachBulkAction;
+use Filament\Actions\DissociateAction;
+use Filament\Actions\DissociateBulkAction;
 use Filament\Actions\Exports\Models\Export as BaseExport;
 use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
 use Filament\Actions\Imports\Models\Import as BaseImport;
@@ -52,6 +58,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -342,5 +350,24 @@ class FilamentServiceProvider extends ServiceProvider
             ->label('Duplicate')
             ->modalSubmitActionLabel('Duplicate')
             ->modalHeading('Duplicate'));
+
+        // Relation manager associate/dissociate/attach/detach actions are not authorized by
+        // Filament out of the box. Because read-only relation managers on resource view pages
+        // are disabled for this panel, these actions would otherwise be available to anyone who
+        // can view the owner record. Gate them behind the "update" ability of the owner record.
+        // Typing $livewire as ManageRelatedRecords|RelationManager also guards against these
+        // actions ever being used outside of a relation manager (it would throw).
+        $authorizeRelationManagerOwnerUpdate = function (AssociateAction | AttachAction | DetachAction | DissociateAction | DetachBulkAction | DissociateBulkAction $action): void {
+            $action->authorize(
+                fn (ManageRelatedRecords | RelationManager $livewire): bool => auth()->user()->can('update', $livewire->getOwnerRecord()),
+            );
+        };
+
+        AssociateAction::configureUsing($authorizeRelationManagerOwnerUpdate);
+        AttachAction::configureUsing($authorizeRelationManagerOwnerUpdate);
+        DetachAction::configureUsing($authorizeRelationManagerOwnerUpdate);
+        DissociateAction::configureUsing($authorizeRelationManagerOwnerUpdate);
+        DetachBulkAction::configureUsing($authorizeRelationManagerOwnerUpdate);
+        DissociateBulkAction::configureUsing($authorizeRelationManagerOwnerUpdate);
     }
 }

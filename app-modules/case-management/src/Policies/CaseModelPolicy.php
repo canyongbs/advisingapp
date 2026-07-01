@@ -131,6 +131,14 @@ class CaseModelPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['case.*.delete'],
+            denyResponse: 'You do not have permission to delete any case.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, CaseModel $case): Response
     {
         /** @var Student|Prospect|null $respondent */
@@ -146,6 +154,14 @@ class CaseModelPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['case.*.restore'],
+            denyResponse: 'You do not have permission to restore any case.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, CaseModel $case): Response
     {
         /** @var Student|Prospect|null $respondent */
@@ -158,6 +174,14 @@ class CaseModelPolicy
         return $authenticatable->canOrElse(
             abilities: ['case.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this case.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['case.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any case.'
         );
     }
 

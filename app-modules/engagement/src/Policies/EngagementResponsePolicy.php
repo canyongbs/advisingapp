@@ -82,6 +82,14 @@ class EngagementResponsePolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['engagement_response.*.delete'],
+            denyResponse: 'You do not have permission to delete any engagement response.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, EngagementResponse $engagementResponse): Response
     {
         return $authenticatable->canOrElse(
@@ -90,11 +98,27 @@ class EngagementResponsePolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['engagement_response.*.restore'],
+            denyResponse: 'You do not have permission to restore any engagement response.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, EngagementResponse $engagementResponse): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['engagement_response.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this engagement response.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['engagement_response.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any engagement response.'
         );
     }
 }

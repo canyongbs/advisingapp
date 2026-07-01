@@ -80,9 +80,9 @@ class EditBasicNeedsCategory extends EditRecord
                         $basicNeedsCategory->delete();
 
                         return $basicNeedsCategory;
-                    } catch (SoftDeleteContraintViolationException $e) {
+                    } catch (SoftDeleteContraintViolationException $exception) {
                         Notification::make()
-                            ->title($e->getMessage())
+                            ->title($exception->getMessage())
                             ->danger()
                             ->send();
                     }

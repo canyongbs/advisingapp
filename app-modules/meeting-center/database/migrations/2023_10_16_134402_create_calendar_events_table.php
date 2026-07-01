@@ -38,6 +38,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
+/** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
     public function up(): void
     {
@@ -46,6 +47,7 @@ return new class () extends Migration {
 
             $table->string('title');
             $table->longText('description')->nullable();
+            // @phpstan-ignore Common.jsonColumnInMigration
             $table->json('attendees')->nullable();
 
             $table->string('provider_id')->nullable();

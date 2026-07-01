@@ -66,7 +66,7 @@ test('A successful action on the CreateProspectSource page', function () {
     assertDatabaseHas(ProspectSource::class, $request);
 });
 
-test('CreateProspectSource requires valid data', function ($data, $errors) {
+test('CreateProspectSource requires valid data', function (CreateProspectSourceRequestFactory $data, array $errors) {
     asSuperAdmin();
 
     livewire(CreateProspectSource::class)

@@ -39,6 +39,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\EnrollmentSemesters\Pages\Ma
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use App\Models\User;
+use Filament\Actions\DeleteBulkAction;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 
 use function Pest\Laravel\actingAs;
@@ -61,6 +62,22 @@ test('the page is gated with proper access control', function () {
         ->get(
             EnrollmentSemesterResource::getUrl('index')
         )->assertSuccessful();
+});
+
+test('the delete bulk action is gated by the delete permission', function () {
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('settings.view-any');
+
+    actingAs($user);
+
+    livewire(ManageEnrollmentSemesters::class)
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
+
+    $user->givePermissionTo('settings.*.delete');
+
+    livewire(ManageEnrollmentSemesters::class)
+        ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
 test('it enables the sync button when appropriate', function () {

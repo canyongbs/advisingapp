@@ -112,24 +112,24 @@ class EventCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             $this->actionEducatable->save();
 
             DB::commit();
-        } catch (ModelNotFoundException $e) {
+        } catch (ModelNotFoundException $exception) {
             DB::rollBack();
 
             $this->actionEducatable->markFailed();
 
-            if ($e->getModel() === Event::class) {
+            if ($exception->getModel() === Event::class) {
                 $this->batch()->cancel();
 
                 return;
             }
 
-            throw $e;
-        } catch (Throwable $e) {
+            throw $exception;
+        } catch (Throwable $exception) {
             DB::rollBack();
 
             $this->actionEducatable->markFailed();
 
-            throw $e;
+            throw $exception;
         }
     }
 }

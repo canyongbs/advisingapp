@@ -299,12 +299,12 @@ class EventRegistrationWidgetController extends Controller
             }
 
             DB::commit();
-        } catch (Exception $e) {
+        } catch (Exception $exception) {
             // TODO: Tag and report this exception. Send the tag to the frontend as a reference.
 
             DB::rollBack();
 
-            throw $e;
+            throw $exception;
         }
 
         return response()->json(

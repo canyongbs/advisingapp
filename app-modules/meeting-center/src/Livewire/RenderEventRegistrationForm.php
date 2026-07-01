@@ -65,17 +65,11 @@ class RenderEventRegistrationForm extends Component implements HasForms, HasActi
     #[Computed]
     public function descriptionHtml(): ?string
     {
-        $description = $this->event->description;
-
-        if (empty($description)) {
+        if (blank($this->event->description)) {
             return null;
         }
 
-        if (isset($description['type']) && isset($description['content'])) {
-            return tiptap_converter()->record($this->event, attribute: 'description')->asHTML($description);
-        }
-
-        return null;
+        return $this->event->getRichContentAttribute('description')?->toHtml();
     }
 
     #[Computed]

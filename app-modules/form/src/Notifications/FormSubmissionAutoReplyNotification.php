@@ -41,7 +41,6 @@ use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\FormVersioningFeature;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
@@ -67,9 +66,7 @@ class FormSubmissionAutoReplyNotification extends Notification implements Should
         /** @var Form $form */
         $form = $this->submission->submissible;
 
-        if (FormVersioningFeature::active()) {
-            $form = $form->latestVersion() ?? $form;
-        }
+        $form = $form->latestVersion() ?? $form;
 
         /** @var Student|Prospect|null $author */
         $author = $this->submission->author;

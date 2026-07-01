@@ -45,6 +45,7 @@ use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use Filament\Support\Colors\Color;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\Sequence;
 
 /**
  * @extends Factory<EventRegistrationForm>
@@ -73,9 +74,12 @@ class EventRegistrationFormFactory extends Factory
     {
         return $this->afterCreating(function (EventRegistrationForm $eventRegistrationForm) {
             if ($eventRegistrationForm->is_wizard) {
-                EventRegistrationFormStep::factory()->count(rand(2, 5))->create([
-                    'form_id' => $eventRegistrationForm->getKey(),
-                ]);
+                EventRegistrationFormStep::factory()
+                    ->count(rand(2, 5))
+                    ->sequence(fn (Sequence $sequence) => ['sort' => $sequence->index])
+                    ->create([
+                        'form_id' => $eventRegistrationForm->getKey(),
+                    ]);
             } else {
                 $fields = $this->generateFields($eventRegistrationForm, rand(1, 3));
 
@@ -113,14 +117,15 @@ class EventRegistrationFormFactory extends Factory
                 'form_id' => $eventRegistrationForm->getKey(),
             ])
             ->map(fn (EventRegistrationFormField $field) => [
-                'type' => 'tiptapBlock',
+                'type' => 'customBlock',
                 'attrs' => [
-                    'type' => $field->type,
-                    'data' => [
+                    'config' => [
+                        'fieldId' => $field->getKey(),
                         'label' => $field->label,
                         'isRequired' => $field->is_required,
+                        ...$field->config,
                     ],
-                    'id' => $field->getKey(),
+                    'id' => $field->type,
                 ],
             ])
             ->toArray();

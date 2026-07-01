@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Tests\RequestFactories\CustomerAdvisorCategoryRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
@@ -72,7 +71,7 @@ test('Create Customer Advisor Category is gated with proper access control', fun
     livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
         ->assertForbidden();
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.create']);
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
 
     actingAs($user)
         ->get(
@@ -93,7 +92,7 @@ test('can create Customer Advisor Category', function () {
 
     $customerAdvisor = CustomerAdvisor::factory()->create();
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.create']);
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
 
     actingAs($user);
 
@@ -133,7 +132,7 @@ test('Create Customer Advisor Category validates the inputs', function (Customer
     livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
         ->assertForbidden();
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.create']);
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
 
     actingAs($user)
         ->get(
@@ -186,12 +185,10 @@ test('can edit Customer Advisor Category', function () {
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.*.update']);
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update']);
 
     $customerAdvisor = CustomerAdvisor::factory()->create();
-    // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, the state can be defined inline again
-    $state = RenameQnaAdvisorsFeature::active() ? ['customer_advisor_id' => $customerAdvisor->getKey()] : ['qna_advisor_id' => $customerAdvisor->getKey()];
-    $customerAdvisorCategory = CustomerAdvisorCategory::factory()->state($state)->create();
+    $customerAdvisorCategory = CustomerAdvisorCategory::factory()->state(['customer_advisor_id' => $customerAdvisor->getKey()])->create();
 
     $request = collect(CustomerAdvisorCategoryRequestFactory::new()->create());
 
@@ -216,25 +213,16 @@ test('Edit Customer Advisor Category validates the inputs', function (CustomerAd
 
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $user->givePermissionTo(RenameQnaAdvisorsFeature::active() ? ['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update'] : ['qna_advisor.view-any', 'qna_advisor.*.view', 'qna_advisor.*.update']);
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update']);
 
     $customerAdvisor = CustomerAdvisor::factory()->create();
 
-    // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, the state can be defined inline again
-    $state = RenameQnaAdvisorsFeature::active() ?
-        [
-            'name' => 'Education',
-            'customer_advisor_id' => $customerAdvisor->getKey(),
-        ] :
-        [
-            'name' => 'Education',
-            'qna_advisor_id' => $customerAdvisor->getKey(),
-        ];
-    CustomerAdvisorCategory::factory()->state($state)->create();
+    CustomerAdvisorCategory::factory()->state([
+        'name' => 'Education',
+        'customer_advisor_id' => $customerAdvisor->getKey(),
+    ])->create();
 
-    // TODO: Cleanup Task - During RenameQnaAdvisorsFeature cleanup, the state can be defined inline again
-    $state = RenameQnaAdvisorsFeature::active() ? ['customer_advisor_id' => $customerAdvisor->getKey()] : ['qna_advisor_id' => $customerAdvisor->getKey()];
-    $customerAdvisorCategory = CustomerAdvisorCategory::factory()->state($state)->create();
+    $customerAdvisorCategory = CustomerAdvisorCategory::factory()->state(['customer_advisor_id' => $customerAdvisor->getKey()])->create();
 
     $request = CustomerAdvisorCategoryRequestFactory::new($data)->create();
 

@@ -82,6 +82,14 @@ class TeamPolicy
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['team.*.delete'],
+            denyResponse: 'You do not have permission to delete any team.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Team $team): Response
     {
         return $authenticatable->canOrElse(
@@ -90,11 +98,27 @@ class TeamPolicy
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['team.*.restore'],
+            denyResponse: 'You do not have permission to restore any team.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Team $team): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['team.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this team.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['team.*.force-delete'],
+            denyResponse: 'You do not have permission to permanently delete any team.'
         );
     }
 }

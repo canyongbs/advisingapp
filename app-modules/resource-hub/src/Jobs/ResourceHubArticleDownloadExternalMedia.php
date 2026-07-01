@@ -87,7 +87,7 @@ class ResourceHubArticleDownloadExternalMedia implements ShouldQueue
     public function downloadExternalMedia(string $content): string
     {
         if (Str::isUrl($content)) {
-            $disk = config('filament-tiptap-editor.disk');
+            $disk = 's3';
 
             $diskConfig = Storage::disk($disk)->getConfig();
 
@@ -113,11 +113,11 @@ class ResourceHubArticleDownloadExternalMedia implements ShouldQueue
 
                     $tmpFile = new UploadedFile($tempFile, basename($content));
 
-                    if (! in_array($tmpFile->getMimeType(), config('filament-tiptap-editor.accepted_file_types'))) {
+                    if (! in_array($tmpFile->getMimeType(), ['image/jpeg', 'image/png', 'image/webp', 'image/svg+xml', 'application/pdf'])) {
                         throw new ResourceHubExternalMediaValidationException('The file type is not allowed.');
                     }
 
-                    if (($tmpFile->getSize() / 1000) > config('filament-tiptap-editor.max_file_size')) {
+                    if (($tmpFile->getSize() / 1000) > 2042) {
                         throw new ResourceHubExternalMediaValidationException('The file size is too large.');
                     }
 
@@ -125,8 +125,8 @@ class ResourceHubArticleDownloadExternalMedia implements ShouldQueue
                         ->toMediaCollection('article_details');
 
                     return "{{media|id:{$media->getKey()};}}";
-                } catch (Exception $e) {
-                    report($e);
+                } catch (Exception $exception) {
+                    report($exception);
                 }
             }
         }

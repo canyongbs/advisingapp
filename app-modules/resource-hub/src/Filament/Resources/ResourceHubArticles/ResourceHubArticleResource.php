@@ -52,13 +52,13 @@ class ResourceHubArticleResource extends Resource
 {
     protected static ?string $model = ResourceHubArticle::class;
 
-    protected static ?string $navigationLabel = 'Resource Hub';
+    protected static ?string $navigationLabel = 'Articles';
 
     protected static ?string $modelLabel = 'resource hub article';
 
     protected static ?string $breadcrumb = 'Resource Hub';
 
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::ResourceHub;
 
     protected static ?int $navigationSort = 100;
 

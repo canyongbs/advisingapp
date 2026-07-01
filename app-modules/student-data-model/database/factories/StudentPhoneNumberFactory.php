@@ -38,7 +38,6 @@ namespace AdvisingApp\StudentDataModel\Database\Factories;
 
 use AdvisingApp\StudentDataModel\Models\PhoneNumberLookup;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use App\Features\PhoneNumberLookupFeature;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -55,9 +54,6 @@ class StudentPhoneNumberFactory extends Factory
             'number' => $this->faker->phoneNumber(),
             'ext' => null,
             'type' => $this->faker->randomElement(['Mobile', 'Home', 'Work']),
-            ...(! PhoneNumberLookupFeature::active() ? [
-                'can_receive_sms' => $this->faker->boolean(),
-            ] : []),
         ];
     }
 
@@ -66,13 +62,9 @@ class StudentPhoneNumberFactory extends Factory
      */
     public function canNotReceiveSms(): Factory
     {
-        if (PhoneNumberLookupFeature::active()) {
-            return $this->afterCreating(function (StudentPhoneNumber $phoneNumber): void {
-                PhoneNumberLookup::factory()->invalid()->create(['number' => $phoneNumber->number]);
-            });
-        }
-
-        return $this->state(['can_receive_sms' => false]);
+        return $this->afterCreating(function (StudentPhoneNumber $phoneNumber): void {
+            PhoneNumberLookup::factory()->invalid()->create(['number' => $phoneNumber->number]);
+        });
     }
 
     /**
@@ -80,13 +72,9 @@ class StudentPhoneNumberFactory extends Factory
      */
     public function canReceiveSms(): Factory
     {
-        if (PhoneNumberLookupFeature::active()) {
-            return $this->afterCreating(function (StudentPhoneNumber $phoneNumber): void {
-                PhoneNumberLookup::factory()->mobile()->create(['number' => $phoneNumber->number]);
-            });
-        }
-
-        return $this->state(['can_receive_sms' => true]);
+        return $this->afterCreating(function (StudentPhoneNumber $phoneNumber): void {
+            PhoneNumberLookup::factory()->mobile()->create(['number' => $phoneNumber->number]);
+        });
     }
 
     /**

@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Team\Filament\Resources\Teams\Pages\EditTeam;
+use AdvisingApp\Team\Filament\Resources\Teams\Pages\ViewTeam;
 use AdvisingApp\Team\Filament\Resources\Teams\RelationManagers\UsersRelationManager;
 use AdvisingApp\Team\Filament\Resources\Teams\TeamResource;
 use AdvisingApp\Team\Models\Team;
@@ -183,4 +184,30 @@ test('Super Admin Users do not show up in UsersRelationManager for Teams search 
 
             return empty($options) ? true : false;
         })->assertSuccessful();
+});
+
+// The associate/dissociate/attach/detach actions on relation managers are gated by the
+// "update" ability of the owner record (see FilamentServiceProvider). On the read-only-able
+// view page, a user who can only view the team must not see the associate action.
+test('the associate action in the team users relation manager is gated by the team update permission', function () {
+    $team = Team::factory()->create();
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('team.view-any');
+    $user->givePermissionTo('team.*.view');
+    $user->givePermissionTo('user.view-any');
+
+    actingAs($user);
+
+    livewire(UsersRelationManager::class, [
+        'ownerRecord' => $team,
+        'pageClass' => ViewTeam::class,
+    ])->assertTableActionHidden(AssociateAction::class);
+
+    $user->givePermissionTo('team.*.update');
+
+    livewire(UsersRelationManager::class, [
+        'ownerRecord' => $team,
+        'pageClass' => ViewTeam::class,
+    ])->assertTableActionVisible(AssociateAction::class);
 });

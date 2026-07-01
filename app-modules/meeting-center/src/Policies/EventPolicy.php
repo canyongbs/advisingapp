@@ -87,6 +87,14 @@ class EventPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function replicate(Authenticatable $authenticatable, Event $event): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'event.create',
+            denyResponse: 'You do not have permission to duplicate this event.'
+        );
+    }
+
     public function update(Authenticatable $authenticatable, Event $event): Response
     {
         return $authenticatable->canOrElse(
@@ -103,6 +111,14 @@ class EventPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['event.*.delete'],
+            denyResponse: 'You do not have permissions to delete any event.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, Event $event): Response
     {
         return $authenticatable->canOrElse(
@@ -111,11 +127,27 @@ class EventPolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['event.*.restore'],
+            denyResponse: 'You do not have permissions to restore any event.'
+        );
+    }
+
     public function forceDelete(Authenticatable $authenticatable, Event $event): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['event.*.force-delete'],
             denyResponse: 'You do not have permissions to permanently delete this event.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['event.*.force-delete'],
+            denyResponse: 'You do not have permissions to permanently delete any event.'
         );
     }
 

@@ -41,7 +41,6 @@ use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Notifications\ApplicationSubmissionNotification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\FormVersioningFeature;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -69,9 +68,7 @@ class SendApplicationNotificationJob implements ShouldQueue
      */
     public function handle(): void
     {
-        $application = FormVersioningFeature::active()
-            ? ($this->application->latestVersion() ?? $this->application)
-            : $this->application;
+        $application = $this->application->latestVersion() ?? $this->application;
 
         $users = $application->notificationUsers;
 

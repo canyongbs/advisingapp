@@ -1,0 +1,25 @@
+{
+    "agents": ["copilot"],
+    "cloud": false,
+    "guidelines": true,
+    "mcp": true,
+    "nightwatch": false,
+    "packages": [
+        "filament/filament",
+        "internachi/modular",
+        "spatie/laravel-medialibrary",
+        "spatie/laravel-multitenancy"
+    ],
+    "sail": false,
+    "skills": [
+        "laravel-best-practices",
+        "pennant-development",
+        "socialite-development",
+        "livewire-development",
+        "pest-testing",
+        "tailwindcss-development",
+        "modular",
+        "medialibrary-development",
+        "laravel-multitenancy-development"
+    ]
+}

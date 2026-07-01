@@ -133,8 +133,10 @@ class ListUsers extends ListRecords
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorizeIndividualRecords('delete'),
+                    RestoreBulkAction::make()
+                        ->authorizeIndividualRecords('restore'),
                     AssignLicensesBulkAction::make()
                         ->visible(fn () => auth()->user()->can('create', License::class)),
                     AssignRolesBulkAction::make()

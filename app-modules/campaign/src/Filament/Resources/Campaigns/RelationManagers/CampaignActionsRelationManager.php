@@ -98,6 +98,7 @@ class CampaignActionsRelationManager extends RelationManager
             ])
             ->headerActions([
                 Action::make('create')
+                    ->authorize(fn (): bool => auth()->user()->can('update', $campaign))
                     ->slideOver()
                     ->label('New')
                     ->modalHeading('Create Journey Steps')
@@ -140,7 +141,7 @@ class CampaignActionsRelationManager extends RelationManager
                     ->modalSubmitActionLabel('Cancel Step')
                     ->modalCancelActionLabel('Go Back')
                     ->hidden(fn (CampaignAction $record) => $record->cancelled_at !== null || $record->hasBeenExecuted())
-                    ->action(function ($record) {
+                    ->action(function (CampaignAction $record) {
                         $record->cancelled_at = now();
                         $record->save();
 
@@ -174,7 +175,8 @@ class CampaignActionsRelationManager extends RelationManager
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorizeIndividualRecords('delete'),
                 ])
                     ->hidden(fn () => $campaign->hasBeenExecuted() === true),
             ]);

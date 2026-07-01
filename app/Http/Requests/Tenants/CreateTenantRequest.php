@@ -77,7 +77,7 @@ class CreateTenantRequest extends FormRequest
             'addons.dataAdvisor' => ['required', 'boolean'],
             'addons.projectManagement' => ['required', 'boolean'],
             'addons.earlyAlert' => ['required', 'boolean'],
-            'addons.publicProfiles' => ['nullable', 'boolean'], // TODO: During Public Profiles feature cleanup, make this required
+            'addons.publicProfiles' => ['required', 'boolean'],
             'subscription' => ['required', 'array'],
             'subscription.clientName' => ['required', 'string'],
             'subscription.partnerName' => ['required', 'string'],

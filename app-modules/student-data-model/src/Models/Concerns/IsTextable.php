@@ -37,23 +37,11 @@
 namespace AdvisingApp\StudentDataModel\Models\Concerns;
 
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
-use App\Features\PhoneNumberLookupFeature;
 
 /**
  * Provides a per-row `isTextable()` predicate for StudentPhoneNumber and
  * ProspectPhoneNumber. Both expose the `smsOptOut`, `bounced`, and
  * `phoneNumberLookup` relationships keyed by `number`.
- *
- * Textability is gated per-tenant by the PhoneNumberLookupFeature Pennant
- * flag so the rollout can be staged:
- *
- *   - Feature ON  (the future-state path): a number is textable when it has
- *     no opt-out, no bounce, AND a Telnyx lookup row exists with a textable
- *     status. No row = not yet scanned = NOT textable.
- *   - Feature OFF (legacy path): the original three-way AND — `can_receive_sms`
- *     true AND no opt-out AND no bounce. The `can_receive_sms` column is
- *     still written via the existing manual entry / SIS sync / importer
- *     paths and continues to drive the gate until a tenant opts in.
  */
 trait IsTextable
 {
@@ -67,12 +55,8 @@ trait IsTextable
             return false;
         }
 
-        if (PhoneNumberLookupFeature::active()) {
-            return $this->phoneNumberLookup()
-                ->whereIn('status', PhoneNumberLookupStatus::textableStatuses())
-                ->exists();
-        }
-
-        return (bool) $this->getAttribute('can_receive_sms');
+        return $this->phoneNumberLookup()
+            ->whereIn('status', PhoneNumberLookupStatus::textableStatuses())
+            ->exists();
     }
 }

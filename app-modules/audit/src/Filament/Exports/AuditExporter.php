@@ -67,7 +67,7 @@ class AuditExporter extends Exporter
                 ->default('N/A'),
             ExportColumn::make('change_agent_name')
                 ->label('Change Agent Name')
-                ->state(function ($record) {
+                ->state(function (Audit $record) {
                     return $record->change_agent_name ?? 'System';
                 }),
             ExportColumn::make('user_agent'),

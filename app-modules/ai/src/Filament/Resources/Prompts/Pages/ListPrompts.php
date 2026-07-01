@@ -104,6 +104,7 @@ class ListPrompts extends ListRecords
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
+                        ->authorizeIndividualRecords('delete')
                         ->visible(auth()->user()->isSuperAdmin()),
                 ]),
             ]);

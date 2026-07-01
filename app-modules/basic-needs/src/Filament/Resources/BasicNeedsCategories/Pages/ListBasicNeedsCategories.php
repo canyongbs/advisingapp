@@ -85,6 +85,7 @@ class ListBasicNeedsCategories extends ListRecords
             ->toolbarActions([
                 BulkActionGroup::make([
                     BulkAction::make('delete')
+                        ->authorize(fn (): bool => auth()->user()->can('settings.*.delete'))
                         ->requiresConfirmation()
                         ->color('danger')
                         ->icon('heroicon-s-trash')
@@ -99,7 +100,7 @@ class ListBasicNeedsCategories extends ListRecords
                                 try {
                                     $record->delete();
                                     $successfullyDeleted++;
-                                } catch (SoftDeleteContraintViolationException $e) {
+                                } catch (SoftDeleteContraintViolationException $exception) {
                                     $unsuccessfullyDeleted++;
                                 }
                             }

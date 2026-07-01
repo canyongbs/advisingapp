@@ -109,10 +109,10 @@ class CloneAiThread implements ShouldQueue
                 ->sendToDatabase($this->recipient);
 
             DB::commit();
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             DB::rollBack();
 
-            throw $e;
+            throw $exception;
         }
     }
 }

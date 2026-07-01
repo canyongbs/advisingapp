@@ -1,0 +1,112 @@
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS Inc.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+@import './inputtext.css';
+@import './iconfield.css';
+
+.p-listbox {
+    @apply bg-surface-0 dark:bg-surface-950 text-surface-700 dark:text-surface-0
+        border border-surface-300 dark:border-surface-700 rounded-md
+        shadow-[0_1px_2px_0_rgba(18,18,23,0.05)]
+        transition-colors duration-200;
+}
+
+.p-listbox.p-focus {
+    @apply border-primary;
+}
+
+.p-listbox.p-disabled {
+    @apply bg-surface-200 text-surface-500 dark:bg-surface-700 dark:text-surface-400 opacity-100 cursor-default;
+}
+
+.p-listbox.p-disabled .p-listbox-option {
+    @apply text-surface-500 dark:text-surface-400 cursor-default;
+}
+
+.p-listbox.p-invalid {
+    @apply border-red-400 dark:border-red-300;
+}
+
+.p-listbox-header {
+    @apply pt-2 pb-1 px-4;
+}
+
+.p-listbox-filter {
+    @apply w-full;
+}
+
+.p-listbox-list-container {
+    @apply overflow-auto;
+}
+
+.p-listbox-list {
+    @apply list-none m-0 p-1 outline-hidden flex flex-col gap-[2px];
+}
+
+.p-listbox-option {
+    @apply flex items-center cursor-pointer relative overflow-hidden px-3 py-2 border-none rounded-sm
+        text-surface-700 dark:text-surface-0
+        transition-colors duration-200;
+}
+
+.p-listbox-striped li:nth-child(even of .p-listbox-option) {
+    @apply bg-surface-50 dark:bg-surface-900;
+}
+
+.p-listbox .p-listbox-list .p-listbox-option.p-listbox-option-selected {
+    @apply bg-highlight;
+}
+
+.p-listbox:not(.p-disabled) .p-listbox-option.p-listbox-option-selected.p-focus {
+    @apply bg-highlight-emphasis;
+}
+
+.p-listbox:not(.p-disabled) .p-listbox-option:not(.p-listbox-option-selected):not(.p-disabled).p-focus {
+    @apply bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-0;
+}
+
+.p-listbox:not(.p-disabled) .p-listbox-option:not(.p-listbox-option-selected):not(.p-disabled):hover {
+    @apply bg-surface-100 dark:bg-surface-800 text-surface-800 dark:text-surface-0;
+}
+
+.p-listbox-option-check-icon {
+    @apply relative -ms-1.5 me-1.5 text-surface-700 dark:text-surface-0;
+}
+
+.p-listbox-option-group {
+    @apply m-0 px-3 py-2 text-surface-500 dark:text-surface-400 font-semibold;
+}
+
+.p-listbox-empty-message {
+    @apply px-3 py-2;
+}

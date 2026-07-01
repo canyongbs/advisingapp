@@ -54,6 +54,7 @@ class ConvertToStudent extends Action
         parent::setUp();
 
         $this
+            ->authorize(fn (): bool => auth()->user()->can('prospect.*.update'))
             ->modalHeading('Convert Prospect to Student')
             ->modalWidth(Width::ExtraLarge)
             ->modalSubmitActionLabel('Convert')
@@ -64,7 +65,7 @@ class ConvertToStudent extends Action
                     ->label('Select Student')
                     ->searchable(),
             ])
-            ->action(function ($data, Prospect $record, Page $livewire) {
+            ->action(function (array $data, Prospect $record, Page $livewire) {
                 /** @var Student $student */
                 $student = Student::find($data['student_id']);
 

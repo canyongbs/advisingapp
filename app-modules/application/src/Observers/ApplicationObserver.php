@@ -37,13 +37,12 @@
 namespace AdvisingApp\Application\Observers;
 
 use AdvisingApp\Application\Models\Application;
-use App\Features\FormVersioningFeature;
 
 class ApplicationObserver
 {
     public function creating(Application $application): void
     {
-        if (FormVersioningFeature::active() && $application->getAttribute('root_id') === null) {
+        if ($application->getAttribute('root_id') === null) {
             $application->root_id = $application->id;
         }
     }

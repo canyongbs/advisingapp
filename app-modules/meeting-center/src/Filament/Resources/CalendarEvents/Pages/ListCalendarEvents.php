@@ -184,7 +184,8 @@ class ListCalendarEvents extends ListRecords
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->authorizeIndividualRecords('delete'),
                 ]),
             ])
             ->modifyQueryUsing(function (Builder $query): Builder {

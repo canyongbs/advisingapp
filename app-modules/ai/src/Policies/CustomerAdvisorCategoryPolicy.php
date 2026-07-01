@@ -38,7 +38,6 @@ namespace AdvisingApp\Ai\Policies;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Concerns\PerformsLicenseChecks;
-use App\Features\RenameQnaAdvisorsFeature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -58,7 +57,7 @@ class CustomerAdvisorCategoryPolicy
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: RenameQnaAdvisorsFeature::active() ? 'customer_advisor.view-any' : 'qna_advisor.view-any',
+            abilities: 'customer_advisor.view-any',
             denyResponse: 'You do not have permission to view Customer Advisor Categories.'
         );
     }
@@ -66,7 +65,7 @@ class CustomerAdvisorCategoryPolicy
     public function view(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.view' : 'qna_advisor.*.view'],
+            abilities: ['customer_advisor.*.view'],
             denyResponse: 'You do not have permission to view this Customer Advisor Category.'
         );
     }
@@ -74,7 +73,7 @@ class CustomerAdvisorCategoryPolicy
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: RenameQnaAdvisorsFeature::active() ? 'customer_advisor.create' : 'qna_advisor.create',
+            abilities: 'customer_advisor.create',
             denyResponse: 'You do not have permission to create Customer Advisor Categories.'
         );
     }
@@ -82,7 +81,7 @@ class CustomerAdvisorCategoryPolicy
     public function update(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.update' : 'qna_advisor.*.update'],
+            abilities: ['customer_advisor.*.update'],
             denyResponse: 'You do not have permission to update this Customer Advisor Category.'
         );
     }
@@ -90,24 +89,48 @@ class CustomerAdvisorCategoryPolicy
     public function delete(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.delete' : 'qna_advisor.*.delete'],
+            abilities: ['customer_advisor.*.delete'],
             denyResponse: 'You do not have permission to delete this Customer Advisor Category.'
+        );
+    }
+
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['customer_advisor.*.delete'],
+            denyResponse: 'You do not have permission to delete any Customer Advisor Category.'
         );
     }
 
     public function restore(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.restore' : 'qna_advisor.*.restore'],
+            abilities: ['customer_advisor.*.restore'],
             denyResponse: 'You do not have permission to restore this Customer Advisor Category.'
+        );
+    }
+
+    public function restoreAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['customer_advisor.*.restore'],
+            denyResponse: 'You do not have permission to restore any Customer Advisor Category.'
         );
     }
 
     public function forceDelete(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: [RenameQnaAdvisorsFeature::active() ? 'customer_advisor.*.force-delete' : 'qna_advisor.*.force-delete'],
+            abilities: ['customer_advisor.*.force-delete'],
             denyResponse: 'You do not have permission to force-delete this Customer Advisor Category.'
+        );
+    }
+
+    public function forceDeleteAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['customer_advisor.*.force-delete'],
+            denyResponse: 'You do not have permission to force-delete any Customer Advisor Category.'
         );
     }
 }

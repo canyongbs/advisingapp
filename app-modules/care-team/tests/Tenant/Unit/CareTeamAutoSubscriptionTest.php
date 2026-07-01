@@ -41,7 +41,7 @@ use App\Models\User;
 
 use function Pest\Laravel\assertDatabaseHas;
 
-it('can auto subscribe user when adding in care team', function ($educatable) {
+it('can auto subscribe user when adding in care team', function (Prospect|Student $educatable) {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $educatable->careTeam()->sync([$user->getKey()]);

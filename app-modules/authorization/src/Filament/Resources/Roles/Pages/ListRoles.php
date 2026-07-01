@@ -101,6 +101,7 @@ class ListRoles extends ListRecords
             ])
             ->recordActions([
                 Action::make('duplicateRole')
+                    ->authorize(fn (): bool => auth()->user()->can('role.create'))
                     ->label('Duplicate')
                     ->icon('heroicon-o-document-duplicate')
                     ->requiresConfirmation()
@@ -132,7 +133,7 @@ class ListRoles extends ListRecords
                                 ->send();
 
                             return redirect(EditRole::getUrl(['record' => $newRole]));
-                        } catch (Throwable $e) {
+                        } catch (Throwable $exception) {
                             DB::rollback();
                             Notification::make()
                                 ->title('Failed to duplicate role.')

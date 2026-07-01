@@ -41,6 +41,8 @@ use App\Filament\Resources\Users\Actions\AssignLicensesBulkAction;
 use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Models\Authenticatable;
 use App\Models\User;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
 use Lab404\Impersonate\Services\ImpersonateManager;
 
 use function Pest\Laravel\actingAs;
@@ -151,6 +153,55 @@ it('allows a user to leave impersonate', function () {
         ->and(auth()->id())->toBe($first->id);
 });
 
+it('hides the bulk delete action from a user without the delete permission', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('user.view-any');
+    actingAs($user);
+
+    User::factory(2)->create();
+
+    livewire(ListUsers::class)
+        ->assertSuccessful()
+        ->assertTableBulkActionHidden(DeleteBulkAction::class);
+});
+
+it('shows the bulk delete action to a user with the delete permission', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('user.view-any', 'user.*.delete');
+    actingAs($user);
+
+    User::factory(2)->create();
+
+    livewire(ListUsers::class)
+        ->assertSuccessful()
+        ->assertTableBulkActionVisible(DeleteBulkAction::class);
+});
+
+it('hides the bulk restore action from a user without the restore permission', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('user.view-any');
+    actingAs($user);
+
+    User::factory(2)->create()->each(fn (User $record) => $record->delete());
+
+    livewire(ListUsers::class)
+        ->assertSuccessful()
+        ->assertTableBulkActionHidden(RestoreBulkAction::class);
+});
+
+it('shows the bulk restore action to a user with the restore permission', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('user.view-any', 'user.*.restore');
+    actingAs($user);
+
+    User::factory(2)->create()->each(fn (User $record) => $record->delete());
+
+    livewire(ListUsers::class)
+        ->assertSuccessful()
+        ->filterTable('trashed', '0')
+        ->assertTableBulkActionVisible(RestoreBulkAction::class);
+});
+
 it('does not allow a user without permission to assign licenses in bulk', function () {
     $user = User::factory()->create();
     $user->givePermissionTo([
@@ -225,7 +276,7 @@ it('can filter users by multiple teams', function () {
         ->count(3)
         ->create();
 
-    $adminTeamGroup->each(function ($user) use ($adminTeam) {
+    $adminTeamGroup->each(function (User $user) use ($adminTeam) {
         $user->team()->associate($adminTeam)->save();
     });
 
@@ -235,7 +286,7 @@ it('can filter users by multiple teams', function () {
         ->count(3)
         ->create();
 
-    $modsTeamGroup->each(function ($user) use ($modTeam) {
+    $modsTeamGroup->each(function (User $user) use ($modTeam) {
         $user->team()->associate($modTeam)->save();
     });
 
@@ -245,7 +296,7 @@ it('can filter users by multiple teams', function () {
         ->count(3)
         ->create();
 
-    $supportTeamGroup->each(function ($user) use ($supportTeam) {
+    $supportTeamGroup->each(function (User $user) use ($supportTeam) {
         $user->team()->associate($supportTeam)->save();
     });
 
@@ -269,7 +320,7 @@ it('it filters users based on team', function () {
         ->count(3)
         ->create();
 
-    $userInTeamA->each(function ($user) use ($teamA) {
+    $userInTeamA->each(function (User $user) use ($teamA) {
         $user->team()->associate($teamA)->save();
     });
 
@@ -277,7 +328,7 @@ it('it filters users based on team', function () {
         ->count(3)
         ->create();
 
-    $userInTeamB->each(function ($user) use ($teamB) {
+    $userInTeamB->each(function (User $user) use ($teamB) {
         $user->team()->associate($teamB)->save();
     });
 
@@ -319,21 +370,21 @@ it('filters users based on roles', function () {
     $usersInRoleA = User::factory()
         ->count(3)
         ->create()
-        ->each(function ($user) use ($roleA) {
+        ->each(function (User $user) use ($roleA) {
             $user->assignRole($roleA);
         });
 
     $usersInRoleB = User::factory()
         ->count(3)
         ->create()
-        ->each(function ($user) use ($roleB) {
+        ->each(function (User $user) use ($roleB) {
             $user->assignRole($roleB);
         });
 
     $usersInRoleC = User::factory()
         ->count(3)
         ->create()
-        ->each(function ($user) use ($roleC) {
+        ->each(function (User $user) use ($roleC) {
             $user->assignRole($roleC);
         });
 
@@ -377,21 +428,21 @@ it('Filter users based on licenses', function () {
     $usersWithRetentionCrmLicense = User::factory()
         ->count(3)
         ->create()
-        ->each(function ($user) {
+        ->each(function (User $user) {
             $user->grantLicense(LicenseType::RetentionCrm);
         });
 
     $usersWithRecruitmentCrmLicense = User::factory()
         ->count(3)
         ->create()
-        ->each(function ($user) {
+        ->each(function (User $user) {
             $user->grantLicense(LicenseType::RecruitmentCrm);
         });
 
     $usersWithConversationalAiLicense = User::factory()
         ->count(3)
         ->create()
-        ->each(function ($user) {
+        ->each(function (User $user) {
             $user->grantLicense(LicenseType::ConversationalAi);
         });
     $usersWithoutLicense = User::factory()

@@ -35,8 +35,10 @@
 */
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
+/** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
     public function up(): void
     {
@@ -45,7 +47,7 @@ return new class () extends Migration {
             ->orderBy('id')
             ->first();
 
-        DB::table('campaigns')->orderBy('id')->chunk(100, function ($campaigns) use ($firstUser) {
+        DB::table('campaigns')->orderBy('id')->chunk(100, function (Collection $campaigns) use ($firstUser) {
             foreach ($campaigns as $campaign) {
                 DB::table('campaigns')
                     ->where('id', $campaign->id)

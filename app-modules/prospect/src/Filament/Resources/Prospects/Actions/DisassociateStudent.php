@@ -49,11 +49,12 @@ class DisassociateStudent extends Action
         parent::setUp();
 
         $this
+            ->authorize(fn (): bool => auth()->user()->can('prospect.*.update'))
             ->modalHeading('Disassociate Prospect from Student?')
             ->requiresConfirmation()
             ->color('danger')
             ->modalSubmitActionLabel('Yes')
-            ->action(function ($record) {
+            ->action(function (Prospect $record) {
                 /** @var Prospect $record */
                 $record->student()->dissociate();
 

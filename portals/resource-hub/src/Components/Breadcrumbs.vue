@@ -32,8 +32,8 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import { ChevronRightIcon, HomeIcon } from '@heroicons/vue/24/outline';
-    import { defineProps } from 'vue';
+    import { ChevronRightIcon } from '@heroicons/vue/20/solid';
+    import { defineEmits, defineProps } from 'vue';
 
     defineProps({
         currentCrumb: {
@@ -41,43 +41,49 @@
             required: true,
         },
         breadcrumbs: {
-            type: Object,
-            default: {},
+            type: Array,
+            default: () => [],
         },
     });
+
+    const emit = defineEmits(['crumb-click']);
 </script>
 
 <template>
-    <nav class="flex" aria-label="Breadcrumb">
-        <ol role="list" class="flex items-center space-x-4">
-            <li>
-                <div>
-                    <router-link :to="{ name: 'home' }" class="text-gray-400 hover:text-gray-500">
-                        <HomeIcon class="h-5 w-5 shrink-0" aria-hidden="true" />
-                        <span class="sr-only">Home</span>
-                    </router-link>
-                </div>
+    <nav aria-label="Breadcrumb">
+        <ol class="flex flex-wrap items-center gap-x-2">
+            <li v-if="currentCrumb !== 'Home'" class="flex items-center gap-x-2 text-sm font-medium">
+                <router-link :to="{ name: 'home' }" class="text-white/70 transition duration-75 hover:text-white">
+                    Home
+                </router-link>
             </li>
-            <li v-for="crumb in breadcrumbs" :key="crumb.route">
-                <div class="flex items-center">
-                    <ChevronRightIcon class="h-5 w-5 shrink-0 text-gray-400" aria-hidden="true" />
+            <li
+                v-for="(crumb, index) in breadcrumbs"
+                :key="(crumb.id || crumb.name) + index"
+                class="flex items-center gap-x-2 text-sm font-medium"
+            >
+                <ChevronRightIcon class="size-5 text-white/40" aria-hidden="true" />
 
+                <template v-if="crumb.route">
                     <router-link
-                        :to="{ name: crumb.route }"
-                        class="ml-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+                        :to="{ name: crumb.route, params: crumb.params }"
+                        class="text-white/70 transition duration-75 hover:text-white"
                     >
                         {{ crumb.name }}
                     </router-link>
-                </div>
+                </template>
+                <template v-else>
+                    <button
+                        @click="emit('crumb-click', crumb)"
+                        class="text-white/70 transition duration-75 hover:text-white"
+                    >
+                        {{ crumb.name }}
+                    </button>
+                </template>
             </li>
-            <li>
-                <div class="flex items-center">
-                    <ChevronRightIcon class="h-5 w-5 shrink-0 text-gray-400" aria-hidden="true" />
-
-                    <div class="ml-4 text-sm font-medium text-primary-600">
-                        {{ currentCrumb }}
-                    </div>
-                </div>
+            <li class="flex items-center gap-x-2 text-sm font-medium">
+                <ChevronRightIcon v-if="currentCrumb !== 'Home'" class="size-5 text-white/40" aria-hidden="true" />
+                <span class="text-white">{{ currentCrumb }}</span>
             </li>
         </ol>
     </nav>

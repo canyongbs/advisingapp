@@ -87,4 +87,9 @@ class ProjectMilestonePolicy
 
         return Response::allow();
     }
+
+    public function deleteAny(Authenticatable $authenticatable): Response
+    {
+        return Response::allow();
+    }
 }

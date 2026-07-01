@@ -38,7 +38,6 @@ namespace AdvisingApp\Authorization\Http\Controllers;
 
 use AdvisingApp\Authorization\Enums\SocialiteProvider;
 use App\Exceptions\InvalidUserAvatarMimeType;
-use App\Features\MediaCreatedByFeature;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Filament\Facades\Filament;
@@ -119,7 +118,7 @@ class SocialiteController extends Controller
                     if ($extension && $body) {
                         $media = $user->addMediaFromString($body)->usingFileName(Str::uuid() . '.' . $extension)->toMediaCollection('avatar');
 
-                        if (MediaCreatedByFeature::active() && is_null($media->created_by_id)) {
+                        if (is_null($media->created_by_id)) {
                             $media->createdBy()->associate($user);
                             $media->saveQuietly();
                         }
@@ -127,12 +126,12 @@ class SocialiteController extends Controller
                 } else {
                     throw new InvalidUserAvatarMimeType($mimeType, $user);
                 }
-            } catch (RequestException $e) {
-                if (! str_contains($e->getMessage(), 'Microsoft.Fast.Profile.Core.Exception.ImageNotFoundException')) {
-                    report($e);
+            } catch (RequestException $exception) {
+                if (! str_contains($exception->getMessage(), 'Microsoft.Fast.Profile.Core.Exception.ImageNotFoundException')) {
+                    report($exception);
                 }
-            } catch (Throwable $e) {
-                report($e);
+            } catch (Throwable $exception) {
+                report($exception);
             }
         }
 

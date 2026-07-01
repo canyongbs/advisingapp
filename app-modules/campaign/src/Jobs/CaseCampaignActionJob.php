@@ -106,12 +106,12 @@ class CaseCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             $this->actionEducatable->save();
 
             DB::commit();
-        } catch (Throwable $e) {
+        } catch (Throwable $exception) {
             DB::rollBack();
 
             $this->actionEducatable->markFailed();
 
-            throw $e;
+            throw $exception;
         }
     }
 }
