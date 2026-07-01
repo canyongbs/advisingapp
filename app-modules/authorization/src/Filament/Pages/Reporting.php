@@ -53,6 +53,8 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\EmbeddedTable;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -67,8 +69,6 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
     use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
-
-    protected string $view = 'authorization::filament.pages.reporting';
 
     protected static string | UnitEnum | null $navigationGroup = NavigationGroup::UserManagement;
 
@@ -96,6 +96,14 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
             static::getUrl() => 'Reporting',
             '' => 'List',
         ];
+    }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                EmbeddedTable::make(),
+            ]);
     }
 
     public function table(Table $table): Table
