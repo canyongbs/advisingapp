@@ -45,9 +45,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @mixin IdeHelperCalendar
  *
- * @phpstan-ignore-next-line Common.modelMissingFillable
  */
-class Calendar extends BaseModel
+class Calendar extends BaseModel // @phpstan-ignore Common.modelMissingFillable
 {
     protected $hidden = [
         'oauth_token',

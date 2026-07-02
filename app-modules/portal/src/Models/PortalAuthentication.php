@@ -50,9 +50,8 @@ use Illuminate\Support\Carbon;
  *
  * @mixin IdeHelperPortalAuthentication
  *
- * @phpstan-ignore-next-line Common.modelMissingFillable
  */
-#[NoPermissions]
+#[NoPermissions] // @phpstan-ignore Common.modelMissingFillable
 class PortalAuthentication extends BaseModel
 {
     use MassPrunable;
