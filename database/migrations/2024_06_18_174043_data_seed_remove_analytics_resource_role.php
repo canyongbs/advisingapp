@@ -42,38 +42,34 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            $roleDetails = DB::table('roles')->where('name', 'analytics.analytics_management')->whereIn('guard_name', ['web', 'api'])->get();
+        $roleDetails = DB::table('roles')->where('name', 'analytics.analytics_management')->whereIn('guard_name', ['web', 'api'])->get();
 
-            if (! $roleDetails->isEmpty()) {
-                foreach ($roleDetails as $role) {
-                    DB::table('model_has_roles')->where('role_id', $role->id)->delete();
-                    DB::table('role_has_permissions')->where('role_id', $role->id)->delete();
-                    DB::table('roles')->where('id', $role->id)->delete();
-                }
+        if (! $roleDetails->isEmpty()) {
+            foreach ($roleDetails as $role) {
+                DB::table('model_has_roles')->where('role_id', $role->id)->delete();
+                DB::table('role_has_permissions')->where('role_id', $role->id)->delete();
+                DB::table('roles')->where('id', $role->id)->delete();
             }
-        });
+        }
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        DB::transaction(function () {
-            $analyticsRoles = [
-                [
-                    'id' => (string) Str::orderedUuid(),
-                    'name' => 'analytics.analytics_management',
-                    'guard_name' => 'web',
-                    'created_at' => now(),
-                ],
-                [
-                    'id' => (string) Str::orderedUuid(),
-                    'name' => 'analytics.analytics_management',
-                    'guard_name' => 'api',
-                    'created_at' => now(),
-                ],
-            ];
-            DB::table('roles')->insert($analyticsRoles);
-        });
+        $analyticsRoles = [
+            [
+                'id' => (string) Str::orderedUuid(),
+                'name' => 'analytics.analytics_management',
+                'guard_name' => 'web',
+                'created_at' => now(),
+            ],
+            [
+                'id' => (string) Str::orderedUuid(),
+                'name' => 'analytics.analytics_management',
+                'guard_name' => 'api',
+                'created_at' => now(),
+            ],
+        ];
+        DB::table('roles')->insert($analyticsRoles);
     }
 };

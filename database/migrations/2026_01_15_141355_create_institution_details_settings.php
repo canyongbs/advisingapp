@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
@@ -42,41 +41,37 @@ return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            try {
-                $this->migrator->add('institution.ipeds_id', null);
-            } catch (SettingAlreadyExists $exception) {
-                // do nothing
-            }
+        try {
+            $this->migrator->add('institution.ipeds_id', null);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-            try {
-                $this->migrator->add('institution.name', null);
-            } catch (SettingAlreadyExists $exception) {
-                // do nothing
-            }
+        try {
+            $this->migrator->add('institution.name', null);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-            try {
-                $this->migrator->add('institution.dark_logo', null);
-            } catch (SettingAlreadyExists $exception) {
-                // do nothing
-            }
+        try {
+            $this->migrator->add('institution.dark_logo', null);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-            try {
-                $this->migrator->add('institution.light_logo', null);
-            } catch (SettingAlreadyExists $exception) {
-                // do nothing
-            }
-        });
+        try {
+            $this->migrator->add('institution.light_logo', null);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        DB::transaction(function () {
-            $this->migrator->deleteIfExists('institution.ipeds_id');
-            $this->migrator->deleteIfExists('institution.name');
-            $this->migrator->deleteIfExists('institution.dark_logo');
-            $this->migrator->deleteIfExists('institution.light_logo');
-        });
+        $this->migrator->deleteIfExists('institution.ipeds_id');
+        $this->migrator->deleteIfExists('institution.name');
+        $this->migrator->deleteIfExists('institution.dark_logo');
+        $this->migrator->deleteIfExists('institution.light_logo');
     }
 };

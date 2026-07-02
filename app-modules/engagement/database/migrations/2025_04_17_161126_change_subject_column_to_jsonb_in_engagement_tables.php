@@ -43,28 +43,24 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            DB::statement('ALTER TABLE engagements ALTER COLUMN subject TYPE jsonb USING subject::jsonb');
-            DB::statement('ALTER TABLE engagement_batches ALTER COLUMN subject TYPE jsonb USING subject::jsonb');
-            DB::statement('ALTER TABLE form_email_auto_replies ALTER COLUMN subject TYPE jsonb USING subject::jsonb');
-        });
+        DB::statement('ALTER TABLE engagements ALTER COLUMN subject TYPE jsonb USING subject::jsonb');
+        DB::statement('ALTER TABLE engagement_batches ALTER COLUMN subject TYPE jsonb USING subject::jsonb');
+        DB::statement('ALTER TABLE form_email_auto_replies ALTER COLUMN subject TYPE jsonb USING subject::jsonb');
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('engagements', function (Blueprint $table) {
-                $table->text('subject')->nullable()->change();
-            });
+        Schema::table('engagements', function (Blueprint $table) {
+            $table->text('subject')->nullable()->change();
+        });
 
-            Schema::table('engagement_batches', function (Blueprint $table) {
-                $table->text('subject')->nullable()->change();
-            });
+        Schema::table('engagement_batches', function (Blueprint $table) {
+            $table->text('subject')->nullable()->change();
+        });
 
-            Schema::table('form_email_auto_replies', function (Blueprint $table) {
-                $table->text('subject')->nullable()->change();
-            });
+        Schema::table('form_email_auto_replies', function (Blueprint $table) {
+            $table->text('subject')->nullable()->change();
         });
     }
 };

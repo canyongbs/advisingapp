@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
@@ -43,14 +42,12 @@ return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            $this->migrator->deleteIfExists('audit.audited_models');
+        $this->migrator->deleteIfExists('audit.audited_models');
 
-            try {
-                $this->migrator->add('audit.audited_models_exclude', []);
-            } catch (SettingAlreadyExists $exception) {
-                // Ignore
-            }
-        });
+        try {
+            $this->migrator->add('audit.audited_models_exclude', []);
+        } catch (SettingAlreadyExists $exception) {
+            // Ignore
+        }
     }
 };

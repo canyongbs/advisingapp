@@ -36,49 +36,44 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('interaction_outcomes', function (Blueprint $table) {
-                $table->boolean('is_default')->default(false);
+        Schema::table('interaction_outcomes', function (Blueprint $table) {
+            $table->boolean('is_default')->default(false);
 
-                $table->unique(['is_default', 'deleted_at']);
-            });
+            $table->unique(['is_default', 'deleted_at']);
+        });
 
-            Schema::table('interaction_relations', function (Blueprint $table) {
-                $table->boolean('is_default')->default(false);
+        Schema::table('interaction_relations', function (Blueprint $table) {
+            $table->boolean('is_default')->default(false);
 
-                $table->unique(['is_default', 'deleted_at']);
-            });
+            $table->unique(['is_default', 'deleted_at']);
+        });
 
-            Schema::table('interaction_statuses', function (Blueprint $table) {
-                $table->boolean('is_default')->default(false);
+        Schema::table('interaction_statuses', function (Blueprint $table) {
+            $table->boolean('is_default')->default(false);
 
-                $table->unique(['is_default', 'deleted_at']);
-            });
+            $table->unique(['is_default', 'deleted_at']);
         });
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('interaction_outcomes', function (Blueprint $table) {
-                $table->dropColumn('is_default');
-            });
+        Schema::table('interaction_outcomes', function (Blueprint $table) {
+            $table->dropColumn('is_default');
+        });
 
-            Schema::table('interaction_relations', function (Blueprint $table) {
-                $table->dropColumn('is_default');
-            });
+        Schema::table('interaction_relations', function (Blueprint $table) {
+            $table->dropColumn('is_default');
+        });
 
-            Schema::table('interaction_statuses', function (Blueprint $table) {
-                $table->dropColumn('is_default');
-            });
+        Schema::table('interaction_statuses', function (Blueprint $table) {
+            $table->dropColumn('is_default');
         });
     }
 };

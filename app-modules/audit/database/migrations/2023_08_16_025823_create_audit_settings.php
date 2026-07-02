@@ -35,7 +35,6 @@
 */
 
 use AdvisingApp\Audit\Actions\Finders\AuditableModels;
-use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
@@ -43,10 +42,8 @@ return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            $this->migrator->add('audit.retention_duration_in_days', 90);
-            $this->migrator->add('audit.assistant_chat_message_logs_retention_duration_in_days', 30);
-            $this->migrator->add('audit.audited_models', AuditableModels::all()->keys());
-        });
+        $this->migrator->add('audit.retention_duration_in_days', 90);
+        $this->migrator->add('audit.assistant_chat_message_logs_retention_duration_in_days', 30);
+        $this->migrator->add('audit.audited_models', AuditableModels::all()->keys());
     }
 };

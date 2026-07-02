@@ -35,45 +35,40 @@
 */
 
 use AdvisingApp\Portal\Enums\GdprBannerButtonLabel;
-use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            $this->migrator->add(
-                'portal.gdpr_banner_text',
-                [
-                    'type' => 'doc',
-                    'content' => [
-                        [
-                            'type' => 'paragraph',
-                            'attrs' => [
-                                'textAlign' => 'start',
-                            ],
-                            'content' => [
-                                [
-                                    'type' => 'text',
-                                    'text' => 'We use cookies to personalize content, to provide social media features, and to analyze our traffic. We also share information about your use of our site with our partners who may combine it with other information that you\'ve provided to them or that they\'ve collected from your use of their services.',
-                                ],
+        $this->migrator->add(
+            'portal.gdpr_banner_text',
+            [
+                'type' => 'doc',
+                'content' => [
+                    [
+                        'type' => 'paragraph',
+                        'attrs' => [
+                            'textAlign' => 'start',
+                        ],
+                        'content' => [
+                            [
+                                'type' => 'text',
+                                'text' => 'We use cookies to personalize content, to provide social media features, and to analyze our traffic. We also share information about your use of our site with our partners who may combine it with other information that you\'ve provided to them or that they\'ve collected from your use of their services.',
                             ],
                         ],
                     ],
-                ]
-            );
+                ],
+            ]
+        );
 
-            $this->migrator->add('portal.gdpr_banner_button_label', GdprBannerButtonLabel::AllowCookies);
-        });
+        $this->migrator->add('portal.gdpr_banner_button_label', GdprBannerButtonLabel::AllowCookies);
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        DB::transaction(function () {
-            $this->migrator->delete('portal.gdpr_banner_text');
-            $this->migrator->delete('portal.gdpr_banner_button_label');
-        });
+        $this->migrator->delete('portal.gdpr_banner_text');
+        $this->migrator->delete('portal.gdpr_banner_button_label');
     }
 };

@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
@@ -42,69 +41,65 @@ return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            try {
-                $this->migrator->add('ai.open_ai_gpt_35_applicable_features', []);
-            } catch (SettingAlreadyExists $exception) {
-                // do nothing
-            }
+        try {
+            $this->migrator->add('ai.open_ai_gpt_35_applicable_features', []);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-            try {
-                $this->migrator->add('ai.open_ai_gpt_4_applicable_features', []);
-            } catch (SettingAlreadyExists $exception) {
-                // do nothing
-            }
+        try {
+            $this->migrator->add('ai.open_ai_gpt_4_applicable_features', []);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-            try {
-                $this->migrator->add('ai.open_ai_gpt_4o_applicable_features', []);
-            } catch (SettingAlreadyExists $exception) {
-                // do nothing
-            }
+        try {
+            $this->migrator->add('ai.open_ai_gpt_4o_applicable_features', []);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-            try {
-                $this->migrator->add('ai.open_ai_gpt_4o_mini_applicable_features', []);
-            } catch (SettingAlreadyExists $exception) {
-                // do nothing
-            }
+        try {
+            $this->migrator->add('ai.open_ai_gpt_4o_mini_applicable_features', []);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-            try {
-                $this->migrator->add('ai.open_ai_gpt_o1_mini_applicable_features', []);
-            } catch (SettingAlreadyExists $exception) {
-                // do nothing
-            }
+        try {
+            $this->migrator->add('ai.open_ai_gpt_o1_mini_applicable_features', []);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-            try {
-                $this->migrator->add('ai.open_ai_gpt_o3_mini_applicable_features', []);
-            } catch (SettingAlreadyExists $exception) {
-                // do nothing
-            }
+        try {
+            $this->migrator->add('ai.open_ai_gpt_o3_mini_applicable_features', []);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-            try {
-                $this->migrator->add('ai.open_ai_gpt_41_mini_applicable_features', []);
-            } catch (SettingAlreadyExists $exception) {
-                // do nothing
-            }
+        try {
+            $this->migrator->add('ai.open_ai_gpt_41_mini_applicable_features', []);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
 
-            try {
-                $this->migrator->add('ai.open_ai_gpt_41_nano_applicable_features', []);
-            } catch (SettingAlreadyExists $exception) {
-                // do nothing
-            }
-        });
+        try {
+            $this->migrator->add('ai.open_ai_gpt_41_nano_applicable_features', []);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        DB::transaction(function () {
-            $this->migrator->deleteIfExists('ai.open_ai_gpt_35_applicable_features');
-            $this->migrator->deleteIfExists('ai.open_ai_gpt_4_applicable_features');
-            $this->migrator->deleteIfExists('ai.open_ai_gpt_4o_applicable_features');
-            $this->migrator->deleteIfExists('ai.open_ai_gpt_4o_mini_applicable_features');
-            $this->migrator->deleteIfExists('ai.open_ai_gpt_o1_mini_applicable_features');
-            $this->migrator->deleteIfExists('ai.open_ai_gpt_o3_mini_applicable_features');
-            $this->migrator->deleteIfExists('ai.open_ai_gpt_41_mini_applicable_features');
-            $this->migrator->deleteIfExists('ai.open_ai_gpt_41_nano_applicable_features');
-        });
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_35_applicable_features');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_4_applicable_features');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_4o_applicable_features');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_4o_mini_applicable_features');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_o1_mini_applicable_features');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_o3_mini_applicable_features');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_41_mini_applicable_features');
+        $this->migrator->deleteIfExists('ai.open_ai_gpt_41_nano_applicable_features');
     }
 };

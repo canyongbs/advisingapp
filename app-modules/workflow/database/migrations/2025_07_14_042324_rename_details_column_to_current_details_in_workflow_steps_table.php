@@ -41,28 +41,24 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            DB::beginTransaction();
+        DB::beginTransaction();
 
-            DB::statement('ALTER TABLE workflow_steps RENAME COLUMN details_id TO current_details_id');
+        DB::statement('ALTER TABLE workflow_steps RENAME COLUMN details_id TO current_details_id');
 
-            DB::statement('ALTER TABLE workflow_steps RENAME COLUMN details_type TO current_details_type');
+        DB::statement('ALTER TABLE workflow_steps RENAME COLUMN details_type TO current_details_type');
 
-            DB::commit();
-        });
+        DB::commit();
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        DB::transaction(function () {
-            DB::beginTransaction();
+        DB::beginTransaction();
 
-            DB::statement('ALTER TABLE workflow_steps RENAME COLUMN current_details_id TO details_id');
+        DB::statement('ALTER TABLE workflow_steps RENAME COLUMN current_details_id TO details_id');
 
-            DB::statement('ALTER TABLE workflow_steps RENAME COLUMN current_details_type TO details_type');
+        DB::statement('ALTER TABLE workflow_steps RENAME COLUMN current_details_type TO details_type');
 
-            DB::commit();
-        });
+        DB::commit();
     }
 };

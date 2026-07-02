@@ -35,7 +35,6 @@
 */
 
 use CanyonGBS\Common\Database\Migrations\Concerns\CanModifySettings;
-use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
@@ -44,40 +43,36 @@ return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            $this->migrator->delete('report_assistant.prompt_system_context');
+        $this->migrator->delete('report_assistant.prompt_system_context');
 
-            $this->updateSettings(
-                group: 'license',
-                name: 'data',
-                modifyPayload: function (array $data) {
-                    if (array_key_exists('experimentalReporting', $data['addons'] ?? [])) {
-                        unset($data['addons']['experimentalReporting']);
-                    }
+        $this->updateSettings(
+            group: 'license',
+            name: 'data',
+            modifyPayload: function (array $data) {
+                if (array_key_exists('experimentalReporting', $data['addons'] ?? [])) {
+                    unset($data['addons']['experimentalReporting']);
+                }
 
-                    return $data;
-                },
-                isEncrypted: true,
-            );
-        });
+                return $data;
+            },
+            isEncrypted: true,
+        );
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        DB::transaction(function () {
-            $this->updateSettings(
-                group: 'license',
-                name: 'data',
-                modifyPayload: function (array $data) {
-                    $data['addons']['experimentalReporting'] = false;
+        $this->updateSettings(
+            group: 'license',
+            name: 'data',
+            modifyPayload: function (array $data) {
+                $data['addons']['experimentalReporting'] = false;
 
-                    return $data;
-                },
-                isEncrypted: true,
-            );
+                return $data;
+            },
+            isEncrypted: true,
+        );
 
-            $this->migrator->add('report_assistant.prompt_system_context');
-        });
+        $this->migrator->add('report_assistant.prompt_system_context');
     }
 };

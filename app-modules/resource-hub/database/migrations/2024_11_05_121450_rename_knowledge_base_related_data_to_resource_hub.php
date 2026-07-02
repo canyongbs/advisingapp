@@ -41,125 +41,121 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            /**
-             * Renaming the table division_knowledge_base_item to division_resource_hub_item
-             * Renaming the column knowledge_base_item_id to resource_hub_item_id in table
-            **/
-            DB::beginTransaction();
+        /**
+         * Renaming the table division_knowledge_base_item to division_resource_hub_item
+         * Renaming the column knowledge_base_item_id to resource_hub_item_id in table
+        **/
+        DB::beginTransaction();
 
-            DB::statement('ALTER TABLE division_knowledge_base_item RENAME TO division_resource_hub_item');
+        DB::statement('ALTER TABLE division_knowledge_base_item RENAME TO division_resource_hub_item');
 
-            DB::statement('ALTER TABLE division_resource_hub_item RENAME CONSTRAINT division_knowledge_base_item_division_id_foreign TO division_resource_hub_item_division_id_foreign');
+        DB::statement('ALTER TABLE division_resource_hub_item RENAME CONSTRAINT division_knowledge_base_item_division_id_foreign TO division_resource_hub_item_division_id_foreign');
 
-            DB::statement('ALTER TABLE division_resource_hub_item RENAME CONSTRAINT division_knowledge_base_item_knowledge_base_item_id_foreign TO division_resource_hub_item_resource_hub_item_id_foreign');
+        DB::statement('ALTER TABLE division_resource_hub_item RENAME CONSTRAINT division_knowledge_base_item_knowledge_base_item_id_foreign TO division_resource_hub_item_resource_hub_item_id_foreign');
 
-            DB::statement('ALTER TABLE division_resource_hub_item RENAME COLUMN knowledge_base_item_id TO resource_hub_item_id');
+        DB::statement('ALTER TABLE division_resource_hub_item RENAME COLUMN knowledge_base_item_id TO resource_hub_item_id');
 
-            DB::statement('CREATE VIEW division_knowledge_base_item AS SELECT resource_hub_item_id AS knowledge_base_item_id FROM division_resource_hub_item');
+        DB::statement('CREATE VIEW division_knowledge_base_item AS SELECT resource_hub_item_id AS knowledge_base_item_id FROM division_resource_hub_item');
 
-            DB::commit();
+        DB::commit();
 
-            /**
-             * Renaming the table knowledge_base_item_upvotes to resource_hub_item_upvotes
-             * Renaming the column knowledge_base_item_id to resource_hub_item_id in table
-            **/
-            DB::beginTransaction();
+        /**
+         * Renaming the table knowledge_base_item_upvotes to resource_hub_item_upvotes
+         * Renaming the column knowledge_base_item_id to resource_hub_item_id in table
+        **/
+        DB::beginTransaction();
 
-            DB::statement('ALTER TABLE knowledge_base_item_upvotes RENAME TO resource_hub_item_upvotes');
+        DB::statement('ALTER TABLE knowledge_base_item_upvotes RENAME TO resource_hub_item_upvotes');
 
-            DB::statement('ALTER TABLE resource_hub_item_upvotes RENAME CONSTRAINT knowledge_base_item_upvotes_pkey TO resource_hub_item_upvotes_pkey');
+        DB::statement('ALTER TABLE resource_hub_item_upvotes RENAME CONSTRAINT knowledge_base_item_upvotes_pkey TO resource_hub_item_upvotes_pkey');
 
-            DB::statement('ALTER TABLE resource_hub_item_upvotes RENAME CONSTRAINT knowledge_base_item_upvotes_knowledge_base_item_id_foreign TO resource_hub_item_upvotes_resource_hub_item_id_foreign');
+        DB::statement('ALTER TABLE resource_hub_item_upvotes RENAME CONSTRAINT knowledge_base_item_upvotes_knowledge_base_item_id_foreign TO resource_hub_item_upvotes_resource_hub_item_id_foreign');
 
-            DB::statement('ALTER TABLE resource_hub_item_upvotes RENAME CONSTRAINT knowledge_base_item_upvotes_user_id_foreign TO resource_hub_item_upvotes_user_id_foreign');
+        DB::statement('ALTER TABLE resource_hub_item_upvotes RENAME CONSTRAINT knowledge_base_item_upvotes_user_id_foreign TO resource_hub_item_upvotes_user_id_foreign');
 
-            DB::statement('ALTER TABLE resource_hub_item_upvotes RENAME COLUMN knowledge_base_item_id TO resource_hub_item_id');
+        DB::statement('ALTER TABLE resource_hub_item_upvotes RENAME COLUMN knowledge_base_item_id TO resource_hub_item_id');
 
-            DB::statement('CREATE VIEW knowledge_base_item_upvotes AS SELECT resource_hub_item_id AS knowledge_base_item_id FROM resource_hub_item_upvotes');
+        DB::statement('CREATE VIEW knowledge_base_item_upvotes AS SELECT resource_hub_item_id AS knowledge_base_item_id FROM resource_hub_item_upvotes');
 
-            DB::commit();
+        DB::commit();
 
-            /**
-             * Renaming the table knowledge_base_item_views to resource_hub_item_views
-             * Renaming the column knowledge_base_item_id to resource_hub_item_id in table
-            **/
-            DB::beginTransaction();
+        /**
+         * Renaming the table knowledge_base_item_views to resource_hub_item_views
+         * Renaming the column knowledge_base_item_id to resource_hub_item_id in table
+        **/
+        DB::beginTransaction();
 
-            DB::statement('ALTER TABLE knowledge_base_item_views RENAME TO resource_hub_item_views');
+        DB::statement('ALTER TABLE knowledge_base_item_views RENAME TO resource_hub_item_views');
 
-            DB::statement('ALTER TABLE resource_hub_item_views RENAME CONSTRAINT knowledge_base_item_views_pkey TO resource_hub_item_views_pkey');
+        DB::statement('ALTER TABLE resource_hub_item_views RENAME CONSTRAINT knowledge_base_item_views_pkey TO resource_hub_item_views_pkey');
 
-            DB::statement('ALTER TABLE resource_hub_item_views RENAME CONSTRAINT knowledge_base_item_views_knowledge_base_item_id_foreign TO resource_hub_item_views_resource_hub_item_id_foreign');
+        DB::statement('ALTER TABLE resource_hub_item_views RENAME CONSTRAINT knowledge_base_item_views_knowledge_base_item_id_foreign TO resource_hub_item_views_resource_hub_item_id_foreign');
 
-            DB::statement('ALTER TABLE resource_hub_item_views RENAME CONSTRAINT knowledge_base_item_views_user_id_foreign TO resource_hub_item_views_user_id_foreign');
+        DB::statement('ALTER TABLE resource_hub_item_views RENAME CONSTRAINT knowledge_base_item_views_user_id_foreign TO resource_hub_item_views_user_id_foreign');
 
-            DB::statement('ALTER TABLE resource_hub_item_views RENAME COLUMN knowledge_base_item_id TO resource_hub_item_id');
+        DB::statement('ALTER TABLE resource_hub_item_views RENAME COLUMN knowledge_base_item_id TO resource_hub_item_id');
 
-            DB::statement('CREATE VIEW knowledge_base_item_views AS SELECT resource_hub_item_id AS knowledge_base_item_id FROM resource_hub_item_views');
+        DB::statement('CREATE VIEW knowledge_base_item_views AS SELECT resource_hub_item_id AS knowledge_base_item_id FROM resource_hub_item_views');
 
-            DB::commit();
-        });
+        DB::commit();
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        DB::transaction(function () {
-            /*** Renaming the table division_resource_hub_item to division_knowledge_base_item
-             ** Renaming the column resource_hub_item_id to knowledge_base_item_id in table
-            **/
-            DB::beginTransaction();
+        /*** Renaming the table division_resource_hub_item to division_knowledge_base_item
+         ** Renaming the column resource_hub_item_id to knowledge_base_item_id in table
+        **/
+        DB::beginTransaction();
 
-            DB::statement('DROP VIEW IF EXISTS division_knowledge_base_item');
+        DB::statement('DROP VIEW IF EXISTS division_knowledge_base_item');
 
-            DB::statement('ALTER TABLE division_resource_hub_item RENAME TO division_knowledge_base_item');
+        DB::statement('ALTER TABLE division_resource_hub_item RENAME TO division_knowledge_base_item');
 
-            DB::statement('ALTER TABLE division_knowledge_base_item RENAME COLUMN resource_hub_item_id TO knowledge_base_item_id');
+        DB::statement('ALTER TABLE division_knowledge_base_item RENAME COLUMN resource_hub_item_id TO knowledge_base_item_id');
 
-            DB::statement('ALTER TABLE division_knowledge_base_item RENAME CONSTRAINT division_resource_hub_item_division_id_foreign TO division_knowledge_base_item_division_id_foreign');
+        DB::statement('ALTER TABLE division_knowledge_base_item RENAME CONSTRAINT division_resource_hub_item_division_id_foreign TO division_knowledge_base_item_division_id_foreign');
 
-            DB::statement('ALTER TABLE division_knowledge_base_item RENAME CONSTRAINT division_resource_hub_item_resource_hub_item_id_foreign TO division_knowledge_base_item_knowledge_base_item_id_foreign');
+        DB::statement('ALTER TABLE division_knowledge_base_item RENAME CONSTRAINT division_resource_hub_item_resource_hub_item_id_foreign TO division_knowledge_base_item_knowledge_base_item_id_foreign');
 
-            DB::commit();
+        DB::commit();
 
-            /*** Renaming the table resource_hub_item_upvotes to knowledge_base_item_upvotes
-             ** Renaming the column resource_hub_item_id to knowledge_base_item_id in table
-            **/
-            DB::beginTransaction();
+        /*** Renaming the table resource_hub_item_upvotes to knowledge_base_item_upvotes
+         ** Renaming the column resource_hub_item_id to knowledge_base_item_id in table
+        **/
+        DB::beginTransaction();
 
-            DB::statement('DROP VIEW IF EXISTS knowledge_base_item_upvotes');
+        DB::statement('DROP VIEW IF EXISTS knowledge_base_item_upvotes');
 
-            DB::statement('ALTER TABLE resource_hub_item_upvotes RENAME TO knowledge_base_item_upvotes');
+        DB::statement('ALTER TABLE resource_hub_item_upvotes RENAME TO knowledge_base_item_upvotes');
 
-            DB::statement('ALTER TABLE knowledge_base_item_upvotes RENAME COLUMN resource_hub_item_id TO knowledge_base_item_id');
+        DB::statement('ALTER TABLE knowledge_base_item_upvotes RENAME COLUMN resource_hub_item_id TO knowledge_base_item_id');
 
-            DB::statement('ALTER TABLE knowledge_base_item_upvotes RENAME CONSTRAINT resource_hub_item_upvotes_pkey TO knowledge_base_item_upvotes_pkey');
+        DB::statement('ALTER TABLE knowledge_base_item_upvotes RENAME CONSTRAINT resource_hub_item_upvotes_pkey TO knowledge_base_item_upvotes_pkey');
 
-            DB::statement('ALTER TABLE knowledge_base_item_upvotes RENAME CONSTRAINT resource_hub_item_upvotes_resource_hub_item_id_foreign TO knowledge_base_item_upvotes_knowledge_base_item_id_foreign');
+        DB::statement('ALTER TABLE knowledge_base_item_upvotes RENAME CONSTRAINT resource_hub_item_upvotes_resource_hub_item_id_foreign TO knowledge_base_item_upvotes_knowledge_base_item_id_foreign');
 
-            DB::statement('ALTER TABLE knowledge_base_item_upvotes RENAME CONSTRAINT resource_hub_item_upvotes_user_id_foreign TO knowledge_base_item_upvotes_user_id_foreign');
+        DB::statement('ALTER TABLE knowledge_base_item_upvotes RENAME CONSTRAINT resource_hub_item_upvotes_user_id_foreign TO knowledge_base_item_upvotes_user_id_foreign');
 
-            DB::commit();
+        DB::commit();
 
-            /*** Renaming the table resource_hub_item_views to knowledge_base_item_views
-             ** Renaming the column resource_hub_item_id to knowledge_base_item_id in table
-            **/
-            DB::beginTransaction();
+        /*** Renaming the table resource_hub_item_views to knowledge_base_item_views
+         ** Renaming the column resource_hub_item_id to knowledge_base_item_id in table
+        **/
+        DB::beginTransaction();
 
-            DB::statement('DROP VIEW IF EXISTS knowledge_base_item_views');
+        DB::statement('DROP VIEW IF EXISTS knowledge_base_item_views');
 
-            DB::statement('ALTER TABLE resource_hub_item_views RENAME TO knowledge_base_item_views');
+        DB::statement('ALTER TABLE resource_hub_item_views RENAME TO knowledge_base_item_views');
 
-            DB::statement('ALTER TABLE knowledge_base_item_views RENAME COLUMN resource_hub_item_id TO knowledge_base_item_id');
+        DB::statement('ALTER TABLE knowledge_base_item_views RENAME COLUMN resource_hub_item_id TO knowledge_base_item_id');
 
-            DB::statement('ALTER TABLE knowledge_base_item_views RENAME CONSTRAINT resource_hub_item_views_resource_hub_item_id_foreign TO knowledge_base_item_views_knowledge_base_item_id_foreign');
+        DB::statement('ALTER TABLE knowledge_base_item_views RENAME CONSTRAINT resource_hub_item_views_resource_hub_item_id_foreign TO knowledge_base_item_views_knowledge_base_item_id_foreign');
 
-            DB::statement('ALTER TABLE knowledge_base_item_views RENAME CONSTRAINT resource_hub_item_views_user_id_foreign TO knowledge_base_item_views_user_id_foreign');
+        DB::statement('ALTER TABLE knowledge_base_item_views RENAME CONSTRAINT resource_hub_item_views_user_id_foreign TO knowledge_base_item_views_user_id_foreign');
 
-            DB::statement('ALTER TABLE knowledge_base_item_views RENAME CONSTRAINT resource_hub_item_views_pkey TO knowledge_base_item_views_pkey');
+        DB::statement('ALTER TABLE knowledge_base_item_views RENAME CONSTRAINT resource_hub_item_views_pkey TO knowledge_base_item_views_pkey');
 
-            DB::commit();
-        });
+        DB::commit();
     }
 };

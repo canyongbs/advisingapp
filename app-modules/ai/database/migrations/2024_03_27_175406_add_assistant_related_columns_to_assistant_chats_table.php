@@ -36,42 +36,37 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('assistant_chats', function (Blueprint $table) {
-                $table->string('assistant_id')->nullable();
-                $table->string('thread_id')->nullable();
-            });
+        Schema::table('assistant_chats', function (Blueprint $table) {
+            $table->string('assistant_id')->nullable();
+            $table->string('thread_id')->nullable();
+        });
 
-            Schema::table('assistant_chat_messages', function (Blueprint $table) {
-                $table->string('message_id')->nullable();
-                $table->string('run_id')->nullable();
-                // @phpstan-ignore Common.jsonColumnInMigration
-                $table->json('file_ids')->nullable();
-            });
+        Schema::table('assistant_chat_messages', function (Blueprint $table) {
+            $table->string('message_id')->nullable();
+            $table->string('run_id')->nullable();
+            // @phpstan-ignore Common.jsonColumnInMigration
+            $table->json('file_ids')->nullable();
         });
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('assistant_chats', function (Blueprint $table) {
-                $table->dropColumn('assistant_id');
-                $table->dropColumn('thread_id');
-            });
+        Schema::table('assistant_chats', function (Blueprint $table) {
+            $table->dropColumn('assistant_id');
+            $table->dropColumn('thread_id');
+        });
 
-            Schema::table('assistant_chat_messages', function (Blueprint $table) {
-                $table->dropColumn('message_id');
-                $table->dropColumn('run_id');
-                $table->dropColumn('file_ids');
-            });
+        Schema::table('assistant_chat_messages', function (Blueprint $table) {
+            $table->dropColumn('message_id');
+            $table->dropColumn('run_id');
+            $table->dropColumn('file_ids');
         });
     }
 };

@@ -42,41 +42,37 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            $groupId = (string) Str::orderedUuid();
+        $groupId = (string) Str::orderedUuid();
 
-            DB::table('permission_groups')
-                ->insert(
-                    [
-                        'id' => $groupId,
-                        'name' => 'Amazon S3',
-                        'created_at' => now(),
-                    ]
-                );
-
-            DB::table('permissions')->insert(
+        DB::table('permission_groups')
+            ->insert(
                 [
-                    'id' => (string) Str::orderedUuid(),
-                    'group_id' => $groupId,
-                    'guard_name' => 'web',
-                    'name' => 'amazon-s3.manage_s3_settings',
+                    'id' => $groupId,
+                    'name' => 'Amazon S3',
                     'created_at' => now(),
                 ]
             );
-        });
+
+        DB::table('permissions')->insert(
+            [
+                'id' => (string) Str::orderedUuid(),
+                'group_id' => $groupId,
+                'guard_name' => 'web',
+                'name' => 'amazon-s3.manage_s3_settings',
+                'created_at' => now(),
+            ]
+        );
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        DB::transaction(function () {
-            DB::table('permissions')
-                ->where('name', 'amazon-s3.manage_s3_settings')
-                ->delete();
+        DB::table('permissions')
+            ->where('name', 'amazon-s3.manage_s3_settings')
+            ->delete();
 
-            DB::table('permission_groups')
-                ->where('name', 'Amazon S3')
-                ->delete();
-        });
+        DB::table('permission_groups')
+            ->where('name', 'Amazon S3')
+            ->delete();
     }
 };

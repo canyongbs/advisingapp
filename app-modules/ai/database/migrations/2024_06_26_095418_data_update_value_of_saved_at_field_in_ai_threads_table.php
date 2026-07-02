@@ -41,24 +41,20 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            $aiThreads = DB::table('ai_threads')->whereNotNull('name')->whereNull('saved_at')->get();
+        $aiThreads = DB::table('ai_threads')->whereNotNull('name')->whereNull('saved_at')->get();
 
-            $aiThreads->each(function (stdClass $thread, int $key): void {
-                DB::table('ai_threads')->where('id', $thread->id)->update(['saved_at' => $thread->updated_at]);
-            });
+        $aiThreads->each(function (stdClass $thread, int $key): void {
+            DB::table('ai_threads')->where('id', $thread->id)->update(['saved_at' => $thread->updated_at]);
         });
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        DB::transaction(function () {
-            $aiThreads = DB::table('ai_threads')->whereNotNull('name')->whereNotNull('saved_at')->get();
+        $aiThreads = DB::table('ai_threads')->whereNotNull('name')->whereNotNull('saved_at')->get();
 
-            $aiThreads->each(function (stdClass $thread, int $key): void {
-                DB::table('ai_threads')->where('id', $thread->id)->update(['saved_at' => null]);
-            });
+        $aiThreads->each(function (stdClass $thread, int $key): void {
+            DB::table('ai_threads')->where('id', $thread->id)->update(['saved_at' => null]);
         });
     }
 };
