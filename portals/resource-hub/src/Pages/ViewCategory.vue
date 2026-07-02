@@ -32,19 +32,19 @@
 </COPYRIGHT>
 -->
 <script setup>
+    import Breadcrumbs from '@common/portal/Breadcrumbs.vue';
+    import Article from '@common/portal/category/Article.vue';
+    import SearchResults from '@common/portal/category/SearchResults.vue';
+    import SubCategories from '@common/portal/category/SubCategories.vue';
+    import HeroSearch from '@common/portal/HeroSearch.vue';
+    import Page from '@common/portal/Page.vue';
+    import Pagination from '@common/portal/Pagination.vue';
+    import Subheading from '@common/portal/Subheading.vue';
+    import Tabs from '@common/portal/Tabs.vue';
     import { DocumentTextIcon } from '@heroicons/vue/24/outline';
     import { computed, defineProps, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
     import AppLoading from '../Components/AppLoading.vue';
-    import Article from '@common/portal/category/Article.vue';
-    import Breadcrumbs from '@common/portal/Breadcrumbs.vue';
-    import HeroSearch from '@common/portal/HeroSearch.vue';
-    import Page from '@common/portal/Page.vue';
-    import Pagination from '@common/portal/Pagination.vue';
-    import SearchResults from '@common/portal/category/SearchResults.vue';
-    import SubCategories from '@common/portal/category/SubCategories.vue';
-    import Subheading from '@common/portal/Subheading.vue';
-    import Tabs from '@common/portal/Tabs.vue';
     import { consumer } from '../Services/Consumer.js';
 
     const route = useRoute();
