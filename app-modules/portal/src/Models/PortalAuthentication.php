@@ -49,7 +49,6 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  *
  * @mixin IdeHelperPortalAuthentication
- *
  */
 #[NoPermissions] // @phpstan-ignore Common.modelMissingFillable
 class PortalAuthentication extends BaseModel

@@ -56,6 +56,9 @@ parameters:
             message: '#Call to an undefined static method Illuminate\\Support\\Facades\\Queue::pushed\(\)#'
             reportUnmatched: false
         -
+            message: '#Call to an undefined static method Illuminate\\Support\\Facades\\Event::fake\(\)#'
+            reportUnmatched: false
+        -
             identifier: larastan.noEnvCallsOutsideOfConfig
             path: app-modules/*/config/*
             reportUnmatched: false
