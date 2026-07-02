@@ -65,16 +65,19 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        collect($this->guards)
-            ->each(function (string $guard) {
-                $this->deletePermissions(array_keys($this->permissions), $guard);
-            });
+        DB::transaction(function () {
 
-        DB::table('permission_groups')
-            ->whereIn('name', [
-                'Maintenance Provider',
-            ])
-            ->delete();
+            collect($this->guards)
+                ->each(function (string $guard) {
+                    $this->deletePermissions(array_keys($this->permissions), $guard);
+                });
+
+            DB::table('permission_groups')
+                ->whereIn('name', [
+                    'Maintenance Provider',
+                ])
+                ->delete();
+        });
     }
 
     public function down(): void

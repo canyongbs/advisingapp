@@ -35,19 +35,26 @@
 */
 
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        $this->migrator->add('student_information_system.is_enabled', false);
-        $this->migrator->add('student_information_system.sis_system', null);
+        DB::transaction(function () {
+
+            $this->migrator->add('student_information_system.is_enabled', false);
+            $this->migrator->add('student_information_system.sis_system', null);
+        });
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        $this->migrator->deleteIfExists('student_information_system.is_enabled');
-        $this->migrator->deleteIfExists('student_information_system.sis_system');
+        DB::transaction(function () {
+
+            $this->migrator->deleteIfExists('student_information_system.is_enabled');
+            $this->migrator->deleteIfExists('student_information_system.sis_system');
+        });
     }
 };

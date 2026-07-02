@@ -43,20 +43,23 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        $firstUser = DB::table('users')
-            ->whereNull('deleted_at')
-            ->orderBy('id')
-            ->first();
+        DB::transaction(function () {
 
-        DB::table('campaigns')->orderBy('id')->chunk(100, function (Collection $campaigns) use ($firstUser) {
-            foreach ($campaigns as $campaign) {
-                DB::table('campaigns')
-                    ->where('id', $campaign->id)
-                    ->update([
-                        'created_by_id' => $campaign->user_id ?? $firstUser->id,
-                        'created_by_type' => 'user',
-                    ]);
-            }
+            $firstUser = DB::table('users')
+                ->whereNull('deleted_at')
+                ->orderBy('id')
+                ->first();
+
+            DB::table('campaigns')->orderBy('id')->chunk(100, function (Collection $campaigns) use ($firstUser) {
+                foreach ($campaigns as $campaign) {
+                    DB::table('campaigns')
+                        ->where('id', $campaign->id)
+                        ->update([
+                            'created_by_id' => $campaign->user_id ?? $firstUser->id,
+                            'created_by_type' => 'user',
+                        ]);
+                }
+            });
         });
     }
 };

@@ -37,42 +37,49 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        Schema::dropIfExists('role_role_group');
-        Schema::dropIfExists('role_group_user');
-        Schema::dropIfExists('role_groups');
+        DB::transaction(function () {
+
+            Schema::dropIfExists('role_role_group');
+            Schema::dropIfExists('role_group_user');
+            Schema::dropIfExists('role_groups');
+        });
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        Schema::create('role_groups', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+        DB::transaction(function () {
 
-            $table->string('name', 125);
-            $table->string('guard_name', 125);
-            $table->string('slug', 125)->nullable();
+            Schema::create('role_groups', function (Blueprint $table) {
+                $table->uuid('id')->primary();
 
-            $table->timestamps();
-            $table->softDeletes();
+                $table->string('name', 125);
+                $table->string('guard_name', 125);
+                $table->string('slug', 125)->nullable();
 
-            $table->unique(['name', 'guard_name']);
-        });
+                $table->timestamps();
+                $table->softDeletes();
 
-        Schema::create('role_group_user', function (Blueprint $table) {
-            $table->foreignUuid('user_id')->references('id')->on('users');
-            $table->foreignUuid('role_group_id')->references('id')->on('role_groups');
-            $table->timestamps();
-        });
+                $table->unique(['name', 'guard_name']);
+            });
 
-        Schema::create('role_role_group', function (Blueprint $table) {
-            $table->foreignUuid('role_id')->references('id')->on('roles');
-            $table->foreignUuid('role_group_id')->references('id')->on('role_groups');
-            $table->timestamps();
+            Schema::create('role_group_user', function (Blueprint $table) {
+                $table->foreignUuid('user_id')->references('id')->on('users');
+                $table->foreignUuid('role_group_id')->references('id')->on('role_groups');
+                $table->timestamps();
+            });
+
+            Schema::create('role_role_group', function (Blueprint $table) {
+                $table->foreignUuid('role_id')->references('id')->on('roles');
+                $table->foreignUuid('role_group_id')->references('id')->on('role_groups');
+                $table->timestamps();
+            });
         });
     }
 };

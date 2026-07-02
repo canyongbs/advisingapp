@@ -37,46 +37,53 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        Schema::dropIfExists('twilio_conversation_user');
-        Schema::dropIfExists('twilio_conversations');
+        DB::transaction(function () {
+
+            Schema::dropIfExists('twilio_conversation_user');
+            Schema::dropIfExists('twilio_conversations');
+        });
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        Schema::create('twilio_conversations', function (Blueprint $table) {
-            $table->string('sid')->primary();
+        DB::transaction(function () {
 
-            $table->string('friendly_name')->nullable();
-            $table->string('type');
-            $table->string('channel_name')->nullable();
-            $table->boolean('is_private_channel')->default(false);
+            Schema::create('twilio_conversations', function (Blueprint $table) {
+                $table->string('sid')->primary();
 
-            $table->timestamps();
-            $table->softDeletes();
-        });
+                $table->string('friendly_name')->nullable();
+                $table->string('type');
+                $table->string('channel_name')->nullable();
+                $table->boolean('is_private_channel')->default(false);
 
-        Schema::create('twilio_conversation_user', function (Blueprint $table) {
-            $table->string('conversation_sid');
-            $table->foreignUuid('user_id');
-            $table->string('participant_sid');
-            $table->boolean('is_channel_manager')->default(false);
-            $table->boolean('is_pinned')->default(false);
-            $table->string('notification_preference')->default('all');
-            $table->string('first_unread_message_sid')->nullable();
-            $table->dateTime('first_unread_message_at')->nullable();
-            $table->text('last_unread_message_content')->nullable();
-            $table->dateTime('last_read_at')->nullable();
-            $table->unsignedInteger('unread_messages_count')->default(0);
+                $table->timestamps();
+                $table->softDeletes();
+            });
 
-            $table->timestamps();
+            Schema::create('twilio_conversation_user', function (Blueprint $table) {
+                $table->string('conversation_sid');
+                $table->foreignUuid('user_id');
+                $table->string('participant_sid');
+                $table->boolean('is_channel_manager')->default(false);
+                $table->boolean('is_pinned')->default(false);
+                $table->string('notification_preference')->default('all');
+                $table->string('first_unread_message_sid')->nullable();
+                $table->dateTime('first_unread_message_at')->nullable();
+                $table->text('last_unread_message_content')->nullable();
+                $table->dateTime('last_read_at')->nullable();
+                $table->unsignedInteger('unread_messages_count')->default(0);
 
-            $table->foreign('conversation_sid')->references('sid')->on('twilio_conversations')->cascadeOnDelete();
+                $table->timestamps();
+
+                $table->foreign('conversation_sid')->references('sid')->on('twilio_conversations')->cascadeOnDelete();
+            });
         });
     }
 };

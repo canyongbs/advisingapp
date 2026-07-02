@@ -17,7 +17,7 @@
         "ably/ably-php": "^1.1",
         "aws/aws-php-sns-message-validator": "^1.9",
         "aws/aws-sdk-php": "^3.316",
-        "barryvdh/laravel-debugbar": "^3.9",
+        "barryvdh/laravel-debugbar": "^4.3",
         "canyon-gbs/advising-app-application": "*",
         "canyon-gbs/advising-app-assistant": "*",
         "canyon-gbs/advising-app-audit": "*",
@@ -64,8 +64,8 @@
         "canyongbs/model-state-machine": "^2.0.8",
         "cknow/laravel-money": "^8.1",
         "composer/composer": "^2.7",
-        "dedoc/scramble": "^0.12.23",
-        "defectivecode/laravel-sqs-extended": "^1.1.0",
+        "dedoc/scramble": "^0.13",
+        "defectivecode/laravel-sqs-extended": "^2.0",
         "defstudio/filament-searchable-input": "^4.0",
         "ezimuel/guzzlestreams": "^4.0",
         "fakerphp/faker": "^1.23",
@@ -80,11 +80,11 @@
         "internachi/modular-livewire": "^1.0",
         "itsgoingd/clockwork": "^5.2",
         "kirschbaum-development/eloquent-power-joins": "^4.0",
-        "laravel/framework": "^12.11.1",
+        "laravel/framework": "^13.0",
         "laravel/pennant": "^1.10",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.24.0",
-        "laravel/tinker": "^2.8",
+        "laravel/tinker": "^3.0",
         "laravel/ui": "^4.5",
         "league/flysystem-aws-s3-v3": "^3.28",
         "league/html-to-markdown": "^5.1",
@@ -103,15 +103,15 @@
         "spatie/laravel-cookie-consent": "^3.3",
         "spatie/laravel-data": "^4.0",
         "spatie/laravel-health": "^1.39.0",
-        "spatie/laravel-json-api-paginate": "^1.16",
+        "spatie/laravel-json-api-paginate": "^2.0",
         "spatie/laravel-medialibrary": "^11.3",
         "spatie/laravel-multitenancy": "^4.0",
         "spatie/laravel-query-builder": "^6.3",
-        "spatie/laravel-schedule-monitor": "^3.9",
+        "spatie/laravel-schedule-monitor": "^4.3",
         "spatie/laravel-settings": "^3.3",
         "sqids/sqids": "^0.5.0",
         "squirephp/countries-en": "^3.9",
-        "staudenmeir/eloquent-has-many-deep": "^1.19",
+        "staudenmeir/eloquent-has-many-deep": "^1.22",
         "stechstudio/filament-impersonate": "^4.0",
         "talkroute/message-segment-calculator": "^1.0",
         "telnyx/telnyx-php": "^3.0",
@@ -275,6 +275,36 @@
     "prefer-stable": true,
     "minimum-stability": "stable",
     "repositories": [
+        {
+            "type": "package",
+            "package": {
+                "name": "canyongbs/model-state-machine",
+                "version": "2.0.9",
+                "source": {
+                    "url": "https://github.com/canyongbs/model-state-machine.git",
+                    "type": "git",
+                    "reference": "0c3a3fa36717a8ec840b208b40882d126f1f4fbc"
+                },
+                "require": {
+                    "php": "^8.2",
+                    "spatie/laravel-package-tools": "^1.16.6",
+                    "illuminate/contracts": "^11.0|^12.0|^13.0"
+                },
+                "autoload": {
+                    "psr-4": {
+                        "Bvtterfly\\ModelStateMachine\\": "src",
+                        "Bvtterfly\\ModelStateMachine\\Database\\Factories\\": "database/factories"
+                    }
+                },
+                "extra": {
+                    "laravel": {
+                        "providers": [
+                            "Bvtterfly\\ModelStateMachine\\ModelStateMachineServiceProvider"
+                        ]
+                    }
+                }
+            }
+        },
         {
             "type": "path",
             "url": "app-modules/*",

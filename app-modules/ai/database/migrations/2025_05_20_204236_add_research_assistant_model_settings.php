@@ -36,29 +36,36 @@
 
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        try {
-            $this->migrator->rename('ai_research_assistant.ai_model', 'ai_research_assistant.discovery_model');
-        } catch (SettingAlreadyExists $exception) {
-            $this->migrator->deleteIfExists('ai_research_assistant.ai_model');
-        }
+        DB::transaction(function () {
 
-        try {
-            $this->migrator->add('ai_research_assistant.research_model');
-        } catch (SettingAlreadyExists $exception) {
-            // do nothing
-        }
+            try {
+                $this->migrator->rename('ai_research_assistant.ai_model', 'ai_research_assistant.discovery_model');
+            } catch (SettingAlreadyExists $exception) {
+                $this->migrator->deleteIfExists('ai_research_assistant.ai_model');
+            }
+
+            try {
+                $this->migrator->add('ai_research_assistant.research_model');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+        });
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        $this->migrator->rename('ai_research_assistant.discovery_model', 'ai_research_assistant.ai_model');
+        DB::transaction(function () {
 
-        $this->migrator->deleteIfExists('ai_research_assistant.research_model');
+            $this->migrator->rename('ai_research_assistant.discovery_model', 'ai_research_assistant.ai_model');
+
+            $this->migrator->deleteIfExists('ai_research_assistant.research_model');
+        });
     }
 };

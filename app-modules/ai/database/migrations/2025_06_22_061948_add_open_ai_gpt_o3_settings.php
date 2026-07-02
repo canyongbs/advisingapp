@@ -36,49 +36,56 @@
 
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        try {
-            $this->migrator->add('ai.open_ai_gpt_o3_model_name');
-        } catch (SettingAlreadyExists $exception) {
-            // do nothing
-        }
+        DB::transaction(function () {
 
-        try {
-            $this->migrator->add('ai.open_ai_gpt_o3_base_uri', config('integration-open-ai.gpt_o3_base_uri'), encrypted: true);
-        } catch (SettingAlreadyExists $exception) {
-            // do nothing
-        }
+            try {
+                $this->migrator->add('ai.open_ai_gpt_o3_model_name');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
 
-        try {
-            $this->migrator->add('ai.open_ai_gpt_o3_api_key', config('integration-open-ai.gpt_o3_api_key'), encrypted: true);
-        } catch (SettingAlreadyExists $exception) {
-            // do nothing
-        }
+            try {
+                $this->migrator->add('ai.open_ai_gpt_o3_base_uri', config('integration-open-ai.gpt_o3_base_uri'), encrypted: true);
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
 
-        try {
-            $this->migrator->add('ai.open_ai_gpt_o3_model', config('integration-open-ai.gpt_o3_model'), encrypted: true);
-        } catch (SettingAlreadyExists $exception) {
-            // do nothing
-        }
+            try {
+                $this->migrator->add('ai.open_ai_gpt_o3_api_key', config('integration-open-ai.gpt_o3_api_key'), encrypted: true);
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
 
-        try {
-            $this->migrator->add('ai.open_ai_gpt_o3_applicable_features', []);
-        } catch (SettingAlreadyExists $exception) {
-            // do nothing
-        }
+            try {
+                $this->migrator->add('ai.open_ai_gpt_o3_model', config('integration-open-ai.gpt_o3_model'), encrypted: true);
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+
+            try {
+                $this->migrator->add('ai.open_ai_gpt_o3_applicable_features', []);
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+        });
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        $this->migrator->deleteIfExists('ai.open_ai_gpt_o3_model_name');
-        $this->migrator->deleteIfExists('ai.open_ai_gpt_o3_base_uri');
-        $this->migrator->deleteIfExists('ai.open_ai_gpt_o3_api_key');
-        $this->migrator->deleteIfExists('ai.open_ai_gpt_o3_model');
-        $this->migrator->deleteIfExists('ai.open_ai_gpt_o3_applicable_features');
+        DB::transaction(function () {
+
+            $this->migrator->deleteIfExists('ai.open_ai_gpt_o3_model_name');
+            $this->migrator->deleteIfExists('ai.open_ai_gpt_o3_base_uri');
+            $this->migrator->deleteIfExists('ai.open_ai_gpt_o3_api_key');
+            $this->migrator->deleteIfExists('ai.open_ai_gpt_o3_model');
+            $this->migrator->deleteIfExists('ai.open_ai_gpt_o3_applicable_features');
+        });
     }
 };

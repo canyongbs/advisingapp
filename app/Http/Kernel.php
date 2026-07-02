@@ -40,12 +40,12 @@ use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\AuthGates;
 use App\Http\Middleware\CheckOlympusKey;
 use App\Http\Middleware\EncryptCookies;
+use App\Http\Middleware\PreventRequestForgery;
 use App\Http\Middleware\PreventRequestsDuringMaintenance;
 use App\Http\Middleware\RedirectIfAuthenticated;
 use App\Http\Middleware\TrimStrings;
 use App\Http\Middleware\TrustProxies;
 use App\Http\Middleware\ValidateSignature;
-use App\Http\Middleware\VerifyCsrfToken;
 use App\Multitenancy\Http\Middleware\NeedsTenant;
 use Illuminate\Auth\Middleware\AuthenticateWithBasicAuth;
 use Illuminate\Auth\Middleware\Authorize;
@@ -101,7 +101,7 @@ class Kernel extends HttpKernel
             EncryptCookies::class,
             AddQueuedCookiesToResponse::class,
             ShareErrorsFromSession::class,
-            VerifyCsrfToken::class,
+            PreventRequestForgery::class,
             SubstituteBindings::class,
             AuthGates::class,
         ],

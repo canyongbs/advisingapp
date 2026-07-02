@@ -41,49 +41,52 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        $themeLogo = DB::table('settings')->where('group', 'theme')
-            ->where('name', 'is_logo_active')
-            ->first();
+        DB::transaction(function () {
 
-        if ($themeLogo) {
-            DB::table('media')
-                ->where('model_type', 'settings_property')
-                ->where('model_id', $themeLogo->id)
-                ->update(['model_type' => 'theme_settings_property']);
-        }
+            $themeLogo = DB::table('settings')->where('group', 'theme')
+                ->where('name', 'is_logo_active')
+                ->first();
 
-        $themeFavicon = DB::table('settings')->where('group', 'theme')
-            ->where('name', 'is_favicon_active')
-            ->first();
+            if ($themeLogo) {
+                DB::table('media')
+                    ->where('model_type', 'settings_property')
+                    ->where('model_id', $themeLogo->id)
+                    ->update(['model_type' => 'theme_settings_property']);
+            }
 
-        if ($themeFavicon) {
-            DB::table('media')
-                ->where('model_type', 'settings_property')
-                ->where('model_id', $themeFavicon->id)
-                ->update(['model_type' => 'theme_settings_property']);
-        }
+            $themeFavicon = DB::table('settings')->where('group', 'theme')
+                ->where('name', 'is_favicon_active')
+                ->first();
 
-        $portalLogo = DB::table('settings')->where('group', 'portal')
-            ->where('name', 'logo')
-            ->first();
+            if ($themeFavicon) {
+                DB::table('media')
+                    ->where('model_type', 'settings_property')
+                    ->where('model_id', $themeFavicon->id)
+                    ->update(['model_type' => 'theme_settings_property']);
+            }
 
-        if ($portalLogo) {
-            DB::table('media')
-                ->where('model_type', 'settings_property')
-                ->where('model_id', $portalLogo->id)
-                ->update(['model_type' => 'portal_settings_property']);
-        }
+            $portalLogo = DB::table('settings')->where('group', 'portal')
+                ->where('name', 'logo')
+                ->first();
 
-        $portalFavicon = DB::table('settings')->where('group', 'portal')
-            ->where('name', 'favicon')
-            ->first();
+            if ($portalLogo) {
+                DB::table('media')
+                    ->where('model_type', 'settings_property')
+                    ->where('model_id', $portalLogo->id)
+                    ->update(['model_type' => 'portal_settings_property']);
+            }
 
-        if ($portalFavicon) {
-            DB::table('media')
-                ->where('model_type', 'settings_property')
-                ->where('model_id', $portalFavicon->id)
-                ->update(['model_type' => 'portal_settings_property']);
-        }
+            $portalFavicon = DB::table('settings')->where('group', 'portal')
+                ->where('name', 'favicon')
+                ->first();
+
+            if ($portalFavicon) {
+                DB::table('media')
+                    ->where('model_type', 'settings_property')
+                    ->where('model_id', $portalFavicon->id)
+                    ->update(['model_type' => 'portal_settings_property']);
+            }
+        });
     }
 
     public function down(): void

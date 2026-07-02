@@ -37,24 +37,28 @@
 use Illuminate\Database\Migrations\Migration;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        Schema::create('workflow_steps', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+        DB::transaction(function () {
 
-            $table->uuidMorphs('details');
-            $table->integer('delay_minutes')->default(0);
-            $table->foreignUuid('workflow_id')->constrained('workflows');
+            Schema::create('workflow_steps', function (Blueprint $table) {
+                $table->uuid('id')->primary();
 
-            $table->timestamps();
-            $table->softDeletes();
-        });
+                $table->uuidMorphs('details');
+                $table->integer('delay_minutes')->default(0);
+                $table->foreignUuid('workflow_id')->constrained('workflows');
 
-        Schema::table('workflow_steps', function (Blueprint $table) {
-            $table->foreignUuid('previous_step_id')->nullable()->constrained('workflow_steps', 'id');
+                $table->timestamps();
+                $table->softDeletes();
+            });
+
+            Schema::table('workflow_steps', function (Blueprint $table) {
+                $table->foreignUuid('previous_step_id')->nullable()->constrained('workflow_steps', 'id');
+            });
         });
     }
 

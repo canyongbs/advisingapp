@@ -36,37 +36,44 @@
 
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        try {
-            $this->migrator->add('ai.jina_deepsearch_v1_model_name');
-        } catch (SettingAlreadyExists $exception) {
-            // do nothing
-        }
+        DB::transaction(function () {
 
-        try {
-            $this->migrator->add('ai.jina_deepsearch_v1_applicable_features', []);
-        } catch (SettingAlreadyExists $exception) {
-            // do nothing
-        }
+            try {
+                $this->migrator->add('ai.jina_deepsearch_v1_model_name');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
 
-        try {
-            $this->migrator->rename('ai.jina_deepsearch_ai_api_key', 'ai.jina_deepsearch_v1_api_key');
-        } catch (SettingAlreadyExists $exception) {
-            $this->migrator->deleteIfExists('ai.jina_deepsearch_ai_api_key');
-        }
+            try {
+                $this->migrator->add('ai.jina_deepsearch_v1_applicable_features', []);
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+
+            try {
+                $this->migrator->rename('ai.jina_deepsearch_ai_api_key', 'ai.jina_deepsearch_v1_api_key');
+            } catch (SettingAlreadyExists $exception) {
+                $this->migrator->deleteIfExists('ai.jina_deepsearch_ai_api_key');
+            }
+        });
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        $this->migrator->deleteIfExists('ai.jina_deepsearch_v1_model_name');
+        DB::transaction(function () {
 
-        $this->migrator->deleteIfExists('ai.jina_deepsearch_v1_applicable_features');
+            $this->migrator->deleteIfExists('ai.jina_deepsearch_v1_model_name');
 
-        $this->migrator->rename('ai.jina_deepsearch_v1_api_key', 'ai.jina_deepsearch_ai_api_key');
+            $this->migrator->deleteIfExists('ai.jina_deepsearch_v1_applicable_features');
+
+            $this->migrator->rename('ai.jina_deepsearch_v1_api_key', 'ai.jina_deepsearch_ai_api_key');
+        });
     }
 };

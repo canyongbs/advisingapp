@@ -43,49 +43,52 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        $groups = DB::table('permission_groups')
-            ->pluck('id', 'name')
-            ->all();
+        DB::transaction(function () {
 
-        DB::table('permissions')
-            ->whereNull('group_id')
-            ->eachById(function (object $permission) use (&$groups) {
-                if (! str($permission->name)->contains('.')) {
-                    throw new Exception("Invalid permission name: [{$permission->name}] does not contain a period.");
-                }
+            $groups = DB::table('permission_groups')
+                ->pluck('id', 'name')
+                ->all();
 
-                $groupName = match ((string) str($permission->name)->before('.')) {
-                    'sla' => 'SLA',
-                    'sms_template' => 'SMS Template',
-                    'in-app-communication' => 'In-App Communication',
-                    'integration-aws-ses-event-handling' => 'Integration: AWS SES Event Handling',
-                    'integration-google-analytics' => 'Integration: Google Analytics',
-                    'integration-google-recaptcha' => 'Integration: Google reCAPTCHA',
-                    'integration-microsoft-clarity' => 'Integration: Microsoft Clarity',
-                    'integration-twilio' => 'Integration: Twilio',
-                    default => (string) str($permission->name)
-                        ->before('.')
-                        ->headline(),
-                };
+            DB::table('permissions')
+                ->whereNull('group_id')
+                ->eachById(function (object $permission) use (&$groups) {
+                    if (! str($permission->name)->contains('.')) {
+                        throw new Exception("Invalid permission name: [{$permission->name}] does not contain a period.");
+                    }
 
-                $groupId = $groups[$groupName] ?? null;
+                    $groupName = match ((string) str($permission->name)->before('.')) {
+                        'sla' => 'SLA',
+                        'sms_template' => 'SMS Template',
+                        'in-app-communication' => 'In-App Communication',
+                        'integration-aws-ses-event-handling' => 'Integration: AWS SES Event Handling',
+                        'integration-google-analytics' => 'Integration: Google Analytics',
+                        'integration-google-recaptcha' => 'Integration: Google reCAPTCHA',
+                        'integration-microsoft-clarity' => 'Integration: Microsoft Clarity',
+                        'integration-twilio' => 'Integration: Twilio',
+                        default => (string) str($permission->name)
+                            ->before('.')
+                            ->headline(),
+                    };
 
-                if (blank($groupId)) {
-                    $groupId = $groups[$groupName] = (string) Str::orderedUuid();
+                    $groupId = $groups[$groupName] ?? null;
 
-                    DB::table('permission_groups')->insert([
-                        'id' => $groupId,
-                        'name' => $groupName,
-                        'created_at' => now(),
-                    ]);
-                }
+                    if (blank($groupId)) {
+                        $groupId = $groups[$groupName] = (string) Str::orderedUuid();
 
-                DB::table('permissions')
-                    ->where('id', $permission->id)
-                    ->update([
-                        'group_id' => $groupId,
-                        'updated_at' => now(),
-                    ]);
-            });
+                        DB::table('permission_groups')->insert([
+                            'id' => $groupId,
+                            'name' => $groupName,
+                            'created_at' => now(),
+                        ]);
+                    }
+
+                    DB::table('permissions')
+                        ->where('id', $permission->id)
+                        ->update([
+                            'group_id' => $groupId,
+                            'updated_at' => now(),
+                        ]);
+                });
+        });
     }
 };

@@ -35,21 +35,28 @@
 */
 
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        $this->migrator->add('theme.color_overrides', []);
-        $this->migrator->add('theme.has_dark_mode', true);
-        $this->migrator->add('theme.url');
+        DB::transaction(function () {
+
+            $this->migrator->add('theme.color_overrides', []);
+            $this->migrator->add('theme.has_dark_mode', true);
+            $this->migrator->add('theme.url');
+        });
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        $this->migrator->deleteIfExists('theme.color_overrides');
-        $this->migrator->deleteIfExists('theme.has_dark_mode');
-        $this->migrator->deleteIfExists('theme.url');
+        DB::transaction(function () {
+
+            $this->migrator->deleteIfExists('theme.color_overrides');
+            $this->migrator->deleteIfExists('theme.has_dark_mode');
+            $this->migrator->deleteIfExists('theme.url');
+        });
     }
 };

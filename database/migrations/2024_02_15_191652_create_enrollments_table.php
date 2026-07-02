@@ -37,31 +37,35 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        if (Schema::hasTable('enrollments')) {
-            return;
-        }
+        DB::transaction(function () {
 
-        Schema::create('enrollments', function (Blueprint $table) {
-            $table->string('sisid');
-            $table->string('acad_career');
-            $table->string('division');
-            $table->string('semester');
-            $table->string('class_nbr');
-            $table->string('subject');
-            $table->string('catalog_nbr');
-            $table->string('enrl_status_reason');
-            $table->dateTimeTz('enrl_add_dt');
-            $table->dateTimeTz('enrl_drop_dt');
-            $table->string('crse_grade_off');
-            $table->integer('unt_taken');
-            $table->integer('unt_earned');
-            $table->dateTimeTz('last_upd_dt_stmp');
+            if (Schema::hasTable('enrollments')) {
+                return;
+            }
+
+            Schema::create('enrollments', function (Blueprint $table) {
+                $table->string('sisid');
+                $table->string('acad_career');
+                $table->string('division');
+                $table->string('semester');
+                $table->string('class_nbr');
+                $table->string('subject');
+                $table->string('catalog_nbr');
+                $table->string('enrl_status_reason');
+                $table->dateTimeTz('enrl_add_dt');
+                $table->dateTimeTz('enrl_drop_dt');
+                $table->string('crse_grade_off');
+                $table->integer('unt_taken');
+                $table->integer('unt_earned');
+                $table->dateTimeTz('last_upd_dt_stmp');
+            });
         });
     }
 };

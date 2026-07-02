@@ -36,18 +36,22 @@
 
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
+use Illuminate\Support\Facades\DB;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        $this->migrator->deleteIfExists('audit.audited_models');
+        DB::transaction(function () {
 
-        try {
-            $this->migrator->add('audit.audited_models_exclude', []);
-        } catch (SettingAlreadyExists $exception) {
-            // Ignore
-        }
+            $this->migrator->deleteIfExists('audit.audited_models');
+
+            try {
+                $this->migrator->add('audit.audited_models_exclude', []);
+            } catch (SettingAlreadyExists $exception) {
+                // Ignore
+            }
+        });
     }
 };

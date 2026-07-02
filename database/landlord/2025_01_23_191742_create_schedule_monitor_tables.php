@@ -37,6 +37,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 class CreateScheduleMonitorTables extends Migration
@@ -44,43 +45,46 @@ class CreateScheduleMonitorTables extends Migration
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        Schema::create('monitored_scheduled_tasks', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+        DB::transaction(function () {
 
-            $table->string('name');
-            $table->string('type')->nullable();
-            $table->string('cron_expression');
-            $table->string('timezone')->nullable();
-            $table->string('ping_url')->nullable();
+            Schema::create('monitored_scheduled_tasks', function (Blueprint $table) {
+                $table->uuid('id')->primary();
 
-            $table->dateTime('last_started_at')->nullable();
-            $table->dateTime('last_finished_at')->nullable();
-            $table->dateTime('last_failed_at')->nullable();
-            $table->dateTime('last_skipped_at')->nullable();
+                $table->string('name');
+                $table->string('type')->nullable();
+                $table->string('cron_expression');
+                $table->string('timezone')->nullable();
+                $table->string('ping_url')->nullable();
 
-            $table->dateTime('registered_on_oh_dear_at')->nullable();
-            $table->dateTime('last_pinged_at')->nullable();
-            $table->integer('grace_time_in_minutes');
+                $table->dateTime('last_started_at')->nullable();
+                $table->dateTime('last_finished_at')->nullable();
+                $table->dateTime('last_failed_at')->nullable();
+                $table->dateTime('last_skipped_at')->nullable();
 
-            $table->timestamps();
-        });
+                $table->dateTime('registered_on_oh_dear_at')->nullable();
+                $table->dateTime('last_pinged_at')->nullable();
+                $table->integer('grace_time_in_minutes');
 
-        Schema::create('monitored_scheduled_task_log_items', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+                $table->timestamps();
+            });
 
-            $table->uuid('monitored_scheduled_task_id');
-            $table
-                ->foreign('monitored_scheduled_task_id', 'fk_scheduled_task_id')
-                ->references('id')
-                ->on('monitored_scheduled_tasks')
-                ->cascadeOnDelete();
+            Schema::create('monitored_scheduled_task_log_items', function (Blueprint $table) {
+                $table->uuid('id')->primary();
 
-            $table->string('type');
+                $table->uuid('monitored_scheduled_task_id');
+                $table
+                    ->foreign('monitored_scheduled_task_id', 'fk_scheduled_task_id')
+                    ->references('id')
+                    ->on('monitored_scheduled_tasks')
+                    ->cascadeOnDelete();
 
-            // @phpstan-ignore Common.jsonColumnInMigration
-            $table->json('meta')->nullable();
+                $table->string('type');
 
-            $table->timestamps();
+                // @phpstan-ignore Common.jsonColumnInMigration
+                $table->json('meta')->nullable();
+
+                $table->timestamps();
+            });
         });
     }
 }
