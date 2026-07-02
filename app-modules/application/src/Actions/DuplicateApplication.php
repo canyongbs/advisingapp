@@ -96,6 +96,9 @@ class DuplicateApplication
         });
     }
 
+    /**
+     * @param array<string, string> $fieldMap
+     */
     private function replaceIdsInContent(mixed &$content, array $fieldMap): mixed
     {
         if (is_array($content)) {
