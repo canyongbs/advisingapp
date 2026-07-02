@@ -67,8 +67,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Prompt\\:\\:\\$my_upvotes_count\\.$#',
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Ai\\\\Models\\\\Prompt\\:\\:\\$my_upvotes_count\\.$#',
     'identifier' => 'property.notFound',
     'count' => 3,
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/Prompts/Pages/ListPrompts.php',
@@ -307,8 +305,6 @@ $ignoreErrors[] = [
     'count' => 1,
     'path' => __DIR__ . '/app-modules/application/src/Actions/DuplicateApplication.php',
 ];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Actions\\\\DuplicateApplication\\:\\:replicateFields\\(\\) has parameter \\$stepMap with no value type specified in iterable type array\\.$#',
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Application\\\\Actions\\\\DuplicateApplication\\:\\:replicateFields\\(\\) has parameter \\$stepMap with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
