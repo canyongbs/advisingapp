@@ -46,6 +46,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @mixin IdeHelperHolisticEngagement
+ *
  * @phpstan-ignore-next-line Common.modelMissingFillable
  */
 class HolisticEngagement extends Model

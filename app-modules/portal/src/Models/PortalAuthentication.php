@@ -49,6 +49,7 @@ use Illuminate\Support\Carbon;
  * @property Carbon|null $created_at
  *
  * @mixin IdeHelperPortalAuthentication
+ *
  * @phpstan-ignore-next-line Common.modelMissingFillable
  */
 #[NoPermissions]
