@@ -40,11 +40,11 @@
     import { computed, defineProps, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
     import AppLoading from '../Components/AppLoading.vue';
-    import Breadcrumbs from '../Components/Breadcrumbs.vue';
+    import Breadcrumbs from '@common/portal/Breadcrumbs.vue';
     import EmptyState from '../Components/EmptyState.vue';
-    import Page from '../Components/Page.vue';
+    import Page from '@common/portal/Page.vue';
     import PageCard from '../Components/PageCard.vue';
-    import Tags from '../Components/Tags.vue';
+    import Tags from '@common/portal/Tags.vue';
     import { consumer } from '../Services/Consumer.js';
 
     const route = useRoute();

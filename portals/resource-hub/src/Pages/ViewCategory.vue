@@ -36,15 +36,15 @@
     import { computed, defineProps, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
     import AppLoading from '../Components/AppLoading.vue';
-    import Article from '../Components/Article.vue';
-    import Breadcrumbs from '../Components/Breadcrumbs.vue';
+    import Article from '@common/portal/category/Article.vue';
+    import Breadcrumbs from '@common/portal/Breadcrumbs.vue';
     import HeroSearch from '@common/portal/HeroSearch.vue';
-    import Page from '../Components/Page.vue';
-    import Pagination from '../Components/Pagination.vue';
-    import SearchResults from '../Components/SearchResults.vue';
-    import SubCategories from '../Components/SubCategories.vue';
+    import Page from '@common/portal/Page.vue';
+    import Pagination from '@common/portal/Pagination.vue';
+    import SearchResults from '@common/portal/category/SearchResults.vue';
+    import SubCategories from '@common/portal/category/SubCategories.vue';
     import Subheading from '@common/portal/Subheading.vue';
-    import Tabs from '../Components/Tabs.vue';
+    import Tabs from '@common/portal/Tabs.vue';
     import { consumer } from '../Services/Consumer.js';
 
     const route = useRoute();
@@ -113,7 +113,6 @@
         }).then((response) => {
             searchResults.value = response.data;
             loadingeSearchResults.value = false;
-            setPagination(response.data.data.articles.meta);
         });
     }, 500);
 
@@ -339,18 +338,7 @@
                         :searchQuery="searchQuery"
                         :searchResults="searchResults"
                         :loadingResults="loadingeSearchResults"
-                        @change-filter="changeSearchFilter"
-                        :selected-filter="filter"
-                        :currentPage="currentPage"
-                        :lastPage="lastPage"
-                        :fromItem="fromArticle"
-                        :toItem="toArticle"
-                        :totalItems="totalArticles"
-                        @fetchNextPage="fetchNextPage"
-                        @fetchPreviousPage="fetchPreviousPage"
-                        @fetchPage="fetchPage"
-                    >
-                    </SearchResults>
+                    />
                 </div>
                 <div v-else class="flex flex-col gap-6">
                     <div class="flex flex-col gap-4">
