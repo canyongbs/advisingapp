@@ -36,7 +36,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
@@ -44,18 +43,16 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::create('role_group_user', function (Blueprint $table) {
-                $table->foreignUuid('user_id')->references('id')->on('users');
-                $table->foreignUuid('role_group_id')->references('id')->on('role_groups');
-                $table->timestamps();
-            });
+        Schema::create('role_group_user', function (Blueprint $table) {
+            $table->foreignUuid('user_id')->references('id')->on('users');
+            $table->foreignUuid('role_group_id')->references('id')->on('role_groups');
+            $table->timestamps();
+        });
 
-            Schema::create('role_role_group', function (Blueprint $table) {
-                $table->foreignUuid('role_id')->references('id')->on('roles');
-                $table->foreignUuid('role_group_id')->references('id')->on('role_groups');
-                $table->timestamps();
-            });
+        Schema::create('role_role_group', function (Blueprint $table) {
+            $table->foreignUuid('role_id')->references('id')->on('roles');
+            $table->foreignUuid('role_group_id')->references('id')->on('role_groups');
+            $table->timestamps();
         });
     }
 };

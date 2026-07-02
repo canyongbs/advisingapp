@@ -36,7 +36,6 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 class CreateAuditsTable extends Migration
@@ -44,41 +43,37 @@ class CreateAuditsTable extends Migration
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            $connection = config('audit.drivers.database.connection', config('database.default'));
-            $table = config('audit.drivers.database.table', 'audits');
+        $connection = config('audit.drivers.database.connection', config('database.default'));
+        $table = config('audit.drivers.database.table', 'audits');
 
-            Schema::connection($connection)->create($table, function (Blueprint $table) {
-                $morphPrefix = config('audit.user.morph_prefix', 'change_agent');
+        Schema::connection($connection)->create($table, function (Blueprint $table) {
+            $morphPrefix = config('audit.user.morph_prefix', 'change_agent');
 
-                $table->uuid('id')->primary();
-                $table->nullableUuidMorphs($morphPrefix);
-                $table->string('event');
-                $table->string('auditable_type');
-                $table->string('auditable_id');
-                // @phpstan-ignore Common.jsonColumnInMigration
-                $table->json('old_values')->nullable();
-                // @phpstan-ignore Common.jsonColumnInMigration
-                $table->json('new_values')->nullable();
-                $table->text('url')->nullable();
-                $table->ipAddress('ip_address')->nullable();
-                $table->string('user_agent', 1023)->nullable();
-                $table->string('tags')->nullable();
-                $table->timestamps();
+            $table->uuid('id')->primary();
+            $table->nullableUuidMorphs($morphPrefix);
+            $table->string('event');
+            $table->string('auditable_type');
+            $table->string('auditable_id');
+            // @phpstan-ignore Common.jsonColumnInMigration
+            $table->json('old_values')->nullable();
+            // @phpstan-ignore Common.jsonColumnInMigration
+            $table->json('new_values')->nullable();
+            $table->text('url')->nullable();
+            $table->ipAddress('ip_address')->nullable();
+            $table->string('user_agent', 1023)->nullable();
+            $table->string('tags')->nullable();
+            $table->timestamps();
 
-                $table->index(['auditable_type', 'auditable_id']);
-            });
+            $table->index(['auditable_type', 'auditable_id']);
         });
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        DB::transaction(function () {
-            $connection = config('audit.drivers.database.connection', config('database.default'));
-            $table = config('audit.drivers.database.table', 'audits');
+        $connection = config('audit.drivers.database.connection', config('database.default'));
+        $table = config('audit.drivers.database.table', 'audits');
 
-            Schema::connection($connection)->drop($table);
-        });
+        Schema::connection($connection)->drop($table);
     }
 }

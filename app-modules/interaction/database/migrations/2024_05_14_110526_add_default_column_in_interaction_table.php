@@ -36,43 +36,38 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('interaction_initiatives', function (Blueprint $table) {
-                $table->boolean('is_default')->default(false);
-            });
+        Schema::table('interaction_initiatives', function (Blueprint $table) {
+            $table->boolean('is_default')->default(false);
+        });
 
-            Schema::table('interaction_drivers', function (Blueprint $table) {
-                $table->boolean('is_default')->default(false);
-            });
+        Schema::table('interaction_drivers', function (Blueprint $table) {
+            $table->boolean('is_default')->default(false);
+        });
 
-            Schema::table('interaction_types', function (Blueprint $table) {
-                $table->boolean('is_default')->default(false);
-            });
+        Schema::table('interaction_types', function (Blueprint $table) {
+            $table->boolean('is_default')->default(false);
         });
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('interaction_initiatives', function (Blueprint $table) {
-                $table->dropColumn('is_default');
-            });
+        Schema::table('interaction_initiatives', function (Blueprint $table) {
+            $table->dropColumn('is_default');
+        });
 
-            Schema::table('interaction_drivers', function (Blueprint $table) {
-                $table->dropColumn('is_default');
-            });
+        Schema::table('interaction_drivers', function (Blueprint $table) {
+            $table->dropColumn('is_default');
+        });
 
-            Schema::table('interaction_types', function (Blueprint $table) {
-                $table->dropColumn('is_default');
-            });
+        Schema::table('interaction_types', function (Blueprint $table) {
+            $table->dropColumn('is_default');
         });
     }
 };

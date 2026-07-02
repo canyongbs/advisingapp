@@ -42,78 +42,74 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            $newStatus = DB::table('prospect_statuses')
-                ->where('classification', 'new')
-                ->where('name', 'New')
-                ->first();
+        $newStatus = DB::table('prospect_statuses')
+            ->where('classification', 'new')
+            ->where('name', 'New')
+            ->first();
 
-            if ($newStatus === null) {
-                if (! app()->runningUnitTests()) {
-                    DB::table('prospect_statuses')->insert([
-                        'id' => (string) Str::orderedUuid(),
-                        'classification' => 'new',
-                        'name' => 'New',
-                        'color' => 'sky',
-                        'created_at' => now(),
-                        'sort' => DB::raw('(SELECT COALESCE(MAX(prospect_statuses.sort), 0) + 1 FROM prospect_statuses)'),
-                    ]);
-                }
-            } else {
-                if ($newStatus->is_system_protected !== true) {
-                    DB::table('prospect_statuses')
-                        ->where('id', $newStatus->id)
-                        ->update([
-                            'is_system_protected' => true,
-                        ]);
-                }
+        if ($newStatus === null) {
+            if (! app()->runningUnitTests()) {
+                DB::table('prospect_statuses')->insert([
+                    'id' => (string) Str::orderedUuid(),
+                    'classification' => 'new',
+                    'name' => 'New',
+                    'color' => 'sky',
+                    'created_at' => now(),
+                    'sort' => DB::raw('(SELECT COALESCE(MAX(prospect_statuses.sort), 0) + 1 FROM prospect_statuses)'),
+                ]);
             }
-
-            $convertedStatus = DB::table('prospect_statuses')
-                ->where('classification', 'converted')
-                ->where('name', 'Converted')
-                ->first();
-
-            if ($convertedStatus === null) {
-                if (! app()->runningUnitTests()) {
-                    DB::table('prospect_statuses')->insert([
-                        'id' => (string) Str::orderedUuid(),
-                        'classification' => 'converted',
-                        'name' => 'Converted',
-                        'color' => 'green',
-                        'created_at' => now(),
-                        'sort' => DB::raw('(SELECT COALESCE(MAX(prospect_statuses.sort), 0) + 1 FROM prospect_statuses)'),
+        } else {
+            if ($newStatus->is_system_protected !== true) {
+                DB::table('prospect_statuses')
+                    ->where('id', $newStatus->id)
+                    ->update([
+                        'is_system_protected' => true,
                     ]);
-                }
-            } else {
-                if ($convertedStatus->is_system_protected !== true) {
-                    DB::table('prospect_statuses')
-                        ->where('id', $convertedStatus->id)
-                        ->update([
-                            'is_system_protected' => true,
-                        ]);
-                }
             }
-        });
+        }
+
+        $convertedStatus = DB::table('prospect_statuses')
+            ->where('classification', 'converted')
+            ->where('name', 'Converted')
+            ->first();
+
+        if ($convertedStatus === null) {
+            if (! app()->runningUnitTests()) {
+                DB::table('prospect_statuses')->insert([
+                    'id' => (string) Str::orderedUuid(),
+                    'classification' => 'converted',
+                    'name' => 'Converted',
+                    'color' => 'green',
+                    'created_at' => now(),
+                    'sort' => DB::raw('(SELECT COALESCE(MAX(prospect_statuses.sort), 0) + 1 FROM prospect_statuses)'),
+                ]);
+            }
+        } else {
+            if ($convertedStatus->is_system_protected !== true) {
+                DB::table('prospect_statuses')
+                    ->where('id', $convertedStatus->id)
+                    ->update([
+                        'is_system_protected' => true,
+                    ]);
+            }
+        }
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        DB::transaction(function () {
-            DB::table('prospect_statuses')
-                ->where('classification', 'new')
-                ->where('name', 'New')
-                ->update([
-                    'is_system_protected' => false,
-                ]);
+        DB::table('prospect_statuses')
+            ->where('classification', 'new')
+            ->where('name', 'New')
+            ->update([
+                'is_system_protected' => false,
+            ]);
 
-            DB::table('prospect_statuses')
-                ->where('classification', 'converted')
-                ->where('name', 'Converted')
-                ->update([
-                    'is_system_protected' => false,
-                ]);
-        });
+        DB::table('prospect_statuses')
+            ->where('classification', 'converted')
+            ->where('name', 'Converted')
+            ->update([
+                'is_system_protected' => false,
+            ]);
     }
 };

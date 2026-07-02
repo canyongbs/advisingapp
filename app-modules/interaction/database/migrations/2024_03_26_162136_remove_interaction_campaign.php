@@ -36,39 +36,34 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('interactions', function (Blueprint $table) {
-                $table->dropForeign(['interaction_campaign_id']);
-                $table->dropColumn('interaction_campaign_id');
-            });
-
-            Schema::dropIfExists('interaction_campaigns');
+        Schema::table('interactions', function (Blueprint $table) {
+            $table->dropForeign(['interaction_campaign_id']);
+            $table->dropColumn('interaction_campaign_id');
         });
+
+        Schema::dropIfExists('interaction_campaigns');
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::create('interaction_campaigns', function (Blueprint $table) {
-                $table->uuid('id')->primary();
+        Schema::create('interaction_campaigns', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-                $table->string('name');
+            $table->string('name');
 
-                $table->timestamps();
-                $table->softDeletes();
-            });
+            $table->timestamps();
+            $table->softDeletes();
+        });
 
-            Schema::table('interactions', function (Blueprint $table) {
-                $table->foreignUuid('interaction_campaign_id')->nullable()->constrained('interaction_campaigns');
-            });
+        Schema::table('interactions', function (Blueprint $table) {
+            $table->foreignUuid('interaction_campaign_id')->nullable()->constrained('interaction_campaigns');
         });
     }
 };

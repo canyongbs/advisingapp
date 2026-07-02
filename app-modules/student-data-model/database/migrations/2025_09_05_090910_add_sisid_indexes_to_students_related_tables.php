@@ -35,7 +35,6 @@
 */
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
@@ -43,52 +42,48 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('enrollments', function (Blueprint $table) {
-                $table->index('sisid');
-            });
+        Schema::table('enrollments', function (Blueprint $table) {
+            $table->index('sisid');
+        });
 
-            Schema::table('programs', function (Blueprint $table) {
-                $table->index('sisid');
-            });
+        Schema::table('programs', function (Blueprint $table) {
+            $table->index('sisid');
+        });
 
-            Schema::table('student_email_addresses', function (Blueprint $table) {
-                $table->index('sisid');
-            });
+        Schema::table('student_email_addresses', function (Blueprint $table) {
+            $table->index('sisid');
+        });
 
-            Schema::table('student_phone_numbers', function (Blueprint $table) {
-                $table->index('sisid');
-            });
+        Schema::table('student_phone_numbers', function (Blueprint $table) {
+            $table->index('sisid');
+        });
 
-            Schema::table('student_addresses', function (Blueprint $table) {
-                $table->index('sisid');
-            });
+        Schema::table('student_addresses', function (Blueprint $table) {
+            $table->index('sisid');
         });
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('enrollments', function (Blueprint $table) {
-                $table->dropIndex(['sisid']);
-            });
+        Schema::table('enrollments', function (Blueprint $table) {
+            $table->dropIndex(['sisid']);
+        });
 
-            Schema::table('programs', function (Blueprint $table) {
-                $table->dropIndex(['sisid']);
-            });
+        Schema::table('programs', function (Blueprint $table) {
+            $table->dropIndex(['sisid']);
+        });
 
-            Schema::table('student_email_addresses', function (Blueprint $table) {
-                $table->dropIndex(['sisid']);
-            });
+        Schema::table('student_email_addresses', function (Blueprint $table) {
+            $table->dropIndex(['sisid']);
+        });
 
-            Schema::table('student_phone_numbers', function (Blueprint $table) {
-                $table->dropIndex(['sisid']);
-            });
+        Schema::table('student_phone_numbers', function (Blueprint $table) {
+            $table->dropIndex(['sisid']);
+        });
 
-            Schema::table('student_addresses', function (Blueprint $table) {
-                $table->dropIndex(['sisid']);
-            });
+        Schema::table('student_addresses', function (Blueprint $table) {
+            $table->dropIndex(['sisid']);
         });
     }
 };

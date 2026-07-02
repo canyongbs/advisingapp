@@ -36,7 +36,6 @@
 
 use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     use CanModifyPermissions;
@@ -67,20 +66,18 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            collect($this->guards)
-                ->each(function (string $guard) {
-                    $permissions = Arr::except($this->permissions, keys: DB::table('permissions')
-                        ->where('guard_name', $guard)
-                        ->pluck('name')
-                        ->all());
+        collect($this->guards)
+            ->each(function (string $guard) {
+                $permissions = Arr::except($this->permissions, keys: DB::table('permissions')
+                    ->where('guard_name', $guard)
+                    ->pluck('name')
+                    ->all());
 
-                    $this->createPermissions($permissions, $guard);
-                });
+                $this->createPermissions($permissions, $guard);
+            });
 
-            collect($this->guards)
-                ->each(fn (string $guard) => $this->deletePermissions($this->permissionsToDelete, $guard));
-        });
+        collect($this->guards)
+            ->each(fn (string $guard) => $this->deletePermissions($this->permissionsToDelete, $guard));
     }
 
     public function down(): void

@@ -43,64 +43,60 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('campaigns', function (Blueprint $table) {
-                if (Schema::hasColumn('campaigns', 'caseload_id')) {
-                    $table->dropColumn('caseload_id');
-                }
+        Schema::table('campaigns', function (Blueprint $table) {
+            if (Schema::hasColumn('campaigns', 'caseload_id')) {
+                $table->dropColumn('caseload_id');
+            }
 
-                $table->foreignUuid('segment_id')->nullable(false)->change();
-            });
-
-            DB::table('permission_groups')
-                ->whereIn('name', ['Caseload', 'Caseload Subject'])
-                ->delete();
-
-            Schema::dropIfExists('caseload_subjects');
-            Schema::dropIfExists('caseloads');
+            $table->foreignUuid('segment_id')->nullable(false)->change();
         });
+
+        DB::table('permission_groups')
+            ->whereIn('name', ['Caseload', 'Caseload Subject'])
+            ->delete();
+
+        Schema::dropIfExists('caseload_subjects');
+        Schema::dropIfExists('caseloads');
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('campaigns', function (Blueprint $table) {
-                $table->foreignUuid('caseload_id')->nullable()->constrained('caseloads');
+        Schema::table('campaigns', function (Blueprint $table) {
+            $table->foreignUuid('caseload_id')->nullable()->constrained('caseloads');
 
-                $table->dropForeign('segment_id');
-                $table->foreignUuid('segment_id')->nullable()->change()->constrained('segments');
-            });
+            $table->dropForeign('segment_id');
+            $table->foreignUuid('segment_id')->nullable()->change()->constrained('segments');
+        });
 
-            Schema::create('caseloads', function (Blueprint $table) {
-                $table->uuid('id')->primary();
+        Schema::create('caseloads', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-                $table->string('name');
-                $table->text('description')->nullable();
-                // @phpstan-ignore Common.jsonColumnInMigration
-                $table->json('filters')->nullable();
-                $table->string('model');
-                $table->string('type');
+            $table->string('name');
+            $table->text('description')->nullable();
+            // @phpstan-ignore Common.jsonColumnInMigration
+            $table->json('filters')->nullable();
+            $table->string('model');
+            $table->string('type');
 
-                $table->foreignUuid('user_id')->constrained('users');
+            $table->foreignUuid('user_id')->constrained('users');
 
-                $table->timestamps();
-                $table->softDeletes();
-            });
+            $table->timestamps();
+            $table->softDeletes();
+        });
 
-            Schema::create('caseload_subjects', function (Blueprint $table) {
-                $table->uuid('id')->primary();
+        Schema::create('caseload_subjects', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-                $table->string('subject_id');
-                $table->string('subject_type');
+            $table->string('subject_id');
+            $table->string('subject_type');
 
-                $table->foreignUuid('caseload_id')->constrained('caseloads')->cascadeOnDelete();
+            $table->foreignUuid('caseload_id')->constrained('caseloads')->cascadeOnDelete();
 
-                $table->index(['subject_type', 'subject_id']);
+            $table->index(['subject_type', 'subject_id']);
 
-                $table->timestamps();
-                $table->softDeletes();
-            });
+            $table->timestamps();
+            $table->softDeletes();
         });
     }
 };

@@ -36,39 +36,34 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('email_templates', function (Blueprint $table) {
-                // @phpstan-ignore Common.jsonColumnInMigration
-                $table->json('content')->nullable()->change();
-            });
+        Schema::table('email_templates', function (Blueprint $table) {
+            // @phpstan-ignore Common.jsonColumnInMigration
+            $table->json('content')->nullable()->change();
+        });
 
-            Schema::table('sms_templates', function (Blueprint $table) {
-                // @phpstan-ignore Common.jsonColumnInMigration
-                $table->json('content')->nullable()->change();
-            });
+        Schema::table('sms_templates', function (Blueprint $table) {
+            // @phpstan-ignore Common.jsonColumnInMigration
+            $table->json('content')->nullable()->change();
         });
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('email_templates', function (Blueprint $table) {
-                // @phpstan-ignore Common.jsonColumnInMigration
-                $table->json('content')->nullable(false)->change();
-            });
+        Schema::table('email_templates', function (Blueprint $table) {
+            // @phpstan-ignore Common.jsonColumnInMigration
+            $table->json('content')->nullable(false)->change();
+        });
 
-            Schema::table('sms_templates', function (Blueprint $table) {
-                // @phpstan-ignore Common.jsonColumnInMigration
-                $table->json('content')->nullable(false)->change();
-            });
+        Schema::table('sms_templates', function (Blueprint $table) {
+            // @phpstan-ignore Common.jsonColumnInMigration
+            $table->json('content')->nullable(false)->change();
         });
     }
 };
