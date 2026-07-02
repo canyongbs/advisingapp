@@ -53,15 +53,18 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        Schema::table('ai_assistants', function (Blueprint $table) {
-            $table->string('type')->nullable();
-            $table->string('application')->nullable()->change();
-            $table->string('model')->nullable()->change();
-        });
+        DB::transaction(function () {
 
-        DB::table('ai_assistants')
-            ->update([
-                'type' => new Expression('CASE WHEN ai_assistants.is_default = true THEN \'default\' ELSE \'custom\' END'),
-            ]);
+            Schema::table('ai_assistants', function (Blueprint $table) {
+                $table->string('type')->nullable();
+                $table->string('application')->nullable()->change();
+                $table->string('model')->nullable()->change();
+            });
+
+            DB::table('ai_assistants')
+                ->update([
+                    'type' => new Expression('CASE WHEN ai_assistants.is_default = true THEN \'default\' ELSE \'custom\' END'),
+                ]);
+        });
     }
 };

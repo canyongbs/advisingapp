@@ -37,29 +37,33 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        if (Schema::hasTable('programs')) {
-            return;
-        }
+        DB::transaction(function () {
 
-        Schema::create('programs', function (Blueprint $table) {
-            $table->string('sisid');
-            $table->string('otherid');
-            $table->string('acad_career');
-            $table->string('division');
-            $table->string('acad_plan');
-            $table->string('prog_status');
-            $table->float('cum_gpa', 4);
-            $table->string('semester');
-            $table->string('descr');
-            $table->string('foi');
-            $table->timestampTz('change_dt');
-            $table->timestampTz('declare_dt');
+            if (Schema::hasTable('programs')) {
+                return;
+            }
+
+            Schema::create('programs', function (Blueprint $table) {
+                $table->string('sisid');
+                $table->string('otherid');
+                $table->string('acad_career');
+                $table->string('division');
+                $table->string('acad_plan');
+                $table->string('prog_status');
+                $table->float('cum_gpa', 4);
+                $table->string('semester');
+                $table->string('descr');
+                $table->string('foi');
+                $table->timestampTz('change_dt');
+                $table->timestampTz('declare_dt');
+            });
         });
     }
 };

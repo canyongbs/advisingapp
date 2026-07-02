@@ -35,21 +35,28 @@
 */
 
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        $this->migrator->add('college_branding.is_enabled', false);
-        $this->migrator->add('college_branding.college_text');
-        $this->migrator->add('college_branding.color');
+        DB::transaction(function () {
+
+            $this->migrator->add('college_branding.is_enabled', false);
+            $this->migrator->add('college_branding.college_text');
+            $this->migrator->add('college_branding.color');
+        });
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        $this->migrator->delete('college_branding.is_enabled');
-        $this->migrator->delete('college_branding.college_text');
-        $this->migrator->delete('college_branding.color');
+        DB::transaction(function () {
+
+            $this->migrator->delete('college_branding.is_enabled');
+            $this->migrator->delete('college_branding.college_text');
+            $this->migrator->delete('college_branding.color');
+        });
     }
 };

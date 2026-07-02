@@ -41,108 +41,114 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        /** Rename knowledge_base_articles to resource_hub_articles*/
-        DB::beginTransaction();
+        DB::transaction(function () {
 
-        DB::statement('ALTER TABLE knowledge_base_articles RENAME TO resource_hub_articles');
+            /** Rename knowledge_base_articles to resource_hub_articles*/
+            DB::beginTransaction();
 
-        DB::statement('ALTER TABLE resource_hub_articles RENAME CONSTRAINT knowledge_base_articles_pkey TO resource_hub_articles_pkey');
+            DB::statement('ALTER TABLE knowledge_base_articles RENAME TO resource_hub_articles');
 
-        DB::statement('ALTER TABLE resource_hub_articles RENAME CONSTRAINT knowledge_base_articles_category_id_foreign TO resource_hub_articles_category_id_foreign');
+            DB::statement('ALTER TABLE resource_hub_articles RENAME CONSTRAINT knowledge_base_articles_pkey TO resource_hub_articles_pkey');
 
-        DB::statement('ALTER TABLE resource_hub_articles RENAME CONSTRAINT knowledge_base_articles_quality_id_foreign TO resource_hub_articles_quality_id_foreign');
+            DB::statement('ALTER TABLE resource_hub_articles RENAME CONSTRAINT knowledge_base_articles_category_id_foreign TO resource_hub_articles_category_id_foreign');
 
-        DB::statement('ALTER TABLE resource_hub_articles RENAME CONSTRAINT knowledge_base_articles_status_id_foreign TO resource_hub_articles_status_id_foreign');
+            DB::statement('ALTER TABLE resource_hub_articles RENAME CONSTRAINT knowledge_base_articles_quality_id_foreign TO resource_hub_articles_quality_id_foreign');
 
-        DB::statement('CREATE VIEW knowledge_base_articles AS SELECT * FROM resource_hub_articles');
+            DB::statement('ALTER TABLE resource_hub_articles RENAME CONSTRAINT knowledge_base_articles_status_id_foreign TO resource_hub_articles_status_id_foreign');
 
-        DB::commit();
+            DB::statement('CREATE VIEW knowledge_base_articles AS SELECT * FROM resource_hub_articles');
 
-        /** Rename knowledge_base_categories to resource_hub_categories*/
-        DB::beginTransaction();
+            DB::commit();
 
-        DB::statement('ALTER TABLE knowledge_base_categories RENAME TO resource_hub_categories');
+            /** Rename knowledge_base_categories to resource_hub_categories*/
+            DB::beginTransaction();
 
-        DB::statement('ALTER TABLE resource_hub_categories RENAME CONSTRAINT knowledge_base_categories_pkey TO resource_hub_categories_pkey');
+            DB::statement('ALTER TABLE knowledge_base_categories RENAME TO resource_hub_categories');
 
-        DB::statement('CREATE VIEW knowledge_base_categories AS SELECT * FROM resource_hub_categories');
+            DB::statement('ALTER TABLE resource_hub_categories RENAME CONSTRAINT knowledge_base_categories_pkey TO resource_hub_categories_pkey');
 
-        DB::commit();
+            DB::statement('CREATE VIEW knowledge_base_categories AS SELECT * FROM resource_hub_categories');
 
-        /** Rename knowledge_base_qualities to resource_hub_qualities*/
-        DB::beginTransaction();
+            DB::commit();
 
-        DB::statement('ALTER TABLE knowledge_base_qualities RENAME TO resource_hub_qualities');
+            /** Rename knowledge_base_qualities to resource_hub_qualities*/
+            DB::beginTransaction();
 
-        DB::statement('CREATE VIEW knowledge_base_qualities AS SELECT * FROM resource_hub_qualities');
+            DB::statement('ALTER TABLE knowledge_base_qualities RENAME TO resource_hub_qualities');
 
-        DB::statement('ALTER TABLE resource_hub_qualities RENAME CONSTRAINT knowledge_base_qualities_pkey TO resource_hub_qualities_pkey');
+            DB::statement('CREATE VIEW knowledge_base_qualities AS SELECT * FROM resource_hub_qualities');
 
-        DB::commit();
+            DB::statement('ALTER TABLE resource_hub_qualities RENAME CONSTRAINT knowledge_base_qualities_pkey TO resource_hub_qualities_pkey');
 
-        /** Rename knowledge_base_statuses to resource_hub_statuses*/
-        DB::beginTransaction();
+            DB::commit();
 
-        DB::statement('ALTER TABLE knowledge_base_statuses RENAME TO resource_hub_statuses');
+            /** Rename knowledge_base_statuses to resource_hub_statuses*/
+            DB::beginTransaction();
 
-        DB::statement('CREATE VIEW knowledge_base_statuses AS SELECT * FROM resource_hub_statuses');
+            DB::statement('ALTER TABLE knowledge_base_statuses RENAME TO resource_hub_statuses');
 
-        DB::statement('ALTER TABLE resource_hub_statuses RENAME CONSTRAINT knowledge_base_statuses_pkey TO resource_hub_statuses_pkey');
+            DB::statement('CREATE VIEW knowledge_base_statuses AS SELECT * FROM resource_hub_statuses');
 
-        DB::commit();
+            DB::statement('ALTER TABLE resource_hub_statuses RENAME CONSTRAINT knowledge_base_statuses_pkey TO resource_hub_statuses_pkey');
+
+            DB::commit();
+        });
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        /** Rename resource_hub_articles to knowledge_base_articles*/
-        DB::beginTransaction();
+        DB::transaction(function () {
 
-        DB::statement('DROP VIEW IF EXISTS knowledge_base_articles');
+            /** Rename resource_hub_articles to knowledge_base_articles*/
+            DB::beginTransaction();
 
-        DB::statement('ALTER TABLE resource_hub_articles RENAME TO knowledge_base_articles');
+            DB::statement('DROP VIEW IF EXISTS knowledge_base_articles');
 
-        DB::statement('ALTER TABLE knowledge_base_articles RENAME CONSTRAINT resource_hub_articles_pkey TO knowledge_base_articles_pkey');
+            DB::statement('ALTER TABLE resource_hub_articles RENAME TO knowledge_base_articles');
 
-        DB::statement('ALTER TABLE knowledge_base_articles RENAME CONSTRAINT resource_hub_articles_category_id_foreign TO knowledge_base_articles_category_id_foreign');
+            DB::statement('ALTER TABLE knowledge_base_articles RENAME CONSTRAINT resource_hub_articles_pkey TO knowledge_base_articles_pkey');
 
-        DB::statement('ALTER TABLE knowledge_base_articles RENAME CONSTRAINT resource_hub_articles_quality_id_foreign TO knowledge_base_articles_quality_id_foreign');
+            DB::statement('ALTER TABLE knowledge_base_articles RENAME CONSTRAINT resource_hub_articles_category_id_foreign TO knowledge_base_articles_category_id_foreign');
 
-        DB::statement('ALTER TABLE knowledge_base_articles RENAME CONSTRAINT resource_hub_articles_status_id_foreign TO knowledge_base_articles_status_id_foreign');
+            DB::statement('ALTER TABLE knowledge_base_articles RENAME CONSTRAINT resource_hub_articles_quality_id_foreign TO knowledge_base_articles_quality_id_foreign');
 
-        DB::commit();
+            DB::statement('ALTER TABLE knowledge_base_articles RENAME CONSTRAINT resource_hub_articles_status_id_foreign TO knowledge_base_articles_status_id_foreign');
 
-        /** Rename resource_hub_categories to knowledge_base_categories*/
-        DB::beginTransaction();
+            DB::commit();
 
-        DB::statement('DROP VIEW IF EXISTS knowledge_base_categories');
+            /** Rename resource_hub_categories to knowledge_base_categories*/
+            DB::beginTransaction();
 
-        DB::statement('ALTER TABLE resource_hub_categories RENAME TO knowledge_base_categories');
+            DB::statement('DROP VIEW IF EXISTS knowledge_base_categories');
 
-        DB::statement('ALTER TABLE knowledge_base_categories RENAME CONSTRAINT resource_hub_categories_pkey TO knowledge_base_categories_pkey');
+            DB::statement('ALTER TABLE resource_hub_categories RENAME TO knowledge_base_categories');
 
-        DB::commit();
+            DB::statement('ALTER TABLE knowledge_base_categories RENAME CONSTRAINT resource_hub_categories_pkey TO knowledge_base_categories_pkey');
 
-        /** Rename resource_hub_qualities to knowledge_base_qualities*/
-        DB::beginTransaction();
+            DB::commit();
 
-        DB::statement('DROP VIEW IF EXISTS knowledge_base_qualities');
+            /** Rename resource_hub_qualities to knowledge_base_qualities*/
+            DB::beginTransaction();
 
-        DB::statement('ALTER TABLE resource_hub_qualities RENAME TO knowledge_base_qualities');
+            DB::statement('DROP VIEW IF EXISTS knowledge_base_qualities');
 
-        DB::statement('ALTER TABLE knowledge_base_qualities RENAME CONSTRAINT resource_hub_qualities_pkey TO knowledge_base_qualities_pkey');
+            DB::statement('ALTER TABLE resource_hub_qualities RENAME TO knowledge_base_qualities');
 
-        DB::commit();
+            DB::statement('ALTER TABLE knowledge_base_qualities RENAME CONSTRAINT resource_hub_qualities_pkey TO knowledge_base_qualities_pkey');
 
-        /** Rename resource_hub_statuses to knowledge_base_statuses*/
-        DB::beginTransaction();
+            DB::commit();
 
-        DB::statement('DROP VIEW IF EXISTS knowledge_base_statuses');
+            /** Rename resource_hub_statuses to knowledge_base_statuses*/
+            DB::beginTransaction();
 
-        DB::statement('ALTER TABLE resource_hub_statuses RENAME TO knowledge_base_statuses');
+            DB::statement('DROP VIEW IF EXISTS knowledge_base_statuses');
 
-        DB::statement('ALTER TABLE knowledge_base_statuses RENAME CONSTRAINT resource_hub_statuses_pkey TO knowledge_base_statuses_pkey');
+            DB::statement('ALTER TABLE resource_hub_statuses RENAME TO knowledge_base_statuses');
 
-        DB::commit();
+            DB::statement('ALTER TABLE knowledge_base_statuses RENAME CONSTRAINT resource_hub_statuses_pkey TO knowledge_base_statuses_pkey');
+
+            DB::commit();
+        });
     }
 };

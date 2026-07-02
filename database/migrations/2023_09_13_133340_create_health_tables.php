@@ -38,33 +38,37 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Spatie\Health\ResultStores\EloquentHealthResultStore;
+use Illuminate\Support\Facades\DB;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        $tableName = EloquentHealthResultStore::getHistoryItemInstance()->getTable();
+        DB::transaction(function () {
 
-        Schema::create($tableName, function (Blueprint $table) {
-            $table->id();
+            $tableName = EloquentHealthResultStore::getHistoryItemInstance()->getTable();
 
-            $table->string('check_name');
-            $table->string('check_label');
-            $table->string('status');
-            $table->text('notification_message')->nullable();
-            $table->string('short_summary')->nullable();
-            // @phpstan-ignore Common.jsonColumnInMigration
-            $table->json('meta');
-            $table->timestamp('ended_at');
-            $table->uuid('batch');
+            Schema::create($tableName, function (Blueprint $table) {
+                $table->id();
 
-            $table->timestamps();
-        });
+                $table->string('check_name');
+                $table->string('check_label');
+                $table->string('status');
+                $table->text('notification_message')->nullable();
+                $table->string('short_summary')->nullable();
+                // @phpstan-ignore Common.jsonColumnInMigration
+                $table->json('meta');
+                $table->timestamp('ended_at');
+                $table->uuid('batch');
 
-        Schema::table($tableName, function (Blueprint $table) {
-            $table->index('created_at');
-            $table->index('batch');
+                $table->timestamps();
+            });
+
+            Schema::table($tableName, function (Blueprint $table) {
+                $table->index('created_at');
+                $table->index('batch');
+            });
         });
     }
 };

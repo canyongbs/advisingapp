@@ -36,28 +36,35 @@
 
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        try {
-            $this->migrator->add('ai_research_assistant.ai_model');
-        } catch (SettingAlreadyExists $exception) {
-            // do nothing
-        }
+        DB::transaction(function () {
 
-        try {
-            $this->migrator->add('ai_research_assistant.context');
-        } catch (SettingAlreadyExists $exception) {
-            // do nothing
-        }
+            try {
+                $this->migrator->add('ai_research_assistant.ai_model');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+
+            try {
+                $this->migrator->add('ai_research_assistant.context');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+        });
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        $this->migrator->deleteIfExists('ai_research_assistant.ai_model');
-        $this->migrator->deleteIfExists('ai_research_assistant.context');
+        DB::transaction(function () {
+
+            $this->migrator->deleteIfExists('ai_research_assistant.ai_model');
+            $this->migrator->deleteIfExists('ai_research_assistant.context');
+        });
     }
 };

@@ -58,20 +58,23 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        $realtimeChatPermissionGroup = DB::table('permission_groups')
-            ->where('name', 'Realtime Chat')
-            ->first();
+        DB::transaction(function () {
 
-        DB::table('permissions')
-            ->whereIn('name', ['realtime_chat.view-any', 'realtime_chat.*.view'])
-            ->update([
-                'group_id' => $realtimeChatPermissionGroup->id,
-            ]);
+            $realtimeChatPermissionGroup = DB::table('permission_groups')
+                ->where('name', 'Realtime Chat')
+                ->first();
 
-        collect($this->guards)
-            ->each(function (string $guard) {
-                $this->deletePermissions(array_keys($this->permissionsToDelete), $guard);
-            });
+            DB::table('permissions')
+                ->whereIn('name', ['realtime_chat.view-any', 'realtime_chat.*.view'])
+                ->update([
+                    'group_id' => $realtimeChatPermissionGroup->id,
+                ]);
+
+            collect($this->guards)
+                ->each(function (string $guard) {
+                    $this->deletePermissions(array_keys($this->permissionsToDelete), $guard);
+                });
+        });
     }
 
     public function down(): void

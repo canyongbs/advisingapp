@@ -37,26 +37,30 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        if (Schema::hasTable('performance')) {
-            return;
-        }
+        DB::transaction(function () {
 
-        Schema::create('performance', function (Blueprint $table) {
-            $table->string('sisid');
-            $table->string('acad_career');
-            $table->string('division');
-            $table->boolean('first_gen');
-            $table->integer('cum_att');
-            $table->integer('cum_ern');
-            $table->integer('pct_ern');
-            $table->float('cum_gpa', 4);
-            $table->timestampTz('max_dt');
+            if (Schema::hasTable('performance')) {
+                return;
+            }
+
+            Schema::create('performance', function (Blueprint $table) {
+                $table->string('sisid');
+                $table->string('acad_career');
+                $table->string('division');
+                $table->boolean('first_gen');
+                $table->integer('cum_att');
+                $table->integer('cum_ern');
+                $table->integer('pct_ern');
+                $table->float('cum_gpa', 4);
+                $table->timestampTz('max_dt');
+            });
         });
     }
 };

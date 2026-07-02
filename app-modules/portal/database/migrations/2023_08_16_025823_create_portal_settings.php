@@ -35,40 +35,44 @@
 */
 
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
+use Illuminate\Support\Facades\DB;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        $this->migrator->add('portal.logo');
-        $this->migrator->add('portal.primary_color');
-        $this->migrator->add('portal.secondary_color');
+        DB::transaction(function () {
 
-        $this->migrator->add('portal.has_applications', false);
-        $this->migrator->add('portal.has_message_center', false);
-        $this->migrator->add('portal.has_user_chat', false);
-        $this->migrator->add('portal.has_care_team', false);
-        $this->migrator->add('portal.has_performance_alerts', false);
-        $this->migrator->add('portal.has_emergency_alerts', false);
-        $this->migrator->add('portal.has_service_management', false);
-        $this->migrator->add('portal.has_notifications', false);
-        $this->migrator->add('portal.has_knowledge_base', false);
-        $this->migrator->add('portal.has_tasks', false);
-        $this->migrator->add('portal.has_files_and_documents', false);
-        $this->migrator->add('portal.has_forms', false);
-        $this->migrator->add('portal.has_surveys', false);
+            $this->migrator->add('portal.logo');
+            $this->migrator->add('portal.primary_color');
+            $this->migrator->add('portal.secondary_color');
 
-        $this->migrator->add('portal.footer_color');
-        $this->migrator->add('portal.footer_copyright_statement');
+            $this->migrator->add('portal.has_applications', false);
+            $this->migrator->add('portal.has_message_center', false);
+            $this->migrator->add('portal.has_user_chat', false);
+            $this->migrator->add('portal.has_care_team', false);
+            $this->migrator->add('portal.has_performance_alerts', false);
+            $this->migrator->add('portal.has_emergency_alerts', false);
+            $this->migrator->add('portal.has_service_management', false);
+            $this->migrator->add('portal.has_notifications', false);
+            $this->migrator->add('portal.has_knowledge_base', false);
+            $this->migrator->add('portal.has_tasks', false);
+            $this->migrator->add('portal.has_files_and_documents', false);
+            $this->migrator->add('portal.has_forms', false);
+            $this->migrator->add('portal.has_surveys', false);
 
-        /**
-         * Knowledge Base Portal
-        */
-        $this->migrator->add('portal.knowledge_management_portal_enabled', false);
-        $this->migrator->add('portal.knowledge_management_portal_service_management', false);
-        $this->migrator->add('portal.knowledge_management_portal_primary_color');
-        $this->migrator->add('portal.knowledge_management_portal_rounding');
-        $this->migrator->add('portal.knowledge_management_portal_authorized_domain');
+            $this->migrator->add('portal.footer_color');
+            $this->migrator->add('portal.footer_copyright_statement');
+
+            /**
+             * Knowledge Base Portal
+            */
+            $this->migrator->add('portal.knowledge_management_portal_enabled', false);
+            $this->migrator->add('portal.knowledge_management_portal_service_management', false);
+            $this->migrator->add('portal.knowledge_management_portal_primary_color');
+            $this->migrator->add('portal.knowledge_management_portal_rounding');
+            $this->migrator->add('portal.knowledge_management_portal_authorized_domain');
+        });
     }
 };

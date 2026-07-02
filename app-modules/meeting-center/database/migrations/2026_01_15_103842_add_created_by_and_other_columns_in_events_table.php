@@ -43,12 +43,15 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        Schema::table('events', function (Blueprint $table) {
-            $table->foreignUuid('created_by_id')->constrained('users')->nullOnDelete();
-            $table->foreignUuid('last_updated_by_id')->nullable()->constrained('users')->nullOnDelete();
-        });
+        DB::transaction(function () {
 
-        DB::statement('ALTER TABLE events ALTER COLUMN description TYPE jsonb USING description::jsonb');
+            Schema::table('events', function (Blueprint $table) {
+                $table->foreignUuid('created_by_id')->constrained('users')->nullOnDelete();
+                $table->foreignUuid('last_updated_by_id')->nullable()->constrained('users')->nullOnDelete();
+            });
+
+            DB::statement('ALTER TABLE events ALTER COLUMN description TYPE jsonb USING description::jsonb');
+        });
     }
 
     public function down(): void

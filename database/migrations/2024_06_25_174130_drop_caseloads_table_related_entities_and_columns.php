@@ -43,60 +43,66 @@ return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        Schema::table('campaigns', function (Blueprint $table) {
-            if (Schema::hasColumn('campaigns', 'caseload_id')) {
-                $table->dropColumn('caseload_id');
-            }
+        DB::transaction(function () {
 
-            $table->foreignUuid('segment_id')->nullable(false)->change();
+            Schema::table('campaigns', function (Blueprint $table) {
+                if (Schema::hasColumn('campaigns', 'caseload_id')) {
+                    $table->dropColumn('caseload_id');
+                }
+
+                $table->foreignUuid('segment_id')->nullable(false)->change();
+            });
+
+            DB::table('permission_groups')
+                ->whereIn('name', ['Caseload', 'Caseload Subject'])
+                ->delete();
+
+            Schema::dropIfExists('caseload_subjects');
+            Schema::dropIfExists('caseloads');
         });
-
-        DB::table('permission_groups')
-            ->whereIn('name', ['Caseload', 'Caseload Subject'])
-            ->delete();
-
-        Schema::dropIfExists('caseload_subjects');
-        Schema::dropIfExists('caseloads');
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        Schema::table('campaigns', function (Blueprint $table) {
-            $table->foreignUuid('caseload_id')->nullable()->constrained('caseloads');
+        DB::transaction(function () {
 
-            $table->dropForeign('segment_id');
-            $table->foreignUuid('segment_id')->nullable()->change()->constrained('segments');
-        });
+            Schema::table('campaigns', function (Blueprint $table) {
+                $table->foreignUuid('caseload_id')->nullable()->constrained('caseloads');
 
-        Schema::create('caseloads', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+                $table->dropForeign('segment_id');
+                $table->foreignUuid('segment_id')->nullable()->change()->constrained('segments');
+            });
 
-            $table->string('name');
-            $table->text('description')->nullable();
-            // @phpstan-ignore Common.jsonColumnInMigration
-            $table->json('filters')->nullable();
-            $table->string('model');
-            $table->string('type');
+            Schema::create('caseloads', function (Blueprint $table) {
+                $table->uuid('id')->primary();
 
-            $table->foreignUuid('user_id')->constrained('users');
+                $table->string('name');
+                $table->text('description')->nullable();
+                // @phpstan-ignore Common.jsonColumnInMigration
+                $table->json('filters')->nullable();
+                $table->string('model');
+                $table->string('type');
 
-            $table->timestamps();
-            $table->softDeletes();
-        });
+                $table->foreignUuid('user_id')->constrained('users');
 
-        Schema::create('caseload_subjects', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+                $table->timestamps();
+                $table->softDeletes();
+            });
 
-            $table->string('subject_id');
-            $table->string('subject_type');
+            Schema::create('caseload_subjects', function (Blueprint $table) {
+                $table->uuid('id')->primary();
 
-            $table->foreignUuid('caseload_id')->constrained('caseloads')->cascadeOnDelete();
+                $table->string('subject_id');
+                $table->string('subject_type');
 
-            $table->index(['subject_type', 'subject_id']);
+                $table->foreignUuid('caseload_id')->constrained('caseloads')->cascadeOnDelete();
 
-            $table->timestamps();
-            $table->softDeletes();
+                $table->index(['subject_type', 'subject_id']);
+
+                $table->timestamps();
+                $table->softDeletes();
+            });
         });
     }
 };

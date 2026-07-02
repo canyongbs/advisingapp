@@ -37,29 +37,36 @@
 use Illuminate\Database\Migrations\Migration;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        Schema::table('ai_assistant_files', function (Blueprint $table) {
-            $table->longText('parsing_results')->nullable();
-        });
+        DB::transaction(function () {
 
-        Schema::table('ai_message_files', function (Blueprint $table) {
-            $table->longText('parsing_results')->nullable();
+            Schema::table('ai_assistant_files', function (Blueprint $table) {
+                $table->longText('parsing_results')->nullable();
+            });
+
+            Schema::table('ai_message_files', function (Blueprint $table) {
+                $table->longText('parsing_results')->nullable();
+            });
         });
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        Schema::table('ai_assistant_files', function (Blueprint $table) {
-            $table->dropColumn('parsing_results');
-        });
+        DB::transaction(function () {
 
-        Schema::table('ai_message_files', function (Blueprint $table) {
-            $table->dropColumn('parsing_results');
+            Schema::table('ai_assistant_files', function (Blueprint $table) {
+                $table->dropColumn('parsing_results');
+            });
+
+            Schema::table('ai_message_files', function (Blueprint $table) {
+                $table->dropColumn('parsing_results');
+            });
         });
     }
 };

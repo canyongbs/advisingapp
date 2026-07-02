@@ -77,10 +77,13 @@ return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        $this->migrator->deleteIfExists('ai.is_open_ai_gpt_4o_responses_api_enabled');
-        $this->migrator->deleteIfExists('ai.is_open_ai_gpt_4o_mini_responses_api_enabled');
-        $this->migrator->deleteIfExists('ai.is_open_ai_gpt_41_mini_responses_api_enabled');
-        $this->migrator->deleteIfExists('ai.is_open_ai_gpt_41_nano_responses_api_enabled');
-        $this->migrator->deleteIfExists('ai.is_open_ai_gpt_o4_mini_responses_api_enabled');
+        DB::transaction(function () {
+
+            $this->migrator->deleteIfExists('ai.is_open_ai_gpt_4o_responses_api_enabled');
+            $this->migrator->deleteIfExists('ai.is_open_ai_gpt_4o_mini_responses_api_enabled');
+            $this->migrator->deleteIfExists('ai.is_open_ai_gpt_41_mini_responses_api_enabled');
+            $this->migrator->deleteIfExists('ai.is_open_ai_gpt_41_nano_responses_api_enabled');
+            $this->migrator->deleteIfExists('ai.is_open_ai_gpt_o4_mini_responses_api_enabled');
+        });
     }
 };

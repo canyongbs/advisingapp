@@ -36,70 +36,77 @@
 
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
+use Illuminate\Support\Facades\DB;
 
 return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        try {
-            $this->migrator->add('ai.open_ai_gpt_35_model_name');
-        } catch (SettingAlreadyExists $exception) {
-            // do nothing
-        }
+        DB::transaction(function () {
 
-        try {
-            $this->migrator->add('ai.open_ai_gpt_4_model_name');
-        } catch (SettingAlreadyExists $exception) {
-            // do nothing
-        }
+            try {
+                $this->migrator->add('ai.open_ai_gpt_35_model_name');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
 
-        try {
-            $this->migrator->add('ai.open_ai_gpt_4o_model_name');
-        } catch (SettingAlreadyExists $exception) {
-            // do nothing
-        }
+            try {
+                $this->migrator->add('ai.open_ai_gpt_4_model_name');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
 
-        try {
-            $this->migrator->add('ai.open_ai_gpt_4o_mini_model_name');
-        } catch (SettingAlreadyExists $exception) {
-            // do nothing
-        }
+            try {
+                $this->migrator->add('ai.open_ai_gpt_4o_model_name');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
 
-        try {
-            $this->migrator->add('ai.open_ai_gpt_o1_mini_model_name');
-        } catch (SettingAlreadyExists $exception) {
-            // do nothing
-        }
+            try {
+                $this->migrator->add('ai.open_ai_gpt_4o_mini_model_name');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
 
-        try {
-            $this->migrator->add('ai.open_ai_gpt_o3_mini_model_name');
-        } catch (SettingAlreadyExists $exception) {
-            // do nothing
-        }
+            try {
+                $this->migrator->add('ai.open_ai_gpt_o1_mini_model_name');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
 
-        try {
-            $this->migrator->add('ai.open_ai_gpt_41_mini_model_name');
-        } catch (SettingAlreadyExists $exception) {
-            // do nothing
-        }
+            try {
+                $this->migrator->add('ai.open_ai_gpt_o3_mini_model_name');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
 
-        try {
-            $this->migrator->add('ai.open_ai_gpt_41_nano_model_name');
-        } catch (SettingAlreadyExists $exception) {
-            // do nothing
-        }
+            try {
+                $this->migrator->add('ai.open_ai_gpt_41_mini_model_name');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+
+            try {
+                $this->migrator->add('ai.open_ai_gpt_41_nano_model_name');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+        });
     }
 
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
-        $this->migrator->deleteIfExists('ai.open_ai_gpt_35_model_name');
-        $this->migrator->deleteIfExists('ai.open_ai_gpt_4_model_name');
-        $this->migrator->deleteIfExists('ai.open_ai_gpt_4o_model_name');
-        $this->migrator->deleteIfExists('ai.open_ai_gpt_4o_mini_model_name');
-        $this->migrator->deleteIfExists('ai.open_ai_gpt_o1_mini_model_name');
-        $this->migrator->deleteIfExists('ai.open_ai_gpt_o3_mini_model_name');
-        $this->migrator->deleteIfExists('ai.open_ai_gpt_41_mini_model_name');
-        $this->migrator->deleteIfExists('ai.open_ai_gpt_41_nano_model_name');
+        DB::transaction(function () {
+
+            $this->migrator->deleteIfExists('ai.open_ai_gpt_35_model_name');
+            $this->migrator->deleteIfExists('ai.open_ai_gpt_4_model_name');
+            $this->migrator->deleteIfExists('ai.open_ai_gpt_4o_model_name');
+            $this->migrator->deleteIfExists('ai.open_ai_gpt_4o_mini_model_name');
+            $this->migrator->deleteIfExists('ai.open_ai_gpt_o1_mini_model_name');
+            $this->migrator->deleteIfExists('ai.open_ai_gpt_o3_mini_model_name');
+            $this->migrator->deleteIfExists('ai.open_ai_gpt_41_mini_model_name');
+            $this->migrator->deleteIfExists('ai.open_ai_gpt_41_nano_model_name');
+        });
     }
 };
