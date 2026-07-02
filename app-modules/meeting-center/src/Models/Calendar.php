@@ -44,7 +44,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @mixin IdeHelperCalendar
- *
  */
 class Calendar extends BaseModel // @phpstan-ignore Common.modelMissingFillable
 {
