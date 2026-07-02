@@ -44,6 +44,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 /**
  * @mixin IdeHelperCampaignActionEducatableRelated
  */
+/** @phpstan-ignore Common.modelMissingFillable */
 class CampaignActionEducatableRelated extends Model
 {
     use HasUuids;

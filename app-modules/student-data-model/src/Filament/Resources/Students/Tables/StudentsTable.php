@@ -195,28 +195,28 @@ class StudentsTable
                             ->operators([
                                 ContainsOperator::make()
                                     ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
-                                        $text = strtolower(trim($settings['text']));
+                                        $text = strtolower(trim($settings['text'])); // @phpstan-ignore Common.noStrtolower
                                         $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(CASE WHEN jsonb_typeof(kv.value) = 'array' THEN kv.value ELSE '[]'::jsonb END) AS elem WHERE lower(elem) LIKE ?)";
 
                                         return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, ["%{$text}%"]);
                                     }),
                                 StartsWithOperator::make()
                                     ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
-                                        $text = strtolower(trim($settings['text']));
+                                        $text = strtolower(trim($settings['text'])); // @phpstan-ignore Common.noStrtolower
                                         $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(CASE WHEN jsonb_typeof(kv.value) = 'array' THEN kv.value ELSE '[]'::jsonb END) AS elem WHERE lower(elem) LIKE ?)";
 
                                         return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, ["{$text}%"]);
                                     }),
                                 EndsWithOperator::make()
                                     ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
-                                        $text = strtolower(trim($settings['text']));
+                                        $text = strtolower(trim($settings['text'])); // @phpstan-ignore Common.noStrtolower
                                         $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(CASE WHEN jsonb_typeof(kv.value) = 'array' THEN kv.value ELSE '[]'::jsonb END) AS elem WHERE lower(elem) LIKE ?)";
 
                                         return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, ["%{$text}"]);
                                     }),
                                 EqualsOperator::make()
                                     ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
-                                        $text = strtolower(trim($settings['text']));
+                                        $text = strtolower(trim($settings['text'])); // @phpstan-ignore Common.noStrtolower
                                         $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(CASE WHEN jsonb_typeof(kv.value) = 'array' THEN kv.value ELSE '[]'::jsonb END) AS elem WHERE lower(elem) = ?)";
 
                                         return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, [$text]);
@@ -329,7 +329,7 @@ class StudentsTable
                     ->filter()
                     ->unique()
                     ->sort()
-                    ->mapWithKeys(fn (?string $option): array => $option ? [strtolower($option) => $option] : [])
+                    ->mapWithKeys(fn (?string $option): array => $option ? [strtolower($option) => $option] : []) // @phpstan-ignore Common.noStrtolower
                     ->all();
             });
     }

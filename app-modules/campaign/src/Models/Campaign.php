@@ -86,6 +86,7 @@ class Campaign extends BaseModel implements Auditable
         return $this->hasMany(CampaignAction::class);
     }
 
+    // @phpstan-ignore Common.noLocalModelScope
     public function scopeHasNotBeenExecuted(Builder $query): void
     {
         $query->whereDoesntHave('actions', function (Builder $query) {

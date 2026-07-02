@@ -107,7 +107,7 @@ trait HasFiltersForm
 
         return Group::query()
             ->where('model', $model)
-            ->when($search, fn (Builder $query) => $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%']))
+            ->when($search, fn (Builder $query) => $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%'])) // @phpstan-ignore Common.noStrtolower
             ->orderByDesc('created_at')
             ->limit(20)
             ->pluck('name', 'id')

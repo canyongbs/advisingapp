@@ -207,7 +207,7 @@ class ListUsers extends ListRecords
                             'Roles' => Role::query()->take(50)->orderBy('name')->pluck('name', 'id')->toArray(),
                         ]
                     )
-                    ->getSearchResultsUsing(fn (string $search): array => ['Roles' => Role::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->orderBy('name')->pluck('name', 'id')->toArray()])
+                    ->getSearchResultsUsing(fn (string $search): array => ['Roles' => Role::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->orderBy('name')->pluck('name', 'id')->toArray()]) // @phpstan-ignore Common.noStrtolower
                     ->getOptionLabelsUsing(function (array $values): array {
                         $values = array_values(array_filter($values, filled(...)));
 
@@ -260,7 +260,7 @@ class ListUsers extends ListRecords
                                 ->toArray(),
                         ]
                     )
-                    ->getSearchResultsUsing(fn (string $search): array => ['Licenses' => collect(LicenseType::cases())->filter(fn ($case) => str_contains(strtolower($case->name), strtolower($search)))->mapWithKeys(fn ($case) => [$case->value => $case->name])->toArray()])
+                    ->getSearchResultsUsing(fn (string $search): array => ['Licenses' => collect(LicenseType::cases())->filter(fn ($case) => str_contains(strtolower($case->name), strtolower($search)))->mapWithKeys(fn ($case) => [$case->value => $case->name])->toArray()]) // @phpstan-ignore Common.noStrtolower, Common.noStrtolower
                     ->getOptionLabelsUsing(function (array $values): array {
                         $values = array_values(array_filter($values, filled(...)));
 

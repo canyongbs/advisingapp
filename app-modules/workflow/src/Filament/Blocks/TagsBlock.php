@@ -66,14 +66,14 @@ class TagsBlock extends WorkflowActionBlock
             Select::make('student_tag_ids')
                 ->label('Which Student tags should be applied?')
                 ->helperText('If the respondee matches to a student within the system, these tags will be applied.')
-                ->options(fn () => Tag::where('type', TagType::Student)->orderBy('name', 'ASC')->pluck('name', 'id'))
+                ->options(fn () => Tag::where('type', TagType::Student)->orderBy('name', 'asc')->pluck('name', 'id'))
                 ->multiple()
                 ->searchable()
                 ->exists('tags', 'id'),
             Select::make('prospect_tag_ids')
                 ->label('Which Prospect tags should be applied?')
                 ->helperText('If the respondee matches to a prospect within the system or is generated as one, these tags will be applied.')
-                ->options(fn () => Tag::where('type', TagType::Prospect)->orderBy('name', 'ASC')->pluck('name', 'id'))
+                ->options(fn () => Tag::where('type', TagType::Prospect)->orderBy('name', 'asc')->pluck('name', 'id'))
                 ->multiple()
                 ->searchable()
                 ->exists('tags', 'id'),

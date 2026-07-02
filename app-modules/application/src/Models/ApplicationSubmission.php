@@ -49,6 +49,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @mixin IdeHelperApplicationSubmission
  */
+/** @phpstan-ignore Common.modelMissingFillable */
 #[ObservedBy([ApplicationSubmissionObserver::class])]
 class ApplicationSubmission extends Submission
 {

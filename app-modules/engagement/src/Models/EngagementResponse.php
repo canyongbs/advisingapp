@@ -184,11 +184,13 @@ class EngagementResponse extends BaseModel implements Auditable, ProvidesATimeli
         );
     }
 
+    // @phpstan-ignore Common.noLocalModelScope
     public function scopeSentByStudent(Builder $query): void
     {
         $query->where('sender_type', resolve(Student::class)->getMorphClass());
     }
 
+    // @phpstan-ignore Common.noLocalModelScope
     public function scopeSentByProspect(Builder $query): void
     {
         $query->where('sender_type', resolve(Prospect::class)->getMorphClass());

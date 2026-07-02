@@ -170,6 +170,7 @@ class ResourceHubArticle extends BaseModel implements AiFile, Auditable, HasMedi
      *
      * @return Builder<ResourceHubArticle>
      */
+    // @phpstan-ignore Common.noLocalModelScope
     public function scopePublic(Builder $query): Builder
     {
         return $query->where('public', true);
