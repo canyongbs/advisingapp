@@ -59,7 +59,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             $realtimeChatPermissionGroup = DB::table('permission_groups')
                 ->where('name', 'Realtime Chat')
                 ->first();

@@ -43,7 +43,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             $roleDetails = DB::table('roles')->where('name', 'analytics.analytics_management')->whereIn('guard_name', ['web', 'api'])->get();
 
             if (! $roleDetails->isEmpty()) {
@@ -60,7 +59,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-
             $analyticsRoles = [
                 [
                     'id' => (string) Str::orderedUuid(),

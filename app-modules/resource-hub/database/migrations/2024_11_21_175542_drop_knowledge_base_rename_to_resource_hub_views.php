@@ -42,7 +42,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             DB::statement('DROP VIEW IF EXISTS knowledge_base_articles');
 
             DB::statement('DROP VIEW IF EXISTS knowledge_base_categories');
@@ -63,7 +62,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-
             DB::statement('CREATE VIEW knowledge_base_articles AS SELECT * FROM resource_hub_articles');
 
             DB::statement('CREATE VIEW knowledge_base_categories AS SELECT * FROM resource_hub_categories');

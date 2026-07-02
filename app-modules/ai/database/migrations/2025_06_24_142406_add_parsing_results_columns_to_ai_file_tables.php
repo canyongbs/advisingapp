@@ -35,16 +35,15 @@
 */
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::transaction(function () {
-
             Schema::table('ai_assistant_files', function (Blueprint $table) {
                 $table->longText('parsing_results')->nullable();
             });
@@ -59,7 +58,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-
             Schema::table('ai_assistant_files', function (Blueprint $table) {
                 $table->dropColumn('parsing_results');
             });

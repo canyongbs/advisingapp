@@ -44,7 +44,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             DB::table('outbound_deliverables')
                 ->where('channel', 'email')
                 ->chunkById(100, function (Collection $outboundDeliverables) {

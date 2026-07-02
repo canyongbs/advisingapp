@@ -34,15 +34,14 @@
 </COPYRIGHT>
 */
 
-use Spatie\LaravelSettings\Migrations\SettingsMigration;
 use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::transaction(function () {
-
             $this->migrator->rename('portal.knowledge_management_portal_enabled', 'portal.resource_hub_portal_enabled');
             $this->migrator->rename('portal.knowledge_management_portal_service_management', 'portal.resource_hub_portal_service_management');
             $this->migrator->rename('portal.knowledge_management_portal_primary_color', 'portal.resource_hub_portal_primary_color');
@@ -55,7 +54,6 @@ return new class () extends SettingsMigration {
     public function down(): void
     {
         DB::transaction(function () {
-
             $this->migrator->rename('portal.resource_hub_portal_enabled', 'portal.knowledge_management_portal_enabled');
             $this->migrator->rename('portal.resource_hub_portal_service_management', 'portal.knowledge_management_portal_service_management');
             $this->migrator->rename('portal.resource_hub_portal_primary_color', 'portal.knowledge_management_portal_primary_color');

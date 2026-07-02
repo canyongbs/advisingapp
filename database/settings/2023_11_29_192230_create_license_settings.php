@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use Spatie\LaravelSettings\Migrations\SettingsMigration;
 use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends SettingsMigration {
@@ -43,7 +43,6 @@ return new class () extends SettingsMigration {
     public function up(): void
     {
         DB::transaction(function () {
-
             // TODO: When we eventually have a paradigm for validating and retrieving license data, change this to both default to null, nothing passed into the second argument
 
             $this->migrator->addEncrypted('license.license_key', null);

@@ -42,7 +42,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             DB::table('permissions')
                 ->where('name', 'LIKE', 'knowledge_base_item.%')
                 ->update([
@@ -63,7 +62,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-
             DB::table('permissions')
                 ->where('name', 'LIKE', 'knowledge_base_article.%')
                 ->update([

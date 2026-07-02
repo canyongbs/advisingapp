@@ -42,7 +42,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             $aiThreads = DB::table('ai_threads')->whereNotNull('name')->whereNull('saved_at')->get();
 
             $aiThreads->each(function (stdClass $thread, int $key): void {
@@ -55,7 +54,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-
             $aiThreads = DB::table('ai_threads')->whereNotNull('name')->whereNotNull('saved_at')->get();
 
             $aiThreads->each(function (stdClass $thread, int $key): void {

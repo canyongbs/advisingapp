@@ -36,15 +36,14 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::transaction(function () {
-
             Schema::table('booking_groups', function (Blueprint $table) {
                 $table->foreignUuid('round_robin_last_assigned_id')->nullable()->constrained('users')->nullOnDelete();
             });
@@ -59,7 +58,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-
             Schema::table('booking_group_appointments', function (Blueprint $table) {
                 $table->dropConstrainedForeignId('meeting_owner_id');
             });

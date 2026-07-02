@@ -35,16 +35,15 @@
 */
 
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::transaction(function () {
-
             Schema::create('workflow_steps', function (Blueprint $table) {
                 $table->uuid('id')->primary();
 

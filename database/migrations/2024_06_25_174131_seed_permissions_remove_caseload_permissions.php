@@ -73,7 +73,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             collect($this->guards)
                 ->each(function (string $guard) {
                     $this->deletePermissions(array_keys($this->permissions), $guard);

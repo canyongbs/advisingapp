@@ -54,7 +54,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-
             Schema::table('ai_assistants', function (Blueprint $table) {
                 $table->string('type')->nullable();
                 $table->string('application')->nullable()->change();

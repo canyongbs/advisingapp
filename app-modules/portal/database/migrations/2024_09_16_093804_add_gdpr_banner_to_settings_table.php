@@ -35,15 +35,14 @@
 */
 
 use AdvisingApp\Portal\Enums\GdprBannerButtonLabel;
-use Spatie\LaravelSettings\Migrations\SettingsMigration;
 use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::transaction(function () {
-
             $this->migrator->add(
                 'portal.gdpr_banner_text',
                 [
@@ -73,7 +72,6 @@ return new class () extends SettingsMigration {
     public function down(): void
     {
         DB::transaction(function () {
-
             $this->migrator->delete('portal.gdpr_banner_text');
             $this->migrator->delete('portal.gdpr_banner_button_label');
         });

@@ -34,16 +34,15 @@
 </COPYRIGHT>
 */
 
+use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
-use Illuminate\Support\Facades\DB;
 
 return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::transaction(function () {
-
             try {
                 $this->migrator->add('ai.open_ai_gpt_4o_mini_base_uri', config('integration-open-ai.gpt_4o_mini_base_uri'), encrypted: true);
             } catch (SettingAlreadyExists $exception) {
@@ -68,7 +67,6 @@ return new class () extends SettingsMigration {
     public function down(): void
     {
         DB::transaction(function () {
-
             $this->migrator->deleteIfExists('ai.open_ai_gpt_4o_mini_base_uri');
             $this->migrator->deleteIfExists('ai.open_ai_gpt_4o_mini_api_key');
             $this->migrator->deleteIfExists('ai.open_ai_gpt_4o_mini_model');

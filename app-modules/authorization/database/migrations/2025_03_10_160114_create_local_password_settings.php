@@ -34,15 +34,14 @@
 </COPYRIGHT>
 */
 
-use Spatie\LaravelSettings\Migrations\SettingsMigration;
 use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::transaction(function () {
-
             $this->migrator->add('local-password.minPasswordLength', 8);
             $this->migrator->add('local-password.maxPasswordLength', 64);
             $this->migrator->add('local-password.minUppercaseLetters', 1);
@@ -59,7 +58,6 @@ return new class () extends SettingsMigration {
     public function down(): void
     {
         DB::transaction(function () {
-
             $this->migrator->delete('local-password.minPasswordLength');
             $this->migrator->delete('local-password.maxPasswordLength');
             $this->migrator->delete('local-password.minUppercaseLetters');

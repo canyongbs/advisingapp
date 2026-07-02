@@ -34,15 +34,14 @@
 </COPYRIGHT>
 */
 
-use Spatie\LaravelSettings\Migrations\SettingsMigration;
 use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::transaction(function () {
-
             $this->migrator->add('theme.changelog_url');
             $this->migrator->add('theme.product_knowledge_base_url');
         });
@@ -52,7 +51,6 @@ return new class () extends SettingsMigration {
     public function down(): void
     {
         DB::transaction(function () {
-
             $this->migrator->delete('theme.changelog_url');
             $this->migrator->delete('theme.product_knowledge_base_url');
         });

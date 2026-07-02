@@ -42,7 +42,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             /** Rename knowledge_base_articles to resource_hub_articles*/
             DB::beginTransaction();
 
@@ -99,7 +98,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-
             /** Rename resource_hub_articles to knowledge_base_articles*/
             DB::beginTransaction();
 

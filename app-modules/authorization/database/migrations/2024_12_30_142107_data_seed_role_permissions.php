@@ -68,7 +68,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             collect($this->guards)
                 ->each(function (string $guard) {
                     $permissions = Arr::except($this->permissions, keys: DB::table('permissions')

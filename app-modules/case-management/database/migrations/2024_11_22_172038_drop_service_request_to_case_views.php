@@ -42,7 +42,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             DB::statement('DROP VIEW IF EXISTS service_request_types');
 
             DB::statement('DROP VIEW IF EXISTS service_request_statuses');
@@ -75,7 +74,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-
             DB::statement('CREATE VIEW service_request_types AS SELECT * FROM case_types');
 
             DB::statement('CREATE VIEW service_request_statuses AS SELECT * FROM case_statuses');

@@ -44,7 +44,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             $firstUser = DB::table('users')
                 ->whereNull('deleted_at')
                 ->orderBy('id')

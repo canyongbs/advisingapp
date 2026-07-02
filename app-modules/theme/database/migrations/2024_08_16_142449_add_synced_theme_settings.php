@@ -34,15 +34,14 @@
 </COPYRIGHT>
 */
 
-use Spatie\LaravelSettings\Migrations\SettingsMigration;
 use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::transaction(function () {
-
             $this->migrator->add('theme.color_overrides', []);
             $this->migrator->add('theme.has_dark_mode', true);
             $this->migrator->add('theme.url');
@@ -53,7 +52,6 @@ return new class () extends SettingsMigration {
     public function down(): void
     {
         DB::transaction(function () {
-
             $this->migrator->deleteIfExists('theme.color_overrides');
             $this->migrator->deleteIfExists('theme.has_dark_mode');
             $this->migrator->deleteIfExists('theme.url');

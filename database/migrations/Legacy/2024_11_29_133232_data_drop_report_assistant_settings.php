@@ -35,8 +35,8 @@
 */
 
 use CanyonGBS\Common\Database\Migrations\Concerns\CanModifySettings;
-use Spatie\LaravelSettings\Migrations\SettingsMigration;
 use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
     use CanModifySettings;
@@ -45,7 +45,6 @@ return new class () extends SettingsMigration {
     public function up(): void
     {
         DB::transaction(function () {
-
             $this->migrator->delete('report_assistant.prompt_system_context');
 
             $this->updateSettings(
@@ -67,7 +66,6 @@ return new class () extends SettingsMigration {
     public function down(): void
     {
         DB::transaction(function () {
-
             $this->updateSettings(
                 group: 'license',
                 name: 'data',

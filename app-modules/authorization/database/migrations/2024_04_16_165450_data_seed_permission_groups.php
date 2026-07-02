@@ -44,7 +44,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             $groups = DB::table('permission_groups')
                 ->pluck('id', 'name')
                 ->all();
