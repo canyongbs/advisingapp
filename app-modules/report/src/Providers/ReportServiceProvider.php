@@ -37,6 +37,8 @@
 namespace AdvisingApp\Report\Providers;
 
 use AdvisingApp\Report\Models\Report;
+use AdvisingApp\Report\Models\ReportTeamAccess;
+use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\Report\ReportPlugin;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -53,6 +55,8 @@ class ReportServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'report' => Report::class,
+            'report_user_access' => ReportUserAccess::class,
+            'report_team_access' => ReportTeamAccess::class,
         ]);
     }
 }

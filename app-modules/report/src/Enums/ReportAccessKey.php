@@ -63,6 +63,7 @@ use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\StudentDataModel\Filament\Pages\RetentionCrmDashboard;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Illuminate\Database\Eloquent\Builder;
 
 enum ReportAccessKey: string
 {
@@ -258,7 +259,7 @@ enum ReportAccessKey: string
     public function accessCount(): int
     {
         return User::query()
-            ->where(function ($query) {
+            ->where(function (Builder $query) {
                 $query->whereIn(
                     'id',
                     ReportUserAccess::query()

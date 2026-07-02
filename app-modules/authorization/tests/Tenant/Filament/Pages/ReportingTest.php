@@ -42,6 +42,7 @@ use AdvisingApp\Team\Models\Team;
 use App\Features\ReportingFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Actions\Testing\TestAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -127,11 +128,11 @@ it('assigns users to a report through the manage action', function () {
     actingAs($user);
 
     livewire(Reporting::class)
-        ->callTableAction('manage', record: ReportAccessKey::UserLoginActivity->value, data: [
+        ->callAction(TestAction::make('manage')->table(ReportAccessKey::UserLoginActivity->value), [
             'users' => [$assignedUser->getKey()],
             'teams' => [],
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertNotified();
 
     expect(
         ReportUserAccess::query()
@@ -150,11 +151,11 @@ it('assigns teams to a report through the manage action', function () {
     actingAs($user);
 
     livewire(Reporting::class)
-        ->callTableAction('manage', record: ReportAccessKey::UserLoginActivity->value, data: [
+        ->callAction(TestAction::make('manage')->table(ReportAccessKey::UserLoginActivity->value), [
             'users' => [],
             'teams' => [$team->getKey()],
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertNotified();
 
     expect(
         ReportTeamAccess::query()
@@ -178,11 +179,11 @@ it('removes access that is no longer selected when managing a report', function 
     actingAs($user);
 
     livewire(Reporting::class)
-        ->callTableAction('manage', record: ReportAccessKey::UserLoginActivity->value, data: [
+        ->callAction(TestAction::make('manage')->table(ReportAccessKey::UserLoginActivity->value), [
             'users' => [],
             'teams' => [],
         ])
-        ->assertHasNoTableActionErrors();
+        ->assertNotified();
 
     expect(
         ReportUserAccess::query()
