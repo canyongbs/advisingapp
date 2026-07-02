@@ -68,11 +68,14 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Prism\Prism\Contracts\Message;
 use Prism\Prism\Contracts\Schema;
-use Prism\Prism\Enums\ChunkType;
 use Prism\Prism\Enums\FinishReason;
 use Prism\Prism\Exceptions\PrismException;
 use Prism\Prism\Exceptions\PrismRateLimitedException;
-use Prism\Prism\Prism;
+use Prism\Prism\Facades\Prism;
+use Prism\Prism\Streaming\Events\StreamEndEvent;
+use Prism\Prism\Streaming\Events\StreamStartEvent;
+use Prism\Prism\Streaming\Events\TextDeltaEvent;
+use Prism\Prism\Streaming\Events\ThinkingEvent;
 use Prism\Prism\Text\PendingRequest;
 use Prism\Prism\ValueObjects\Messages\AssistantMessage;
 use Prism\Prism\ValueObjects\Messages\UserMessage;
@@ -235,33 +238,41 @@ abstract class BaseOpenAiService implements AiService
 
                         foreach ($stream as $chunk) {
                             if (
-                                ($chunk->chunkType === ChunkType::Meta) &&
-                                filled($chunk->meta?->id)
+                                ($chunk instanceof StreamStartEvent) &&
+                                filled($chunk->id)
                             ) {
-                                yield json_encode(['type' => 'next_request_options', 'options' => base64_encode(json_encode(['previous_response_id' => $chunk->meta->id]))]);
+                                yield json_encode(['type' => 'next_request_options', 'options' => base64_encode(json_encode(['previous_response_id' => $chunk->id]))]);
 
                                 continue;
                             }
 
-                            if ($chunk->chunkType !== ChunkType::Text) {
-                                Log::info('Received unhandled AI stream chunk.', [
-                                    'chunk' => $chunk,
-                                ]);
+                            if ($chunk instanceof ThinkingEvent) {
+                                continue;
+                            }
+
+                            if ($chunk instanceof TextDeltaEvent) {
+                                yield json_encode(['type' => 'content', 'content' => base64_encode($chunk->delta)]);
 
                                 continue;
                             }
 
-                            yield json_encode(['type' => 'content', 'content' => base64_encode($chunk->text)]);
+                            if ($chunk instanceof StreamEndEvent) {
+                                if ($chunk->finishReason === FinishReason::Length) {
+                                    yield json_encode(['type' => 'content', 'content' => base64_encode('...'), 'incomplete' => true]);
+                                }
 
-                            if ($chunk->finishReason === FinishReason::Length) {
-                                yield json_encode(['type' => 'content', 'content' => base64_encode('...'), 'incomplete' => true]);
+                                if ($chunk->finishReason === FinishReason::Error) {
+                                    yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
+
+                                    report(new MessageResponseException('Stream not successful.'));
+                                }
+
+                                continue;
                             }
 
-                            if ($chunk->finishReason === FinishReason::Error) {
-                                yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
-
-                                report(new MessageResponseException('Stream not successful.'));
-                            }
+                            Log::info('Received unhandled AI stream chunk.', [
+                                'chunk' => $chunk,
+                            ]);
                         }
                     } catch (PrismRateLimitedException $exception) {
                         foreach ($exception->rateLimits as $rateLimit) {
@@ -481,34 +492,30 @@ abstract class BaseOpenAiService implements AiService
 
                         foreach ($stream as $chunk) {
                             if (
-                                ($chunk->chunkType === ChunkType::Meta) &&
-                                filled($chunk->meta?->id)
+                                ($chunk instanceof StreamStartEvent) &&
+                                filled($chunk->id)
                             ) {
                                 yield new Meta(
-                                    messageId: $chunk->meta->id,
-                                    nextRequestOptions: ['previous_response_id' => $chunk->meta->id],
+                                    messageId: $chunk->id,
+                                    nextRequestOptions: ['previous_response_id' => $chunk->id],
                                 );
 
                                 continue;
                             }
 
-                            if ($chunk->chunkType === ChunkType::Thinking) {
-                                yield new Thinking($chunk->text);
+                            if ($chunk instanceof ThinkingEvent) {
+                                yield new Thinking($chunk->delta);
 
                                 continue;
                             }
 
-                            if ($chunk->chunkType !== ChunkType::Text) {
-                                Log::info('Received unhandled AI stream chunk.', [
-                                    'chunk' => $chunk,
-                                ]);
+                            if ($chunk instanceof TextDeltaEvent) {
+                                yield new Text($chunk->delta);
 
                                 continue;
                             }
 
-                            yield new Text($chunk->text);
-
-                            if ($chunk->finishReason) {
+                            if ($chunk instanceof StreamEndEvent) {
                                 yield new Finish(
                                     isIncomplete: $chunk->finishReason === FinishReason::Length,
                                     error: ($chunk->finishReason === FinishReason::Error) ? 'Something went wrong' : null,
@@ -516,6 +523,10 @@ abstract class BaseOpenAiService implements AiService
 
                                 break;
                             }
+
+                            Log::info('Received unhandled AI stream chunk.', [
+                                'chunk' => $chunk,
+                            ]);
                         }
                     } catch (PrismRateLimitedException $exception) {
                         foreach ($exception->rateLimits as $rateLimit) {

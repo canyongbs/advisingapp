@@ -40,6 +40,7 @@ use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi\Maps\MessageMap;
 use Illuminate\Http\Client\Response as ClientResponse;
 use Illuminate\Support\Arr;
 use Prism\Prism\Providers\OpenAI\Handlers\Text as BaseText;
+use Prism\Prism\Providers\OpenAI\Maps\ProviderToolCallMap;
 use Prism\Prism\Providers\OpenAI\Maps\ToolCallMap;
 use Prism\Prism\Providers\OpenAI\Maps\ToolChoiceMap;
 use Prism\Prism\Text\Request;
@@ -56,16 +57,20 @@ class Text extends BaseText
      */
     protected function addStep(array $data, Request $request, ClientResponse $clientResponse, array $toolResults = []): void
     {
+        /** @var array<array-key, array<string, mixed>> $output */
+        $output = data_get($data, 'output', []);
+
         $this->responseBuilder->addStep(new Step(
             text: data_get($data, 'output.{last}.content.0.text') ?? '',
             finishReason: $this->mapFinishReason($data),
-            toolCalls: ToolCallMap::map(array_filter(data_get($data, 'output', []), fn (array $output): bool => $output['type'] === 'function_call')),
+            toolCalls: ToolCallMap::map(array_filter($output, fn (array $output): bool => $output['type'] === 'function_call')),
             toolResults: $toolResults,
+            providerToolCalls: ProviderToolCallMap::map($output),
             usage: new Usage(
                 promptTokens: data_get($data, 'usage.input_tokens', 0) - data_get($data, 'usage.input_tokens_details.cached_tokens', 0),
                 completionTokens: data_get($data, 'usage.output_tokens'),
                 cacheReadInputTokens: data_get($data, 'usage.input_tokens_details.cached_tokens'),
-                thoughtTokens: data_get($data, 'usage.output_token_details.reasoning_tokens'),
+                thoughtTokens: data_get($data, 'usage.output_tokens_details.reasoning_tokens'),
             ),
             meta: new Meta(
                 id: data_get($data, 'id'),
