@@ -1224,12 +1224,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/Observers/CampaignObserver.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Providers\\\\CampaignServiceProvider\\:\\:boot\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Providers/CampaignServiceProvider.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Match arm comparison between AdvisingApp\\\\Notification\\\\Enums\\\\NotificationChannel\\:\\:Sms and AdvisingApp\\\\Notification\\\\Enums\\\\NotificationChannel\\:\\:Sms is always true\\.$#',
     'identifier' => 'match.alwaysTrue',
     'count' => 1,
@@ -1241,18 +1235,7 @@ $ignoreErrors[] = [
     'count' => 1,
     'path' => __DIR__ . '/app-modules/care-team/src/Filament/Resources/ProspectCareTeamRoles/Pages/EditProspectCareTeamRole.php',
 ];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/care-team/src/Filament/Resources/StudentCareTeamRoles/Pages/CreateStudentCareTeamRole.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/care-team/src/Filament/Resources/StudentCareTeamRoles/Pages/EditStudentCareTeamRole.php',
-];
+
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$query of class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany constructor expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TRelatedModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
     'identifier' => 'argument.type',
