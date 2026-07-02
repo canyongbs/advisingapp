@@ -41,7 +41,7 @@ use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
 use App\DataTransferObjects\LicenseManagement\LicenseData;
 use App\DataTransferObjects\LicenseManagement\LicenseLimitsData;
 use App\DataTransferObjects\LicenseManagement\LicenseSubscriptionData;
-use App\Enums\TenantSubscriptionStatus;
+use App\Enums\SubscriptionStatus;
 use App\Http\Requests\Tenants\SyncTenantRequest;
 use App\Jobs\UpdateTenantLicenseData;
 use App\Models\Tenant;
@@ -62,7 +62,7 @@ class SyncTenantController
         dispatch_sync(new UpdateTenantLicenseData($tenant, $licenseData));
 
         if (filled($subscriptionStatus = $request->validated('subscriptionStatus'))) {
-            $tenant->subscription_status = TenantSubscriptionStatus::from($subscriptionStatus);
+            $tenant->subscription_status = SubscriptionStatus::from($subscriptionStatus);
             $tenant->save();
         }
 

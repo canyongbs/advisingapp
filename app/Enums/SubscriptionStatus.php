@@ -36,9 +36,20 @@
 
 namespace App\Enums;
 
-enum TenantSubscriptionStatus: string
+/**
+ * The full subscription lifecycle status synced from Olympus. The instance only
+ * acts on ExpiredPeriod2 (warning banner) and Expired (offline); the remaining
+ * cases are stored so future behaviour can key off them.
+ */
+enum SubscriptionStatus: string
 {
+    case NotApplicable = 'not_applicable';
+
+    case Upcoming = 'upcoming';
+
     case Active = 'active';
+
+    case Outstanding = 'outstanding';
 
     case ExpiredPeriod1 = 'expired_period_1';
 
