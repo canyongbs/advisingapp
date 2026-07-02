@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\DB;
 return new class () extends Migration {
     use CanModifyPermissions;
 
-    private array $permissions = [
+    private array $permissions = [ // @phpstan-ignore missingType.iterableValue
         'role.*.delete' => 'Role',
         'role.*.force-delete' => 'Role',
         'role.*.restore' => 'Role',
@@ -49,7 +49,7 @@ return new class () extends Migration {
         'role.create' => 'Role',
     ];
 
-    private array $permissionsToDelete = [
+    private array $permissionsToDelete = [ // @phpstan-ignore missingType.iterableValue
         'role_group.view-any',
         'role_group.create',
         'role_group.*.view',
@@ -59,7 +59,7 @@ return new class () extends Migration {
         'role_group.*.force-delete',
     ];
 
-    private array $guards = [
+    private array $guards = [ // @phpstan-ignore missingType.iterableValue
         'web',
         'api',
     ];

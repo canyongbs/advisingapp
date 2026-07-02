@@ -43,6 +43,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @mixin IdeHelperSurveyAuthentication
  */
+/** @phpstan-ignore Common.modelMissingFillable */
 #[NoPermissions]
 class SurveyAuthentication extends SubmissibleAuthentication
 {

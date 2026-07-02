@@ -99,6 +99,7 @@ class CampaignAction extends BaseModel implements Auditable, HasMedia, HasRichCo
         return $this->hasMany(CampaignActionEducatable::class);
     }
 
+    // @phpstan-ignore Common.noLocalModelScope
     public function scopeCampaignEnabled(Builder $query): void
     {
         $query->whereRelation('campaign', 'enabled', true);

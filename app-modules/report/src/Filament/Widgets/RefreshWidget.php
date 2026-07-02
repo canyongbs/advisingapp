@@ -58,7 +58,7 @@ class RefreshWidget extends StatsOverviewReportWidget
             Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'updated-time',
                 now()->addHours(24),
-                fn () => now()->toIso8601String()
+                fn () => now()
             )
         )->setTimezone($timezone);
 

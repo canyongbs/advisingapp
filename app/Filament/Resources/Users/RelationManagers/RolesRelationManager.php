@@ -96,7 +96,7 @@ class RolesRelationManager extends RelationManager
                                         ! auth()->user()->isSuperAdmin(),
                                         fn (Builder $query) => $query->whereNotIn('name', [Authenticatable::SUPER_ADMIN_ROLE, Authenticatable::PARTNER_ADMIN_ROLE, Authenticatable::AI_ADMIN_ROLE])
                                     )
-                                    ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
+                                    ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%') // @phpstan-ignore Common.noStrtolower
                                     ->limit(50)
                                     ->pluck('name', 'id')
                                     ->toArray()

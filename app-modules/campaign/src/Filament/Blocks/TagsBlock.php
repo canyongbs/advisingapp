@@ -74,7 +74,7 @@ class TagsBlock extends CampaignActionBlock
                     }
                     $group = Group::find($groupId);
 
-                    return Tag::where('type', $group->model)->orderBy('name', 'ASC')->pluck('name', 'id');
+                    return Tag::where('type', $group->model)->orderBy('name', 'asc')->pluck('name', 'id');
                 })
                 ->multiple()
                 ->searchable()

@@ -62,7 +62,7 @@ class StudentTagsBulkAction
                     ->label('Which tags should be applied?')
                     ->options(
                         fn (): array => Tag::where('type', TagType::Student)
-                            ->orderBy('name', 'ASC')
+                            ->orderBy('name', 'asc')
                             ->pluck('name', 'id')
                             ->toArray()
                     )

@@ -50,7 +50,7 @@ class EducatableSearch
 
     public function __invoke(Builder $query): void
     {
-        $search = strtolower($this->search);
+        $search = strtolower($this->search); // @phpstan-ignore Common.noStrtolower
 
         $query->whereHasMorph(
             $this->relationship,
