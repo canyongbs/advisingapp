@@ -34,15 +34,14 @@
 </COPYRIGHT>
 */
 
-use Spatie\LaravelSettings\Migrations\SettingsMigration;
 use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::transaction(function () {
-
             $this->migrator->add('stock_media.is_active', false);
 
             $this->migrator->add('stock_media.provider');
@@ -55,7 +54,6 @@ return new class () extends SettingsMigration {
     public function down(): void
     {
         DB::transaction(function () {
-
             $this->migrator->deleteIfExists('stock_media.is_active');
 
             $this->migrator->deleteIfExists('stock_media.provider');

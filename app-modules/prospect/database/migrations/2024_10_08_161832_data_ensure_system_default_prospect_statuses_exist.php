@@ -43,7 +43,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             $newStatus = DB::table('prospect_statuses')
                 ->where('classification', 'new')
                 ->where('name', 'New')
@@ -102,7 +101,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-
             DB::table('prospect_statuses')
                 ->where('classification', 'new')
                 ->where('name', 'New')

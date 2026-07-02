@@ -36,8 +36,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 class CreateScheduleMonitorTables extends Migration
@@ -46,7 +46,6 @@ class CreateScheduleMonitorTables extends Migration
     public function up(): void
     {
         DB::transaction(function () {
-
             Schema::create('monitored_scheduled_tasks', function (Blueprint $table) {
                 $table->uuid('id')->primary();
 

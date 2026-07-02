@@ -36,15 +36,14 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::transaction(function () {
-
             Schema::dropIfExists('role_role_group');
             Schema::dropIfExists('role_group_user');
             Schema::dropIfExists('role_groups');
@@ -55,7 +54,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-
             Schema::create('role_groups', function (Blueprint $table) {
                 $table->uuid('id')->primary();
 

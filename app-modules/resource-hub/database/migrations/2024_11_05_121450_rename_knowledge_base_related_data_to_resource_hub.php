@@ -42,7 +42,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             /**
              * Renaming the table division_knowledge_base_item to division_resource_hub_item
              * Renaming the column knowledge_base_item_id to resource_hub_item_id in table
@@ -107,7 +106,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-
             /*** Renaming the table division_resource_hub_item to division_knowledge_base_item
              ** Renaming the column resource_hub_item_id to knowledge_base_item_id in table
             **/

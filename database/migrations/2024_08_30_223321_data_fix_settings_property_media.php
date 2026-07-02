@@ -42,7 +42,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             $themeLogo = DB::table('settings')->where('group', 'theme')
                 ->where('name', 'is_logo_active')
                 ->first();

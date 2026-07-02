@@ -34,16 +34,15 @@
 </COPYRIGHT>
 */
 
+use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
-use Illuminate\Support\Facades\DB;
 
 return new class () extends SettingsMigration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::transaction(function () {
-
             try {
                 $this->migrator->add('institution.ipeds_id', null);
             } catch (SettingAlreadyExists $exception) {
@@ -74,7 +73,6 @@ return new class () extends SettingsMigration {
     public function down(): void
     {
         DB::transaction(function () {
-
             $this->migrator->deleteIfExists('institution.ipeds_id');
             $this->migrator->deleteIfExists('institution.name');
             $this->migrator->deleteIfExists('institution.dark_logo');

@@ -53,7 +53,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-
             $tenant = Tenant::current();
 
             DB::table('ai_assistants')

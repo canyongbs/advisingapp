@@ -44,7 +44,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             Schema::table('campaigns', function (Blueprint $table) {
                 if (Schema::hasColumn('campaigns', 'caseload_id')) {
                     $table->dropColumn('caseload_id');
@@ -66,7 +65,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-
             Schema::table('campaigns', function (Blueprint $table) {
                 $table->foreignUuid('caseload_id')->nullable()->constrained('caseloads');
 

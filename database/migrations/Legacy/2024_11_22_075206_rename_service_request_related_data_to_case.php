@@ -42,7 +42,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             /**
              * Renaming the table service_request_assignments to case_assignments
              * Renaming the column service_request_id to case_model_id in table
@@ -269,7 +268,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-
             /**
              * Renaming the table case_assignments to service_request_assignments
              * Renaming the column case_model_id to service_request_id in table

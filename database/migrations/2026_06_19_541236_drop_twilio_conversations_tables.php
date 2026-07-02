@@ -36,15 +36,14 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
     // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::transaction(function () {
-
             Schema::dropIfExists('twilio_conversation_user');
             Schema::dropIfExists('twilio_conversations');
         });
@@ -54,7 +53,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-
             Schema::create('twilio_conversations', function (Blueprint $table) {
                 $table->string('sid')->primary();
 

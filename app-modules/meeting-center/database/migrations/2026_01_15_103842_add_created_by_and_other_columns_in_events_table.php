@@ -44,7 +44,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             Schema::table('events', function (Blueprint $table) {
                 $table->foreignUuid('created_by_id')->constrained('users')->nullOnDelete();
                 $table->foreignUuid('last_updated_by_id')->nullable()->constrained('users')->nullOnDelete();

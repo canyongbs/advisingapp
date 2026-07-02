@@ -42,7 +42,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             DB::beginTransaction();
 
             DB::statement('ALTER TABLE workflow_steps RENAME COLUMN details_id TO current_details_id');
@@ -57,7 +56,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-
             DB::beginTransaction();
 
             DB::statement('ALTER TABLE workflow_steps RENAME COLUMN current_details_id TO details_id');

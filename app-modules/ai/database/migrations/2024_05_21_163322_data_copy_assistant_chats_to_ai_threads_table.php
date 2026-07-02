@@ -46,7 +46,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             if (
                 DB::table('assistant_chats')->count() &&
                 (! DB::table('ai_assistants')

@@ -43,7 +43,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             $groupId = (string) Str::orderedUuid();
 
             DB::table('permission_groups')
@@ -71,7 +70,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-
             DB::table('permissions')
                 ->where('name', 'amazon-s3.manage_s3_settings')
                 ->delete();

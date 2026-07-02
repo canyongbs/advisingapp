@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use Spatie\LaravelSettings\Migrations\SettingsMigration;
 use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends SettingsMigration {
@@ -43,7 +43,6 @@ return new class () extends SettingsMigration {
     public function up(): void
     {
         DB::transaction(function () {
-
             $this->migrator->add('theme.is_logo_active', false);
             $this->migrator->add('theme.is_favicon_active', false);
         });

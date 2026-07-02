@@ -42,7 +42,6 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-
             /** Rename service_request_types to case_types*/
             DB::beginTransaction();
 
@@ -86,7 +85,6 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-
             /** Rename case_types to service_request_types*/
             DB::beginTransaction();
 
