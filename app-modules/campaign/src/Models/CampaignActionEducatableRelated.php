@@ -43,6 +43,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 /**
  * @mixin IdeHelperCampaignActionEducatableRelated
+ *
  * @phpstan-ignore-next-line Common.modelMissingFillable
  */
 class CampaignActionEducatableRelated extends Model
