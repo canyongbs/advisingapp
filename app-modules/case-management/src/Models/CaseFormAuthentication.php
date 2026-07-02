@@ -42,8 +42,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @mixin IdeHelperCaseFormAuthentication
+ * @phpstan-ignore-next-line Common.modelMissingFillable
  */
-/** @phpstan-ignore Common.modelMissingFillable */
 #[NoPermissions]
 class CaseFormAuthentication extends SubmissibleAuthentication
 {

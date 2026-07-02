@@ -48,8 +48,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @mixin IdeHelperApplicationSubmission
+ * @phpstan-ignore-next-line Common.modelMissingFillable
  */
-/** @phpstan-ignore Common.modelMissingFillable */
 #[ObservedBy([ApplicationSubmissionObserver::class])]
 class ApplicationSubmission extends Submission
 {

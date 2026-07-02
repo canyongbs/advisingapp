@@ -42,8 +42,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @mixin IdeHelperApplicationAuthentication
+ * @phpstan-ignore-next-line Common.modelMissingFillable
  */
-/** @phpstan-ignore Common.modelMissingFillable */
 #[NoPermissions]
 class ApplicationAuthentication extends SubmissibleAuthentication
 {
