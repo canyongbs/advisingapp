@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Report\Abstract;
 
-use AdvisingApp\Report\Support\ReportAccess;
+use AdvisingApp\Report\Enums\ReportAccessKey;
 use App\Features\ReportingFeature;
 use App\Filament\Clusters\ReportLibrary;
 use App\Filament\Clusters\ReportLibraryNavigationGroup;
@@ -59,6 +59,6 @@ abstract class UserReport extends Dashboard
             return $user->can('report-library.view-any');
         }
 
-        return ReportAccess::userCanAccessPage(static::class, $user);
+        return ReportAccessKey::fromPageClass(static::class)?->userCanAccess($user) ?? false;
     }
 }

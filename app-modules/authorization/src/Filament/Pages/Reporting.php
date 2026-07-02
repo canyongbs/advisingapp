@@ -39,7 +39,6 @@ namespace AdvisingApp\Authorization\Filament\Pages;
 use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Models\ReportTeamAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
-use AdvisingApp\Report\Support\ReportAccess;
 use AdvisingApp\Team\Models\Team;
 use App\Enums\NavigationGroup;
 use App\Features\ReportingFeature;
@@ -60,8 +59,11 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Throwable;
 use UnitEnum;
 
 class Reporting extends Page implements HasActions, HasForms, HasTable
@@ -128,7 +130,7 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                             'report_key' => $key->value,
                             'name' => $key->getName(),
                             'category' => $key->getCategory(),
-                            'access_count' => ReportAccess::accessCount($key),
+                            'access_count' => $key->accessCount(),
                         ],
                     ])
                     ->all();
@@ -192,7 +194,7 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                     )
                     ->getSearchResultsUsing(
                         fn (string $search): array => $usersQuery
-                            ->where('name', 'ilike', "%{$search}%")
+                            ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
                             ->limit(50)
                             ->pluck('name', 'id')
                             ->all(),
@@ -215,7 +217,7 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                     )
                     ->getSearchResultsUsing(
                         fn (string $search): array => $teamsQuery
-                            ->where('name', 'ilike', "%{$search}%")
+                            ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
                             ->limit(50)
                             ->pluck('name', 'id')
                             ->all(),
@@ -228,15 +230,28 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                     ),
             ])
             ->action(function (array $record, array $data): void {
-                $this->syncUserAccess($record['report_key'], $data['users'] ?? []);
-                $this->syncTeamAccess($record['report_key'], $data['teams'] ?? []);
+                try {
+                    DB::beginTransaction();
+                    $this->syncUserAccess($record['report_key'], $data['users'] ?? []);
+                    $this->syncTeamAccess($record['report_key'], $data['teams'] ?? []);
 
-                $this->resetTable();
+                    $this->resetTable();
+                    DB::commit();
 
-                Notification::make()
-                    ->success()
-                    ->title('Report access updated')
-                    ->send();
+                    Notification::make()
+                        ->success()
+                        ->title('Report access updated')
+                        ->send();
+                } catch (Throwable $exception) {
+                    DB::rollBack();
+
+                    report($exception);
+
+                    Notification::make()
+                        ->danger()
+                        ->title('Failed to update report access')
+                        ->send();
+                }
             });
     }
 

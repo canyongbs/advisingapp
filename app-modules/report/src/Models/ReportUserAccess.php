@@ -36,12 +36,16 @@
 
 namespace AdvisingApp\Report\Models;
 
+use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ReportUserAccess extends BaseModel
+class ReportUserAccess extends BaseModel implements Auditable
 {
+    use AuditableTrait;
+
     protected $fillable = [
         'report_key',
         'user_id',

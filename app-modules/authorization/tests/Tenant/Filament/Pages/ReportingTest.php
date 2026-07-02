@@ -38,7 +38,6 @@ use AdvisingApp\Authorization\Filament\Pages\Reporting;
 use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Models\ReportTeamAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
-use AdvisingApp\Report\Support\ReportAccess;
 use AdvisingApp\Team\Models\Team;
 use App\Features\ReportingFeature;
 use App\Models\User;
@@ -208,5 +207,5 @@ it('counts a user with both direct and team access only once', function () {
         'team_id' => $team->getKey(),
     ]);
 
-    expect(ReportAccess::accessCount(ReportAccessKey::UserLoginActivity))->toEqual(1);
+    expect(ReportAccessKey::UserLoginActivity->accessCount())->toEqual(1);
 });

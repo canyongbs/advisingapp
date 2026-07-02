@@ -58,7 +58,10 @@ use AdvisingApp\Report\Filament\Pages\StudentMessagesOverviewReport;
 use AdvisingApp\Report\Filament\Pages\Students;
 use AdvisingApp\Report\Filament\Pages\StudentTaskManagement;
 use AdvisingApp\Report\Filament\Pages\UserLoginActivity;
+use AdvisingApp\Report\Models\ReportTeamAccess;
+use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\StudentDataModel\Filament\Pages\RetentionCrmDashboard;
+use App\Models\User;
 use App\Settings\LicenseSettings;
 
 enum ReportAccessKey: string
@@ -153,7 +156,9 @@ enum ReportAccessKey: string
             self::EmployeeAdvisorReport,
             self::InstitutionalAdvisorReport,
             self::ResearchAdvisorReport => 'Enterprise AI',
+
             self::ProjectReport => 'Project Management',
+
             self::StudentActionCenter,
             self::Students,
             self::StudentCaseReport,
@@ -162,6 +167,7 @@ enum ReportAccessKey: string
             self::StudentMessagesDetailReport,
             self::StudentMessagesOverviewReport,
             self::StudentTaskManagement => 'Students',
+
             self::ProspectActionCenter,
             self::ProspectReport,
             self::ProspectCaseReport,
@@ -169,6 +175,7 @@ enum ReportAccessKey: string
             self::ProspectMessagesDetailReport,
             self::ProspectMessagesOverviewReport,
             self::ProspectTaskManagement => 'Prospects',
+
             self::UserLoginActivity => 'Users',
         };
     }
@@ -184,21 +191,32 @@ enum ReportAccessKey: string
             self::StudentInteractionReport,
             self::StudentMessagesDetailReport,
             self::StudentMessagesOverviewReport => LicenseType::RetentionCrm->isLicensable(),
+
             self::StudentCaseReport => LicenseType::RetentionCrm->isLicensable() && $addons->caseManagement,
+
             self::StudentTaskManagement => LicenseType::RetentionCrm->isLicensable() || LicenseType::RecruitmentCrm->isLicensable(),
+
             self::ProspectActionCenter,
             self::ProspectReport,
             self::ProspectInteractionReport,
             self::ProspectMessagesDetailReport,
             self::ProspectMessagesOverviewReport => LicenseType::RecruitmentCrm->isLicensable(),
+
             self::ProspectCaseReport => LicenseType::RecruitmentCrm->isLicensable() && $addons->caseManagement,
+
             self::ProspectTaskManagement => LicenseType::RecruitmentCrm->isLicensable(),
+
             self::ArtificialIntelligence,
             self::InstitutionalAdvisorReport => LicenseType::ConversationalAi->isLicensable(),
+
             self::CustomerAdvisorReport => LicenseType::ConversationalAi->isLicensable() && $addons->customerAdvisors,
+
             self::EmployeeAdvisorReport => LicenseType::ConversationalAi->isLicensable() && $addons->employeeAdvisors,
+
             self::ResearchAdvisorReport => LicenseType::ConversationalAi->isLicensable() && $addons->researchAdvisor,
+
             self::ProjectReport => $addons->projectManagement,
+
             self::UserLoginActivity => true,
         };
     }
@@ -212,5 +230,48 @@ enum ReportAccessKey: string
         }
 
         return null;
+    }
+
+    public function userCanAccess(User $user): bool
+    {
+        if ($user->isSuperAdmin() || $user->isPartnerAdmin()) {
+            return true;
+        }
+
+        return ReportUserAccess::query()
+            ->where('report_key', $this->value)
+            ->where('user_id', $user->getKey())
+            ->selectRaw('1')
+            ->union(
+                ReportTeamAccess::query()
+                    ->where('report_key', $this->value)
+                    ->where('team_id', $user->team_id)
+                    ->selectRaw('1')
+            )
+            ->exists();
+    }
+
+    /**
+     * The number of distinct users that have access to the report, counting both
+     * direct user assignments and members of assigned teams (deduplicated).
+     */
+    public function accessCount(): int
+    {
+        return User::query()
+            ->where(function ($query) {
+                $query->whereIn(
+                    'id',
+                    ReportUserAccess::query()
+                        ->where('report_key', $this->value)
+                        ->select('user_id')
+                )
+                    ->orWhereIn(
+                        'team_id',
+                        ReportTeamAccess::query()
+                            ->where('report_key', $this->value)
+                            ->select('team_id')
+                    );
+            })
+            ->count();
     }
 }
