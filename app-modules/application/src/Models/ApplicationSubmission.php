@@ -49,9 +49,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @mixin IdeHelperApplicationSubmission
  *
- * @phpstan-ignore-next-line Common.modelMissingFillable
  */
-#[ObservedBy([ApplicationSubmissionObserver::class])]
+#[ObservedBy([ApplicationSubmissionObserver::class])] // @phpstan-ignore Common.modelMissingFillable
 class ApplicationSubmission extends Submission
 {
     use HasRelationBasedStateMachine;
