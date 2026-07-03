@@ -36,26 +36,29 @@
 
 namespace AdvisingApp\Report\Models;
 
-use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Team\Models\Team;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 
+/**
+ * @mixin IdeHelperReportTeamAccess
+ */
 class ReportTeamAccess extends BaseModel implements Auditable
 {
-    use AuditableTrait;
+  use AuditableTrait;
 
-    protected $fillable = [
-        'report_key',
-        'team_id',
-    ];
+  protected $fillable = [
+    'report_key',
+    'team_id',
+  ];
 
-    /**
-     * @return BelongsTo<Team, $this>
-     */
-    public function team(): BelongsTo
-    {
-        return $this->belongsTo(Team::class);
-    }
+  /**
+   * @return BelongsTo<Team, $this>
+   */
+  public function team(): BelongsTo
+  {
+    return $this->belongsTo(Team::class);
+  }
 }
