@@ -40,6 +40,7 @@ document.addEventListener('alpine:init', () => {
                 window.Sortable.create(kanbanList, {
                     group: 'kanban',
                     animation: 100,
+                    draggable: '[data-task]',
                     forceFallback: true,
                     dragClass: 'drag-card',
                     ghostClass: 'ghost-card',
