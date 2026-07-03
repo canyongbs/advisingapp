@@ -47,18 +47,18 @@ use OwenIt\Auditing\Contracts\Auditable;
  */
 class ReportTeamAccess extends BaseModel implements Auditable
 {
-  use AuditableTrait;
+    use AuditableTrait;
 
-  protected $fillable = [
-    'report_key',
-    'team_id',
-  ];
+    protected $fillable = [
+        'report_key',
+        'team_id',
+    ];
 
-  /**
-   * @return BelongsTo<Team, $this>
-   */
-  public function team(): BelongsTo
-  {
-    return $this->belongsTo(Team::class);
-  }
+    /**
+     * @return BelongsTo<Team, $this>
+     */
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
+    }
 }
