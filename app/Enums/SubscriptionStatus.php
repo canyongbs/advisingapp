@@ -43,8 +43,6 @@ namespace App\Enums;
  */
 enum SubscriptionStatus: string
 {
-    case NotApplicable = 'not_applicable';
-
     case Upcoming = 'upcoming';
 
     case Active = 'active';
@@ -56,6 +54,8 @@ enum SubscriptionStatus: string
     case ExpiredPeriod2 = 'expired_period_2';
 
     case Expired = 'expired';
+
+    case NotApplicable = 'not_applicable';
 
     /**
      * Whether the expiration warning banner should be shown for this status.
