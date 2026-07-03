@@ -32,7 +32,7 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import SearchLoading from '@common/portal/home/SearchLoading.vue';
+    import SearchLoading from '@common/portal/SearchLoading.vue';
     import { DocumentTextIcon, FolderIcon } from '@heroicons/vue/24/outline';
     import { defineProps } from 'vue';
     import Article from './Article.vue';
@@ -106,7 +106,7 @@
 
 <template>
     <div v-if="loadingResults">
-        <SearchLoading />
+        <SearchLoading label="Searching Resource Hub..." />
     </div>
 
     <div v-if="!loadingResults && searchResults?.data" class="flex flex-col gap-6">
