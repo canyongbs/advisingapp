@@ -32,10 +32,10 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import { FormKit } from '@formkit/vue';
-    import { ref } from 'vue';
     import Footer from '@common/portal/Footer.vue';
     import Heading from '@common/portal/Heading.vue';
+    import { FormKit } from '@formkit/vue';
+    import { ref } from 'vue';
 
     const authentication = defineModel('authentication', {
         type: Object,
