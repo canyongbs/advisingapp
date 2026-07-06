@@ -35,7 +35,10 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\MeetingCenter\Filament\Pages\ManagePersonalBookingPage;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages\ListCalendarEvents;
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use App\Filament\Pages\ConnectedAccounts;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\DeleteBulkAction;
@@ -65,4 +68,18 @@ it('the delete bulk action is gated by the delete permission', function () {
 
     livewire(ListCalendarEvents::class)
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
+});
+
+it('renders ManagePersonalBookingPage and ConnectedAccounts in settings view', function () {
+    $user = listCalendarEventsTestUser();
+    $user->givePermissionTo('calendar_event.view-any');
+
+    Calendar::factory()->for($user)->create();
+
+    actingAs($user);
+
+    livewire(ListCalendarEvents::class)
+        ->set('viewType', 'settings')
+        ->assertSeeLivewire(ManagePersonalBookingPage::class)
+        ->assertSeeLivewire(ConnectedAccounts::class);
 });
