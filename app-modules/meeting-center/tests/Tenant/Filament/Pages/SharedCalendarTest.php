@@ -243,7 +243,6 @@ test("`SharedCalendar` 'Selected Groups' filter with no groups selected shows al
 test('Settings view renders ListBookingGroups', function () {
     asSuperAdmin();
 
-    livewire(SharedCalendar::class)
-        ->set('viewType', 'settings')
+    get(SharedCalendar::getUrl() . '?view=settings')
         ->assertSeeLivewire(ListBookingGroups::class);
 });

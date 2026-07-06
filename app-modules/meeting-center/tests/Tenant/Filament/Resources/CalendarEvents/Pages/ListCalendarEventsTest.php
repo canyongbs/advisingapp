@@ -36,6 +36,7 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Filament\Pages\ManagePersonalBookingPage;
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\CalendarEventResource;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\Pages\ListCalendarEvents;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use App\Filament\Pages\ConnectedAccounts;
@@ -44,6 +45,7 @@ use App\Settings\LicenseSettings;
 use Filament\Actions\DeleteBulkAction;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
 function listCalendarEventsTestUser(): User
@@ -78,8 +80,7 @@ it('renders ManagePersonalBookingPage and ConnectedAccounts in settings view', f
 
     actingAs($user);
 
-    livewire(ListCalendarEvents::class)
-        ->set('viewType', 'settings')
+    get(CalendarEventResource::getUrl('index', ['view' => 'settings']))
         ->assertSeeLivewire(ManagePersonalBookingPage::class)
         ->assertSeeLivewire(ConnectedAccounts::class);
 });
