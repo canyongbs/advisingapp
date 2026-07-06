@@ -51,7 +51,6 @@ use App\Overrides\Filament\Actions\Exports\Jobs\ExportCompletionOverride;
 use App\Overrides\Filament\Actions\Exports\Jobs\ExportCsvOverride;
 use App\Overrides\Filament\Actions\Exports\Jobs\PrepareCsvExportOverride;
 use App\Overrides\Filament\Actions\Imports\Jobs\ImportCsvOverride;
-use App\Overrides\Laravel\PermissionMigrationCreator;
 use App\Overrides\Laravel\StartSession as OverrideStartSession;
 use Aws\GeoPlaces\GeoPlacesClient;
 use Exception;
@@ -153,10 +152,6 @@ class AppServiceProvider extends ServiceProvider
             configureScope(function (Scope $scope): void {
                 $scope->removeUser();
             });
-        });
-
-        $this->app->singleton(PermissionMigrationCreator::class, function ($app) {
-            return new PermissionMigrationCreator($app['files'], $app->basePath('stubs'));
         });
 
         $this->app->singleton('current-commit', function ($app) {
