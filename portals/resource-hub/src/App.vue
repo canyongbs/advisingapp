@@ -32,10 +32,10 @@
 </COPYRIGHT>
 -->
 <script setup>
+    import Footer from '@common/portal/Footer.vue';
     import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
     import { RouterView, useRoute, useRouter } from 'vue-router';
     import AppLoading from './Components/AppLoading.vue';
-    import Footer from '@common/portal/Footer.vue';
     import Header from './Components/Header.vue';
     import axios from './Globals/Axios.js';
     import Login from './Pages/Login.vue';
