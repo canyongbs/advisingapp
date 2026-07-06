@@ -54,6 +54,7 @@
     const categoriesWithRoutes = computed(() =>
         Object.values(props.categories).map((category) => ({
             ...category,
+            key: category.id,
             to: { name: 'view-category', params: { categoryId: category.id } },
         })),
     );
