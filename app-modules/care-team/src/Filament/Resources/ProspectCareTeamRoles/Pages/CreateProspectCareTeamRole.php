@@ -59,7 +59,7 @@ class CreateProspectCareTeamRole extends CreateRecord
                     ->string(),
                 Toggle::make('is_default')
                     ->label('Default')
-                    ->hint(function (?CareTeamRole $record, $state): ?string {
+                    ->hint(function (?CareTeamRole $record, ?bool $state): ?string {
                         if ($record?->is_default) {
                             return null;
                         }
