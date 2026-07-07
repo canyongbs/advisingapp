@@ -55,6 +55,11 @@ class ListBookingGroups extends ListRecords
 
     protected static ?string $title = 'Configuration';
 
+    public function getBreadcrumbs(): array
+    {
+        return [];
+    }
+
     public function table(Table $table): Table
     {
         return $table

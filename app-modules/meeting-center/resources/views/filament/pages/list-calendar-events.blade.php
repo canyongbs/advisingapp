@@ -35,6 +35,8 @@
     use Filament\Support\Facades\FilamentView;
     use Filament\Support\Facades\FilamentAsset;
     use AdvisingApp\MeetingCenter\Filament\Widgets\CalendarEventWidget;
+    use AdvisingApp\MeetingCenter\Filament\Pages\ManagePersonalBookingPage;
+    use App\Filament\Pages\ConnectedAccounts;
 @endphp
 
 <x-filament-panels::page
@@ -50,7 +52,7 @@
     @endif
 
     <div class="flex w-full justify-start">
-        <div class="grid max-w-xs grid-cols-2 gap-1 rounded-lg bg-gray-100 p-1 dark:bg-gray-800" role="group">
+        <div class="grid max-w-xs grid-cols-3 gap-1 rounded-lg bg-gray-100 p-1 dark:bg-gray-800" role="group">
             <button
                 type="button"
                 @class([
@@ -72,6 +74,17 @@
                 wire:click="setViewType('calendar')"
             >
                 <x-filament::icon class="h-6 w-6" icon="heroicon-m-calendar-days" />
+            </button>
+            <button
+                type="button"
+                @class([
+                    'px-5 py-1.5 text-xs font-medium rounded-lg',
+                    'text-white bg-gray-900 dark:bg-gray-300 dark:text-gray-900' => $viewType === 'settings',
+                    'text-gray-900 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700' => $viewType !== 'settings',
+                ])
+                wire:click="setViewType('settings')"
+            >
+                <x-filament::icon class="h-6 w-6" icon="heroicon-m-cog-6-tooth" />
             </button>
         </div>
     </div>
@@ -111,6 +124,11 @@
     @elseif ($viewType === 'calendar')
         <div>
             @livewire(CalendarEventWidget::class)
+        </div>
+    @elseif ($viewType === 'settings')
+        <div class="grid gap-y-6">
+            @livewire(ManagePersonalBookingPage::class)
+            @livewire(ConnectedAccounts::class)
         </div>
     @endif
 </x-filament-panels::page>

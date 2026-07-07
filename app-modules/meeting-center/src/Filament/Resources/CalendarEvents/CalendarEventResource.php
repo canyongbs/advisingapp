@@ -49,13 +49,13 @@ class CalendarEventResource extends Resource
 {
     protected static ?string $model = CalendarEvent::class;
 
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Scheduling;
 
-    protected static ?int $navigationSort = 60;
+    protected static ?int $navigationSort = 10;
 
-    protected static ?string $navigationLabel = 'My Appointments';
+    protected static ?string $navigationLabel = 'My Schedule';
 
-    protected static ?string $breadcrumb = 'My Appointments';
+    protected static ?string $breadcrumb = 'My Schedule';
 
     protected static ?string $modelLabel = 'appointment';
 

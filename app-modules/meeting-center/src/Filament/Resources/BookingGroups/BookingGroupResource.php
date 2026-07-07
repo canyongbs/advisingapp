@@ -42,7 +42,6 @@ use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\EditBooking
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ViewBookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use App\Filament\Clusters\GroupAppointments;
 use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
@@ -51,13 +50,9 @@ class BookingGroupResource extends Resource
 {
     protected static ?string $navigationLabel = 'Configuration';
 
-    protected static ?string $breadcrumb = 'Configuration';
-
-    protected static ?int $navigationSort = 20;
-
     protected static ?string $model = BookingGroup::class;
 
-    protected static ?string $cluster = GroupAppointments::class;
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
