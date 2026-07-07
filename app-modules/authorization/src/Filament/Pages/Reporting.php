@@ -169,6 +169,7 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
             ->label('Manage')
             ->icon('heroicon-m-user-group')
             ->slideOver()
+            ->authorize(fn (): bool => auth()->user()->can('reporting.*.update'))
             ->modalHeading(fn (array $record): string => "Manage Access: {$record['name']}")
             ->modalDescription('Grant access to this report by assigning individual users and/or teams.')
             ->fillForm(fn (array $record): array => [

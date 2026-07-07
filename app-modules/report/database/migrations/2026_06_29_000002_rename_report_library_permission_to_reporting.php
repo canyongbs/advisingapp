@@ -46,18 +46,27 @@ return new class () extends Migration {
         'api',
     ];
 
+    private array $permissions = [
+        'reporting.*.update' => 'Reporting',
+    ];
+
     public function up(): void
     {
-        collect($this->guards)
-            ->each(fn (string $guard) => $this->renamePermissions(['report-library.view-any' => 'reporting.view-any'], $guard));
-
         $this->renamePermissionGroups(['Report Library' => 'Reporting']);
+        collect($this->guards)
+            ->each(function (string $guard): void {
+                $this->renamePermissions(['report-library.view-any' => 'reporting.view-any'], $guard);
+                $this->createPermissions($this->permissions, $guard);
+            });
     }
 
     public function down(): void
     {
         collect($this->guards)
-            ->each(fn (string $guard) => $this->renamePermissions(['reporting.view-any' => 'report-library.view-any'], $guard));
+            ->each(function (string $guard): void {
+                $this->deletePermissions(array_keys($this->permissions), $guard);
+                $this->renamePermissions(['reporting.view-any' => 'report-library.view-any'], $guard);
+            });
 
         $this->renamePermissionGroups(['Reporting' => 'Report Library']);
     }

@@ -42,6 +42,7 @@ use AdvisingApp\Team\Models\Team;
 use App\Features\ReportingFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Closure;
 use Filament\Actions\Testing\TestAction;
 
 use function Pest\Laravel\actingAs;
@@ -70,9 +71,16 @@ it('can be accessed by a user with the reporting permission', function () {
     get(Reporting::getUrl())->assertSuccessful();
 });
 
-it('only lists reports that are available to the tenant', function () {
+it('always lists reports that require no license or addon', function () {
     $settings = app(LicenseSettings::class);
+    $settings->data->limits->conversationalAiSeats = 0;
     $settings->data->limits->retentionCrmSeats = 0;
+    $settings->data->limits->recruitmentCrmSeats = 0;
+    $settings->data->addons->caseManagement = false;
+    $settings->data->addons->customerAdvisors = false;
+    $settings->data->addons->employeeAdvisors = false;
+    $settings->data->addons->researchAdvisor = false;
+    $settings->data->addons->projectManagement = false;
     $settings->save();
 
     $user = User::factory()->create();
@@ -81,15 +89,135 @@ it('only lists reports that are available to the tenant', function () {
     actingAs($user);
 
     livewire(Reporting::class)
-        ->assertSee(ReportAccessKey::UserLoginActivity->getName())
-        ->assertDontSee(ReportAccessKey::Students->getName());
+        ->assertCanSeeTableRecords([ReportAccessKey::UserLoginActivity->value]);
+});
 
-    $settings->data->limits->retentionCrmSeats = 10;
+it('only lists a report when the required licenses and addons are enabled for the tenant', function (Closure $enableReport, ReportAccessKey $case) {
+    $settings = app(LicenseSettings::class);
+    $settings->data->limits->conversationalAiSeats = 0;
+    $settings->data->limits->retentionCrmSeats = 0;
+    $settings->data->limits->recruitmentCrmSeats = 0;
+    $settings->data->addons->caseManagement = false;
+    $settings->data->addons->customerAdvisors = false;
+    $settings->data->addons->employeeAdvisors = false;
+    $settings->data->addons->researchAdvisor = false;
+    $settings->data->addons->projectManagement = false;
+    $settings->save();
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('reporting.view-any');
+
+    actingAs($user);
+
+    livewire(Reporting::class)
+        ->assertCanNotSeeTableRecords([$case->value]);
+
+    $enableReport($settings);
     $settings->save();
 
     livewire(Reporting::class)
-        ->assertSee(ReportAccessKey::Students->getName());
-});
+        ->assertCanSeeTableRecords([$case->value]);
+})->with([
+    ReportAccessKey::ArtificialIntelligence->value => [
+        fn (LicenseSettings $settings) => $settings->data->limits->conversationalAiSeats = 10,
+        ReportAccessKey::ArtificialIntelligence,
+    ],
+    ReportAccessKey::CustomerAdvisorReport->value => [
+        function (LicenseSettings $settings) {
+            $settings->data->limits->conversationalAiSeats = 10;
+            $settings->data->addons->customerAdvisors = true;
+        },
+        ReportAccessKey::CustomerAdvisorReport,
+    ],
+    ReportAccessKey::EmployeeAdvisorReport->value => [
+        function (LicenseSettings $settings) {
+            $settings->data->limits->conversationalAiSeats = 10;
+            $settings->data->addons->employeeAdvisors = true;
+        },
+        ReportAccessKey::EmployeeAdvisorReport,
+    ],
+    ReportAccessKey::InstitutionalAdvisorReport->value => [
+        fn (LicenseSettings $settings) => $settings->data->limits->conversationalAiSeats = 10,
+        ReportAccessKey::InstitutionalAdvisorReport,
+    ],
+    ReportAccessKey::ResearchAdvisorReport->value => [
+        function (LicenseSettings $settings) {
+            $settings->data->limits->conversationalAiSeats = 10;
+            $settings->data->addons->researchAdvisor = true;
+        },
+        ReportAccessKey::ResearchAdvisorReport,
+    ],
+    ReportAccessKey::ProjectReport->value => [
+        fn (LicenseSettings $settings) => $settings->data->addons->projectManagement = true,
+        ReportAccessKey::ProjectReport,
+    ],
+    ReportAccessKey::StudentActionCenter->value => [
+        fn (LicenseSettings $settings) => $settings->data->limits->retentionCrmSeats = 10,
+        ReportAccessKey::StudentActionCenter,
+    ],
+    ReportAccessKey::Students->value => [
+        fn (LicenseSettings $settings) => $settings->data->limits->retentionCrmSeats = 10,
+        ReportAccessKey::Students,
+    ],
+    ReportAccessKey::StudentCaseReport->value => [
+        function (LicenseSettings $settings) {
+            $settings->data->limits->retentionCrmSeats = 10;
+            $settings->data->addons->caseManagement = true;
+        },
+        ReportAccessKey::StudentCaseReport,
+    ],
+    ReportAccessKey::StudentDeliverabilityReport->value => [
+        fn (LicenseSettings $settings) => $settings->data->limits->retentionCrmSeats = 10,
+        ReportAccessKey::StudentDeliverabilityReport,
+    ],
+    ReportAccessKey::StudentInteractionReport->value => [
+        fn (LicenseSettings $settings) => $settings->data->limits->retentionCrmSeats = 10,
+        ReportAccessKey::StudentInteractionReport,
+    ],
+    ReportAccessKey::StudentMessagesDetailReport->value => [
+        fn (LicenseSettings $settings) => $settings->data->limits->retentionCrmSeats = 10,
+        ReportAccessKey::StudentMessagesDetailReport,
+    ],
+    ReportAccessKey::StudentMessagesOverviewReport->value => [
+        fn (LicenseSettings $settings) => $settings->data->limits->retentionCrmSeats = 10,
+        ReportAccessKey::StudentMessagesOverviewReport,
+    ],
+    ReportAccessKey::StudentTaskManagement->value => [
+        fn (LicenseSettings $settings) => $settings->data->limits->retentionCrmSeats = 10,
+        ReportAccessKey::StudentTaskManagement,
+    ],
+    ReportAccessKey::ProspectActionCenter->value => [
+        fn (LicenseSettings $settings) => $settings->data->limits->recruitmentCrmSeats = 10,
+        ReportAccessKey::ProspectActionCenter,
+    ],
+    ReportAccessKey::ProspectReport->value => [
+        fn (LicenseSettings $settings) => $settings->data->limits->recruitmentCrmSeats = 10,
+        ReportAccessKey::ProspectReport,
+    ],
+    ReportAccessKey::ProspectCaseReport->value => [
+        function (LicenseSettings $settings) {
+            $settings->data->limits->recruitmentCrmSeats = 10;
+            $settings->data->addons->caseManagement = true;
+        },
+        ReportAccessKey::ProspectCaseReport,
+    ],
+    ReportAccessKey::ProspectInteractionReport->value => [
+        fn (LicenseSettings $settings) => $settings->data->limits->recruitmentCrmSeats = 10,
+        ReportAccessKey::ProspectInteractionReport,
+    ],
+    ReportAccessKey::ProspectMessagesDetailReport->value => [
+        fn (LicenseSettings $settings) => $settings->data->limits->recruitmentCrmSeats = 10,
+        ReportAccessKey::ProspectMessagesDetailReport,
+    ],
+    ReportAccessKey::ProspectMessagesOverviewReport->value => [
+        fn (LicenseSettings $settings) => $settings->data->limits->recruitmentCrmSeats = 10,
+        ReportAccessKey::ProspectMessagesOverviewReport,
+    ],
+    ReportAccessKey::ProspectTaskManagement->value => [
+        fn (LicenseSettings $settings) => $settings->data->limits->recruitmentCrmSeats = 10,
+        ReportAccessKey::ProspectTaskManagement,
+    ],
+]);
 
 it('can search reports by name', function () {
     $settings = app(LicenseSettings::class);
@@ -103,8 +231,8 @@ it('can search reports by name', function () {
 
     livewire(Reporting::class)
         ->searchTable(ReportAccessKey::ProjectReport->getName())
-        ->assertSee(ReportAccessKey::ProjectReport->getName())
-        ->assertDontSee(ReportAccessKey::UserLoginActivity->getName());
+        ->assertCanSeeTableRecords([ReportAccessKey::ProjectReport->value])
+        ->assertCanNotSeeTableRecords([ReportAccessKey::UserLoginActivity->value]);
 });
 
 it('can filter reports by category', function () {
@@ -115,13 +243,35 @@ it('can filter reports by category', function () {
 
     livewire(Reporting::class)
         ->filterTable('category', ReportAccessKey::UserLoginActivity->getCategory())
-        ->assertSee(ReportAccessKey::UserLoginActivity->getName())
-        ->assertDontSee(ReportAccessKey::ArtificialIntelligence->getName());
+        ->assertCanSeeTableRecords([ReportAccessKey::UserLoginActivity->value])
+        ->assertCanNotSeeTableRecords([ReportAccessKey::ArtificialIntelligence->value]);
+});
+
+it('manage report action with approprite permissions', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('reporting.view-any');
+    $user->givePermissionTo('reporting.*.update');
+
+    actingAs($user);
+
+    livewire(Reporting::class)
+        ->assertActionVisible(TestAction::make('manage')->table(ReportAccessKey::UserLoginActivity->value));
+});
+
+it('can not manage report action without approprite permissions', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('reporting.view-any');
+
+    actingAs($user);
+
+    livewire(Reporting::class)
+        ->assertActionHidden(TestAction::make('manage')->table(ReportAccessKey::UserLoginActivity->value));
 });
 
 it('assigns users to a report through the manage action', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
+    $user->givePermissionTo('reporting.*.update');
 
     $assignedUser = User::factory()->create();
 
@@ -145,6 +295,7 @@ it('assigns users to a report through the manage action', function () {
 it('assigns teams to a report through the manage action', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
+    $user->givePermissionTo('reporting.*.update');
 
     $team = Team::factory()->create();
 
@@ -168,6 +319,7 @@ it('assigns teams to a report through the manage action', function () {
 it('removes access that is no longer selected when managing a report', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
+    $user->givePermissionTo('reporting.*.update');
 
     $previouslyAssignedUser = User::factory()->create();
 
