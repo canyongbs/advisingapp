@@ -40,7 +40,8 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     use CanModifyPermissions;
 
-    private array $permissions = [ // @phpstan-ignore missingType.iterableValue
+    /** @var array<string, string> */
+    private array $permissions = [
         'role.*.delete' => 'Role',
         'role.*.force-delete' => 'Role',
         'role.*.restore' => 'Role',
@@ -48,7 +49,8 @@ return new class () extends Migration {
         'role.create' => 'Role',
     ];
 
-    private array $permissionsToDelete = [ // @phpstan-ignore missingType.iterableValue
+    /** @var list<string> */
+    private array $permissionsToDelete = [
         'role_group.view-any',
         'role_group.create',
         'role_group.*.view',
@@ -58,12 +60,12 @@ return new class () extends Migration {
         'role_group.*.force-delete',
     ];
 
-    private array $guards = [ // @phpstan-ignore missingType.iterableValue
+    /** @var list<string> */
+    private array $guards = [
         'web',
         'api',
     ];
 
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         collect($this->guards)

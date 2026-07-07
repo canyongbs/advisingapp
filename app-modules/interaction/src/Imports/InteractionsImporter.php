@@ -111,7 +111,7 @@ class InteractionsImporter extends Importer
                         ->when(
                             str($state)->isUuid(),
                             fn (Builder $query) => $query->whereKey($state),
-                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]), // @phpstan-ignore Common.noStrtolower
+                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]),
                         )
                         ->first(),
                 )
@@ -123,7 +123,7 @@ class InteractionsImporter extends Importer
                         ->when(
                             str($state)->isUuid(),
                             fn (Builder $query) => $query->whereKey($state),
-                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]), // @phpstan-ignore Common.noStrtolower
+                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]),
                         )
                         ->first(),
                 )
@@ -135,7 +135,7 @@ class InteractionsImporter extends Importer
                         ->when(
                             str($state)->isUuid(),
                             fn (Builder $query) => $query->whereKey($state),
-                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]), // @phpstan-ignore Common.noStrtolower
+                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]),
                         )
                         ->first(),
                 )
@@ -147,7 +147,7 @@ class InteractionsImporter extends Importer
                         ->when(
                             str($state)->isUuid(),
                             fn (Builder $query) => $query->whereKey($state),
-                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]), // @phpstan-ignore Common.noStrtolower
+                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]),
                         )
                         ->first(),
                 )
@@ -159,7 +159,7 @@ class InteractionsImporter extends Importer
                         ->when(
                             str($state)->isUuid(),
                             fn (Builder $query) => $query->whereKey($state),
-                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]), // @phpstan-ignore Common.noStrtolower
+                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]),
                         )
                         ->first(),
                 )
@@ -171,7 +171,7 @@ class InteractionsImporter extends Importer
                         ->when(
                             str($state)->isUuid(),
                             fn (Builder $query) => $query->whereKey($state),
-                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]), // @phpstan-ignore Common.noStrtolower
+                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]),
                         )
                         ->first(),
                 )

@@ -104,7 +104,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                         ->where(
                             DB::raw('LOWER(domain)'),
                             'like',
-                            strtolower("{$localPart}.%") // @phpstan-ignore Common.noStrtolower
+                            strtolower("{$localPart}.%")
                         )
                         ->first();
                 })

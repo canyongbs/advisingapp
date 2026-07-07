@@ -50,7 +50,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * @mixin IdeHelperApplicationSubmission
  */
-#[ObservedBy([ApplicationSubmissionObserver::class])] // @phpstan-ignore Common.modelMissingFillable
+#[ObservedBy([ApplicationSubmissionObserver::class])]
 class ApplicationSubmission extends Submission
 {
     use CanBeArchived;

@@ -256,19 +256,16 @@ class Engagement extends BaseModel implements Auditable, CanTriggerAutoSubscript
         return $this->engagementBatch();
     }
 
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeIsNotPartOfABatch(Builder $query): void
     {
         $query->whereNull('engagement_batch_id');
     }
 
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeSentToStudent(Builder $query): void
     {
         $query->where('recipient_type', resolve(Student::class)->getMorphClass());
     }
 
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeSentToProspect(Builder $query): void
     {
         $query->where('recipient_type', resolve(Prospect::class)->getMorphClass());

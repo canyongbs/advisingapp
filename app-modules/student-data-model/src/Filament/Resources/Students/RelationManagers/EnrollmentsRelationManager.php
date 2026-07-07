@@ -143,7 +143,7 @@ class EnrollmentsRelationManager extends RelationManager
                     ->placeholder('N/A')
                     ->searchable(query: function (Builder $query, string $search): Builder {
                         return $query->whereRaw('LOWER(enrollments.name) LIKE ?', [
-                            '%' . strtolower($search) . '%', // @phpstan-ignore Common.noStrtolower
+                            '%' . strtolower($search) . '%',
                         ]);
                     }),
                 TextColumn::make('class_nbr')

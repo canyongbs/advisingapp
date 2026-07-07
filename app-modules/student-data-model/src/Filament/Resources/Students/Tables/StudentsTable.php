@@ -343,7 +343,7 @@ class StudentsTable
                     ->filter()
                     ->unique()
                     ->sort()
-                    ->mapWithKeys(fn (?string $option): array => $option ? [strtolower($option) => $option] : []) // @phpstan-ignore Common.noStrtolower
+                    ->mapWithKeys(fn (?string $option): array => $option ? [strtolower($option) => $option] : [])
                     ->all();
             });
     }

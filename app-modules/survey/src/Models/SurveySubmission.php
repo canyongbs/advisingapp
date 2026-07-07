@@ -110,7 +110,6 @@ class SurveySubmission extends Submission
      *
      * @return Builder<SurveySubmission>
      */
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeRequested(Builder $query): Builder
     {
         return $query->notSubmitted()->notCanceled();
@@ -121,7 +120,6 @@ class SurveySubmission extends Submission
      *
      * @return Builder<SurveySubmission>
      */
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeSubmitted(Builder $query): Builder
     {
         return $query->whereNotNull('submitted_at');
@@ -132,7 +130,6 @@ class SurveySubmission extends Submission
      *
      * @return Builder<SurveySubmission>
      */
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeCanceled(Builder $query): Builder
     {
         return $query->notSubmitted()->whereNotNull('canceled_at');
@@ -143,7 +140,6 @@ class SurveySubmission extends Submission
      *
      * @return Builder<SurveySubmission>
      */
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeNotSubmitted(Builder $query): Builder
     {
         return $query->whereNull('submitted_at');
@@ -154,7 +150,6 @@ class SurveySubmission extends Submission
      *
      * @return Builder<SurveySubmission>
      */
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeNotCanceled(Builder $query): Builder
     {
         return $query->whereNull('canceled_at');

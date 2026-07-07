@@ -195,7 +195,6 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, H
     /**
      * @param Builder<Task> $query
      */
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeByNextDue(Builder $query): void
     {
         $query->orderBy('due');
@@ -204,7 +203,6 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, H
     /**
      * @param Builder<Task> $query
      */
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeOpen(Builder $query): void
     {
         $query->where('status', '=', TaskStatus::Pending)

@@ -144,7 +144,7 @@ class GetAvailableGroupAppointmentSlots
         Carbon $now,
         ?Carbon $latestAllowed = null,
     ): array {
-        $dayOfWeek = strtolower($date->format('l')); // @phpstan-ignore Common.noStrtolower
+        $dayOfWeek = strtolower($date->format('l'));
 
         $groupDayHours = $this->getGroupHoursForDay($groupHours, $dayOfWeek);
 

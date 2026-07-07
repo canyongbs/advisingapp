@@ -145,7 +145,7 @@ class GetAvailableAppointmentSlots
      */
     protected function getAvailableBlocksForDay(User $user, Carbon $date, Collection $busyPeriods, int $leadTimeHours = 0, int $maxLeadTimeDays = 0): array
     {
-        $dayOfWeek = strtolower($date->format('l')); // @phpstan-ignore Common.noStrtolower
+        $dayOfWeek = strtolower($date->format('l'));
         $hours = $this->getHoursForDay($user, $dayOfWeek);
 
         if ($hours->isEmpty()) {

@@ -40,7 +40,7 @@ use AdvisingApp\Form\Models\SubmissibleAuthentication;
 use App\Models\Attributes\NoPermissions;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[NoPermissions] // @phpstan-ignore Common.modelMissingFillable
+#[NoPermissions]
 /**
  * @property-read EventRegistrationForm $submissible
  *

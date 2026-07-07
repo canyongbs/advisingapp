@@ -433,7 +433,6 @@ trait InteractsWithVectorStores
         return false;
     }
 
-    // @phpstan-ignore Common.noLocalModelScope
     protected function scopeVectorStoreQueryByContext(Builder $query, ?Model $context): void
     {
         if ($context) {

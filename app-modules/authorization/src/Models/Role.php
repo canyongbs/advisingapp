@@ -71,19 +71,16 @@ class Role extends SpatieRole implements Auditable
         );
     }
 
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeApi(Builder $query): void
     {
         $query->where('guard_name', 'api');
     }
 
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeWeb(Builder $query): void
     {
         $query->where('guard_name', 'web');
     }
 
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeSuperAdmin(Builder $query): void
     {
         $query

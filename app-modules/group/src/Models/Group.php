@@ -98,7 +98,6 @@ class Group extends BaseModel
         return $this->hasMany(Campaign::class, 'segment_id');
     }
 
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeModel(Builder $query, GroupModel $model): void
     {
         $query->where('model', $model);
