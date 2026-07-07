@@ -32,11 +32,9 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import { consumer } from '@/Services/Consumer.js';
     import HelpCenter from '@common/portal/home/HelpCenter.vue';
-    import HeroSearch from '@common/portal/home/HeroSearch.vue';
-    import SearchResults from '@common/portal/home/SearchResults.vue';
-    import { defineProps, ref, watch } from 'vue';
+    import Page from '@common/portal/Page.vue';
+    import { computed, defineProps } from 'vue';
 
     const props = defineProps({
         searchUrl: {
@@ -53,63 +51,19 @@
         },
     });
 
-    const searchQuery = ref(null);
-    const loadingResults = ref(false);
-    const searchResults = ref(null);
-
-    const debounceSearch = debounce((value) => {
-        if (!value) {
-            searchQuery.value = null;
-            searchResults.value = null;
-            return;
-        }
-
-        const { post } = consumer();
-
-        loadingResults.value = true;
-
-        post(props.searchUrl, {
-            search: JSON.stringify(value),
-        }).then((response) => {
-            searchResults.value = response.data;
-            loadingResults.value = false;
-        });
-    }, 500);
-
-    watch(searchQuery, (value) => {
-        if (value) {
-            loadingResults.value = true;
-        }
-        debounceSearch(value);
-    });
-
-    function debounce(func, delay) {
-        let timerId;
-        return function (...args) {
-            if (timerId) {
-                clearTimeout(timerId);
-            }
-            timerId = setTimeout(() => {
-                func(...args);
-            }, delay);
-        };
-    }
+    const categoriesWithRoutes = computed(() =>
+        Object.values(props.categories).map((category) => ({
+            ...category,
+            key: category.id,
+            to: { name: 'view-category', params: { categoryId: category.id } },
+        })),
+    );
 </script>
 
 <template>
-    <div class="flex flex-col bg-gray-50">
-        <HeroSearch v-model="searchQuery" @sidebar-opened="$emit('sidebarOpened')"></HeroSearch>
-        <main class="px-6">
-            <div class="max-w-screen-xl flex flex-col gap-y-6 mx-auto py-8">
-                <SearchResults
-                    v-if="searchQuery"
-                    :searchQuery="searchQuery"
-                    :searchResults="searchResults"
-                    :loadingResults="loadingResults"
-                ></SearchResults>
+    <Page>
+        <template #heading>Resource Hub</template>
 
-                <HelpCenter v-else :categories="categories"></HelpCenter>
-            </div>
-        </main>
-    </div>
+        <HelpCenter :categories="categoriesWithRoutes" />
+    </Page>
 </template>

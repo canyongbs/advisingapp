@@ -116,6 +116,44 @@
         });
     }, 500);
 
+    const articlesWithRoutes = computed(() =>
+        (articles.value ?? []).map((article) => ({
+            ...article,
+            key: article.id,
+            to: { name: 'view-article', params: { categoryId: article.categoryId, articleId: article.id } },
+        })),
+    );
+
+    const subCategoriesWithRoutes = computed(() =>
+        (category.value?.subCategories ?? []).map((subCategory) => ({
+            ...subCategory,
+            key: subCategory.id,
+            to: {
+                name: 'view-subcategory',
+                params: {
+                    parentCategoryId: subCategory.parentCategory.id,
+                    categoryId: subCategory.id,
+                },
+            },
+        })),
+    );
+
+    const searchArticles = computed(() =>
+        (searchResults.value?.data?.articles ?? []).map((article) => ({
+            ...article,
+            key: article.id,
+            to: { name: 'view-article', params: { categoryId: article.categoryId, articleId: article.id } },
+        })),
+    );
+
+    const searchCategories = computed(() =>
+        (searchResults.value?.data?.categories ?? []).map((cat) => ({
+            ...cat,
+            key: cat.id,
+            to: { name: 'view-category', params: { categoryId: cat.id } },
+        })),
+    );
+
     const setPagination = (pagination) => {
         currentPage.value = pagination.current_page;
         prevPageUrl.value = pagination.prev_page_url;
@@ -336,8 +374,10 @@
                 <div v-if="searchQuery || selectedTags.length > 0" class="flex flex-col gap-6">
                     <SearchResults
                         :searchQuery="searchQuery"
-                        :searchResults="searchResults"
+                        :articles="searchArticles"
+                        :categories="searchCategories"
                         :loadingResults="loadingeSearchResults"
+                        label="Searching Resource Hub..."
                     />
                 </div>
                 <div v-else class="flex flex-col gap-6">
@@ -347,8 +387,8 @@
                             <p v-if="category.description" class="text-sm text-gray-500">{{ category.description }}</p>
                         </div>
                         <SubCategories
-                            v-if="category.subCategories?.length > 0"
-                            :subCategories="category.subCategories"
+                            v-if="subCategoriesWithRoutes.length > 0"
+                            :subCategories="subCategoriesWithRoutes"
                         ></SubCategories>
                         <div class="flex flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">
                             <Tabs
@@ -358,10 +398,10 @@
                                 :contained="true"
                             />
 
-                            <div v-if="articles?.length > 0">
+                            <div v-if="articlesWithRoutes.length > 0">
                                 <ul role="list" class="divide-y">
-                                    <li v-for="article in articles" :key="article.id">
-                                        <Article :article="article" />
+                                    <li v-for="article in articlesWithRoutes" :key="article.key">
+                                        <Article :to="article.to" :name="article.name" :tags="article.tags" :featured="article.featured" />
                                     </li>
                                 </ul>
                                 <Pagination
