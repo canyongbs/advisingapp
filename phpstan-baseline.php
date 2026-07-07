@@ -7427,4 +7427,197 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/database/migrations/2024_06_04_150112_add_open_ai_gpt_4o_integration_settings.php',
 ];
 
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Actions/UploadFileForParsing.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Pages/Reporting.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/authorization/src/Http/Controllers/SocialiteController.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 3,
+    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/TaskBlock.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Jobs/ProcessSesS3InboundEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/CheckboxesFormFieldBlock.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 7,
+    'path' => __DIR__ . '/app-modules/interaction/src/Imports/InteractionsImporter.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/meeting-center/src/Actions/GetAvailableAppointmentSlots.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/meeting-center/src/Actions/GetAvailableGroupAppointmentSlots.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/report/src/Abstract/Concerns/HasFiltersForm.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Enums/PhoneNumberLookupStatus.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentAlerts.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/RelationManagers/EnrollmentsRelationManager.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 5,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Tables/StudentsTable.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Scopes/EducatableSearch.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 3,
+    'path' => __DIR__ . '/app/Filament/Resources/Users/Pages/ListUsers.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Filament/Resources/Users/RelationManagers/RolesRelationManager.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\. The "scopeByNextDue" method on "AdvisingApp\\\Task\\\Models\\\Task" defines a local scope, which relies on magic methods that static analysis cannot reason about\. Use a tappable scope instead\. See https://seankegel\.com/elevate-your-laravel-eloquent-queries-with-tappable-scopes\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\. The "scopeOpen" method on "AdvisingApp\\\Task\\\Models\\\Task" defines a local scope, which relies on magic methods that static analysis cannot reason about\. Use a tappable scope instead\. See https://seankegel\.com/elevate-your-laravel-eloquent-queries-with-tappable-scopes\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\. The "scopeModel" method on "AdvisingApp\\\Group\\\Models\\\Group" defines a local scope, which relies on magic methods that static analysis cannot reason about\. Use a tappable scope instead\. See https://seankegel\.com/elevate-your-laravel-eloquent-queries-with-tappable-scopes\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Models/Group.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\. The "scopeForEntity" method on "AdvisingApp\\\Timeline\\\Models\\\Timeline" defines a local scope, which relies on magic methods that static analysis cannot reason about\. Use a tappable scope instead\. See https://seankegel\.com/elevate-your-laravel-eloquent-queries-with-tappable-scopes\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/timeline/src/Models/Timeline.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\. The "scopeLicensedToEducatable" method on "AdvisingApp\\\StudentDataModel\\\Models\\\Concerns\\\BelongsToEducatable" defines a local scope, which relies on magic methods that static analysis cannot reason about\. Use a tappable scope instead\. See https://seankegel\.com/elevate-your-laravel-eloquent-queries-with-tappable-scopes\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Concerns/BelongsToEducatable.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\. The "scopeIsNotPartOfABatch" method on "AdvisingApp\\\Engagement\\\Models\\\Engagement" defines a local scope, which relies on magic methods that static analysis cannot reason about\. Use a tappable scope instead\. See https://seankegel\.com/elevate-your-laravel-eloquent-queries-with-tappable-scopes\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Models/Engagement.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\. The "scopeSentToStudent" method on "AdvisingApp\\\Engagement\\\Models\\\Engagement" defines a local scope, which relies on magic methods that static analysis cannot reason about\. Use a tappable scope instead\. See https://seankegel\.com/elevate-your-laravel-eloquent-queries-with-tappable-scopes\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Models/Engagement.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\. The "scopeSentToProspect" method on "AdvisingApp\\\Engagement\\\Models\\\Engagement" defines a local scope, which relies on magic methods that static analysis cannot reason about\. Use a tappable scope instead\. See https://seankegel\.com/elevate-your-laravel-eloquent-queries-with-tappable-scopes\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Models/Engagement.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\. The "scopeSentByStudent" method on "AdvisingApp\\\Engagement\\\Models\\\EngagementResponse" defines a local scope, which relies on magic methods that static analysis cannot reason about\. Use a tappable scope instead\. See https://seankegel\.com/elevate-your-laravel-eloquent-queries-with-tappable-scopes\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementResponse.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\. The "scopeSentByProspect" method on "AdvisingApp\\\Engagement\\\Models\\\EngagementResponse" defines a local scope, which relies on magic methods that static analysis cannot reason about\. Use a tappable scope instead\. See https://seankegel\.com/elevate-your-laravel-eloquent-queries-with-tappable-scopes\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementResponse.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\. The "scopeOpen" method on "AdvisingApp\\\CaseManagement\\\Models\\\CaseModel" defines a local scope, which relies on magic methods that static analysis cannot reason about\. Use a tappable scope instead\. See https://seankegel\.com/elevate-your-laravel-eloquent-queries-with-tappable-scopes\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/case-management/src/Models/CaseModel.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\. The "scopeHasNotBeenExecuted" method on "AdvisingApp\\\Campaign\\\Models\\\Campaign" defines a local scope, which relies on magic methods that static analysis cannot reason about\. Use a tappable scope instead\. See https://seankegel\.com/elevate-your-laravel-eloquent-queries-with-tappable-scopes\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/campaign/src/Models/Campaign.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\. The "scopeCampaignEnabled" method on "AdvisingApp\\\Campaign\\\Models\\\CampaignAction" defines a local scope, which relies on magic methods that static analysis cannot reason about\. Use a tappable scope instead\. See https://seankegel\.com/elevate-your-laravel-eloquent-queries-with-tappable-scopes\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/campaign/src/Models/CampaignAction.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\. The "scopePublic" method on "AdvisingApp\\\ResourceHub\\\Models\\\ResourceHubArticle" defines a local scope, which relies on magic methods that static analysis cannot reason about\. Use a tappable scope instead\. See https://seankegel\.com/elevate-your-laravel-eloquent-queries-with-tappable-scopes\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Models/ResourceHubArticle.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\. The "scopeAdvancedFilter" method on "App\\\Support\\\HasAdvancedFilter" defines a local scope, which relies on magic methods that static analysis cannot reason about\. Use a tappable scope instead\. See https://seankegel\.com/elevate-your-laravel-eloquent-queries-with-tappable-scopes\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Support/HasAdvancedFilter.php',
+];
+
 return ['parameters' => ['ignoreErrors' => $ignoreErrors]];
