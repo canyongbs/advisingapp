@@ -34,42 +34,41 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Abstract;
+use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
-use AdvisingApp\Report\Enums\ReportAccessKey;
-use App\Features\ReportingFeature;
-use App\Models\User;
-use Filament\Pages\Dashboard;
+return new class () extends Migration {
+    use CanModifyPermissions;
 
-abstract class ProspectReport extends Dashboard implements HasGroupModel
-{
-    use HasFiltersForm;
+    /** @var array<string> */
+    private array $guards = [
+        'web',
+        'api',
+    ];
 
-    protected string $view = 'report::filament.pages.report';
+    /** @var array<string, string> */
+    private array $permissions = [
+        'reporting.*.update' => 'Reporting',
+    ];
 
-    public function persistsFiltersInSession(): bool
+    public function up(): void
     {
-        return false;
+        $this->renamePermissionGroups(['Report Library' => 'Reporting']);
+        collect($this->guards)
+            ->each(function (string $guard): void {
+                $this->renamePermissions(['report-library.view-any' => 'reporting.view-any'], $guard);
+                $this->createPermissions($this->permissions, $guard);
+            });
     }
 
-    public static function canAccess(): bool
+    public function down(): void
     {
-        /** @var User $user */
-        $user = auth()->user();
+        collect($this->guards)
+            ->each(function (string $guard): void {
+                $this->deletePermissions(array_keys($this->permissions), $guard);
+                $this->renamePermissions(['reporting.view-any' => 'report-library.view-any'], $guard);
+            });
 
-        if (! ReportingFeature::active()) {
-            return $user->hasLicense(LicenseType::RecruitmentCrm) && $user->can('report-library.view-any');
-        }
-
-        return $user->hasLicense(LicenseType::RecruitmentCrm) && (ReportAccessKey::fromPageClass(static::class)?->userCanAccess($user) ?? false);
+        $this->renamePermissionGroups(['Reporting' => 'Report Library']);
     }
-
-    public function groupModel(): ?GroupModel
-    {
-        return GroupModel::Prospect;
-    }
-}
+};

@@ -34,49 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace App\Console\Commands;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use App\Overrides\Laravel\PermissionMigrationCreator;
-use Illuminate\Database\Console\Migrations\MigrateMakeCommand;
-use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Composer;
-use InterNACHI\Modularize\ModularizeGeneratorCommand;
-
-class CreatePermissionMigration extends MigrateMakeCommand
-{
-    use ModularizeGeneratorCommand;
-
-    protected $signature = 'make:permission-migration {name : The name of the migration}
-        {--create= : The table to be created}
-        {--table= : The table to migrate}
-        {--path= : The location where the migration file should be created}
-        {--realpath : Indicate any provided migration file paths are pre-resolved absolute paths}
-        {--fullpath : Output the full path of the migration (Deprecated)}';
-
-    protected $description = 'Creates a permission migration file.';
-
-    public function __construct(PermissionMigrationCreator $creator, Composer $composer)
+return new class () extends Migration {
+    public function up(): void
     {
-        parent::__construct($creator, $composer);
+        Schema::create('report_user_accesses', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('report_key');
+            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            $table->timestamps();
+
+            $table->unique(['report_key', 'user_id']);
+        });
     }
 
-    protected function getMigrationPath()
+    public function down(): void
     {
-        $path = parent::getMigrationPath();
-
-        if ($module = $this->module()) {
-            $appDirectory = $this->laravel->databasePath('migrations');
-            $moduleDirectory = $module->path('database/migrations');
-
-            $path = str_replace($appDirectory, $moduleDirectory, $path);
-
-            $filesystem = $this->getLaravel()->make(Filesystem::class);
-
-            if (! $filesystem->isDirectory($moduleDirectory)) {
-                $filesystem->makeDirectory($moduleDirectory, 0755, true);
-            }
-        }
-
-        return $path;
+        Schema::dropIfExists('report_user_accesses');
     }
-}
+};

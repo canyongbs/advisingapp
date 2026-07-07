@@ -34,58 +34,17 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Report\Enums\ReportAccessKey;
-use AdvisingApp\Report\Filament\Pages\ProspectMessagesDetailReport;
-use AdvisingApp\Report\Models\ReportTeamAccess;
-use AdvisingApp\Report\Models\ReportUserAccess;
-use AdvisingApp\Team\Models\Team;
 use App\Features\ReportingFeature;
-use App\Models\User;
+use Illuminate\Database\Migrations\Migration;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Laravel\get;
+return new class () extends Migration {
+    public function up(): void
+    {
+        ReportingFeature::activate();
+    }
 
-it('is gated with proper access control', function () {
-    ReportingFeature::activate();
-
-    $user = User::factory()->create();
-
-    actingAs($user);
-
-    get(ProspectMessagesDetailReport::getUrl())->assertForbidden();
-
-    $user->grantLicense(LicenseType::RecruitmentCrm);
-
-    $user->refresh();
-
-    get(ProspectMessagesDetailReport::getUrl())->assertForbidden();
-
-    ReportUserAccess::factory()->create([
-        'report_key' => ReportAccessKey::ProspectMessagesDetailReport->value,
-        'user_id' => $user->getKey(),
-    ]);
-
-    get(ProspectMessagesDetailReport::getUrl())->assertSuccessful();
-});
-
-it('grants access to a user belonging to a team that has been granted access', function () {
-    $team = Team::factory()->create();
-
-    $user = User::factory()->create(['team_id' => $team->getKey()]);
-
-    $user->grantLicense(LicenseType::RecruitmentCrm);
-
-    $user->refresh();
-
-    actingAs($user);
-
-    get(ProspectMessagesDetailReport::getUrl())->assertForbidden();
-
-    ReportTeamAccess::factory()->create([
-        'report_key' => ReportAccessKey::ProspectMessagesDetailReport->value,
-        'team_id' => $team->getKey(),
-    ]);
-
-    get(ProspectMessagesDetailReport::getUrl())->assertSuccessful();
-});
+    public function down(): void
+    {
+        ReportingFeature::deactivate();
+    }
+};

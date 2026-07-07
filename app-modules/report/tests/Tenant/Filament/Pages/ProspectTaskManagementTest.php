@@ -35,13 +35,20 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Filament\Pages\ProspectTaskManagement;
+use AdvisingApp\Report\Models\ReportTeamAccess;
+use AdvisingApp\Report\Models\ReportUserAccess;
+use AdvisingApp\Team\Models\Team;
+use App\Features\ReportingFeature;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
 it('is gated with proper access control', function () {
+    ReportingFeature::activate();
+
     $user = User::factory()->create();
 
     actingAs($user);
@@ -60,7 +67,31 @@ it('is gated with proper access control', function () {
 
     get(ProspectTaskManagement::getUrl())->assertForbidden();
 
-    $user->givePermissionTo('report-library.view-any');
+    ReportUserAccess::factory()->create([
+        'report_key' => ReportAccessKey::ProspectTaskManagement->value,
+        'user_id' => $user->getKey(),
+    ]);
+
+    get(ProspectTaskManagement::getUrl())->assertSuccessful();
+});
+
+it('grants access to a user belonging to a team that has been granted access', function () {
+    $team = Team::factory()->create();
+
+    $user = User::factory()->create(['team_id' => $team->getKey()]);
+
+    $user->grantLicense(LicenseType::RecruitmentCrm);
+
+    $user->refresh();
+
+    actingAs($user);
+
+    get(ProspectTaskManagement::getUrl())->assertForbidden();
+
+    ReportTeamAccess::factory()->create([
+        'report_key' => ReportAccessKey::ProspectTaskManagement->value,
+        'team_id' => $team->getKey(),
+    ]);
 
     get(ProspectTaskManagement::getUrl())->assertSuccessful();
 });

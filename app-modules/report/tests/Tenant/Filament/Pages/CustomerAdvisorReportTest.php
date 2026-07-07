@@ -35,7 +35,12 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Filament\Pages\CustomerAdvisorReport;
+use AdvisingApp\Report\Models\ReportTeamAccess;
+use AdvisingApp\Report\Models\ReportUserAccess;
+use AdvisingApp\Team\Models\Team;
+use App\Features\ReportingFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
@@ -43,6 +48,8 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
 it('is gated with proper access control', function () {
+    ReportingFeature::activate();
+
     $settings = app(LicenseSettings::class);
     $user = User::factory()->create();
 
@@ -59,12 +66,41 @@ it('is gated with proper access control', function () {
 
     get(CustomerAdvisorReport::getUrl())->assertForbidden();
 
-    $user->givePermissionTo('report-library.view-any');
+    ReportUserAccess::factory()->create([
+        'report_key' => ReportAccessKey::CustomerAdvisorReport->value,
+        'user_id' => $user->getKey(),
+    ]);
 
     get(CustomerAdvisorReport::getUrl())->assertForbidden();
 
     $settings->data->addons->customerAdvisors = true;
     $settings->save();
+
+    get(CustomerAdvisorReport::getUrl())->assertSuccessful();
+});
+
+it('grants access to a user belonging to a team that has been granted access', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->customerAdvisors = true;
+    $settings->save();
+
+    $team = Team::factory()->create();
+
+    $user = User::factory()->create(['team_id' => $team->getKey()]);
+
+    $user->grantLicense(LicenseType::ConversationalAi);
+
+    $user->refresh();
+
+    actingAs($user);
+
+    get(CustomerAdvisorReport::getUrl())->assertForbidden();
+
+    ReportTeamAccess::factory()->create([
+        'report_key' => ReportAccessKey::CustomerAdvisorReport->value,
+        'team_id' => $team->getKey(),
+    ]);
 
     get(CustomerAdvisorReport::getUrl())->assertSuccessful();
 });

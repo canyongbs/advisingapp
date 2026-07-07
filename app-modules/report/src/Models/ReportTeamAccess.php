@@ -34,18 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace App\Overrides\Laravel;
+namespace AdvisingApp\Report\Models;
 
-use Illuminate\Database\Migrations\MigrationCreator;
+use AdvisingApp\Team\Models\Team;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class PermissionMigrationCreator extends MigrationCreator
+/**
+ * @mixin IdeHelperReportTeamAccess
+ */
+class ReportTeamAccess extends BaseModel implements Auditable
 {
-    protected function getStub($table, $create)
+    use AuditableTrait;
+
+    protected $fillable = [
+        'report_key',
+        'team_id',
+    ];
+
+    /**
+     * @return BelongsTo<Team, $this>
+     */
+    public function team(): BelongsTo
     {
-        return $this->files->get(
-            $this->files->exists($customPath = $this->customStubPath . '/permission-migration.stub')
-                ? $customPath
-                : $this->stubPath() . '/migration.stub'
-        );
+        return $this->belongsTo(Team::class);
     }
 }

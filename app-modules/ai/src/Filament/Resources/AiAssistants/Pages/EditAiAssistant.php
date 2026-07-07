@@ -60,7 +60,6 @@ class EditAiAssistant extends EditRecord
         return resolve(AiAssistantForm::class)->form($schema);
     }
 
-    /** @var AiAssistant $assistant */
     public static function canAccess(array $parameters = []): bool
     {
         $assistant = $parameters['record'];
