@@ -6898,7 +6898,21 @@ $ignoreErrors[] = [
 ];
 
 $ignoreErrors[] = [
+    'message' => '#^Migrations that make multiple changes must wrap them in a single "DB::transaction\\(\\.\\.\\.\\)" call so that a failure rolls back every change and the migration stays idempotent\\. Move the statements in this "up\\(\\)" method into a "DB::transaction\\(\\.\\.\\.\\)" closure\\.$#',
+    'identifier' => 'Common.multipleMigrationChangesNotWrappedInTransaction',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/database/migrations/2025_05_20_204236_add_research_assistant_model_settings.php',
+];
+
+$ignoreErrors[] = [
     'message' => '#^Migrations that make multiple changes must wrap them in a single "DB::transaction\\(\\.\\.\\.\\)" call so that a failure rolls back every change and the migration stays idempotent\\. Move the statements in this "down\\(\\)" method into a "DB::transaction\\(\\.\\.\\.\\)" closure\\.$#',
+    'identifier' => 'Common.multipleMigrationChangesNotWrappedInTransaction',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/database/migrations/2025_06_22_061948_add_open_ai_gpt_o3_settings.php',
+];
+
+$ignoreErrors[] = [
+    'message' => '#^Migrations that make multiple changes must wrap them in a single "DB::transaction\\(\\.\\.\\.\\)" call so that a failure rolls back every change and the migration stays idempotent\\. Move the statements in this "up\\(\\)" method into a "DB::transaction\\(\\.\\.\\.\\)" closure\\.$#',
     'identifier' => 'Common.multipleMigrationChangesNotWrappedInTransaction',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/database/migrations/2025_06_22_061948_add_open_ai_gpt_o3_settings.php',
@@ -6940,7 +6954,21 @@ $ignoreErrors[] = [
 ];
 
 $ignoreErrors[] = [
+    'message' => '#^Migrations that make multiple changes must wrap them in a single "DB::transaction\\(\\.\\.\\.\\)" call so that a failure rolls back every change and the migration stays idempotent\\. Move the statements in this "up\\(\\)" method into a "DB::transaction\\(\\.\\.\\.\\)" closure\\.$#',
+    'identifier' => 'Common.multipleMigrationChangesNotWrappedInTransaction',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/database/migrations/2025_08_25_224702_add_gpt_5_settings.php',
+];
+
+$ignoreErrors[] = [
     'message' => '#^Migrations that make multiple changes must wrap them in a single "DB::transaction\\(\\.\\.\\.\\)" call so that a failure rolls back every change and the migration stays idempotent\\. Move the statements in this "down\\(\\)" method into a "DB::transaction\\(\\.\\.\\.\\)" closure\\.$#',
+    'identifier' => 'Common.multipleMigrationChangesNotWrappedInTransaction',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/database/migrations/2025_08_25_224729_add_gpt_5_mini_settings.php',
+];
+
+$ignoreErrors[] = [
+    'message' => '#^Migrations that make multiple changes must wrap them in a single "DB::transaction\\(\\.\\.\\.\\)" call so that a failure rolls back every change and the migration stays idempotent\\. Move the statements in this "up\\(\\)" method into a "DB::transaction\\(\\.\\.\\.\\)" closure\\.$#',
     'identifier' => 'Common.multipleMigrationChangesNotWrappedInTransaction',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/database/migrations/2025_08_25_224729_add_gpt_5_mini_settings.php',
@@ -6951,6 +6979,20 @@ $ignoreErrors[] = [
     'identifier' => 'Common.multipleMigrationChangesNotWrappedInTransaction',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/database/migrations/2025_08_25_224740_add_gpt_5_nano_settings.php',
+];
+
+$ignoreErrors[] = [
+    'message' => '#^Migrations that make multiple changes must wrap them in a single "DB::transaction\\(\\.\\.\\.\\)" call so that a failure rolls back every change and the migration stays idempotent\\. Move the statements in this "up\\(\\)" method into a "DB::transaction\\(\\.\\.\\.\\)" closure\\.$#',
+    'identifier' => 'Common.multipleMigrationChangesNotWrappedInTransaction',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/database/migrations/2025_08_25_224740_add_gpt_5_nano_settings.php',
+];
+
+$ignoreErrors[] = [
+    'message' => '#^Migrations that make multiple changes must wrap them in a single "DB::transaction\\(\\.\\.\\.\\)" call so that a failure rolls back every change and the migration stays idempotent\\. Move the statements in this "down\\(\\)" method into a "DB::transaction\\(\\.\\.\\.\\)" closure\\.$#',
+    'identifier' => 'Common.multipleMigrationChangesNotWrappedInTransaction',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/audit/database/migrations/2023_08_15_021059_create_audits_table.php',
 ];
 
 $ignoreErrors[] = [
@@ -7713,6 +7755,34 @@ $ignoreErrors[] = [
     'identifier' => 'Common.modelMissingFillable',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/portal/src/Models/PortalAuthentication.php',
+];
+
+$ignoreErrors[] = [
+    'message' => '#^Eloquent models must define a "\$fillable" property\. Add a "\$fillable" property to this model or a parent model\.$#',
+    'identifier' => 'Common.modelMissingFillable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/application/src/Models/ApplicationAuthentication.php',
+];
+
+$ignoreErrors[] = [
+    'message' => '#^Eloquent models must define a "\$fillable" property\. Add a "\$fillable" property to this model or a parent model\.$#',
+    'identifier' => 'Common.modelMissingFillable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/application/src/Models/ApplicationSubmission.php',
+];
+
+$ignoreErrors[] = [
+    'message' => '#^Migrations that make multiple changes must wrap them in a single "DB::transaction\\(\\.\\.\\.\\)" call so that a failure rolls back every change and the migration stays idempotent\\. Move the statements in this "up\\(\\)" method into a "DB::transaction\\(\\.\\.\\.\\)" closure\\.$#',
+    'identifier' => 'Common.multipleMigrationChangesNotWrappedInTransaction',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/audit/database/migrations/2024_08_28_131810_data_remove_audited_models_and_add_audited_models_exclude_to_audit_settings.php',
+];
+
+$ignoreErrors[] = [
+    'message' => '#^Migrations that make multiple changes must wrap them in a single "DB::transaction\\(\\.\\.\\.\\)" call so that a failure rolls back every change and the migration stays idempotent\\. Move the statements in this "down\\(\\)" method into a "DB::transaction\\(\\.\\.\\.\\)" closure\\.$#',
+    'identifier' => 'Common.multipleMigrationChangesNotWrappedInTransaction',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/database/migrations/2025_06_18_061948_add_responses_api_settings.php',
 ];
 
 return ['parameters' => ['ignoreErrors' => $ignoreErrors]];
