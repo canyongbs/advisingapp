@@ -70,7 +70,6 @@ class Timeline extends BaseModel
      *
      * @return Builder<Model>
      */
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeForEntity(Builder $query, Model $entity): Builder
     {
         return $query->where('entity_type', $entity->getMorphClass())

@@ -51,7 +51,6 @@ trait BelongsToEducatable
      *
      * @return Builder<Student|Prospect>
      */
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeLicensedToEducatable(Builder $query, string $relationship): Builder
     {
         if (! auth()->check()) {

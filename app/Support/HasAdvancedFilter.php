@@ -44,7 +44,6 @@ trait HasAdvancedFilter
     /**
      * @param array<mixed> $data
      */
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeAdvancedFilter(Builder $query, array $data): Builder
     {
         return $this->processQuery($query, $data);

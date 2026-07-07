@@ -114,8 +114,8 @@ class ViewStudentAlerts extends Page implements HasTable
                     ->searchable(query: function (Builder $query, string $search): Builder {
                         $ids = AlertConfiguration::all()
                             ->filter(fn (AlertConfiguration $config): bool => str_contains(
-                                strtolower($config->preset->getHandler()->getName()), // @phpstan-ignore Common.noStrtolower
-                                strtolower($search) // @phpstan-ignore Common.noStrtolower
+                                strtolower($config->preset->getHandler()->getName()),
+                                strtolower($search)
                             ))
                             ->pluck('id');
 

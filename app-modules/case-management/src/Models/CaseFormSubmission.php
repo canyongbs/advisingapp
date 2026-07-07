@@ -128,31 +128,26 @@ class CaseFormSubmission extends Submission
         $this->request_method->deliver($this);
     }
 
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeRequested(Builder $query): Builder
     {
         return $query->notSubmitted()->notCanceled();
     }
 
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeSubmitted(Builder $query): Builder
     {
         return $query->whereNotNull('submitted_at');
     }
 
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeCanceled(Builder $query): Builder
     {
         return $query->notSubmitted()->whereNotNull('canceled_at');
     }
 
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeNotSubmitted(Builder $query): Builder
     {
         return $query->whereNull('submitted_at');
     }
 
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeNotCanceled(Builder $query): Builder
     {
         return $query->whereNull('canceled_at');

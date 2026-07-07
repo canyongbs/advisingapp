@@ -111,7 +111,7 @@ class UploadFileForParsing
 
     protected function isPlainTextFile(string $name, string $mimeType): bool
     {
-        $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION)); // @phpstan-ignore Common.noStrtolower
+        $extension = strtolower(pathinfo($name, PATHINFO_EXTENSION));
 
         return in_array($extension, ['txt', 'md', 'csv'], true)
             || in_array($mimeType, [

@@ -90,7 +90,7 @@ class TaskBlock extends CampaignActionBlock
                                     ->all())
                                 ->searchable()
                                 ->getSearchResultsUsing(fn (string $search): array => Project::query()
-                                    ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%') // @phpstan-ignore Common.noStrtolower
+                                    ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
                                     ->limit(50)
                                     ->pluck('name', 'id')
                                     ->all())
@@ -130,7 +130,7 @@ class TaskBlock extends CampaignActionBlock
                                         }
                                     })
                                     ->orderBy('name')
-                                    ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%') // @phpstan-ignore Common.noStrtolower
+                                    ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
                                     ->limit(50)
                                     ->pluck('name', 'id')
                                     ->all())
@@ -155,7 +155,7 @@ class TaskBlock extends CampaignActionBlock
                                 ->searchable()
                                 ->getSearchResultsUsing(fn (string $search): array => Department::query()
                                     ->orderBy('name')
-                                    ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%') // @phpstan-ignore Common.noStrtolower
+                                    ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
                                     ->limit(50)
                                     ->pluck('name', 'id')
                                     ->all())

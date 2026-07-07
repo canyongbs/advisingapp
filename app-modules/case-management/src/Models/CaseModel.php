@@ -247,7 +247,6 @@ class CaseModel extends BaseModel implements Auditable, CanTriggerAutoSubscripti
         return $this->belongsTo(User::class);
     }
 
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeOpen(Builder $query): void
     {
         $query->whereIn(

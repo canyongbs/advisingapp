@@ -98,7 +98,7 @@ enum PhoneNumberLookupStatus: string implements HasLabel
      */
     public static function fromTelnyxCarrierType(?string $carrierType): self
     {
-        $normalized = strtolower(trim((string) $carrierType)); // @phpstan-ignore Common.noStrtolower
+        $normalized = strtolower(trim((string) $carrierType));
 
         if ($normalized === '') {
             return self::Unknown;

@@ -76,13 +76,11 @@ class Permission extends SpatiePermission implements Auditable
         return $this->belongsTo(PermissionGroup::class, 'group_id');
     }
 
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeApi(Builder $query): void
     {
         $query->where('guard_name', 'api');
     }
 
-    // @phpstan-ignore Common.noLocalModelScope
     public function scopeWeb(Builder $query): void
     {
         $query->where('guard_name', 'web');

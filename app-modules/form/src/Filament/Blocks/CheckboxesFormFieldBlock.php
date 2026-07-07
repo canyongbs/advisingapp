@@ -137,7 +137,7 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
         }
 
         $responseArray = is_array($response) ? $response : [];
-        $optionKeysLower = $options->keys()->map(fn ($key) => strtolower($key)); // @phpstan-ignore Common.noStrtolower
+        $optionKeysLower = $options->keys()->map(fn ($key) => strtolower($key));
 
         $result = $options
             ->mapWithKeys(fn ($label, $key) => [
@@ -146,7 +146,7 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
             ->toArray();
 
         if ($hasOtherOption && is_array($response)) {
-            $otherValues = array_filter($response, fn ($val) => ! $optionKeysLower->contains(strtolower($val))); // @phpstan-ignore Common.noStrtolower
+            $otherValues = array_filter($response, fn ($val) => ! $optionKeysLower->contains(strtolower($val)));
 
             foreach ($otherValues as $otherValue) {
                 $result['Other: ' . $otherValue] = true;

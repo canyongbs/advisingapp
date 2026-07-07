@@ -6898,6 +6898,13 @@ $ignoreErrors[] = [
 ];
 
 $ignoreErrors[] = [
+    'message' => '#^Migrations that make multiple changes must wrap them in a single "DB\:\:transaction\(\.\.\.\)" call so that a failure rolls back every change and the migration stays idempotent\. Move the statements in this "up\(\)" method into a "DB\:\:transaction\(\.\.\.\)" closure\.$#',
+    'identifier' => 'Common.multipleMigrationChangesNotWrappedInTransaction',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/authorization/database/migrations/2024_12_30_142107_data_seed_role_permissions.php',
+];
+
+$ignoreErrors[] = [
     'message' => '#^Avoid strtolower\(\) as it is not multibyte\-safe\. Use Laravel\'s Str\:\:lower\(\) instead, or mb_strtolower\(\) if a framework\-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(\/\/ @phpstan\-ignore Common\.noStrtolower\)\.$#',
     'identifier' => 'Common.noStrtolower',
 ];
@@ -6908,7 +6915,7 @@ $ignoreErrors[] = [
 ];
 
 $ignoreErrors[] = [
-    'message' => '#^Eloquent models must define a "\$fillable" property\. Add a "\$fillable" property to this model or a parent model\.$#',
+    'message' => '#^Eloquent models must define a "\\$fillable" property\\. Add a "\\$fillable" property to this model or a parent model\\.$#',
     'identifier' => 'Common.modelMissingFillable',
 ];
 
