@@ -7428,103 +7428,103 @@ $ignoreErrors[] = [
 ];
 
 $ignoreErrors[] = [
-    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel\'s Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
     'identifier' => 'Common.noStrtolower',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/src/Actions/UploadFileForParsing.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel\'s Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
     'identifier' => 'Common.noStrtolower',
     'count' => 2,
     'path' => __DIR__ . '/app-modules/authorization/src/Filament/Pages/Reporting.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel\'s Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
     'identifier' => 'Common.noStrtolower',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/authorization/src/Http/Controllers/SocialiteController.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel\'s Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
     'identifier' => 'Common.noStrtolower',
     'count' => 3,
     'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/TaskBlock.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel\'s Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
     'identifier' => 'Common.noStrtolower',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Jobs/ProcessSesS3InboundEmail.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel\'s Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
     'identifier' => 'Common.noStrtolower',
     'count' => 2,
     'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/CheckboxesFormFieldBlock.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel\'s Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
     'identifier' => 'Common.noStrtolower',
     'count' => 7,
     'path' => __DIR__ . '/app-modules/interaction/src/Imports/InteractionsImporter.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel\'s Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
     'identifier' => 'Common.noStrtolower',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/meeting-center/src/Actions/GetAvailableAppointmentSlots.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel\'s Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
     'identifier' => 'Common.noStrtolower',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/meeting-center/src/Actions/GetAvailableGroupAppointmentSlots.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel\'s Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
     'identifier' => 'Common.noStrtolower',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/report/src/Abstract/Concerns/HasFiltersForm.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel\'s Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
     'identifier' => 'Common.noStrtolower',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Enums/PhoneNumberLookupStatus.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel\'s Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
     'identifier' => 'Common.noStrtolower',
     'count' => 2,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentAlerts.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel\'s Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
     'identifier' => 'Common.noStrtolower',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/RelationManagers/EnrollmentsRelationManager.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel\'s Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
     'identifier' => 'Common.noStrtolower',
     'count' => 5,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Tables/StudentsTable.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel\'s Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
     'identifier' => 'Common.noStrtolower',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Scopes/EducatableSearch.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel\'s Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
     'identifier' => 'Common.noStrtolower',
     'count' => 3,
     'path' => __DIR__ . '/app/Filament/Resources/Users/Pages/ListUsers.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel's Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte-safe\. Use Laravel\'s Str::lower\(\) instead, or mb_strtolower\(\) if a framework-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(// @phpstan-ignore Common\.noStrtolower\)\.$#',
     'identifier' => 'Common.noStrtolower',
     'count' => 1,
     'path' => __DIR__ . '/app/Filament/Resources/Users/RelationManagers/RolesRelationManager.php',
@@ -7618,6 +7618,31 @@ $ignoreErrors[] = [
     'identifier' => 'Common.noLocalModelScope',
     'count' => 1,
     'path' => __DIR__ . '/app/Support/HasAdvancedFilter.php',
+];
+
+$ignoreErrors[] = [
+    'message' => '#^Eloquent models must define a "\$fillable" property\. Add a "\$fillable" property to this model or a parent model\.$#',
+    'identifier' => 'Common.modelMissingFillable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/campaign/src/Models/CampaignActionEducatableRelated.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent models must define a "\$fillable" property\. Add a "\$fillable" property to this model or a parent model\.$#',
+    'identifier' => 'Common.modelMissingFillable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Models/HolisticEngagement.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent models must define a "\$fillable" property\. Add a "\$fillable" property to this model or a parent model\.$#',
+    'identifier' => 'Common.modelMissingFillable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/meeting-center/src/Models/Calendar.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent models must define a "\$fillable" property\. Add a "\$fillable" property to this model or a parent model\.$#',
+    'identifier' => 'Common.modelMissingFillable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/portal/src/Models/PortalAuthentication.php',
 ];
 
 return ['parameters' => ['ignoreErrors' => $ignoreErrors]];
