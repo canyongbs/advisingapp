@@ -46,6 +46,7 @@ return new class () extends Migration {
         'api',
     ];
 
+    /** @var array<string, string> */
     private array $permissions = [
         'reporting.*.update' => 'Reporting',
     ];
