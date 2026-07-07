@@ -36,11 +36,15 @@
 
 namespace App\Filament\Pages;
 
+use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\CalendarEventResource;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use App\Models\User;
 use Filament\Actions\Action;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
+use Filament\Pages\Page;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Grid;
@@ -49,19 +53,23 @@ use Filament\Schemas\Schema;
 use Illuminate\Support\Collection;
 
 /**
- * @property Schema $form
+ * @property-read Schema $form
  */
-class ConnectedAccounts extends ProfilePage
+class ConnectedAccounts extends Page implements HasForms
 {
+    use InteractsWithForms;
+
     protected static ?string $slug = 'connected-accounts';
 
     protected static ?string $title = 'Connected Accounts';
 
-    protected static ?int $navigationSort = 70;
+    protected static bool $shouldRegisterNavigation = false;
+
+    protected string $view = 'filament.pages.connected-accounts';
 
     public static function canAccess(): bool
     {
-        return self::getConnectedAccounts()->count() > 0 && parent::canAccess();
+        return self::getConnectedAccounts()->count() > 0;
     }
 
     public function form(Schema $schema): Schema
@@ -120,13 +128,7 @@ class ConnectedAccounts extends ProfilePage
                                         ->success()
                                         ->send();
 
-                                    $user->refresh();
-
-                                    if (! $user->calendar?->oauth_token) {
-                                        return redirect(ProfileInformation::getUrl());
-                                    }
-
-                                    return redirect(request()->url());
+                                    return redirect(CalendarEventResource::getUrl());
                                 }
                                 Notification::make()
                                     ->title("Failed to disconnect {$providerLabel} Calendar")

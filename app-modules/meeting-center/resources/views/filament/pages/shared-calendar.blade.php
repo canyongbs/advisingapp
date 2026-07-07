@@ -33,11 +33,12 @@
 --}}
 @php
     use AdvisingApp\MeetingCenter\Filament\Widgets\GroupAppointmentCalendarWidget;
+    use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
 @endphp
 
 <x-filament-panels::page>
     <div class="flex w-full justify-start">
-        <div class="grid max-w-xs grid-cols-2 gap-1 rounded-lg bg-gray-100 p-1 dark:bg-gray-800" role="group">
+        <div class="grid max-w-xs grid-cols-3 gap-1 rounded-lg bg-gray-100 p-1 dark:bg-gray-800" role="group">
             <button
                 type="button"
                 @class([
@@ -60,16 +61,29 @@
             >
                 <x-filament::icon class="h-6 w-6" icon="heroicon-m-calendar-days" />
             </button>
+            <button
+                type="button"
+                @class([
+                    'px-5 py-1.5 text-xs font-medium rounded-lg',
+                    'text-white bg-gray-900 dark:bg-gray-300 dark:text-gray-900' => $viewType === 'settings',
+                    'text-gray-900 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700' => $viewType !== 'settings',
+                ])
+                wire:click="setViewType('settings')"
+            >
+                <x-filament::icon class="h-6 w-6" icon="heroicon-m-cog-6-tooth" />
+            </button>
         </div>
     </div>
 
-    {{ $this->form }}
-
     @if ($viewType === 'table')
+        {{ $this->form }}
+
         <div class="flex flex-col gap-y-6">
             {{ $this->table }}
         </div>
     @elseif ($viewType === 'calendar')
+        {{ $this->form }}
+
         <div>
             @livewire(
                 GroupAppointmentCalendarWidget::class,
@@ -79,6 +93,10 @@
                     'hidePast' => $data['hidePast'] ?? true,
                 ]
             )
+        </div>
+    @elseif ($viewType === 'settings')
+        <div>
+            @livewire(ListBookingGroups::class)
         </div>
     @endif
 </x-filament-panels::page>

@@ -45,6 +45,7 @@ enum NavigationGroup implements Collapsible, HasIcon, HasLabel
     case EnterpriseAi;
     case Chatbots;
     case Crm;
+    case Scheduling;
     case ResourceHub;
     case PremiumFeatures;
     case DataAndAnalytics;
@@ -58,6 +59,7 @@ enum NavigationGroup implements Collapsible, HasIcon, HasLabel
             self::EnterpriseAi => 'Enterprise AI',
             self::Chatbots => 'Chatbots',
             self::Crm => 'CRM',
+            self::Scheduling => 'Scheduling',
             self::ResourceHub => 'Resource Hub',
             self::PremiumFeatures => 'Premium Features',
             self::DataAndAnalytics => 'Data and Analytics',
@@ -73,6 +75,7 @@ enum NavigationGroup implements Collapsible, HasIcon, HasLabel
             self::EnterpriseAi => 'heroicon-o-sparkles',
             self::Chatbots => 'heroicon-o-bolt',
             self::Crm => 'heroicon-o-academic-cap',
+            self::Scheduling => 'heroicon-o-calendar',
             self::ResourceHub => 'heroicon-o-book-open',
             self::PremiumFeatures => 'heroicon-o-rocket-launch',
             self::DataAndAnalytics => 'heroicon-o-circle-stack',

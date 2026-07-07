@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages;
 
+use AdvisingApp\MeetingCenter\Filament\Pages\SharedCalendar;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use Filament\Actions\Action;
@@ -54,6 +55,14 @@ class ViewBookingGroup extends ViewRecord
     protected static ?string $navigationLabel = 'View Group';
 
     protected static ?int $navigationSort = 10;
+
+    public function getBreadcrumbs(): array
+    {
+        return [
+            SharedCalendar::getUrl() . '?view=settings' => 'Configuration',
+            ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
+        ];
+    }
 
     public function infolist(Schema $schema): Schema
     {

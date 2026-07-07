@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\MeetingCenter\Filament\Pages\SharedCalendar;
+use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\Team\Models\Team;
@@ -237,4 +238,11 @@ test("`SharedCalendar` 'Selected Groups' filter with no groups selected shows al
             'hidePast' => false,
         ])
         ->assertCountTableRecords(1);
+});
+
+test('Settings view renders ListBookingGroups', function () {
+    asSuperAdmin();
+
+    get(SharedCalendar::getUrl() . '?view=settings')
+        ->assertSeeLivewire(ListBookingGroups::class);
 });
