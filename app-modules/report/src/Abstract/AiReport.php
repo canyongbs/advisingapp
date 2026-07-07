@@ -38,6 +38,9 @@ namespace AdvisingApp\Report\Abstract;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
+use AdvisingApp\Report\Enums\ReportAccessKey;
+use App\Features\ReportingFeature;
+use App\Models\User;
 use BackedEnum;
 use Filament\Pages\Dashboard;
 
@@ -54,6 +57,10 @@ abstract class AiReport extends Dashboard
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->hasLicense(LicenseType::ConversationalAi) && $user->can('report-library.view-any');
+        if (! ReportingFeature::active()) {
+            return $user->hasLicense(LicenseType::ConversationalAi) && $user->can('report-library.view-any');
+        }
+
+        return $user->hasLicense(LicenseType::ConversationalAi) && (ReportAccessKey::fromPageClass(static::class)?->userCanAccess($user) ?? false);
     }
 }

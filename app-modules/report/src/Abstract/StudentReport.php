@@ -40,6 +40,9 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
 use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
+use AdvisingApp\Report\Enums\ReportAccessKey;
+use App\Features\ReportingFeature;
+use App\Models\User;
 use Filament\Pages\Dashboard;
 
 abstract class StudentReport extends Dashboard implements HasGroupModel
@@ -58,7 +61,11 @@ abstract class StudentReport extends Dashboard implements HasGroupModel
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->hasLicense(LicenseType::RetentionCrm) && $user->can('report-library.view-any');
+        if (! ReportingFeature::active()) {
+            return $user->hasLicense(LicenseType::RetentionCrm) && $user->can('report-library.view-any');
+        }
+
+        return $user->hasLicense(LicenseType::RetentionCrm) && (ReportAccessKey::fromPageClass(static::class)?->userCanAccess($user) ?? false);
     }
 
     public function groupModel(): ?GroupModel

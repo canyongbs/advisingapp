@@ -34,42 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Abstract;
+namespace App\Features;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
-use AdvisingApp\Report\Enums\ReportAccessKey;
-use App\Features\ReportingFeature;
-use App\Models\User;
-use Filament\Pages\Dashboard;
+use App\Support\AbstractFeatureFlag;
 
-abstract class ProspectReport extends Dashboard implements HasGroupModel
+class ReportingFeature extends AbstractFeatureFlag
 {
-    use HasFiltersForm;
-
-    protected string $view = 'report::filament.pages.report';
-
-    public function persistsFiltersInSession(): bool
+    public function resolve(mixed $scope): mixed
     {
         return false;
-    }
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        if (! ReportingFeature::active()) {
-            return $user->hasLicense(LicenseType::RecruitmentCrm) && $user->can('report-library.view-any');
-        }
-
-        return $user->hasLicense(LicenseType::RecruitmentCrm) && (ReportAccessKey::fromPageClass(static::class)?->userCanAccess($user) ?? false);
-    }
-
-    public function groupModel(): ?GroupModel
-    {
-        return GroupModel::Prospect;
     }
 }
