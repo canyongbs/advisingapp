@@ -36,36 +36,41 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::create('ai_assistants', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('assistant_id')->nullable();
+        DB::transaction(function () {
+            Schema::create('ai_assistants', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->string('assistant_id')->nullable();
 
-            $table->string('name');
-            $table->string('type')->nullable();
-            $table->text('description')->nullable();
-            $table->longText('instructions')->nullable();
-            $table->longText('knowledge')->nullable();
+                $table->string('name');
+                $table->string('type')->nullable();
+                $table->text('description')->nullable();
+                $table->longText('instructions')->nullable();
+                $table->longText('knowledge')->nullable();
 
-            $table->timestamps();
-            $table->softDeletes();
-        });
+                $table->timestamps();
+                $table->softDeletes();
+            });
 
-        Schema::table('assistant_chats', function (Blueprint $table) {
-            $table->foreignUuid('ai_assistant_id')->nullable()->constrained('ai_assistants');
+            Schema::table('assistant_chats', function (Blueprint $table) {
+                $table->foreignUuid('ai_assistant_id')->nullable()->constrained('ai_assistants');
+            });
         });
     }
 
     public function down(): void
     {
-        Schema::table('assistant_chats', function (Blueprint $table) {
-            $table->dropColumn('ai_assistant_id');
-        });
+        DB::transaction(function () {
+            Schema::table('assistant_chats', function (Blueprint $table) {
+                $table->dropColumn('ai_assistant_id');
+            });
 
-        Schema::dropIfExists('ai_assistants');
+            Schema::dropIfExists('ai_assistants');
+        });
     }
 };
