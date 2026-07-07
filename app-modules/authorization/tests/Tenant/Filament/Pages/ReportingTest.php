@@ -42,7 +42,6 @@ use AdvisingApp\Team\Models\Team;
 use App\Features\ReportingFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
-use Closure;
 use Filament\Actions\Testing\TestAction;
 
 use function Pest\Laravel\actingAs;
