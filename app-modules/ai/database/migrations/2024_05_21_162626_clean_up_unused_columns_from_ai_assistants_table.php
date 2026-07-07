@@ -52,17 +52,15 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
-            Schema::table('ai_assistants', function (Blueprint $table) {
-                $table->string('type')->nullable();
-                $table->string('application')->nullable()->change();
-                $table->string('model')->nullable()->change();
-            });
-
-            DB::table('ai_assistants')
-                ->update([
-                    'type' => new Expression('CASE WHEN ai_assistants.is_default = true THEN \'default\' ELSE \'custom\' END'),
-                ]);
+        Schema::table('ai_assistants', function (Blueprint $table) {
+            $table->string('type')->nullable();
+            $table->string('application')->nullable()->change();
+            $table->string('model')->nullable()->change();
         });
+
+        DB::table('ai_assistants')
+            ->update([
+                'type' => new Expression('CASE WHEN ai_assistants.is_default = true THEN \'default\' ELSE \'custom\' END'),
+            ]);
     }
 };

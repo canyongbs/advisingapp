@@ -36,7 +36,6 @@
 
 use App\Models\Tenant;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
     public function up(): void
@@ -51,15 +50,13 @@ return new class () extends Migration {
 
     public function down(): void
     {
-        DB::transaction(function () {
-            $tenant = Tenant::current();
+        $tenant = Tenant::current();
 
-            DB::table('ai_assistants')
-                ->where('type', 'default')
-                ->update([
-                    'name' => "{$tenant->name} AI Assistant",
-                    'updated_at' => now(),
-                ]);
-        });
+        DB::table('ai_assistants')
+            ->where('type', 'default')
+            ->update([
+                'name' => "{$tenant->name} AI Assistant",
+                'updated_at' => now(),
+            ]);
     }
 };
