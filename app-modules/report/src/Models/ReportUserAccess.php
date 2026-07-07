@@ -34,42 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Abstract;
+namespace AdvisingApp\Report\Models;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
-use AdvisingApp\Report\Enums\ReportAccessKey;
-use App\Features\ReportingFeature;
+use App\Models\BaseModel;
 use App\Models\User;
-use Filament\Pages\Dashboard;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-abstract class ProspectReport extends Dashboard implements HasGroupModel
+/**
+ * @mixin IdeHelperReportUserAccess
+ */
+class ReportUserAccess extends BaseModel implements Auditable
 {
-    use HasFiltersForm;
+    use AuditableTrait;
 
-    protected string $view = 'report::filament.pages.report';
+    protected $fillable = [
+        'report_key',
+        'user_id',
+    ];
 
-    public function persistsFiltersInSession(): bool
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
     {
-        return false;
-    }
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        if (! ReportingFeature::active()) {
-            return $user->hasLicense(LicenseType::RecruitmentCrm) && $user->can('report-library.view-any');
-        }
-
-        return $user->hasLicense(LicenseType::RecruitmentCrm) && (ReportAccessKey::fromPageClass(static::class)?->userCanAccess($user) ?? false);
-    }
-
-    public function groupModel(): ?GroupModel
-    {
-        return GroupModel::Prospect;
+        return $this->belongsTo(User::class);
     }
 }

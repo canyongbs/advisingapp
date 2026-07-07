@@ -34,42 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Abstract;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
-use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
-use AdvisingApp\Report\Enums\ReportAccessKey;
-use App\Features\ReportingFeature;
-use App\Models\User;
-use Filament\Pages\Dashboard;
-
-abstract class ProspectReport extends Dashboard implements HasGroupModel
-{
-    use HasFiltersForm;
-
-    protected string $view = 'report::filament.pages.report';
-
-    public function persistsFiltersInSession(): bool
+return new class () extends Migration {
+    public function up(): void
     {
-        return false;
+        Schema::create('report_team_accesses', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('report_key');
+            $table->foreignUuid('team_id')->constrained('teams')->cascadeOnDelete();
+            $table->timestamps();
+
+            $table->unique(['report_key', 'team_id']);
+        });
     }
 
-    public static function canAccess(): bool
+    public function down(): void
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        if (! ReportingFeature::active()) {
-            return $user->hasLicense(LicenseType::RecruitmentCrm) && $user->can('report-library.view-any');
-        }
-
-        return $user->hasLicense(LicenseType::RecruitmentCrm) && (ReportAccessKey::fromPageClass(static::class)?->userCanAccess($user) ?? false);
+        Schema::dropIfExists('report_team_accesses');
     }
-
-    public function groupModel(): ?GroupModel
-    {
-        return GroupModel::Prospect;
-    }
-}
+};

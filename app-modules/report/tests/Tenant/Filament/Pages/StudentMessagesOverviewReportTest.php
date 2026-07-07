@@ -35,13 +35,20 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Filament\Pages\StudentMessagesOverviewReport;
+use AdvisingApp\Report\Models\ReportTeamAccess;
+use AdvisingApp\Report\Models\ReportUserAccess;
+use AdvisingApp\Team\Models\Team;
+use App\Features\ReportingFeature;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
 it('is gated with proper access control', function () {
+    ReportingFeature::activate();
+
     $user = User::factory()->create();
 
     actingAs($user);
@@ -54,7 +61,31 @@ it('is gated with proper access control', function () {
 
     get(StudentMessagesOverviewReport::getUrl())->assertForbidden();
 
-    $user->givePermissionTo('report-library.view-any');
+    ReportUserAccess::factory()->create([
+        'report_key' => ReportAccessKey::StudentMessagesOverviewReport->value,
+        'user_id' => $user->getKey(),
+    ]);
+
+    get(StudentMessagesOverviewReport::getUrl())->assertSuccessful();
+});
+
+it('grants access to a user belonging to a team that has been granted access', function () {
+    $team = Team::factory()->create();
+
+    $user = User::factory()->create(['team_id' => $team->getKey()]);
+
+    $user->grantLicense(LicenseType::RetentionCrm);
+
+    $user->refresh();
+
+    actingAs($user);
+
+    get(StudentMessagesOverviewReport::getUrl())->assertForbidden();
+
+    ReportTeamAccess::factory()->create([
+        'report_key' => ReportAccessKey::StudentMessagesOverviewReport->value,
+        'team_id' => $team->getKey(),
+    ]);
 
     get(StudentMessagesOverviewReport::getUrl())->assertSuccessful();
 });
