@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "fe985ac8500ba8afdf34a4cf650a40f1",
+    "content-hash": "f3f7d4c94b24daa4d20f7751f1da635e",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -2109,16 +2109,16 @@
         },
         {
             "name": "canyongbs/common",
-            "version": "2.23.0",
+            "version": "2.27.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/common.git",
-                "reference": "0f0f1b0e660c7691b86513fb4c53b3f5361c721a"
+                "reference": "30484e046a7e57aaf4986384cf9013028963ed6e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/common/zipball/0f0f1b0e660c7691b86513fb4c53b3f5361c721a",
-                "reference": "0f0f1b0e660c7691b86513fb4c53b3f5361c721a",
+                "url": "https://api.github.com/repos/canyongbs/common/zipball/30484e046a7e57aaf4986384cf9013028963ed6e",
+                "reference": "30484e046a7e57aaf4986384cf9013028963ed6e",
                 "shasum": ""
             },
             "require": {
@@ -2130,7 +2130,8 @@
                 "laravel/prompts": "^0.3",
                 "php": "8.4.*|8.5.*",
                 "spatie/laravel-health": "^1.40",
-                "tapp/filament-timezone-field": "^3.0"
+                "tapp/filament-timezone-field": "^3.0",
+                "tpetry/laravel-postgresql-enhanced": "^3.5.1"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.75",
@@ -2170,9 +2171,9 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/common/issues",
-                "source": "https://github.com/canyongbs/common/tree/2.23.0"
+                "source": "https://github.com/canyongbs/common/tree/2.27.0"
             },
-            "time": "2026-06-26T15:40:45+00:00"
+            "time": "2026-07-07T16:29:19+00:00"
         },
         {
             "name": "canyongbs/model-state-machine",

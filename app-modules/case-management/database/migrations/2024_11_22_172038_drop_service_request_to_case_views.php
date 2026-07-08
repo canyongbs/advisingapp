@@ -38,6 +38,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::statement('DROP VIEW IF EXISTS service_request_types');
@@ -67,6 +68,7 @@ return new class () extends Migration {
         DB::statement('DROP VIEW IF EXISTS service_requests');
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         DB::statement('CREATE VIEW service_request_types AS SELECT * FROM case_types');

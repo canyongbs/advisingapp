@@ -42,6 +42,7 @@ return new class () extends Migration {
     /**
      * Run the migrations.
      */
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         $teams = config('permission.teams');
@@ -169,6 +170,7 @@ return new class () extends Migration {
     /**
      * Reverse the migrations.
      */
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         $tableNames = config('permission.table_names');

@@ -44,6 +44,7 @@ class CreateResourceHubCategoryRequestFactory extends RequestFactory
     {
         return [
             'name' => $this->faker->word(),
+            'icon' => 'heroicon-o-academic-cap',
         ];
     }
 }

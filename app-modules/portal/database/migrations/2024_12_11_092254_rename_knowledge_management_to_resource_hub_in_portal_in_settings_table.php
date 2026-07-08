@@ -37,6 +37,7 @@
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         $this->migrator->rename('portal.knowledge_management_portal_enabled', 'portal.resource_hub_portal_enabled');
@@ -46,6 +47,7 @@ return new class () extends SettingsMigration {
         $this->migrator->rename('portal.knowledge_management_portal_authorized_domain', 'portal.resource_hub_portal_authorized_domain');
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         $this->migrator->rename('portal.resource_hub_portal_enabled', 'portal.knowledge_management_portal_enabled');

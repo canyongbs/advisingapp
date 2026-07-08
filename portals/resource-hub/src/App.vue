@@ -32,11 +32,13 @@
 </COPYRIGHT>
 -->
 <script setup>
+    import Footer from '@common/portal/Footer.vue';
+    import Header from '@common/portal/Header.vue';
+    import { HomeIcon } from '@heroicons/vue/24/outline';
+    import { storeToRefs } from 'pinia';
     import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
     import { RouterView, useRoute, useRouter } from 'vue-router';
     import AppLoading from './Components/AppLoading.vue';
-    import Footer from './Components/Footer.vue';
-    import Header from './Components/Header.vue';
     import axios from './Globals/Axios.js';
     import Login from './Pages/Login.vue';
     import { consumer } from './Services/Consumer.js';
@@ -145,6 +147,30 @@
 
     const route = useRoute();
     const router = useRouter();
+
+    const { user } = storeToRefs(useAuthStore());
+
+    const menuItems = computed(() => [
+        {
+            label: 'Home',
+            routeName: 'home',
+            icon: HomeIcon,
+        },
+    ]);
+
+    const logout = () => {
+        const { post } = consumer();
+        const { removeToken } = useTokenStore();
+
+        post(apiUrl.value + '/logout').then((response) => {
+            if (!response.data.success) {
+                return;
+            }
+
+            removeToken();
+            window.location.href = response.data.redirect_url;
+        });
+    };
 
     const assistantWidgetLoaderUrl = ref(null);
     const assistantWidgetConfigUrl = ref(null);
@@ -424,6 +450,7 @@
             })
             .catch((error) => {
                 errorLoading.value = true;
+                loading.value = false;
                 console.error(`Resource Hub Portal Embed ${error}`);
             });
     }
@@ -622,7 +649,7 @@
             '--primary-800': portalPrimaryColor[800],
             '--primary-900': portalPrimaryColor[900],
             '--primary-950': portalPrimaryColor[950],
-            '--primary-on-color': primaryOnColor.value,
+            '--primary-on-color': primaryOnColor,
             '--rounding-sm': portalRounding.sm,
             '--rounding': portalRounding.default,
             '--rounding-md': portalRounding.md,
@@ -644,15 +671,19 @@
                 :requires-authentication="requiresAuthentication"
                 :header-logo="headerLogo"
                 :footer-logo="footerLogo"
+                :app-name="appName"
                 @authenticate="authenticate"
                 @cancel="showLogin = false"
             />
             <div v-else class="min-h-screen flex flex-col">
                 <Header
-                    :api-url="apiUrl"
-                    @show-login="showLogin = true"
                     :header-logo="headerLogo"
                     :app-name="appName"
+                    :user="user"
+                    :requires-authentication="requiresAuthentication"
+                    :menu-items="menuItems"
+                    @show-login="showLogin = true"
+                    @logout="logout"
                 />
 
                 <main class="flex-1">
@@ -671,7 +702,7 @@
                     />
                 </main>
 
-                <Footer :logo="footerLogo"></Footer>
+                <Footer :logo="footerLogo" :appName="appName"></Footer>
             </div>
         </div>
     </div>

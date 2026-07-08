@@ -37,6 +37,7 @@
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         $this->migrator->add('theme.is_support_url_enabled', false);
@@ -48,6 +49,7 @@ return new class () extends SettingsMigration {
         $this->migrator->add('theme.custom_link_url');
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         $this->migrator->delete('theme.is_support_url_enabled');
