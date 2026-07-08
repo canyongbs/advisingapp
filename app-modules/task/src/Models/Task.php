@@ -49,7 +49,7 @@ use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Histories\TaskHistory;
 use AdvisingApp\Task\Models\Scopes\ConfidentialTaskScope;
 use AdvisingApp\Task\Observers\TaskObserver;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use AdvisingApp\Timeline\Models\Concerns\InteractsWithHistory;
 use AdvisingApp\Timeline\Models\Contracts\HasHistory;
 use App\Models\BaseModel;
@@ -187,11 +187,11 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, H
     }
 
     /**
-     * @return BelongsToMany<Team, $this, covariant ConfidentialTasksTeams>
+     * @return BelongsToMany<Department, $this, covariant ConfidentialTasksTeams>
      */
     public function confidentialAccessTeams(): BelongsToMany
     {
-        return $this->belongsToMany(Team::class, 'confidential_task_teams')
+        return $this->belongsToMany(Department::class, 'confidential_task_teams')
             ->using(ConfidentialTasksTeams::class)
             ->withTimestamps();
     }

@@ -39,7 +39,7 @@ namespace App\Filament\Resources\Users\Pages;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Enums\RetentionCrmRestriction;
 use App\Filament\Forms\Components\Licenses;
 use App\Filament\Resources\Users\UserResource;
@@ -122,7 +122,7 @@ class EditUser extends EditRecord
                     ->schema([
                         Select::make('team')
                             ->label('')
-                            ->options(Team::all()->pluck('name', 'id'))
+                            ->options(Department::all()->pluck('name', 'id'))
                             ->relationship('team', 'name'),
                     ])
                     ->hidden(fn (?User $record) => $record?->isAdmin() ?? false),

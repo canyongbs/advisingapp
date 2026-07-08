@@ -40,7 +40,7 @@ use AdvisingApp\Ai\Models\ConfidentialPromptTeam;
 use AdvisingApp\Ai\Models\ConfidentialPromptUser;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\Authenticatable;
 use Filament\Actions\DeleteBulkAction;
 
@@ -193,7 +193,7 @@ test('only shows confidential prompts to authorized users', function () use ($li
         'prompt_id' => $confidentialPrompt->id,
     ]);
 
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     ConfidentialPromptTeam::create([
         'team_id' => $team->id,

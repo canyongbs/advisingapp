@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Database\Factories;
 
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiAssistantConfidentialTeam;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -55,7 +55,7 @@ class AiAssistantConfidentialTeamFactory extends Factory
     {
         return [
             'ai_assistant_id' => AiAssistant::factory(),
-            'team_id' => Team::factory(),
+            'team_id' => Department::factory(),
         ];
     }
 }

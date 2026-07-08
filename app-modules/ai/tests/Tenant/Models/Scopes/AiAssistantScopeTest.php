@@ -37,7 +37,7 @@
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\Scopes\AiAssistantConfidentialScope;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -52,7 +52,7 @@ test('AiAssistant model has applied global scope', function () {
 test('AiAssistant model with fetch data for team user', function () {
     $teamUser = User::factory()->licensed(LicenseType::cases())->create();
 
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     $teamUser->team()->associate($team)->save();
 

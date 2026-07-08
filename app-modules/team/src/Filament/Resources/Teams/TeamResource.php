@@ -41,14 +41,14 @@ use AdvisingApp\Team\Filament\Resources\Teams\Pages\EditTeam;
 use AdvisingApp\Team\Filament\Resources\Teams\Pages\ListTeams;
 use AdvisingApp\Team\Filament\Resources\Teams\Pages\ViewTeam;
 use AdvisingApp\Team\Filament\Resources\Teams\RelationManagers\UsersRelationManager;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
 use UnitEnum;
 
 class TeamResource extends Resource
 {
-    protected static ?string $model = Team::class;
+    protected static ?string $model = Department::class;
 
     protected static string | UnitEnum | null $navigationGroup = NavigationGroup::UserManagement;
 

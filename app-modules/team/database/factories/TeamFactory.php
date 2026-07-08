@@ -37,11 +37,11 @@
 namespace AdvisingApp\Team\Database\Factories;
 
 use AdvisingApp\Division\Models\Division;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Team>
+ * @extends Factory<Department>
  */
 class TeamFactory extends Factory
 {
@@ -55,7 +55,7 @@ class TeamFactory extends Factory
 
     public function configure(): TeamFactory|Factory
     {
-        return $this->afterCreating(function (Team $team) {
+        return $this->afterCreating(function (Department $team) {
             if (! $team->division()->exists() && $this->faker->boolean()) {
                 $team->division()->associate(tap(Division::factory()->make())->save());
                 $team->save();

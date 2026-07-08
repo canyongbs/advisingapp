@@ -38,7 +38,7 @@ namespace AdvisingApp\Task\Database\Factories;
 
 use AdvisingApp\Task\Models\ConfidentialTasksTeams;
 use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -55,7 +55,7 @@ class ConfidentialTasksTeamsFactory extends Factory
     {
         return [
             'task_id' => Task::factory(),
-            'team_id' => Team::factory(),
+            'team_id' => Department::factory(),
         ];
     }
 }

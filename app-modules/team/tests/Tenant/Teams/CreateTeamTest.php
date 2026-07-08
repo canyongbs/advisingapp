@@ -36,8 +36,9 @@
 
 use AdvisingApp\Team\Filament\Resources\Teams\Pages\CreateTeam;
 use AdvisingApp\Team\Filament\Resources\Teams\TeamResource;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
+use Illuminate\Support\Collection;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -65,14 +66,15 @@ test('CreateTeam is gated with proper access control', function () {
             TeamResource::getUrl('create')
         )->assertSuccessful();
 
-    $request = collect(Team::factory()->make());
+    /** @var Collection<int, Department> $request */
+    $request = collect([Department::factory()->make()]);
 
     livewire(CreateTeam::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
 
-    assertCount(1, Team::all());
+    assertCount(1, Department::all());
 
-    assertDatabaseHas(Team::class, $request->toArray());
+    assertDatabaseHas(Department::class, $request->toArray());
 });

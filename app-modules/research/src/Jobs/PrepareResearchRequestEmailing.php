@@ -38,7 +38,7 @@ namespace AdvisingApp\Research\Jobs;
 
 use AdvisingApp\Research\Enums\ResearchRequestShareTarget;
 use AdvisingApp\Research\Models\ResearchRequest;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Filament\Notifications\Notification;
 use Illuminate\Bus\Batch;
@@ -81,11 +81,11 @@ class PrepareResearchRequestEmailing implements ShouldQueue
         if ($this->targetType === ResearchRequestShareTarget::Team->value) {
             $sender = $this->sender;
 
-            Team::query()
+            Department::query()
                 ->whereKey($this->targetIds)
                 ->with('users')
                 ->get()
-                ->each(function (Team $team) use ($sender) {
+                ->each(function (Department $team) use ($sender) {
                     Bus::batch(
                         $team->users()->whereKeyNot($this->sender)->get()
                             ->map(fn (User $recipient) => new EmailResearchRequest($this->researchRequest, $this->note, $this->sender, $recipient, false))

@@ -40,7 +40,7 @@ use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
 use AdvisingApp\MeetingCenter\Filament\Pages\SharedCalendar;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
 use App\Filament\Forms\Components\UserSelect;
@@ -184,7 +184,7 @@ class EditBookingGroup extends EditRecord
 
                             $teamGroups = collect();
 
-                            foreach (Team::query()->whereIn('id', $selectedTeamIds)->orderBy('name')->get() as $team) {
+                            foreach (Department::query()->whereIn('id', $selectedTeamIds)->orderBy('name')->get() as $team) {
                                 $disconnected = User::query()
                                     ->where('team_id', $team->id)
                                     ->whereDoesntHave('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))

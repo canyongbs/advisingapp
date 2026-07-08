@@ -40,7 +40,7 @@ use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
 use AdvisingApp\Research\Enums\ResearchRequestShareTarget;
 use AdvisingApp\Research\Jobs\PrepareResearchRequestEmailing;
 use AdvisingApp\Research\Models\ResearchRequest;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -260,7 +260,7 @@ trait CanManageRequests
                     ->visible(fn (Get $get): bool => filled($get('targetType')))
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
-                            ResearchRequestShareTarget::Team => Team::orderBy('name')->pluck('name', 'id'),
+                            ResearchRequestShareTarget::Team => Department::orderBy('name')->pluck('name', 'id'),
                             ResearchRequestShareTarget::User => User::query()->tap(new WithoutAnyAdmin())->orderBy('name')->pluck('name', 'id'),
                             default => '',
                         };

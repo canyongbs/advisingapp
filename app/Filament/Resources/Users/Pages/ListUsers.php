@@ -39,7 +39,7 @@ namespace App\Filament\Resources\Users\Pages;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\Role;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Filament\Imports\UserImporter;
 use App\Filament\Resources\Users\Actions\AssignLicensesBulkAction;
 use App\Filament\Resources\Users\Actions\AssignRolesBulkAction;
@@ -155,10 +155,10 @@ class ListUsers extends ListRecords
                             '' => [
                                 'unassigned' => 'Unassigned',
                             ],
-                            'Team' => Team::query()->take(50)->orderBy('name')->pluck('name', 'id')->toArray(),
+                            'Team' => Department::query()->take(50)->orderBy('name')->pluck('name', 'id')->toArray(),
                         ]
                     )
-                    ->getSearchResultsUsing(fn (string $search): array => ['Team' => Team::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->pluck('name', 'id')->toArray()])
+                    ->getSearchResultsUsing(fn (string $search): array => ['Team' => Department::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->pluck('name', 'id')->toArray()])
                     ->getOptionLabelsUsing(function (array $values): array {
                         $values = array_values(array_filter($values, filled(...)));
 
@@ -173,7 +173,7 @@ class ListUsers extends ListRecords
                         if ($teamIds !== []) {
                             $labels = [
                                 ...$labels,
-                                ...Team::query()
+                                ...Department::query()
                                     ->whereIn('id', $teamIds)
                                     ->pluck('name', 'id')
                                     ->toArray(),

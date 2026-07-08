@@ -37,7 +37,7 @@
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -76,7 +76,7 @@ test('ListBookingGroups is gated with proper access control', function () {
 test('ListBookingGroups page displays correct member count', function () {
     $otherUsers = User::factory()->count(2)->create();
 
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
     User::factory()->count(2)->create(['team_id' => $team->id]);
 
     $bookingGroup = BookingGroup::factory()->create();

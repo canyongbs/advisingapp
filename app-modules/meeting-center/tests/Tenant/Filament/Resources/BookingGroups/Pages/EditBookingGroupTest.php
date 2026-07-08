@@ -38,7 +38,7 @@ use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\EditBooking
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory\EditBookingGroupRequestFactory;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use App\Models\User;
@@ -134,7 +134,7 @@ it('can edit a booking group', function () {
     actingAs($user);
 
     $users = User::factory()->count(3)->create();
-    $teams = Team::factory()->count(2)->create();
+    $teams = Department::factory()->count(2)->create();
     $meetingOwner = $users->first();
     Calendar::factory()->for($meetingOwner)->create(['provider_id' => 'owner-calendar-id']);
 

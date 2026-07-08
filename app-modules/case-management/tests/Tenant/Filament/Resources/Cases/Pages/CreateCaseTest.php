@@ -46,7 +46,7 @@ use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories\CreateCaseRequestFactory;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
@@ -149,7 +149,7 @@ test('CreateCase is gated with proper access control', function () {
     $user->givePermissionTo('case.view-any');
     $user->givePermissionTo('case.create');
 
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     $user->team()->associate($team)->save();
 
@@ -215,7 +215,7 @@ test('CreateCase is gated with proper feature access control', function () {
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     $user->team()->associate($team)->save();
 
@@ -276,7 +276,7 @@ test('assignment type individual manager will auto assign to new cases', functio
     $user->givePermissionTo('case.create');
     $user->givePermissionTo('case.*.update');
 
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     $user->team()->associate($team)->save();
 
@@ -320,7 +320,7 @@ test('assignment type individual manager will auto assign to new cases', functio
 test('assignment type round robin will auto-assign to new cases', function () {
     asSuperAdmin();
 
-    $team = Team::factory()
+    $team = Department::factory()
         ->has(User::factory()->licensed(LicenseType::cases())->count(3), 'users')->create();
 
     $caseTypeWithManager = CaseType::factory()
@@ -388,7 +388,7 @@ test('assignment type round robin will auto-assign to new cases', function () {
 test('assignment type workload will auto-assign to new cases', function () {
     asSuperAdmin();
 
-    $team = Team::factory()
+    $team = Department::factory()
         ->has(User::factory()->licensed(LicenseType::cases())->count(5), 'users')->create();
 
     $factoryUsers = $team->users;

@@ -47,7 +47,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use AdvisingApp\Timeline\Models\Contracts\ProvidesATimeline;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Timeline\Timelines\InteractionTimeline;
@@ -207,11 +207,11 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
     }
 
     /**
-     * @return BelongsToMany<Team, $this, covariant InteractionConfidentialTeam>
+     * @return BelongsToMany<Department, $this, covariant InteractionConfidentialTeam>
      */
     public function confidentialAccessTeams(): BelongsToMany
     {
-        return $this->belongsToMany(Team::class, 'interaction_confidential_teams')
+        return $this->belongsToMany(Department::class, 'interaction_confidential_teams')
             ->using(InteractionConfidentialTeam::class)
             ->withTimestamps();
     }

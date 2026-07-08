@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Jobs\Advisors;
 
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Batch;
@@ -128,11 +128,11 @@ class PrepareAiThreadCloning implements ShouldQueue
 
     protected function generateTeamShareJobs(): array
     {
-        return Team::query()
+        return Department::query()
             ->whereKey($this->targetIds)
             ->with('users')
             ->get()
-            ->map(function (Team $team) {
+            ->map(function (Department $team) {
                 return $team->users()
                     ->whereKeyNot($this->sender)
                     ->get()

@@ -48,7 +48,7 @@ use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Illuminate\Support\Facades\Bus;
 
@@ -205,7 +205,7 @@ it('creates a confidential task and syncs confidential access relationships', fu
 
     $projects = Project::factory()->count(2)->for($user, 'createdBy')->create();
     $users = User::factory()->count(2)->create();
-    $teams = Team::factory()->count(2)->create();
+    $teams = Department::factory()->count(2)->create();
 
     /** @var CampaignAction $action */
     $action = CampaignAction::factory()

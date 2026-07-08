@@ -38,7 +38,7 @@ namespace AdvisingApp\CaseManagement\Database\Factories;
 
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Models\CaseTypeManager;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -55,7 +55,7 @@ class CaseTypeManagerFactory extends Factory
     {
         return [
             'case_type_id' => CaseType::factory(),
-            'team_id' => Team::factory(),
+            'team_id' => Department::factory(),
         ];
     }
 }

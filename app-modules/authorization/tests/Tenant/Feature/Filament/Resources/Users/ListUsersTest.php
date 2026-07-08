@@ -36,7 +36,7 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\Role;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Filament\Resources\Users\Actions\AssignLicensesBulkAction;
 use App\Filament\Resources\Users\Pages\ListUsers;
 use App\Models\Authenticatable;
@@ -270,7 +270,7 @@ it('allows a user with permission to assign licenses in bulk', function () {
 it('can filter users by multiple teams', function () {
     asSuperAdmin();
 
-    $adminTeam = Team::factory()->create();
+    $adminTeam = Department::factory()->create();
 
     $adminTeamGroup = User::factory()
         ->count(3)
@@ -280,7 +280,7 @@ it('can filter users by multiple teams', function () {
         $user->team()->associate($adminTeam)->save();
     });
 
-    $modTeam = Team::factory()->create();
+    $modTeam = Department::factory()->create();
 
     $modsTeamGroup = User::factory()
         ->count(3)
@@ -290,7 +290,7 @@ it('can filter users by multiple teams', function () {
         $user->team()->associate($modTeam)->save();
     });
 
-    $supportTeam = Team::factory()->create();
+    $supportTeam = Department::factory()->create();
 
     $supportTeamGroup = User::factory()
         ->count(3)
@@ -313,8 +313,8 @@ it('can filter users by multiple teams', function () {
 it('it filters users based on team', function () {
     asSuperAdmin();
 
-    $teamA = Team::factory()->create(['name' => 'Team A']);
-    $teamB = Team::factory()->create(['name' => 'Team B']);
+    $teamA = Department::factory()->create(['name' => 'Team A']);
+    $teamB = Department::factory()->create(['name' => 'Team B']);
 
     $userInTeamA = User::factory()
         ->count(3)

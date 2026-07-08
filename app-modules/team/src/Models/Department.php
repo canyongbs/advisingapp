@@ -50,10 +50,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
- * @mixin IdeHelperTeam
+ * @mixin IdeHelperDepartment
  */
-class Team extends BaseModel
+class Department extends BaseModel
 {
+    protected $table = 'teams';
+
     protected $fillable = [
         'name',
         'description',

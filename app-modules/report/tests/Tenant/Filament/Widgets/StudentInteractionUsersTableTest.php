@@ -39,7 +39,7 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionUsersTable;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Actions\ExportAction;
@@ -49,7 +49,7 @@ use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can see student interaction users table', function () {
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     $user1 = User::factory()->create();
 
@@ -126,7 +126,7 @@ it('can see student interaction users table', function () {
 });
 
 it('can filter users by name', function () {
-    $team = Team::factory()->create([
+    $team = Department::factory()->create([
         'name' => 'Test Team',
     ]);
 
@@ -167,7 +167,7 @@ it('can filter users by name', function () {
 });
 
 it('can filter users by job title', function () {
-    $team = Team::factory()->create([
+    $team = Department::factory()->create([
         'name' => 'Test Team',
     ]);
 
@@ -208,7 +208,7 @@ it('can filter users by job title', function () {
 });
 
 it('can filter users by team', function () {
-    $team = Team::factory()->create([
+    $team = Department::factory()->create([
         'name' => 'Interaction Team',
     ]);
 
@@ -252,7 +252,7 @@ it('displays only users with student interactions within the selected date range
     $interactionStartDate = now()->subDays(10);
     $interactionEndDate = now()->subDays(5);
 
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     $userWithOldInteractions = User::factory()->create();
 
@@ -322,7 +322,7 @@ it('displays only users with student interactions based on group filter', functi
         ],
     ]);
 
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     $userWithOldInteractions = User::factory()->create();
 

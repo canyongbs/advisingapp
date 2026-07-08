@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Team\Policies;
 
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -50,7 +50,7 @@ class TeamPolicy
         );
     }
 
-    public function view(Authenticatable $authenticatable, Team $team): Response
+    public function view(Authenticatable $authenticatable, Department $team): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['team.*.view'],
@@ -66,7 +66,7 @@ class TeamPolicy
         );
     }
 
-    public function update(Authenticatable $authenticatable, Team $team): Response
+    public function update(Authenticatable $authenticatable, Department $team): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['team.*.update'],
@@ -74,7 +74,7 @@ class TeamPolicy
         );
     }
 
-    public function delete(Authenticatable $authenticatable, Team $team): Response
+    public function delete(Authenticatable $authenticatable, Department $team): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['team.*.delete'],
@@ -90,7 +90,7 @@ class TeamPolicy
         );
     }
 
-    public function restore(Authenticatable $authenticatable, Team $team): Response
+    public function restore(Authenticatable $authenticatable, Department $team): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['team.*.restore'],
@@ -106,7 +106,7 @@ class TeamPolicy
         );
     }
 
-    public function forceDelete(Authenticatable $authenticatable, Team $team): Response
+    public function forceDelete(Authenticatable $authenticatable, Department $team): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['team.*.force-delete'],

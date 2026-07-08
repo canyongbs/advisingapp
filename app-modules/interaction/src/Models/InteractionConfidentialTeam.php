@@ -37,7 +37,7 @@
 namespace AdvisingApp\Interaction\Models;
 
 use AdvisingApp\Interaction\Database\Factories\InteractionConfidentialTeamFactory;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -59,6 +59,6 @@ class InteractionConfidentialTeam extends Pivot
 
     public function team()
     {
-        return $this->belongsTo(Team::class);
+        return $this->belongsTo(Department::class);
     }
 }

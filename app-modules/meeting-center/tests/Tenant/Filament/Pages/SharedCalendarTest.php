@@ -38,7 +38,7 @@ use AdvisingApp\MeetingCenter\Filament\Pages\SharedCalendar;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -161,7 +161,7 @@ test("`SharedCalendar` 'My Groups' filter only shows appointments from the user'
 });
 
 test("`SharedCalendar` 'My Groups' filter includes appointments from groups linked to the user's team", function () {
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
     $user = User::factory()->create(['team_id' => $team->id]);
     $user->givePermissionTo('group_appointment.view-any');
     actingAs($user);

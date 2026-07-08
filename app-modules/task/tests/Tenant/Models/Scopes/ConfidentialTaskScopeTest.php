@@ -39,7 +39,7 @@ use AdvisingApp\Project\Models\Project;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Scopes\ConfidentialTaskScope;
 use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -83,7 +83,7 @@ it('can be accessed when confidential by users who created it', function () {
 });
 
 it('can be accessed when confidential by users on a team with access', function () {
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->team()->associate($team)->save();
 
@@ -96,7 +96,7 @@ it('can be accessed when confidential by users on a team with access', function 
         ->create(['is_confidential' => true]);
 
     $otherTeamTasks = Task::factory()
-        ->hasAttached(Team::factory()->create(), [], 'confidentialAccessTeams')
+        ->hasAttached(Department::factory()->create(), [], 'confidentialAccessTeams')
         ->count(10)
         ->concerningStudent(Student::factory()->create())
         ->create(['is_confidential' => true]);
@@ -163,7 +163,7 @@ it('can be accessed when confidential by users who are managers on a project the
 });
 
 it('can be accessed when confidential by users on a team that is a manager on a project the task is associated with', function () {
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->team()->associate($team)->save();
 
@@ -220,7 +220,7 @@ it('can be accessed when confidential by users who are auditors on a project the
 });
 
 it('can be accessed when confidential by users on a team that is an auditor on a project the task is associated with', function () {
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->team()->associate($team)->save();
 

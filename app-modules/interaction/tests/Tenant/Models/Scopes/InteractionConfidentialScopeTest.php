@@ -37,7 +37,7 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\Scopes\InteractionConfidentialScope;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -83,7 +83,7 @@ test('Interactions model with fetch data for created user', function () {
 test('Interactions model with fetch data for team user', function () {
     $teamUser = User::factory()->licensed(LicenseType::cases())->create();
 
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     $teamUser->team()->associate($team)->save();
 

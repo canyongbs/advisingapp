@@ -39,7 +39,7 @@ namespace AdvisingApp\MeetingCenter\Models;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\MeetingCenter\Database\Factories\BookingGroupFactory;
 use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\BaseModel;
 use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
@@ -104,12 +104,12 @@ class BookingGroup extends BaseModel implements Auditable
     }
 
     /**
-     * @return BelongsToMany<Team, $this, covariant BookingGroupTeam>
+     * @return BelongsToMany<Department, $this, covariant BookingGroupTeam>
      */
     public function teams(): BelongsToMany
     {
         return $this->belongsToMany(
-            related: Team::class,
+            related: Department::class,
             table: 'booking_group_teams'
         )
             ->using(BookingGroupTeam::class)

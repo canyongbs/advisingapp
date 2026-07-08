@@ -36,7 +36,7 @@
 
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ViewBookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -101,7 +101,7 @@ it('displays booking group with both users and teams', function () {
     actingAs($user);
 
     $users = User::factory()->count(2)->create();
-    $teams = Team::factory()->count(2)->create();
+    $teams = Department::factory()->count(2)->create();
 
     $bookingGroup = BookingGroup::factory()->create([
         'name' => 'Mixed Booking Group',

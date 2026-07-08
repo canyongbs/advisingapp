@@ -49,7 +49,7 @@ use AdvisingApp\Assistant\Filament\Pages\InstitutionalAdvisor;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Consent\Enums\ConsentAgreementType;
 use AdvisingApp\Consent\Models\ConsentAgreement;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Filament\Pages\Dashboard;
 use App\Models\Authenticatable;
 use App\Models\User;
@@ -881,7 +881,7 @@ it('can clone a thread to a team', function () use ($setUp) {
 
     ['user' => $user, 'thread' => $thread] = $setUp();
 
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     Livewire::test(InstitutionalAdvisor::class)
         ->callAction('cloneThread', [
@@ -1004,7 +1004,7 @@ it('can email a thread to a team', function () use ($setUp) {
 
     ['user' => $user, 'thread' => $thread] = $setUp();
 
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     Livewire::test(InstitutionalAdvisor::class)
         ->callAction('emailThread', [

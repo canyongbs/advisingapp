@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Project\Models;
 
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -57,10 +57,10 @@ class ProjectAuditorTeam extends Pivot
     }
 
     /**
-     * @return BelongsTo<Team, $this>
+     * @return BelongsTo<Department, $this>
      */
     public function team(): BelongsTo
     {
-        return $this->belongsTo(Team::class, 'team_id', 'id', 'team');
+        return $this->belongsTo(Department::class, 'team_id', 'id', 'team');
     }
 }

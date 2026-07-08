@@ -36,7 +36,7 @@
 
 namespace App\Filament\Resources\Users\Actions;
 
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Exception;
 use Filament\Actions\BulkAction;
@@ -62,7 +62,7 @@ class AssignTeamBulkAction extends BulkAction
             ->form([
                 Select::make('team')
                     ->label('Team')
-                    ->options(Team::pluck('name', 'id'))
+                    ->options(Department::pluck('name', 'id'))
                     ->searchable()
                     ->required(),
             ])

@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Jobs\Advisors;
 
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
@@ -85,11 +85,11 @@ class PrepareAiThreadEmailing implements ShouldQueue
         if ($this->targetType === AiThreadShareTarget::Team->value) {
             $sender = $this->sender;
 
-            Team::query()
+            Department::query()
                 ->whereKey($this->targetIds)
                 ->with('users')
                 ->get()
-                ->each(function (Team $team) use ($sender) {
+                ->each(function (Department $team) use ($sender) {
                     Bus::batch(
                         $team->users()->whereKeyNot($this->sender)->get()
                             ->map(fn (User $recipient) => new EmailAiThread($this->thread, $this->sender, $recipient))

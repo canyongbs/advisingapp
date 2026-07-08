@@ -186,7 +186,7 @@ use AdvisingApp\Task\Models\ConfidentialTasksProjects;
 use AdvisingApp\Task\Models\ConfidentialTasksTeams;
 use AdvisingApp\Task\Models\ConfidentialTasksUsers;
 use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use AdvisingApp\Timeline\Models\History;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Webhook\Models\InboundWebhook;
@@ -454,7 +454,7 @@ return [
     ConfidentialTasksTeams::class,
     ConfidentialTasksUsers::class,
     Task::class,
-    Team::class,
+    Department::class,
     History::class,
     Timeline::class,
     InboundWebhook::class,

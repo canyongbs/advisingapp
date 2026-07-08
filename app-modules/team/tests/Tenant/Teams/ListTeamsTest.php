@@ -36,7 +36,7 @@
 
 use AdvisingApp\Team\Filament\Resources\Teams\Pages\ListTeams;
 use AdvisingApp\Team\Filament\Resources\Teams\TeamResource;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
 
@@ -66,7 +66,7 @@ test('hides the bulk delete action from a user without the delete permission', f
     $user->givePermissionTo('team.view-any');
     actingAs($user);
 
-    Team::factory()->count(2)->create();
+    Department::factory()->count(2)->create();
 
     livewire(ListTeams::class)
         ->assertSuccessful()
@@ -78,7 +78,7 @@ test('shows the bulk delete action to a user with the delete permission', functi
     $user->givePermissionTo('team.view-any', 'team.*.delete');
     actingAs($user);
 
-    Team::factory()->count(2)->create();
+    Department::factory()->count(2)->create();
 
     livewire(ListTeams::class)
         ->assertSuccessful()

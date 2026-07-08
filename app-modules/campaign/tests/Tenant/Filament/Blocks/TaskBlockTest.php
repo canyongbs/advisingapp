@@ -41,7 +41,7 @@ use AdvisingApp\Campaign\Filament\Resources\Campaigns\RelationManagers\CampaignA
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use App\Models\User;
@@ -115,7 +115,7 @@ it('can edit a confidential task campaign journey step and persist confidential 
     $assignedTo = User::factory()->create();
     $projects = Project::factory()->count(2)->create();
     $users = User::factory()->count(2)->create();
-    $teams = Team::factory()->count(2)->create();
+    $teams = Department::factory()->count(2)->create();
 
     /** @var CampaignAction $action */
     $action = CampaignAction::factory()

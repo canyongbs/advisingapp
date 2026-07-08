@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -59,10 +59,10 @@ class ConfidentialPromptTeam extends Pivot
     }
 
     /**
-     * @return BelongsTo<Team, $this>
+     * @return BelongsTo<Department, $this>
      */
     public function team(): BelongsTo
     {
-        return $this->belongsTo(Team::class);
+        return $this->belongsTo(Department::class);
     }
 }

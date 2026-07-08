@@ -37,7 +37,7 @@
 namespace AdvisingApp\CaseManagement\Models;
 
 use AdvisingApp\CaseManagement\Database\Factories\CaseTypeAuditorFactory;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -56,11 +56,11 @@ class CaseTypeAuditor extends Pivot
     protected $table = 'case_type_auditors';
 
     /**
-     * @return BelongsTo<Team, $this>
+     * @return BelongsTo<Department, $this>
      */
     public function team(): BelongsTo
     {
-        return $this->belongsTo(Team::class);
+        return $this->belongsTo(Department::class);
     }
 
     /**

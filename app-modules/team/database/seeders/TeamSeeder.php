@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Team\Database\Seeders;
 
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -44,7 +44,7 @@ class TeamSeeder extends Seeder
 {
     public function run(): void
     {
-        $teams = Team::factory()
+        $teams = Department::factory()
             ->count(10)
             ->create();
 

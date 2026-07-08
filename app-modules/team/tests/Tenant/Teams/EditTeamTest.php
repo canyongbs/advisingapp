@@ -38,7 +38,7 @@ use AdvisingApp\Team\Filament\Resources\Teams\Pages\EditTeam;
 use AdvisingApp\Team\Filament\Resources\Teams\Pages\ViewTeam;
 use AdvisingApp\Team\Filament\Resources\Teams\RelationManagers\UsersRelationManager;
 use AdvisingApp\Team\Filament\Resources\Teams\TeamResource;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Actions\AssociateAction;
@@ -52,7 +52,7 @@ use function Pest\Livewire\livewire;
 test('EditTeam is gated with proper access control', function () {
     $user = User::factory()->create();
 
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     actingAs($user)
         ->get(
@@ -77,8 +77,8 @@ test('EditTeam is gated with proper access control', function () {
         )->assertSuccessful();
 
     // TODO: Finish these tests to ensure changes are allowed
-    /** @var Team $request */
-    $request = Team::factory()->make();
+    /** @var Department $request */
+    $request = Department::factory()->make();
 
     livewire(EditTeam::class, [
         'record' => $team->getRouteKey(),
@@ -97,7 +97,7 @@ test('EditTeam is gated with proper access control', function () {
 
 test('Non Super Admin Users can be added to a team', function () {
     $user = User::factory()->create();
-    $team = Team::factory()->has(User::factory()->count(1))->create();
+    $team = Department::factory()->has(User::factory()->count(1))->create();
 
     $user->givePermissionTo('team.view-any');
     $user->givePermissionTo('team.*.update');
@@ -126,7 +126,7 @@ test('Non Super Admin Users can be added to a team', function () {
 test('Super Admin Users cannot be added to a team', function () {
     $user = User::factory()->create();
     $superAdmin = User::factory()->create();
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     $user->givePermissionTo('team.view-any');
     $user->givePermissionTo('team.*.update');
@@ -158,7 +158,7 @@ test('Super Admin Users cannot be added to a team', function () {
 test('Super Admin Users do not show up in UsersRelationManager for Teams search results', function () {
     $user = User::factory()->create();
     $superAdmin = User::factory()->create();
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     $user->givePermissionTo('team.view-any');
     $user->givePermissionTo('team.*.update');
@@ -190,7 +190,7 @@ test('Super Admin Users do not show up in UsersRelationManager for Teams search 
 // "update" ability of the owner record (see FilamentServiceProvider). On the read-only-able
 // view page, a user who can only view the team must not see the associate action.
 test('the associate action in the team users relation manager is gated by the team update permission', function () {
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     $user = User::factory()->create();
     $user->givePermissionTo('team.view-any');

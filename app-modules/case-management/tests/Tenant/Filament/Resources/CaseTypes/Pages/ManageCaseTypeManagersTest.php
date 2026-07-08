@@ -37,7 +37,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\CaseTypeResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages\ManageCaseTypeManagers;
 use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Filament\Actions\AttachAction;
 
@@ -49,7 +49,7 @@ it('can attach team member to case type', function () {
 
     $caseType = CaseType::factory()->create();
 
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     actingAs($user)
         ->get(

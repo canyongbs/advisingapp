@@ -37,7 +37,7 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\ListProjects;
 use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\DeleteBulkAction;
@@ -150,7 +150,7 @@ it('does not list projects to unauthorized manager teams', function () {
     $user->givePermissionTo('project.*.view');
     $user->givePermissionTo('project.create');
 
-    $authorizedTeam = Team::factory()->create();
+    $authorizedTeam = Department::factory()->create();
 
     $user->team()->associate($authorizedTeam);
     $user->save();
@@ -256,7 +256,7 @@ it('does not list projects to unauthorized auditor teams', function () {
     $user->givePermissionTo('project.*.view');
     $user->givePermissionTo('project.create');
 
-    $authorizedTeam = Team::factory()->create();
+    $authorizedTeam = Department::factory()->create();
 
     $user->team()->associate($authorizedTeam);
 

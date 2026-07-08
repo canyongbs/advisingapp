@@ -39,14 +39,14 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionUsersTable;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Carbon\Carbon;
 
 use function Pest\Livewire\livewire;
 
 it('can see prospect interaction users table', function () {
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     $user1 = User::factory()->create();
 
@@ -123,7 +123,7 @@ it('can see prospect interaction users table', function () {
 });
 
 it('can filter users by name', function () {
-    $team = Team::factory()->create([
+    $team = Department::factory()->create([
         'name' => 'Test Team',
     ]);
 
@@ -164,7 +164,7 @@ it('can filter users by name', function () {
 });
 
 it('can filter users by job title', function () {
-    $team = Team::factory()->create([
+    $team = Department::factory()->create([
         'name' => 'Test Team',
     ]);
 
@@ -205,7 +205,7 @@ it('can filter users by job title', function () {
 });
 
 it('can filter users by team', function () {
-    $team = Team::factory()->create([
+    $team = Department::factory()->create([
         'name' => 'Interaction Team',
     ]);
 
@@ -249,7 +249,7 @@ it('displays only users with prospect interactions within the selected date rang
     $interactionStartDate = now()->subDays(10);
     $interactionEndDate = now()->subDays(5);
 
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     $userWithOldInteractions = User::factory()->create();
 
@@ -319,7 +319,7 @@ it('displays only users with prospect interactions based on group filter', funct
         ],
     ]);
 
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     $userWithOldInteractions = User::factory()->create();
 
