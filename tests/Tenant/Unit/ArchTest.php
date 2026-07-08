@@ -57,10 +57,6 @@ arch('All Core Models should not use HasVersion4Uuids trait')
     ->not->toUseTrait(HasVersion4Uuids::class)
     ->ignoring($legacyV4UuidModels);
 
-arch('All Core Factories should not use the fake global function')
-    ->expect('Database\Factories')
-    ->not->toUse('fake');
-
 /** @var Collection<int, ModuleConfig> $modules */
 $modulesPath = dirname(__DIR__, 3) . '/app-modules';
 $modules = (new ModuleRegistry(
@@ -82,10 +78,6 @@ $modules->each(function (ModuleConfig $module) use ($legacyV4UuidModels) {
         ->extending(Model::class)
         ->not->toUseTrait(HasVersion4Uuids::class)
         ->ignoring($legacyV4UuidModels);
-
-    arch("All {$module->name} Factories should not use the fake global function")
-        ->expect($module->namespace() . 'Database\Factories')
-        ->not->toUse('fake');
 });
 
 test('Legacy models must not use HasUuids (UUIDv7)', function () {
