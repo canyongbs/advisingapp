@@ -62,6 +62,7 @@ class SetPasswordNotification extends Notification implements ShouldQueue
     {
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
+            ->subject('Set up your password')
             ->line('A new account has been created for you.')
             ->action('Set up your password', url(URL::temporarySignedRoute(
                 name: 'login.one-time',
