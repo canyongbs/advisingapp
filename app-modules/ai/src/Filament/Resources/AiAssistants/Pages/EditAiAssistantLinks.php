@@ -47,7 +47,6 @@ use UnitEnum;
 
 class EditAiAssistantLinks extends EditRecord
 {
-
     protected static string $resource = AiAssistantResource::class;
 
     protected static ?string $title = 'Websites';

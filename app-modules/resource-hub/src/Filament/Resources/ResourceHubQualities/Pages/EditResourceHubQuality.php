@@ -45,7 +45,6 @@ use Filament\Schemas\Schema;
 
 class EditResourceHubQuality extends EditRecord
 {
-
     protected static string $resource = ResourceHubQualityResource::class;
 
     public function form(Schema $schema): Schema

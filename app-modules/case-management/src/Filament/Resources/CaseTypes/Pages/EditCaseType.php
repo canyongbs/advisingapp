@@ -52,7 +52,6 @@ use Filament\Schemas\Schema;
 
 class EditCaseType extends EditRecord
 {
-
     protected static string $resource = CaseTypeResource::class;
 
     protected static ?string $navigationLabel = 'Edit';

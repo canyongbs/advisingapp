@@ -50,7 +50,6 @@ use Filament\Schemas\Schema;
 
 class EditSmsTemplate extends EditRecord
 {
-
     protected static string $resource = SmsTemplateResource::class;
 
     public function form(Schema $schema): Schema

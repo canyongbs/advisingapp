@@ -57,7 +57,6 @@ use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class ManageFormEmailAutoReply extends EditRecord
 {
-
     protected static string $resource = FormResource::class;
 
     protected static ?string $navigationLabel = 'Email Auto Reply';

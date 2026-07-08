@@ -63,7 +63,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class EditInteraction extends EditRecord
 {
-
     protected static string $resource = InteractionResource::class;
 
     private ?InteractionManagementSettings $settings = null;

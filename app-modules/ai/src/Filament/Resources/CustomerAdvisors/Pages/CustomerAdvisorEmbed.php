@@ -58,7 +58,6 @@ use UnitEnum;
 
 class CustomerAdvisorEmbed extends EditRecord
 {
-
     protected static string $resource = CustomerAdvisorResource::class;
 
     protected static string | UnitEnum | null $navigationGroup = 'Configuration';

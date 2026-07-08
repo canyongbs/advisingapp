@@ -42,7 +42,6 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditDataAdvisor extends EditRecord
 {
-
     protected static string $resource = DataAdvisorResource::class;
 
     protected function getHeaderActions(): array

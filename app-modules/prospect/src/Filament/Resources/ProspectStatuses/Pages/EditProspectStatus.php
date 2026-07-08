@@ -48,7 +48,6 @@ use Filament\Schemas\Schema;
 
 class EditProspectStatus extends EditRecord
 {
-
     protected static string $resource = ProspectStatusResource::class;
 
     public function form(Schema $schema): Schema

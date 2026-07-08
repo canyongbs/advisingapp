@@ -44,7 +44,6 @@ use Filament\Schemas\Schema;
 
 class EditStudentTag extends EditRecord
 {
-
     protected static string $resource = StudentTagResource::class;
 
     public function form(Schema $schema): Schema

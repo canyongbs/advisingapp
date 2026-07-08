@@ -52,7 +52,6 @@ use Filament\Schemas\Schema;
 
 class EditCaseStatus extends EditRecord
 {
-
     protected static string $resource = CaseStatusResource::class;
 
     public function form(Schema $schema): Schema

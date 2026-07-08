@@ -49,7 +49,6 @@ use Filament\Schemas\Schema;
 
 class EditConcernStatus extends EditRecord
 {
-
     protected static string $resource = ConcernStatusResource::class;
 
     protected ?bool $hasDatabaseTransactions = true;

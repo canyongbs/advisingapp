@@ -53,7 +53,6 @@ use Illuminate\Support\Str;
 
 class EditPipeline extends EditRecord
 {
-
     protected static string $resource = PipelineResource::class;
 
     public function form(Schema $schema): Schema

@@ -42,7 +42,6 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditInteractionInitiative extends EditRecord
 {
-
     protected static string $resource = InteractionInitiativeResource::class;
 
     protected function getHeaderActions(): array

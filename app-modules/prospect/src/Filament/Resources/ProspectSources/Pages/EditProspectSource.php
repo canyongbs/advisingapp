@@ -45,7 +45,6 @@ use Filament\Schemas\Schema;
 
 class EditProspectSource extends EditRecord
 {
-
     protected static string $resource = ProspectSourceResource::class;
 
     public function form(Schema $schema): Schema

@@ -58,7 +58,6 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 class EditEventRegistration extends EditRecord
 {
-
     protected static string $resource = EventResource::class;
 
     protected static ?string $navigationLabel = 'Registration Form';

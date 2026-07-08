@@ -50,7 +50,6 @@ use Filament\Schemas\Schema;
 
 class EditApplicationSubmissionState extends EditRecord
 {
-
     protected static string $resource = ApplicationSubmissionStateResource::class;
 
     public function form(Schema $schema): Schema

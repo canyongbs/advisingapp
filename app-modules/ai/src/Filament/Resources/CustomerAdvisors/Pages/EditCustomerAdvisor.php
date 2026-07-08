@@ -59,7 +59,6 @@ use UnitEnum;
 
 class EditCustomerAdvisor extends EditRecord
 {
-
     protected static string $resource = CustomerAdvisorResource::class;
 
     protected static ?string $navigationLabel = 'Edit';

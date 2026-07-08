@@ -42,7 +42,6 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class EditConsentAgreement extends EditRecord
 {
-
     protected static string $resource = ConsentAgreementResource::class;
 
     public function getTitle(): string | Htmlable

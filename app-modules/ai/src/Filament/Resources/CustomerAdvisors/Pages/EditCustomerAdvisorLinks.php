@@ -50,7 +50,6 @@ use UnitEnum;
 
 class EditCustomerAdvisorLinks extends EditRecord
 {
-
     protected static string $resource = CustomerAdvisorResource::class;
 
     protected static ?string $title = 'Websites';

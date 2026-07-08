@@ -43,7 +43,6 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditEngagementFile extends EditRecord
 {
-
     protected static string $resource = EngagementFileResource::class;
 
     protected function getHeaderActions(): array

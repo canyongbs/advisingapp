@@ -47,7 +47,6 @@ use Filament\Schemas\Schema;
 
 class EditStudentCareTeamRole extends EditRecord
 {
-
     protected static string $resource = StudentCareTeamRoleResource::class;
 
     public function form(Schema $schema): Schema

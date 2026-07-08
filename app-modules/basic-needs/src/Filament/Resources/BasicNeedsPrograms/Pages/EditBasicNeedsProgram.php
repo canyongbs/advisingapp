@@ -48,7 +48,6 @@ use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class EditBasicNeedsProgram extends EditRecord
 {
-
     protected static string $resource = BasicNeedsProgramResource::class;
 
     protected static ?string $navigationLabel = 'Edit';

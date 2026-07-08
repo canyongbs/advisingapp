@@ -50,7 +50,6 @@ use Filament\Schemas\Schema;
 
 class EditCalendarEvent extends EditRecord
 {
-
     protected static string $resource = CalendarEventResource::class;
 
     public function form(Schema $schema): Schema

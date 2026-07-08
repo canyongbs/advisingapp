@@ -48,7 +48,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class EditTeam extends EditRecord
 {
-
     protected static string $resource = TeamResource::class;
 
     public function form(Schema $schema): Schema

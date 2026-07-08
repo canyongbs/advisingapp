@@ -48,7 +48,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditWorkflow extends EditRecord
 {
-
     protected static string $resource = WorkflowResource::class;
 
     public function getBreadcrumbs(): array

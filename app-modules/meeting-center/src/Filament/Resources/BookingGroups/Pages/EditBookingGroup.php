@@ -67,7 +67,6 @@ use Illuminate\Support\Str;
 
 class EditBookingGroup extends EditRecord
 {
-
     protected static string $resource = BookingGroupResource::class;
 
     protected static ?string $navigationLabel = 'Group Configuration';

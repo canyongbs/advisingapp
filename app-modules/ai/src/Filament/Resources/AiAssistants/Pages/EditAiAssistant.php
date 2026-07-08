@@ -50,7 +50,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditAiAssistant extends EditRecord
 {
-
     protected static string $resource = AiAssistantResource::class;
 
     public function form(Schema $schema): Schema

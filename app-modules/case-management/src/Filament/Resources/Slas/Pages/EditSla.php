@@ -42,7 +42,6 @@ use Filament\Resources\Pages\EditRecord;
 
 class EditSla extends EditRecord
 {
-
     protected static string $resource = SlaResource::class;
 
     protected function getHeaderActions(): array

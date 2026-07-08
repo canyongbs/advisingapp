@@ -49,7 +49,6 @@ use Filament\Schemas\Schema;
 
 class EditBasicNeedsCategory extends EditRecord
 {
-
     protected static string $resource = BasicNeedsCategoryResource::class;
 
     public function form(Schema $schema): Schema

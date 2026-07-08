@@ -47,7 +47,6 @@ use Filament\Schemas\Schema;
 
 class EditResourceHubCategory extends EditRecord
 {
-
     protected static string $resource = ResourceHubCategoryResource::class;
 
     public function form(Schema $schema): Schema

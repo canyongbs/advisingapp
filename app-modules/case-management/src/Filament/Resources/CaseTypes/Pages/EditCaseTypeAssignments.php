@@ -53,7 +53,6 @@ use Illuminate\Support\HtmlString;
 
 class EditCaseTypeAssignments extends EditRecord
 {
-
     protected static string $resource = CaseTypeResource::class;
 
     protected static ?string $title = 'Assignments';

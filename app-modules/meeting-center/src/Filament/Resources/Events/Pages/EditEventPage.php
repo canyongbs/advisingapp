@@ -46,7 +46,6 @@ use Filament\Schemas\Schema;
 
 class EditEventPage extends EditRecord
 {
-
     protected static string $resource = EventResource::class;
 
     protected static ?string $navigationLabel = 'Landing Page';

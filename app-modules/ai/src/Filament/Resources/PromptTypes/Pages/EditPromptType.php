@@ -47,7 +47,6 @@ use Filament\Schemas\Schema;
 
 class EditPromptType extends EditRecord
 {
-
     protected static string $resource = PromptTypeResource::class;
 
     public function form(Schema $schema): Schema

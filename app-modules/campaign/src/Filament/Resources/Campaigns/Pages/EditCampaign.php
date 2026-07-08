@@ -49,7 +49,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class EditCampaign extends EditRecord
 {
-
     protected static string $resource = CampaignResource::class;
 
     public function form(Schema $schema): Schema

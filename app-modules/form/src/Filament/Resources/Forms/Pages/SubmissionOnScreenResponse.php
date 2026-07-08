@@ -43,7 +43,6 @@ use Filament\Schemas\Schema;
 
 class SubmissionOnScreenResponse extends EditRecord
 {
-
     protected static string $resource = FormResource::class;
 
     protected static ?string $navigationLabel = 'On-Screen Response';

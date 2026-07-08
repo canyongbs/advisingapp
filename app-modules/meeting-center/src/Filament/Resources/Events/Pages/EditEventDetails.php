@@ -53,7 +53,6 @@ use Filament\Schemas\Schema;
 
 class EditEventDetails extends EditRecord
 {
-
     protected static string $resource = EventResource::class;
 
     protected static ?string $navigationLabel = 'Details';

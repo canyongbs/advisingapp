@@ -44,7 +44,6 @@ use Filament\Schemas\Schema;
 
 class EditCaseTypeNotifications extends EditRecord
 {
-
     protected static string $resource = CaseTypeResource::class;
 
     protected static ?string $title = 'Notifications';

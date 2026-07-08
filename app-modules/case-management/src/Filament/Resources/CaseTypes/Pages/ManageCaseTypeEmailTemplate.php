@@ -56,7 +56,6 @@ use UnitEnum;
 /** @property-read ?CaseTypeEmailTemplate $template */
 class ManageCaseTypeEmailTemplate extends EditRecord
 {
-
     protected static string $resource = CaseTypeResource::class;
 
     #[Locked]

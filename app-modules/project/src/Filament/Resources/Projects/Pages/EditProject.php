@@ -46,7 +46,6 @@ use Filament\Schemas\Schema;
 
 class EditProject extends EditRecord
 {
-
     protected static string $resource = ProjectResource::class;
 
     protected static ?string $navigationLabel = 'Edit';

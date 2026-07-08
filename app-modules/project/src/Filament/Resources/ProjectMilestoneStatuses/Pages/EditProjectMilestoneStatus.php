@@ -46,7 +46,6 @@ use Filament\Schemas\Schema;
 
 class EditProjectMilestoneStatus extends EditRecord
 {
-
     protected static string $resource = ProjectMilestoneStatusResource::class;
 
     public function form(Schema $schema): Schema

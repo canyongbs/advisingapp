@@ -53,7 +53,6 @@ use Illuminate\Validation\Rules\Unique;
 
 class EditRole extends EditRecord
 {
-
     protected static string $resource = RoleResource::class;
 
     public function form(Schema $schema): Schema

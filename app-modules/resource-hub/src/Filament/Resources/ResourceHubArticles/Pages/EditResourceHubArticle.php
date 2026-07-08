@@ -61,7 +61,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditResourceHubArticle extends EditRecord
 {
-
     protected static string $resource = ResourceHubArticleResource::class;
 
     public function form(Schema $schema): Schema

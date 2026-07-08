@@ -49,7 +49,6 @@ use Filament\Schemas\Schema;
 
 class EditDivision extends EditRecord
 {
-
     protected static string $resource = DivisionResource::class;
 
     protected ?bool $hasDatabaseTransactions = true;
