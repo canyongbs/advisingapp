@@ -48,6 +48,8 @@ use App\Jobs\UpdateTenantLicenseData;
 use App\Models\Tenant;
 use App\Settings\TenantExpirationSettings;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class SyncTenantController
 {
@@ -60,24 +62,36 @@ class SyncTenantController
             addons: LicenseAddonsData::from($request->validated('addons')),
         );
 
-        dispatch_sync(new UpdateTenantLicenseData($tenant, $licenseData));
+        try {
+            dispatch_sync(new UpdateTenantLicenseData($tenant, $licenseData));
 
-        if (SubscriptionExpirationFeature::active()) {
-            if (filled($subscriptionStatus = $request->validated('subscriptionStatus'))) {
-                $tenant->subscription_status = SubscriptionStatus::from($subscriptionStatus);
-                $tenant->save();
+            if (SubscriptionExpirationFeature::active()) {
+                // Subscription status and the expiration banner both live in the landlord
+                // database, so they are committed together on the landlord connection.
+                DB::connection('landlord')->transaction(function () use ($request, $tenant): void {
+                    if (filled($subscriptionStatus = $request->validated('subscriptionStatus'))) {
+                        $tenant->subscription_status = SubscriptionStatus::from($subscriptionStatus);
+                        $tenant->save();
+                    }
+
+                    if (filled($bannerText = $request->validated('expirationBannerText'))) {
+                        $settings = app(TenantExpirationSettings::class);
+                        $settings->period_2_banner_text = $bannerText;
+                        $settings->save();
+                    }
+                });
             }
 
-            if (filled($bannerText = $request->validated('expirationBannerText'))) {
-                $settings = app(TenantExpirationSettings::class);
-                $settings->period_2_banner_text = $bannerText;
-                $settings->save();
-            }
+            $tenant->execute(function () use ($request): void {
+                DB::connection('tenant')->transaction(function () use ($request): void {
+                    app(SyncTenantSmartPrompts::class)->execute($request);
+                });
+            });
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json(['message' => 'Failed to sync tenant.'], 500);
         }
-
-        $tenant->execute(function () use ($request) {
-            app(SyncTenantSmartPrompts::class)->execute($request);
-        });
 
         return response()->json();
     }
