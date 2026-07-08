@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Pages;
 
+use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
@@ -44,13 +45,12 @@ use AdvisingApp\StudentDataModel\Actions\ResolveEducatableFromEmail;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\Feature;
-use App\Filament\Clusters\GroupAppointments;
+use App\Enums\NavigationGroup;
 use App\Models\User;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -61,6 +61,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Url;
+use UnitEnum;
 
 /** @property Schema $form */
 class SharedCalendar extends Page implements HasForms, HasTable
@@ -68,15 +69,13 @@ class SharedCalendar extends Page implements HasForms, HasTable
     use InteractsWithForms;
     use InteractsWithTable;
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 20;
 
     protected string $view = 'meeting-center::filament.pages.shared-calendar';
 
-    protected static ?string $cluster = GroupAppointments::class;
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Scheduling;
 
-    protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
-
-    protected static ?string $navigationLabel = 'Shared Calendar';
+    protected static ?string $navigationLabel = 'Group Appointments';
 
     #[Url(as: 'view')]
     public string $viewType = 'table';
@@ -85,6 +84,14 @@ class SharedCalendar extends Page implements HasForms, HasTable
      * @var array<string, mixed>
      */
     public array $data = [];
+
+    public static function getNavigationItemActiveRoutePattern(): string | array
+    {
+        return [
+            static::getRouteName(),
+            BookingGroupResource::getRouteBaseName() . '.*',
+        ];
+    }
 
     public function mount(): void
     {

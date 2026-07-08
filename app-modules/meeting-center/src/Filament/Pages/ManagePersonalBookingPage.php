@@ -42,7 +42,6 @@ use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use App\Enums\Feature;
 use App\Filament\Forms\Components\DailyHoursRepeater;
-use App\Filament\Pages\ProfilePage;
 use App\Models\User;
 use Closure;
 use Filament\Actions\Action;
@@ -51,27 +50,75 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Notifications\Notification;
+use Filament\Pages\Page;
 use Filament\Schemas\Components\Callout;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
-class ManagePersonalBookingPage extends ProfilePage
+/**
+ * @property-read Schema $form
+ */
+class ManagePersonalBookingPage extends Page implements HasForms
 {
+    use InteractsWithForms;
+
     protected static ?string $slug = 'personal-booking-page';
 
     protected static ?string $title = 'Personal Booking Page';
 
-    protected static ?int $navigationSort = 20;
+    protected static bool $shouldRegisterNavigation = false;
+
+    protected string $view = 'meeting-center::filament.pages.manage-personal-booking-page';
+
+    /** @var array<string, mixed> */
+    public ?array $data = [];
 
     public static function canAccess(): bool
     {
-        return Gate::check(Feature::ScheduleAndAppointments->getGateName()) && parent::canAccess();
+        return Gate::check(Feature::ScheduleAndAppointments->getGateName());
+    }
+
+    public function mount(): void
+    {
+        $this->form->fill($this->getFormData());
+    }
+
+    public function save(): void
+    {
+        $data = $this->form->getState();
+
+        /** @var User $user */
+        $user = auth()->user();
+
+        $bookingPage = $user->personalBookingPage()->firstOrNew();
+        $bookingPage->is_enabled = $data['is_enabled'] ?? false;
+        $bookingPage->slug = $data['slug'] ?? Str::slug($user->name);
+        $bookingPage->default_appointment_duration = $data['default_appointment_duration'] ?? 30;
+        $bookingPage->minimum_booking_lead_time_hours = $data['minimum_booking_lead_time_hours'] ?? 0;
+        $bookingPage->maximum_booking_lead_time_days = $data['maximum_booking_lead_time_days'] ?? 0;
+        $bookingPage->save();
+
+        $user->update([
+            'office_hours_are_enabled' => $data['office_hours_are_enabled'] ?? false,
+            'appointments_are_restricted_to_existing_students' => $data['appointments_are_restricted_to_existing_students'] ?? false,
+            'office_hours' => ! empty($data['office_hours']) ? DailyHoursRepeater::mutateDataBeforeSave($data['office_hours']) : ($data['office_hours'] ?? null),
+            'out_of_office_is_enabled' => $data['out_of_office_is_enabled'] ?? false,
+            'out_of_office_starts_at' => $data['out_of_office_starts_at'] ?? null,
+            'out_of_office_ends_at' => $data['out_of_office_ends_at'] ?? null,
+        ]);
+
+        Notification::make()
+            ->success()
+            ->title('Saved successfully')
+            ->send();
     }
 
     public function getHeaderActions(): array
@@ -100,6 +147,7 @@ class ManagePersonalBookingPage extends ProfilePage
         $bookingPageEnabled = $bookingPage->is_enabled ?? false;
 
         return $schema
+            ->statePath('data')
             ->columns(1)
             ->components([
                 Callout::make('Your calendar connection has been revoked.')
@@ -240,10 +288,13 @@ class ManagePersonalBookingPage extends ProfilePage
             ]);
     }
 
-    public function mutateFormDataBeforeFill(array $data): array
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getFormData(): array
     {
+        /** @var User $user */
         $user = auth()->user();
-        assert($user instanceof User);
         $bookingPage = PersonalBookingPage::query()->whereBelongsTo($user)->first();
         $hasCalendar = Calendar::query()->whereBelongsTo($user)->whereNotNull('oauth_token')->exists();
 
@@ -276,31 +327,6 @@ class ManagePersonalBookingPage extends ProfilePage
             'out_of_office_starts_at' => $user->out_of_office_starts_at,
             'out_of_office_ends_at' => $user->out_of_office_ends_at,
         ];
-    }
-
-    public function handleRecordUpdate(Model $record, array $data): Model
-    {
-        $user = $record;
-        assert($user instanceof User);
-
-        $bookingPage = $user->personalBookingPage()->firstOrNew();
-        $bookingPage->is_enabled = $data['is_enabled'] ?? false;
-        $bookingPage->slug = $data['slug'] ?? Str::slug($user->name);
-        $bookingPage->default_appointment_duration = $data['default_appointment_duration'] ?? 30;
-        $bookingPage->minimum_booking_lead_time_hours = $data['minimum_booking_lead_time_hours'] ?? 0;
-        $bookingPage->maximum_booking_lead_time_days = $data['maximum_booking_lead_time_days'] ?? 0;
-        $bookingPage->save();
-
-        $user->update([
-            'office_hours_are_enabled' => $data['office_hours_are_enabled'] ?? false,
-            'appointments_are_restricted_to_existing_students' => $data['appointments_are_restricted_to_existing_students'] ?? false,
-            'office_hours' => ! empty($data['office_hours']) ? DailyHoursRepeater::mutateDataBeforeSave($data['office_hours']) : ($data['office_hours'] ?? null),
-            'out_of_office_is_enabled' => $data['out_of_office_is_enabled'] ?? false,
-            'out_of_office_starts_at' => $data['out_of_office_starts_at'] ?? null,
-            'out_of_office_ends_at' => $data['out_of_office_ends_at'] ?? null,
-        ]);
-
-        return $record;
     }
 
     protected function userHasHoursConfigured(User $user): bool
