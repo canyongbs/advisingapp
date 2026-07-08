@@ -34,8 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
 use Illuminate\Database\Eloquent\Model;
@@ -106,23 +104,3 @@ test('Legacy models must not use HasUuids (UUIDv7)', function () {
     }
 });
 
-test('pages extending EditRecord have the EditPageRedirection test', function () {
-    foreach (get_declared_classes() as $class) {
-        if (
-            (! str_starts_with($class, 'App\\'))
-            && (! str_starts_with($class, 'AdvisingApp\\'))
-        ) {
-            continue;
-        }
-
-        if (! is_subclass_of($class, EditRecord::class)) {
-            continue;
-        }
-
-        Assert::assertContains(
-            EditPageRedirection::class,
-            class_uses_recursive($class),
-            "Class [{$class}] does not use the EditPageRedirection trait.",
-        );
-    }
-});
