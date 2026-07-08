@@ -1,0 +1,253 @@
+<?php
+
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor's trademarks is subject
+      to applicable law.
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS Inc.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+use App\Filament\Imports\UserImporter;
+use App\Filament\Pages\ImportExportPage;
+use App\Livewire\ExportHubTable;
+use App\Livewire\ImportHubTable;
+use App\Models\Export;
+use App\Models\Import;
+use App\Models\User;
+use Illuminate\Support\Facades\Storage;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
+use function Pest\Livewire\livewire;
+
+it('is gated with proper access control', function () {
+    $user = User::factory()->create();
+
+    actingAs($user);
+
+    get(ImportExportPage::getUrl())->assertForbidden();
+
+    $user->givePermissionTo('export_hub.view-any');
+
+    get(ImportExportPage::getUrl())->assertSuccessful();
+});
+
+it('defaults to the import tab', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+
+    actingAs($user);
+
+    get(ImportExportPage::getUrl())
+        ->assertSuccessful()
+        ->assertSeeText('Import');
+});
+
+it('renders the import table', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+
+    actingAs($user);
+
+    livewire(ImportHubTable::class)
+        ->assertSuccessful();
+});
+
+it('displays import records in the import table', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+
+    actingAs($user);
+
+    $import = new Import();
+    $import->user()->associate($user);
+    $import->file_name = 'test-import.csv';
+    $import->file_path = '/tmp/test-import.csv';
+    $import->importer = UserImporter::class;
+    $import->total_rows = 100;
+    $import->save();
+
+    livewire(ImportHubTable::class)
+        ->assertCanSeeTableRecords([$import]);
+});
+
+it('shows download button when import is completed and file exists and user has permission', function () {
+    Storage::fake('s3');
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+    $user->givePermissionTo('export_hub.import');
+
+    actingAs($user);
+
+    $import = new Import();
+    $import->user()->associate($user);
+    $import->file_name = 'test-import.csv';
+    $import->file_path = '/tmp/test-import.csv';
+    $import->importer = UserImporter::class;
+    $import->total_rows = 50;
+    $import->completed_at = now();
+    $import->save();
+
+    Storage::disk('s3')->put("imports/{$import->getKey()}.csv", 'test,data');
+
+    livewire(ImportHubTable::class)
+        ->assertTableActionVisible('download', $import);
+});
+
+it('hides download button when import is not completed', function () {
+    Storage::fake('s3');
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+    $user->givePermissionTo('export_hub.import');
+
+    actingAs($user);
+
+    $import = new Import();
+    $import->user()->associate($user);
+    $import->file_name = 'test-import.csv';
+    $import->file_path = '/tmp/test-import.csv';
+    $import->importer = UserImporter::class;
+    $import->total_rows = 50;
+    $import->save();
+
+    Storage::disk('s3')->put("imports/{$import->getKey()}.csv", 'test,data');
+
+    livewire(ImportHubTable::class)
+        ->assertTableActionHidden('download', $import);
+});
+
+it('hides download button when import file does not exist on disk', function () {
+    Storage::fake('s3');
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+    $user->givePermissionTo('export_hub.import');
+
+    actingAs($user);
+
+    $import = new Import();
+    $import->user()->associate($user);
+    $import->file_name = 'test-import.csv';
+    $import->file_path = '/tmp/test-import.csv';
+    $import->importer = UserImporter::class;
+    $import->total_rows = 50;
+    $import->completed_at = now();
+    $import->save();
+
+    livewire(ImportHubTable::class)
+        ->assertTableActionHidden('download', $import);
+});
+
+it('hides download button when user lacks export_hub.import permission', function () {
+    Storage::fake('s3');
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+
+    actingAs($user);
+
+    $import = new Import();
+    $import->user()->associate($user);
+    $import->file_name = 'test-import.csv';
+    $import->file_path = '/tmp/test-import.csv';
+    $import->importer = UserImporter::class;
+    $import->total_rows = 50;
+    $import->completed_at = now();
+    $import->save();
+
+    Storage::disk('s3')->put("imports/{$import->getKey()}.csv", 'test,data');
+
+    livewire(ImportHubTable::class)
+        ->assertTableActionHidden('download', $import);
+});
+
+// Export Tab Tests
+
+it('renders the export table', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+
+    actingAs($user);
+
+    livewire(ExportHubTable::class)
+        ->assertSuccessful();
+});
+
+// Student Sync Tab Tests
+
+it('does not show student sync tab when student editing is disabled', function () {
+    $settings = app(ManageStudentConfigurationSettings::class);
+    $settings->is_enabled = false;
+    $settings->save();
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+    $user->givePermissionTo('record_sync.view-any');
+
+    actingAs($user);
+
+    get(ImportExportPage::getUrl())
+        ->assertSuccessful()
+        ->assertDontSeeText('Student Sync');
+});
+
+it('does not show student sync tab when user lacks record_sync.view-any permission', function () {
+    $settings = app(ManageStudentConfigurationSettings::class);
+    $settings->is_enabled = true;
+    $settings->save();
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+
+    actingAs($user);
+
+    get(ImportExportPage::getUrl())
+        ->assertSuccessful()
+        ->assertDontSeeText('Student Sync');
+});
+
+it('shows student sync tab when student editing is enabled and user has permission', function () {
+    $settings = app(ManageStudentConfigurationSettings::class);
+    $settings->is_enabled = true;
+    $settings->save();
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+    $user->givePermissionTo('record_sync.view-any');
+
+    actingAs($user);
+
+    get(ImportExportPage::getUrl())
+        ->assertSuccessful()
+        ->assertSeeText('Student Sync');
+});

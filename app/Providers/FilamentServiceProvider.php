@@ -48,6 +48,7 @@ use Filament\Actions\DetachBulkAction;
 use Filament\Actions\DissociateAction;
 use Filament\Actions\DissociateBulkAction;
 use Filament\Actions\Exports\Models\Export as BaseExport;
+use Filament\Actions\ImportAction;
 use Filament\Actions\Imports\Models\FailedImportRow as BaseFailedImportRow;
 use Filament\Actions\Imports\Models\Import as BaseImport;
 use Filament\Actions\ReplicateAction;
@@ -71,9 +72,11 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View;
 use Livewire\Component;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Ysfkaya\FilamentPhoneInput\Infolists\PhoneEntry;
 use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
@@ -369,5 +372,31 @@ class FilamentServiceProvider extends ServiceProvider
         DissociateAction::configureUsing($authorizeRelationManagerOwnerUpdate);
         DetachBulkAction::configureUsing($authorizeRelationManagerOwnerUpdate);
         DissociateBulkAction::configureUsing($authorizeRelationManagerOwnerUpdate);
+
+        ImportAction::configureUsing(function (ImportAction $action): void {
+            $action->after(function (array $data, ImportAction $action): void {
+                $file = $data['file'] ?? null;
+
+                if (! $file instanceof TemporaryUploadedFile) {
+                    return;
+                }
+
+                $import = Import::query()
+                    ->where('user_id', auth()->id())
+                    ->where('importer', $action->getImporter())
+                    ->latest()
+                    ->first();
+
+                if (! $import) {
+                    return;
+                }
+
+                Storage::disk('s3')->put(
+                    "imports/{$import->getKey()}.csv",
+                    $file->get(),
+                    'private',
+                );
+            });
+        });
     }
 }

@@ -34,37 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Pages;
+namespace App\Filament\Pages;
 
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Enums\NavigationGroup;
+use App\Models\User;
 use Filament\Pages\Page;
 use UnitEnum;
 
-class ManageStudentSyncs extends Page
+class ImportExportPage extends Page
 {
-    protected static bool $shouldRegisterNavigation = false;
-
-    protected static ?string $navigationLabel = 'Sync History';
-
-    protected static ?string $title = 'Records Sync';
-
-    protected static ?int $navigationSort = 30;
+    protected string $view = 'filament.pages.import-export-page';
 
     protected static string | UnitEnum | null $navigationGroup = NavigationGroup::DataAndAnalytics;
 
-    protected string $view = 'student-data-model::filament.pages.manage-student-syncs';
+    protected static ?string $navigationLabel = 'Import/Export';
+
+    protected static ?string $title = 'Import/Export';
+
+    protected static ?int $navigationSort = 30;
+
+    public string $activeTab = 'import';
 
     public static function canAccess(): bool
     {
-        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return false;
-        }
+        $user = auth()->user();
+        assert($user instanceof User);
 
-        if (! auth()->user()->can('record_sync.view-any')) {
-            return false;
-        }
+        return $user->can('export_hub.view-any');
+    }
 
-        return parent::canAccess();
+    public function canViewStudentSyncTab(): bool
+    {
+        return app(ManageStudentConfigurationSettings::class)->is_enabled
+            && auth()->user()->can('record_sync.view-any');
     }
 }

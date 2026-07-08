@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use App\Filament\Pages\ExportHubPage;
+use App\Filament\Pages\ImportExportPage;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -45,9 +45,9 @@ it('is gated with proper access control', function () {
 
     actingAs($user);
 
-    get(ExportHubPage::getUrl())->assertForbidden();
+    get(ImportExportPage::getUrl())->assertForbidden();
 
     $user->givePermissionTo('export_hub.view-any');
 
-    get(ExportHubPage::getUrl())->assertSuccessful();
+    get(ImportExportPage::getUrl())->assertSuccessful();
 });

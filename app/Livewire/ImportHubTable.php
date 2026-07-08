@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,65 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Livewire;
 
-use App\Enums\NavigationGroup;
-use App\Models\Export;
-use App\Models\User;
+use App\Models\Import;
 use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Pages\Page;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
-use UnitEnum;
+use Livewire\Component;
 
-class ExportHubPage extends Page implements HasForms, HasTable
+class ImportHubTable extends Component implements HasActions, HasForms, HasTable
 {
+    use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
-
-    protected string $view = 'filament.pages.export-hub-page';
-
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::DataAndAnalytics;
-
-    protected static ?string $navigationLabel = 'Export Hub';
-
-    protected static ?string $title = 'Export Hub';
-
-    protected static ?int $navigationSort = 30;
-
-    public static function canAccess(): bool
-    {
-        $user = auth()->user();
-        assert($user instanceof User);
-
-        return $user->can('export_hub.view-any');
-    }
 
     public function table(Table $table): Table
     {
         return $table
-            ->query(Export::query())
+            ->query(Import::query())
             ->columns([
                 TextColumn::make('requestor')
-                    ->getStateUsing(function (Export $record): ?string {
+                    ->getStateUsing(function (Import $record): ?string {
                         return $record->user->name ?? null;
                     }),
-                TextColumn::make('exporter')
-                    ->label('Export Name')
-                    ->getStateUsing(function (Export $record): string {
-                        if (defined($record->exporter . '::EXPORT_NAME')) {
-                            return constant($record->exporter . '::EXPORT_NAME') . ' Export';
+                TextColumn::make('importer')
+                    ->label('Import Name')
+                    ->getStateUsing(function (Import $record): string {
+                        if (defined($record->importer . '::IMPORT_NAME')) {
+                            return constant($record->importer . '::IMPORT_NAME') . ' Import';
                         }
 
-                        return Str::of(class_basename($record->exporter))
-                            ->replaceLast('Exporter', '')
-                            ->headline() . ' Export';
+                        return Str::of(class_basename($record->importer))
+                            ->replaceLast('Importer', '')
+                            ->headline() . ' Import';
                     }),
                 TextColumn::make('created_at')
                     ->label('Date Started')
@@ -104,8 +88,16 @@ class ExportHubPage extends Page implements HasForms, HasTable
                 Action::make('download')
                     ->label('Download')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->url(fn (Export $record) => URL::signedRoute('exports.download', $record))
-                    ->visible(fn (Export $record) => $record->completed_at !== null && auth()->user()->can('export_hub.import')),
+                    ->tooltip(fn (Import $record) => $record->total_rows ? 'Number of Rows: ' . number_format($record->total_rows) : null)
+                    ->url(fn (Import $record) => URL::signedRoute('imports.download', $record))
+                    ->visible(fn (Import $record) => $record->completed_at !== null
+                        && Storage::disk('s3')->exists("imports/{$record->getKey()}.csv")
+                        && auth()->user()->can('export_hub.import')),
             ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.import-hub-table');
     }
 }

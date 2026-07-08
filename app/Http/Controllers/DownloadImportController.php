@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,37 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Pages;
+namespace App\Http\Controllers;
 
-use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use App\Enums\NavigationGroup;
-use Filament\Pages\Page;
-use UnitEnum;
+use App\Models\Import;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class ManageStudentSyncs extends Page
+class DownloadImportController extends Controller
 {
-    protected static bool $shouldRegisterNavigation = false;
-
-    protected static ?string $navigationLabel = 'Sync History';
-
-    protected static ?string $title = 'Records Sync';
-
-    protected static ?int $navigationSort = 30;
-
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::DataAndAnalytics;
-
-    protected string $view = 'student-data-model::filament.pages.manage-student-syncs';
-
-    public static function canAccess(): bool
+    public function __invoke(Import $import): StreamedResponse
     {
-        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return false;
-        }
+        abort_unless(auth()->user()->can('export_hub.import'), 403);
 
-        if (! auth()->user()->can('record_sync.view-any')) {
-            return false;
-        }
+        $path = "imports/{$import->getKey()}.csv";
 
-        return parent::canAccess();
+        abort_unless(Storage::disk('s3')->exists($path), 404);
+
+        return Storage::disk('s3')->download($path, $import->file_name);
     }
 }
