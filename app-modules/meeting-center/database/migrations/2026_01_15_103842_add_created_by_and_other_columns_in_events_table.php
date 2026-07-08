@@ -40,6 +40,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         Schema::table('events', function (Blueprint $table) {
@@ -50,6 +51,7 @@ return new class () extends Migration {
         DB::statement('ALTER TABLE events ALTER COLUMN description TYPE jsonb USING description::jsonb');
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         Schema::table('events', function (Blueprint $table) {

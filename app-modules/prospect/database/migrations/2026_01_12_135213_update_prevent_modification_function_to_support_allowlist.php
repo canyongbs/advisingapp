@@ -38,6 +38,7 @@ use Illuminate\Database\Migrations\Migration;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         Schema::createFunctionOrReplace(
@@ -85,6 +86,7 @@ return new class () extends Migration {
         );
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         Schema::createFunctionOrReplace(

@@ -268,6 +268,7 @@ return new class () extends Migration {
             ->each(fn (string $guard) => $this->deletePermissions(array_keys($this->permissions), $guard));
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         collect($this->guards)

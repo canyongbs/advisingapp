@@ -37,6 +37,7 @@
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         $this->migrator->deleteIfExists('ai.open_ai_gpt_35_base_uri');
@@ -52,6 +53,7 @@ return new class () extends SettingsMigration {
         $this->migrator->deleteIfExists('ai.open_ai_gpt_4_applicable_features');
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         $this->migrator->add('ai.open_ai_gpt_35_base_uri');

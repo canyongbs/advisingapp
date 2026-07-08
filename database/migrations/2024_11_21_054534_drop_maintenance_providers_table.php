@@ -44,6 +44,7 @@ return new class () extends Migration {
         Schema::dropIfExists('maintenance_providers');
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         Schema::create('maintenance_providers', function (Blueprint $table) {

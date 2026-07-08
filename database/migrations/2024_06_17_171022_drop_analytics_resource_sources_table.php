@@ -44,6 +44,7 @@ return new class () extends Migration {
         Schema::dropIfExists('analytics_resource_sources');
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         Schema::table('analytics_resource_sources', function (Blueprint $table) {

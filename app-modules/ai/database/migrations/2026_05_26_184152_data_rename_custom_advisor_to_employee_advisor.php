@@ -58,6 +58,7 @@ return new class () extends SettingsMigration {
         'ai.jina_deepsearch_v1_applicable_features',
     ];
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::transaction(function () {
@@ -77,6 +78,7 @@ return new class () extends SettingsMigration {
         });
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         DB::transaction(function () {

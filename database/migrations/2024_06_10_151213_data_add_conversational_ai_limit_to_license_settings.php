@@ -40,6 +40,7 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     use CanModifySettings;
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         $this->updateSettings('license', 'data', function (array $data): array {
@@ -49,6 +50,7 @@ return new class () extends Migration {
         }, isEncrypted: true);
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         $this->updateSettings('license', 'data', function (array $data): array {

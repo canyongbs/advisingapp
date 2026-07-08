@@ -44,6 +44,7 @@ return new class () extends Migration {
         Schema::dropIfExists('login_magic_links');
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         Schema::create('login_magic_links', function (Blueprint $table) {

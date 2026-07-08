@@ -38,6 +38,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         /** Rename knowledge_base_articles to resource_hub_articles*/
@@ -91,6 +92,7 @@ return new class () extends Migration {
         DB::commit();
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         /** Rename resource_hub_articles to knowledge_base_articles*/

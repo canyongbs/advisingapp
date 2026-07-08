@@ -44,6 +44,7 @@ return new class () extends Migration {
         Schema::dropIfExists('asset_check_ins');
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         Schema::create('asset_check_ins', function (Blueprint $table) {

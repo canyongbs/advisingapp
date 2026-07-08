@@ -39,6 +39,7 @@ use Illuminate\Support\Facades\DB;
 use Tiptap\Editor;
 
 return new class () extends Migration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::table('engagements')
@@ -62,6 +63,7 @@ return new class () extends Migration {
             });
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         DB::table('engagements')

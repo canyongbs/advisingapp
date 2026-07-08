@@ -38,6 +38,7 @@ use AdvisingApp\Portal\Enums\GdprBannerButtonLabel;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         $this->migrator->add(
@@ -64,6 +65,7 @@ return new class () extends SettingsMigration {
         $this->migrator->add('portal.gdpr_banner_button_label', GdprBannerButtonLabel::AllowCookies);
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         $this->migrator->delete('portal.gdpr_banner_text');

@@ -37,12 +37,14 @@
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         $this->migrator->add('student_information_system.is_enabled', false);
         $this->migrator->add('student_information_system.sis_system', null);
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         $this->migrator->deleteIfExists('student_information_system.is_enabled');

@@ -39,6 +39,7 @@ use App\Models\Authenticatable;
 use Illuminate\Database\Migrations\Migration;
 
 return new class () extends Migration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::transaction(function () {

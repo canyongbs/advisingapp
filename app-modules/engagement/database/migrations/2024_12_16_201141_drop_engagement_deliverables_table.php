@@ -44,6 +44,7 @@ return new class () extends Migration {
         Schema::dropIfExists('engagement_deliverables');
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         Schema::create('engagement_deliverables', function (Blueprint $table) {

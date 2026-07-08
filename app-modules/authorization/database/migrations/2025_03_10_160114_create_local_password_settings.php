@@ -37,6 +37,7 @@
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         $this->migrator->add('local-password.minPasswordLength', 8);
@@ -50,6 +51,7 @@ return new class () extends SettingsMigration {
         $this->migrator->add('local-password.blacklistCommonPasswords', true);
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         $this->migrator->delete('local-password.minPasswordLength');
