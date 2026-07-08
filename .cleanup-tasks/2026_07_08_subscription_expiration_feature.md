@@ -13,8 +13,6 @@ created: 2026-07-08
 
 ## Additional Cleanup
 
-Once `SubscriptionExpirationFeature` is fully rolled out and the flag is removed, search the codebase for `TODO: Cleanup Task` and apply the following changes:
-
 - In `app/Http/Requests/Tenants/SyncTenantRequest.php`:
     1. Change the `subscriptionStatus` rule from `['nullable', Rule::enum(SubscriptionStatus::class)]` back to `['required', Rule::enum(SubscriptionStatus::class)]` — safe once Olympus always sends the field.
 
