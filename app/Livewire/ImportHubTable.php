@@ -61,7 +61,8 @@ class ImportHubTable extends Component implements HasActions, HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(Import::query())
+            ->query(Import::query()->with('user'))
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('requestor')
                     ->getStateUsing(function (Import $record): ?string {

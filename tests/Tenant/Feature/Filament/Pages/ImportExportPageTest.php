@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Report\Filament\Exports\UserExporter;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Filament\Imports\UserImporter;
 use App\Filament\Pages\ImportExportPage;
@@ -201,6 +202,24 @@ it('renders the export table', function () {
 
     livewire(ExportHubTable::class)
         ->assertSuccessful();
+});
+
+it('displays export records in the export table', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+
+    actingAs($user);
+
+    $export = new Export();
+    $export->user()->associate($user);
+    $export->file_name = 'test-export.csv';
+    $export->file_disk = 's3';
+    $export->exporter = UserExporter::class;
+    $export->total_rows = 200;
+    $export->save();
+
+    livewire(ExportHubTable::class)
+        ->assertCanSeeTableRecords([$export]);
 });
 
 // Student Sync Tab Tests

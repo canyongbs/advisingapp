@@ -37,6 +37,7 @@
 namespace App\Filament\Pages;
 
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+use App\Enums\ImportExportPageTab;
 use App\Enums\NavigationGroup;
 use App\Models\User;
 use Filament\Pages\Page;
@@ -54,7 +55,7 @@ class ImportExportPage extends Page
 
     protected static ?int $navigationSort = 30;
 
-    public string $activeTab = 'import';
+    public ImportExportPageTab $activeTab = ImportExportPageTab::Import;
 
     public static function canAccess(): bool
     {

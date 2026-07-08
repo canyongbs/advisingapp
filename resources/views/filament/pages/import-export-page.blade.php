@@ -42,14 +42,14 @@
             <x-filament::tabs label="Import/Export tabs">
                 <x-filament::tabs.item
                     wire:click="$set('activeTab', '{{ ImportExportPageTab::Import->value }}')"
-                    :active="$activeTab === ImportExportPageTab::Import->value"
+                    :active="$activeTab === ImportExportPageTab::Import"
                 >
                     {{ ImportExportPageTab::Import->getLabel() }}
                 </x-filament::tabs.item>
 
                 <x-filament::tabs.item
                     wire:click="$set('activeTab', '{{ ImportExportPageTab::Export->value }}')"
-                    :active="$activeTab === ImportExportPageTab::Export->value"
+                    :active="$activeTab === ImportExportPageTab::Export"
                 >
                     {{ ImportExportPageTab::Export->getLabel() }}
                 </x-filament::tabs.item>
@@ -57,7 +57,7 @@
                 @if ($this->canViewStudentSyncTab())
                     <x-filament::tabs.item
                         wire:click="$set('activeTab', '{{ ImportExportPageTab::StudentSync->value }}')"
-                        :active="$activeTab === ImportExportPageTab::StudentSync->value"
+                        :active="$activeTab === ImportExportPageTab::StudentSync"
                     >
                         {{ ImportExportPageTab::StudentSync->getLabel() }}
                     </x-filament::tabs.item>
@@ -66,11 +66,11 @@
         </div>
 
         <div class="mt-4">
-            @if ($activeTab === ImportExportPageTab::Import->value)
+            @if ($activeTab === ImportExportPageTab::Import)
                 @livewire('import-hub-table')
-            @elseif ($activeTab === ImportExportPageTab::Export->value)
+            @elseif ($activeTab === ImportExportPageTab::Export)
                 @livewire('export-hub-table')
-            @elseif ($activeTab === ImportExportPageTab::StudentSync->value && $this->canViewStudentSyncTab())
+            @elseif ($activeTab === ImportExportPageTab::StudentSync && $this->canViewStudentSyncTab())
                 @livewire(\AdvisingApp\StudentDataModel\Livewire\StudentDataImportsTable::class)
             @endif
         </div>

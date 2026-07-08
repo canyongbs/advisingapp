@@ -384,6 +384,7 @@ class FilamentServiceProvider extends ServiceProvider
                 $import = Import::query()
                     ->where('user_id', auth()->id())
                     ->where('importer', $action->getImporter())
+                    ->where('file_name', $file->getClientOriginalName())
                     ->latest()
                     ->first();
 
