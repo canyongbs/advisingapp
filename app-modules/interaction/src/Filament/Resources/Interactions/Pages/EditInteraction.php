@@ -48,7 +48,6 @@ use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\DateTimePicker;
@@ -64,7 +63,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class EditInteraction extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = InteractionResource::class;
 

@@ -37,13 +37,11 @@
 namespace AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\Pages;
 
 use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\InteractionDriverResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditInteractionDriver extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = InteractionDriverResource::class;
 

@@ -42,7 +42,6 @@ use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use AdvisingApp\Team\Models\Team;
 use App\Enums\RetentionCrmRestriction;
 use App\Filament\Forms\Components\Licenses;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Filament\Resources\Users\UserResource;
 use App\Models\User;
 use App\Notifications\SetPasswordNotification;
@@ -61,8 +60,6 @@ use STS\FilamentImpersonate\Actions\Impersonate;
 
 class EditUser extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = UserResource::class;
 
     protected ?bool $hasDatabaseTransactions = true;

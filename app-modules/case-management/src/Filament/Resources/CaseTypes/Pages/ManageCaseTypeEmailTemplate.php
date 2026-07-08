@@ -43,7 +43,6 @@ use AdvisingApp\CaseManagement\Filament\Blocks\SurveyResponseEmailTemplateTakeSu
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\CaseTypeResource;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Resources\Pages\EditRecord;
@@ -57,7 +56,6 @@ use UnitEnum;
 /** @property-read ?CaseTypeEmailTemplate $template */
 class ManageCaseTypeEmailTemplate extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = CaseTypeResource::class;
 

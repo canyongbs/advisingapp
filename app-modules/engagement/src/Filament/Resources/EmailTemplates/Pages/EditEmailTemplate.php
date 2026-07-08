@@ -42,7 +42,6 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\StockMedia\Enums\StockMediaProvider;
 use AdvisingApp\StockMedia\Settings\StockMediaSettings;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use CanyonGBS\Common\Filament\Forms\RichContentPlugins\StockImageRichContentPlugin;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\RichEditor;
@@ -56,7 +55,6 @@ use Illuminate\Support\Facades\URL;
 
 class EditEmailTemplate extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = EmailTemplateResource::class;
 

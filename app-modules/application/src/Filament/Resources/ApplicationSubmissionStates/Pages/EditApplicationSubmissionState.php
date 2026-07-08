@@ -38,7 +38,6 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates
 
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Actions\DeleteAction;
@@ -51,7 +50,6 @@ use Filament\Schemas\Schema;
 
 class EditApplicationSubmissionState extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = ApplicationSubmissionStateResource::class;
 

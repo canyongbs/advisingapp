@@ -39,7 +39,6 @@ namespace AdvisingApp\Concern\Filament\Resources\ConcernStatuses\Pages;
 use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Concern\Filament\Resources\ConcernStatuses\ConcernStatusResource;
 use AdvisingApp\Concern\Models\ConcernStatus;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -50,7 +49,6 @@ use Filament\Schemas\Schema;
 
 class EditConcernStatus extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = ConcernStatusResource::class;
 

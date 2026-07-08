@@ -42,7 +42,6 @@ use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
 use App\Filament\Forms\Components\AvatarUploadOrAiGenerator;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -60,7 +59,6 @@ use UnitEnum;
 
 class EditCustomerAdvisor extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = CustomerAdvisorResource::class;
 

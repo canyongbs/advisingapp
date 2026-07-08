@@ -37,7 +37,6 @@
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectSources\Pages;
 
 use AdvisingApp\Prospect\Filament\Resources\ProspectSources\ProspectSourceResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
@@ -46,7 +45,6 @@ use Filament\Schemas\Schema;
 
 class EditProspectSource extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = ProspectSourceResource::class;
 

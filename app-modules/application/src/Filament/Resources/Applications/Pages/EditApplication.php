@@ -41,7 +41,6 @@ use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\Concerns\HasSharedFormConfiguration;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Form\Actions\SaveSubmissibleFieldsFromContent;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
@@ -51,7 +50,6 @@ use Illuminate\Support\Facades\DB;
 class EditApplication extends EditRecord
 {
     use HasSharedFormConfiguration;
-    use EditPageRedirection;
 
     protected static string $resource = ApplicationResource::class;
 

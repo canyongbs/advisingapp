@@ -44,7 +44,6 @@ use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use App\Filament\Forms\Components\UserSelect;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action as BaseAction;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
@@ -62,7 +61,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditResourceHubArticle extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = ResourceHubArticleResource::class;
 

@@ -40,7 +40,6 @@ use AdvisingApp\CaseManagement\Enums\ColumnColorOptions;
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseStatuses\CaseStatusResource;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
@@ -53,7 +52,6 @@ use Filament\Schemas\Schema;
 
 class EditCaseStatus extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = CaseStatusResource::class;
 

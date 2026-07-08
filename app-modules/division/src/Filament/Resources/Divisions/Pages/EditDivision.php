@@ -38,7 +38,6 @@ namespace AdvisingApp\Division\Filament\Resources\Divisions\Pages;
 
 use AdvisingApp\Division\Filament\Resources\Divisions\DivisionResource;
 use AdvisingApp\Division\Models\Division;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\NotificationSetting;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
@@ -50,7 +49,6 @@ use Filament\Schemas\Schema;
 
 class EditDivision extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = DivisionResource::class;
 

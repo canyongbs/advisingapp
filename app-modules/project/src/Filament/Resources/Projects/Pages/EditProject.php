@@ -37,7 +37,6 @@
 namespace AdvisingApp\Project\Filament\Resources\Projects\Pages;
 
 use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Textarea;
@@ -47,7 +46,6 @@ use Filament\Schemas\Schema;
 
 class EditProject extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = ProjectResource::class;
 

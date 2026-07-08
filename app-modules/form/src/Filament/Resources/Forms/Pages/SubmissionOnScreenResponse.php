@@ -37,14 +37,12 @@
 namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
 
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 
 class SubmissionOnScreenResponse extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = FormResource::class;
 

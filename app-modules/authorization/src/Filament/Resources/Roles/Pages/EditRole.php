@@ -40,7 +40,6 @@ use AdvisingApp\Authorization\Enums\PermissionDescription;
 use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
 use AdvisingApp\Authorization\Models\PermissionGroup;
 use AdvisingApp\Authorization\Models\Role;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -54,7 +53,6 @@ use Illuminate\Validation\Rules\Unique;
 
 class EditRole extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = RoleResource::class;
 

@@ -38,7 +38,6 @@ namespace AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages;
 
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\CaseTypeResource;
 use AdvisingApp\CaseManagement\Models\CaseType;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
@@ -53,7 +52,6 @@ use Filament\Schemas\Schema;
 
 class EditCaseType extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = CaseTypeResource::class;
 

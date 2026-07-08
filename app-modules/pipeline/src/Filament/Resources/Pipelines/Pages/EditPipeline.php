@@ -40,7 +40,6 @@ use AdvisingApp\Pipeline\Filament\Resources\Pipelines\PipelineResource;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Pipeline\Models\PipelineStage;
 use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Repeater;
@@ -54,7 +53,6 @@ use Illuminate\Support\Str;
 
 class EditPipeline extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = PipelineResource::class;
 

@@ -40,7 +40,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Enums\ReportModel;
 use AdvisingApp\Report\Filament\Resources\Reports\ReportResource;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -64,7 +63,6 @@ class EditReport extends EditRecord implements HasTable
     use InteractsWithTable {
         bootedInteractsWithTable as baseBootedInteractsWithTable;
     }
-    use EditPageRedirection;
 
     protected static string $resource = ReportResource::class;
 

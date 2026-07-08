@@ -38,7 +38,6 @@ namespace AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\AiAssistantResource;
 use AdvisingApp\Ai\Models\AiAssistantLink;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
@@ -48,7 +47,6 @@ use UnitEnum;
 
 class EditAiAssistantLinks extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = AiAssistantResource::class;
 

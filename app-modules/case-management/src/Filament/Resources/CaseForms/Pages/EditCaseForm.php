@@ -40,7 +40,6 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseForms\CaseFormResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseForms\Pages\Concerns\HasSharedFormConfiguration;
 use AdvisingApp\CaseManagement\Models\CaseForm;
 use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Infolists\Components\TextEntry;
@@ -50,7 +49,6 @@ use Filament\Schemas\Schema;
 class EditCaseForm extends EditRecord
 {
     use HasSharedFormConfiguration;
-    use EditPageRedirection;
 
     protected static string $resource = CaseFormResource::class;
 

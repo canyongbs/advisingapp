@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Filament\Resources\AiAssistants\AiAssistantResource;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Forms\AiAssistantForm;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Settings\AiEmployeeAdvisorSettings;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Settings\LicenseSettings;
 use Exception;
 use Filament\Actions\Action;
@@ -51,7 +50,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditAiAssistant extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = AiAssistantResource::class;
 

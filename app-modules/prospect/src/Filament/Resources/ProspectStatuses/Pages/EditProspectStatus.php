@@ -38,7 +38,6 @@ namespace AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\Pages;
 
 use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\ProspectStatusResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -49,7 +48,6 @@ use Filament\Schemas\Schema;
 
 class EditProspectStatus extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = ProspectStatusResource::class;
 

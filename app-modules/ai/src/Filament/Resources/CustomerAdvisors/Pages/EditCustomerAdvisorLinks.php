@@ -39,7 +39,6 @@ namespace AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -51,7 +50,6 @@ use UnitEnum;
 
 class EditCustomerAdvisorLinks extends EditRecord
 {
-    use EditPageRedirection;
 
     protected static string $resource = CustomerAdvisorResource::class;
 

@@ -115,6 +115,7 @@ class AdminPanelProvider extends PanelProvider
             })
             ->assets($this->getAssets())
             ->readOnlyRelationManagersOnResourceViewPagesByDefault(false)
+            ->resourceEditPageRedirect('view')
             ->maxContentWidth('full')
             ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
