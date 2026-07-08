@@ -103,4 +103,3 @@ test('Legacy models must not use HasUuids (UUIDv7)', function () {
         );
     }
 });
-
