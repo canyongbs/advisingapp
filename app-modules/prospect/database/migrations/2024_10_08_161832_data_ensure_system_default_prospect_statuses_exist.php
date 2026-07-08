@@ -39,6 +39,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 return new class () extends Migration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         $newStatus = DB::table('prospect_statuses')
@@ -94,6 +95,7 @@ return new class () extends Migration {
         }
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         DB::table('prospect_statuses')

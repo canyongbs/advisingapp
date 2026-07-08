@@ -40,6 +40,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::statement('ALTER TABLE engagements ALTER COLUMN subject TYPE jsonb USING subject::jsonb');
@@ -47,6 +48,7 @@ return new class () extends Migration {
         DB::statement('ALTER TABLE form_email_auto_replies ALTER COLUMN subject TYPE jsonb USING subject::jsonb');
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         Schema::table('engagements', function (Blueprint $table) {

@@ -69,6 +69,7 @@ return new class () extends Migration {
         'api',
     ];
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         collect($this->guards)

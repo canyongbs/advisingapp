@@ -40,6 +40,7 @@ use Spatie\LaravelSettings\Migrations\SettingsMigration;
 return new class () extends SettingsMigration {
     use CanModifySettings;
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         $this->migrator->delete('report_assistant.prompt_system_context');
@@ -58,6 +59,7 @@ return new class () extends SettingsMigration {
         );
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         $this->updateSettings(

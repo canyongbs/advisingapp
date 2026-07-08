@@ -38,6 +38,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
 return new class () extends Migration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::statement('DROP VIEW IF EXISTS knowledge_base_articles');
@@ -55,6 +56,7 @@ return new class () extends Migration {
         DB::statement('DROP VIEW IF EXISTS knowledge_base_item_views');
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         DB::statement('CREATE VIEW knowledge_base_articles AS SELECT * FROM resource_hub_articles');
