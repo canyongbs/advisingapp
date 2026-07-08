@@ -41,9 +41,6 @@ parameters:
     # Level 9 is the highest level
     level: 6
 
-    parallel:
-        maximumNumberOfProcesses: 1
-
     meliorstan:
         boolean_get_method_name:
             check_parameterized_methods: true
