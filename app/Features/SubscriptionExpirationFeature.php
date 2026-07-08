@@ -34,31 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace App\Multitenancy\TenantFinder;
+namespace App\Features;
 
-use App\Enums\SubscriptionStatus;
-use App\Features\SubscriptionExpirationFeature;
-use Illuminate\Http\Request;
-use Spatie\Multitenancy\Contracts\IsTenant;
-use Spatie\Multitenancy\TenantFinder\DomainTenantFinder;
+use App\Support\LandlordAbstractFeatureFlag;
 
-/**
- * Resolves a tenant by domain, but only when its subscription is not fully
- * expired. An expired tenant is therefore not found and the request 404s via
- * the NeedsTenant middleware — as if the tenant did not exist.
- */
-class SubscriptionAwareDomainTenantFinder extends DomainTenantFinder
+class SubscriptionExpirationFeature extends LandlordAbstractFeatureFlag
 {
-    public function findForRequest(Request $request): ?IsTenant
+    public function resolve(mixed $scope): mixed
     {
-        if (! SubscriptionExpirationFeature::active()) {
-            return parent::findForRequest($request);
-        }
-
-        $host = $request->getHost();
-
-        return app(IsTenant::class)::whereDomain($host)
-            ->where('subscription_status', '!=', SubscriptionStatus::Expired->value)
-            ->first();
+        return false;
     }
 }
