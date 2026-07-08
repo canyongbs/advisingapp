@@ -40,6 +40,7 @@ use Illuminate\Support\Facades\Schema;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         Schema::create('system_users', function (Blueprint $table) {

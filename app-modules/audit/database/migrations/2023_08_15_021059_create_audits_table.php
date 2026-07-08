@@ -40,6 +40,7 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateAuditsTable extends Migration
 {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         $connection = config('audit.drivers.database.connection', config('database.default'));
@@ -67,6 +68,7 @@ class CreateAuditsTable extends Migration
         });
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         $connection = config('audit.drivers.database.connection', config('database.default'));

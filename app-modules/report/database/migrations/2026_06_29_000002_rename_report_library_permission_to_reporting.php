@@ -51,6 +51,7 @@ return new class () extends Migration {
         'reporting.*.update' => 'Reporting',
     ];
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         $this->renamePermissionGroups(['Report Library' => 'Reporting']);
@@ -61,6 +62,7 @@ return new class () extends Migration {
             });
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         collect($this->guards)

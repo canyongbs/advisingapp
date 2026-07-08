@@ -41,6 +41,7 @@ use Illuminate\Support\Facades\Schema;
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 class CreateKnowledgeBaseStatusesTable extends Migration
 {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         Schema::create('knowledge_base_statuses', function (Blueprint $table) {

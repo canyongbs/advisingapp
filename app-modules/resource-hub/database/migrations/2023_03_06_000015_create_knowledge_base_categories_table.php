@@ -41,6 +41,7 @@ use Illuminate\Support\Facades\Schema;
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 class CreateKnowledgeBaseCategoriesTable extends Migration
 {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         Schema::create('knowledge_base_categories', function (Blueprint $table) {

@@ -41,6 +41,7 @@ use Illuminate\Support\Facades\Schema;
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 class CreateProspectSourcesTable extends Migration
 {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         Schema::create('prospect_sources', function (Blueprint $table) {

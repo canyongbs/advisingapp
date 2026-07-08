@@ -40,6 +40,7 @@ use Illuminate\Support\Facades\Schema;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         Schema::create('interaction_outcomes', function (Blueprint $table) {

@@ -40,6 +40,7 @@ use Illuminate\Support\Facades\Schema;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         Schema::create('division_knowledge_base_item', function (Blueprint $table) {

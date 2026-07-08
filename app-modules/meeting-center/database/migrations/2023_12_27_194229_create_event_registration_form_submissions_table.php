@@ -40,6 +40,7 @@ use Illuminate\Support\Facades\Schema;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         Schema::create('event_registration_form_submissions', function (Blueprint $table) {
