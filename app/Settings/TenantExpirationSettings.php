@@ -34,17 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+namespace App\Settings;
 
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
-use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
+use Spatie\LaravelSettings\Settings;
 
-/**
- * @mixin IdeHelperLandlordSettingsProperty
- */
-class LandlordSettingsProperty extends BaseSettingsProperty
+class TenantExpirationSettings extends Settings
 {
-    use HasUuids;
-    use UsesLandlordConnection;
+    /**
+     * The banner text shown during the Expired - Period 2 window. Seeded with a
+     * static default that is used until Olympus syncs the current value.
+     */
+    public string $period_2_banner_text = 'Your subscription has expired. Please contact us for more details.';
+
+    public static function repository(): ?string
+    {
+        return 'landlord_database';
+    }
+
+    public static function group(): string
+    {
+        return 'tenant_expiration';
+    }
 }

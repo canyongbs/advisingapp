@@ -39,6 +39,7 @@ namespace App\Providers\Filament;
 use AdvisingApp\Authorization\Filament\Pages\Auth\Login;
 use AdvisingApp\Theme\Settings\ThemeSettings;
 use App\Enums\NavigationGroup;
+use App\Features\SubscriptionExpirationFeature;
 use App\Filament\Clusters\ProfileSettings;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\ProductHealth;
@@ -183,10 +184,12 @@ class AdminPanelProvider extends PanelProvider
                         return $themeSettings->is_support_url_enabled && ! empty($themeSettings->support_url);
                     }),
             ])
-            ->colors(fn (ThemeSettings $themeSettings): array => array_merge(config('default-colors'), $themeSettings->color_overrides))
+            ->colors(fn (ThemeSettings $themeSettings): array => Tenant::current()
+                ? array_merge(config('default-colors'), $themeSettings->color_overrides)
+                : config('default-colors'))
             ->renderHook(
                 'panels::head.end',
-                fn (ThemeSettings $themeSettings) => ($themeSettings->url) ? view('filament.layout.theme', ['url' => $themeSettings->url]) : null,
+                fn (ThemeSettings $themeSettings) => (Tenant::current() && $themeSettings->url) ? view('filament.layout.theme', ['url' => $themeSettings->url]) : null,
             )
             ->bootUsing(function (Panel $panel) {
                 if (! Tenant::current()) {
@@ -205,6 +208,22 @@ class AdminPanelProvider extends PanelProvider
                     }
 
                     return new HtmlString(Blade::render('<livewire:branding-bar />'));
+                },
+            )
+            ->renderHook(
+                PanelsRenderHook::TOPBAR_AFTER,
+                function (): ?Htmlable {
+                    if (! SubscriptionExpirationFeature::active()) {
+                        return null;
+                    }
+
+                    $tenant = Tenant::current();
+
+                    if (! $tenant?->subscription_status?->showsExpirationBanner()) {
+                        return null;
+                    }
+
+                    return new HtmlString(Blade::render('<livewire:subscription-expired-banner />'));
                 },
             )
             ->renderHook(

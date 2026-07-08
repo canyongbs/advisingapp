@@ -34,17 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+namespace App\Livewire;
 
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
-use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
+use App\Settings\TenantExpirationSettings;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
 
-/**
- * @mixin IdeHelperLandlordSettingsProperty
- */
-class LandlordSettingsProperty extends BaseSettingsProperty
+class SubscriptionExpiredBanner extends Component
 {
-    use HasUuids;
-    use UsesLandlordConnection;
+    public string $bannerText;
+
+    public function mount(): void
+    {
+        $this->bannerText = app(TenantExpirationSettings::class)->period_2_banner_text;
+    }
+
+    public function render(): View
+    {
+        return view('filament.components.subscription-expired-banner');
+    }
 }

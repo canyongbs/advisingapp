@@ -34,17 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+use App\Features\SubscriptionExpirationFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
-use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
+return new class () extends Migration {
+    public function up(): void
+    {
+        SubscriptionExpirationFeature::activate();
+    }
 
-/**
- * @mixin IdeHelperLandlordSettingsProperty
- */
-class LandlordSettingsProperty extends BaseSettingsProperty
-{
-    use HasUuids;
-    use UsesLandlordConnection;
-}
+    public function down(): void
+    {
+        SubscriptionExpirationFeature::deactivate();
+    }
+};

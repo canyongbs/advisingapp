@@ -34,17 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
-use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
+return new class () extends SettingsMigration {
+    public function up(): void
+    {
+        DB::transaction(function () {
+            $this->migrator->repository('landlord_database');
 
-/**
- * @mixin IdeHelperLandlordSettingsProperty
- */
-class LandlordSettingsProperty extends BaseSettingsProperty
-{
-    use HasUuids;
-    use UsesLandlordConnection;
-}
+            try {
+                $this->migrator->add('tenant_expiration.period_2_banner_text', 'Your subscription has expired. Please contact us for more details.');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+        });
+    }
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            $this->migrator->repository('landlord_database');
+
+            $this->migrator->deleteIfExists('tenant_expiration.period_2_banner_text');
+        });
+    }
+};
