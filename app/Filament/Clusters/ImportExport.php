@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,28 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Filament\Clusters;
 
-use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use App\Enums\ImportExportPageTab;
 use App\Enums\NavigationGroup;
 use App\Models\User;
-use Filament\Pages\Page;
+use Filament\Clusters\Cluster;
 use UnitEnum;
 
-class ImportExportPage extends Page
+class ImportExport extends Cluster
 {
-    protected string $view = 'filament.pages.import-export-page';
+    protected static ?int $navigationSort = 30;
 
     protected static string | UnitEnum | null $navigationGroup = NavigationGroup::DataAndAnalytics;
 
     protected static ?string $navigationLabel = 'Import/Export';
-
-    protected static ?string $title = 'Import/Export';
-
-    protected static ?int $navigationSort = 30;
-
-    public ImportExportPageTab $activeTab = ImportExportPageTab::Import;
 
     public static function canAccess(): bool
     {
@@ -63,11 +55,5 @@ class ImportExportPage extends Page
         assert($user instanceof User);
 
         return $user->can('export_hub.view-any');
-    }
-
-    public function canViewStudentSyncTab(): bool
-    {
-        return app(ManageStudentConfigurationSettings::class)->is_enabled
-            && auth()->user()->can('record_sync.view-any');
     }
 }

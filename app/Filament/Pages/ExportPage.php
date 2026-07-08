@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,28 +34,57 @@
 </COPYRIGHT>
 */
 
-namespace App\Livewire;
+namespace App\Filament\Pages;
 
+use App\Filament\Clusters\ImportExport;
 use App\Models\Export;
+use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Pages\Enums\SubNavigationPosition;
+use Filament\Pages\Page;
+use Filament\Schemas\Components\EmbeddedTable;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
-use Livewire\Component;
 
-class ExportHubTable extends Component implements HasActions, HasForms, HasTable
+class ExportPage extends Page implements HasActions, HasForms, HasTable
 {
     use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
+
+    protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+
+    protected static ?string $navigationLabel = 'Export';
+
+    protected static ?string $title = 'Export';
+
+    protected static ?int $navigationSort = 20;
+
+    protected static ?string $cluster = ImportExport::class;
+
+    public static function canAccess(): bool
+    {
+        $user = auth()->user();
+        assert($user instanceof User);
+
+        return $user->can('export_hub.view-any');
+    }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema->components([
+            EmbeddedTable::make(),
+        ]);
+    }
 
     public function table(Table $table): Table
     {
@@ -91,10 +120,5 @@ class ExportHubTable extends Component implements HasActions, HasForms, HasTable
                     ->url(fn (Export $record) => URL::signedRoute('exports.download', $record))
                     ->visible(fn (Export $record) => $record->completed_at !== null && auth()->user()->can('export_hub.import')),
             ]);
-    }
-
-    public function render(): View
-    {
-        return view('livewire.export-hub-table');
     }
 }

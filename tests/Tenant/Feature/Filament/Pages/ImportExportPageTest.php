@@ -37,9 +37,8 @@
 use AdvisingApp\Report\Filament\Exports\UserExporter;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Filament\Imports\UserImporter;
-use App\Filament\Pages\ImportExportPage;
-use App\Livewire\ExportHubTable;
-use App\Livewire\ImportHubTable;
+use App\Filament\Pages\ExportPage;
+use App\Filament\Pages\ImportPage;
 use App\Models\Export;
 use App\Models\Import;
 use App\Models\User;
@@ -54,20 +53,20 @@ it('is gated with proper access control', function () {
 
     actingAs($user);
 
-    get(ImportExportPage::getUrl())->assertForbidden();
+    get(ImportPage::getUrl())->assertForbidden();
 
     $user->givePermissionTo('export_hub.view-any');
 
-    get(ImportExportPage::getUrl())->assertSuccessful();
+    get(ImportPage::getUrl())->assertSuccessful();
 });
 
-it('defaults to the import tab', function () {
+it('renders the import page', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('export_hub.view-any');
 
     actingAs($user);
 
-    get(ImportExportPage::getUrl())
+    get(ImportPage::getUrl())
         ->assertSuccessful()
         ->assertSeeText('Import');
 });
@@ -78,7 +77,7 @@ it('renders the import table', function () {
 
     actingAs($user);
 
-    livewire(ImportHubTable::class)
+    livewire(ImportPage::class)
         ->assertSuccessful();
 });
 
@@ -96,7 +95,7 @@ it('displays import records in the import table', function () {
     $import->total_rows = 100;
     $import->save();
 
-    livewire(ImportHubTable::class)
+    livewire(ImportPage::class)
         ->assertCanSeeTableRecords([$import]);
 });
 
@@ -120,7 +119,7 @@ it('shows download button when import is completed and file exists and user has 
 
     Storage::disk('s3')->put("imports/{$import->getKey()}.csv", 'test,data');
 
-    livewire(ImportHubTable::class)
+    livewire(ImportPage::class)
         ->assertTableActionVisible('download', $import);
 });
 
@@ -143,7 +142,7 @@ it('hides download button when import is not completed', function () {
 
     Storage::disk('s3')->put("imports/{$import->getKey()}.csv", 'test,data');
 
-    livewire(ImportHubTable::class)
+    livewire(ImportPage::class)
         ->assertTableActionHidden('download', $import);
 });
 
@@ -165,7 +164,7 @@ it('hides download button when import file does not exist on disk', function () 
     $import->completed_at = now();
     $import->save();
 
-    livewire(ImportHubTable::class)
+    livewire(ImportPage::class)
         ->assertTableActionHidden('download', $import);
 });
 
@@ -188,19 +187,19 @@ it('hides download button when user lacks export_hub.import permission', functio
 
     Storage::disk('s3')->put("imports/{$import->getKey()}.csv", 'test,data');
 
-    livewire(ImportHubTable::class)
+    livewire(ImportPage::class)
         ->assertTableActionHidden('download', $import);
 });
 
-// Export Tab Tests
+// Export Page Tests
 
-it('renders the export table', function () {
+it('renders the export page', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('export_hub.view-any');
 
     actingAs($user);
 
-    livewire(ExportHubTable::class)
+    livewire(ExportPage::class)
         ->assertSuccessful();
 });
 
@@ -218,7 +217,7 @@ it('displays export records in the export table', function () {
     $export->total_rows = 200;
     $export->save();
 
-    livewire(ExportHubTable::class)
+    livewire(ExportPage::class)
         ->assertCanSeeTableRecords([$export]);
 });
 
@@ -235,7 +234,7 @@ it('does not show student sync tab when student editing is disabled', function (
 
     actingAs($user);
 
-    get(ImportExportPage::getUrl())
+    get(ImportPage::getUrl())
         ->assertSuccessful()
         ->assertDontSeeText('Student Sync');
 });
@@ -250,7 +249,7 @@ it('does not show student sync tab when user lacks record_sync.view-any permissi
 
     actingAs($user);
 
-    get(ImportExportPage::getUrl())
+    get(ImportPage::getUrl())
         ->assertSuccessful()
         ->assertDontSeeText('Student Sync');
 });
@@ -266,7 +265,7 @@ it('shows student sync tab when student editing is enabled and user has permissi
 
     actingAs($user);
 
-    get(ImportExportPage::getUrl())
+    get(ImportPage::getUrl())
         ->assertSuccessful()
         ->assertSeeText('Student Sync');
 });

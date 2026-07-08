@@ -37,21 +37,21 @@
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use App\Enums\NavigationGroup;
+use App\Filament\Clusters\ImportExport;
+use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
-use UnitEnum;
 
 class ManageStudentSyncs extends Page
 {
-    protected static bool $shouldRegisterNavigation = false;
+    protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
-    protected static ?string $navigationLabel = 'Sync History';
+    protected static ?string $navigationLabel = 'Student Sync';
 
-    protected static ?string $title = 'Records Sync';
+    protected static ?string $title = 'Student Sync';
 
     protected static ?int $navigationSort = 30;
 
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::DataAndAnalytics;
+    protected static ?string $cluster = ImportExport::class;
 
     protected string $view = 'student-data-model::filament.pages.manage-student-syncs';
 
