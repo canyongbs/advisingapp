@@ -65,7 +65,7 @@ class ListCalendarEvents extends ListRecords
 {
     protected static string $resource = CalendarEventResource::class;
 
-    protected ?string $heading = 'My Appointments';
+    protected ?string $heading = 'My Schedule';
 
     protected string $view = 'meeting-center::filament.pages.list-calendar-events';
 

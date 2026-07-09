@@ -1,4 +1,6 @@
-<!--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
@@ -30,11 +32,16 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
--->
-<script setup>
-    import LoadingSpinner from '@common/LoadingSpinner.vue';
-</script>
+*/
 
-<template>
-    <LoadingSpinner label="Searching Resource Hub..." />
-</template>
+namespace App\Features;
+
+use App\Support\LandlordAbstractFeatureFlag;
+
+class SubscriptionExpirationFeature extends LandlordAbstractFeatureFlag
+{
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
+    }
+}

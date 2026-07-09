@@ -6722,4 +6722,19 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/tests/Tenant/Unit/AwsGeoPlacesServiceTest.php',
 ];
 
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\(\) as it is not multibyte\-safe\. Use Laravel\'s Str\:\:lower\(\) instead, or mb_strtolower\(\) if a framework\-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(\/\/ @phpstan\-ignore Common\.noStrtolower\)\.$#',
+    'identifier' => 'Common.noStrtolower',
+];
+
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\. The ".+" method on ".+" defines a local scope, which relies on magic methods that static analysis cannot reason about\. Use a tappable scope instead\. See https://seankegel\.com/elevate\-your\-laravel\-eloquent\-queries\-with\-tappable\-scopes\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+];
+
+$ignoreErrors[] = [
+    'message' => '#^Eloquent models must define a "\$fillable" property\. Add a "\$fillable" property to this model or a parent model\.$#',
+    'identifier' => 'Common.modelMissingFillable',
+];
+
 return ['parameters' => ['ignoreErrors' => $ignoreErrors]];

@@ -37,6 +37,7 @@
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         $this->migrator->add('stock_media.is_active', false);
@@ -46,6 +47,7 @@ return new class () extends SettingsMigration {
         $this->migrator->addEncrypted('stock_media.pexels_api_key');
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         $this->migrator->deleteIfExists('stock_media.is_active');

@@ -50,46 +50,81 @@ class IconSelect extends Select
         $this
             ->allowHtml()
             ->searchable()
-            ->options(function (): array {
-                return Cache::remember('heroicon-select-options', now()->addHour(), function (): array {
-                    $paths = app(Factory::class)->all()['heroicons']['paths'];
+            ->options(fn (): array => $this->getIconOptions())
+            ->getSearchResultsUsing(function (string $search): array {
+                $search = (string) str($search)->lower();
 
-                    $options = [];
-
-                    foreach ($paths as $path) {
-                        foreach (File::files($path) as $file) {
-                            $id = $file->getFilenameWithoutExtension();
-
-                            if (! str($id)->startsWith('o-')) {
-                                continue;
-                            }
-
-                            $icon = "heroicon-{$id}";
-
-                            $name = (string) str($id)->after('o-')->headline();
-
-                            $options[] = [
-                                'customProperties' => [
-                                    'name' => $name,
-                                ],
-                                'label' => view('filament.forms.components.icon-select.option', [
-                                    'icon' => $icon,
-                                    'label' => $name,
-                                ])->render(),
-                                'value' => $icon,
-                            ];
-                        }
-                    }
-
-                    return $options;
-                });
+                return collect($this->getIcons())
+                    ->filter(fn (string $name, string $icon): bool => str($name)->lower()->contains($search)
+                        || str($icon)->lower()->contains($search))
+                    ->take($this->getOptionsLimit())
+                    ->map(fn (string $name, string $icon): string => $this->renderIconOption($icon, $name))
+                    ->all();
             })
-            ->transformOptionsForJsUsing(fn (array $options): array => $options)
-            ->optionsLimit(1000);
+            ->getOptionLabelUsing(function (?string $value): ?string {
+                if (blank($value)) {
+                    return null;
+                }
+
+                $name = $this->getIcons()[$value] ?? null;
+
+                if ($name === null) {
+                    return null;
+                }
+
+                return $this->renderIconOption($value, $name);
+            })
+            ->transformOptionsForJsUsing(fn (array $options): array => collect($options)
+                ->map(fn (string $label, string $value): array => [
+                    'label' => $label,
+                    'value' => $value,
+                ])
+                ->values()
+                ->all())
+            ->optionsLimit(50);
     }
 
-    public function getSearchableOptionFields(): array
+    /**
+     * @return array<string, string>
+     */
+    protected function getIcons(): array
     {
-        return ['customProperties.name'];
+        return Cache::remember('icon-select-icons', now()->addHour(), function (): array {
+            $paths = app(Factory::class)->all()['heroicons']['paths'];
+
+            $icons = [];
+
+            foreach ($paths as $path) {
+                foreach (File::files($path) as $file) {
+                    $id = $file->getFilenameWithoutExtension();
+
+                    if (! str($id)->startsWith('o-')) {
+                        continue;
+                    }
+
+                    $icons["heroicon-{$id}"] = (string) str($id)->after('o-')->headline();
+                }
+            }
+
+            return $icons;
+        });
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function getIconOptions(): array
+    {
+        return collect($this->getIcons())
+            ->map(fn (string $name, string $icon): string => $this->renderIconOption($icon, $name))
+            ->all();
+    }
+
+    protected function renderIconOption(string $icon, string $name): string
+    {
+        return view('filament.forms.components.icon-select.option', [
+            'icon' => $icon,
+            'label' => $name,
+        ])->render();
     }
 }

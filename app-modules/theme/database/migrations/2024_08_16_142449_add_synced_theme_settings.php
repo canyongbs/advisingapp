@@ -37,6 +37,7 @@
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         $this->migrator->add('theme.color_overrides', []);
@@ -44,6 +45,7 @@ return new class () extends SettingsMigration {
         $this->migrator->add('theme.url');
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         $this->migrator->deleteIfExists('theme.color_overrides');

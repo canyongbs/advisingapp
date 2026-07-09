@@ -1,4 +1,6 @@
-<!--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
@@ -30,36 +32,33 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
--->
-<script setup>
-    import CategoryCard from './CategoryCard.vue';
-    import Subheading from './Subheading.vue';
+*/
 
-    defineProps({
-        categories: {
-            type: Object,
-            required: true,
-        },
-        serviceRequests: {
-            type: Object,
-            required: true,
-        },
-    });
-</script>
+namespace AdvisingApp\Report\Models;
 
-<template>
-    <div class="flex flex-col gap-4">
-        <Subheading title="Article Categories" />
+use AdvisingApp\Team\Models\Team;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-        <div class="grid gap-3 md:grid-cols-2">
-            <CategoryCard
-                v-for="category in categories"
-                :key="category.id"
-                :to="{ name: 'view-category', params: { categoryId: category.id } }"
-                :icon="category.icon"
-                :name="category.name"
-                :description="category.description"
-            />
-        </div>
-    </div>
-</template>
+/**
+ * @mixin IdeHelperReportTeamAccess
+ */
+class ReportTeamAccess extends BaseModel implements Auditable
+{
+    use AuditableTrait;
+
+    protected $fillable = [
+        'report_key',
+        'team_id',
+    ];
+
+    /**
+     * @return BelongsTo<Team, $this>
+     */
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class);
+    }
+}

@@ -38,6 +38,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
+use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
 
 /**
  * @mixin IdeHelperLandlordSettingsProperty
@@ -45,4 +46,5 @@ use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
 class LandlordSettingsProperty extends BaseSettingsProperty
 {
     use HasUuids;
+    use UsesLandlordConnection;
 }

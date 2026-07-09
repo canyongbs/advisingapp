@@ -38,9 +38,12 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Filament\Pages\StudentInteractionReport;
 use AdvisingApp\Report\Filament\Widgets\StudentInteractionStats;
+use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\ReportingFeature;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -49,20 +52,24 @@ use function Pest\Laravel\get;
 $licenses = [
     LicenseType::RetentionCrm,
 ];
-$permission = [
-    'report-library.view-any',
-];
 
-it('cannot render without a license', function () use ($permission) {
-    actingAs(user(
-        permissions: $permission
-    ));
+it('cannot render without a license', function () {
+    ReportingFeature::activate();
+
+    $user = user();
+
+    actingAs($user);
+
+    ReportUserAccess::factory()->create([
+        'report_key' => ReportAccessKey::StudentInteractionReport->value,
+        'user_id' => $user->getKey(),
+    ]);
 
     get(StudentInteractionReport::getUrl())
         ->assertForbidden();
 });
 
-it('cannot render without permissions', function () use ($licenses) {
+it('cannot render without report access', function () use ($licenses) {
     actingAs(user(
         licenses: $licenses
     ));
@@ -71,11 +78,19 @@ it('cannot render without permissions', function () use ($licenses) {
         ->assertForbidden();
 });
 
-it('can render', function () use ($licenses, $permission) {
-    actingAs(user(
-        licenses: $licenses,
-        permissions: $permission
-    ));
+it('can render', function () use ($licenses) {
+    ReportingFeature::activate();
+
+    $user = user(
+        licenses: $licenses
+    );
+
+    actingAs($user);
+
+    ReportUserAccess::factory()->create([
+        'report_key' => ReportAccessKey::StudentInteractionReport->value,
+        'user_id' => $user->getKey(),
+    ]);
 
     get(StudentInteractionReport::getUrl())
         ->assertSuccessful();

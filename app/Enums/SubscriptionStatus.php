@@ -1,4 +1,6 @@
-<!--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
@@ -30,16 +32,44 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
--->
-<script setup>
-    defineProps({
-        title: {
-            type: String,
-            required: true,
-        },
-    });
-</script>
+*/
 
-<template>
-    <h2 class="text-2xl font-bold tracking-tight text-gray-950">{{ title }}</h2>
-</template>
+namespace App\Enums;
+
+/**
+ * The full subscription lifecycle status synced from Olympus. The instance only
+ * acts on ExpiredPeriod2 (warning banner) and Expired (offline); the remaining
+ * cases are stored so future behaviour can key off them.
+ */
+enum SubscriptionStatus: string
+{
+    case Upcoming = 'upcoming';
+
+    case Active = 'active';
+
+    case Outstanding = 'outstanding';
+
+    case ExpiredPeriod1 = 'expired_period_1';
+
+    case ExpiredPeriod2 = 'expired_period_2';
+
+    case Expired = 'expired';
+
+    case NotApplicable = 'not_applicable';
+
+    /**
+     * Whether the expiration warning banner should be shown for this status.
+     */
+    public function showsExpirationBanner(): bool
+    {
+        return $this === self::ExpiredPeriod2;
+    }
+
+    /**
+     * Whether the tenant should be fully inaccessible for this status.
+     */
+    public function isInaccessible(): bool
+    {
+        return $this === self::Expired;
+    }
+}

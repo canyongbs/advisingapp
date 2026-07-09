@@ -1,4 +1,6 @@
-<!--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
@@ -30,19 +32,25 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
--->
-<script setup>
-    defineProps({
-        title: {
-            type: String,
-            default: '',
-        },
-    });
-</script>
+*/
 
-<template>
-    <h2 class="text-xl font-medium text-gray-950">
-        <template v-if="$slots.default"><slot /></template>
-        <template v-else>{{ title }}</template>
-    </h2>
-</template>
+namespace App\Livewire;
+
+use App\Settings\TenantExpirationSettings;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
+
+class SubscriptionExpiredBanner extends Component
+{
+    public string $bannerText;
+
+    public function mount(): void
+    {
+        $this->bannerText = app(TenantExpirationSettings::class)->period_2_banner_text;
+    }
+
+    public function render(): View
+    {
+        return view('filament.components.subscription-expired-banner');
+    }
+}

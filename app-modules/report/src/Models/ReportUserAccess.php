@@ -1,4 +1,6 @@
-<!--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
@@ -30,30 +32,33 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
--->
-<script setup>
-    import { defineProps } from 'vue';
+*/
 
-    const props = defineProps({
-        logo: {
-            type: String,
-            required: true,
-        },
-    });
-</script>
+namespace AdvisingApp\Report\Models;
 
-<template>
-    <div class="bg-white border-t border-gray-200 flex w-full flex-col py-4">
-        <div class="flex w-full justify-center">
-            <img class="block h-7" :src="logo" alt="Advising App Logo" />
-        </div>
+use App\Models\BaseModel;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-        <div class="flex w-full justify-center pb-4 pt-2">
-            <span class="w-11/12 text-center text-xs lg:w-3/4 xl:w-7/12">
-                &copy; 2016-{{ new Date().getFullYear() }} Canyon GBS Inc. All Rights Reserved. Canyon GBS&reg; and
-                Advising App&reg; are trademarks of Canyon GBS Inc. For more information or inquiries, please visit our
-                website at <a class="text-blue-600 underline" href="https://canyongbs.com/">https://canyongbs.com</a>.
-            </span>
-        </div>
-    </div>
-</template>
+/**
+ * @mixin IdeHelperReportUserAccess
+ */
+class ReportUserAccess extends BaseModel implements Auditable
+{
+    use AuditableTrait;
+
+    protected $fillable = [
+        'report_key',
+        'user_id',
+    ];
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+}

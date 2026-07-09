@@ -34,15 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Clusters;
+namespace AdvisingApp\Report\Database\Factories;
 
-use App\Enums\NavigationGroup;
-use Filament\Clusters\Cluster;
-use UnitEnum;
+use AdvisingApp\Report\Enums\ReportAccessKey;
+use AdvisingApp\Report\Models\ReportTeamAccess;
+use AdvisingApp\Team\Models\Team;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class GroupAppointments extends Cluster
+/**
+ * @extends Factory<ReportTeamAccess>
+ */
+class ReportTeamAccessFactory extends Factory
 {
-    protected static ?int $navigationSort = 70;
-
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
+    public function definition(): array
+    {
+        return [
+            'report_key' => $this->faker->randomElement(ReportAccessKey::cases())->value,
+            'team_id' => Team::factory(),
+        ];
+    }
 }

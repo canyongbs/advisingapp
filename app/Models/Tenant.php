@@ -36,6 +36,7 @@
 
 namespace App\Models;
 
+use App\Enums\SubscriptionStatus;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -59,11 +60,13 @@ class Tenant extends SpatieTenant
         'domain',
         'config',
         'setup_complete',
+        'subscription_status',
     ];
 
     protected $casts = [
         'setup_complete' => 'boolean',
         'config' => TenantConfig::class . ':encrypted',
+        'subscription_status' => SubscriptionStatus::class,
     ];
 
     public function makeCurrent(): static

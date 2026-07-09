@@ -39,6 +39,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         Schema::dropIfExists('role_role_group');
@@ -46,6 +47,7 @@ return new class () extends Migration {
         Schema::dropIfExists('role_groups');
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         Schema::create('role_groups', function (Blueprint $table) {

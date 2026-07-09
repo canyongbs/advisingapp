@@ -1,4 +1,6 @@
-<!--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
@@ -30,51 +32,25 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
--->
-<script setup>
-    import { ChevronRightIcon } from '@heroicons/vue/20/solid';
+*/
 
-    defineProps({
-        to: {
-            type: [Object, String],
-            required: true,
-        },
-        icon: {
-            type: String,
-            default: null,
-        },
-        name: {
-            type: String,
-            required: true,
-        },
-        description: {
-            type: String,
-            default: null,
-        },
-    });
-</script>
+namespace AdvisingApp\Report\Database\Factories;
 
-<template>
-    <router-link
-        :to="to"
-        class="group flex items-start w-full gap-3 rounded-xl bg-white px-6 py-4 ring-1 ring-gray-950/5 transition duration-75 hover:bg-gray-50"
-    >
-        <div
-            v-if="icon"
-            v-html="icon"
-            class="shrink-0 text-gray-400 [&>svg]:size-6 transition duration-75 group-hover:text-brand-500"
-            aria-hidden="true"
-        ></div>
+use AdvisingApp\Report\Enums\ReportAccessKey;
+use AdvisingApp\Report\Models\ReportUserAccess;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-        <div class="mt-0.5 grid flex-1 gap-1 min-w-0">
-            <span class="text-sm font-medium text-gray-950">{{ name }}</span>
-            <p class="overflow-hidden text-sm text-pretty break-words text-gray-500">
-                {{ description }}
-            </p>
-        </div>
-
-        <ChevronRightIcon
-            class="shrink-0 size-5 self-center text-gray-400 opacity-0 transition-all group-hover:translate-x-1 group-hover:opacity-100"
-        />
-    </router-link>
-</template>
+/**
+ * @extends Factory<ReportUserAccess>
+ */
+class ReportUserAccessFactory extends Factory
+{
+    public function definition(): array
+    {
+        return [
+            'report_key' => $this->faker->randomElement(ReportAccessKey::cases())->value,
+            'user_id' => User::factory(),
+        ];
+    }
+}

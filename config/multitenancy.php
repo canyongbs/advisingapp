@@ -44,6 +44,7 @@ use App\Multitenancy\Tasks\SwitchS3FilesystemTask;
 use App\Multitenancy\Tasks\SwitchS3PublicFilesystemTask;
 use App\Multitenancy\Tasks\SwitchSessionDriver;
 use App\Multitenancy\Tasks\SwitchTenantDatabasesTask;
+use App\Multitenancy\TenantFinder\SubscriptionAwareDomainTenantFinder;
 use Illuminate\Broadcasting\BroadcastEvent;
 use Illuminate\Events\CallQueuedListener;
 use Illuminate\Mail\SendQueuedMailable;
@@ -53,7 +54,6 @@ use Spatie\Multitenancy\Actions\ForgetCurrentTenantAction;
 use Spatie\Multitenancy\Actions\MakeQueueTenantAwareAction;
 use Spatie\Multitenancy\Actions\MakeTenantCurrentAction;
 use Spatie\Multitenancy\Actions\MigrateTenantAction;
-use Spatie\Multitenancy\TenantFinder\DomainTenantFinder;
 
 return [
     /*
@@ -63,7 +63,7 @@ return [
      * This class should extend `Spatie\Multitenancy\TenantFinder\TenantFinder`
      *
      */
-    'tenant_finder' => DomainTenantFinder::class,
+    'tenant_finder' => SubscriptionAwareDomainTenantFinder::class,
 
     /*
      * These fields are used by tenant:artisan command to match one or more tenant.

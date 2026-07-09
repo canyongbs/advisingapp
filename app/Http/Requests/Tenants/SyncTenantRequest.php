@@ -36,7 +36,9 @@
 
 namespace App\Http\Requests\Tenants;
 
+use App\Enums\SubscriptionStatus;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class SyncTenantRequest extends FormRequest
 {
@@ -86,6 +88,8 @@ class SyncTenantRequest extends FormRequest
             'subscription.partnerName' => ['required', 'string'],
             'subscription.startDate' => ['required', 'string'],
             'subscription.endDate' => ['required', 'string'],
+            'subscriptionStatus' => ['nullable', Rule::enum(SubscriptionStatus::class)],
+            'expirationBannerText' => ['nullable', 'string'],
         ];
     }
 }

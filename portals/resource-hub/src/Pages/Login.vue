@@ -32,10 +32,10 @@
 </COPYRIGHT>
 -->
 <script setup>
+    import Footer from '@common/portal/Footer.vue';
+    import Heading from '@common/portal/Heading.vue';
     import { FormKit } from '@formkit/vue';
     import { ref } from 'vue';
-    import Footer from '../Components/Footer.vue';
-    import Heading from '../Components/Heading.vue';
 
     const authentication = defineModel('authentication', {
         type: Object,
@@ -52,6 +52,10 @@
             required: true,
         },
         footerLogo: {
+            type: String,
+            required: true,
+        },
+        appName: {
             type: String,
             required: true,
         },
@@ -228,6 +232,6 @@
             </div>
         </main>
 
-        <Footer :logo="footerLogo" />
+        <Footer :logo="footerLogo" :appName="appName" />
     </div>
 </template>

@@ -41,6 +41,7 @@ use Spatie\Health\ResultStores\EloquentHealthResultStore;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         $tableName = EloquentHealthResultStore::getHistoryItemInstance()->getTable();

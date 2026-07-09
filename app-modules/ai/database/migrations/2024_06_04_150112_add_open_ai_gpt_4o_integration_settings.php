@@ -37,6 +37,7 @@
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         $this->migrator->add('ai.open_ai_gpt_4o_base_uri', config('integration-open-ai.gpt_4o_base_uri'), encrypted: true);
@@ -44,6 +45,7 @@ return new class () extends SettingsMigration {
         $this->migrator->add('ai.open_ai_gpt_4o_model', config('integration-open-ai.gpt_4o_model'), encrypted: true);
     }
 
+    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         $this->migrator->deleteIfExists('ai.open_ai_gpt_4o_base_uri');

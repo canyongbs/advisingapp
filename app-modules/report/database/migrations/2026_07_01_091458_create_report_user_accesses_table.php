@@ -1,4 +1,6 @@
-<!--
+<?php
+
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
@@ -30,27 +32,27 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
--->
-<script setup>
-    import { useRouter } from 'vue-router';
-    import { globalSearchQuery } from '../Stores/globalState.js';
+*/
 
-    const router = useRouter();
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-    const onSearch = () => {
-        router.push({ name: 'home', query: { search: globalSearchQuery.value } });
-    };
-</script>
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('report_user_accesses', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->string('report_key');
+            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            $table->timestamps();
 
-<template>
-    <div class="float-right mr-3">
-        <form @submit.prevent="onSearch">
-            <input
-                v-model="globalSearchQuery"
-                type="text"
-                placeholder="Search resource hub"
-                class="m-3 block w-full rounded border-0 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-brand-2-- sm:text-sm sm:leading-6"
-            />
-        </form>
-    </div>
-</template>
+            $table->unique(['report_key', 'user_id']);
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('report_user_accesses');
+    }
+};
