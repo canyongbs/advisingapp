@@ -34,19 +34,22 @@
 <script setup>
     import Breadcrumbs from '@common/portal/Breadcrumbs.vue';
     import Article from '@common/portal/category/Article.vue';
-    import SubCategories from '@common/portal/category/SubCategories.vue';
     import Page from '@common/portal/Page.vue';
     import Pagination from '@common/portal/Pagination.vue';
     import Subheading from '@common/portal/Subheading.vue';
     import Tabs from '@common/portal/Tabs.vue';
     import { DocumentTextIcon } from '@heroicons/vue/24/outline';
+    import NProgress from 'nprogress';
+    import 'nprogress/nprogress.css';
     import { computed, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
-    import AppLoading from '../Components/AppLoading.vue';
     import { consumer } from '../Services/Consumer.js';
+
+    NProgress.configure({ showSpinner: false });
 
     const route = useRoute();
     const router = useRouter();
+    const { get } = consumer();
 
     const props = defineProps({
         apiUrl: {
@@ -55,51 +58,24 @@
         },
     });
 
-    const loadingResults = ref(true);
     const category = ref(null);
-    const articles = ref(null);
-    const currentPage = ref(1);
-    const lastPage = ref(null);
-    const totalArticles = ref(0);
-    const fromArticle = ref(0);
-    const toArticle = ref(0);
-    const filter = ref('');
+    const initialLoading = ref(true);
+    const loadingPage = ref(null);
+    const activeFilter = ref('all-articles');
+
+    const filterState = ref({
+        'all-articles': { data: [], currentPage: 1, lastPage: 1, total: 0, from: 0, to: 0 },
+        'most-viewed': { data: [], currentPage: 1, lastPage: 1, total: 0, from: 0, to: 0 },
+    });
 
     const filterTabs = [
         { label: 'All Articles', value: 'all-articles' },
-        { label: 'Featured', value: 'featured' },
         { label: 'Most Viewed', value: 'most-viewed' },
     ];
 
-    const articlesWithRoutes = computed(() =>
-        (articles.value ?? []).map((article) => ({
-            ...article,
-            key: article.id,
-            to: { name: 'view-article', params: { categoryId: article.categoryId, articleId: article.id } },
-        })),
-    );
+    const currentFilterState = computed(() => filterState.value[activeFilter.value]);
 
-    const subCategoriesWithRoutes = computed(() =>
-        (category.value?.subCategories ?? []).map((subCategory) => ({
-            ...subCategory,
-            key: subCategory.id,
-            to: {
-                name: 'view-subcategory',
-                params: {
-                    parentCategoryId: subCategory.parentCategory.id,
-                    categoryId: subCategory.id,
-                },
-            },
-        })),
-    );
-
-    const setPagination = (pagination) => {
-        currentPage.value = pagination.current_page;
-        lastPage.value = pagination.last_page;
-        totalArticles.value = pagination.total;
-        fromArticle.value = pagination.from;
-        toArticle.value = pagination.to;
-    };
+    const articlesWithRoutes = computed(() => currentFilterState.value?.data ?? []);
 
     const breadcrumbs = computed(() => {
         if (category.value?.parentCategory) {
@@ -115,34 +91,27 @@
         return [];
     });
 
-    const fetchNextPage = () => {
-        if (currentPage.value < lastPage.value) {
-            fetchPage(currentPage.value + 1);
-        }
-    };
+    function setFilterPagination(filterKey, pagination) {
+        filterState.value[filterKey] = {
+            ...filterState.value[filterKey],
+            currentPage: pagination.current_page,
+            lastPage: pagination.last_page,
+            total: pagination.total,
+            from: pagination.from ?? 0,
+            to: pagination.to ?? 0,
+        };
+    }
 
-    const fetchPreviousPage = () => {
-        if (currentPage.value > 1) {
-            fetchPage(currentPage.value - 1);
-        }
-    };
+    function mapArticles(rawData) {
+        return rawData.map((article) => ({
+            ...article,
+            key: article.id,
+            to: { name: 'view-article', params: { categoryId: article.categoryId, articleId: article.id } },
+        }));
+    }
 
-    const fetchPage = (page) => {
-        if (page === currentPage.value) return;
-
-        router.push({
-            name: route.name,
-            params: route.params,
-            query: {
-                ...route.query,
-                page,
-                filter: filter.value || undefined,
-            },
-        });
-    };
-
-    const changeFilter = (value) => {
-        filter.value = value;
+    function changeFilter(value) {
+        activeFilter.value = value;
 
         router.push({
             name: route.name,
@@ -150,58 +119,113 @@
             query: {
                 ...route.query,
                 page: 1,
-                filter: filter.value || undefined,
+                filter: value === 'all-articles' ? undefined : value,
+            },
+        });
+    }
+
+    const fetchNextPage = () => {
+        const state = currentFilterState.value;
+        if (state.currentPage < state.lastPage) fetchPage(state.currentPage + 1);
+    };
+
+    const fetchPreviousPage = () => {
+        const state = currentFilterState.value;
+        if (state.currentPage > 1) fetchPage(state.currentPage - 1);
+    };
+
+    const fetchPage = (page) => {
+        const state = currentFilterState.value;
+        if (page === state.currentPage || loadingPage.value !== null) return;
+
+        router.push({
+            name: route.name,
+            params: route.params,
+            query: {
+                ...route.query,
+                page,
+                filter: activeFilter.value === 'all-articles' ? undefined : activeFilter.value,
             },
         });
     };
 
+    async function fetchFilterPage(filter, page) {
+        loadingPage.value = page;
+
+        try {
+            const response = await get(props.apiUrl + '/categories/' + route.params.categoryId, {
+                filter,
+                page,
+            });
+
+            filterState.value[filter].data = mapArticles(response.data.articles.data);
+            setFilterPagination(filter, response.data.articles);
+        } catch (error) {
+            console.error('Error fetching page:', error);
+        } finally {
+            loadingPage.value = null;
+        }
+    }
+
+    let lastCategoryId = null;
+
+    async function loadCategory() {
+        NProgress.start();
+        initialLoading.value = true;
+        category.value = null;
+
+        try {
+            const response = await get(props.apiUrl + '/categories/' + route.params.categoryId);
+
+            if (route.params.categoryId && route.params.parentCategoryId) {
+                router.replace({
+                    name: 'view-subcategory',
+                    params: {
+                        parentCategoryId: response.data.category.id,
+                        categoryId: response.data.category.id,
+                    },
+                    query: { ...route.query },
+                });
+            }
+
+            category.value = response.data.category;
+            filterState.value['all-articles'].data = mapArticles(response.data.all_articles.data);
+            setFilterPagination('all-articles', response.data.all_articles);
+            filterState.value['most-viewed'].data = mapArticles(response.data.most_viewed_articles.data);
+            setFilterPagination('most-viewed', response.data.most_viewed_articles);
+        } catch (error) {
+            console.error('Error loading category:', error);
+        } finally {
+            initialLoading.value = false;
+            NProgress.done();
+        }
+    }
+
     watch(
         route,
         async (newRoute) => {
-            currentPage.value = parseInt(newRoute.query.page) || 1;
-            filter.value = newRoute.query.filter || '';
-            await getData(currentPage.value);
+            const newCategoryId = newRoute.params.categoryId;
+            const newFilter = newRoute.query.filter || 'all-articles';
+            const newPage = parseInt(newRoute.query.page) || 1;
+
+            if (newCategoryId !== lastCategoryId) {
+                lastCategoryId = newCategoryId;
+                activeFilter.value = newFilter;
+                await loadCategory();
+                return;
+            }
+
+            if (newFilter !== activeFilter.value) {
+                activeFilter.value = newFilter;
+            }
+
+            const currentPage = currentFilterState.value?.currentPage ?? 1;
+            if (newPage !== currentPage) {
+                await fetchFilterPage(newFilter, newPage);
+            }
         },
         { immediate: true },
     );
-
-    async function getData(page = 1) {
-        loadingResults.value = true;
-
-        const { get } = consumer();
-
-        await get(props.apiUrl + '/categories/' + route.params.categoryId, {
-            page: page,
-            filter: filter.value,
-        })
-            .then((response) => {
-                if (route.params.categoryId && route.params.parentCategoryId) {
-                    router.replace({
-                        name: 'view-subcategory',
-                        params: {
-                            parentCategoryId: response.data.category.parentCategory.id,
-                            categoryId: response.data.category.id,
-                        },
-                        query: { ...route.query },
-                    });
-                } else if (route.params.categoryId) {
-                    router.replace({
-                        name: 'view-category',
-                        params: { categoryId: response.data.category.id },
-                        query: { ...route.query },
-                    });
-                }
-
-                category.value = response.data.category;
-                articles.value = response.data.articles.data;
-                setPagination(response.data.articles);
-                loadingResults.value = false;
-            })
-            .catch((error) => {
-                console.error('Error loading category:', error);
-                loadingResults.value = false;
-            });
-    }
 </script>
 
 <template>
@@ -211,25 +235,22 @@
         <template v-if="category?.description" #description>{{ category.description }}</template>
 
         <template #breadcrumbs>
-            <Breadcrumbs v-if="!loadingResults && category" :currentCrumb="category.name" :breadcrumbs="breadcrumbs" />
+            <Breadcrumbs v-if="!initialLoading && category" :currentCrumb="category.name" :breadcrumbs="breadcrumbs" />
         </template>
 
-        <div v-if="loadingResults">
-            <AppLoading />
+        <div v-if="initialLoading" class="flex items-center justify-center py-12">
+            <div class="size-8 animate-spin rounded-full border-4 border-gray-200 border-t-brand-600"></div>
         </div>
+
         <div v-else-if="category">
             <main class="flex flex-col gap-8">
                 <div class="flex flex-col gap-6">
                     <div class="flex flex-col gap-4">
                         <Subheading :title="category.name" />
-                        <SubCategories
-                            v-if="subCategoriesWithRoutes.length > 0"
-                            :subCategories="subCategoriesWithRoutes"
-                        />
                         <div class="flex flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">
                             <Tabs
                                 :tabs="filterTabs"
-                                :modelValue="filter || 'all-articles'"
+                                :modelValue="activeFilter"
                                 @update:modelValue="changeFilter"
                                 :contained="true"
                             />
@@ -240,17 +261,18 @@
                                         <Article
                                             :to="article.to"
                                             :name="article.name"
-                                            :tags="article.tags"
-                                            :featured="article.featured"
+                                            :tags="article.tags ?? []"
+                                            :featured="article.featured ?? false"
                                         />
                                     </li>
                                 </ul>
                                 <Pagination
-                                    :currentPage="currentPage"
-                                    :lastPage="lastPage"
-                                    :fromItem="fromArticle"
-                                    :toItem="toArticle"
-                                    :totalItems="totalArticles"
+                                    :currentPage="currentFilterState.currentPage"
+                                    :lastPage="currentFilterState.lastPage"
+                                    :fromItem="currentFilterState.from"
+                                    :toItem="currentFilterState.to"
+                                    :totalItems="currentFilterState.total"
+                                    :loadingPage="loadingPage"
                                     @fetchNextPage="fetchNextPage"
                                     @fetchPreviousPage="fetchPreviousPage"
                                     @fetchPage="fetchPage"

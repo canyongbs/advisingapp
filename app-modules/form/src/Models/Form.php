@@ -53,6 +53,8 @@ use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
+ * @property string|null $root_id
+ *
  * @mixin IdeHelperForm
  */
 #[ObservedBy([FormObserver::class])]
