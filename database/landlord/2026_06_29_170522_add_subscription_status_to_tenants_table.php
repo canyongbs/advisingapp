@@ -34,17 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
-use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('tenants', function (Blueprint $table) {
+            $table->string('subscription_status')->default('active');
+        });
+    }
 
-/**
- * @mixin IdeHelperLandlordSettingsProperty
- */
-class LandlordSettingsProperty extends BaseSettingsProperty
-{
-    use HasUuids;
-    use UsesLandlordConnection;
-}
+    public function down(): void
+    {
+        Schema::table('tenants', function (Blueprint $table) {
+            $table->dropColumn('subscription_status');
+        });
+    }
+};

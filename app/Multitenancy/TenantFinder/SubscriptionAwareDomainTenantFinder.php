@@ -34,17 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+namespace App\Multitenancy\TenantFinder;
 
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
-use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
+use App\Enums\SubscriptionStatus;
+use App\Features\SubscriptionExpirationFeature;
+use Illuminate\Http\Request;
+use Spatie\Multitenancy\Contracts\IsTenant;
+use Spatie\Multitenancy\TenantFinder\DomainTenantFinder;
 
 /**
- * @mixin IdeHelperLandlordSettingsProperty
+ * Resolves a tenant by domain, but only when its subscription is not fully
+ * expired. An expired tenant is therefore not found and the request 404s via
+ * the NeedsTenant middleware — as if the tenant did not exist.
  */
-class LandlordSettingsProperty extends BaseSettingsProperty
+class SubscriptionAwareDomainTenantFinder extends DomainTenantFinder
 {
-    use HasUuids;
-    use UsesLandlordConnection;
+    public function findForRequest(Request $request): ?IsTenant
+    {
+        if (! SubscriptionExpirationFeature::active()) {
+            return parent::findForRequest($request);
+        }
+
+        $host = $request->getHost();
+
+        return app(IsTenant::class)::whereDomain($host)
+            ->where('subscription_status', '!=', SubscriptionStatus::Expired->value)
+            ->first();
+    }
 }

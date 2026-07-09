@@ -34,17 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+namespace App\Features;
 
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Spatie\LaravelSettings\Models\SettingsProperty as BaseSettingsProperty;
-use Spatie\Multitenancy\Models\Concerns\UsesLandlordConnection;
+use App\Support\LandlordAbstractFeatureFlag;
 
-/**
- * @mixin IdeHelperLandlordSettingsProperty
- */
-class LandlordSettingsProperty extends BaseSettingsProperty
+class SubscriptionExpirationFeature extends LandlordAbstractFeatureFlag
 {
-    use HasUuids;
-    use UsesLandlordConnection;
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
+    }
 }
