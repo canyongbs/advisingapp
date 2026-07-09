@@ -36,35 +36,40 @@
 
 namespace App\Filament\Pages;
 
-use App\Enums\NavigationGroup;
+use App\Filament\Clusters\ImportExport;
 use App\Models\Export;
 use App\Models\User;
 use Filament\Actions\Action;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\EmbeddedTable;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
-use UnitEnum;
 
-class ExportHubPage extends Page implements HasForms, HasTable
+class ExportPage extends Page implements HasActions, HasForms, HasTable
 {
+    use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
 
-    protected string $view = 'filament.pages.export-hub-page';
+    protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::DataAndAnalytics;
+    protected static ?string $navigationLabel = 'Export';
 
-    protected static ?string $navigationLabel = 'Export Hub';
+    protected static ?string $title = 'Export';
 
-    protected static ?string $title = 'Export Hub';
+    protected static ?int $navigationSort = 20;
 
-    protected static ?int $navigationSort = 30;
+    protected static ?string $cluster = ImportExport::class;
 
     public static function canAccess(): bool
     {
@@ -74,10 +79,18 @@ class ExportHubPage extends Page implements HasForms, HasTable
         return $user->can('export_hub.view-any');
     }
 
+    public function content(Schema $schema): Schema
+    {
+        return $schema->components([
+            EmbeddedTable::make(),
+        ]);
+    }
+
     public function table(Table $table): Table
     {
         return $table
-            ->query(Export::query())
+            ->query(Export::query()->with('user'))
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('requestor')
                     ->getStateUsing(function (Export $record): ?string {

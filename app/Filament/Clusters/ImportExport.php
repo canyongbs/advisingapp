@@ -34,37 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Pages;
+namespace App\Filament\Clusters;
 
-use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use App\Filament\Clusters\ImportExport;
-use Filament\Pages\Enums\SubNavigationPosition;
-use Filament\Pages\Page;
+use App\Enums\NavigationGroup;
+use Filament\Clusters\Cluster;
+use UnitEnum;
 
-class ManageStudentSyncs extends Page
+class ImportExport extends Cluster
 {
-    protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
-
-    protected static ?string $navigationLabel = 'Student Sync';
-
-    protected static ?string $title = 'Student Sync';
-
     protected static ?int $navigationSort = 30;
 
-    protected static ?string $cluster = ImportExport::class;
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::DataAndAnalytics;
 
-    protected string $view = 'student-data-model::filament.pages.manage-student-syncs';
-
-    public static function canAccess(): bool
-    {
-        if (! app(ManageStudentConfigurationSettings::class)->is_enabled) {
-            return false;
-        }
-
-        if (! auth()->user()->can('record_sync.view-any')) {
-            return false;
-        }
-
-        return parent::canAccess();
-    }
+    protected static ?string $navigationLabel = 'Import/Export';
 }

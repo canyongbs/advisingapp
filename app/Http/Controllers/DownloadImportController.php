@@ -34,20 +34,22 @@
 </COPYRIGHT>
 */
 
-use App\Filament\Pages\ExportHubPage;
-use App\Models\User;
+namespace App\Http\Controllers;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Laravel\get;
+use App\Models\Import;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
-it('is gated with proper access control', function () {
-    $user = User::factory()->create();
+class DownloadImportController extends Controller
+{
+    public function __invoke(Import $import): StreamedResponse
+    {
+        abort_unless(auth()->user()->can('export_hub.import'), 403);
 
-    actingAs($user);
+        $path = "imports/{$import->getKey()}.csv";
 
-    get(ExportHubPage::getUrl())->assertForbidden();
+        abort_unless(Storage::disk('s3')->exists($path), 404);
 
-    $user->givePermissionTo('export_hub.view-any');
-
-    get(ExportHubPage::getUrl())->assertSuccessful();
-});
+        return Storage::disk('s3')->download($path, $import->file_name);
+    }
+}
