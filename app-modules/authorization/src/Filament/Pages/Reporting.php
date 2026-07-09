@@ -40,7 +40,6 @@ use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Models\ReportTeamAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\Team\Models\Department;
-use AdvisingApp\Team\Models\Team;
 use App\Enums\NavigationGroup;
 use App\Features\ReportingFeature;
 use App\Models\Scopes\WithoutAnyAdmin;

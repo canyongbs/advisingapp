@@ -37,7 +37,6 @@
 namespace AdvisingApp\Report\Models;
 
 use AdvisingApp\Team\Models\Department;
-use AdvisingApp\Team\Models\Team;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use OwenIt\Auditing\Auditable as AuditableTrait;
