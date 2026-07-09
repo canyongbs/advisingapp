@@ -75,7 +75,13 @@
 
     const currentFilterState = computed(() => filterState.value[activeFilter.value]);
 
-    const articlesWithRoutes = computed(() => currentFilterState.value?.data ?? []);
+    const articlesWithRoutes = computed(() =>
+        (currentFilterState.value?.data ?? []).map((article) => ({
+            ...article,
+            key: article.id,
+            to: { name: 'view-article', params: { categoryId: article.categoryId, articleId: article.id } },
+        })),
+    );
 
     const breadcrumbs = computed(() => {
         if (category.value?.parentCategory) {
@@ -103,11 +109,7 @@
     }
 
     function mapArticles(rawData) {
-        return rawData.map((article) => ({
-            ...article,
-            key: article.id,
-            to: { name: 'view-article', params: { categoryId: article.categoryId, articleId: article.id } },
-        }));
+        return rawData.map((article) => ({ ...article }));
     }
 
     function changeFilter(value) {
@@ -176,17 +178,6 @@
 
         try {
             const response = await get(props.apiUrl + '/categories/' + route.params.categoryId);
-
-            if (route.params.categoryId && route.params.parentCategoryId) {
-                router.replace({
-                    name: 'view-subcategory',
-                    params: {
-                        parentCategoryId: response.data.category.id,
-                        categoryId: response.data.category.id,
-                    },
-                    query: { ...route.query },
-                });
-            }
 
             category.value = response.data.category;
             filterState.value['all-articles'].data = mapArticles(response.data.all_articles.data);

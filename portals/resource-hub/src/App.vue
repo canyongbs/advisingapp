@@ -150,26 +150,27 @@
 
     const { user } = storeToRefs(useAuthStore());
 
-    const menuItems = [
+    const menuItems = computed(() => [
         {
             label: 'Home',
             routeName: 'home',
             icon: HomeIcon,
         },
-    ];
+    ]);
 
-    async function logout() {
+    const logout = () => {
         const { post } = consumer();
+        const { removeToken } = useTokenStore();
 
         post(apiUrl.value + '/logout').then((response) => {
             if (!response.data.success) {
                 return;
             }
 
-            useTokenStore().removeToken();
+            removeToken();
             window.location.href = response.data.redirect_url;
         });
-    }
+    };
 
     const assistantWidgetLoaderUrl = ref(null);
     const assistantWidgetConfigUrl = ref(null);
