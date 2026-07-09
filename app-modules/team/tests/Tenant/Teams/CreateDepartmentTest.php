@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Team\Filament\Resources\Departments\Pages\CreateDepartment;
 use AdvisingApp\Team\Filament\Resources\Departments\DepartmentResource;
+use AdvisingApp\Team\Filament\Resources\Departments\Pages\CreateDepartment;
 use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Illuminate\Support\Collection;

@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Team\Filament\Resources\Departments\DepartmentResource;
 use AdvisingApp\Team\Filament\Resources\Departments\Pages\EditDepartment;
 use AdvisingApp\Team\Filament\Resources\Departments\Pages\ViewDepartment;
 use AdvisingApp\Team\Filament\Resources\Departments\RelationManagers\UsersRelationManager;
-use AdvisingApp\Team\Filament\Resources\Departments\DepartmentResource;
 use AdvisingApp\Team\Models\Department;
 use App\Models\Authenticatable;
 use App\Models\User;
