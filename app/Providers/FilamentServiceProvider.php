@@ -72,7 +72,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\View\View;
 use Livewire\Component;
@@ -392,11 +391,7 @@ class FilamentServiceProvider extends ServiceProvider
                     return;
                 }
 
-                Storage::disk('s3')->put(
-                    "imports/{$import->getKey()}.csv",
-                    $file->get(),
-                    'private',
-                );
+                $file->storeAs('imports', "{$import->getKey()}.csv");
             });
         });
     }
