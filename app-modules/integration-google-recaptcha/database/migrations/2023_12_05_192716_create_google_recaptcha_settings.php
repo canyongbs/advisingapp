@@ -39,7 +39,6 @@ use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends SettingsMigration {
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         $this->migrator->inGroup('google-recaptcha', function (SettingsBlueprint $blueprint): void {

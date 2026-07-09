@@ -44,7 +44,6 @@ return new class () extends Migration {
         Schema::dropIfExists('team_user');
     }
 
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         Schema::create('team_user', function (Blueprint $table) {

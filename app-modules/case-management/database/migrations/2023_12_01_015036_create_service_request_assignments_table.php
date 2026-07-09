@@ -41,7 +41,6 @@ use Illuminate\Support\Facades\Schema;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         Schema::create('service_request_assignments', function (Blueprint $table) {

@@ -41,7 +41,6 @@ use Illuminate\Support\Facades\Schema;
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 class CreateProspectStatusesTable extends Migration
 {
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         Schema::create('prospect_statuses', function (Blueprint $table) {

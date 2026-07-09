@@ -39,7 +39,6 @@ use Spatie\LaravelSettings\Migrations\SettingsBlueprint;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         $this->migrator->inGroup('twilio', function (SettingsBlueprint $blueprint): void {
@@ -55,7 +54,6 @@ return new class () extends SettingsMigration {
         });
     }
 
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         $this->migrator->inGroup('twilio', function (SettingsBlueprint $blueprint): void {

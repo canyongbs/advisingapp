@@ -40,7 +40,6 @@ use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends Migration {
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         Schema::create('subscriptions', function (Blueprint $table) {

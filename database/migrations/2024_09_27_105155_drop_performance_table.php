@@ -44,7 +44,6 @@ return new class () extends Migration {
         Schema::dropIfExists('performance');
     }
 
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         Schema::create('performance', function (Blueprint $table) {

@@ -41,7 +41,6 @@ use Illuminate\Support\Facades\Schema;
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 class AddRelationshipFieldsToKnowledgeBaseItemsTable extends Migration
 {
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         Schema::table('knowledge_base_articles', function (Blueprint $table) {

@@ -39,7 +39,6 @@ use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         Schema::table('open_ai_research_request_vector_stores', function (Blueprint $table) {
@@ -52,7 +51,6 @@ return new class () extends Migration {
         });
     }
 
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         Schema::table('open_ai_research_request_vector_stores', function (Blueprint $table) {

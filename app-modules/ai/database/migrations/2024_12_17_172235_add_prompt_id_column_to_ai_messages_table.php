@@ -39,7 +39,6 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         Schema::table('ai_messages', function (Blueprint $table) {
@@ -47,7 +46,6 @@ return new class () extends Migration {
         });
     }
 
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         Schema::table('ai_messages', function (Blueprint $table) {

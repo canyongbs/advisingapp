@@ -38,7 +38,6 @@ use Illuminate\Database\Migrations\Migration;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 return new class () extends Migration {
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         Media::query()

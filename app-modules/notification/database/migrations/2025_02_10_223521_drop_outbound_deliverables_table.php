@@ -44,7 +44,6 @@ return new class () extends Migration {
         Schema::dropIfExists('outbound_deliverables');
     }
 
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         Schema::create('outbound_deliverables', function (Blueprint $table) {

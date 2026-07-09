@@ -48,7 +48,6 @@ class CreateOneTimeOperationsLandlordTable extends Migration
         $this->name = 'operations';
     }
 
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         Schema::create($this->name, function (Blueprint $table) {

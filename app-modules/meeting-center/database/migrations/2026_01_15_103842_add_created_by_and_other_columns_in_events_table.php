@@ -51,7 +51,6 @@ return new class () extends Migration {
         DB::statement('ALTER TABLE events ALTER COLUMN description TYPE jsonb USING description::jsonb');
     }
 
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         Schema::table('events', function (Blueprint $table) {

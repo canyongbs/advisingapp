@@ -82,7 +82,6 @@ return new class () extends Migration {
             ->delete();
     }
 
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         collect($this->guards)

@@ -62,7 +62,6 @@ return new class () extends Migration {
         'api',
     ];
 
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         DB::transaction(function () {
@@ -74,7 +73,6 @@ return new class () extends Migration {
         });
     }
 
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function down(): void
     {
         DB::transaction(function () {
