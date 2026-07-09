@@ -40,7 +40,7 @@ use AdvisingApp\Team\Models\Department;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
-class TeamPolicy
+class DepartmentPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
     {
