@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Team\Filament\Resources\Teams\Pages\ListTeams;
-use AdvisingApp\Team\Filament\Resources\Teams\TeamResource;
+use AdvisingApp\Team\Filament\Resources\Departments\Pages\ListDepartments;
+use AdvisingApp\Team\Filament\Resources\Departments\DepartmentResource;
 use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
@@ -45,19 +45,19 @@ use function Pest\Livewire\livewire;
 
 // Permission Tests
 
-test('ListTeams is gated with proper access control', function () {
+test('ListDepartments is gated with proper access control', function () {
     $user = User::factory()->create();
 
     actingAs($user)
         ->get(
-            TeamResource::getUrl('index')
+            DepartmentResource::getUrl('index')
         )->assertForbidden();
 
     $user->givePermissionTo('team.view-any');
 
     actingAs($user)
         ->get(
-            TeamResource::getUrl('index')
+            DepartmentResource::getUrl('index')
         )->assertSuccessful();
 });
 
@@ -68,7 +68,7 @@ test('hides the bulk delete action from a user without the delete permission', f
 
     Department::factory()->count(2)->create();
 
-    livewire(ListTeams::class)
+    livewire(ListDepartments::class)
         ->assertSuccessful()
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 });
@@ -80,7 +80,7 @@ test('shows the bulk delete action to a user with the delete permission', functi
 
     Department::factory()->count(2)->create();
 
-    livewire(ListTeams::class)
+    livewire(ListDepartments::class)
         ->assertSuccessful()
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

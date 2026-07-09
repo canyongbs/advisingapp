@@ -165,7 +165,7 @@ class TaskBlock extends CampaignActionBlock
                                         ->pluck('name', 'id')
                                         ->all(),
                                 )
-                                ->label('Teams')
+                                ->label('Departments')
                                 ->multiple()
                                 ->dehydrated(true)
                                 ->exists('teams', 'id')

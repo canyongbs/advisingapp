@@ -34,21 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Team\Filament\Resources\Teams\Pages;
+namespace AdvisingApp\Team\Filament\Resources\Departments\Pages;
 
 use AdvisingApp\Division\Models\Division;
-use AdvisingApp\Team\Filament\Resources\Teams\TeamResource;
-use Filament\Actions\DeleteAction;
+use AdvisingApp\Team\Filament\Resources\Departments\DepartmentResource;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\ValidationException;
 
-class EditTeam extends EditRecord
+class CreateDepartment extends CreateRecord
 {
-    protected static string $resource = TeamResource::class;
+    protected static string $resource = DepartmentResource::class;
 
     public function form(Schema $schema): Schema
     {
@@ -65,14 +65,17 @@ class EditTeam extends EditRecord
                     ->relationship('division', 'name', modifyQueryUsing: fn (Builder $query) => $query->orderBy('is_default', 'DESC'))
                     ->searchable()
                     ->preload()
-                    ->visible(fn (): bool => Division::count() > 1),
+                    ->default(
+                        fn () => auth()->user()->team?->division?->getKey()
+                        ?? Division::query()
+                            ->where('is_default', true)
+                            ->first()
+                            ?->getKey()
+                        ?? Division::query()->first()?->getKey()
+                        ?? throw ValidationException::withMessages(['No division found'])
+                    )
+                    ->visible(fn (): bool => Division::count() > 1)
+                    ->dehydratedWhenHidden(),
             ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            DeleteAction::make(),
-        ];
     }
 }

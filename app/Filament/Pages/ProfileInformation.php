@@ -145,7 +145,7 @@ class ProfileInformation extends ProfilePage
                             ->live()
                             ->visible($hasCrmLicense),
                         TextEntry::make('teams')
-                            ->label('Team')
+                            ->label('Department')
                             ->state(fn () => $user->team->name)
                             ->hidden(! $user->team)
                             ->hint(fn (Get $get): string => $get('are_teams_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),

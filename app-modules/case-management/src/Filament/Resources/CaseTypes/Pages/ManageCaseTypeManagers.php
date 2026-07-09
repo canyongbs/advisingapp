@@ -63,7 +63,7 @@ class ManageCaseTypeManagers extends ManageRelatedRecords
             ->inverseRelationship('manageableCaseTypes')
             ->columns([
                 TextColumn::make('name')
-                    ->label('Team'),
+                    ->label('Department'),
             ])
             ->headerActions([
                 AttachAction::make(),

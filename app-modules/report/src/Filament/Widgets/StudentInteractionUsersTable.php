@@ -281,10 +281,10 @@ class StudentInteractionUsersTable extends BaseWidget
                         }
                     }),
                 SelectFilter::make('team')
-                    ->label('Team')
+                    ->label('Department')
                     ->relationship('team', 'name')
                     ->multiple()
-                    ->placeholder('Select Team')
+                    ->placeholder('Select Department')
                     ->searchable()
                     ->preload(),
             ])

@@ -34,38 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Team\Filament\Resources\Teams\Pages;
+namespace AdvisingApp\Team\Filament\Resources\Departments;
 
-use AdvisingApp\Team\Filament\Resources\Teams\TeamResource;
-use Filament\Actions\EditAction;
-use Filament\Infolists\Components\TextEntry;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
+use AdvisingApp\Team\Filament\Resources\Departments\Pages\CreateDepartment;
+use AdvisingApp\Team\Filament\Resources\Departments\Pages\EditDepartment;
+use AdvisingApp\Team\Filament\Resources\Departments\Pages\ListDepartments;
+use AdvisingApp\Team\Filament\Resources\Departments\Pages\ViewDepartment;
+use AdvisingApp\Team\Filament\Resources\Departments\RelationManagers\UsersRelationManager;
+use AdvisingApp\Team\Models\Department;
+use App\Enums\NavigationGroup;
+use Filament\Resources\Resource;
+use UnitEnum;
 
-class ViewTeam extends ViewRecord
+class DepartmentResource extends Resource
 {
-    protected static string $resource = TeamResource::class;
+    protected static ?string $model = Department::class;
 
-    public function infolist(Schema $schema): Schema
-    {
-        return $schema
-            ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('name'),
-                        TextEntry::make('division.name')->default('N/A'),
-                        TextEntry::make('description')
-                            ->columnSpanFull(),
-                    ])
-                    ->columns(),
-            ]);
-    }
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::UserManagement;
 
-    protected function getHeaderActions(): array
+    protected static ?int $navigationSort = 20;
+
+    public static function getRelations(): array
     {
         return [
-            EditAction::make(),
+            UsersRelationManager::make(),
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListDepartments::route('/'),
+            'create' => CreateDepartment::route('/create'),
+            'view' => ViewDepartment::route('/{record}'),
+            'edit' => EditDepartment::route('/{record}/edit'),
         ];
     }
 }

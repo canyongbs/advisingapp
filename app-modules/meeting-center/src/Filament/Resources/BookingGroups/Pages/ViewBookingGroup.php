@@ -84,7 +84,7 @@ class ViewBookingGroup extends ViewRecord
                     TextEntry::make('teams.name')
                         ->placeholder('N/A')
                         ->badge()
-                        ->label('Teams'),
+                        ->label('Departments'),
                     Callout::make('Some group members do not have a connected calendar and will be skipped during bookings.')
                         ->warning()
                         ->description(function () use ($bookingGroup): HtmlString {

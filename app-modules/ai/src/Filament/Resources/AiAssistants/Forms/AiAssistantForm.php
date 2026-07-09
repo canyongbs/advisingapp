@@ -162,7 +162,7 @@ class AiAssistantForm
                         Select::make('ai_assistant_confidential_teams')
                             ->relationship('confidentialAccessTeams', 'name')
                             ->preload()
-                            ->label('Teams')
+                            ->label('Departments')
                             ->multiple()
                             ->exists('teams', 'id')
                             ->visible(fn (Get $get) => $get('is_confidential')),

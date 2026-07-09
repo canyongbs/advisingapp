@@ -96,7 +96,7 @@ abstract class BaseTaskRelationManager extends ManageRelatedRecords
                         Select::make('confidential_task_teams')
                             ->relationship('confidentialAccessTeams', 'name')
                             ->preload()
-                            ->label('Teams')
+                            ->label('Departments')
                             ->multiple()
                             ->exists('teams', 'id')
                             ->visible(fn (Get $get) => $get('is_confidential')),

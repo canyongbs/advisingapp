@@ -83,7 +83,7 @@ class ListUsers extends ListRecords
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('team.name')
-                    ->label('Team')
+                    ->label('Department')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('email')
                     ->label('Email address')
@@ -149,7 +149,7 @@ class ListUsers extends ListRecords
                 TrashedFilter::make()
                     ->visible((fn () => auth()->user()->can('user.*.restore'))),
                 SelectFilter::make('team')
-                    ->label('Team')
+                    ->label('Department')
                     ->options(
                         fn (): array => [
                             '' => [

@@ -34,10 +34,10 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Team\Filament\Resources\Teams\Pages\EditTeam;
-use AdvisingApp\Team\Filament\Resources\Teams\Pages\ViewTeam;
-use AdvisingApp\Team\Filament\Resources\Teams\RelationManagers\UsersRelationManager;
-use AdvisingApp\Team\Filament\Resources\Teams\TeamResource;
+use AdvisingApp\Team\Filament\Resources\Departments\Pages\EditDepartment;
+use AdvisingApp\Team\Filament\Resources\Departments\Pages\ViewDepartment;
+use AdvisingApp\Team\Filament\Resources\Departments\RelationManagers\UsersRelationManager;
+use AdvisingApp\Team\Filament\Resources\Departments\DepartmentResource;
 use AdvisingApp\Team\Models\Department;
 use App\Models\Authenticatable;
 use App\Models\User;
@@ -49,19 +49,19 @@ use function Pest\Livewire\livewire;
 
 // Permission Tests
 
-test('EditTeam is gated with proper access control', function () {
+test('EditDepartment is gated with proper access control', function () {
     $user = User::factory()->create();
 
     $team = Department::factory()->create();
 
     actingAs($user)
         ->get(
-            TeamResource::getUrl('edit', [
+            DepartmentResource::getUrl('edit', [
                 'record' => $team,
             ])
         )->assertForbidden();
 
-    livewire(EditTeam::class, [
+    livewire(EditDepartment::class, [
         'record' => $team->getRouteKey(),
     ])
         ->assertForbidden();
@@ -71,7 +71,7 @@ test('EditTeam is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            TeamResource::getUrl('edit', [
+            DepartmentResource::getUrl('edit', [
                 'record' => $team,
             ])
         )->assertSuccessful();
@@ -80,7 +80,7 @@ test('EditTeam is gated with proper access control', function () {
     /** @var Department $request */
     $request = Department::factory()->make();
 
-    livewire(EditTeam::class, [
+    livewire(EditDepartment::class, [
         'record' => $team->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -106,14 +106,14 @@ test('Non Super Admin Users can be added to a team', function () {
 
     actingAs($user)
         ->get(
-            TeamResource::getUrl('edit', [
+            DepartmentResource::getUrl('edit', [
                 'record' => $team,
             ])
         )->assertSuccessful();
 
     livewire(UsersRelationManager::class, [
         'ownerRecord' => $team,
-        'pageClass' => EditTeam::class,
+        'pageClass' => EditDepartment::class,
     ])
         ->callTableAction(
             AssociateAction::class,
@@ -137,14 +137,14 @@ test('Super Admin Users cannot be added to a team', function () {
 
     actingAs($user)
         ->get(
-            TeamResource::getUrl('edit', [
+            DepartmentResource::getUrl('edit', [
                 'record' => $team,
             ])
         )->assertSuccessful();
 
     livewire(UsersRelationManager::class, [
         'ownerRecord' => $team,
-        'pageClass' => EditTeam::class,
+        'pageClass' => EditDepartment::class,
     ])
         ->callTableAction(
             AssociateAction::class,
@@ -169,14 +169,14 @@ test('Super Admin Users do not show up in UsersRelationManager for Teams search 
 
     actingAs($user)
         ->get(
-            TeamResource::getUrl('edit', [
+            DepartmentResource::getUrl('edit', [
                 'record' => $team,
             ])
         )->assertSuccessful();
 
     livewire(UsersRelationManager::class, [
         'ownerRecord' => $team,
-        'pageClass' => EditTeam::class,
+        'pageClass' => EditDepartment::class,
     ])
         ->mountTableAction(AssociateAction::class)
         ->assertFormFieldExists('recordId', checkFieldUsing: function (Select $select) use ($superAdmin) {
@@ -201,13 +201,13 @@ test('the associate action in the team users relation manager is gated by the te
 
     livewire(UsersRelationManager::class, [
         'ownerRecord' => $team,
-        'pageClass' => ViewTeam::class,
+        'pageClass' => ViewDepartment::class,
     ])->assertTableActionHidden(AssociateAction::class);
 
     $user->givePermissionTo('team.*.update');
 
     livewire(UsersRelationManager::class, [
         'ownerRecord' => $team,
-        'pageClass' => ViewTeam::class,
+        'pageClass' => ViewDepartment::class,
     ])->assertTableActionVisible(AssociateAction::class);
 });

@@ -34,8 +34,8 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Team\Filament\Resources\Teams\Pages\CreateTeam;
-use AdvisingApp\Team\Filament\Resources\Teams\TeamResource;
+use AdvisingApp\Team\Filament\Resources\Departments\Pages\CreateDepartment;
+use AdvisingApp\Team\Filament\Resources\Departments\DepartmentResource;
 use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Illuminate\Support\Collection;
@@ -47,15 +47,15 @@ use function PHPUnit\Framework\assertCount;
 
 // Permission Tests
 
-test('CreateTeam is gated with proper access control', function () {
+test('CreateDepartment is gated with proper access control', function () {
     $user = User::factory()->create();
 
     actingAs($user)
         ->get(
-            TeamResource::getUrl('create')
+            DepartmentResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateTeam::class)
+    livewire(CreateDepartment::class)
         ->assertForbidden();
 
     $user->givePermissionTo('team.view-any');
@@ -63,13 +63,13 @@ test('CreateTeam is gated with proper access control', function () {
 
     actingAs($user)
         ->get(
-            TeamResource::getUrl('create')
+            DepartmentResource::getUrl('create')
         )->assertSuccessful();
 
     /** @var Collection<int, Department> $request */
     $request = collect([Department::factory()->make()]);
 
-    livewire(CreateTeam::class)
+    livewire(CreateDepartment::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();

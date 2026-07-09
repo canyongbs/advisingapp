@@ -61,7 +61,7 @@ class AssignTeamBulkAction extends BulkAction
             ])
             ->form([
                 Select::make('team')
-                    ->label('Team')
+                    ->label('Department')
                     ->options(Department::pluck('name', 'id'))
                     ->searchable()
                     ->required(),

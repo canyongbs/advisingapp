@@ -34,53 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Team\Filament\Resources\Teams\Pages;
+namespace AdvisingApp\Team\Filament\Resources\Departments\Pages;
 
-use AdvisingApp\Team\Filament\Resources\Teams\TeamResource;
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
+use AdvisingApp\Team\Filament\Resources\Departments\DepartmentResource;
 use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
-class ListTeams extends ListRecords
+class ViewDepartment extends ViewRecord
 {
-    protected static string $resource = TeamResource::class;
+    protected static string $resource = DepartmentResource::class;
 
-    public function table(Table $table): Table
+    public function infolist(Schema $schema): Schema
     {
-        return $table
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name')
-                    ->sortable(),
-                TextColumn::make('division.name')
-                    ->sortable(),
-                TextColumn::make('description')
-                    ->limit(50),
-            ])
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make(),
-                DeleteAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->authorizeIndividualRecords('delete'),
-                ]),
+        return $schema
+            ->schema([
+                Section::make()
+                    ->schema([
+                        TextEntry::make('name'),
+                        TextEntry::make('division.name')->default('N/A'),
+                        TextEntry::make('description')
+                            ->columnSpanFull(),
+                    ])
+                    ->columns(),
             ]);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            EditAction::make(),
         ];
     }
 }

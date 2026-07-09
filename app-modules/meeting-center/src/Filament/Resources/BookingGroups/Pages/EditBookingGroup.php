@@ -120,7 +120,7 @@ class EditBookingGroup extends EditRecord
                         ->preload()
                         ->live(),
                     Select::make('teams')
-                        ->label('Teams')
+                        ->label('Departments')
                         ->multiple()
                         ->relationship('teams', 'name')
                         ->searchable()

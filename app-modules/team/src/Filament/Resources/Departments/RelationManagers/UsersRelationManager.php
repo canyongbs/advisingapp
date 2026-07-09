@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Team\Filament\Resources\Teams\RelationManagers;
+namespace AdvisingApp\Team\Filament\Resources\Departments\RelationManagers;
 
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\Scopes\WithoutAnyAdmin;
