@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Report\Models;
 
+use AdvisingApp\Team\Models\Department;
 use AdvisingApp\Team\Models\Team;
 use App\Models\BaseModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -55,10 +56,10 @@ class ReportTeamAccess extends BaseModel implements Auditable
     ];
 
     /**
-     * @return BelongsTo<Team, $this>
+     * @return BelongsTo<Department, $this>
      */
     public function team(): BelongsTo
     {
-        return $this->belongsTo(Team::class);
+        return $this->belongsTo(Department::class);
     }
 }

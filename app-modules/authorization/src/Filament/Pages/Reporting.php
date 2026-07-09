@@ -39,6 +39,7 @@ namespace AdvisingApp\Authorization\Filament\Pages;
 use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Models\ReportTeamAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
+use AdvisingApp\Team\Models\Department;
 use AdvisingApp\Team\Models\Team;
 use App\Enums\NavigationGroup;
 use App\Features\ReportingFeature;
@@ -162,7 +163,7 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
             ->tap(new WithoutAnyAdmin())
             ->orderBy('name');
 
-        $teamsQuery = Team::query()
+        $departmentsQuery = Department::query()
             ->orderBy('name');
 
         return Action::make('manage')
@@ -207,24 +208,24 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                             ->all(),
                     ),
                 Select::make('teams')
-                    ->label('Teams')
+                    ->label('Departments')
                     ->multiple()
                     ->searchable()
                     ->options(
-                        fn (): array => $teamsQuery
+                        fn (): array => $departmentsQuery
                             ->limit(50)
                             ->pluck('name', 'id')
                             ->all(),
                     )
                     ->getSearchResultsUsing(
-                        fn (string $search): array => $teamsQuery
+                        fn (string $search): array => $departmentsQuery
                             ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
                             ->limit(50)
                             ->pluck('name', 'id')
                             ->all(),
                     )
                     ->getOptionLabelsUsing(
-                        fn (array $values): array => $teamsQuery
+                        fn (array $values): array => $departmentsQuery
                             ->whereKey($values)
                             ->pluck('name', 'id')
                             ->all(),

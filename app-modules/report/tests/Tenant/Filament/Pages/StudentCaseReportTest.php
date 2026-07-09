@@ -39,6 +39,7 @@ use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Filament\Pages\StudentCaseReport;
 use AdvisingApp\Report\Models\ReportTeamAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
+use AdvisingApp\Team\Models\Department;
 use AdvisingApp\Team\Models\Team;
 use App\Features\ReportingFeature;
 use App\Models\User;
@@ -79,15 +80,15 @@ it('is gated with proper access control', function () {
     get(StudentCaseReport::getUrl())->assertSuccessful();
 });
 
-it('grants access to a user belonging to a team that has been granted access', function () {
+it('grants access to a user belonging to a department that has been granted access', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->caseManagement = true;
     $settings->save();
 
-    $team = Team::factory()->create();
+    $department = Department::factory()->create();
 
-    $user = User::factory()->create(['team_id' => $team->getKey()]);
+    $user = User::factory()->create(['team_id' => $department->getKey()]);
 
     $user->grantLicense(LicenseType::RetentionCrm);
 
@@ -99,7 +100,7 @@ it('grants access to a user belonging to a team that has been granted access', f
 
     ReportTeamAccess::factory()->create([
         'report_key' => ReportAccessKey::StudentCaseReport->value,
-        'team_id' => $team->getKey(),
+        'team_id' => $department->getKey(),
     ]);
 
     get(StudentCaseReport::getUrl())->assertSuccessful();

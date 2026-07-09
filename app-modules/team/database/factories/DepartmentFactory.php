@@ -43,7 +43,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 /**
  * @extends Factory<Department>
  */
-class TeamFactory extends Factory
+class DepartmentFactory extends Factory
 {
     public function definition(): array
     {
@@ -53,12 +53,12 @@ class TeamFactory extends Factory
         ];
     }
 
-    public function configure(): TeamFactory|Factory
+    public function configure(): DepartmentFactory|Factory
     {
-        return $this->afterCreating(function (Department $team) {
-            if (! $team->division()->exists() && $this->faker->boolean()) {
-                $team->division()->associate(tap(Division::factory()->make())->save());
-                $team->save();
+        return $this->afterCreating(function (Department $department) {
+            if (! $department->division()->exists() && $this->faker->boolean()) {
+                $department->division()->associate(tap(Division::factory()->make())->save());
+                $department->save();
             }
         });
     }

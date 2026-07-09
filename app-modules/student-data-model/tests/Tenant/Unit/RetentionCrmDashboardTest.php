@@ -45,6 +45,7 @@ use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Team\Models\Department;
 use AdvisingApp\Team\Models\Team;
 use App\Features\ReportingFeature;
 use App\Models\User;
@@ -113,12 +114,12 @@ it('is gated with proper access control', function () {
     get(RetentionCrmDashboard::getUrl())->assertSuccessful();
 });
 
-it('grants access to a user belonging to a team that has been granted access', function () {
+it('grants access to a user belonging to a department that has been granted access', function () {
     ReportingFeature::activate();
 
-    $team = Team::factory()->create();
+    $department = Department::factory()->create();
 
-    $user = User::factory()->create(['team_id' => $team->getKey()]);
+    $user = User::factory()->create(['team_id' => $department->getKey()]);
 
     $user->grantLicense(LicenseType::RetentionCrm);
 
@@ -130,7 +131,7 @@ it('grants access to a user belonging to a team that has been granted access', f
 
     ReportTeamAccess::factory()->create([
         'report_key' => ReportAccessKey::StudentActionCenter->value,
-        'team_id' => $team->getKey(),
+        'team_id' => $department->getKey(),
     ]);
 
     get(RetentionCrmDashboard::getUrl())->assertSuccessful();

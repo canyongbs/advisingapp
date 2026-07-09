@@ -47,6 +47,7 @@ use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Team\Models\Department;
 use AdvisingApp\Team\Models\Team;
 use App\Features\ReportingFeature;
 use App\Models\User;
@@ -189,7 +190,7 @@ it('is gated with proper access control', function () {
 it('grants access to a user belonging to a team that has been granted access', function () {
     ReportingFeature::activate();
 
-    $team = Team::factory()->create();
+    $team = Department::factory()->create();
 
     $user = User::factory()->create(['team_id' => $team->getKey()]);
 

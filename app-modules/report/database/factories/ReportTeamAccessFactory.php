@@ -38,6 +38,7 @@ namespace AdvisingApp\Report\Database\Factories;
 
 use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Models\ReportTeamAccess;
+use AdvisingApp\Team\Models\Department;
 use AdvisingApp\Team\Models\Team;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -50,7 +51,7 @@ class ReportTeamAccessFactory extends Factory
     {
         return [
             'report_key' => $this->faker->randomElement(ReportAccessKey::cases())->value,
-            'team_id' => Team::factory(),
+            'team_id' => Department::factory(),
         ];
     }
 }
