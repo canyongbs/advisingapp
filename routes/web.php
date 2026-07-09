@@ -35,6 +35,7 @@
 */
 
 use App\Http\Controllers\DownloadExportController;
+use App\Http\Controllers\DownloadImportController;
 use App\Http\Controllers\ViewPublicUserProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -44,6 +45,10 @@ Route::get('/profiles/{user:public_profile_slug}', ViewPublicUserProfileControll
 Route::get('/exports/{export}/download', DownloadExportController::class)
     ->middleware(['auth', 'signed'])
     ->name('exports.download');
+
+Route::get('/imports/{import}/download', DownloadImportController::class)
+    ->middleware(['auth', 'signed'])
+    ->name('imports.download');
 
 Route::redirect('/docs/api', '/docs/api/v1')
     ->name('docs.api');
