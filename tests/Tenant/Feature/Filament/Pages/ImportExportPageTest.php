@@ -35,7 +35,9 @@
 */
 
 use AdvisingApp\Report\Filament\Exports\UserExporter;
+use AdvisingApp\StudentDataModel\Filament\Pages\ManageStudentSyncs;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+use App\Filament\Clusters\ImportExport;
 use App\Filament\Imports\UserImporter;
 use App\Filament\Pages\ExportPage;
 use App\Filament\Pages\ImportPage;
@@ -193,6 +195,18 @@ it('hides download button when user lacks export_hub.import permission', functio
 
 // Export Page Tests
 
+it('gates the export page with proper access control', function () {
+    $user = User::factory()->create();
+
+    actingAs($user);
+
+    get(ExportPage::getUrl())->assertForbidden();
+
+    $user->givePermissionTo('export_hub.view-any');
+
+    get(ExportPage::getUrl())->assertSuccessful();
+});
+
 it('renders the export page', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('export_hub.view-any');
@@ -219,6 +233,64 @@ it('displays export records in the export table', function () {
 
     livewire(ExportPage::class)
         ->assertCanSeeTableRecords([$export]);
+});
+
+it('shows the export download button when the export is completed and the user has permission', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+    $user->givePermissionTo('export_hub.import');
+
+    actingAs($user);
+
+    $export = new Export();
+    $export->user()->associate($user);
+    $export->file_name = 'test-export.csv';
+    $export->file_disk = 's3';
+    $export->exporter = UserExporter::class;
+    $export->total_rows = 200;
+    $export->completed_at = now();
+    $export->save();
+
+    livewire(ExportPage::class)
+        ->assertTableActionVisible('download', $export);
+});
+
+it('hides the export download button when the export is not completed', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+    $user->givePermissionTo('export_hub.import');
+
+    actingAs($user);
+
+    $export = new Export();
+    $export->user()->associate($user);
+    $export->file_name = 'test-export.csv';
+    $export->file_disk = 's3';
+    $export->exporter = UserExporter::class;
+    $export->total_rows = 200;
+    $export->save();
+
+    livewire(ExportPage::class)
+        ->assertTableActionHidden('download', $export);
+});
+
+it('hides the export download button when the user lacks the export_hub.import permission', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+
+    actingAs($user);
+
+    $export = new Export();
+    $export->user()->associate($user);
+    $export->file_name = 'test-export.csv';
+    $export->file_disk = 's3';
+    $export->exporter = UserExporter::class;
+    $export->total_rows = 200;
+    $export->completed_at = now();
+    $export->save();
+
+    livewire(ExportPage::class)
+        ->assertTableActionHidden('download', $export);
 });
 
 // Student Sync Tab Tests
@@ -268,4 +340,61 @@ it('shows student sync tab when student editing is enabled and user has permissi
     get(ImportPage::getUrl())
         ->assertSuccessful()
         ->assertSeeText('Student Sync');
+});
+
+// Cluster Access Tests
+
+it('allows the import/export cluster when the user can only access the student sync page', function () {
+    $settings = app(ManageStudentConfigurationSettings::class);
+    $settings->is_enabled = true;
+    $settings->save();
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('record_sync.view-any');
+
+    actingAs($user);
+
+    get(ImportExport::getUrl())
+        ->assertRedirect(ManageStudentSyncs::getUrl());
+});
+
+it('redirects the import/export cluster to the import page when the user has export hub access', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+
+    actingAs($user);
+
+    get(ImportExport::getUrl())
+        ->assertRedirect(ImportPage::getUrl());
+});
+
+// Student Sync Page Tests
+
+it('gates the student sync page behind the record sync permission', function () {
+    $settings = app(ManageStudentConfigurationSettings::class);
+    $settings->is_enabled = true;
+    $settings->save();
+
+    $user = User::factory()->create();
+
+    actingAs($user);
+
+    get(ManageStudentSyncs::getUrl())->assertForbidden();
+
+    $user->givePermissionTo('record_sync.view-any');
+
+    get(ManageStudentSyncs::getUrl())->assertSuccessful();
+});
+
+it('forbids the student sync page when student editing is disabled', function () {
+    $settings = app(ManageStudentConfigurationSettings::class);
+    $settings->is_enabled = false;
+    $settings->save();
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('record_sync.view-any');
+
+    actingAs($user);
+
+    get(ManageStudentSyncs::getUrl())->assertForbidden();
 });

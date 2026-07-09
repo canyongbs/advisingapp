@@ -72,6 +72,11 @@ class ImportPage extends Page implements HasActions, HasForms, HasTable
 
     protected static ?string $cluster = ImportExport::class;
 
+    /**
+     * @var array<int|string, bool>
+     */
+    protected array $importFileExistsCache = [];
+
     public static function canAccess(): bool
     {
         $user = auth()->user();
@@ -124,7 +129,12 @@ class ImportPage extends Page implements HasActions, HasForms, HasTable
                     ->url(fn (Import $record) => URL::signedRoute('imports.download', $record))
                     ->visible(fn (Import $record) => $canDownload
                         && $record->completed_at !== null
-                        && Storage::disk('s3')->exists("imports/{$record->getKey()}.csv")),
+                        && $this->importFileExists($record)),
             ]);
+    }
+
+    protected function importFileExists(Import $import): bool
+    {
+        return $this->importFileExistsCache[$import->getKey()] ??= Storage::disk('s3')->exists("imports/{$import->getKey()}.csv");
     }
 }

@@ -37,7 +37,6 @@
 namespace App\Filament\Clusters;
 
 use App\Enums\NavigationGroup;
-use App\Models\User;
 use Filament\Clusters\Cluster;
 use UnitEnum;
 
@@ -48,12 +47,4 @@ class ImportExport extends Cluster
     protected static string | UnitEnum | null $navigationGroup = NavigationGroup::DataAndAnalytics;
 
     protected static ?string $navigationLabel = 'Import/Export';
-
-    public static function canAccess(): bool
-    {
-        $user = auth()->user();
-        assert($user instanceof User);
-
-        return $user->can('export_hub.view-any');
-    }
 }
