@@ -168,7 +168,7 @@ it('can be accessed when confidential by users on a team that is a manager on a 
     $user->department()->associate($team)->save();
 
     $project = Project::factory()->for(User::factory()->licensed(LicenseType::cases())->create(), 'createdBy')->create();
-    $project->managerTeams()->attach($team);
+    $project->managerDepartments()->attach($team);
 
     actingAs($user);
 
@@ -225,7 +225,7 @@ it('can be accessed when confidential by users on a team that is an auditor on a
     $user->department()->associate($team)->save();
 
     $project = Project::factory()->for(User::factory()->licensed(LicenseType::cases())->create(), 'createdBy')->create();
-    $project->auditorTeams()->attach($team);
+    $project->auditorDepartments()->attach($team);
 
     actingAs($user);
 

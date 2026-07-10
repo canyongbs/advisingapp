@@ -34,31 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Models;
+namespace AdvisingApp\Project\Models;
 
-use AdvisingApp\Interaction\Database\Factories\InteractionConfidentialTeamFactory;
 use AdvisingApp\Team\Models\Department;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
- * @mixin IdeHelperInteractionConfidentialTeam
+ * @mixin IdeHelperDepartmentProjectManager
  */
-class InteractionConfidentialTeam extends Pivot
+class DepartmentProjectManager extends Pivot
 {
-    /** @use HasFactory<InteractionConfidentialTeamFactory> */
-    use HasFactory;
-
     use HasUuids;
 
-    public function interaction()
+    protected $table = 'project_manager_teams';
+
+    /**
+     * @return BelongsTo<Project, $this>
+     */
+    public function project(): BelongsTo
     {
-        return $this->belongsTo(Interaction::class);
+        return $this->belongsTo(Project::class, 'project_id', 'id', 'project');
     }
 
-    public function department()
+    /**
+     * @return BelongsTo<Department, $this>
+     */
+    public function department(): BelongsTo
     {
-        return $this->belongsTo(Department::class, 'team_id');
+        return $this->belongsTo(Department::class, 'team_id', 'id', 'department');
     }
 }

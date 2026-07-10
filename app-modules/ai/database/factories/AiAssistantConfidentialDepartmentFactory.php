@@ -34,38 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Task\Models;
+namespace AdvisingApp\Ai\Database\Factories;
 
-use AdvisingApp\Task\Database\Factories\ConfidentialTasksTeamsFactory;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\AiAssistantConfidentialDepartment;
 use AdvisingApp\Team\Models\Department;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperConfidentialTasksTeams
+ * @extends Factory<AiAssistantConfidentialDepartment>
  */
-class ConfidentialTasksTeams extends Pivot
+class AiAssistantConfidentialDepartmentFactory extends Factory
 {
-    /** @use HasFactory<ConfidentialTasksTeamsFactory> */
-    use HasFactory;
-
-    use HasUuids;
-
     /**
-     * @return BelongsTo<Task, $this>
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
      */
-    public function task(): BelongsTo
+    public function definition(): array
     {
-        return $this->belongsTo(Task::class);
-    }
-
-    /**
-     * @return BelongsTo<Department, $this>
-     */
-    public function department(): BelongsTo
-    {
-        return $this->belongsTo(Department::class, 'team_id');
+        return [
+            'ai_assistant_id' => AiAssistant::factory(),
+            'team_id' => Department::factory(),
+        ];
     }
 }

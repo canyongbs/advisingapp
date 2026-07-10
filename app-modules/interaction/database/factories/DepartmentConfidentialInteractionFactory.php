@@ -34,33 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Models;
+namespace AdvisingApp\Interaction\Database\Factories;
 
+use AdvisingApp\Interaction\Models\DepartmentConfidentialInteraction;
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Team\Models\Department;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperProjectAuditorTeam
+ * @extends Factory<DepartmentConfidentialInteraction>
  */
-class ProjectAuditorTeam extends Pivot
+class DepartmentConfidentialInteractionFactory extends Factory
 {
-    use HasUuids;
-
     /**
-     * @return BelongsTo<Project, $this>
+     * Define the model's default state.
+     *
+     * @return array<string, mixed>
      */
-    public function project(): BelongsTo
+    public function definition(): array
     {
-        return $this->belongsTo(Project::class, 'project_id', 'id', 'project');
-    }
-
-    /**
-     * @return BelongsTo<Department, $this>
-     */
-    public function department(): BelongsTo
-    {
-        return $this->belongsTo(Department::class, 'team_id', 'id', 'department');
+        return [
+            'interaction_id' => Interaction::factory(),
+            'team_id' => Department::factory(),
+        ];
     }
 }

@@ -75,7 +75,7 @@ class CaseBlock extends CampaignActionBlock
                 ->relationship('division', 'name')
                 ->model(CaseModel::class)
                 ->default(
-                    fn () => auth()->user()->team?->division?->getKey()
+                    fn () => auth()->user()->department?->division?->getKey()
                         ?? Division::query()
                             ->where('is_default', true)
                             ->first()
@@ -132,7 +132,7 @@ class CaseBlock extends CampaignActionBlock
                     }
 
                     $managers = User::query()
-                        ->whereHas('team.manageableCaseTypes', fn ($query) => $query->where('case_types.id', $caseTypeId))
+                        ->whereHas('department.manageableCaseTypes', fn ($query) => $query->where('case_types.id', $caseTypeId))
                         ->pluck('name', 'id')
                         ->toArray();
 

@@ -45,7 +45,7 @@ use Filament\Tables\Table;
 
 class AuditorTeamsRelationManager extends RelationManager
 {
-    protected static string $relationship = 'auditorTeams';
+    protected static string $relationship = 'auditorDepartments';
 
     protected static ?string $title = 'Teams';
 

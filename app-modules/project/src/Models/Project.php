@@ -125,13 +125,13 @@ class Project extends BaseModel implements Auditable
     }
 
     /**
-     * @return BelongsToMany<Department, $this, ProjectManagerTeam>
+     * @return BelongsToMany<Department, $this, DepartmentProjectManager>
      */
-    public function managerTeams(): BelongsToMany
+    public function managerDepartments(): BelongsToMany
     {
         return $this
             ->belongsToMany(Department::class, 'project_manager_teams', 'project_id', 'team_id')
-            ->using(ProjectManagerTeam::class)
+            ->using(DepartmentProjectManager::class)
             ->withTimestamps();
     }
 
@@ -147,13 +147,13 @@ class Project extends BaseModel implements Auditable
     }
 
     /**
-     * @return BelongsToMany<Department, $this, ProjectAuditorTeam>
+     * @return BelongsToMany<Department, $this, DepartmentProjectAuditor>
      */
-    public function auditorTeams(): BelongsToMany
+    public function auditorDepartments(): BelongsToMany
     {
         return $this
             ->belongsToMany(Department::class, 'project_auditor_teams', 'project_id', 'team_id')
-            ->using(ProjectAuditorTeam::class)
+            ->using(DepartmentProjectAuditor::class)
             ->withTimestamps();
     }
 }

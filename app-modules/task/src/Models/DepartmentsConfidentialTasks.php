@@ -34,28 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Task\Database\Factories;
+namespace AdvisingApp\Task\Models;
 
-use AdvisingApp\Task\Models\ConfidentialTasksTeams;
-use AdvisingApp\Task\Models\Task;
+use AdvisingApp\Task\Database\Factories\DepartmentsConfidentialTasksFactory;
 use AdvisingApp\Team\Models\Department;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
- * @extends Factory<ConfidentialTasksTeams>
+ * @mixin IdeHelperDepartmentsConfidentialTasks
  */
-class ConfidentialTasksTeamsFactory extends Factory
+class DepartmentsConfidentialTasks extends Pivot
 {
+    /** @use HasFactory<DepartmentsConfidentialTasksFactory> */
+    use HasFactory;
+
+    use HasUuids;
+
+    protected $table = 'confidential_task_teams';
+
     /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
+     * @return BelongsTo<Task, $this>
      */
-    public function definition(): array
+    public function task(): BelongsTo
     {
-        return [
-            'task_id' => Task::factory(),
-            'team_id' => Department::factory(),
-        ];
+        return $this->belongsTo(Task::class);
+    }
+
+    /**
+     * @return BelongsTo<Department, $this>
+     */
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class, 'team_id');
     }
 }

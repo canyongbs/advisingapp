@@ -66,7 +66,7 @@ class CreateDepartment extends CreateRecord
                     ->searchable()
                     ->preload()
                     ->default(
-                        fn () => auth()->user()->team?->division?->getKey()
+                        fn () => auth()->user()->department?->division?->getKey()
                         ?? Division::query()
                             ->where('is_default', true)
                             ->first()

@@ -89,7 +89,7 @@ class Media extends SpatieMedia
     private function getUserSubLabel(User $creator): ?string
     {
         $jobTitle = (string) ($creator->job_title ?? '');
-        $teamName = (string) ($creator->team->name ?? '');
+        $teamName = (string) ($creator->department->name ?? '');
 
         if ($jobTitle && $teamName) {
             return "{$jobTitle} ({$teamName})";

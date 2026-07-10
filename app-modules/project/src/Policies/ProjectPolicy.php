@@ -82,9 +82,9 @@ class ProjectPolicy
     public function update(Authenticatable $authenticatable, Project $project): Response
     {
         if (! auth()->user()->isSuperAdmin()) {
-            $team = auth()->user()->team;
+            $team = auth()->user()->department;
 
-            $teamExists = $project->managerTeams()->where('teams.id', $team?->getKey())->exists();
+            $teamExists = $project->managerDepartments()->where('teams.id', $team?->getKey())->exists();
             $userExists = $project->managerUsers()->where('users.id', auth()->user()->getKey())->exists();
 
             if (! $teamExists && ! $userExists && ! $project->createdBy->is(auth()->user())) {
@@ -101,9 +101,9 @@ class ProjectPolicy
     public function delete(Authenticatable $authenticatable, Project $project): Response
     {
         if (! auth()->user()->isSuperAdmin()) {
-            $team = auth()->user()->team;
+            $team = auth()->user()->department;
 
-            $teamExists = $project->managerTeams()->where('teams.id', $team?->getKey())->exists();
+            $teamExists = $project->managerDepartments()->where('teams.id', $team?->getKey())->exists();
             $userExists = $project->managerUsers()->where('users.id', auth()->user()->getKey())->exists();
 
             if (! $teamExists && ! $userExists && ! $project->createdBy->is(auth()->user())) {
@@ -128,9 +128,9 @@ class ProjectPolicy
     public function restore(Authenticatable $authenticatable, Project $project): Response
     {
         if (! auth()->user()->isSuperAdmin()) {
-            $team = auth()->user()->team;
+            $team = auth()->user()->department;
 
-            $teamExists = $project->managerTeams()->where('teams.id', $team?->getKey())->exists();
+            $teamExists = $project->managerDepartments()->where('teams.id', $team?->getKey())->exists();
             $userExists = $project->managerUsers()->where('users.id', auth()->user()->getKey())->exists();
 
             if (! $teamExists && ! $userExists && ! $project->createdBy->is(auth()->user())) {
@@ -155,9 +155,9 @@ class ProjectPolicy
     public function forceDelete(Authenticatable $authenticatable, Project $project): Response
     {
         if (! auth()->user()->isSuperAdmin()) {
-            $team = auth()->user()->team;
+            $team = auth()->user()->department;
 
-            $teamExists = $project->managerTeams()->where('teams.id', $team?->getKey())->exists();
+            $teamExists = $project->managerDepartments()->where('teams.id', $team?->getKey())->exists();
             $userExists = $project->managerUsers()->where('users.id', auth()->user()->getKey())->exists();
 
             if (! $teamExists && ! $userExists && ! $project->createdBy->is(auth()->user())) {

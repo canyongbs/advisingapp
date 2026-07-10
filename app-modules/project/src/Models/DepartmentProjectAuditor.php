@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Models;
+namespace AdvisingApp\Project\Models;
 
 use AdvisingApp\Team\Models\Department;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
@@ -42,20 +42,20 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
- * @mixin IdeHelperConfidentialPromptTeam
+ * @mixin IdeHelperDepartmentProjectAuditor
  */
-class ConfidentialPromptTeam extends Pivot
+class DepartmentProjectAuditor extends Pivot
 {
     use HasUuids;
 
-    protected $table = 'confidential_prompt_teams';
+    protected $table = 'project_auditor_teams';
 
     /**
-     * @return BelongsTo<Prompt, $this>
+     * @return BelongsTo<Project, $this>
      */
-    public function prompt(): BelongsTo
+    public function project(): BelongsTo
     {
-        return $this->belongsTo(Prompt::class);
+        return $this->belongsTo(Project::class, 'project_id', 'id', 'project');
     }
 
     /**
@@ -63,6 +63,6 @@ class ConfidentialPromptTeam extends Pivot
      */
     public function department(): BelongsTo
     {
-        return $this->belongsTo(Department::class, 'team_id');
+        return $this->belongsTo(Department::class, 'team_id', 'id', 'department');
     }
 }

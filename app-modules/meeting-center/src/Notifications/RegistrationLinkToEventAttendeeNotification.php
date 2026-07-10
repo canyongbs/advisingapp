@@ -74,7 +74,7 @@ class RegistrationLinkToEventAttendeeNotification extends Notification implement
     private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
     {
         return $notifiable instanceof EventAttendee
-            ? $this->sender->team?->division?->notificationSetting?->setting
+            ? $this->sender->department?->division?->notificationSetting?->setting
             : null;
     }
 }

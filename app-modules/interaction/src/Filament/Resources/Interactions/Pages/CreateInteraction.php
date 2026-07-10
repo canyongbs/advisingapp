@@ -157,7 +157,7 @@ class CreateInteraction extends CreateRecord
                     Select::make('division_id')
                         ->relationship('division', 'name')
                         ->default(
-                            fn () => auth()->user()->team?->division?->getKey()
+                            fn () => auth()->user()->department?->division?->getKey()
                                 ?? Division::query()
                                     ->where('is_default', true)
                                     ->first()

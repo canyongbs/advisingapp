@@ -61,6 +61,6 @@ class ResetPasswordNotification extends ResetPassword
 
     private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
     {
-        return $notifiable->team?->division?->notificationSetting?->setting;
+        return $notifiable->department?->division?->notificationSetting?->setting;
     }
 }

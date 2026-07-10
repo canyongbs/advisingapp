@@ -167,7 +167,7 @@ it('does not list projects to unauthorized manager teams', function () {
 
     actingAs($user);
 
-    $authorizedProjects->each(fn ($project) => $project->managerTeams()->attach($authorizedTeam));
+    $authorizedProjects->each(fn ($project) => $project->managerDepartments()->attach($authorizedTeam));
 
     livewire(ListProjects::class)
         ->assertSuccessful()
@@ -273,7 +273,7 @@ it('does not list projects to unauthorized auditor teams', function () {
         ->count(5)
         ->create();
 
-    $authorizedProjects->each(fn ($project) => $project->auditorTeams()->attach($authorizedTeam));
+    $authorizedProjects->each(fn ($project) => $project->auditorDepartments()->attach($authorizedTeam));
 
     actingAs($user);
     livewire(ListProjects::class)

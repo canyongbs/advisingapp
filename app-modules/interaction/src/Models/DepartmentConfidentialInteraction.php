@@ -34,28 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Database\Factories;
+namespace AdvisingApp\Interaction\Models;
 
-use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Interaction\Models\InteractionConfidentialTeam;
+use AdvisingApp\Interaction\Database\Factories\DepartmentConfidentialInteractionFactory;
 use AdvisingApp\Team\Models\Department;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
- * @extends Factory<InteractionConfidentialTeam>
+ * @mixin IdeHelperDepartmentConfidentialInteraction
  */
-class InteractionConfidentialTeamFactory extends Factory
+class DepartmentConfidentialInteraction extends Pivot
 {
+    /** @use HasFactory<DepartmentConfidentialInteractionFactory> */
+    use HasFactory;
+
+    use HasUuids;
+
+    protected $table = 'interaction_confidential_teams';
+
     /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
+     * @return BelongsTo<Interaction, $this>
      */
-    public function definition(): array
+    public function interaction(): BelongsTo
     {
-        return [
-            'interaction_id' => Interaction::factory(),
-            'team_id' => Department::factory(),
-        ];
+        return $this->belongsTo(Interaction::class);
+    }
+
+    /**
+     * @return BelongsTo<Department, $this>
+     */
+    public function department(): BelongsTo
+    {
+        return $this->belongsTo(Department::class, 'team_id');
     }
 }

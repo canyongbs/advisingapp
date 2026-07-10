@@ -36,29 +36,26 @@
 
 namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\Ai\Database\Factories\AiAssistantConfidentialTeamFactory;
 use AdvisingApp\Team\Models\Department;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
- * @mixin IdeHelperAiAssistantConfidentialTeam
+ * @mixin IdeHelperDepartmentConfidentialPrompt
  */
-class AiAssistantConfidentialTeam extends Pivot
+class DepartmentConfidentialPrompt extends Pivot
 {
-    /** @use HasFactory<AiAssistantConfidentialTeamFactory> */
-    use HasFactory;
-
     use HasUuids;
 
+    protected $table = 'confidential_prompt_teams';
+
     /**
-     * @return BelongsTo<AiAssistant, $this>
+     * @return BelongsTo<Prompt, $this>
      */
-    public function assistant(): BelongsTo
+    public function prompt(): BelongsTo
     {
-        return $this->belongsTo(AiAssistant::class);
+        return $this->belongsTo(Prompt::class);
     }
 
     /**
