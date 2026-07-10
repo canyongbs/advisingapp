@@ -49,6 +49,8 @@ return new class () extends Migration {
                 $table->timestamp('archived_at')->nullable();
             });
 
+            DB::table('applications')->whereNull('root_id')->update(['root_id' => DB::raw('id')]);
+
             Schema::table('applications', function (Blueprint $table) {
                 $table->uuid('root_id')->nullable(false)->change();
                 $table->foreign('root_id')->references('id')->on('applications');

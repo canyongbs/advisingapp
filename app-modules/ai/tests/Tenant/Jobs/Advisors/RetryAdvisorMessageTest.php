@@ -78,13 +78,12 @@ it('retries a message', function () {
     expect($messages->count())
         ->toBe(2);
 
-    $userMessage = $messages->whereNotNull('user_id')->first();
-    $response = $messages->whereNull('user_id')->first();
-
-    expect($userMessage)
+    expect($messages->first())
         ->content->toBe($messageContent)
         ->thread->getKey()->toBe($thread->getKey())
         ->user->getKey()->toBe(auth()->user()->getKey());
+
+    $response = $messages->last();
 
     expect($response) /** @phpstan-ignore method.nonObject */
         ->thread->getKey()->toBe($thread->getKey())
@@ -128,13 +127,12 @@ it('does not create a new message if the most recent one has the same content', 
     expect($messages->count())
         ->toBe(2);
 
-    $userMessage = $messages->whereNotNull('user_id')->first();
-    $response = $messages->whereNull('user_id')->first();
-
-    expect($userMessage)
+    expect($messages->first())
         ->content->toBe($messageContent)
         ->thread->getKey()->toBe($thread->getKey())
         ->user->getKey()->toBe(auth()->user()->getKey());
+
+    $response = $messages->last();
 
     expect($response) /** @phpstan-ignore method.nonObject */
         ->thread->getKey()->toBe($thread->getKey())

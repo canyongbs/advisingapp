@@ -59,8 +59,6 @@ use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 
 /**
- * @property string|null $root_id
- *
  * @mixin IdeHelperApplication
  */
 #[ObservedBy([ApplicationObserver::class])]
