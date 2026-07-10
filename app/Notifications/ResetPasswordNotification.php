@@ -52,7 +52,7 @@ class ResetPasswordNotification extends ResetPassword
     {
         return MailMessage::make()
             ->settings($this->resolveNotificationSetting($notifiable))
-            ->subject(__('Reset Password Notification'))
+            ->subject('Reset your password')
             ->line(__('You are receiving this email because we received a password reset request for your account.'))
             ->action(__('Reset Password'), $this->resetUrl($notifiable))
             ->line(__('This password reset link will expire in :count minutes.', ['count' => config('auth.passwords.' . config('auth.defaults.passwords') . '.expire')]))
