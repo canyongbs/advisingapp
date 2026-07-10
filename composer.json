@@ -279,11 +279,11 @@
             "type": "package",
             "package": {
                 "name": "canyongbs/model-state-machine",
-                "version": "2.0.9",
+                "version": "2.1.0",
                 "source": {
                     "url": "https://github.com/canyongbs/model-state-machine.git",
                     "type": "git",
-                    "reference": "0c3a3fa36717a8ec840b208b40882d126f1f4fbc"
+                    "reference": "83db630293ab0ca5442967f4066f3812adb281ea"
                 },
                 "require": {
                     "php": "^8.2",

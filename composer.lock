@@ -2255,11 +2255,11 @@
         },
         {
             "name": "canyongbs/model-state-machine",
-            "version": "2.0.9",
+            "version": "2.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/model-state-machine.git",
-                "reference": "0c3a3fa36717a8ec840b208b40882d126f1f4fbc"
+                "reference": "83db630293ab0ca5442967f4066f3812adb281ea"
             },
             "require": {
                 "illuminate/contracts": "^11.0|^12.0|^13.0",
