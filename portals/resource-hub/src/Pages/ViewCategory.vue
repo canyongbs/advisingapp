@@ -59,7 +59,6 @@
     });
 
     const category = ref(null);
-    const initialLoading = ref(true);
     const loadingPage = ref(null);
     const activeFilter = ref('all-articles');
 
@@ -173,8 +172,6 @@
 
     async function loadCategory() {
         NProgress.start();
-        initialLoading.value = true;
-        category.value = null;
 
         try {
             const response = await get(props.apiUrl + '/categories/' + route.params.categoryId);
@@ -187,7 +184,6 @@
         } catch (error) {
             console.error('Error loading category:', error);
         } finally {
-            initialLoading.value = false;
             NProgress.done();
         }
     }
@@ -226,14 +222,10 @@
         <template v-if="category?.description" #description>{{ category.description }}</template>
 
         <template #breadcrumbs>
-            <Breadcrumbs v-if="!initialLoading && category" :currentCrumb="category.name" :breadcrumbs="breadcrumbs" />
+            <Breadcrumbs v-if="category" :currentCrumb="category.name" :breadcrumbs="breadcrumbs" />
         </template>
 
-        <div v-if="initialLoading" class="flex items-center justify-center py-12">
-            <div class="size-8 animate-spin rounded-full border-4 border-gray-200 border-t-brand-600"></div>
-        </div>
-
-        <div v-else-if="category">
+        <div v-if="category">
             <main class="flex flex-col gap-8">
                 <div class="flex flex-col gap-6">
                     <div class="flex flex-col gap-4">
