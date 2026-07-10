@@ -38,7 +38,6 @@ use AdvisingApp\Team\Filament\Resources\Departments\DepartmentResource;
 use AdvisingApp\Team\Filament\Resources\Departments\Pages\CreateDepartment;
 use AdvisingApp\Team\Models\Department;
 use App\Models\User;
-use Illuminate\Support\Collection;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -66,8 +65,7 @@ test('CreateDepartment is gated with proper access control', function () {
             DepartmentResource::getUrl('create')
         )->assertSuccessful();
 
-    /** @var Collection<int, Department> $request */
-    $request = collect([Department::factory()->make()]);
+    $request = Department::factory()->make();
 
     livewire(CreateDepartment::class)
         ->fillForm($request->toArray())
@@ -76,5 +74,5 @@ test('CreateDepartment is gated with proper access control', function () {
 
     assertCount(1, Department::all());
 
-    assertDatabaseHas(Department::class, $request->toArray());
+    assertDatabaseHas(Department::class, $request->only(['name', 'description']));
 });
