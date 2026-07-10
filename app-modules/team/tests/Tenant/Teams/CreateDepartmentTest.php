@@ -37,6 +37,7 @@
 use AdvisingApp\Team\Filament\Resources\Departments\DepartmentResource;
 use AdvisingApp\Team\Filament\Resources\Departments\Pages\CreateDepartment;
 use AdvisingApp\Team\Models\Department;
+use App\Features\RenameTeamToDepartmentFeature;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -57,8 +58,8 @@ test('CreateDepartment is gated with proper access control', function () {
     livewire(CreateDepartment::class)
         ->assertForbidden();
 
-    $user->givePermissionTo('team.view-any');
-    $user->givePermissionTo('team.create');
+    $user->givePermissionTo(RenameTeamToDepartmentFeature::active() ? 'department.view-any' : 'team.view-any');
+    $user->givePermissionTo(RenameTeamToDepartmentFeature::active() ? 'department.create' : 'team.create');
 
     actingAs($user)
         ->get(

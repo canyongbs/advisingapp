@@ -37,6 +37,7 @@
 namespace AdvisingApp\Team\Policies;
 
 use AdvisingApp\Team\Models\Department;
+use App\Features\RenameTeamToDepartmentFeature;
 use App\Models\Authenticatable;
 use Illuminate\Auth\Access\Response;
 
@@ -45,7 +46,7 @@ class DepartmentPolicy
     public function viewAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'team.view-any',
+            abilities: RenameTeamToDepartmentFeature::active() ? 'department.view-any' : 'team.view-any',
             denyResponse: 'You do not have permission to view departments.'
         );
     }
@@ -53,7 +54,7 @@ class DepartmentPolicy
     public function view(Authenticatable $authenticatable, Department $department): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['team.*.view'],
+            abilities: [RenameTeamToDepartmentFeature::active() ? 'department.*.view' : 'team.*.view'],
             denyResponse: 'You do not have permission to view this department.'
         );
     }
@@ -61,7 +62,7 @@ class DepartmentPolicy
     public function create(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'team.create',
+            abilities: RenameTeamToDepartmentFeature::active() ? 'department.create' : 'team.create',
             denyResponse: 'You do not have permission to create departments.'
         );
     }
@@ -69,7 +70,7 @@ class DepartmentPolicy
     public function update(Authenticatable $authenticatable, Department $department): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['team.*.update'],
+            abilities: [RenameTeamToDepartmentFeature::active() ? 'department.*.update' : 'team.*.update'],
             denyResponse: 'You do not have permission to update this department.'
         );
     }
@@ -77,7 +78,7 @@ class DepartmentPolicy
     public function delete(Authenticatable $authenticatable, Department $department): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['team.*.delete'],
+            abilities: [RenameTeamToDepartmentFeature::active() ? 'department.*.delete' : 'team.*.delete'],
             denyResponse: 'You do not have permission to delete this department.'
         );
     }
@@ -85,7 +86,7 @@ class DepartmentPolicy
     public function deleteAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['team.*.delete'],
+            abilities: [RenameTeamToDepartmentFeature::active() ? 'department.*.delete' : 'team.*.delete'],
             denyResponse: 'You do not have permission to delete any department.'
         );
     }
@@ -93,7 +94,7 @@ class DepartmentPolicy
     public function restore(Authenticatable $authenticatable, Department $department): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['team.*.restore'],
+            abilities: [RenameTeamToDepartmentFeature::active() ? 'department.*.restore' : 'team.*.restore'],
             denyResponse: 'You do not have permission to restore this department.'
         );
     }
@@ -101,7 +102,7 @@ class DepartmentPolicy
     public function restoreAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['team.*.restore'],
+            abilities: [RenameTeamToDepartmentFeature::active() ? 'department.*.restore' : 'team.*.restore'],
             denyResponse: 'You do not have permission to restore any department.'
         );
     }
@@ -109,7 +110,7 @@ class DepartmentPolicy
     public function forceDelete(Authenticatable $authenticatable, Department $department): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['team.*.force-delete'],
+            abilities: [RenameTeamToDepartmentFeature::active() ? 'department.*.force-delete' : 'team.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete this department.'
         );
     }
@@ -117,7 +118,7 @@ class DepartmentPolicy
     public function forceDeleteAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: ['team.*.force-delete'],
+            abilities: [RenameTeamToDepartmentFeature::active() ? 'department.*.force-delete' : 'team.*.force-delete'],
             denyResponse: 'You do not have permission to permanently delete any department.'
         );
     }

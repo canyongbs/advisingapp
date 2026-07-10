@@ -37,6 +37,7 @@
 use AdvisingApp\Team\Filament\Resources\Departments\DepartmentResource;
 use AdvisingApp\Team\Filament\Resources\Departments\Pages\ListDepartments;
 use AdvisingApp\Team\Models\Department;
+use App\Features\RenameTeamToDepartmentFeature;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
 
@@ -53,7 +54,7 @@ test('ListDepartments is gated with proper access control', function () {
             DepartmentResource::getUrl('index')
         )->assertForbidden();
 
-    $user->givePermissionTo('team.view-any');
+    $user->givePermissionTo(RenameTeamToDepartmentFeature::active() ? 'department.view-any' : 'team.view-any');
 
     actingAs($user)
         ->get(
@@ -63,7 +64,7 @@ test('ListDepartments is gated with proper access control', function () {
 
 test('hides the bulk delete action from a user without the delete permission', function () {
     $user = User::factory()->create();
-    $user->givePermissionTo('team.view-any');
+    $user->givePermissionTo(RenameTeamToDepartmentFeature::active() ? 'department.view-any' : 'team.view-any');
     actingAs($user);
 
     Department::factory()->count(2)->create();
@@ -75,7 +76,7 @@ test('hides the bulk delete action from a user without the delete permission', f
 
 test('shows the bulk delete action to a user with the delete permission', function () {
     $user = User::factory()->create();
-    $user->givePermissionTo('team.view-any', 'team.*.delete');
+    RenameTeamToDepartmentFeature::active() ? $user->givePermissionTo('department.view-any', 'department.*.delete') : $user->givePermissionTo('team.view-any', 'team.*.delete');
     actingAs($user);
 
     Department::factory()->count(2)->create();
