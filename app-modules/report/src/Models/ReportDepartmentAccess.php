@@ -49,6 +49,8 @@ class ReportDepartmentAccess extends BaseModel implements Auditable
 {
     use AuditableTrait;
 
+    protected $table = 'report_team_accesses';
+
     protected $fillable = [
         'report_key',
         'team_id',
