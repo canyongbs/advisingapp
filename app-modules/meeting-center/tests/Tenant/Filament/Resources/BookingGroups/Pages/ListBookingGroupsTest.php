@@ -81,7 +81,7 @@ test('ListBookingGroups page displays correct member count', function () {
 
     $bookingGroup = BookingGroup::factory()->create();
     $bookingGroup->users()->attach($otherUsers->pluck('id')->toArray());
-    $bookingGroup->teams()->attach($team->id);
+    $bookingGroup->departments()->attach($team->id);
 
     asSuperAdmin();
 
@@ -91,7 +91,7 @@ test('ListBookingGroups page displays correct member count', function () {
         ->assertSee('4');
 
     $bookingGroup->users()->detach($otherUsers->pluck('id')->toArray());
-    $bookingGroup->teams()->detach($team->id);
+    $bookingGroup->departments()->detach($team->id);
     $bookingGroup->refresh();
 
     livewire(ListBookingGroups::class)

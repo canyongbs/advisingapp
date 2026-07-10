@@ -131,7 +131,7 @@ it('can create a booking group with users and teams', function () {
 
     $request = CreateBookingGroupRequestFactory::new()->state([
         'users' => $users->pluck('id')->toArray(),
-        'teams' => $teams->pluck('id')->toArray(),
+        'departments' => $teams->pluck('id')->toArray(),
         'meeting_owner_id' => $meetingOwner->id,
     ])->create();
 
@@ -147,7 +147,7 @@ it('can create a booking group with users and teams', function () {
     assert($bookingGroup instanceof BookingGroup);
 
     expect($bookingGroup->users)->toHaveCount(3);
-    expect($bookingGroup->teams)->toHaveCount(2);
+    expect($bookingGroup->departments)->toHaveCount(2);
     expect($bookingGroup->meeting_owner_id)->toBe($meetingOwner->id);
 
     $undoRepeaterFake();

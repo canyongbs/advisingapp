@@ -104,7 +104,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                         })
                         ->with([
                             'interactions',
-                            'team',
+                            'department',
                         ]);
                 }
             )
@@ -113,7 +113,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                     ->label('Name')
                     ->description(function ($record) {
                         $jobTitle = $record->job_title ?? null;
-                        $teamName = $record->team->name ?? null;
+                        $teamName = $record->department->name ?? null;
 
                         if ($jobTitle && $teamName) {
                             return "{$jobTitle} ({$teamName})";
@@ -131,7 +131,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                             $query->where(function ($query) use ($search) {
                                 $query->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"])
                                     ->orWhereRaw('LOWER(job_title) LIKE ?', ["%{$search}%"])
-                                    ->orWhereHas('team', function ($teamQuery) use ($search) {
+                                    ->orWhereHas('department', function ($teamQuery) use ($search) {
                                         $teamQuery->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"]);
                                     });
                             });
@@ -287,7 +287,7 @@ class ProspectInteractionUsersTable extends BaseWidget
                     }),
                 SelectFilter::make('team')
                     ->label('Department')
-                    ->relationship('team', 'name')
+                    ->relationship('department', 'name')
                     ->multiple()
                     ->placeholder('Select Department')
                     ->searchable()

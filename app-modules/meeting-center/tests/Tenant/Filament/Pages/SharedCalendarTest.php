@@ -167,7 +167,7 @@ test("`SharedCalendar` 'My Groups' filter includes appointments from groups link
     actingAs($user);
 
     $teamGroup = BookingGroup::factory()->create();
-    $teamGroup->teams()->attach($team->id);
+    $teamGroup->departments()->attach($team->id);
 
     $otherGroup = BookingGroup::factory()->create();
 

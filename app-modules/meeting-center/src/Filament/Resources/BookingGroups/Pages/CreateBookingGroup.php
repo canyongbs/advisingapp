@@ -112,10 +112,10 @@ class CreateBookingGroup extends CreateRecord
                         ->relationship('users', 'name')
                         ->preload()
                         ->live(),
-                    Select::make('teams')
+                    Select::make('departments')
                         ->label('Departments')
                         ->multiple()
-                        ->relationship('teams', 'name')
+                        ->relationship('departments', 'name')
                         ->searchable()
                         ->preload()
                         ->live(),

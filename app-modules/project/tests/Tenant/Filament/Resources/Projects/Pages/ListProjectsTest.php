@@ -152,7 +152,7 @@ it('does not list projects to unauthorized manager teams', function () {
 
     $authorizedTeam = Department::factory()->create();
 
-    $user->team()->associate($authorizedTeam);
+    $user->department()->associate($authorizedTeam);
     $user->save();
     $user->refresh();
 
@@ -258,7 +258,7 @@ it('does not list projects to unauthorized auditor teams', function () {
 
     $authorizedTeam = Department::factory()->create();
 
-    $user->team()->associate($authorizedTeam);
+    $user->department()->associate($authorizedTeam);
 
     $user->save();
     $user->refresh();

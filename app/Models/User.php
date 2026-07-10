@@ -459,9 +459,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     }
 
     /** @return BelongsTo<Department, $this> */
-    public function team(): BelongsTo
+    public function department(): BelongsTo
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Department::class, 'team_id');
     }
 
     /**
@@ -645,7 +645,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
 
     public function assignTeam(int|string $teamId): void
     {
-        $this->team()->associate($teamId)->save();
+        $this->department()->associate($teamId)->save();
     }
 
     public function canReceiveSms(): bool

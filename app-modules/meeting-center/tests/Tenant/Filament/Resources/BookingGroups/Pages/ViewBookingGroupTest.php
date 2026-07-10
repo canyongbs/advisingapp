@@ -108,7 +108,7 @@ it('displays booking group with both users and teams', function () {
     ]);
 
     $bookingGroup->users()->attach($users);
-    $bookingGroup->teams()->attach($teams);
+    $bookingGroup->departments()->attach($teams);
 
     livewire(ViewBookingGroup::class, [
         'record' => $bookingGroup->getRouteKey(),

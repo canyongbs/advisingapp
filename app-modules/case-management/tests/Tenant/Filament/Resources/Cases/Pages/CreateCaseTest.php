@@ -151,7 +151,7 @@ test('CreateCase is gated with proper access control', function () {
 
     $team = Department::factory()->create();
 
-    $user->team()->associate($team)->save();
+    $user->department()->associate($team)->save();
 
     $user->refresh();
 
@@ -217,7 +217,7 @@ test('CreateCase is gated with proper feature access control', function () {
 
     $team = Department::factory()->create();
 
-    $user->team()->associate($team)->save();
+    $user->department()->associate($team)->save();
 
     $user->refresh();
 
@@ -278,7 +278,7 @@ test('assignment type individual manager will auto assign to new cases', functio
 
     $team = Department::factory()->create();
 
-    $user->team()->associate($team)->save();
+    $user->department()->associate($team)->save();
 
     $user->refresh();
 

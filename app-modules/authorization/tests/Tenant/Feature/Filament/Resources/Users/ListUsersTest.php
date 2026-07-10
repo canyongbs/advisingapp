@@ -277,7 +277,7 @@ it('can filter users by multiple teams', function () {
         ->create();
 
     $adminTeamGroup->each(function (User $user) use ($adminTeam) {
-        $user->team()->associate($adminTeam)->save();
+        $user->department()->associate($adminTeam)->save();
     });
 
     $modTeam = Department::factory()->create();
@@ -287,7 +287,7 @@ it('can filter users by multiple teams', function () {
         ->create();
 
     $modsTeamGroup->each(function (User $user) use ($modTeam) {
-        $user->team()->associate($modTeam)->save();
+        $user->department()->associate($modTeam)->save();
     });
 
     $supportTeam = Department::factory()->create();
@@ -297,7 +297,7 @@ it('can filter users by multiple teams', function () {
         ->create();
 
     $supportTeamGroup->each(function (User $user) use ($supportTeam) {
-        $user->team()->associate($supportTeam)->save();
+        $user->department()->associate($supportTeam)->save();
     });
 
     livewire(ListUsers::class)
@@ -321,7 +321,7 @@ it('it filters users based on team', function () {
         ->create();
 
     $userInTeamA->each(function (User $user) use ($teamA) {
-        $user->team()->associate($teamA)->save();
+        $user->department()->associate($teamA)->save();
     });
 
     $userInTeamB = User::factory()
@@ -329,7 +329,7 @@ it('it filters users based on team', function () {
         ->create();
 
     $userInTeamB->each(function (User $user) use ($teamB) {
-        $user->team()->associate($teamB)->save();
+        $user->department()->associate($teamB)->save();
     });
 
     $unassignedUser = User::factory()->count(2)->create();

@@ -191,7 +191,7 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, H
      */
     public function confidentialAccessTeams(): BelongsToMany
     {
-        return $this->belongsToMany(Department::class, 'confidential_task_teams')
+        return $this->belongsToMany(Department::class, 'confidential_task_teams', 'task_id', 'team_id')
             ->using(ConfidentialTasksTeams::class)
             ->withTimestamps();
     }

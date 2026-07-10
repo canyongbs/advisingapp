@@ -50,7 +50,7 @@ it('can see prospect interaction users table', function () {
 
     $user1 = User::factory()->create();
 
-    $user2 = User::factory()->for($team, 'team')->create();
+    $user2 = User::factory()->for($team, 'department')->create();
 
     $prospect = Prospect::factory()->create();
 
@@ -132,7 +132,7 @@ it('can filter users by name', function () {
         'job_title' => 'Computer Operator',
     ]);
 
-    $user2 = User::factory()->for($team, 'team')->create([
+    $user2 = User::factory()->for($team, 'department')->create([
         'name' => 'Canyon GBS',
         'job_title' => 'CEO',
     ]);
@@ -173,7 +173,7 @@ it('can filter users by job title', function () {
         'job_title' => 'Computer Operator',
     ]);
 
-    $user2 = User::factory()->for($team, 'team')->create([
+    $user2 = User::factory()->for($team, 'department')->create([
         'name' => 'Canyon GBS',
         'job_title' => 'CEO',
     ]);
@@ -214,7 +214,7 @@ it('can filter users by team', function () {
         'job_title' => 'Computer Operator',
     ]);
 
-    $user2 = User::factory()->for($team, 'team')->create([
+    $user2 = User::factory()->for($team, 'department')->create([
         'name' => 'Canyon GBS',
         'job_title' => 'CEO',
     ]);
@@ -253,7 +253,7 @@ it('displays only users with prospect interactions within the selected date rang
 
     $userWithOldInteractions = User::factory()->create();
 
-    $userWithRecentAndOtherInteractions = User::factory()->for($team, 'team')->create();
+    $userWithRecentAndOtherInteractions = User::factory()->for($team, 'department')->create();
 
     $userWithoutInteractions = User::factory()->create();
 
@@ -323,7 +323,7 @@ it('displays only users with prospect interactions based on group filter', funct
 
     $userWithOldInteractions = User::factory()->create();
 
-    $userWithRecentAndOtherInteractions = User::factory()->for($team, 'team')->create();
+    $userWithRecentAndOtherInteractions = User::factory()->for($team, 'department')->create();
 
     $userWithoutInteractions = User::factory()->create();
 

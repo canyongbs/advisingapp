@@ -53,7 +53,7 @@ it('can see student interaction users table', function () {
 
     $user1 = User::factory()->create();
 
-    $user2 = User::factory()->for($team, 'team')->create();
+    $user2 = User::factory()->for($team, 'department')->create();
 
     $student = Student::factory()->create();
 
@@ -135,7 +135,7 @@ it('can filter users by name', function () {
         'job_title' => 'Computer Operator',
     ]);
 
-    $user2 = User::factory()->for($team, 'team')->create([
+    $user2 = User::factory()->for($team, 'department')->create([
         'name' => 'Canyon GBS',
         'job_title' => 'CEO',
     ]);
@@ -176,7 +176,7 @@ it('can filter users by job title', function () {
         'job_title' => 'Computer Operator',
     ]);
 
-    $user2 = User::factory()->for($team, 'team')->create([
+    $user2 = User::factory()->for($team, 'department')->create([
         'name' => 'Canyon GBS',
         'job_title' => 'CEO',
     ]);
@@ -217,7 +217,7 @@ it('can filter users by team', function () {
         'job_title' => 'Computer Operator',
     ]);
 
-    $user2 = User::factory()->for($team, 'team')->create([
+    $user2 = User::factory()->for($team, 'department')->create([
         'name' => 'Canyon GBS',
         'job_title' => 'CEO',
     ]);
@@ -256,7 +256,7 @@ it('displays only users with student interactions within the selected date range
 
     $userWithOldInteractions = User::factory()->create();
 
-    $userWithRecentAndOtherInteractions = User::factory()->for($team, 'team')->create();
+    $userWithRecentAndOtherInteractions = User::factory()->for($team, 'department')->create();
 
     $userWithoutInteractions = User::factory()->create();
 
@@ -326,7 +326,7 @@ it('displays only users with student interactions based on group filter', functi
 
     $userWithOldInteractions = User::factory()->create();
 
-    $userWithRecentAndOtherInteractions = User::factory()->for($team, 'team')->create();
+    $userWithRecentAndOtherInteractions = User::factory()->for($team, 'department')->create();
 
     $userWithoutInteractions = User::factory()->create();
 

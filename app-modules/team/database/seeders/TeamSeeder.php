@@ -40,7 +40,7 @@ use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
-class TeamSeeder extends Seeder
+class DepartmentSeeder extends Seeder
 {
     public function run(): void
     {
@@ -49,6 +49,6 @@ class TeamSeeder extends Seeder
             ->create();
 
         User::all()
-            ->each(fn (User $user) => $user->team()->associate($teams->random())->save());
+            ->each(fn (User $user) => $user->department()->associate($teams->random())->save());
     }
 }

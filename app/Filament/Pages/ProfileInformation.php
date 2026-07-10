@@ -146,20 +146,20 @@ class ProfileInformation extends ProfilePage
                             ->visible($hasCrmLicense),
                         TextEntry::make('teams')
                             ->label('Department')
-                            ->state(fn () => $user->team->name)
-                            ->hidden(! $user->team)
+                            ->state(fn () => $user->department->name)
+                            ->hidden(! $user->department)
                             ->hint(fn (Get $get): string => $get('are_teams_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
                         Checkbox::make('are_teams_visible_on_profile')
-                            ->label('Show ' . str('team') . ' on profile')
-                            ->hidden(! $user->team)
+                            ->label('Show department on profile')
+                            ->hidden(! $user->department)
                             ->live(),
                         TextEntry::make('division')
-                            ->state($user->team?->division?->name)
-                            ->hidden(! $user->team?->division()->exists())
+                            ->state($user->department?->division?->name)
+                            ->hidden(! $user->department?->division()->exists())
                             ->hint(fn (Get $get): string => $get('is_division_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
                         Checkbox::make('is_division_visible_on_profile')
                             ->label('Show Division on profile')
-                            ->hidden(! $user->team?->division()->exists())
+                            ->hidden(! $user->department?->division()->exists())
                             ->live(),
                         $this->getPasswordFormComponent()
                             ->hidden($user->is_external),

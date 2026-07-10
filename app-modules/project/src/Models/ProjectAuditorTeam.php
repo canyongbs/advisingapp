@@ -59,8 +59,8 @@ class ProjectAuditorTeam extends Pivot
     /**
      * @return BelongsTo<Department, $this>
      */
-    public function team(): BelongsTo
+    public function department(): BelongsTo
     {
-        return $this->belongsTo(Department::class, 'team_id', 'id', 'team');
+        return $this->belongsTo(Department::class, 'team_id', 'id', 'department');
     }
 }

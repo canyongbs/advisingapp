@@ -57,8 +57,8 @@ class InteractionConfidentialTeam extends Pivot
         return $this->belongsTo(Interaction::class);
     }
 
-    public function team()
+    public function department()
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Department::class, 'team_id');
     }
 }

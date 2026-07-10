@@ -71,7 +71,7 @@ class EditCaseTypeAssignmentsRequestFactory extends RequestFactory
         if ($team) {
             $userFactory = $userFactory->for(
                 factory: $team,
-                relationship: 'team'
+                relationship: 'department'
             );
         }
 

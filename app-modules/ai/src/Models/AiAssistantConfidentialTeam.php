@@ -64,8 +64,8 @@ class AiAssistantConfidentialTeam extends Pivot
     /**
      * @return BelongsTo<Department, $this>
      */
-    public function team(): BelongsTo
+    public function department(): BelongsTo
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Department::class, 'team_id');
     }
 }

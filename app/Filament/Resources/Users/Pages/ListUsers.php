@@ -155,10 +155,10 @@ class ListUsers extends ListRecords
                             '' => [
                                 'unassigned' => 'Unassigned',
                             ],
-                            'Team' => Department::query()->take(50)->orderBy('name')->pluck('name', 'id')->toArray(),
+                            'Department' => Department::query()->take(50)->orderBy('name')->pluck('name', 'id')->toArray(),
                         ]
                     )
-                    ->getSearchResultsUsing(fn (string $search): array => ['Team' => Department::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->pluck('name', 'id')->toArray()])
+                    ->getSearchResultsUsing(fn (string $search): array => ['Department' => Department::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->pluck('name', 'id')->toArray()])
                     ->getOptionLabelsUsing(function (array $values): array {
                         $values = array_values(array_filter($values, filled(...)));
 
@@ -188,9 +188,9 @@ class ListUsers extends ListRecords
                         }
 
                         $query->when(in_array('unassigned', $data['values']), function (Builder $query) {
-                            $query->whereDoesntHave('team');
+                            $query->whereDoesntHave('department');
                         })
-                            ->{in_array('unassigned', $data['values']) ? 'orWhereHas' : 'whereHas'}('team', function (Builder $query) use ($data) {
+                            ->{in_array('unassigned', $data['values']) ? 'orWhereHas' : 'whereHas'}('department', function (Builder $query) use ($data) {
                                 $query->whereIn('team_id', array_filter($data['values'], fn ($value) => $value !== 'unassigned'));
                             });
                     })

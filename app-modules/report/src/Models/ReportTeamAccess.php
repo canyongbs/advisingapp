@@ -57,8 +57,8 @@ class ReportTeamAccess extends BaseModel implements Auditable
     /**
      * @return BelongsTo<Department, $this>
      */
-    public function team(): BelongsTo
+    public function department(): BelongsTo
     {
-        return $this->belongsTo(Department::class);
+        return $this->belongsTo(Department::class, 'team_id');
     }
 }

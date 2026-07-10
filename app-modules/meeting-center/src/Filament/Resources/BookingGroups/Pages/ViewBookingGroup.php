@@ -81,7 +81,7 @@ class ViewBookingGroup extends ViewRecord
                         ->placeholder('N/A')
                         ->badge()
                         ->label('Users'),
-                    TextEntry::make('teams.name')
+                    TextEntry::make('departments.name')
                         ->placeholder('N/A')
                         ->badge()
                         ->label('Departments'),

@@ -92,7 +92,7 @@ class Division extends BaseModel implements Auditable
     /**
      * @return HasMany<Department, $this>
      */
-    public function teams(): HasMany
+    public function departments(): HasMany
     {
         return $this->hasMany(Department::class);
     }

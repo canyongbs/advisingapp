@@ -109,10 +109,7 @@ class Prompt extends BaseModel
      */
     public function confidentialAccessTeams(): BelongsToMany
     {
-        return $this->belongsToMany(
-            Department::class,
-            'confidential_prompt_teams'
-        )
+        return $this->belongsToMany(Department::class, 'confidential_prompt_teams', 'prompt_id', 'team_id')
             ->using(ConfidentialPromptTeam::class)
             ->withTimestamps();
     }

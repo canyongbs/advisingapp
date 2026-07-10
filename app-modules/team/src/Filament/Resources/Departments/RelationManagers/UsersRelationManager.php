@@ -75,7 +75,7 @@ class UsersRelationManager extends RelationManager
             ])
             ->headerActions([
                 AssociateAction::make()
-                    ->label('Add user to this team')
+                    ->label('Add user to this department')
                     ->recordSelectOptionsQuery(function (Builder $query) {
                         $query->tap(new WithoutAnyAdmin());
                     })
@@ -84,12 +84,12 @@ class UsersRelationManager extends RelationManager
                             ->rules([
                                 fn (): Closure => function (string $attribute, mixed $value, Closure $fail) {
                                     //TODO: remove this if we support multiple teams
-                                    if (User::findOrFail($value)->team) {
-                                        $fail('This user already belongs to a team.');
+                                    if (User::findOrFail($value)->department) {
+                                        $fail('This user already belongs to a department.');
                                     }
 
                                     if (User::findOrFail($value)->isSuperAdmin()) {
-                                        $fail('Super admin users cannot be added to a team.');
+                                        $fail('Super admin users cannot be added to a department.');
                                     }
                                 },
                             ]),
@@ -97,7 +97,7 @@ class UsersRelationManager extends RelationManager
             ])
             ->recordActions([
                 DissociateAction::make()
-                    ->label('Remove from this team'),
+                    ->label('Remove from this department'),
             ])
             ->toolbarActions([]);
     }

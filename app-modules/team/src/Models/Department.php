@@ -64,7 +64,7 @@ class Department extends BaseModel
     /** @return HasMany<User, $this> */
     public function users(): HasMany
     {
-        return $this->hasMany(User::class);
+        return $this->hasMany(User::class, 'team_id');
     }
 
     /**

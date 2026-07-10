@@ -34,38 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Task\Models;
+namespace AdvisingApp\Team\Database\Seeders;
 
-use AdvisingApp\Task\Database\Factories\ConfidentialTasksTeamsFactory;
 use AdvisingApp\Team\Models\Department;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\Pivot;
+use App\Models\User;
+use Illuminate\Database\Seeder;
 
-/**
- * @mixin IdeHelperConfidentialTasksTeams
- */
-class ConfidentialTasksTeams extends Pivot
+class DepartmentSeeder extends Seeder
 {
-    /** @use HasFactory<ConfidentialTasksTeamsFactory> */
-    use HasFactory;
-
-    use HasUuids;
-
-    /**
-     * @return BelongsTo<Task, $this>
-     */
-    public function task(): BelongsTo
+    public function run(): void
     {
-        return $this->belongsTo(Task::class);
-    }
+        $departments = Department::factory()
+            ->count(10)
+            ->create();
 
-    /**
-     * @return BelongsTo<Department, $this>
-     */
-    public function department(): BelongsTo
-    {
-        return $this->belongsTo(Department::class, 'team_id');
+        User::all()
+            ->each(fn (User $user) => $user->department()->associate($departments->random())->save());
     }
 }

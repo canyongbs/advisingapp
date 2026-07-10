@@ -85,7 +85,7 @@ test('Interactions model with fetch data for team user', function () {
 
     $team = Department::factory()->create();
 
-    $teamUser->team()->associate($team)->save();
+    $teamUser->department()->associate($team)->save();
 
     actingAs($teamUser);
 

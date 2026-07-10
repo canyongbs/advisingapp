@@ -49,11 +49,11 @@ class HandleUserTeamChanged
 
         BookingGroup::query()
             ->where('meeting_owner_id', $event->user->id)
-            ->whereHas('teams', fn ($query) => $query->whereKey($event->previousTeamId))
+            ->whereHas('departments', fn ($query) => $query->whereKey($event->previousTeamId))
             ->whereDoesntHave('users', fn ($query) => $query->whereKey($event->user->id))
             ->when(
                 filled($event->currentTeamId),
-                fn ($query) => $query->whereDoesntHave('teams', fn ($teamQuery) => $teamQuery->whereKey($event->currentTeamId)),
+                fn ($query) => $query->whereDoesntHave('departments', fn ($teamQuery) => $teamQuery->whereKey($event->currentTeamId)),
             )
             ->eachById(fn (BookingGroup $bookingGroup): mixed => $bookingGroup->users()->syncWithoutDetaching([$event->user->id]));
     }

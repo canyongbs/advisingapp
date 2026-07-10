@@ -143,13 +143,13 @@ it('can edit a booking group', function () {
     ]);
 
     $bookingGroup->users()->attach($users);
-    $bookingGroup->teams()->attach($teams);
+    $bookingGroup->departments()->attach($teams);
 
     $request = EditBookingGroupRequestFactory::new()->state([
         'name' => 'Updated Name',
         'description' => 'Updated Description',
         'users' => $users->pluck('id')->toArray(),
-        'teams' => $teams->pluck('id')->toArray(),
+        'departments' => $teams->pluck('id')->toArray(),
         'meeting_owner_id' => $meetingOwner->id,
     ])->create();
 
@@ -220,7 +220,7 @@ it('blocks save when meeting owner is no longer in selected users or teams', fun
 
     $request = EditBookingGroupRequestFactory::new()->state([
         'users' => [],
-        'teams' => [],
+        'departments' => [],
         'meeting_owner_id' => $meetingOwner->id,
     ])->create();
 

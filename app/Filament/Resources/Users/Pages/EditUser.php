@@ -118,12 +118,12 @@ class EditUser extends EditRecord
                             ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
                     ]),
-                Section::make('Team')
+                Section::make('Department')
                     ->schema([
                         Select::make('team')
                             ->label('')
                             ->options(Department::all()->pluck('name', 'id'))
-                            ->relationship('team', 'name'),
+                            ->relationship('department', 'name'),
                     ])
                     ->hidden(fn (?User $record) => $record?->isAdmin() ?? false),
                 Licenses::make()
