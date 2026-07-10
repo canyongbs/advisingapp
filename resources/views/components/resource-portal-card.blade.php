@@ -15,7 +15,7 @@
     in the software, and you may not remove or obscure any functionality in the
     software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-    of the licensor in the software. Any use of the licensor's trademarks is subject
+    of the licensor in the software. Any use of the licensor’s trademarks is subject
     to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
     same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -31,7 +31,8 @@
     
     </COPYRIGHT>
 --}}
-@props ([
+
+@props([
     'productResourceHubUrl',
 ])
 
@@ -41,7 +42,9 @@
     <div class="@sm:flex-row @sm:items-center flex flex-1 flex-col items-start justify-between gap-x-4 gap-y-6">
         <div class="flex flex-1 flex-col items-start @sm:self-stretch">
             <p class="text-sm font-semibold text-gray-950">Resource Portal</p>
-            <p class="mt-2 mb-4 text-sm text-gray-800">Visit our resource portal for answers to frequently asked product and service questions.</p>
+            <p class="mt-2 mb-4 text-sm text-gray-800">
+                Visit our resource portal for answers to frequently asked product and service questions.
+            </p>
             <a
                 class="mt-auto inline-flex items-center gap-1.5 rounded-lg border-2 border-gray-700 px-4 py-2 text-sm font-semibold text-gray-700 transition duration-75 hover:bg-gray-950/5 focus-visible:ring-2 focus-visible:ring-gray-950/30 focus-visible:ring-offset-2 focus-visible:ring-offset-turkish-300 focus-visible:outline-none"
                 href="{{ $productResourceHubUrl }}"
