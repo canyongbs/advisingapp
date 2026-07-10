@@ -15,7 +15,7 @@
     in the software, and you may not remove or obscure any functionality in the
     software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-    of the licensor in the software. Any use of the licensor’s trademarks is subject
+    of the licensor in the software. Any use of the licensor's trademarks is subject
     to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
     same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -31,17 +31,22 @@
     
     </COPYRIGHT>
 --}}
-<div class="@container flex h-full items-center rounded-xl bg-turkish-500 p-6 text-white">
+@props ([
+    'themeChangelogUrl',
+])
+
+<div
+    {{ $attributes->class(['@container flex flex-col rounded-xl bg-turkish-500 p-6 text-white shadow-sm ring-1 ring-turkish-500/50']) }}
+>
     <div class="@sm:flex-row @sm:items-center flex flex-1 flex-col items-start justify-between gap-x-4 gap-y-6">
-        <div>
+        <div class="flex flex-1 flex-col items-start @sm:self-stretch">
             <p class="text-sm font-semibold text-white">Version {{ app('current-version') }} is now available!</p>
-            <p class="my-4 text-sm text-white">
-                Your instance of Advising App&#174; was automatically updated with our latest available features.
-            </p>
+            <p class="mt-2 mb-4 text-sm text-white">Your instance of Advising App&#174; was automatically updated with our latest available features.</p>
             <a
-                class="inline-block rounded-xl border-2 border-white px-4 py-2 text-sm font-semibold text-white"
+                class="mt-auto inline-flex items-center gap-1.5 rounded-lg border-2 border-white px-4 py-2 text-sm font-semibold text-white transition duration-75 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-turkish-500 focus-visible:outline-none"
                 href="{{ $themeChangelogUrl }}"
                 target="_blank"
+                rel="noopener noreferrer"
             >
                 Learn More
             </a>

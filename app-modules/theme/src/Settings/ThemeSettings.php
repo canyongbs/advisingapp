@@ -41,6 +41,10 @@ use App\Settings\SettingsWithMedia;
 
 class ThemeSettings extends SettingsWithMedia
 {
+    public const DEFAULT_CHANGELOG_URL = 'https://github.com/canyongbs/aidingapp/releases';
+
+    public const DEFAULT_PRODUCT_RESOURCE_HUB_URL = 'https://canyongbs.aiding.app/portal';
+
     public bool $is_logo_active = false;
 
     public bool $is_favicon_active = false;

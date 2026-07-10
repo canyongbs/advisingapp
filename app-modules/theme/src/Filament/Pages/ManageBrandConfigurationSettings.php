@@ -184,7 +184,8 @@ class ManageBrandConfigurationSettings extends SettingsPage
                         TextInput::make('changelog_url')
                             ->label('Changelog URL')
                             ->url()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->placeholder(ThemeSettings::DEFAULT_CHANGELOG_URL),
                     ]),
 
                 Section::make('Product Resource Hub URL')
@@ -193,7 +194,8 @@ class ManageBrandConfigurationSettings extends SettingsPage
                         TextInput::make('product_resource_hub_url')
                             ->label('Product Resource Hub URL')
                             ->url()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->placeholder(ThemeSettings::DEFAULT_PRODUCT_RESOURCE_HUB_URL),
                     ]),
             ]);
     }
