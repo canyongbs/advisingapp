@@ -112,12 +112,12 @@ trait CanManagePromptLibrary
                             $set('promptId', null);
                         }
 
-                        $set('myTeamPrompts', false);
+                        $set('myDepartmentPrompts', false);
                     })
                     ->live()
                     ->hidden(fn (Get $get): bool => blank($get('isSmart')) || $get('isSmart')),
-                Checkbox::make('myTeamPrompts')
-                    ->label('My team\'s prompts only')
+                Checkbox::make('myDepartmentPrompts')
+                    ->label('My department\'s prompts only')
                     ->afterStateUpdated(function (Set $set) {
                         $set('myPrompts', false);
                         $set('promptId', null);
@@ -150,15 +150,15 @@ trait CanManagePromptLibrary
                                     fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
                                 )
                                 ->when(
-                                    $get('myTeamPrompts'),
+                                    $get('myDepartmentPrompts'),
                                     function (Builder $query) {
                                         /** @var User $user */
                                         $user = auth()->user();
-                                        $teamUsers = $user->department?->users;
+                                        $departmentUsers = $user->department?->users;
 
-                                        if ($teamUsers) {
-                                            $query->whereHas('user', function (Builder $query) use ($teamUsers) {
-                                                return $query->whereIn('id', $teamUsers->pluck('id'));
+                                        if ($departmentUsers) {
+                                            $query->whereHas('user', function (Builder $query) use ($departmentUsers) {
+                                                return $query->whereIn('id', $departmentUsers->pluck('id'));
                                             });
                                         }
                                     },
@@ -216,15 +216,15 @@ trait CanManagePromptLibrary
                                 fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
                             )
                             ->when(
-                                $get('myTeamPrompts'),
+                                $get('myDepartmentPrompts'),
                                 function (Builder $query) {
                                     /** @var User $user */
                                     $user = auth()->user();
-                                    $teamUsers = $user->department?->users;
+                                    $departmentmUsers = $user->department?->users;
 
-                                    if ($teamUsers) {
-                                        $query->whereHas('user', function (Builder $query) use ($teamUsers) {
-                                            return $query->whereIn('id', $teamUsers->pluck('id'));
+                                    if ($departmentmUsers) {
+                                        $query->whereHas('user', function (Builder $query) use ($departmentmUsers) {
+                                            return $query->whereIn('id', $departmentmUsers->pluck('id'));
                                         });
                                     }
                                 },

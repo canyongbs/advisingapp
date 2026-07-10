@@ -144,7 +144,7 @@ class ProfileInformation extends ProfilePage
                             ->label('Show Pronouns on profile')
                             ->live()
                             ->visible($hasCrmLicense),
-                        TextEntry::make('teams')
+                        TextEntry::make('departments')
                             ->label('Department')
                             ->state(fn () => $user->department->name)
                             ->hidden(! $user->department)

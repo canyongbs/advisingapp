@@ -115,8 +115,8 @@ class CreateInteraction extends CreateRecord
                                 ->multiple()
                                 ->exists('users', 'id')
                                 ->visible(fn (Get $get) => $get('is_confidential')),
-                            Select::make('interaction_confidential_teams')
-                                ->relationship('confidentialAccessTeams', 'name')
+                            Select::make('interaction_confidential_departments')
+                                ->relationship('confidentialAccessDepartments', 'name')
                                 ->preload()
                                 ->label('Departments')
                                 ->multiple()

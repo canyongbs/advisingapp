@@ -34,21 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Team\Database\Seeders;
+namespace AdvisingApp\Project\Filament\Resources\Projects\RelationManagers;
 
-use AdvisingApp\Team\Models\Department;
-use App\Models\User;
-use Illuminate\Database\Seeder;
+use Filament\Actions\AttachAction;
+use Filament\Actions\DetachAction;
+use Filament\Actions\DetachBulkAction;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
-class DepartmentSeeder extends Seeder
+class AuditorDepartmentsRelationManager extends RelationManager
 {
-    public function run(): void
-    {
-        $teams = Department::factory()
-            ->count(10)
-            ->create();
+    protected static string $relationship = 'auditorDepartments';
 
-        User::all()
-            ->each(fn (User $user) => $user->department()->associate($teams->random())->save());
+    protected static ?string $title = 'Departments';
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->recordTitleAttribute('name')
+            ->columns([
+                TextColumn::make('name'),
+            ])
+            ->headerActions([
+                AttachAction::make()
+                    ->authorize(function () {
+                        return auth()->user()->can('update', $this->ownerRecord);
+                    }),
+            ])
+            ->recordActions([
+                DetachAction::make()
+                    ->authorize(function () {
+                        return auth()->user()->can('update', $this->ownerRecord);
+                    }),
+            ])
+            ->toolbarActions([
+                DetachBulkAction::make()
+                    ->authorize(function () {
+                        return auth()->user()->can('update', $this->ownerRecord);
+                    }),
+            ])
+            ->inverseRelationship('auditedProjects');
     }
 }

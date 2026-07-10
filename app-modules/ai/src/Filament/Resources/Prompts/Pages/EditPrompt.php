@@ -102,8 +102,8 @@ class EditPrompt extends EditRecord
                                 ->multiple()
                                 ->exists('users', 'id')
                                 ->visible(fn (Get $get) => $get('is_confidential')),
-                            Select::make('confidential_prompt_teams')
-                                ->relationship('confidentialAccessTeams', 'name')
+                            Select::make('confidential_prompt_departments')
+                                ->relationship('confidentialAccessDepartments', 'name')
                                 ->preload()
                                 ->label('Departments')
                                 ->multiple()

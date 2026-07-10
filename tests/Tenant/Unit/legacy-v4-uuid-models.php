@@ -108,7 +108,7 @@ use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
-use AdvisingApp\MeetingCenter\Models\BookingGroupTeam;
+use AdvisingApp\MeetingCenter\Models\BookingGroupDepartment;
 use AdvisingApp\MeetingCenter\Models\BookingGroupUser;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
@@ -376,7 +376,7 @@ return [
     InteractionType::class,
     BookingGroup::class,
     BookingGroupAppointment::class,
-    BookingGroupTeam::class,
+    BookingGroupDepartment::class,
     BookingGroupUser::class,
     Calendar::class,
     CalendarEvent::class,

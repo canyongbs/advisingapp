@@ -37,7 +37,7 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Filament\Pages\ProspectTaskManagement;
-use AdvisingApp\Report\Models\ReportTeamAccess;
+use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\Team\Models\Department;
 use App\Features\ReportingFeature;
@@ -88,7 +88,7 @@ it('grants access to a user belonging to a department that has been granted acce
 
     get(ProspectTaskManagement::getUrl())->assertForbidden();
 
-    ReportTeamAccess::factory()->create([
+    ReportDepartmentAccess::factory()->create([
         'report_key' => ReportAccessKey::ProspectTaskManagement->value,
         'team_id' => $department->getKey(),
     ]);

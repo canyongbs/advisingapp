@@ -193,10 +193,10 @@ test('only shows confidential prompts to authorized users', function () use ($li
         'prompt_id' => $confidentialPrompt->id,
     ]);
 
-    $team = Department::factory()->create();
+    $department = Department::factory()->create();
 
     DepartmentConfidentialPrompt::create([
-        'team_id' => $team->id,
+        'team_id' => $department->id,
         'prompt_id' => $confidentialPrompt->id,
     ]);
 
@@ -204,7 +204,7 @@ test('only shows confidential prompts to authorized users', function () use ($li
         licenses: $licenses,
         permissions: $permissions
     );
-    $departmentConfidentialPromptUser->team_id = $team->id;
+    $departmentConfidentialPromptUser->team_id = $department->id;
     $departmentConfidentialPromptUser->save();
 
     assertDatabaseCount(Prompt::class, 2);

@@ -253,14 +253,14 @@ trait CanManageRequests
                     ->afterStateUpdated(fn (Set $set) => $set('targetIds', [])),
                 Select::make('targetIds')
                     ->label(fn (Get $get): string => match ($get('targetType')) {
-                        ResearchRequestShareTarget::Team => 'Select Teams',
+                        ResearchRequestShareTarget::Department => 'Select Departments',
                         ResearchRequestShareTarget::User => 'Select Users',
                         default => '',
                     })
                     ->visible(fn (Get $get): bool => filled($get('targetType')))
                     ->options(function (Get $get): Collection {
                         return match ($get('targetType')) {
-                            ResearchRequestShareTarget::Team => Department::orderBy('name')->pluck('name', 'id'),
+                            ResearchRequestShareTarget::Department => Department::orderBy('name')->pluck('name', 'id'),
                             ResearchRequestShareTarget::User => User::query()->tap(new WithoutAnyAdmin())->orderBy('name')->pluck('name', 'id'),
                             default => '',
                         };
@@ -271,7 +271,7 @@ trait CanManageRequests
                     ->rules([
                         fn (Get $get) => match ($get('targetType')) {
                             ResearchRequestShareTarget::User => new RestrictSuperAdmin('email'),
-                            ResearchRequestShareTarget::Team => null,
+                            ResearchRequestShareTarget::Department => null,
                             default => '',
                         },
                     ]),

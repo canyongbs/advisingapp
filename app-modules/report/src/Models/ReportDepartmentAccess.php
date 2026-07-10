@@ -34,46 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Project\Filament\Resources\Projects\RelationManagers;
+namespace AdvisingApp\Report\Models;
 
-use Filament\Actions\AttachAction;
-use Filament\Actions\DetachAction;
-use Filament\Actions\DetachBulkAction;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use AdvisingApp\Team\Models\Department;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use OwenIt\Auditing\Auditable as AuditableTrait;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class ManagerTeamsRelationManager extends RelationManager
+/**
+ * @mixin IdeHelperReportDepartmentAccess
+ */
+class ReportDepartmentAccess extends BaseModel implements Auditable
 {
-    protected static string $relationship = 'managerDepartments';
+    use AuditableTrait;
 
-    protected static ?string $title = 'Teams';
+    protected $fillable = [
+        'report_key',
+        'team_id',
+    ];
 
-    public function table(Table $table): Table
+    /**
+     * @return BelongsTo<Department, $this>
+     */
+    public function department(): BelongsTo
     {
-        return $table
-            ->recordTitleAttribute('name')
-            ->columns([
-                TextColumn::make('name'),
-            ])
-            ->headerActions([
-                AttachAction::make()
-                    ->authorize(function () {
-                        return auth()->user()->can('update', $this->ownerRecord);
-                    }),
-            ])
-            ->recordActions([
-                DetachAction::make()
-                    ->authorize(function () {
-                        return auth()->user()->can('update', $this->ownerRecord);
-                    }),
-            ])
-            ->toolbarActions([
-                DetachBulkAction::make()
-                    ->authorize(function () {
-                        return auth()->user()->can('update', $this->ownerRecord);
-                    }),
-            ])
-            ->inverseRelationship('managedProjects');
+        return $this->belongsTo(Department::class, 'team_id');
     }
 }

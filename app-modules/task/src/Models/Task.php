@@ -189,7 +189,7 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, H
     /**
      * @return BelongsToMany<Department, $this, covariant DepartmentsConfidentialTasks>
      */
-    public function confidentialAccessTeams(): BelongsToMany
+    public function confidentialAccessDepartments(): BelongsToMany
     {
         return $this->belongsToMany(Department::class, 'confidential_task_teams', 'task_id', 'team_id')
             ->using(DepartmentsConfidentialTasks::class)

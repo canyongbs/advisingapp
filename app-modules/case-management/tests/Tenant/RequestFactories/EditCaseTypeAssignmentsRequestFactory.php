@@ -64,13 +64,13 @@ class EditCaseTypeAssignmentsRequestFactory extends RequestFactory
         ]);
     }
 
-    public function withIndividualId(?Department $team = null): static
+    public function withIndividualId(?Department $department = null): static
     {
         $userFactory = User::factory();
 
-        if ($team) {
+        if ($department) {
             $userFactory = $userFactory->for(
-                factory: $team,
+                factory: $department,
                 relationship: 'department'
             );
         }

@@ -44,12 +44,12 @@ use Filament\Actions\AttachAction;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-it('can attach team member to case type', function () {
+it('can attach department member to case type', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $caseType = CaseType::factory()->create();
 
-    $team = Department::factory()->create();
+    $department = Department::factory()->create();
 
     actingAs($user)
         ->get(
@@ -67,13 +67,13 @@ it('can attach team member to case type', function () {
     ])
         ->callTableAction(
             AttachAction::class,
-            data: ['recordId' => $team->getKey()]
+            data: ['recordId' => $department->getKey()]
         )->assertSuccessful();
 
     expect(
         $caseType->refresh()
             ->managers
             ->pluck('id')
-            ->contains($team->getKey())
+            ->contains($department->getKey())
     )->toBeTrue();
 });

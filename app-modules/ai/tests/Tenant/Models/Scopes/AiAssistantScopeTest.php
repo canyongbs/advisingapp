@@ -49,15 +49,15 @@ test('AiAssistant model has applied global scope', function () {
     expect(AiAssistant::hasGlobalScope(AiAssistantConfidentialScope::class))->toBeTrue();
 });
 
-test('AiAssistant model with fetch data for team user', function () {
-    $teamUser = User::factory()->licensed(LicenseType::cases())->create();
+test('AiAssistant model with fetch data for department user', function () {
+    $departmentUser = User::factory()->licensed(LicenseType::cases())->create();
 
-    $team = Department::factory()->create();
+    $department = Department::factory()->create();
 
-    $teamUser->department()->associate($team)->save();
+    $departmentUser->department()->associate($department)->save();
 
     $ownedConfidentialAiAssistants = AiAssistant::factory()
-        ->hasAttached($team, [], 'confidentialAccessTeams')
+        ->hasAttached($department, [], 'confidentialAccessDepartments')
         ->count(10)
         ->create([
             'is_confidential' => true,
@@ -71,7 +71,7 @@ test('AiAssistant model with fetch data for team user', function () {
         'is_confidential' => false,
     ]);
 
-    actingAs($teamUser);
+    actingAs($departmentUser);
 
     $aiAssistants = AiAssistant::query()->get();
 

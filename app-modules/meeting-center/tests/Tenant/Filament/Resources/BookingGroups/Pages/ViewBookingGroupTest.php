@@ -92,7 +92,7 @@ it('displays booking group basic information', function () {
         ->assertHasNoErrors();
 });
 
-it('displays booking group with both users and teams', function () {
+it('displays booking group with both users and departments', function () {
     $user = User::factory()->create();
 
     $user->givePermissionTo('group_appointment.view-any');
@@ -101,14 +101,14 @@ it('displays booking group with both users and teams', function () {
     actingAs($user);
 
     $users = User::factory()->count(2)->create();
-    $teams = Department::factory()->count(2)->create();
+    $departments = Department::factory()->count(2)->create();
 
     $bookingGroup = BookingGroup::factory()->create([
         'name' => 'Mixed Booking Group',
     ]);
 
     $bookingGroup->users()->attach($users);
-    $bookingGroup->departments()->attach($teams);
+    $bookingGroup->departments()->attach($departments);
 
     livewire(ViewBookingGroup::class, [
         'record' => $bookingGroup->getRouteKey(),
@@ -116,7 +116,7 @@ it('displays booking group with both users and teams', function () {
         ->assertSee('Mixed Booking Group')
         ->assertSee($users[0]->name)
         ->assertSee($users[1]->name)
-        ->assertSee($teams[0]->name)
-        ->assertSee($teams[1]->name)
+        ->assertSee($departments[0]->name)
+        ->assertSee($departments[1]->name)
         ->assertHasNoErrors();
 });

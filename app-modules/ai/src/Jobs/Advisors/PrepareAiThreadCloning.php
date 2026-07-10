@@ -73,7 +73,7 @@ class PrepareAiThreadCloning implements ShouldQueue
         Bus::batch(
             match ($this->targetType) {
                 AiThreadShareTarget::User => $this->generateSingleUserShareJobs(),
-                AiThreadShareTarget::Team => $this->generateTeamShareJobs(),
+                AiThreadShareTarget::Department => $this->generateDepartmentShareJobs(),
             },
         )
             ->name("AiThreadCloning batch for {$this->targetType->getLabel()}")
@@ -126,14 +126,17 @@ class PrepareAiThreadCloning implements ShouldQueue
             ->all();
     }
 
-    protected function generateTeamShareJobs(): array
+    /**
+     * @return array<Department>
+     */
+    protected function generateDepartmentShareJobs(): array
     {
         return Department::query()
             ->whereKey($this->targetIds)
             ->with('users')
             ->get()
-            ->map(function (Department $team) {
-                return $team->users()
+            ->map(function (Department $department) {
+                return $department->users()
                     ->whereKeyNot($this->sender)
                     ->get()
                     ->map(fn (User $recipient) => new CloneAiThread($this->thread, $this->sender, $recipient))

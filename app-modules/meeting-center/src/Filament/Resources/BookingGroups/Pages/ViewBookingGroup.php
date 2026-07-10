@@ -92,13 +92,13 @@ class ViewBookingGroup extends ViewRecord
 
                             return new HtmlString(view('meeting-center::filament.components.disconnected-calendar-members', [
                                 'directUsers' => $data['directUsers'],
-                                'teamGroups' => $data['teamGroups'],
+                                'departmentGroups' => $data['departmentGroups'],
                             ])->render());
                         })
                         ->visible(function () use ($bookingGroup): bool {
                             $data = $bookingGroup->disconnectedCalendarMembers();
 
-                            return $data['directUsers']->isNotEmpty() || $data['teamGroups']->isNotEmpty();
+                            return $data['directUsers']->isNotEmpty() || $data['departmentGroups']->isNotEmpty();
                         })
                         ->columnSpanFull(),
                 ]),

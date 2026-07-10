@@ -42,9 +42,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
- * @mixin IdeHelperBookingGroupTeam
+ * @mixin IdeHelperBookingGroupDepartment
  */
-class BookingGroupTeam extends Pivot
+class BookingGroupDepartment extends Pivot
 {
     use HasUuids;
 

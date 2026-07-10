@@ -876,32 +876,32 @@ it('can clone a thread to a user', function () use ($setUp) {
     });
 });
 
-it('can clone a thread to a team', function () use ($setUp) {
+it('can clone a thread to a department', function () use ($setUp) {
     Bus::fake();
 
     ['user' => $user, 'thread' => $thread] = $setUp();
 
-    $team = Department::factory()->create();
+    $department = Department::factory()->create();
 
     Livewire::test(InstitutionalAdvisor::class)
         ->callAction('cloneThread', [
-            'targetType' => AiThreadShareTarget::Team,
-            'targetIds' => [$team->getKey()],
+            'targetType' => AiThreadShareTarget::Department,
+            'targetIds' => [$department->getKey()],
         ], arguments: [
             'thread' => $thread->getKey(),
         ])
         ->assertHasNoActionErrors();
 
-    Bus::assertDispatched(PrepareAiThreadCloning::class, function (PrepareAiThreadCloning $job) use ($thread, $team, $user) {
+    Bus::assertDispatched(PrepareAiThreadCloning::class, function (PrepareAiThreadCloning $job) use ($thread, $department, $user) {
         if (! $job->thread->is($thread)) {
             return false;
         }
 
-        if ($job->targetType !== AiThreadShareTarget::Team) {
+        if ($job->targetType !== AiThreadShareTarget::Department) {
             return false;
         }
 
-        if ($job->targetIds !== [$team->getKey()]) {
+        if ($job->targetIds !== [$department->getKey()]) {
             return false;
         }
 
@@ -999,32 +999,32 @@ it('can email a thread to a user', function () use ($setUp) {
     });
 });
 
-it('can email a thread to a team', function () use ($setUp) {
+it('can email a thread to a department', function () use ($setUp) {
     Bus::fake();
 
     ['user' => $user, 'thread' => $thread] = $setUp();
 
-    $team = Department::factory()->create();
+    $department = Department::factory()->create();
 
     Livewire::test(InstitutionalAdvisor::class)
         ->callAction('emailThread', [
-            'targetType' => AiThreadShareTarget::Team->value,
-            'targetIds' => [$team->getKey()],
+            'targetType' => AiThreadShareTarget::Department->value,
+            'targetIds' => [$department->getKey()],
         ], arguments: [
             'thread' => $thread->getKey(),
         ])
         ->assertHasNoActionErrors();
 
-    Bus::assertDispatched(PrepareAiThreadEmailing::class, function (PrepareAiThreadEmailing $job) use ($thread, $team, $user) {
+    Bus::assertDispatched(PrepareAiThreadEmailing::class, function (PrepareAiThreadEmailing $job) use ($thread, $department, $user) {
         if (! $job->thread->is($thread)) {
             return false;
         }
 
-        if ($job->targetType !== AiThreadShareTarget::Team->value) {
+        if ($job->targetType !== AiThreadShareTarget::Department->value) {
             return false;
         }
 
-        if ($job->targetIds !== [$team->getKey()]) {
+        if ($job->targetIds !== [$department->getKey()]) {
             return false;
         }
 

@@ -76,12 +76,12 @@ test('ListBookingGroups is gated with proper access control', function () {
 test('ListBookingGroups page displays correct member count', function () {
     $otherUsers = User::factory()->count(2)->create();
 
-    $team = Department::factory()->create();
-    User::factory()->count(2)->create(['team_id' => $team->id]);
+    $department = Department::factory()->create();
+    User::factory()->count(2)->create(['team_id' => $department->id]);
 
     $bookingGroup = BookingGroup::factory()->create();
     $bookingGroup->users()->attach($otherUsers->pluck('id')->toArray());
-    $bookingGroup->departments()->attach($team->id);
+    $bookingGroup->departments()->attach($department->id);
 
     asSuperAdmin();
 
@@ -91,7 +91,7 @@ test('ListBookingGroups page displays correct member count', function () {
         ->assertSee('4');
 
     $bookingGroup->users()->detach($otherUsers->pluck('id')->toArray());
-    $bookingGroup->departments()->detach($team->id);
+    $bookingGroup->departments()->detach($department->id);
     $bookingGroup->refresh();
 
     livewire(ListBookingGroups::class)

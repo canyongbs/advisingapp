@@ -209,7 +209,7 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
     /**
      * @return BelongsToMany<Department, $this, covariant DepartmentConfidentialInteraction>
      */
-    public function confidentialAccessTeams(): BelongsToMany
+    public function confidentialAccessDepartments(): BelongsToMany
     {
         return $this->belongsToMany(Department::class, 'interaction_confidential_teams', 'interaction_id', 'team_id')
             ->using(DepartmentConfidentialInteraction::class)

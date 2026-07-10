@@ -643,9 +643,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->phone_number;
     }
 
-    public function assignTeam(int|string $teamId): void
+    public function assignDepartment(int|string $departmentId): void
     {
-        $this->department()->associate($teamId)->save();
+        $this->department()->associate($departmentId)->save();
     }
 
     public function canReceiveSms(): bool

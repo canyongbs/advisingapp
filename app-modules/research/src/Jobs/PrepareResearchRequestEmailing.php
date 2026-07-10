@@ -78,24 +78,24 @@ class PrepareResearchRequestEmailing implements ShouldQueue
             return;
         }
 
-        if ($this->targetType === ResearchRequestShareTarget::Team->value) {
+        if ($this->targetType === ResearchRequestShareTarget::Department->value) {
             $sender = $this->sender;
 
             Department::query()
                 ->whereKey($this->targetIds)
                 ->with('users')
                 ->get()
-                ->each(function (Department $team) use ($sender) {
+                ->each(function (Department $department) use ($sender) {
                     Bus::batch(
-                        $team->users()->whereKeyNot($this->sender)->get()
+                        $department->users()->whereKeyNot($this->sender)->get()
                             ->map(fn (User $recipient) => new EmailResearchRequest($this->researchRequest, $this->note, $this->sender, $recipient, false))
                             ->all(),
                     )
-                        ->name("PrepareResearchReportEmailing for team {$team->getKey()}")
-                        ->finally(function (Batch $batch) use ($sender, $team) {
+                        ->name("PrepareResearchReportEmailing for department {$department->getKey()}")
+                        ->finally(function (Batch $batch) use ($sender, $department) {
                             Notification::make()
                                 ->success()
-                                ->title("You emailed a research report to {$batch->processedJobs()} users in team {$team->name}.")
+                                ->title("You emailed a research report to {$batch->processedJobs()} users in department {$department->name}.")
                                 ->sendToDatabase($sender);
                         })
                         ->dispatch();

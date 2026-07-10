@@ -34,31 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Models;
+namespace AdvisingApp\Report\Database\Factories;
 
+use AdvisingApp\Report\Enums\ReportAccessKey;
+use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Team\Models\Department;
-use App\Models\BaseModel;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use OwenIt\Auditing\Auditable as AuditableTrait;
-use OwenIt\Auditing\Contracts\Auditable;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @mixin IdeHelperReportTeamAccess
+ * @extends Factory<ReportDepartmentAccess>
  */
-class ReportTeamAccess extends BaseModel implements Auditable
+class ReportDepartmentAccessFactory extends Factory
 {
-    use AuditableTrait;
-
-    protected $fillable = [
-        'report_key',
-        'team_id',
-    ];
-
-    /**
-     * @return BelongsTo<Department, $this>
-     */
-    public function department(): BelongsTo
+    public function definition(): array
     {
-        return $this->belongsTo(Department::class, 'team_id');
+        return [
+            'report_key' => $this->faker->randomElement(ReportAccessKey::cases())->value,
+            'team_id' => Department::factory(),
+        ];
     }
 }

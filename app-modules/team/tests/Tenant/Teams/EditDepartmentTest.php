@@ -52,17 +52,17 @@ use function Pest\Livewire\livewire;
 test('EditDepartment is gated with proper access control', function () {
     $user = User::factory()->create();
 
-    $team = Department::factory()->create();
+    $department = Department::factory()->create();
 
     actingAs($user)
         ->get(
             DepartmentResource::getUrl('edit', [
-                'record' => $team,
+                'record' => $department,
             ])
         )->assertForbidden();
 
     livewire(EditDepartment::class, [
-        'record' => $team->getRouteKey(),
+        'record' => $department->getRouteKey(),
     ])
         ->assertForbidden();
 
@@ -72,7 +72,7 @@ test('EditDepartment is gated with proper access control', function () {
     actingAs($user)
         ->get(
             DepartmentResource::getUrl('edit', [
-                'record' => $team,
+                'record' => $department,
             ])
         )->assertSuccessful();
 
@@ -81,23 +81,23 @@ test('EditDepartment is gated with proper access control', function () {
     $request = Department::factory()->make();
 
     livewire(EditDepartment::class, [
-        'record' => $team->getRouteKey(),
+        'record' => $department->getRouteKey(),
     ])
         ->fillForm($request->toArray())
         ->call('save')
         ->assertHasNoFormErrors();
 
-    $team->refresh();
+    $department->refresh();
 
-    expect($team->name)->toEqual($request->name)
-        ->and($team->description)->toEqual($request->description);
+    expect($department->name)->toEqual($request->name)
+        ->and($department->description)->toEqual($request->description);
 });
 
-// Non Super Admin Users can be added to a team test
+// Non Super Admin Users can be added to a department test
 
-test('Non Super Admin Users can be added to a team', function () {
+test('Non Super Admin Users can be added to a department', function () {
     $user = User::factory()->create();
-    $team = Department::factory()->has(User::factory()->count(1))->create();
+    $department = Department::factory()->has(User::factory()->count(1))->create();
 
     $user->givePermissionTo('team.view-any');
     $user->givePermissionTo('team.*.update');
@@ -107,12 +107,12 @@ test('Non Super Admin Users can be added to a team', function () {
     actingAs($user)
         ->get(
             DepartmentResource::getUrl('edit', [
-                'record' => $team,
+                'record' => $department,
             ])
         )->assertSuccessful();
 
     livewire(UsersRelationManager::class, [
-        'ownerRecord' => $team,
+        'ownerRecord' => $department,
         'pageClass' => EditDepartment::class,
     ])
         ->callTableAction(
@@ -121,12 +121,12 @@ test('Non Super Admin Users can be added to a team', function () {
         )->assertSuccessful();
 });
 
-// Super Admin Users cannot be added to a team
+// Super Admin Users cannot be added to a department
 
-test('Super Admin Users cannot be added to a team', function () {
+test('Super Admin Users cannot be added to a department', function () {
     $user = User::factory()->create();
     $superAdmin = User::factory()->create();
-    $team = Department::factory()->create();
+    $department = Department::factory()->create();
 
     $user->givePermissionTo('team.view-any');
     $user->givePermissionTo('team.*.update');
@@ -138,12 +138,12 @@ test('Super Admin Users cannot be added to a team', function () {
     actingAs($user)
         ->get(
             DepartmentResource::getUrl('edit', [
-                'record' => $team,
+                'record' => $department,
             ])
         )->assertSuccessful();
 
     livewire(UsersRelationManager::class, [
-        'ownerRecord' => $team,
+        'ownerRecord' => $department,
         'pageClass' => EditDepartment::class,
     ])
         ->callTableAction(
@@ -153,12 +153,12 @@ test('Super Admin Users cannot be added to a team', function () {
         ->assertHasTableActionErrors(['recordId']);
 });
 
-//Super Admin Users do not show up in UsersRelationManager for Teams search results
+//Super Admin Users do not show up in UsersRelationManager for Departments search results
 
-test('Super Admin Users do not show up in UsersRelationManager for Teams search results', function () {
+test('Super Admin Users do not show up in UsersRelationManager for Departments search results', function () {
     $user = User::factory()->create();
     $superAdmin = User::factory()->create();
-    $team = Department::factory()->create();
+    $department = Department::factory()->create();
 
     $user->givePermissionTo('team.view-any');
     $user->givePermissionTo('team.*.update');
@@ -170,12 +170,12 @@ test('Super Admin Users do not show up in UsersRelationManager for Teams search 
     actingAs($user)
         ->get(
             DepartmentResource::getUrl('edit', [
-                'record' => $team,
+                'record' => $department,
             ])
         )->assertSuccessful();
 
     livewire(UsersRelationManager::class, [
-        'ownerRecord' => $team,
+        'ownerRecord' => $department,
         'pageClass' => EditDepartment::class,
     ])
         ->mountTableAction(AssociateAction::class)
@@ -188,9 +188,9 @@ test('Super Admin Users do not show up in UsersRelationManager for Teams search 
 
 // The associate/dissociate/attach/detach actions on relation managers are gated by the
 // "update" ability of the owner record (see FilamentServiceProvider). On the read-only-able
-// view page, a user who can only view the team must not see the associate action.
-test('the associate action in the team users relation manager is gated by the team update permission', function () {
-    $team = Department::factory()->create();
+// view page, a user who can only view the department must not see the associate action.
+test('the associate action in the department users relation manager is gated by the department update permission', function () {
+    $department = Department::factory()->create();
 
     $user = User::factory()->create();
     $user->givePermissionTo('team.view-any');
@@ -200,14 +200,14 @@ test('the associate action in the team users relation manager is gated by the te
     actingAs($user);
 
     livewire(UsersRelationManager::class, [
-        'ownerRecord' => $team,
+        'ownerRecord' => $department,
         'pageClass' => ViewDepartment::class,
     ])->assertTableActionHidden(AssociateAction::class);
 
     $user->givePermissionTo('team.*.update');
 
     livewire(UsersRelationManager::class, [
-        'ownerRecord' => $team,
+        'ownerRecord' => $department,
         'pageClass' => ViewDepartment::class,
     ])->assertTableActionVisible(AssociateAction::class);
 });

@@ -114,7 +114,7 @@ it('validates the inputs', function (CreateBookingGroupRequestFactory $data, arr
     ],
 ]);
 
-it('can create a booking group with users and teams', function () {
+it('can create a booking group with users and departments', function () {
     $undoRepeaterFake = Repeater::fake();
 
     $user = User::factory()->create();
@@ -125,13 +125,13 @@ it('can create a booking group with users and teams', function () {
     actingAs($user);
 
     $users = User::factory()->count(3)->create();
-    $teams = Department::factory()->count(2)->create();
+    $departments = Department::factory()->count(2)->create();
     $meetingOwner = $users->first();
     Calendar::factory()->for($meetingOwner)->create(['provider_id' => 'owner-calendar-id']);
 
     $request = CreateBookingGroupRequestFactory::new()->state([
         'users' => $users->pluck('id')->toArray(),
-        'departments' => $teams->pluck('id')->toArray(),
+        'departments' => $departments->pluck('id')->toArray(),
         'meeting_owner_id' => $meetingOwner->id,
     ])->create();
 

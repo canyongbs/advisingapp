@@ -34,23 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Database\Factories;
+namespace AdvisingApp\MeetingCenter\Listeners;
 
-use AdvisingApp\Report\Enums\ReportAccessKey;
-use AdvisingApp\Report\Models\ReportTeamAccess;
-use AdvisingApp\Team\Models\Department;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use App\Events\UserDepartmentChanged;
 
-/**
- * @extends Factory<ReportTeamAccess>
- */
-class ReportTeamAccessFactory extends Factory
+class HandleUserDepartmentChanged
 {
-    public function definition(): array
+    public function handle(UserDepartmentChanged $event): void
     {
-        return [
-            'report_key' => $this->faker->randomElement(ReportAccessKey::cases())->value,
-            'team_id' => Department::factory(),
-        ];
+        if (blank($event->previousDepartmentId) || $event->previousDepartmentId === $event->currentDepartmentId) {
+            return;
+        }
+
+        BookingGroup::query()
+            ->where('meeting_owner_id', $event->user->id)
+            ->whereHas('departments', fn ($query) => $query->whereKey($event->previousDepartmentId))
+            ->whereDoesntHave('users', fn ($query) => $query->whereKey($event->user->id))
+            ->when(
+                filled($event->currentDepartmentId),
+                fn ($query) => $query->whereDoesntHave('departments', fn ($departmentQuery) => $departmentQuery->whereKey($event->currentDepartmentId)),
+            )
+            ->eachById(fn (BookingGroup $bookingGroup): mixed => $bookingGroup->users()->syncWithoutDetaching([$event->user->id]));
     }
 }

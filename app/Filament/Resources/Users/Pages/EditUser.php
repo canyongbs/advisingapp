@@ -120,7 +120,7 @@ class EditUser extends EditRecord
                     ]),
                 Section::make('Department')
                     ->schema([
-                        Select::make('team')
+                        Select::make('department')
                             ->label('')
                             ->options(Department::all()->pluck('name', 'id'))
                             ->relationship('department', 'name'),

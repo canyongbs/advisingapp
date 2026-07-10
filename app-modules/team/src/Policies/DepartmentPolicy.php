@@ -46,15 +46,15 @@ class DepartmentPolicy
     {
         return $authenticatable->canOrElse(
             abilities: 'team.view-any',
-            denyResponse: 'You do not have permission to view teams.'
+            denyResponse: 'You do not have permission to view departments.'
         );
     }
 
-    public function view(Authenticatable $authenticatable, Department $team): Response
+    public function view(Authenticatable $authenticatable, Department $department): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['team.*.view'],
-            denyResponse: 'You do not have permission to view this team.'
+            denyResponse: 'You do not have permission to view this department.'
         );
     }
 
@@ -62,23 +62,23 @@ class DepartmentPolicy
     {
         return $authenticatable->canOrElse(
             abilities: 'team.create',
-            denyResponse: 'You do not have permission to create teams.'
+            denyResponse: 'You do not have permission to create departments.'
         );
     }
 
-    public function update(Authenticatable $authenticatable, Department $team): Response
+    public function update(Authenticatable $authenticatable, Department $department): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['team.*.update'],
-            denyResponse: 'You do not have permission to update this team.'
+            denyResponse: 'You do not have permission to update this department.'
         );
     }
 
-    public function delete(Authenticatable $authenticatable, Department $team): Response
+    public function delete(Authenticatable $authenticatable, Department $department): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['team.*.delete'],
-            denyResponse: 'You do not have permission to delete this team.'
+            denyResponse: 'You do not have permission to delete this department.'
         );
     }
 
@@ -86,15 +86,15 @@ class DepartmentPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['team.*.delete'],
-            denyResponse: 'You do not have permission to delete any team.'
+            denyResponse: 'You do not have permission to delete any department.'
         );
     }
 
-    public function restore(Authenticatable $authenticatable, Department $team): Response
+    public function restore(Authenticatable $authenticatable, Department $department): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['team.*.restore'],
-            denyResponse: 'You do not have permission to restore this team.'
+            denyResponse: 'You do not have permission to restore this department.'
         );
     }
 
@@ -102,15 +102,15 @@ class DepartmentPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['team.*.restore'],
-            denyResponse: 'You do not have permission to restore any team.'
+            denyResponse: 'You do not have permission to restore any department.'
         );
     }
 
-    public function forceDelete(Authenticatable $authenticatable, Department $team): Response
+    public function forceDelete(Authenticatable $authenticatable, Department $department): Response
     {
         return $authenticatable->canOrElse(
             abilities: ['team.*.force-delete'],
-            denyResponse: 'You do not have permission to permanently delete this team.'
+            denyResponse: 'You do not have permission to permanently delete this department.'
         );
     }
 
@@ -118,7 +118,7 @@ class DepartmentPolicy
     {
         return $authenticatable->canOrElse(
             abilities: ['team.*.force-delete'],
-            denyResponse: 'You do not have permission to permanently delete any team.'
+            denyResponse: 'You do not have permission to permanently delete any department.'
         );
     }
 }

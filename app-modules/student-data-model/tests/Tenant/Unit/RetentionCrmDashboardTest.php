@@ -38,7 +38,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Report\Enums\ReportAccessKey;
-use AdvisingApp\Report\Models\ReportTeamAccess;
+use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\StudentDataModel\Filament\Pages\RetentionCrmDashboard;
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
@@ -128,7 +128,7 @@ it('grants access to a user belonging to a department that has been granted acce
 
     get(RetentionCrmDashboard::getUrl())->assertForbidden();
 
-    ReportTeamAccess::factory()->create([
+    ReportDepartmentAccess::factory()->create([
         'report_key' => ReportAccessKey::StudentActionCenter->value,
         'team_id' => $department->getKey(),
     ]);

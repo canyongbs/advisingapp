@@ -49,7 +49,7 @@ it('can attach audit member to case type', function () {
 
     $caseType = CaseType::factory()->create();
 
-    $team = Department::factory()->create();
+    $department = Department::factory()->create();
 
     actingAs($user)
         ->get(
@@ -67,13 +67,13 @@ it('can attach audit member to case type', function () {
     ])
         ->callTableAction(
             AttachAction::class,
-            data: ['recordId' => $team->getKey()]
+            data: ['recordId' => $department->getKey()]
         )->assertSuccessful();
 
     expect(
         $caseType->refresh()
             ->auditors
             ->pluck('id')
-            ->contains($team->getKey())
+            ->contains($department->getKey())
     )->toBeTrue();
 });

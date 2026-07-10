@@ -146,7 +146,7 @@ class TaskBlock extends CampaignActionBlock
                                 ->dehydrated(true)
                                 ->exists('users', 'id')
                                 ->visible(fn (Get $get) => $get('is_confidential')),
-                            Select::make('confidential_task_teams')
+                            Select::make('department_confidential_task')
                                 ->options(fn () => Department::query()
                                     ->orderBy('name')
                                     ->limit(50)

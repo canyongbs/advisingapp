@@ -37,7 +37,7 @@
 namespace AdvisingApp\Authorization\Filament\Pages;
 
 use AdvisingApp\Report\Enums\ReportAccessKey;
-use AdvisingApp\Report\Models\ReportTeamAccess;
+use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\Team\Models\Department;
 use App\Enums\NavigationGroup;
@@ -171,13 +171,13 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
             ->slideOver()
             ->authorize(fn (): bool => auth()->user()->can('reporting.*.update'))
             ->modalHeading(fn (array $record): string => "Manage Access: {$record['name']}")
-            ->modalDescription('Grant access to this report by assigning individual users and/or teams.')
+            ->modalDescription('Grant access to this report by assigning individual users and/or departments.')
             ->fillForm(fn (array $record): array => [
                 'users' => ReportUserAccess::query()
                     ->where('report_key', $record['report_key'])
                     ->pluck('user_id')
                     ->all(),
-                'teams' => ReportTeamAccess::query()
+                'departments' => ReportDepartmentAccess::query()
                     ->where('report_key', $record['report_key'])
                     ->pluck('team_id')
                     ->all(),
@@ -206,7 +206,7 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                             ->pluck('name', 'id')
                             ->all(),
                     ),
-                Select::make('teams')
+                Select::make('departments')
                     ->label('Departments')
                     ->multiple()
                     ->searchable()
@@ -234,7 +234,7 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
                 try {
                     DB::beginTransaction();
                     $this->syncUserAccess($record['report_key'], $data['users'] ?? []);
-                    $this->syncTeamAccess($record['report_key'], $data['teams'] ?? []);
+                    $this->syncDepartmentAccess($record['report_key'], $data['departments'] ?? []);
 
                     $this->resetTable();
                     DB::commit();
@@ -294,24 +294,24 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
     }
 
     /**
-     * @param array<int, string> $teamIds
+     * @param array<int, string> $departmentIds
      */
-    protected function syncTeamAccess(string $reportKey, array $teamIds): void
+    protected function syncDepartmentAccess(string $reportKey, array $departmentIds): void
     {
-        ReportTeamAccess::query()
+        ReportDepartmentAccess::query()
             ->where('report_key', $reportKey)
-            ->whereNotIn('team_id', $teamIds)
+            ->whereNotIn('team_id', $departmentIds)
             ->delete();
 
-        $existing = ReportTeamAccess::query()
+        $existing = ReportDepartmentAccess::query()
             ->where('report_key', $reportKey)
             ->pluck('team_id')
             ->all();
 
-        foreach (array_diff($teamIds, $existing) as $teamId) {
-            ReportTeamAccess::query()->create([
+        foreach (array_diff($departmentIds, $existing) as $departmentId) {
+            ReportDepartmentAccess::query()->create([
                 'report_key' => $reportKey,
-                'team_id' => $teamId,
+                'team_id' => $departmentId,
             ]);
         }
     }

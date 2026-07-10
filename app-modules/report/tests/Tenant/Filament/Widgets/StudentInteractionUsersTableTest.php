@@ -49,11 +49,11 @@ use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can see student interaction users table', function () {
-    $team = Department::factory()->create();
+    $department = Department::factory()->create();
 
     $user1 = User::factory()->create();
 
-    $user2 = User::factory()->for($team, 'department')->create();
+    $user2 = User::factory()->for($department, 'department')->create();
 
     $student = Student::factory()->create();
 
@@ -126,8 +126,8 @@ it('can see student interaction users table', function () {
 });
 
 it('can filter users by name', function () {
-    $team = Department::factory()->create([
-        'name' => 'Test Team',
+    $department = Department::factory()->create([
+        'name' => 'Test Department',
     ]);
 
     $user1 = User::factory()->create([
@@ -135,7 +135,7 @@ it('can filter users by name', function () {
         'job_title' => 'Computer Operator',
     ]);
 
-    $user2 = User::factory()->for($team, 'department')->create([
+    $user2 = User::factory()->for($department, 'department')->create([
         'name' => 'Canyon GBS',
         'job_title' => 'CEO',
     ]);
@@ -167,8 +167,8 @@ it('can filter users by name', function () {
 });
 
 it('can filter users by job title', function () {
-    $team = Department::factory()->create([
-        'name' => 'Test Team',
+    $department = Department::factory()->create([
+        'name' => 'Test Department',
     ]);
 
     $user1 = User::factory()->create([
@@ -176,7 +176,7 @@ it('can filter users by job title', function () {
         'job_title' => 'Computer Operator',
     ]);
 
-    $user2 = User::factory()->for($team, 'department')->create([
+    $user2 = User::factory()->for($department, 'department')->create([
         'name' => 'Canyon GBS',
         'job_title' => 'CEO',
     ]);
@@ -207,9 +207,9 @@ it('can filter users by job title', function () {
         ->assertCanNotSeeTableRecords(collect([$user2]));
 });
 
-it('can filter users by team', function () {
-    $team = Department::factory()->create([
-        'name' => 'Interaction Team',
+it('can filter users by department', function () {
+    $department = Department::factory()->create([
+        'name' => 'Interaction Department',
     ]);
 
     $user1 = User::factory()->create([
@@ -217,7 +217,7 @@ it('can filter users by team', function () {
         'job_title' => 'Computer Operator',
     ]);
 
-    $user2 = User::factory()->for($team, 'department')->create([
+    $user2 = User::factory()->for($department, 'department')->create([
         'name' => 'Canyon GBS',
         'job_title' => 'CEO',
     ]);
@@ -241,8 +241,8 @@ it('can filter users by team', function () {
         ]);
 
     livewire(StudentInteractionUsersTable::class, ['cacheTag' => 'report-student-interaction'])
-        ->filterTable('team', [
-            'team' => $team->getKey(),
+        ->filterTable('department', [
+            'department' => $department->getKey(),
         ])
         ->assertCanSeeTableRecords(collect([$user2]))
         ->assertCanNotSeeTableRecords(collect([$user1]));
@@ -252,11 +252,11 @@ it('displays only users with student interactions within the selected date range
     $interactionStartDate = now()->subDays(10);
     $interactionEndDate = now()->subDays(5);
 
-    $team = Department::factory()->create();
+    $department = Department::factory()->create();
 
     $userWithOldInteractions = User::factory()->create();
 
-    $userWithRecentAndOtherInteractions = User::factory()->for($team, 'department')->create();
+    $userWithRecentAndOtherInteractions = User::factory()->for($department, 'department')->create();
 
     $userWithoutInteractions = User::factory()->create();
 
@@ -322,11 +322,11 @@ it('displays only users with student interactions based on group filter', functi
         ],
     ]);
 
-    $team = Department::factory()->create();
+    $department = Department::factory()->create();
 
     $userWithOldInteractions = User::factory()->create();
 
-    $userWithRecentAndOtherInteractions = User::factory()->for($team, 'department')->create();
+    $userWithRecentAndOtherInteractions = User::factory()->for($department, 'department')->create();
 
     $userWithoutInteractions = User::factory()->create();
 

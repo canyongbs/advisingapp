@@ -93,7 +93,7 @@ it('can edit a non-confidential task campaign journey step without error', funct
                 'is_confidential' => false,
                 'confidential_task_projects' => [],
                 'confidential_task_users' => [],
-                'confidential_task_teams' => [],
+                'department_confidential_task' => [],
             ],
         ])
         ->assertHasNoTableActionErrors();
@@ -115,7 +115,7 @@ it('can edit a confidential task campaign journey step and persist confidential 
     $assignedTo = User::factory()->create();
     $projects = Project::factory()->count(2)->create();
     $users = User::factory()->count(2)->create();
-    $teams = Department::factory()->count(2)->create();
+    $departments = Department::factory()->count(2)->create();
 
     /** @var CampaignAction $action */
     $action = CampaignAction::factory()
@@ -149,7 +149,7 @@ it('can edit a confidential task campaign journey step and persist confidential 
                 'is_confidential' => true,
                 'confidential_task_projects' => $projects->pluck('id')->toArray(),
                 'confidential_task_users' => $users->pluck('id')->toArray(),
-                'confidential_task_teams' => $teams->pluck('id')->toArray(),
+                'department_confidential_task' => $departments->pluck('id')->toArray(),
             ],
         ])
         ->assertHasNoTableActionErrors();
@@ -160,7 +160,7 @@ it('can edit a confidential task campaign journey step and persist confidential 
         ->and($action->data['is_confidential'])->toBeTrue()
         ->and($action->data['confidential_task_projects'])->toEqual($projects->pluck('id')->toArray())
         ->and($action->data['confidential_task_users'])->toEqual($users->pluck('id')->toArray())
-        ->and($action->data['confidential_task_teams'])->toEqual($teams->pluck('id')->toArray());
+        ->and($action->data['department_confidential_task'])->toEqual($departments->pluck('id')->toArray());
 });
 
 it('assigned_to UserSelect shows all users when filter_admins_from_selection config is false', function () {

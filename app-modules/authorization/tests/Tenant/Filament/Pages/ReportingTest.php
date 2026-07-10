@@ -36,7 +36,7 @@
 
 use AdvisingApp\Authorization\Filament\Pages\Reporting;
 use AdvisingApp\Report\Enums\ReportAccessKey;
-use AdvisingApp\Report\Models\ReportTeamAccess;
+use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\Team\Models\Department;
 use App\Features\ReportingFeature;
@@ -279,7 +279,7 @@ it('assigns users to a report through the manage action', function () {
     livewire(Reporting::class)
         ->callAction(TestAction::make('manage')->table(ReportAccessKey::UserLoginActivity->value), [
             'users' => [$assignedUser->getKey()],
-            'teams' => [],
+            'departments' => [],
         ])
         ->assertNotified();
 
@@ -303,12 +303,12 @@ it('assigns departments to a report through the manage action', function () {
     livewire(Reporting::class)
         ->callAction(TestAction::make('manage')->table(ReportAccessKey::UserLoginActivity->value), [
             'users' => [],
-            'teams' => [$department->getKey()],
+            'departments' => [$department->getKey()],
         ])
         ->assertNotified();
 
     expect(
-        ReportTeamAccess::query()
+        ReportDepartmentAccess::query()
             ->where('report_key', ReportAccessKey::UserLoginActivity->value)
             ->where('team_id', $department->getKey())
             ->exists()
@@ -332,7 +332,7 @@ it('removes access that is no longer selected when managing a report', function 
     livewire(Reporting::class)
         ->callAction(TestAction::make('manage')->table(ReportAccessKey::UserLoginActivity->value), [
             'users' => [],
-            'teams' => [],
+            'departments' => [],
         ])
         ->assertNotified();
 
@@ -354,7 +354,7 @@ it('counts a user with both direct and department access only once', function ()
         'user_id' => $user->getKey(),
     ]);
 
-    ReportTeamAccess::factory()->create([
+    ReportDepartmentAccess::factory()->create([
         'report_key' => ReportAccessKey::UserLoginActivity->value,
         'team_id' => $department->getKey(),
     ]);

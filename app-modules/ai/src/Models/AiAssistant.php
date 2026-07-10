@@ -208,7 +208,7 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
     /**
      * @return BelongsToMany<Department, $this, covariant AiAssistantConfidentialDepartment>
      */
-    public function confidentialAccessTeams(): BelongsToMany
+    public function confidentialAccessDepartments(): BelongsToMany
     {
         return $this->belongsToMany(Department::class, 'ai_assistant_confidential_teams', 'ai_assistant_id', 'team_id')
             ->using(AiAssistantConfidentialDepartment::class)

@@ -107,7 +107,7 @@ class Prompt extends BaseModel
     /**
      * @return BelongsToMany<Department, $this, covariant DepartmentConfidentialPrompt>
      */
-    public function confidentialAccessTeams(): BelongsToMany
+    public function confidentialAccessDepartments(): BelongsToMany
     {
         return $this->belongsToMany(Department::class, 'confidential_prompt_teams', 'prompt_id', 'team_id')
             ->using(DepartmentConfidentialPrompt::class)

@@ -60,7 +60,7 @@ class AssignTeamBulkAction extends BulkAction
                 'records' => $records,
             ])
             ->form([
-                Select::make('team')
+                Select::make('department')
                     ->label('Department')
                     ->options(Department::pluck('name', 'id'))
                     ->searchable()
@@ -72,7 +72,7 @@ class AssignTeamBulkAction extends BulkAction
                 /** @var Collection <int, User> $records */
                 $records->each(function (User $record) use ($data, &$success, &$fail) {
                     try {
-                        $record->assignTeam($data['team']);
+                        $record->assignDepartment($data['department']);
                         $success++;
                     } catch (Exception $exception) {
                         report($exception);
@@ -99,6 +99,6 @@ class AssignTeamBulkAction extends BulkAction
 
     public static function getDefaultName(): ?string
     {
-        return 'Assign team';
+        return 'Assign department';
     }
 }

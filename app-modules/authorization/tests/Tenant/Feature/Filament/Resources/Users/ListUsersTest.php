@@ -267,96 +267,96 @@ it('allows a user with permission to assign licenses in bulk', function () {
     });
 });
 
-it('can filter users by multiple teams', function () {
+it('can filter users by multiple departments', function () {
     asSuperAdmin();
 
-    $adminTeam = Department::factory()->create();
+    $adminDepartment = Department::factory()->create();
 
-    $adminTeamGroup = User::factory()
+    $adminDepartmentGroup = User::factory()
         ->count(3)
         ->create();
 
-    $adminTeamGroup->each(function (User $user) use ($adminTeam) {
-        $user->department()->associate($adminTeam)->save();
+    $adminDepartmentGroup->each(function (User $user) use ($adminDepartment) {
+        $user->department()->associate($adminDepartment)->save();
     });
 
-    $modTeam = Department::factory()->create();
+    $modDepartment = Department::factory()->create();
 
-    $modsTeamGroup = User::factory()
+    $modsDepartmentGroup = User::factory()
         ->count(3)
         ->create();
 
-    $modsTeamGroup->each(function (User $user) use ($modTeam) {
-        $user->department()->associate($modTeam)->save();
+    $modsDepartmentGroup->each(function (User $user) use ($modDepartment) {
+        $user->department()->associate($modDepartment)->save();
     });
 
-    $supportTeam = Department::factory()->create();
+    $supportDepartment = Department::factory()->create();
 
-    $supportTeamGroup = User::factory()
+    $supportDepartmentGroup = User::factory()
         ->count(3)
         ->create();
 
-    $supportTeamGroup->each(function (User $user) use ($supportTeam) {
-        $user->department()->associate($supportTeam)->save();
+    $supportDepartmentGroup->each(function (User $user) use ($supportDepartment) {
+        $user->department()->associate($supportDepartment)->save();
     });
 
     livewire(ListUsers::class)
         ->set('tableRecordsPerPage', 10)
-        ->assertCanSeeTableRecords($adminTeamGroup->merge($modsTeamGroup)->merge($supportTeamGroup))
-        ->filterTable('team', [$adminTeam->id, $modTeam->id])
+        ->assertCanSeeTableRecords($adminDepartmentGroup->merge($modsDepartmentGroup)->merge($supportDepartmentGroup))
+        ->filterTable('department', [$adminDepartment->id, $modDepartment->id])
         ->assertCanSeeTableRecords(
-            $adminTeamGroup
+            $adminDepartmentGroup
         )
-        ->assertCanNotSeeTableRecords($supportTeamGroup);
+        ->assertCanNotSeeTableRecords($supportDepartmentGroup);
 });
 
-it('it filters users based on team', function () {
+it('it filters users based on department', function () {
     asSuperAdmin();
 
-    $teamA = Department::factory()->create(['name' => 'Team A']);
-    $teamB = Department::factory()->create(['name' => 'Team B']);
+    $departmentA = Department::factory()->create(['name' => 'Department A']);
+    $departmentB = Department::factory()->create(['name' => 'Department B']);
 
-    $userInTeamA = User::factory()
+    $userInDepartmentA = User::factory()
         ->count(3)
         ->create();
 
-    $userInTeamA->each(function (User $user) use ($teamA) {
-        $user->department()->associate($teamA)->save();
+    $userInDepartmentA->each(function (User $user) use ($departmentA) {
+        $user->department()->associate($departmentA)->save();
     });
 
-    $userInTeamB = User::factory()
+    $userInDepartmentB = User::factory()
         ->count(3)
         ->create();
 
-    $userInTeamB->each(function (User $user) use ($teamB) {
-        $user->department()->associate($teamB)->save();
+    $userInDepartmentB->each(function (User $user) use ($departmentB) {
+        $user->department()->associate($departmentB)->save();
     });
 
     $unassignedUser = User::factory()->count(2)->create();
 
     livewire(ListUsers::class)
         ->set('tableRecordsPerPage', 10)
-        ->assertCanSeeTableRecords($unassignedUser->merge($userInTeamA)->merge($userInTeamB))
-        ->filterTable('team', [$teamA->getKey()])
+        ->assertCanSeeTableRecords($unassignedUser->merge($userInDepartmentA)->merge($userInDepartmentB))
+        ->filterTable('department', [$departmentA->getKey()])
         ->assertCanSeeTableRecords(
-            $userInTeamA
+            $userInDepartmentA
         )
         ->assertCanNotSeeTableRecords(
-            $unassignedUser->merge($userInTeamB)
+            $unassignedUser->merge($userInDepartmentB)
         )
-        ->filterTable('team', [$teamB->getKey()])
+        ->filterTable('department', [$departmentB->getKey()])
         ->assertCanSeeTableRecords(
-            $userInTeamB
+            $userInDepartmentB
         )
         ->assertCanNotSeeTableRecords(
-            $unassignedUser->merge($userInTeamA)
+            $unassignedUser->merge($userInDepartmentA)
         )
-        ->filterTable('team', ['unassigned'])
+        ->filterTable('department', ['unassigned'])
         ->assertCanSeeTableRecords(
             $unassignedUser
         )
         ->assertCanNotSeeTableRecords(
-            $userInTeamA->merge($userInTeamB)
+            $userInDepartmentA->merge($userInDepartmentB)
         );
 });
 

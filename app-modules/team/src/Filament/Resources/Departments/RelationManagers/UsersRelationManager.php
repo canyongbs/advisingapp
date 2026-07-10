@@ -83,7 +83,7 @@ class UsersRelationManager extends RelationManager
                         $action->getRecordSelect()
                             ->rules([
                                 fn (): Closure => function (string $attribute, mixed $value, Closure $fail) {
-                                    //TODO: remove this if we support multiple teams
+                                    //TODO: remove this if we support multiple departments
                                     if (User::findOrFail($value)->department) {
                                         $fail('This user already belongs to a department.');
                                     }

@@ -82,7 +82,7 @@ class ListUsers extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('name')
                     ->searchable(),
-                TextColumn::make('team.name')
+                TextColumn::make('department.name')
                     ->label('Department')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('email')
@@ -148,7 +148,7 @@ class ListUsers extends ListRecords
             ->filters([
                 TrashedFilter::make()
                     ->visible((fn () => auth()->user()->can('user.*.restore'))),
-                SelectFilter::make('team')
+                SelectFilter::make('department')
                     ->label('Department')
                     ->options(
                         fn (): array => [
@@ -168,13 +168,13 @@ class ListUsers extends ListRecords
                             $labels['unassigned'] = 'Unassigned';
                         }
 
-                        $teamIds = array_values(array_filter($values, fn ($value) => $value !== 'unassigned'));
+                        $departmentIds = array_values(array_filter($values, fn ($value) => $value !== 'unassigned'));
 
-                        if ($teamIds !== []) {
+                        if ($departmentIds !== []) {
                             $labels = [
                                 ...$labels,
                                 ...Department::query()
-                                    ->whereIn('id', $teamIds)
+                                    ->whereIn('id', $departmentIds)
                                     ->pluck('name', 'id')
                                     ->toArray(),
                             ];

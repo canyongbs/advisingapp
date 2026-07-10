@@ -174,7 +174,7 @@ class EditBookingGroup extends EditRecord
                         ->warning()
                         ->description(function (Get $get): HtmlString {
                             $selectedUserIds = array_values(array_filter(is_array($get('users')) ? $get('users') : []));
-                            $selectedTeamIds = array_values(array_filter(is_array($get('teams')) ? $get('teams') : []));
+                            $selectedDepartmentIds = array_values(array_filter(is_array($get('departments')) ? $get('departments') : []));
 
                             $directUsers = User::query()
                                 ->whereIn('id', $selectedUserIds)
@@ -182,28 +182,28 @@ class EditBookingGroup extends EditRecord
                                 ->orderBy('name')
                                 ->get();
 
-                            $teamGroups = collect();
+                            $departmentGroups = collect();
 
-                            foreach (Department::query()->whereIn('id', $selectedTeamIds)->orderBy('name')->get() as $team) {
+                            foreach (Department::query()->whereIn('id', $selectedDepartmentIds)->orderBy('name')->get() as $department) {
                                 $disconnected = User::query()
-                                    ->where('team_id', $team->id)
+                                    ->where('team_id', $department->id)
                                     ->whereDoesntHave('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
                                     ->orderBy('name')
                                     ->get();
 
                                 if ($disconnected->isNotEmpty()) {
-                                    $teamGroups->put($team->name, $disconnected);
+                                    $departmentGroups->put($department->name, $disconnected);
                                 }
                             }
 
                             return new HtmlString(view('meeting-center::filament.components.disconnected-calendar-members', [
                                 'directUsers' => $directUsers,
-                                'teamGroups' => $teamGroups,
+                                'departmentGroups' => $departmentGroups,
                             ])->render());
                         })
                         ->visible(function (Get $get): bool {
                             $selectedUserIds = array_values(array_filter(is_array($get('users')) ? $get('users') : []));
-                            $selectedTeamIds = array_values(array_filter(is_array($get('teams')) ? $get('teams') : []));
+                            $selectedDepartmentIds = array_values(array_filter(is_array($get('departments')) ? $get('departments') : []));
 
                             if (User::query()
                                 ->whereIn('id', $selectedUserIds)
@@ -212,8 +212,8 @@ class EditBookingGroup extends EditRecord
                                 return true;
                             }
 
-                            return ! empty($selectedTeamIds) && User::query()
-                                ->whereIn('team_id', $selectedTeamIds)
+                            return ! empty($selectedDepartmentIds) && User::query()
+                                ->whereIn('team_id', $selectedDepartmentIds)
                                 ->whereDoesntHave('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
                                 ->exists();
                         })
@@ -340,17 +340,17 @@ class EditBookingGroup extends EditRecord
             array_filter(is_array($users) ? $users : []),
         ));
 
-        $teams = $get('teams');
-        $selectedTeamIds = array_values(array_map(
+        $departments = $get('departments');
+        $selectedDepartmentIds = array_values(array_map(
             'strval',
-            array_filter(is_array($teams) ? $teams : []),
+            array_filter(is_array($departments) ? $departments : []),
         ));
 
-        $teamUserIds = ! empty($selectedTeamIds)
-            ? User::query()->whereIn('team_id', $selectedTeamIds)->tap(new WithoutAnyAdmin())->pluck('id')->map(fn ($id): string => (string) $id)->all()
+        $departmentUserIds = ! empty($selectedDepartmentIds)
+            ? User::query()->whereIn('team_id', $selectedDepartmentIds)->tap(new WithoutAnyAdmin())->pluck('id')->map(fn ($id): string => (string) $id)->all()
             : [];
 
-        return array_values(array_unique([...$selectedUserIds, ...$teamUserIds]));
+        return array_values(array_unique([...$selectedUserIds, ...$departmentUserIds]));
     }
 
     protected function isBookWithAll(Get $get): bool

@@ -160,19 +160,19 @@ test("`SharedCalendar` 'My Groups' filter only shows appointments from the user'
         ->assertCanNotSeeTableRecords([$otherAppointment]);
 });
 
-test("`SharedCalendar` 'My Groups' filter includes appointments from groups linked to the user's team", function () {
-    $team = Department::factory()->create();
-    $user = User::factory()->create(['team_id' => $team->id]);
+test("`SharedCalendar` 'My Groups' filter includes appointments from groups linked to the user's department", function () {
+    $department = Department::factory()->create();
+    $user = User::factory()->create(['team_id' => $department->id]);
     $user->givePermissionTo('group_appointment.view-any');
     actingAs($user);
 
-    $teamGroup = BookingGroup::factory()->create();
-    $teamGroup->departments()->attach($team->id);
+    $departmentGroup = BookingGroup::factory()->create();
+    $departmentGroup->departments()->attach($department->id);
 
     $otherGroup = BookingGroup::factory()->create();
 
-    $teamAppointment = BookingGroupAppointment::factory()
-        ->for($teamGroup, 'bookingGroup')
+    $departmentAppointment = BookingGroupAppointment::factory()
+        ->for($departmentGroup, 'bookingGroup')
         ->create(['starts_at' => now()->addDay(), 'ends_at' => now()->addDay()->addHour()]);
 
     $otherAppointment = BookingGroupAppointment::factory()
@@ -186,7 +186,7 @@ test("`SharedCalendar` 'My Groups' filter includes appointments from groups link
             'hidePast' => false,
         ])
         ->assertCountTableRecords(1)
-        ->assertCanSeeTableRecords([$teamAppointment])
+        ->assertCanSeeTableRecords([$departmentAppointment])
         ->assertCanNotSeeTableRecords([$otherAppointment]);
 });
 

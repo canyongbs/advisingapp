@@ -34,27 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Listeners;
+namespace App\Events;
 
-use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use App\Events\UserTeamChanged;
+use App\Models\User;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Queue\SerializesModels;
 
-class HandleUserTeamChanged
+class UserDepartmentChanged
 {
-    public function handle(UserTeamChanged $event): void
-    {
-        if (blank($event->previousTeamId) || $event->previousTeamId === $event->currentTeamId) {
-            return;
-        }
+    use Dispatchable;
+    use SerializesModels;
 
-        BookingGroup::query()
-            ->where('meeting_owner_id', $event->user->id)
-            ->whereHas('departments', fn ($query) => $query->whereKey($event->previousTeamId))
-            ->whereDoesntHave('users', fn ($query) => $query->whereKey($event->user->id))
-            ->when(
-                filled($event->currentTeamId),
-                fn ($query) => $query->whereDoesntHave('departments', fn ($teamQuery) => $teamQuery->whereKey($event->currentTeamId)),
-            )
-            ->eachById(fn (BookingGroup $bookingGroup): mixed => $bookingGroup->users()->syncWithoutDetaching([$event->user->id]));
-    }
+    public function __construct(
+        public User $user,
+        public ?string $previousDepartmentId,
+        public ?string $currentDepartmentId,
+    ) {}
 }

@@ -54,6 +54,7 @@ enum PermissionDescription: string implements HasLabel
     case Concern = 'This permission group enables the display and management of the Concern feature in the tertiary navigation group View Student or View Prospect. Permission options include create, view, update, and delete concerns.';
     case CustomerAdvisor = 'This permission group enables the display and management of the Customer Advisor feature in the primary navigation group Chatbots. Permission options include create, view, update, and delete customer advisors.';
     case CustomerAdvisorEmbed = 'This permission group enables the display and management of the Customer Advisor Embed feature in the tertiary navigation group View Customer Advisor. Permission options include view customer advisor embeds.';
+    case Department = 'This permission group enables the display and management of the Department feature in the primary navigation group User Management. Permission options include create, view, update, and delete departments.';
     case Division = 'This permission group enables the display and management of the Division feature in the primary navigation group User Management. Permission options include create, view, update, and delete divisions.';
     case Engagement = 'This permission group enables the display and management of the Sent Items feature in the secondary navigation group Unified Inbox. Permission options include create, view, update, and delete engagements.';
     case EngagementResponse = 'This permission group enables the display and management of the Inbox feature in the secondary navigation group Unified Inbox. Permission options include create, view, update, and delete engagement responses.';
@@ -85,7 +86,6 @@ enum PermissionDescription: string implements HasLabel
     case Survey = 'This permission group enables the display and management of the Survey feature in the primary navigation group Premium Features. Permission options include create, view, update, and delete surveys.';
     case SystemUser = 'This permission group enables the display and management of the Programmatic Users feature in the primary navigation group User Management. Permission options include create, view, update, and delete programmatic users.';
     case Task = 'This permission group enables the display and management of the Task feature in the tertiary navigation group View Student or View Prospect. Permission options include create, view, update, delete, and import tasks.';
-    case Team = 'This permission group enables the display and management of the Team feature in the primary navigation group User Management. Permission options include create, view, update, and delete teams.';
     case User = 'This permission group enables the display and management of the User feature in the primary navigation group User Management. Permission options include create, view, update, delete, and import users.';
 
     public function getLabel(): string

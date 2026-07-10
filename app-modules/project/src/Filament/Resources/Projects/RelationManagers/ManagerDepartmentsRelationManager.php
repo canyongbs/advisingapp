@@ -34,20 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace App\Events;
+namespace AdvisingApp\Project\Filament\Resources\Projects\RelationManagers;
 
-use App\Models\User;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
+use Filament\Actions\AttachAction;
+use Filament\Actions\DetachAction;
+use Filament\Actions\DetachBulkAction;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
-class UserTeamChanged
+class ManagerDepartmentsRelationManager extends RelationManager
 {
-    use Dispatchable;
-    use SerializesModels;
+    protected static string $relationship = 'managerDepartments';
 
-    public function __construct(
-        public User $user,
-        public ?string $previousTeamId,
-        public ?string $currentTeamId,
-    ) {}
+    protected static ?string $title = 'Departments';
+
+    public function table(Table $table): Table
+    {
+        return $table
+            ->recordTitleAttribute('name')
+            ->columns([
+                TextColumn::make('name'),
+            ])
+            ->headerActions([
+                AttachAction::make()
+                    ->authorize(function () {
+                        return auth()->user()->can('update', $this->ownerRecord);
+                    }),
+            ])
+            ->recordActions([
+                DetachAction::make()
+                    ->authorize(function () {
+                        return auth()->user()->can('update', $this->ownerRecord);
+                    }),
+            ])
+            ->toolbarActions([
+                DetachBulkAction::make()
+                    ->authorize(function () {
+                        return auth()->user()->can('update', $this->ownerRecord);
+                    }),
+            ])
+            ->inverseRelationship('managedProjects');
+    }
 }

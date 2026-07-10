@@ -82,12 +82,12 @@ class ProjectPolicy
     public function update(Authenticatable $authenticatable, Project $project): Response
     {
         if (! auth()->user()->isSuperAdmin()) {
-            $team = auth()->user()->department;
+            $department = auth()->user()->department;
 
-            $teamExists = $project->managerDepartments()->where('teams.id', $team?->getKey())->exists();
+            $departmentExists = $project->managerDepartments()->where('teams.id', $department?->getKey())->exists();
             $userExists = $project->managerUsers()->where('users.id', auth()->user()->getKey())->exists();
 
-            if (! $teamExists && ! $userExists && ! $project->createdBy->is(auth()->user())) {
+            if (! $departmentExists && ! $userExists && ! $project->createdBy->is(auth()->user())) {
                 return Response::deny("You do not have permission to update this project because you're not manager, or creator of this project.");
             }
         }
@@ -101,12 +101,12 @@ class ProjectPolicy
     public function delete(Authenticatable $authenticatable, Project $project): Response
     {
         if (! auth()->user()->isSuperAdmin()) {
-            $team = auth()->user()->department;
+            $department = auth()->user()->department;
 
-            $teamExists = $project->managerDepartments()->where('teams.id', $team?->getKey())->exists();
+            $departmentExists = $project->managerDepartments()->where('teams.id', $department?->getKey())->exists();
             $userExists = $project->managerUsers()->where('users.id', auth()->user()->getKey())->exists();
 
-            if (! $teamExists && ! $userExists && ! $project->createdBy->is(auth()->user())) {
+            if (! $departmentExists && ! $userExists && ! $project->createdBy->is(auth()->user())) {
                 return Response::deny("You do not have permission to delete this project because you're not manager, or creator of this project.");
             }
         }
@@ -128,12 +128,12 @@ class ProjectPolicy
     public function restore(Authenticatable $authenticatable, Project $project): Response
     {
         if (! auth()->user()->isSuperAdmin()) {
-            $team = auth()->user()->department;
+            $department = auth()->user()->department;
 
-            $teamExists = $project->managerDepartments()->where('teams.id', $team?->getKey())->exists();
+            $departmentExists = $project->managerDepartments()->where('teams.id', $department?->getKey())->exists();
             $userExists = $project->managerUsers()->where('users.id', auth()->user()->getKey())->exists();
 
-            if (! $teamExists && ! $userExists && ! $project->createdBy->is(auth()->user())) {
+            if (! $departmentExists && ! $userExists && ! $project->createdBy->is(auth()->user())) {
                 return Response::deny("You do not have permission to restore this project because you're not manager, or creator of this project.");
             }
         }
@@ -155,12 +155,12 @@ class ProjectPolicy
     public function forceDelete(Authenticatable $authenticatable, Project $project): Response
     {
         if (! auth()->user()->isSuperAdmin()) {
-            $team = auth()->user()->department;
+            $department = auth()->user()->department;
 
-            $teamExists = $project->managerDepartments()->where('teams.id', $team?->getKey())->exists();
+            $departmentExists = $project->managerDepartments()->where('teams.id', $department?->getKey())->exists();
             $userExists = $project->managerUsers()->where('users.id', auth()->user()->getKey())->exists();
 
-            if (! $teamExists && ! $userExists && ! $project->createdBy->is(auth()->user())) {
+            if (! $departmentExists && ! $userExists && ! $project->createdBy->is(auth()->user())) {
                 return Response::deny("You do not have permission to permanently delete this project because you're not manager, or creator of this project.");
             }
         }
