@@ -43,7 +43,7 @@ use AdvisingApp\Team\Models\Department;
 use App\Filament\Imports\UserImporter;
 use App\Filament\Resources\Users\Actions\AssignLicensesBulkAction;
 use App\Filament\Resources\Users\Actions\AssignRolesBulkAction;
-use App\Filament\Resources\Users\Actions\AssignTeamBulkAction;
+use App\Filament\Resources\Users\Actions\AssignDepartmentBulkAction;
 use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
@@ -141,7 +141,7 @@ class ListUsers extends ListRecords
                         ->visible(fn () => auth()->user()->can('create', License::class)),
                     AssignRolesBulkAction::make()
                         ->visible(fn () => auth()->user()->can('user.*.update', User::class)),
-                    AssignTeamBulkAction::make()
+                    AssignDepartmentBulkAction::make()
                         ->visible(fn () => auth()->user()->can('user.*.update', User::class)),
                 ]),
             ])

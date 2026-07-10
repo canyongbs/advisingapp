@@ -77,11 +77,11 @@ test('A successful action on the EditCaseTypeAssignments page', function () {
 });
 
 test('A successful action on the EditCaseTypeAssignments page when the type selected is Individual', function () {
-    $managerTeam = Department::factory()->create();
+    $managerDepartment = Department::factory()->create();
 
     $caseType = CaseType::factory()
         ->hasAttached(
-            factory: $managerTeam,
+            factory: $managerDepartment,
             relationship: 'managers'
         )
         ->create();
@@ -96,7 +96,7 @@ test('A successful action on the EditCaseTypeAssignments page when the type sele
 
     $editRequest = EditCaseTypeAssignmentsRequestFactory::new()
         ->withIndividualType()
-        ->withIndividualId($managerTeam)
+        ->withIndividualId($managerDepartment)
         ->create();
 
     livewire(EditCaseTypeAssignments::class, [

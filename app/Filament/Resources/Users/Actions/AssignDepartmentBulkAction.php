@@ -45,7 +45,7 @@ use Filament\Notifications\Notification;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Collection;
 
-class AssignTeamBulkAction extends BulkAction
+class AssignDepartmentBulkAction extends BulkAction
 {
     protected function setUp(): void
     {
