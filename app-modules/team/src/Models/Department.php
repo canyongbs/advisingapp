@@ -80,7 +80,7 @@ class Department extends BaseModel
      */
     public function manageableCaseTypes(): BelongsToMany
     {
-        return $this->belongsToMany(CaseType::class, 'case_type_managers')
+        return $this->belongsToMany(CaseType::class, 'case_type_managers', 'team_id', 'case_type_id')
             ->using(CaseTypeManager::class)
             ->withTimestamps();
     }
@@ -90,7 +90,7 @@ class Department extends BaseModel
      */
     public function auditableCaseTypes(): BelongsToMany
     {
-        return $this->belongsToMany(CaseType::class, 'case_type_auditors')
+        return $this->belongsToMany(CaseType::class, 'case_type_auditors', 'team_id', 'case_type_id')
             ->using(CaseTypeAuditor::class)
             ->withTimestamps();
     }
