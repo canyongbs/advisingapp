@@ -37,11 +37,13 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
+use AdvisingApp\MeetingCenter\Actions\CreateEventRegistrationFormVersion;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
+use App\Features\EventVersioningFeature;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
@@ -67,14 +69,19 @@ class EditEventRegistration extends EditRecord
         return $schema->components([
             Fieldset::make('Registration Form')
                 ->relationship('eventRegistrationForm')
-                ->saveRelationshipsBeforeChildrenUsing(static function (Component | CanEntangleWithSingularRelationships $component): void {
+                ->saveRelationshipsBeforeChildrenUsing(function (Component | CanEntangleWithSingularRelationships $component): void {
                     $relationship = $component->getRelationship();
                     $record = $component->getCachedExistingRecord();
                     $data = $component->getChildComponentContainer()->getState(shouldCallHooksBefore: false);
 
-                    if ($record) {
-                        $record->fill($data);
-                        $record->save();
+                    if ($record instanceof EventRegistrationForm) {
+                        if (EventVersioningFeature::active()) {
+                            $newVersion = app(CreateEventRegistrationFormVersion::class)->execute($record, $data);
+                            $component->cachedExistingRecord($newVersion);
+                        } else {
+                            $record->fill($data);
+                            $record->save();
+                        }
                     } else {
                         $data = $component->mutateRelationshipDataBeforeCreate($data);
 
@@ -84,23 +91,23 @@ class EditEventRegistration extends EditRecord
                         $record->fill($data);
 
                         $relationship->save($record);
-                    }
 
-                    $component->cachedExistingRecord($record);
+                        $component->cachedExistingRecord($record);
+                    }
                 })
                 ->saveRelationshipsUsing(null)
                 ->schema([
                     Toggle::make('is_wizard')
                         ->label('Multi-step form')
                         ->live()
-                        ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
+                        ->disabled(fn (?EventRegistrationForm $record) => ! EventVersioningFeature::active() && $record?->submissions()->exists()),
 
                     Section::make('Form Fields')
                         ->schema([
                             $this->fieldBuilder(),
                         ])
                         ->hidden(fn (Get $get) => $get('is_wizard'))
-                        ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
+                        ->disabled(fn (?EventRegistrationForm $record) => ! EventVersioningFeature::active() && $record?->submissions()->exists()),
 
                     Repeater::make('steps')
                         ->schema([
@@ -116,7 +123,7 @@ class EditEventRegistration extends EditRecord
                         ->addActionLabel('New step')
                         ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
                         ->visible(fn (Get $get) => $get('is_wizard'))
-                        ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists())
+                        ->disabled(fn (?EventRegistrationForm $record) => ! EventVersioningFeature::active() && $record?->submissions()->exists())
                         ->relationship()
                         ->reorderable()
                         ->columnSpanFull(),

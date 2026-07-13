@@ -38,6 +38,9 @@ namespace AdvisingApp\MeetingCenter\Models;
 
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Models\Submissible;
+use AdvisingApp\MeetingCenter\Observers\EventRegistrationFormObserver;
+use CanyonGBS\Common\Models\Concerns\CanBeArchived;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -45,8 +48,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @mixin IdeHelperEventRegistrationForm
  */
+#[ObservedBy([EventRegistrationFormObserver::class])]
 class EventRegistrationForm extends Submissible
 {
+    use CanBeArchived;
     use SoftDeletes;
 
     protected $fillable = [
@@ -58,6 +63,7 @@ class EventRegistrationForm extends Submissible
         'primary_color',
         'rounding',
         'content',
+        'root_id',
     ];
 
     protected $casts = [
@@ -100,5 +106,28 @@ class EventRegistrationForm extends Submissible
     public function submissions(): HasMany
     {
         return $this->hasMany(EventRegistrationFormSubmission::class, 'form_id');
+    }
+
+    /**
+     * @return BelongsTo<EventRegistrationForm, $this>
+     */
+    public function rootForm(): BelongsTo
+    {
+        return $this->belongsTo(EventRegistrationForm::class, 'root_id');
+    }
+
+    /**
+     * @return HasMany<EventRegistrationForm, $this>
+     */
+    public function versions(): HasMany
+    {
+        return $this->hasMany(EventRegistrationForm::class, 'root_id', 'root_id');
+    }
+
+    public function latestVersion(): ?EventRegistrationForm
+    {
+        return EventRegistrationForm::query()->where('root_id', $this->root_id)
+            ->whereNull('archived_at')
+            ->first();
     }
 }
