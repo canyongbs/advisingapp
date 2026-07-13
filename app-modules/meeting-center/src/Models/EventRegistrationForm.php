@@ -109,4 +109,27 @@ class EventRegistrationForm extends Submissible
     {
         return $this->hasMany(EventRegistrationFormSubmission::class, 'form_id');
     }
+
+    /**
+     * @return BelongsTo<EventRegistrationForm, $this>
+     */
+    public function rootForm(): BelongsTo
+    {
+        return $this->belongsTo(EventRegistrationForm::class, 'root_id');
+    }
+
+    /**
+     * @return HasMany<EventRegistrationForm, $this>
+     */
+    public function versions(): HasMany
+    {
+        return $this->hasMany(EventRegistrationForm::class, 'root_id', 'root_id');
+    }
+
+    public function latestVersion(): ?EventRegistrationForm
+    {
+        return EventRegistrationForm::query()->where('root_id', $this->root_id)
+            ->whereNull('archived_at')
+            ->first();
+    }
 }
