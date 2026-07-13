@@ -36,15 +36,18 @@
 
 namespace AdvisingApp\Authorization\Filament\Pages;
 
+use AdvisingApp\Authorization\Filament\Actions\ManageReportAssignmentsBulkAction;
 use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\Team\Models\Department;
 use App\Enums\NavigationGroup;
+use App\Features\BulkManageReportAssignmentsFeature;
 use App\Features\ReportingFeature;
 use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Filament\Actions\Action;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Select;
@@ -149,6 +152,14 @@ class Reporting extends Page implements HasActions, HasForms, HasTable
             ->filters([
                 SelectFilter::make('category')
                     ->options($this->getCategoryOptions()),
+            ])
+            ->toolbarActions([
+                // TODO: Cleanup Task - After BulkManageReportAssignmentsFeature is removed, keep the BulkActionGroup and its contents
+                BulkActionGroup::make([
+                    ManageReportAssignmentsBulkAction::make()
+                        ->authorize(fn (): bool => auth()->user()->can('reporting.*.update'))
+                        ->after(fn () => $this->resetTable()),
+                ])->visible(fn (): bool => BulkManageReportAssignmentsFeature::active()),
             ])
             ->recordActions([
                 $this->manageAction(),
