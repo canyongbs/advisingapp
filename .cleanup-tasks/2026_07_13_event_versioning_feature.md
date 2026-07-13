@@ -10,3 +10,5 @@ created: 2026-07-13
 ## Temporary Migrations
 
 ## Additional Cleanup
+
+- Search for `TODO: Cleanup Task - EventVersioningFeature` in the codebase for inline cleanup instructions (migration backfill comments)
