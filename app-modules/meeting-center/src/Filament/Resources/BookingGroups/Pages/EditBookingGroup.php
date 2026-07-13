@@ -44,7 +44,6 @@ use AdvisingApp\Team\Models\Team;
 use App\Filament\Forms\Components\DailyHoursRepeater;
 use App\Filament\Forms\Components\DurationInput;
 use App\Filament\Forms\Components\UserSelect;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Closure;
@@ -68,8 +67,6 @@ use Illuminate\Support\Str;
 
 class EditBookingGroup extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = BookingGroupResource::class;
 
     protected static ?string $navigationLabel = 'Group Configuration';

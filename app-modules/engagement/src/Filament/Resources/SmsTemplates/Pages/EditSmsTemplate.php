@@ -40,7 +40,6 @@ use AdvisingApp\Engagement\Filament\Resources\Actions\DraftTemplateWithAiAction;
 use AdvisingApp\Engagement\Filament\Resources\SmsTemplates\SmsTemplateResource;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Textarea;
@@ -51,8 +50,6 @@ use Filament\Schemas\Schema;
 
 class EditSmsTemplate extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = SmsTemplateResource::class;
 
     public function form(Schema $schema): Schema

@@ -37,7 +37,6 @@
 namespace App\Filament\Resources\NotificationSettings\Pages;
 
 use App\Filament\Resources\NotificationSettings\NotificationSettingResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -48,8 +47,6 @@ use Filament\Schemas\Schema;
 
 class EditNotificationSetting extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = NotificationSettingResource::class;
 
     public function form(Schema $schema): Schema

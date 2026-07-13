@@ -39,7 +39,6 @@ namespace AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\AiAssistantResource;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Concerns\HandlesFileUploads;
 use AdvisingApp\Ai\Models\AiAssistant;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -58,7 +57,6 @@ use UnitEnum;
 class ManageAiAssistantAdditionalKnowledge extends EditRecord
 {
     use HandlesFileUploads;
-    use EditPageRedirection;
 
     protected static string $resource = AiAssistantResource::class;
 

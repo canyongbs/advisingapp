@@ -47,7 +47,6 @@ use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\DataTransferObjects\AutocompletedAddress;
 use App\Filament\Forms\Components\AddressInput;
 use App\Filament\Forms\Components\UserSelect;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use DefStudio\SearchableInput\DTO\SearchResult;
 use Filament\Actions\Action;
@@ -74,7 +73,6 @@ use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 class EditProspect extends EditRecord
 {
     use ProspectHolisticViewPage;
-    use EditPageRedirection;
     use HasProspectHeader;
 
     protected static string $resource = ProspectResource::class;

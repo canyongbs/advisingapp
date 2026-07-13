@@ -42,7 +42,6 @@ use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns\HasSharedFormConfiguration;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns\ValidatesProspectGenerationFields;
 use AdvisingApp\Form\Models\Form;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
@@ -53,7 +52,6 @@ class EditForm extends EditRecord
 {
     use HasSharedFormConfiguration;
     use ValidatesProspectGenerationFields;
-    use EditPageRedirection;
 
     protected static string $resource = FormResource::class;
 
