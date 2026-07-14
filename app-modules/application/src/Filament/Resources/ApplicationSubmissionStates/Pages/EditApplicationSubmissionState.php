@@ -38,6 +38,7 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates
 
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Actions\DeleteAction;
@@ -45,6 +46,7 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 
@@ -74,6 +76,31 @@ class EditApplicationSubmissionState extends EditRecord
                     ->label('Description')
                     ->required()
                     ->string(),
+                Toggle::make('is_default')
+                    ->label('Default')
+                    ->live()
+                    ->hint(function (?ApplicationSubmissionState $record, ?bool $state): string {
+                        $basicHint = 'Set this state as the default tab on the Submissions page.';
+
+                        if ($record?->is_default) {
+                            return $basicHint;
+                        }
+
+                        if (! $state) {
+                            return $basicHint;
+                        }
+
+                        $currentDefault = ApplicationSubmissionState::query()
+                            ->where('is_default', true)
+                            ->value('name');
+
+                        if (blank($currentDefault)) {
+                            return $basicHint;
+                        }
+
+                        return $basicHint . " The current default state is '{$currentDefault}', you are replacing it.";
+                    })
+                    ->hintColor('danger'),
             ]);
     }
 

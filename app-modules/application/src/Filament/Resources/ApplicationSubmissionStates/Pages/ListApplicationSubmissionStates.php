@@ -46,6 +46,7 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Colors\Color;
 use Filament\Tables\Columns\ColorColumn;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -74,6 +75,9 @@ class ListApplicationSubmissionStates extends ListRecords
                     ->label('# of Applications Submissions')
                     ->counts('submissions')
                     ->sortable(),
+                IconColumn::make('is_default')
+                    ->label('Default')
+                    ->boolean(),
             ])
             // @phpstan-ignore argument.templateType
             ->modifyQueryUsing(fn (Builder $query) => $query->withoutArchivedAndUnused()) // @phpstan-ignore method.notFound

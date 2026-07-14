@@ -75,14 +75,12 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
 
     public function getDefaultActiveTab(): string | int | null
     {
-        // @phpstan-ignore method.notFound
-        $firstState = ApplicationSubmissionState::query()
-            ->withoutArchivedAndUnused()
-            ->oldest('id')
+        $defaultState = ApplicationSubmissionState::query()
+            ->where('is_default', true)
             ->first();
 
-        return $firstState
-            ? $firstState->id
+        return $defaultState
+            ? $defaultState->id
             : 'all';
     }
 

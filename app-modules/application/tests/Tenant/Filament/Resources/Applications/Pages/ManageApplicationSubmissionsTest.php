@@ -92,11 +92,17 @@ test('tab label includes Archived when the state for that classification is arch
     expect($tabs[$receivedKey]->getLabel())->toContain('(Archived)');
 });
 
-test('default active tab is the first non-archived state', function () {
+test('default active tab is the state with is_default true', function () {
     asSuperAdmin();
 
-    $receivedState = ApplicationSubmissionState::factory()->create([
+    ApplicationSubmissionState::factory()->create([
         'classification' => ApplicationSubmissionStateClassification::Received,
+        'is_default' => false,
+    ]);
+
+    $defaultState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Review,
+        'is_default' => true,
     ]);
 
     $application = Application::factory()->create();
@@ -105,22 +111,21 @@ test('default active tab is the first non-archived state', function () {
         ->instance()
         ->getDefaultActiveTab();
 
-    expect($defaultTab)->toBe($receivedState->id);
+    expect($defaultTab)->toBe($defaultState->id);
 });
 
-test('default tab falls back to first non-archived state when first created state is archived and unused', function () {
+test('default tab falls back to all when no state has is_default true', function () {
     asSuperAdmin();
 
-    $receivedState = ApplicationSubmissionState::factory()->create([
+    ApplicationSubmissionState::factory()->create([
         'classification' => ApplicationSubmissionStateClassification::Received,
+        'is_default' => false,
     ]);
 
-    $reviewState = ApplicationSubmissionState::factory()->create([
+    ApplicationSubmissionState::factory()->create([
         'classification' => ApplicationSubmissionStateClassification::Review,
+        'is_default' => false,
     ]);
-
-    // @phpstan-ignore method.notFound
-    $receivedState->archive();
 
     $application = Application::factory()->create();
 
@@ -128,7 +133,7 @@ test('default tab falls back to first non-archived state when first created stat
         ->instance()
         ->getDefaultActiveTab();
 
-    expect($defaultTab)->toBe($reviewState->id);
+    expect($defaultTab)->toBe('all');
 });
 
 test('archived state that has submissions still appears as a tab', function () {

@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,29 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Database\Factories;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
-use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use CanyonGBS\Common\Enums\Color;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends Factory<ApplicationSubmissionState>
- */
-class ApplicationSubmissionStateFactory extends Factory
-{
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+/** @phpstan-ignore Common.migrationMissingDownMethod */
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'classification' => $this->faker->randomElement(ApplicationSubmissionStateClassification::cases()),
-            'name' => $this->faker->word,
-            'color' => $this->faker->randomElement(Color::cases())->value,
-            'description' => $this->faker->sentence,
-            'is_default' => false,
-        ];
+        Schema::table('application_submission_states', function (Blueprint $table) {
+            $table->boolean('is_default')->default(false);
+        });
+
+        DB::statement('
+            CREATE UNIQUE INDEX application_submission_states_is_default_unique
+            ON application_submission_states (is_default)
+            WHERE is_default = true AND deleted_at IS NULL;
+        ');
     }
-}
+};
