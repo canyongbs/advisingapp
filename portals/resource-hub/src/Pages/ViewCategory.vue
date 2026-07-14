@@ -34,18 +34,15 @@
 <script setup>
     import Breadcrumbs from '@common/portal/Breadcrumbs.vue';
     import Article from '@common/portal/category/Article.vue';
+    import AppLoading from '@common/portal/AppLoading.vue';
     import Page from '@common/portal/Page.vue';
     import Pagination from '@common/portal/Pagination.vue';
     import Subheading from '@common/portal/Subheading.vue';
     import Tabs from '@common/portal/Tabs.vue';
     import { DocumentTextIcon } from '@heroicons/vue/24/outline';
-    import NProgress from 'nprogress';
-    import 'nprogress/nprogress.css';
     import { computed, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
     import { consumer } from '../Services/Consumer.js';
-
-    NProgress.configure({ showSpinner: false });
 
     const route = useRoute();
     const router = useRouter();
@@ -59,6 +56,7 @@
     });
 
     const category = ref(null);
+    const loadingCategory = ref(true);
     const loadingPage = ref(null);
     const activeFilter = ref('all-articles');
 
@@ -171,7 +169,7 @@
     let lastCategoryId = null;
 
     async function loadCategory() {
-        NProgress.start();
+        loadingCategory.value = true;
 
         try {
             const response = await get(props.apiUrl + '/categories/' + route.params.categoryId);
@@ -184,7 +182,7 @@
         } catch (error) {
             console.error('Error loading category:', error);
         } finally {
-            NProgress.done();
+            loadingCategory.value = false;
         }
     }
 
@@ -225,7 +223,11 @@
             <Breadcrumbs v-if="category" :currentCrumb="category.name" :breadcrumbs="breadcrumbs" />
         </template>
 
-        <div v-if="category">
+        <div v-if="loadingCategory">
+            <AppLoading label="Loading..." />
+        </div>
+
+        <div v-else-if="category">
             <main class="flex flex-col gap-8">
                 <div class="flex flex-col gap-6">
                     <div class="flex flex-col gap-4">

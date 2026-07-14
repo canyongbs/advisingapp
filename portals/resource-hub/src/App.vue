@@ -267,29 +267,21 @@
         if (props.appTitle) {
             document.title = props.appTitle;
         }
+
+        await getKnowledgeManagementPortal();
+
+        const { requiresAuthentication } = useAuthStore();
+
+        if (userAuthenticationUrl.value) {
+            userIsAuthenticated.value = await determineIfUserIsAuthenticated(userAuthenticationUrl.value);
+        }
+
+        if (userIsAuthenticated.value || !requiresAuthentication.value) {
+            await getData();
+        } else {
+            loading.value = false;
+        }
     });
-
-    watch(
-        route,
-        async () => {
-            await getKnowledgeManagementPortal().then(async () => {
-                const { requiresAuthentication } = useAuthStore();
-
-                if (userAuthenticationUrl.value) {
-                    userIsAuthenticated.value = await determineIfUserIsAuthenticated(userAuthenticationUrl.value);
-                }
-
-                if (userIsAuthenticated.value || !requiresAuthentication.value) {
-                    await getData();
-                    return;
-                }
-                loading.value = false;
-            });
-        },
-        {
-            immediate: true,
-        },
-    );
 
     watch(favicon, async (newFavicon, oldFavicon) => {
         if (newFavicon != oldFavicon) {
