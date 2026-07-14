@@ -29,7 +29,7 @@
     For more information or inquiries please visit our website at
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
-</COPYRIGHT>
+</COPYRIGHT>cus
 */
 import laravel, { refreshPaths } from 'laravel-vite-plugin';
 import { defineConfig } from 'vite';
@@ -45,6 +45,7 @@ export default defineConfig({
                 'app-modules/ai/resources/js/chat.js',
                 'app-modules/ai/resources/js/chats.js',
                 'app-modules/ai/resources/js/customer-advisor-preview.js',
+                'app-modules/ai/resources/js/employee-advisor-preview.js',
                 'app-modules/research/resources/js/results.js',
                 'app-modules/research/resources/js/requests.js',
                 'app-modules/task/resources/js/kanban.js',

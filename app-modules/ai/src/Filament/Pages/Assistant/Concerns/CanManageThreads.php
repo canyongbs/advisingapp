@@ -230,6 +230,7 @@ trait CanManageThreads
             ->aiThreads()
             ->withMax('messages', 'created_at')
             ->whereRelation('assistant', 'application', static::APPLICATION)
+            ->where('is_preview', false)
             ->whereNotNull('name')
             ->doesntHave('folder')
             ->latest('updated_at')

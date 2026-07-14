@@ -73,6 +73,7 @@ trait CanManageFolders
 
         return $user
             ->researchRequestFolders()
+            ->where('is_preview', false)
             ->with([/** @phpstan-ignore argument.type */
                 'requests' => fn (HasMany $query) => $query
                     ->latest('updated_at'),

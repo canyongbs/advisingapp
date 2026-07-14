@@ -79,12 +79,14 @@ class AiThread extends BaseModel implements HasMedia, Wireable
         'user_id',
         'locked_at',
         'locked_reason',
+        'is_preview',
     ];
 
     protected $casts = [
         'locked_at' => 'datetime',
         'locked_reason' => AiThreadLockedReason::class,
         'saved_at' => 'datetime',
+        'is_preview' => 'boolean',
     ];
 
     protected $dispatchesEvents = [
