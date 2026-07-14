@@ -365,7 +365,6 @@ it('counts a user with both direct and department access only once', function ()
 // Bulk Manage Assignments tests
 
 it('bulk manage assignments action is visible when feature flag is active and user has permission', function () {
-
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
     $user->givePermissionTo('reporting.*.update');
@@ -376,9 +375,7 @@ it('bulk manage assignments action is visible when feature flag is active and us
         ->assertTableBulkActionVisible('manageReportAssignments');
 });
 
-
 it('bulk manage assignments action is not visible for user without update permission', function () {
-
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
 
@@ -389,7 +386,6 @@ it('bulk manage assignments action is not visible for user without update permis
 });
 
 it('bulk manage assignments action adds users and departments to selected reports additively', function () {
-
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
     $user->givePermissionTo('reporting.*.update');
@@ -436,7 +432,6 @@ it('bulk manage assignments action adds users and departments to selected report
 });
 
 it('bulk manage assignments action replaces all existing assignments when sync is enabled', function () {
-
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
     $user->givePermissionTo('reporting.*.update');
