@@ -42,6 +42,7 @@ use Filament\Actions\EditAction;
 use Filament\Infolists\Components\ColorEntry;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
+use App\Features\ApplicationSubmissionStateDefaultViewFeature;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
@@ -68,7 +69,8 @@ class ViewApplicationSubmissionState extends ViewRecord
                             ->label('Description'),
                         IconEntry::make('is_default')
                             ->label('Default')
-                            ->boolean(),
+                            ->boolean()
+                            ->visible(fn () => ApplicationSubmissionStateDefaultViewFeature::active()),
                     ])
                     ->columns(),
             ]);

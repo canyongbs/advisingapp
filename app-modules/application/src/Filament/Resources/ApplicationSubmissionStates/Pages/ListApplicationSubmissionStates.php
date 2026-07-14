@@ -43,6 +43,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use App\Features\ApplicationSubmissionStateDefaultViewFeature;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Colors\Color;
 use Filament\Tables\Columns\ColorColumn;
@@ -77,7 +78,8 @@ class ListApplicationSubmissionStates extends ListRecords
                     ->sortable(),
                 IconColumn::make('is_default')
                     ->label('Default')
-                    ->boolean(),
+                    ->boolean()
+                    ->visible(fn () => ApplicationSubmissionStateDefaultViewFeature::active()),
             ])
             // @phpstan-ignore argument.templateType
             ->modifyQueryUsing(fn (Builder $query) => $query->withoutArchivedAndUnused()) // @phpstan-ignore method.notFound

@@ -34,40 +34,14 @@
 </COPYRIGHT>
 */
 
-use App\Features\ApplicationSubmissionStateDefaultViewFeature;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
+namespace App\Features;
 
-return new class () extends Migration {
-    public function up(): void
+use App\Support\AbstractFeatureFlag;
+
+class ApplicationSubmissionStateDefaultViewFeature extends AbstractFeatureFlag
+{
+    public function resolve(mixed $scope): mixed
     {
-        DB::transaction(function () {
-            Schema::table('application_submission_states', function (Blueprint $table) {
-                $table->boolean('is_default')->default(false);
-            });
-
-            DB::statement('
-                CREATE UNIQUE INDEX application_submission_states_is_default_unique
-                ON application_submission_states (is_default)
-                WHERE is_default = true AND deleted_at IS NULL;
-            ');
-
-            ApplicationSubmissionStateDefaultViewFeature::activate();
-        });
+        return false;
     }
-
-    public function down(): void
-    {
-        DB::transaction(function () {
-            ApplicationSubmissionStateDefaultViewFeature::deactivate();
-
-            DB::statement('DROP INDEX IF EXISTS application_submission_states_is_default_unique;');
-
-            Schema::table('application_submission_states', function (Blueprint $table) {
-                $table->dropColumn('is_default');
-            });
-        });
-    }
-};
+}

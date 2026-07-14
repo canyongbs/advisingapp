@@ -47,6 +47,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use App\Features\ApplicationSubmissionStateDefaultViewFeature;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 
@@ -100,7 +101,8 @@ class EditApplicationSubmissionState extends EditRecord
 
                         return $basicHint . " The current default state is '{$currentDefault}', you are replacing it.";
                     })
-                    ->hintColor('danger'),
+                    ->hintColor('danger')
+                    ->visible(fn () => ApplicationSubmissionStateDefaultViewFeature::active()),
             ]);
     }
 

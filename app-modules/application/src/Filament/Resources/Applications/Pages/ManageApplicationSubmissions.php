@@ -42,6 +42,7 @@ use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use App\Features\ApplicationSubmissionStateDefaultViewFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
@@ -75,6 +76,17 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
 
     public function getDefaultActiveTab(): string | int | null
     {
+        if (! ApplicationSubmissionStateDefaultViewFeature::active()) {
+            // TODO: Cleanup Task - Remove this fallback when ApplicationSubmissionStateDefaultViewFeature is cleaned up
+            // @phpstan-ignore method.notFound
+            $firstState = ApplicationSubmissionState::query()
+                ->withoutArchivedAndUnused()
+                ->oldest('id')
+                ->first();
+
+            return $firstState ? $firstState->id : 'all';
+        }
+
         $defaultState = ApplicationSubmissionState::query()
             ->where('is_default', true)
             ->first();
