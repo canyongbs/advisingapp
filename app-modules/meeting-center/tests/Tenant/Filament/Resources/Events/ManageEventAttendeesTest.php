@@ -34,13 +34,10 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ManageEventAttendees;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use App\Models\User;
 
-use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
