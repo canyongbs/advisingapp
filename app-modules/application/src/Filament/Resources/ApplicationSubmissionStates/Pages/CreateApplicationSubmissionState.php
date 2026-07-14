@@ -39,12 +39,12 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use App\Features\ApplicationSubmissionStateDefaultViewFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use App\Features\ApplicationSubmissionStateDefaultViewFeature;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
 

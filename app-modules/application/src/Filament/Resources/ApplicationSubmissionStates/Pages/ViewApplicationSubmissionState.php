@@ -38,11 +38,11 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates
 
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use App\Features\ApplicationSubmissionStateDefaultViewFeature;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\ColorEntry;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
-use App\Features\ApplicationSubmissionStateDefaultViewFeature;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;

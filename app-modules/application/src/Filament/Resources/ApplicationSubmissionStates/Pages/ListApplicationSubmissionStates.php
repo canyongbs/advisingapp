@@ -38,12 +38,12 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates
 
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use App\Features\ApplicationSubmissionStateDefaultViewFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use App\Features\ApplicationSubmissionStateDefaultViewFeature;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Colors\Color;
 use Filament\Tables\Columns\ColorColumn;
