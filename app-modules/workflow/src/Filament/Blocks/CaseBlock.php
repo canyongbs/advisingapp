@@ -81,7 +81,7 @@ class CaseBlock extends WorkflowActionBlock
             Select::make('division_id')
                 ->relationship('division', 'name')
                 ->model(CaseModel::class)
-                ->default(fn () => auth()->user()->team?->division?->getKey()
+                ->default(fn () => auth()->user()->department?->division?->getKey()
                     ?? Division::query()->where('is_default', true)->first()?->getKey()
                     ?? Division::query()->first()?->getKey()
                     ?? throw ValidationException::withMessages(['No division found']))
@@ -171,7 +171,7 @@ class CaseBlock extends WorkflowActionBlock
                     }
 
                     $managers = User::query()
-                        ->whereHas('team.manageableCaseTypes', fn ($query) => $query->where('case_types.id', $caseTypeId))
+                        ->whereHas('department.manageableCaseTypes', fn ($query) => $query->where('case_types.id', $caseTypeId))
                         ->pluck('name', 'id')
                         ->toArray();
 

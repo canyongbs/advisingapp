@@ -36,9 +36,9 @@
 
 use AdvisingApp\Authorization\Filament\Pages\Reporting;
 use AdvisingApp\Report\Enums\ReportAccessKey;
-use AdvisingApp\Report\Models\ReportTeamAccess;
+use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Features\ReportingFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -279,7 +279,7 @@ it('assigns users to a report through the manage action', function () {
     livewire(Reporting::class)
         ->callAction(TestAction::make('manage')->table(ReportAccessKey::UserLoginActivity->value), [
             'users' => [$assignedUser->getKey()],
-            'teams' => [],
+            'departments' => [],
         ])
         ->assertNotified();
 
@@ -291,26 +291,26 @@ it('assigns users to a report through the manage action', function () {
     )->toBeTrue();
 });
 
-it('assigns teams to a report through the manage action', function () {
+it('assigns departments to a report through the manage action', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
     $user->givePermissionTo('reporting.*.update');
 
-    $team = Team::factory()->create();
+    $department = Department::factory()->create();
 
     actingAs($user);
 
     livewire(Reporting::class)
         ->callAction(TestAction::make('manage')->table(ReportAccessKey::UserLoginActivity->value), [
             'users' => [],
-            'teams' => [$team->getKey()],
+            'departments' => [$department->getKey()],
         ])
         ->assertNotified();
 
     expect(
-        ReportTeamAccess::query()
+        ReportDepartmentAccess::query()
             ->where('report_key', ReportAccessKey::UserLoginActivity->value)
-            ->where('team_id', $team->getKey())
+            ->where('team_id', $department->getKey())
             ->exists()
     )->toBeTrue();
 });
@@ -332,7 +332,7 @@ it('removes access that is no longer selected when managing a report', function 
     livewire(Reporting::class)
         ->callAction(TestAction::make('manage')->table(ReportAccessKey::UserLoginActivity->value), [
             'users' => [],
-            'teams' => [],
+            'departments' => [],
         ])
         ->assertNotified();
 
@@ -344,19 +344,19 @@ it('removes access that is no longer selected when managing a report', function 
     )->toBeFalse();
 });
 
-it('counts a user with both direct and team access only once', function () {
-    $team = Team::factory()->create();
+it('counts a user with both direct and department access only once', function () {
+    $department = Department::factory()->create();
 
-    $user = User::factory()->create(['team_id' => $team->getKey()]);
+    $user = User::factory()->create(['team_id' => $department->getKey()]);
 
     ReportUserAccess::factory()->create([
         'report_key' => ReportAccessKey::UserLoginActivity->value,
         'user_id' => $user->getKey(),
     ]);
 
-    ReportTeamAccess::factory()->create([
+    ReportDepartmentAccess::factory()->create([
         'report_key' => ReportAccessKey::UserLoginActivity->value,
-        'team_id' => $team->getKey(),
+        'team_id' => $department->getKey(),
     ]);
 
     expect(ReportAccessKey::UserLoginActivity->accessCount())->toEqual(1);

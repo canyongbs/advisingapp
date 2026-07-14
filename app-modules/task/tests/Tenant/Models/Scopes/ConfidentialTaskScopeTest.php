@@ -39,7 +39,7 @@ use AdvisingApp\Project\Models\Project;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Scopes\ConfidentialTaskScope;
 use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -82,21 +82,21 @@ it('can be accessed when confidential by users who created it', function () {
     expect($tasks->pluck('id'))->toContain(...$userTasks->pluck('id'));
 });
 
-it('can be accessed when confidential by users on a team with access', function () {
-    $team = Team::factory()->create();
+it('can be accessed when confidential by users on a department with access', function () {
+    $department = Department::factory()->create();
     $user = User::factory()->licensed(LicenseType::cases())->create();
-    $user->team()->associate($team)->save();
+    $user->department()->associate($department)->save();
 
     actingAs($user);
 
-    $teamTasks = Task::factory()
-        ->hasAttached($team, [], 'confidentialAccessTeams')
+    $departmentTasks = Task::factory()
+        ->hasAttached($department, [], 'confidentialAccessDepartments')
         ->count(10)
         ->concerningStudent(Student::factory()->create())
         ->create(['is_confidential' => true]);
 
-    $otherTeamTasks = Task::factory()
-        ->hasAttached(Team::factory()->create(), [], 'confidentialAccessTeams')
+    $otherDepartmentTasks = Task::factory()
+        ->hasAttached(Department::factory()->create(), [], 'confidentialAccessDepartments')
         ->count(10)
         ->concerningStudent(Student::factory()->create())
         ->create(['is_confidential' => true]);
@@ -104,9 +104,9 @@ it('can be accessed when confidential by users on a team with access', function 
     $tasks = Task::query()->get();
     expect($tasks)->toHaveCount(10);
 
-    expect($tasks->pluck('id'))->toContain(...$teamTasks->pluck('id'));
+    expect($tasks->pluck('id'))->toContain(...$departmentTasks->pluck('id'));
 
-    expect($tasks->pluck('id'))->not->toContain(...$otherTeamTasks->pluck('id'));
+    expect($tasks->pluck('id'))->not->toContain(...$otherDepartmentTasks->pluck('id'));
 });
 
 it('can be accessed when confidential by users who have created a project the task is associated with', function () {
@@ -162,13 +162,13 @@ it('can be accessed when confidential by users who are managers on a project the
     expect($tasks->pluck('id'))->not->toContain(...$otherProjectTasks->pluck('id'));
 });
 
-it('can be accessed when confidential by users on a team that is a manager on a project the task is associated with', function () {
-    $team = Team::factory()->create();
+it('can be accessed when confidential by users on a department that is a manager on a project the task is associated with', function () {
+    $department = Department::factory()->create();
     $user = User::factory()->licensed(LicenseType::cases())->create();
-    $user->team()->associate($team)->save();
+    $user->department()->associate($department)->save();
 
     $project = Project::factory()->for(User::factory()->licensed(LicenseType::cases())->create(), 'createdBy')->create();
-    $project->managerTeams()->attach($team);
+    $project->managerDepartments()->attach($department);
 
     actingAs($user);
 
@@ -219,13 +219,13 @@ it('can be accessed when confidential by users who are auditors on a project the
     expect($tasks->pluck('id'))->not->toContain(...$otherProjectTasks->pluck('id'));
 });
 
-it('can be accessed when confidential by users on a team that is an auditor on a project the task is associated with', function () {
-    $team = Team::factory()->create();
+it('can be accessed when confidential by users on a department that is an auditor on a project the task is associated with', function () {
+    $department = Department::factory()->create();
     $user = User::factory()->licensed(LicenseType::cases())->create();
-    $user->team()->associate($team)->save();
+    $user->department()->associate($department)->save();
 
     $project = Project::factory()->for(User::factory()->licensed(LicenseType::cases())->create(), 'createdBy')->create();
-    $project->auditorTeams()->attach($team);
+    $project->auditorDepartments()->attach($department);
 
     actingAs($user);
 

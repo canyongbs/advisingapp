@@ -62,7 +62,7 @@ class EditCampaign extends EditRecord
                     ->options(function () {
                         return Group::query()
                             ->whereHas('user', function (Builder $query) {
-                                $query->whereKey(auth()->id())->orWhereRelation('team.users', 'id', auth()->id());
+                                $query->whereKey(auth()->id())->orWhereRelation('department.users', 'id', auth()->id());
                             })
                             ->pluck('name', 'id');
                     })

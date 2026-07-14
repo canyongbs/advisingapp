@@ -55,7 +55,7 @@ class CaseTypeAssignmentsIndividualUserMustBeAManager implements ValidationRule
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
         if ($this->caseType->managers()->whereRelation('users', 'users.id', $value)->doesntExist()) {
-            $fail('The selected user must be in a team designated as managers of this Case Type.');
+            $fail('The selected user must be in a department designated as managers of this Case Type.');
         }
     }
 }

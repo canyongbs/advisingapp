@@ -53,7 +53,7 @@ class WorkloadAssigner implements CaseTypeAssigner
         $user = null;
 
         if ($lastAssignee) {
-            $lowestCase = User::query()->whereRelation('team.manageableCaseTypes', 'case_types.id', $caseType->getKey())
+            $lowestCase = User::query()->whereRelation('department.manageableCaseTypes', 'case_types.id', $caseType->getKey())
                 ->withCount([
                     'cases as case_count' => function (Builder $query) {
                         $query->whereRelation('status', 'classification', '!=', SystemCaseClassification::Closed);
@@ -62,7 +62,7 @@ class WorkloadAssigner implements CaseTypeAssigner
                 ->orderBy('case_count', 'asc')
                 ->first()->case_count ?? 0;
 
-            $user = User::query()->whereRelation('team.manageableCaseTypes', 'case_types.id', $caseType->getKey())
+            $user = User::query()->whereRelation('department.manageableCaseTypes', 'case_types.id', $caseType->getKey())
                 /** @phpstan-ignore-next-line */
                 ->where(function (QueryBuilder $query) {
                     $query->selectRaw('count(*)')
@@ -87,7 +87,7 @@ class WorkloadAssigner implements CaseTypeAssigner
         }
 
         if ($user === null) {
-            $user = User::query()->whereRelation('team.manageableCaseTypes', 'case_types.id', $caseType->getKey())
+            $user = User::query()->whereRelation('department.manageableCaseTypes', 'case_types.id', $caseType->getKey())
                 ->withCount([
                     'cases as case_count' => function (Builder $query) {
                         $query->whereRelation('status', 'classification', '!=', SystemCaseClassification::Closed);

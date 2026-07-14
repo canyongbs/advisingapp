@@ -39,7 +39,7 @@ namespace App\Filament\Resources\Users\Pages;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Enums\RetentionCrmRestriction;
 use App\Filament\Forms\Components\Licenses;
 use App\Filament\Resources\Users\UserResource;
@@ -118,12 +118,13 @@ class EditUser extends EditRecord
                             ->formatStateUsing(fn ($state) => Carbon::parse($state)->format(config('project.datetime_format') ?? 'Y-m-d H:i:s'))
                             ->disabled(),
                     ]),
-                Section::make('Team')
+                Section::make('Department')
                     ->schema([
-                        Select::make('team')
-                            ->label('')
-                            ->options(Team::all()->pluck('name', 'id'))
-                            ->relationship('team', 'name'),
+                        Select::make('team_id')
+                            ->label('Department')
+                            ->hiddenLabel()
+                            ->options(Department::all()->pluck('name', 'id'))
+                            ->relationship('department', 'name'),
                     ])
                     ->hidden(fn (?User $record) => $record?->isAdmin() ?? false),
                 Licenses::make()

@@ -88,9 +88,9 @@ class CaseModelPolicy
     public function create(Authenticatable $authenticatable): Response
     {
         if (! auth()->user()->isSuperAdmin()) {
-            $team = auth()->user()->team;
+            $department = auth()->user()->department;
 
-            if (! $team?->manageableCaseTypes()->exists()) {
+            if (! $department?->manageableCaseTypes()->exists()) {
                 return Response::deny('You do not have permission to create cases.');
             }
         }

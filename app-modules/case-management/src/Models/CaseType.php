@@ -38,7 +38,7 @@ namespace AdvisingApp\CaseManagement\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\CaseManagement\Enums\CaseTypeAssignmentTypes;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\BaseModel;
 use App\Models\User;
 use DateTimeInterface;
@@ -165,21 +165,21 @@ class CaseType extends BaseModel implements Auditable
     }
 
     /**
-     * @return BelongsToMany<Team, $this, covariant CaseTypeManager>
+     * @return BelongsToMany<Department, $this, covariant CaseTypeManager>
      */
     public function managers(): BelongsToMany
     {
-        return $this->belongsToMany(Team::class, 'case_type_managers', 'case_type_id', 'team_id')
+        return $this->belongsToMany(Department::class, 'case_type_managers', 'case_type_id', 'team_id')
             ->using(CaseTypeManager::class)
             ->withTimestamps();
     }
 
     /**
-     * @return BelongsToMany<Team, $this, covariant CaseTypeAuditor>
+     * @return BelongsToMany<Department, $this, covariant CaseTypeAuditor>
      */
     public function auditors(): BelongsToMany
     {
-        return $this->belongsToMany(Team::class, 'case_type_auditors', 'case_type_id', 'team_id')
+        return $this->belongsToMany(Department::class, 'case_type_auditors', 'case_type_id', 'team_id')
             ->using(CaseTypeAuditor::class)
             ->withTimestamps();
     }

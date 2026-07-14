@@ -46,7 +46,7 @@ use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories\CreateCaseRequestFactory;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
@@ -149,15 +149,15 @@ test('CreateCase is gated with proper access control', function () {
     $user->givePermissionTo('case.view-any');
     $user->givePermissionTo('case.create');
 
-    $team = Team::factory()->create();
+    $department = Department::factory()->create();
 
-    $user->team()->associate($team)->save();
+    $user->department()->associate($department)->save();
 
     $user->refresh();
 
     $caseTypesWithManager = CaseType::factory()->create();
 
-    $caseTypesWithManager->managers()->attach($team);
+    $caseTypesWithManager->managers()->attach($department);
 
     $caseTypesWithManager->save();
 
@@ -215,9 +215,9 @@ test('CreateCase is gated with proper feature access control', function () {
 
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
-    $team = Team::factory()->create();
+    $department = Department::factory()->create();
 
-    $user->team()->associate($team)->save();
+    $user->department()->associate($department)->save();
 
     $user->refresh();
 
@@ -238,7 +238,7 @@ test('CreateCase is gated with proper feature access control', function () {
 
     $caseType = CaseType::factory()->create();
 
-    $caseType->managers()->attach($team);
+    $caseType->managers()->attach($department);
 
     actingAs($user)
         ->get(
@@ -276,9 +276,9 @@ test('assignment type individual manager will auto assign to new cases', functio
     $user->givePermissionTo('case.create');
     $user->givePermissionTo('case.*.update');
 
-    $team = Team::factory()->create();
+    $department = Department::factory()->create();
 
-    $user->team()->associate($team)->save();
+    $user->department()->associate($department)->save();
 
     $user->refresh();
 
@@ -286,7 +286,7 @@ test('assignment type individual manager will auto assign to new cases', functio
 
     $caseTypesWithManager = CaseType::factory()
         ->hasAttached(
-            factory: $team,
+            factory: $department,
             relationship: 'managers'
         )
         ->state([
@@ -320,12 +320,12 @@ test('assignment type individual manager will auto assign to new cases', functio
 test('assignment type round robin will auto-assign to new cases', function () {
     asSuperAdmin();
 
-    $team = Team::factory()
+    $department = Department::factory()
         ->has(User::factory()->licensed(LicenseType::cases())->count(3), 'users')->create();
 
     $caseTypeWithManager = CaseType::factory()
         ->hasAttached(
-            factory: $team,
+            factory: $department,
             relationship: 'managers'
         )
         ->state([
@@ -343,7 +343,7 @@ test('assignment type round robin will auto-assign to new cases', function () {
         'type_id' => $caseTypeWithManager->getKey(),
     ]));
 
-    $users = $team->users()->orderBy('name')->orderBy('id')->get();
+    $users = $department->users()->orderBy('name')->orderBy('id')->get();
 
     travelTo(now()->subSeconds(count($users)));
 
@@ -381,22 +381,22 @@ test('assignment type round robin will auto-assign to new cases', function () {
 
     $latestCase = CaseModel::latest()->first();
     $getCaseType = CaseType::where('assignment_type', CaseTypeAssignmentTypes::RoundRobin->value)->first();
-    expect($getCaseType->last_assigned_id)->toBe($team->users()->orderBy('name')->orderBy('id')->first()->getKey());
-    expect($latestCase->assignedTo->user_id)->toBe($team->users()->orderBy('name')->orderBy('id')->first()->getKey());
+    expect($getCaseType->last_assigned_id)->toBe($department->users()->orderBy('name')->orderBy('id')->first()->getKey());
+    expect($latestCase->assignedTo->user_id)->toBe($department->users()->orderBy('name')->orderBy('id')->first()->getKey());
 });
 
 test('assignment type workload will auto-assign to new cases', function () {
     asSuperAdmin();
 
-    $team = Team::factory()
+    $department = Department::factory()
         ->has(User::factory()->licensed(LicenseType::cases())->count(5), 'users')->create();
 
-    $factoryUsers = $team->users;
+    $factoryUsers = $department->users;
     $factoryUsers->each(fn ($user) => $user->givePermissionTo('case.*.update'));
 
     $caseTypeWithManager = CaseType::factory()
         ->hasAttached(
-            factory: $team,
+            factory: $department,
             relationship: 'managers'
         )
         ->state([

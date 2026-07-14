@@ -104,6 +104,6 @@ class ResearchTranscriptNotification extends Notification implements ShouldQueue
 
     private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
     {
-        return $this->sender->team?->division?->notificationSetting?->setting;
+        return $this->sender->department?->division?->notificationSetting?->setting;
     }
 }

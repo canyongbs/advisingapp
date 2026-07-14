@@ -39,11 +39,11 @@ namespace App\Filament\Resources\Users\Pages;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\Role;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Filament\Imports\UserImporter;
+use App\Filament\Resources\Users\Actions\AssignDepartmentBulkAction;
 use App\Filament\Resources\Users\Actions\AssignLicensesBulkAction;
 use App\Filament\Resources\Users\Actions\AssignRolesBulkAction;
-use App\Filament\Resources\Users\Actions\AssignTeamBulkAction;
 use App\Filament\Resources\Users\UserResource;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
@@ -82,8 +82,8 @@ class ListUsers extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('name')
                     ->searchable(),
-                TextColumn::make('team.name')
-                    ->label('Team')
+                TextColumn::make('department.name')
+                    ->label('Department')
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('email')
                     ->label('Email address')
@@ -141,24 +141,24 @@ class ListUsers extends ListRecords
                         ->visible(fn () => auth()->user()->can('create', License::class)),
                     AssignRolesBulkAction::make()
                         ->visible(fn () => auth()->user()->can('user.*.update', User::class)),
-                    AssignTeamBulkAction::make()
+                    AssignDepartmentBulkAction::make()
                         ->visible(fn () => auth()->user()->can('user.*.update', User::class)),
                 ]),
             ])
             ->filters([
                 TrashedFilter::make()
                     ->visible((fn () => auth()->user()->can('user.*.restore'))),
-                SelectFilter::make('team')
-                    ->label('Team')
+                SelectFilter::make('department')
+                    ->label('Department')
                     ->options(
                         fn (): array => [
                             '' => [
                                 'unassigned' => 'Unassigned',
                             ],
-                            'Team' => Team::query()->take(50)->orderBy('name')->pluck('name', 'id')->toArray(),
+                            'Department' => Department::query()->take(50)->orderBy('name')->pluck('name', 'id')->toArray(),
                         ]
                     )
-                    ->getSearchResultsUsing(fn (string $search): array => ['Team' => Team::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->pluck('name', 'id')->toArray()])
+                    ->getSearchResultsUsing(fn (string $search): array => ['Department' => Department::query()->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')->take(50)->pluck('name', 'id')->toArray()])
                     ->getOptionLabelsUsing(function (array $values): array {
                         $values = array_values(array_filter($values, filled(...)));
 
@@ -168,13 +168,13 @@ class ListUsers extends ListRecords
                             $labels['unassigned'] = 'Unassigned';
                         }
 
-                        $teamIds = array_values(array_filter($values, fn ($value) => $value !== 'unassigned'));
+                        $departmentIds = array_values(array_filter($values, fn ($value) => $value !== 'unassigned'));
 
-                        if ($teamIds !== []) {
+                        if ($departmentIds !== []) {
                             $labels = [
                                 ...$labels,
-                                ...Team::query()
-                                    ->whereIn('id', $teamIds)
+                                ...Department::query()
+                                    ->whereIn('id', $departmentIds)
                                     ->pluck('name', 'id')
                                     ->toArray(),
                             ];
@@ -188,9 +188,9 @@ class ListUsers extends ListRecords
                         }
 
                         $query->when(in_array('unassigned', $data['values']), function (Builder $query) {
-                            $query->whereDoesntHave('team');
+                            $query->whereDoesntHave('department');
                         })
-                            ->{in_array('unassigned', $data['values']) ? 'orWhereHas' : 'whereHas'}('team', function (Builder $query) use ($data) {
+                            ->{in_array('unassigned', $data['values']) ? 'orWhereHas' : 'whereHas'}('department', function (Builder $query) use ($data) {
                                 $query->whereIn('team_id', array_filter($data['values'], fn ($value) => $value !== 'unassigned'));
                             });
                     })

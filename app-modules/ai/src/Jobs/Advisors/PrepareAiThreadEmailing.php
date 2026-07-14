@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Jobs\Advisors;
 
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
@@ -82,24 +82,24 @@ class PrepareAiThreadEmailing implements ShouldQueue
             return;
         }
 
-        if ($this->targetType === AiThreadShareTarget::Team->value) {
+        if ($this->targetType === AiThreadShareTarget::Department->value) {
             $sender = $this->sender;
 
-            Team::query()
+            Department::query()
                 ->whereKey($this->targetIds)
                 ->with('users')
                 ->get()
-                ->each(function (Team $team) use ($sender) {
+                ->each(function (Department $department) use ($sender) {
                     Bus::batch(
-                        $team->users()->whereKeyNot($this->sender)->get()
+                        $department->users()->whereKeyNot($this->sender)->get()
                             ->map(fn (User $recipient) => new EmailAiThread($this->thread, $this->sender, $recipient))
                             ->all(),
                     )
-                        ->name("PrepareAiThreadEmailing for team {$team->id}")
-                        ->then(function () use ($sender, $team) {
+                        ->name("PrepareAiThreadEmailing for department {$department->id}")
+                        ->then(function () use ($sender, $department) {
                             FilamentNotification::make()
                                 ->success()
-                                ->title("You emailed an AI chat to users in team {$team->name}.")
+                                ->title("You emailed an AI chat to users in department {$department->name}.")
                                 ->sendToDatabase($sender);
                         })
                         ->dispatch();

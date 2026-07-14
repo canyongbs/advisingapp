@@ -40,7 +40,7 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages\EditCaseTypeAs
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Rules\CaseTypeAssignmentsIndividualUserMustBeAManager;
 use AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories\EditCaseTypeAssignmentsRequestFactory;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
@@ -77,11 +77,11 @@ test('A successful action on the EditCaseTypeAssignments page', function () {
 });
 
 test('A successful action on the EditCaseTypeAssignments page when the type selected is Individual', function () {
-    $managerTeam = Team::factory()->create();
+    $managerDepartment = Department::factory()->create();
 
     $caseType = CaseType::factory()
         ->hasAttached(
-            factory: $managerTeam,
+            factory: $managerDepartment,
             relationship: 'managers'
         )
         ->create();
@@ -96,7 +96,7 @@ test('A successful action on the EditCaseTypeAssignments page when the type sele
 
     $editRequest = EditCaseTypeAssignmentsRequestFactory::new()
         ->withIndividualType()
-        ->withIndividualId($managerTeam)
+        ->withIndividualId($managerDepartment)
         ->create();
 
     livewire(EditCaseTypeAssignments::class, [

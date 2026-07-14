@@ -39,7 +39,7 @@ namespace AdvisingApp\Campaign\Filament\Blocks;
 use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
 use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
@@ -146,26 +146,26 @@ class TaskBlock extends CampaignActionBlock
                                 ->dehydrated(true)
                                 ->exists('users', 'id')
                                 ->visible(fn (Get $get) => $get('is_confidential')),
-                            Select::make('confidential_task_teams')
-                                ->options(fn () => Team::query()
+                            Select::make('department_confidential_task')
+                                ->options(fn () => Department::query()
                                     ->orderBy('name')
                                     ->limit(50)
                                     ->pluck('name', 'id')
                                     ->all())
                                 ->searchable()
-                                ->getSearchResultsUsing(fn (string $search): array => Team::query()
+                                ->getSearchResultsUsing(fn (string $search): array => Department::query()
                                     ->orderBy('name')
                                     ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
                                     ->limit(50)
                                     ->pluck('name', 'id')
                                     ->all())
                                 ->getOptionLabelUsing(
-                                    fn (array $values): array => Team::query()
+                                    fn (array $values): array => Department::query()
                                         ->whereKey($values)
                                         ->pluck('name', 'id')
                                         ->all(),
                                 )
-                                ->label('Teams')
+                                ->label('Departments')
                                 ->multiple()
                                 ->dehydrated(true)
                                 ->exists('teams', 'id')

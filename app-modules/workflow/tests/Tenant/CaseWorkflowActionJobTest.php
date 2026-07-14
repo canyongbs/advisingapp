@@ -38,7 +38,7 @@ use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\Division\Models\Division;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use AdvisingApp\Workflow\Jobs\CaseWorkflowActionJob;
 use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
 use AdvisingApp\Workflow\Models\WorkflowRun;
@@ -68,7 +68,7 @@ it('executes case workflow step successfully', function () {
     $division = Division::factory()->create();
     $caseStatus = CaseStatus::factory()->create();
     $casePriority = CasePriority::factory()->create();
-    $assignedTo = User::factory()->for(Team::factory()->hasAttached($casePriority->type, relationship: 'manageableCaseTypes'))->create();
+    $assignedTo = User::factory()->for(Department::factory()->hasAttached($casePriority->type, relationship: 'manageableCaseTypes'))->create();
     $closeDetails = fake()->sentence();
     $resDetails = fake()->sentence();
 

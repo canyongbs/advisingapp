@@ -1,7 +1,7 @@
 <?php
 
 use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\AiAssistantConfidentialTeam;
+use AdvisingApp\Ai\Models\AiAssistantConfidentialDepartment;
 use AdvisingApp\Ai\Models\AiAssistantConfidentialUser;
 use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Models\AiAssistantLink;
@@ -11,7 +11,6 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiThreadFolder;
-use AdvisingApp\Ai\Models\ConfidentialPromptTeam;
 use AdvisingApp\Ai\Models\ConfidentialPromptUser;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
@@ -21,6 +20,7 @@ use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Ai\Models\DataAdvisor;
+use AdvisingApp\Ai\Models\DepartmentConfidentialPrompt;
 use AdvisingApp\Ai\Models\LegacyAiMessageLog;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptType;
@@ -97,8 +97,8 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Group\Models\GroupSubject;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiResearchRequestVectorStore;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
+use AdvisingApp\Interaction\Models\DepartmentConfidentialInteraction;
 use AdvisingApp\Interaction\Models\Interaction;
-use AdvisingApp\Interaction\Models\InteractionConfidentialTeam;
 use AdvisingApp\Interaction\Models\InteractionConfidentialUser;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
@@ -108,7 +108,7 @@ use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
-use AdvisingApp\MeetingCenter\Models\BookingGroupTeam;
+use AdvisingApp\MeetingCenter\Models\BookingGroupDepartment;
 use AdvisingApp\MeetingCenter\Models\BookingGroupUser;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
@@ -132,11 +132,11 @@ use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
 use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Pipeline\Models\PipelineStage;
 use AdvisingApp\Portal\Models\PortalAuthentication;
+use AdvisingApp\Project\Models\DepartmentProjectAuditor;
+use AdvisingApp\Project\Models\DepartmentProjectManager;
 use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\Models\ProjectAuditorTeam;
 use AdvisingApp\Project\Models\ProjectAuditorUser;
 use AdvisingApp\Project\Models\ProjectFile;
-use AdvisingApp\Project\Models\ProjectManagerTeam;
 use AdvisingApp\Project\Models\ProjectManagerUser;
 use AdvisingApp\Project\Models\ProjectMilestone;
 use AdvisingApp\Project\Models\ProjectMilestoneStatus;
@@ -183,10 +183,10 @@ use AdvisingApp\Survey\Models\SurveyFieldSubmission;
 use AdvisingApp\Survey\Models\SurveyStep;
 use AdvisingApp\Survey\Models\SurveySubmission;
 use AdvisingApp\Task\Models\ConfidentialTasksProjects;
-use AdvisingApp\Task\Models\ConfidentialTasksTeams;
 use AdvisingApp\Task\Models\ConfidentialTasksUsers;
+use AdvisingApp\Task\Models\DepartmentsConfidentialTasks;
 use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use AdvisingApp\Timeline\Models\History;
 use AdvisingApp\Timeline\Models\Timeline;
 use AdvisingApp\Webhook\Models\InboundWebhook;
@@ -269,7 +269,7 @@ use App\Models\User;
 
 return [
     AiAssistant::class,
-    AiAssistantConfidentialTeam::class,
+    AiAssistantConfidentialDepartment::class,
     AiAssistantConfidentialUser::class,
     AiAssistantFile::class,
     AiAssistantLink::class,
@@ -279,7 +279,7 @@ return [
     AiMessageFile::class,
     AiThread::class,
     AiThreadFolder::class,
-    ConfidentialPromptTeam::class,
+    DepartmentConfidentialPrompt::class,
     ConfidentialPromptUser::class,
     DataAdvisor::class,
     LegacyAiMessageLog::class,
@@ -366,7 +366,7 @@ return [
     OpenAiResearchRequestVectorStore::class,
     OpenAiVectorStore::class,
     Interaction::class,
-    InteractionConfidentialTeam::class,
+    DepartmentConfidentialInteraction::class,
     InteractionConfidentialUser::class,
     InteractionDriver::class,
     InteractionInitiative::class,
@@ -376,7 +376,7 @@ return [
     InteractionType::class,
     BookingGroup::class,
     BookingGroupAppointment::class,
-    BookingGroupTeam::class,
+    BookingGroupDepartment::class,
     BookingGroupUser::class,
     Calendar::class,
     CalendarEvent::class,
@@ -401,10 +401,10 @@ return [
     PipelineStage::class,
     PortalAuthentication::class,
     Project::class,
-    ProjectAuditorTeam::class,
+    DepartmentProjectAuditor::class,
     ProjectAuditorUser::class,
     ProjectFile::class,
-    ProjectManagerTeam::class,
+    DepartmentProjectManager::class,
     ProjectManagerUser::class,
     ProjectMilestone::class,
     ProjectMilestoneStatus::class,
@@ -451,10 +451,10 @@ return [
     SurveyStep::class,
     SurveySubmission::class,
     ConfidentialTasksProjects::class,
-    ConfidentialTasksTeams::class,
+    DepartmentsConfidentialTasks::class,
     ConfidentialTasksUsers::class,
     Task::class,
-    Team::class,
+    Department::class,
     History::class,
     Timeline::class,
     InboundWebhook::class,

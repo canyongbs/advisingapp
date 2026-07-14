@@ -99,7 +99,7 @@ class EditCaseTypeAssignments extends EditRecord
                                 name: 'assignmentTypeIndividual',
                                 titleAttribute: 'name',
                                 modifyQueryUsing: fn (Builder $query) => $query->whereRelation(
-                                    'team.manageableCaseTypes',
+                                    'department.manageableCaseTypes',
                                     'case_types.id',
                                     $this->record->getKey(),
                                 )

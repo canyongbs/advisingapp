@@ -48,7 +48,7 @@ use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Illuminate\Support\Facades\Bus;
 
@@ -176,7 +176,7 @@ it('creates a non-confidential task when is_confidential is not set', function (
     expect($tasks->first()->is_confidential)->toBeFalse()
         ->and($tasks->first()->confidentialAccessProjects)->toHaveCount(0)
         ->and($tasks->first()->confidentialAccessUsers)->toHaveCount(0)
-        ->and($tasks->first()->confidentialAccessTeams)->toHaveCount(0);
+        ->and($tasks->first()->confidentialAccessDepartments)->toHaveCount(0);
 })
     ->with([
         'student' => [fn () => Student::factory()->create()],
@@ -205,7 +205,7 @@ it('creates a confidential task and syncs confidential access relationships', fu
 
     $projects = Project::factory()->count(2)->for($user, 'createdBy')->create();
     $users = User::factory()->count(2)->create();
-    $teams = Team::factory()->count(2)->create();
+    $departments = Department::factory()->count(2)->create();
 
     /** @var CampaignAction $action */
     $action = CampaignAction::factory()
@@ -220,7 +220,7 @@ it('creates a confidential task and syncs confidential access relationships', fu
                 'is_confidential' => true,
                 'confidential_task_projects' => $projects->pluck('id')->toArray(),
                 'confidential_task_users' => $users->pluck('id')->toArray(),
-                'confidential_task_teams' => $teams->pluck('id')->toArray(),
+                'department_confidential_task' => $departments->pluck('id')->toArray(),
             ],
         ]);
 
@@ -244,8 +244,8 @@ it('creates a confidential task and syncs confidential access relationships', fu
     expect($tasks->first()->confidentialAccessUsers->pluck('id')->sort()->values())
         ->toEqual($users->pluck('id')->sort()->values());
 
-    expect($tasks->first()->confidentialAccessTeams->pluck('id')->sort()->values())
-        ->toEqual($teams->pluck('id')->sort()->values());
+    expect($tasks->first()->confidentialAccessDepartments->pluck('id')->sort()->values())
+        ->toEqual($departments->pluck('id')->sort()->values());
 })
     ->with([
         'student' => [fn () => Student::factory()->create()],

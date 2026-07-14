@@ -37,7 +37,7 @@
 namespace AdvisingApp\Project\Filament\Resources\Projects\Pages;
 
 use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
-use AdvisingApp\Project\Filament\Resources\Projects\RelationManagers\ManagerTeamsRelationManager;
+use AdvisingApp\Project\Filament\Resources\Projects\RelationManagers\ManagerDepartmentsRelationManager;
 use AdvisingApp\Project\Filament\Resources\Projects\RelationManagers\ManagerUsersRelationManager;
 use Filament\Resources\Pages\ManageRelatedRecords;
 
@@ -56,7 +56,7 @@ class ManageManagers extends ManageRelatedRecords
     {
         return [
             ManagerUsersRelationManager::class,
-            ManagerTeamsRelationManager::class,
+            ManagerDepartmentsRelationManager::class,
         ];
     }
 

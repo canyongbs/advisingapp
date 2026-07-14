@@ -104,6 +104,6 @@ class EngagementFailedNotification extends Notification implements ShouldQueue
 
     private function resolveNotificationSetting(CanBeNotified $notifiable): ?NotificationSetting
     {
-        return $notifiable instanceof User ? $this->engagement->createdBy->team?->division?->notificationSetting?->setting : null;
+        return $notifiable instanceof User ? $this->engagement->createdBy->department?->division?->notificationSetting?->setting : null;
     }
 }

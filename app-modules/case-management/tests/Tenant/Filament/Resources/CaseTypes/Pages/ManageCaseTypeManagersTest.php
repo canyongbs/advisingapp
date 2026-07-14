@@ -37,19 +37,20 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\CaseTypeResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages\ManageCaseTypeManagers;
 use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
+use App\Features\RenameTeamToDepartmentFeature;
 use App\Models\User;
 use Filament\Actions\AttachAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 
-it('can attach team member to case type', function () {
+it('can attach department member to case type', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
 
     $caseType = CaseType::factory()->create();
 
-    $team = Team::factory()->create();
+    $department = Department::factory()->create();
 
     actingAs($user)
         ->get(
@@ -60,20 +61,20 @@ it('can attach team member to case type', function () {
 
     $user->givePermissionTo('settings.view-any');
     $user->givePermissionTo('settings.*.update');
-    $user->givePermissionTo('team.view-any');
+    $user->givePermissionTo(RenameTeamToDepartmentFeature::active() ? 'department.view-any' : 'team.view-any');
 
     livewire(ManageCaseTypeManagers::class, [
         'record' => $caseType->getRouteKey(),
     ])
         ->callTableAction(
             AttachAction::class,
-            data: ['recordId' => $team->getKey()]
+            data: ['recordId' => $department->getKey()]
         )->assertSuccessful();
 
     expect(
         $caseType->refresh()
             ->managers
             ->pluck('id')
-            ->contains($team->getKey())
+            ->contains($department->getKey())
     )->toBeTrue();
 });

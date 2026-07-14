@@ -37,7 +37,7 @@
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\BookingGroupResource;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -76,12 +76,12 @@ test('ListBookingGroups is gated with proper access control', function () {
 test('ListBookingGroups page displays correct member count', function () {
     $otherUsers = User::factory()->count(2)->create();
 
-    $team = Team::factory()->create();
-    User::factory()->count(2)->create(['team_id' => $team->id]);
+    $department = Department::factory()->create();
+    User::factory()->count(2)->create(['team_id' => $department->id]);
 
     $bookingGroup = BookingGroup::factory()->create();
     $bookingGroup->users()->attach($otherUsers->pluck('id')->toArray());
-    $bookingGroup->teams()->attach($team->id);
+    $bookingGroup->departments()->attach($department->id);
 
     asSuperAdmin();
 
@@ -91,7 +91,7 @@ test('ListBookingGroups page displays correct member count', function () {
         ->assertSee('4');
 
     $bookingGroup->users()->detach($otherUsers->pluck('id')->toArray());
-    $bookingGroup->teams()->detach($team->id);
+    $bookingGroup->departments()->detach($department->id);
     $bookingGroup->refresh();
 
     livewire(ListBookingGroups::class)
