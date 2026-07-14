@@ -42,7 +42,6 @@ use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
@@ -59,8 +58,6 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 class EditEventRegistration extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = EventResource::class;
 
     protected static ?string $navigationLabel = 'Registration Form';

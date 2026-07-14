@@ -37,7 +37,6 @@
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\Pages;
 
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubStatusResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
@@ -46,8 +45,6 @@ use Filament\Schemas\Schema;
 
 class EditResourceHubStatus extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = ResourceHubStatusResource::class;
 
     public function form(Schema $schema): Schema

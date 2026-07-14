@@ -40,7 +40,6 @@ use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use AdvisingApp\Survey\Filament\Resources\Surveys\Pages\Concerns\HasSharedFormConfiguration;
 use AdvisingApp\Survey\Filament\Resources\Surveys\SurveyResource;
 use AdvisingApp\Survey\Models\Survey;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Infolists\Components\TextEntry;
@@ -50,7 +49,6 @@ use Filament\Schemas\Schema;
 class EditSurvey extends EditRecord
 {
     use HasSharedFormConfiguration;
-    use EditPageRedirection;
 
     protected static string $resource = SurveyResource::class;
 

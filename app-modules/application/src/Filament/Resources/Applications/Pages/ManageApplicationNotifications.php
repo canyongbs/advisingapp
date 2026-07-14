@@ -38,7 +38,6 @@ namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use App\Filament\Forms\Components\UserSelect;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection as ConcernsEditPageRedirection;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
@@ -46,8 +45,6 @@ use Filament\Schemas\Schema;
 
 class ManageApplicationNotifications extends EditRecord
 {
-    use ConcernsEditPageRedirection;
-
     protected static string $resource = ApplicationResource::class;
 
     protected static ?string $navigationLabel = 'Notifications';

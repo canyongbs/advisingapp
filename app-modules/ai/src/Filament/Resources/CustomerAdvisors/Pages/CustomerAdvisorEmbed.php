@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Actions\GenerateCustomerAdvisorWidgetEmbedCode;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Form\Rules\IsDomain;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\ColorPicker;
@@ -59,8 +58,6 @@ use UnitEnum;
 
 class CustomerAdvisorEmbed extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = CustomerAdvisorResource::class;
 
     protected static string | UnitEnum | null $navigationGroup = 'Configuration';
