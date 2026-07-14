@@ -32,7 +32,6 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import AppLoading from '../Components/AppLoading.vue';
     import Breadcrumbs from '@common/portal/Breadcrumbs.vue';
     import Article from '@common/portal/category/Article.vue';
     import Page from '@common/portal/Page.vue';
@@ -42,6 +41,7 @@
     import { DocumentTextIcon } from '@heroicons/vue/24/outline';
     import { computed, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
+    import AppLoading from '../Components/AppLoading.vue';
     import { consumer } from '../Services/Consumer.js';
 
     const route = useRoute();
