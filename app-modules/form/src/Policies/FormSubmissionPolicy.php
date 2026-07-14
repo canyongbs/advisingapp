@@ -65,12 +65,4 @@ class FormSubmissionPolicy
             denyResponse: 'You do not have permission to delete form submissions.'
         );
     }
-
-    public function archive(Authenticatable $authenticatable, FormSubmission $formSubmission): Response
-    {
-        return $authenticatable->canOrElse(
-            abilities: ['form.*.update'],
-            denyResponse: 'You do not have permission to archive this form submission.'
-        );
-    }
 }

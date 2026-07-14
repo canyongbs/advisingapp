@@ -58,6 +58,7 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -143,7 +144,7 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                     ->whereHas(
                         'submissible',
                         fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $owner->root_id),
-                    )->when(ArchiveSubmissionsFeature::active(), fn (Builder $query) => $query->withoutArchived())
+                    )
             )
             ->columns([
                 IdColumn::make(),
@@ -178,6 +179,12 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                         'student' => 'Student',
                         'prospect' => 'Prospect',
                     ]),
+                ...(ArchiveSubmissionsFeature::active() ? [
+                    Filter::make('withoutArchived')
+                        ->label('Without archived')
+                        ->query(fn (Builder $query) => $query->withoutArchived())
+                        ->default(),
+                ] : []),
             ])
             ->headerActions([
                 Action::make('export')
@@ -231,13 +238,12 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                     ->extraModalFooterActions(ApplicationAdmissionActions::get()),
                 ...(ArchiveSubmissionsFeature::active() ? [
                     Action::make('archive')
-                        ->label('Archive')
                         ->icon('heroicon-o-archive-box')
                         ->color('danger')
                         ->requiresConfirmation()
                         ->modalHeading('Archive Submission')
                         ->modalSubmitActionLabel('Archive')
-                        ->authorize(fn (ApplicationSubmission $record) => auth()->user()->can('archive', $record))
+                        ->authorize(fn (): bool => auth()->user()->can('application.*.update'))
                         ->action(function (ApplicationSubmission $record): void {
                             $record->archive();
 
@@ -247,23 +253,6 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                                 ->send();
                         })
                         ->hidden(fn (ApplicationSubmission $record): bool => $record->isArchived()),
-                    Action::make('unarchive')
-                        ->label('Unarchive')
-                        ->icon('heroicon-o-archive-box-arrow-down')
-                        ->color('gray')
-                        ->requiresConfirmation()
-                        ->modalHeading('Unarchive Submission')
-                        ->modalSubmitActionLabel('Unarchive')
-                        ->authorize(fn (ApplicationSubmission $record) => auth()->user()->can('unarchive', $record))
-                        ->action(function (ApplicationSubmission $record): void {
-                            $record->unarchive();
-
-                            Notification::make()
-                                ->title('Submission unarchived')
-                                ->success()
-                                ->send();
-                        })
-                        ->hidden(fn (ApplicationSubmission $record): bool => ! $record->isArchived()),
                 ] : [
                     DeleteAction::make(),
                 ]),

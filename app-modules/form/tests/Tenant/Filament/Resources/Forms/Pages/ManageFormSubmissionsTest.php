@@ -55,26 +55,8 @@ function manageFormSubmissionsTestUser(): User
     return User::factory()->licensed(LicenseType::cases())->create();
 }
 
-test('archive action is hidden when submission is already archived', function () {
-    $user = manageFormSubmissionsTestUser();
-    $user->givePermissionTo('form.view-any');
-    $user->givePermissionTo('form.*.update');
-
-    actingAs($user);
-
-    $form = Form::factory()->create();
-    $submission = FormSubmission::factory()->create(['form_id' => $form->id, 'archived_at' => now()]);
-
-    livewire(ManageFormSubmissions::class, ['record' => $form->getRouteKey()])
-        ->assertTableActionHidden('archive', $submission);
-});
-
 test('archive action is visible when submission is not archived', function () {
-    $user = manageFormSubmissionsTestUser();
-    $user->givePermissionTo('form.view-any');
-    $user->givePermissionTo('form.*.update');
-
-    actingAs($user);
+    asSuperAdmin();
 
     $form = Form::factory()->create();
     $submission = FormSubmission::factory()->create(['form_id' => $form->id]);

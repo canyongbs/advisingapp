@@ -65,20 +65,4 @@ class ApplicationSubmissionPolicy
             denyResponse: 'You do not have permission to delete application submissions.'
         );
     }
-
-    public function archive(Authenticatable $authenticatable, ApplicationSubmission $applicationSubmission): Response
-    {
-        return $authenticatable->canOrElse(
-            abilities: ['application.*.update'],
-            denyResponse: 'You do not have permission to archive this application submission.'
-        );
-    }
-
-    public function unarchive(Authenticatable $authenticatable, ApplicationSubmission $applicationSubmission): Response
-    {
-        return $authenticatable->canOrElse(
-            abilities: ['application.*.update'],
-            denyResponse: 'You do not have permission to unarchive this application submission.'
-        );
-    }
 }

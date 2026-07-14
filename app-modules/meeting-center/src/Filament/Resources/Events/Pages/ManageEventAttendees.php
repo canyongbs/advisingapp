@@ -48,6 +48,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -66,19 +67,19 @@ class ManageEventAttendees extends ManageRelatedRecords
     public function table(Table $table): Table
     {
         return $table
-            ->modifyQueryUsing(function (Builder $query): Builder {
-                if (ArchiveSubmissionsFeature::active()) {
-                    /** @phpstan-ignore method.notFound */
-                    return $query->withoutArchived();
-                }
-
-                return $query;
-            })
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('status')
                     ->badge(),
                 TextColumn::make('email'),
+            ])
+            ->filters([
+                ...(ArchiveSubmissionsFeature::active() ? [
+                    Filter::make('withoutArchived')
+                        ->label('Without archived')
+                        ->query(fn (Builder $query) => $query->withoutArchived())
+                        ->default(),
+                ] : []),
             ])
             ->headerActions([
             ])
@@ -86,13 +87,12 @@ class ManageEventAttendees extends ManageRelatedRecords
                 ViewEventAttendeeAction::make(),
                 ...(ArchiveSubmissionsFeature::active() ? [
                     Action::make('archive')
-                        ->label('Archive')
                         ->icon('heroicon-o-archive-box')
                         ->color('danger')
                         ->requiresConfirmation()
                         ->modalHeading('Archive Attendee')
                         ->modalSubmitActionLabel('Archive')
-                        ->authorize(fn (EventAttendee $record) => auth()->user()->can('archive', $record))
+                        ->authorize(fn (): bool => auth()->user()->can('event_attendee.*.delete'))
                         ->action(function (EventAttendee $record): void {
                             $record->archive();
 
@@ -102,23 +102,6 @@ class ManageEventAttendees extends ManageRelatedRecords
                                 ->send();
                         })
                         ->hidden(fn (EventAttendee $record): bool => $record->isArchived()),
-                    Action::make('unarchive')
-                        ->label('Unarchive')
-                        ->icon('heroicon-o-archive-box-arrow-down')
-                        ->color('gray')
-                        ->requiresConfirmation()
-                        ->modalHeading('Unarchive Attendee')
-                        ->modalSubmitActionLabel('Unarchive')
-                        ->authorize(fn (EventAttendee $record) => auth()->user()->can('unarchive', $record))
-                        ->action(function (EventAttendee $record): void {
-                            $record->unarchive();
-
-                            Notification::make()
-                                ->title('Attendee unarchived')
-                                ->success()
-                                ->send();
-                        })
-                        ->hidden(fn (EventAttendee $record): bool => ! $record->isArchived()),
                 ] : []),
             ])
             ->toolbarActions([
