@@ -91,7 +91,8 @@ class ViewUser extends ViewRecord
                 Section::make('Department')
                     ->schema([
                         Select::make('team_id')
-                            ->label('')
+                            ->label('Department')
+                            ->hiddenLabel()
                             ->relationship('department', 'name')
                             ->disabled(),
                     ])
