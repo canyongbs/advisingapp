@@ -32,9 +32,9 @@
 </COPYRIGHT>
 -->
 <script setup>
+    import AppLoading from '@common/portal/AppLoading.vue';
     import Breadcrumbs from '@common/portal/Breadcrumbs.vue';
     import Article from '@common/portal/category/Article.vue';
-    import AppLoading from '../Components/AppLoading.vue';
     import Page from '@common/portal/Page.vue';
     import Pagination from '@common/portal/Pagination.vue';
     import Subheading from '@common/portal/Subheading.vue';
