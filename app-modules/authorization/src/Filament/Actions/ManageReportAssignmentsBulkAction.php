@@ -64,6 +64,7 @@ class ManageReportAssignmentsBulkAction
         return BulkAction::make('manageReportAssignments')
             ->icon('heroicon-s-user-group')
             ->label('Manage Assignments')
+            ->authorize(fn (): bool => auth()->user()->can('reporting.*.update'))
             ->modalHeading(fn (Collection $records): string => 'Manage Assignments for ' . $records->count() . ' ' . str('Report')->plural($records->count()))
             ->modalDescription('Grant access to the selected reports by assigning individual users and/or departments.')
             ->form([
@@ -179,6 +180,7 @@ class ManageReportAssignmentsBulkAction
                         ->send();
                 }
             })
+            ->after(fn ($livewire) => $livewire->resetTable())
             ->deselectRecordsAfterCompletion();
     }
 }

@@ -39,7 +39,6 @@ use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\Team\Models\Department;
-use App\Features\BulkManageReportAssignmentsFeature;
 use App\Features\ReportingFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -366,7 +365,6 @@ it('counts a user with both direct and department access only once', function ()
 // Bulk Manage Assignments tests
 
 it('bulk manage assignments action is visible when feature flag is active and user has permission', function () {
-    BulkManageReportAssignmentsFeature::activate();
 
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
@@ -378,21 +376,8 @@ it('bulk manage assignments action is visible when feature flag is active and us
         ->assertTableBulkActionVisible('manageReportAssignments');
 });
 
-it('bulk manage assignments action is not visible when feature flag is inactive', function () {
-    BulkManageReportAssignmentsFeature::deactivate();
-
-    $user = User::factory()->create();
-    $user->givePermissionTo('reporting.view-any');
-    $user->givePermissionTo('reporting.*.update');
-
-    actingAs($user);
-
-    livewire(Reporting::class)
-        ->assertTableBulkActionHidden('manageReportAssignments');
-});
 
 it('bulk manage assignments action is not visible for user without update permission', function () {
-    BulkManageReportAssignmentsFeature::activate();
 
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
@@ -404,7 +389,6 @@ it('bulk manage assignments action is not visible for user without update permis
 });
 
 it('bulk manage assignments action adds users and departments to selected reports additively', function () {
-    BulkManageReportAssignmentsFeature::activate();
 
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
@@ -452,7 +436,6 @@ it('bulk manage assignments action adds users and departments to selected report
 });
 
 it('bulk manage assignments action replaces all existing assignments when sync is enabled', function () {
-    BulkManageReportAssignmentsFeature::activate();
 
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
