@@ -268,3 +268,173 @@ test('all tab shows submissions from all states', function () {
         ->set('activeTab', 'all')
         ->assertCanSeeTableRecords([$receivedSubmission, $reviewSubmission]);
 });
+
+test('archive action is visible when submission is not archived', function () {
+    asSuperAdmin();
+
+    ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
+    $application = Application::factory()->create();
+    $submission = ApplicationSubmission::factory()->create(['application_id' => $application->id]);
+
+    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+        ->assertTableActionVisible('archive', $submission);
+});
+
+test('archive action is hidden when submission is already archived', function () {
+    asSuperAdmin();
+
+    ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
+    $application = Application::factory()->create();
+    $submission = ApplicationSubmission::factory()->create([
+        'application_id' => $application->id,
+        'archived_at' => now(),
+    ]);
+
+    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+        ->assertTableActionHidden('archive', $submission);
+});
+
+test('archive action successfully archives a submission', function () {
+    asSuperAdmin();
+
+    ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
+    $application = Application::factory()->create();
+    $submission = ApplicationSubmission::factory()->create(['application_id' => $application->id]);
+
+    expect($submission->isArchived())->toBeFalse();
+
+    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+        ->callTableAction('archive', $submission)
+        ->assertNotified();
+
+    expect($submission->fresh()->isArchived())->toBeTrue();
+});
+
+test('unarchive action is hidden when submission is not archived', function () {
+    asSuperAdmin();
+
+    ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
+    $application = Application::factory()->create();
+    $submission = ApplicationSubmission::factory()->create(['application_id' => $application->id]);
+
+    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+        ->assertTableActionHidden('unarchive', $submission);
+});
+
+test('unarchive action is visible when submission is archived', function () {
+    asSuperAdmin();
+
+    ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
+    $application = Application::factory()->create();
+    $submission = ApplicationSubmission::factory()->create([
+        'application_id' => $application->id,
+        'archived_at' => now(),
+    ]);
+
+    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+        ->assertTableActionVisible('unarchive', $submission);
+});
+
+test('unarchive action successfully unarchives a submission', function () {
+    asSuperAdmin();
+
+    ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
+    $application = Application::factory()->create();
+    $submission = ApplicationSubmission::factory()->create([
+        'application_id' => $application->id,
+        'archived_at' => now(),
+    ]);
+
+    expect($submission->isArchived())->toBeTrue();
+
+    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+        ->callTableAction('unarchive', $submission)
+        ->assertNotified();
+
+    expect($submission->fresh()->isArchived())->toBeFalse();
+});
+
+test('bulk archive action successfully archives multiple submissions', function () {
+    asSuperAdmin();
+
+    ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
+    $application = Application::factory()->create();
+    $application->submissions()->forceDelete();
+
+    $submissions = ApplicationSubmission::factory()->count(3)->create(['application_id' => $application->id]);
+
+    $submissions->each(function (ApplicationSubmission $submission): void {
+        expect($submission->isArchived())->toBeFalse();
+    });
+
+    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+        ->callTableBulkAction('archive', $submissions)
+        ->assertNotified();
+
+    $submissions->each(function (ApplicationSubmission $submission): void {
+        expect($submission->fresh()->isArchived())->toBeTrue();
+    });
+});
+
+test('archived submissions are hidden by default', function () {
+    asSuperAdmin();
+
+    ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
+    $application = Application::factory()->create();
+    $application->submissions()->forceDelete();
+
+    $activeSubmission = ApplicationSubmission::factory()->create(['application_id' => $application->id]);
+    $archivedSubmission = ApplicationSubmission::factory()->create([
+        'application_id' => $application->id,
+        'archived_at' => now(),
+    ]);
+
+    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+        ->assertCanSeeTableRecords([$activeSubmission])
+        ->assertCanNotSeeTableRecords([$archivedSubmission]);
+});
+
+test('archived submissions are visible when the withoutArchived filter is removed', function () {
+    asSuperAdmin();
+
+    ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+    ]);
+
+    $application = Application::factory()->create();
+    $application->submissions()->forceDelete();
+
+    $activeSubmission = ApplicationSubmission::factory()->create(['application_id' => $application->id]);
+    $archivedSubmission = ApplicationSubmission::factory()->create([
+        'application_id' => $application->id,
+        'archived_at' => now(),
+    ]);
+
+    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+        ->removeTableFilter('withoutArchived')
+        ->assertCanSeeTableRecords([$activeSubmission, $archivedSubmission]);
+});

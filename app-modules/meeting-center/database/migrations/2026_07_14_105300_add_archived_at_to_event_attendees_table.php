@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,43 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Policies;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Form\Models\FormSubmission;
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
-
-class FormSubmissionPolicy
-{
-    public function update(Authenticatable $authenticatable, FormSubmission $formSubmission): Response
+return new class () extends Migration {
+    public function up(): void
     {
-        return $authenticatable->canOrElse(
-            abilities: ['form.*.update'],
-            denyResponse: 'You do not have permission to update this form submission.'
-        );
+        Schema::table('event_attendees', function (Blueprint $table) {
+            $table->timestamp('archived_at')->nullable();
+        });
     }
 
-    public function delete(Authenticatable $authenticatable, FormSubmission $formSubmission): Response
+    public function down(): void
     {
-        return $authenticatable->canOrElse(
-            abilities: ['form.*.update'],
-            denyResponse: 'You do not have permission to delete this form submission.'
-        );
+        Schema::table('event_attendees', function (Blueprint $table) {
+            $table->dropColumn('archived_at');
+        });
     }
-
-    public function deleteAny(Authenticatable $authenticatable): Response
-    {
-        return $authenticatable->canOrElse(
-            abilities: ['form.*.update'],
-            denyResponse: 'You do not have permission to delete form submissions.'
-        );
-    }
-
-    public function archive(Authenticatable $authenticatable, FormSubmission $formSubmission): Response
-    {
-        return $authenticatable->canOrElse(
-            abilities: ['form.*.update'],
-            denyResponse: 'You do not have permission to archive this form submission.'
-        );
-    }
-}
+};
