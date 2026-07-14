@@ -34,7 +34,7 @@
 <script setup>
     import Breadcrumbs from '@common/portal/Breadcrumbs.vue';
     import Article from '@common/portal/category/Article.vue';
-    import AppLoading from '@common/portal/AppLoading.vue';
+    import AppLoading from '../Components/AppLoading.vue';
     import Page from '@common/portal/Page.vue';
     import Pagination from '@common/portal/Pagination.vue';
     import Subheading from '@common/portal/Subheading.vue';
@@ -224,7 +224,7 @@
         </template>
 
         <div v-if="loadingCategory">
-            <AppLoading label="Loading..." />
+            <AppLoading />
         </div>
 
         <div v-else-if="category">
