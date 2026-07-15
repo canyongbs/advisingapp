@@ -37,6 +37,7 @@
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEventRegistration;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use App\Settings\LicenseSettings;
 
 use function Pest\Livewire\livewire;
@@ -140,4 +141,77 @@ it('sets root_id to its own id when a registration form is first created', funct
     $form = $event->eventRegistrationForm;
 
     expect($form->root_id)->toBe($form->id);
+});
+
+it('when saving a wizard registration form, the new version retains the same number of steps', function () {
+    editEventRegistrationTestSetup();
+
+    asSuperAdmin();
+
+    $event = Event::factory()->create();
+    $form = $event->eventRegistrationForm;
+
+    // Ensure the form is in wizard mode with a known set of steps
+    $form->steps()->delete();
+    $form->is_wizard = true;
+    $form->content = null;
+    $form->save();
+
+    EventRegistrationFormStep::factory()->count(2)->create(['form_id' => $form->getKey()]);
+
+    $originalStepCount = $form->steps()->count();
+    $originalRootId = $form->root_id;
+    $originalId = $form->id;
+
+    livewire(EditEventRegistration::class, ['record' => $event->getKey()])
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $newVersion = EventRegistrationForm::withoutGlobalScopes()
+        ->where('root_id', $originalRootId)
+        ->whereNull('archived_at')
+        ->first();
+
+    expect($newVersion)->not->toBeNull();
+    expect($newVersion->id)->not->toBe($originalId);
+    expect($newVersion->is_wizard)->toBeTrue();
+    expect($newVersion->steps()->count())->toBe($originalStepCount);
+
+    // Archived version retains its original steps
+    $archivedVersion = EventRegistrationForm::withoutGlobalScopes()
+        ->where('id', $originalId)
+        ->first();
+
+    expect($archivedVersion->archived_at)->not->toBeNull();
+    expect($archivedVersion->steps()->count())->toBe($originalStepCount);
+});
+
+it('when saving a wizard registration form, the archived version still has its original steps', function () {
+    editEventRegistrationTestSetup();
+
+    asSuperAdmin();
+
+    $event = Event::factory()->create();
+    $form = $event->eventRegistrationForm;
+
+    $form->steps()->delete();
+    $form->is_wizard = true;
+    $form->content = null;
+    $form->save();
+
+    EventRegistrationFormStep::factory()->count(3)->create(['form_id' => $form->getKey()]);
+
+    $originalStepCount = $form->steps()->count();
+    $originalId = $form->id;
+
+    livewire(EditEventRegistration::class, ['record' => $event->getKey()])
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $archivedVersion = EventRegistrationForm::withoutGlobalScopes()
+        ->where('id', $originalId)
+        ->first();
+
+    expect($archivedVersion->archived_at)->not->toBeNull();
+    expect($archivedVersion->steps()->count())->toBe($originalStepCount);
 });

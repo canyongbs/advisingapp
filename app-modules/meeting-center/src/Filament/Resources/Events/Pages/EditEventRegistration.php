@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 
+use AdvisingApp\Form\Actions\SaveSubmissibleFieldsFromContent;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\MeetingCenter\Actions\CreateEventRegistrationFormVersion;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
@@ -57,12 +58,15 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Support\Facades\DB;
 
 class EditEventRegistration extends EditRecord
 {
     protected static string $resource = EventResource::class;
 
     protected static ?string $navigationLabel = 'Registration Form';
+
+    protected bool $registrationFormVersionedInCurrentSave = false;
 
     public function form(Schema $schema): Schema
     {
@@ -76,8 +80,38 @@ class EditEventRegistration extends EditRecord
 
                     if ($record instanceof EventRegistrationForm) {
                         if (EventVersioningFeature::active()) {
-                            $newVersion = app(CreateEventRegistrationFormVersion::class)->execute($record, $data);
-                            $component->cachedExistingRecord($newVersion);
+                            $newVersion = DB::transaction(function () use ($component, $record, $data): EventRegistrationForm {
+                                $newVersion = app(CreateEventRegistrationFormVersion::class)->execute($record, $data);
+
+                                if ($newVersion->is_wizard) {
+                                    // The Repeater state inside a nested Fieldset relationship is not
+                                    // reliably dehydrated, so we source step data directly from the
+                                    // old version and let SaveSubmissibleFieldsFromContent recreate
+                                    // the steps and their fields on the new version.
+                                    $stepsData = ! empty($data['steps'])
+                                        ? array_values($data['steps'])
+                                        : $record->steps()->orderBy('sort')->get()
+                                            ->map(fn (EventRegistrationFormStep $step) => [
+                                                'label' => $step->label,
+                                                'content' => $step->content,
+                                            ])
+                                            ->all();
+
+                                    app(SaveSubmissibleFieldsFromContent::class)->execute(
+                                        $newVersion,
+                                        ['steps' => $stepsData],
+                                    );
+                                }
+
+                                $component->cachedExistingRecord($newVersion);
+
+                                return $newVersion;
+                            });
+
+                            // Only skip the Repeater and RichEditor saves for wizard forms,
+                            // since SaveSubmissibleFieldsFromContent already handled them.
+                            // For non-wizard, the RichEditor saveRelationshipsUsing still runs.
+                            $this->registrationFormVersionedInCurrentSave = $newVersion->is_wizard;
                         } else {
                             $record->fill($data);
                             $record->save();
@@ -125,6 +159,13 @@ class EditEventRegistration extends EditRecord
                         ->visible(fn (Get $get) => $get('is_wizard'))
                         ->disabled(fn (?EventRegistrationForm $record) => ! EventVersioningFeature::active() && $record?->submissions()->exists())
                         ->relationship()
+                        ->saveRelationshipsUsing(function (Repeater $component): void {
+                            if ($this->registrationFormVersionedInCurrentSave) {
+                                return;
+                            }
+
+                            $component->saveToRelationship();
+                        })
                         ->reorderable()
                         ->columnSpanFull(),
                 ]),
@@ -146,6 +187,10 @@ class EditEventRegistration extends EditRecord
             ->placeholder('Drag blocks here to build your form')
             ->hiddenLabel()
             ->saveRelationshipsUsing(function (RichEditor $component, EventRegistrationForm | EventRegistrationFormStep $record) {
+                if ($this->registrationFormVersionedInCurrentSave) {
+                    return;
+                }
+
                 if ($component->isDisabled()) {
                     return;
                 }
@@ -233,6 +278,7 @@ class EditEventRegistration extends EditRecord
     protected function afterSave(): void
     {
         $this->clearFormContentForWizard();
+        $this->registrationFormVersionedInCurrentSave = false;
     }
 
     protected function clearFormContentForWizard(): void

@@ -36,6 +36,7 @@
 
 use App\Features\EventVersioningFeature;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
@@ -58,6 +59,24 @@ return new class () extends Migration {
                 $table->index('root_id');
             });
 
+            // Archive all but the most recently created active form per event
+            // so the partial unique index can be created cleanly on existing data.
+            DB::statement(
+                'UPDATE event_registration_forms
+                 SET archived_at = NOW()
+                 WHERE archived_at IS NULL
+                   AND id NOT IN (
+                       SELECT DISTINCT ON (event_id) id
+                       FROM event_registration_forms
+                       WHERE archived_at IS NULL
+                       ORDER BY event_id, created_at DESC
+                   )'
+            );
+
+            Schema::table('event_registration_forms', function (Blueprint $table) {
+                $table->uniqueIndex(['event_id'])->where(fn (Builder $condition) => $condition->whereNull('archived_at'));
+            });
+
             EventVersioningFeature::activate();
         });
     }
@@ -66,6 +85,10 @@ return new class () extends Migration {
     {
         DB::transaction(function () {
             EventVersioningFeature::deactivate();
+
+            Schema::table('event_registration_forms', function (Blueprint $table) {
+                $table->dropIndex('event_registration_forms_event_id_unique');
+            });
 
             Schema::table('event_registration_forms', function (Blueprint $table) {
                 $table->dropForeign(['root_id']);
