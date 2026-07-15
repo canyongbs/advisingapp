@@ -38,10 +38,13 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates
 
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use App\Features\ApplicationSubmissionStateDefaultViewFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
 
@@ -71,6 +74,27 @@ class CreateApplicationSubmissionState extends CreateRecord
                     ->label('Description')
                     ->required()
                     ->string(),
+                Toggle::make('is_default')
+                    ->label('Default')
+                    ->live()
+                    ->helperText('Set this state as the default tab on the Submissions page.')
+                    ->hint(function (?bool $state): ?string {
+                        if (! $state) {
+                            return null;
+                        }
+
+                        $currentDefault = ApplicationSubmissionState::query()
+                            ->where('is_default', true)
+                            ->value('name');
+
+                        if (blank($currentDefault)) {
+                            return null;
+                        }
+
+                        return "The current default state is '{$currentDefault}', you are replacing it.";
+                    })
+                    ->hintColor('danger')
+                    ->visible(fn () => ApplicationSubmissionStateDefaultViewFeature::active()),
             ]);
     }
 }

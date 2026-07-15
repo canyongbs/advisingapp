@@ -38,6 +38,7 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates
 
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use App\Features\ApplicationSubmissionStateDefaultViewFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -46,6 +47,7 @@ use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Colors\Color;
 use Filament\Tables\Columns\ColorColumn;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -74,6 +76,10 @@ class ListApplicationSubmissionStates extends ListRecords
                     ->label('# of Applications Submissions')
                     ->counts('submissions')
                     ->sortable(),
+                IconColumn::make('is_default')
+                    ->label('Default')
+                    ->boolean()
+                    ->visible(fn () => ApplicationSubmissionStateDefaultViewFeature::active()),
             ])
             // @phpstan-ignore argument.templateType
             ->modifyQueryUsing(fn (Builder $query) => $query->withoutArchivedAndUnused()) // @phpstan-ignore method.notFound

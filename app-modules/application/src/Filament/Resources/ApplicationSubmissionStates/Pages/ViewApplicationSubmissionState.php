@@ -38,8 +38,10 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates
 
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use App\Features\ApplicationSubmissionStateDefaultViewFeature;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\ColorEntry;
+use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
@@ -65,6 +67,10 @@ class ViewApplicationSubmissionState extends ViewRecord
                             ->state(fn (ApplicationSubmissionState $applicationState): string => Color::convertToRgb(Color::all()[$applicationState->color->value][600])),
                         TextEntry::make('description')
                             ->label('Description'),
+                        IconEntry::make('is_default')
+                            ->label('Default')
+                            ->boolean()
+                            ->visible(fn () => ApplicationSubmissionStateDefaultViewFeature::active()),
                     ])
                     ->columns(),
             ]);
