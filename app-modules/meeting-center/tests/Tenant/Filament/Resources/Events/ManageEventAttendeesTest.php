@@ -85,17 +85,18 @@ test('bulk archive action successfully archives multiple attendees', function ()
     });
 });
 
-// test('archived attendees are hidden by default', function () {
-//     asSuperAdmin();
+test('archived attendees are hidden by default', function () {
+    asSuperAdmin();
 
-//     $event = Event::factory()->create();
-//     $activeAttendee = EventAttendee::factory()->create(['event_id' => $event->id]);
-//     $archivedAttendee = EventAttendee::factory()->create(['event_id' => $event->id, 'archived_at' => now()]);
+    $event = Event::factory()->create();
+    $activeAttendee = EventAttendee::factory()->create(['event_id' => $event->id]);
+    $archivedAttendee = EventAttendee::factory()->create(['event_id' => $event->id, 'archived_at' => now()]);
 
-//     livewire(ManageEventAttendees::class, ['record' => $event->getRouteKey()])
-//         ->assertCanSeeTableRecords([$activeAttendee])
-//         ->assertCanNotSeeTableRecords([$archivedAttendee]);
-// });
+    livewire(ManageEventAttendees::class, ['record' => $event->getRouteKey()])
+        ->loadTable()
+        ->assertCanSeeTableRecords([$activeAttendee])
+        ->assertCanNotSeeTableRecords([$archivedAttendee]);
+});
 
 test('archived attendees are visible when the withoutArchived filter is removed', function () {
     asSuperAdmin();
@@ -105,6 +106,7 @@ test('archived attendees are visible when the withoutArchived filter is removed'
     $archivedAttendee = EventAttendee::factory()->create(['event_id' => $event->id, 'archived_at' => now()]);
 
     livewire(ManageEventAttendees::class, ['record' => $event->getRouteKey()])
+        ->loadTable()
         ->removeTableFilter('withoutArchived')
         ->assertCanSeeTableRecords([$activeAttendee, $archivedAttendee]);
 });
