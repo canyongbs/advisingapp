@@ -1396,41 +1396,6 @@
             }
         },
         {
-            "name": "canyon-gbs/advising-app-project",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/project",
-                "reference": "26c6a13b8cf2c24fcad0d8d10e0c3d2021c7ef48"
-            },
-            "require": {
-                "filament/filament": "^4.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\Project\\Providers\\ProjectServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\Project\\": "src/",
-                    "AdvisingApp\\Project\\Tests\\": "tests/",
-                    "AdvisingApp\\Project\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\Project\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
             "name": "canyon-gbs/advising-app-prospect",
             "version": "1.0",
             "dist": {

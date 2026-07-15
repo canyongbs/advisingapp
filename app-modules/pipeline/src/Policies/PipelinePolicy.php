@@ -63,10 +63,6 @@ class PipelinePolicy
 
     public function view(Authenticatable $authenticatable, Pipeline $pipeline): Response
     {
-        if ($pipeline->project && (! $authenticatable->can('view', $pipeline->project))) {
-            return Response::deny('You do not have permission to view this pipeline\'s project.');
-        }
-
         return $authenticatable->canOrElse(
             abilities: ['pipeline.*.view'],
             denyResponse: 'You do not have permission to view this pipeline.'
@@ -83,10 +79,6 @@ class PipelinePolicy
 
     public function update(Authenticatable $authenticatable, Pipeline $pipeline): Response
     {
-        if ($pipeline->project && (! $authenticatable->can('update', $pipeline->project))) {
-            return Response::deny('You do not have permission to update this pipeline\'s project.');
-        }
-
         return $authenticatable->canOrElse(
             abilities: ['pipeline.*.update'],
             denyResponse: 'You do not have permission to update this pipeline.'
@@ -95,10 +87,6 @@ class PipelinePolicy
 
     public function delete(Authenticatable $authenticatable, Pipeline $pipeline): Response
     {
-        if ($pipeline->project && (! $authenticatable->can('update', $pipeline->project))) {
-            return Response::deny('You do not have permission to update this pipeline\'s project.');
-        }
-
         return $authenticatable->canOrElse(
             abilities: ['pipeline.*.delete'],
             denyResponse: 'You do not have permission to delete this pipeline.'
@@ -115,10 +103,6 @@ class PipelinePolicy
 
     public function restore(Authenticatable $authenticatable, Pipeline $pipeline): Response
     {
-        if ($pipeline->project && (! $authenticatable->can('update', $pipeline->project))) {
-            return Response::deny('You do not have permission to update this pipeline\'s project.');
-        }
-
         return $authenticatable->canOrElse(
             abilities: ['pipeline.*.restore'],
             denyResponse: 'You do not have permission to restore this pipeline.'
@@ -135,10 +119,6 @@ class PipelinePolicy
 
     public function forceDelete(Authenticatable $authenticatable, Pipeline $pipeline): Response
     {
-        if ($pipeline->project && (! $authenticatable->can('update', $pipeline->project))) {
-            return Response::deny('You do not have permission to update this pipeline\'s project.');
-        }
-
         return $authenticatable->canOrElse(
             abilities: ['pipeline.*.force-delete'],
             denyResponse: 'You do not have permission to force delete this pipeline.'

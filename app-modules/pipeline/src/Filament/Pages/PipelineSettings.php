@@ -41,7 +41,6 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\Feature;
-use App\Filament\Clusters\ProjectManagement;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -56,11 +55,11 @@ class PipelineSettings extends SettingsPage
 
     protected static ?string $title = 'Pipelines';
 
-    protected static ?string $cluster = ProjectManagement::class;
-
     protected static string $settings = ProspectPipelineSettings::class;
 
     protected static ?int $navigationSort = 40;
+
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function canAccess(): bool
     {

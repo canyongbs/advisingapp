@@ -40,7 +40,6 @@ use AdvisingApp\Group\Actions\TranslateGroupFilters;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Pipeline\Filament\Resources\Pipelines\PipelineResource;
 use AdvisingApp\Pipeline\Models\Pipeline;
-use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
 use BackedEnum;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -129,14 +128,7 @@ class ManageEductables extends ManageRelatedRecords implements HasTable
 
         assert($pipeline instanceof Pipeline);
 
-        $project = $pipeline->project;
-
         $breadcrumbs = [
-            ProjectResource::getUrl() => ProjectResource::getBreadcrumb(),
-            ...($project ? [
-                ProjectResource::getUrl('view', ['record' => $project]) => $project->name ?? '',
-                ProjectResource::getUrl('manage-pipelines', ['record' => $project]) => 'Pipelines',
-            ] : []),
             PipelineResource::getUrl('view', ['record' => $this->getRecord()]) => Str::limit($this->getRecordTitle(), 16),
             ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
         ];

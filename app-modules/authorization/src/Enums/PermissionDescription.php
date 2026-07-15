@@ -69,7 +69,6 @@ enum PermissionDescription: string implements HasLabel
     case JourneyStep = 'This permission group enables the display and management of the Journey Step feature in the tertiary navigation group View Campaign. Permission options include create, view, update, and delete journey steps.';
     case License = 'This permission group enables the display and management of the License feature in the tertiary navigation group View User. Permission options include granting and revoking licenses.';
     case Program = 'This permission group enables the display and management of the Program feature in the tertiary navigation group View Student. Permission options include create, view, update, and delete programs.';
-    case Project = 'This permission group enables the display and management of the Project feature in the primary navigation group CRM. Permission options include create, view, update, and delete projects.';
     case Prompt = 'This permission group enables the display and management of the Prompt Library feature in the primary navigation group Enterprise AI. Permission options include create, view, update, and delete prompts.';
     case Prospect = 'This permission group enables the display and management of the Prospect feature in the primary navigation group CRM. Permission options include create, view, update, delete, and import prospects.';
     case RecordSync = 'This permission group enables the display and management of the Sync History feature in the primary navigation group Data and Analytics. Permission options include view record syncs.';

@@ -38,7 +38,6 @@ namespace AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages;
 
 use AdvisingApp\Pipeline\Filament\Resources\Pipelines\PipelineResource;
 use AdvisingApp\Pipeline\Models\Pipeline;
-use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
@@ -79,14 +78,7 @@ class ViewPipeline extends ViewRecord
 
         assert($pipeline instanceof Pipeline);
 
-        $project = $pipeline->project;
-
         $breadcrumbs = [
-            ProjectResource::getUrl() => ProjectResource::getBreadcrumb(),
-            ...($project ? [
-                ProjectResource::getUrl('view', ['record' => $project]) => $project->name ?? '',
-                ProjectResource::getUrl('manage-pipelines', ['record' => $project]) => 'Pipelines',
-            ] : []),
             PipelineResource::getUrl('view', ['record' => $this->getRecord()]) => Str::limit($this->getRecordTitle(), 16),
             ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
         ];

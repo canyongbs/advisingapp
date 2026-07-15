@@ -37,8 +37,6 @@
 namespace AdvisingApp\Pipeline\Filament\Resources\Pipelines\Pages;
 
 use AdvisingApp\Pipeline\Filament\Resources\Pipelines\PipelineResource;
-use AdvisingApp\Project\Filament\Resources\Projects\ProjectResource;
-use AdvisingApp\Project\Models\Project;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
@@ -97,47 +95,18 @@ class CreatePipeline extends CreateRecord
             ]);
     }
 
-    public function getBreadcrumbs(): array
-    {
-        $project = Project::find($this->project);
-
-        $breadcrumbs = [
-            ProjectResource::getUrl() => ProjectResource::getBreadcrumb(),
-            ...($project ? [
-                ProjectResource::getUrl('view', ['record' => $project]) => $project->name ?? '',
-                ProjectResource::getUrl('manage-pipelines', ['record' => $project]) => 'Pipelines',
-            ] : []),
-            ...(filled($breadcrumb = $this->getBreadcrumb()) ? [$breadcrumb] : []),
-        ];
-
-        if (filled($cluster = static::getCluster())) {
-            return $cluster::unshiftClusterBreadcrumbs($breadcrumbs);
-        }
-
-        return $breadcrumbs;
-    }
-
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $project = Project::find($this->project);
-
-        if ($project && (! auth()->user()->can('update', $project))) {
-            $project = null;
-        }
-
         $data['user_id'] = auth()->id();
-        $data['project_id'] = $project?->getKey();
 
         return $data;
     }
 
     protected function getCancelFormAction(): Action
     {
-        $project = Project::find($this->project);
-
         return Action::make('cancel')
             ->label(__('filament-panels::resources/pages/create-record.form.actions.cancel.label'))
-            ->alpineClickHandler('document.referrer ? window.history.back() : (window.location.href = ' . Js::from($this->previousUrl ?? ($project ? ProjectResource::getUrl('manage-pipelines', ['record' => $project]) : null)) . ')')
+            ->alpineClickHandler('document.referrer ? window.history.back() : (window.location.href = ' . Js::from($this->previousUrl ?? null) . ')')
             ->color('gray');
     }
 }

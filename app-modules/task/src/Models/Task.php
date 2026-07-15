@@ -39,7 +39,6 @@ namespace AdvisingApp\Task\Models;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
-use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Concerns\BelongsToEducatable;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
@@ -169,14 +168,6 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, H
     }
 
     /**
-     * @return BelongsTo<Project, $this>
-     */
-    public function project(): BelongsTo
-    {
-        return $this->belongsTo(Project::class);
-    }
-
-    /**
      * @return BelongsToMany<User, $this, covariant ConfidentialTasksUsers>
      */
     public function confidentialAccessUsers(): BelongsToMany
@@ -193,16 +184,6 @@ class Task extends BaseModel implements Auditable, CanTriggerAutoSubscription, H
     {
         return $this->belongsToMany(Department::class, 'confidential_task_teams', 'task_id', 'team_id')
             ->using(DepartmentsConfidentialTasks::class)
-            ->withTimestamps();
-    }
-
-    /**
-     * @return BelongsToMany<Project, $this, covariant ConfidentialTasksProjects>
-     */
-    public function confidentialAccessProjects(): BelongsToMany
-    {
-        return $this->belongsToMany(Project::class, 'confidential_task_projects')
-            ->using(ConfidentialTasksProjects::class)
             ->withTimestamps();
     }
 
