@@ -38,7 +38,7 @@ use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\EditBooking
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory\EditBookingGroupRequestFactory;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use App\Models\User;
@@ -134,7 +134,7 @@ it('can edit a booking group', function () {
     actingAs($user);
 
     $users = User::factory()->count(3)->create();
-    $teams = Team::factory()->count(2)->create();
+    $departments = Department::factory()->count(2)->create();
     $meetingOwner = $users->first();
     Calendar::factory()->for($meetingOwner)->create(['provider_id' => 'owner-calendar-id']);
 
@@ -143,13 +143,13 @@ it('can edit a booking group', function () {
     ]);
 
     $bookingGroup->users()->attach($users);
-    $bookingGroup->teams()->attach($teams);
+    $bookingGroup->departments()->attach($departments);
 
     $request = EditBookingGroupRequestFactory::new()->state([
         'name' => 'Updated Name',
         'description' => 'Updated Description',
         'users' => $users->pluck('id')->toArray(),
-        'teams' => $teams->pluck('id')->toArray(),
+        'departments' => $departments->pluck('id')->toArray(),
         'meeting_owner_id' => $meetingOwner->id,
     ])->create();
 
@@ -206,7 +206,7 @@ it('tracks last_updated_by user correctly', function () {
     expect($bookingGroup->last_updated_by_id)->toBe($editor->id);
 });
 
-it('blocks save when meeting owner is no longer in selected users or teams', function () {
+it('blocks save when meeting owner is no longer in selected users or departments', function () {
     asSuperAdmin();
 
     $meetingOwner = User::factory()->create();
@@ -220,7 +220,7 @@ it('blocks save when meeting owner is no longer in selected users or teams', fun
 
     $request = EditBookingGroupRequestFactory::new()->state([
         'users' => [],
-        'teams' => [],
+        'departments' => [],
         'meeting_owner_id' => $meetingOwner->id,
     ])->create();
 

@@ -59,7 +59,7 @@ use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubCategorySeeder;
 use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubQualitySeeder;
 use AdvisingApp\ResourceHub\Database\Seeders\ResourceHubStatusSeeder;
 use AdvisingApp\Task\Database\Seeders\TaskSeeder;
-use AdvisingApp\Team\Database\Seeders\TeamSeeder;
+use AdvisingApp\Team\Database\Seeders\DepartmentSeeder;
 use App\Models\Tenant;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Artisan;
@@ -105,7 +105,7 @@ class DatabaseSeeder extends Seeder
             FormSeeder::class,
             ConcernStatusSeeder::class,
             ConcernSeeder::class,
-            TeamSeeder::class,
+            DepartmentSeeder::class,
             SuperAdminSeeder::class,
             TwilioStudentSeeder::class,
             ApplicationSubmissionStateSeeder::class,

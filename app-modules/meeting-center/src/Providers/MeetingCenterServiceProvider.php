@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\MeetingCenter\Providers;
 
-use AdvisingApp\MeetingCenter\Listeners\HandleUserTeamChanged;
+use AdvisingApp\MeetingCenter\Listeners\HandleUserDepartmentChanged;
 use AdvisingApp\MeetingCenter\Livewire\EventAttendeeSubmissionsManager;
 use AdvisingApp\MeetingCenter\MeetingCenterPlugin;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
@@ -51,7 +51,7 @@ use AdvisingApp\MeetingCenter\Models\EventRegistrationFormFieldSubmission;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use App\Events\UserTeamChanged;
+use App\Events\UserDepartmentChanged;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Event as EventFacade;
@@ -89,8 +89,8 @@ class MeetingCenterServiceProvider extends ServiceProvider
         $this->loadRoutesFrom(__DIR__ . '/../../routes/widgets.php');
 
         EventFacade::listen(
-            UserTeamChanged::class,
-            HandleUserTeamChanged::class,
+            UserDepartmentChanged::class,
+            HandleUserDepartmentChanged::class,
         );
     }
 }

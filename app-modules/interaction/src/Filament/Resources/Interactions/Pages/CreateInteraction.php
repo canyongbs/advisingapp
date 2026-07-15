@@ -115,10 +115,10 @@ class CreateInteraction extends CreateRecord
                                 ->multiple()
                                 ->exists('users', 'id')
                                 ->visible(fn (Get $get) => $get('is_confidential')),
-                            Select::make('interaction_confidential_teams')
-                                ->relationship('confidentialAccessTeams', 'name')
+                            Select::make('interaction_confidential_departments')
+                                ->relationship('confidentialAccessDepartments', 'name')
                                 ->preload()
-                                ->label('Teams')
+                                ->label('Departments')
                                 ->multiple()
                                 ->exists('teams', 'id')
                                 ->visible(fn (Get $get) => $get('is_confidential')),
@@ -157,7 +157,7 @@ class CreateInteraction extends CreateRecord
                     Select::make('division_id')
                         ->relationship('division', 'name')
                         ->default(
-                            fn () => auth()->user()->team?->division?->getKey()
+                            fn () => auth()->user()->department?->division?->getKey()
                                 ?? Division::query()
                                     ->where('is_default', true)
                                     ->first()

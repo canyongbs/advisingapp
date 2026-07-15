@@ -38,7 +38,7 @@ use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\CreateBooki
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Tests\Tenant\Filament\Resources\BookingGroups\Pages\RequestFactory\CreateBookingGroupRequestFactory;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use App\Models\User;
@@ -114,7 +114,7 @@ it('validates the inputs', function (CreateBookingGroupRequestFactory $data, arr
     ],
 ]);
 
-it('can create a booking group with users and teams', function () {
+it('can create a booking group with users and departments', function () {
     $undoRepeaterFake = Repeater::fake();
 
     $user = User::factory()->create();
@@ -125,13 +125,13 @@ it('can create a booking group with users and teams', function () {
     actingAs($user);
 
     $users = User::factory()->count(3)->create();
-    $teams = Team::factory()->count(2)->create();
+    $departments = Department::factory()->count(2)->create();
     $meetingOwner = $users->first();
     Calendar::factory()->for($meetingOwner)->create(['provider_id' => 'owner-calendar-id']);
 
     $request = CreateBookingGroupRequestFactory::new()->state([
         'users' => $users->pluck('id')->toArray(),
-        'teams' => $teams->pluck('id')->toArray(),
+        'departments' => $departments->pluck('id')->toArray(),
         'meeting_owner_id' => $meetingOwner->id,
     ])->create();
 
@@ -147,7 +147,7 @@ it('can create a booking group with users and teams', function () {
     assert($bookingGroup instanceof BookingGroup);
 
     expect($bookingGroup->users)->toHaveCount(3);
-    expect($bookingGroup->teams)->toHaveCount(2);
+    expect($bookingGroup->departments)->toHaveCount(2);
     expect($bookingGroup->meeting_owner_id)->toBe($meetingOwner->id);
 
     $undoRepeaterFake();

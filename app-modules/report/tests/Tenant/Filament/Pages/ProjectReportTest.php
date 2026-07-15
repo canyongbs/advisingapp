@@ -36,9 +36,9 @@
 
 use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Filament\Pages\ProjectReport;
-use AdvisingApp\Report\Models\ReportTeamAccess;
+use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Features\ReportingFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -72,23 +72,23 @@ it('is gated with proper access control', function () {
     get(ProjectReport::getUrl())->assertSuccessful();
 });
 
-it('grants access to a user belonging to a team that has been granted access', function () {
+it('grants access to a user belonging to a department that has been granted access', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->projectManagement = true;
     $settings->save();
 
-    $team = Team::factory()->create();
+    $department = Department::factory()->create();
 
-    $user = User::factory()->create(['team_id' => $team->getKey()]);
+    $user = User::factory()->create(['team_id' => $department->getKey()]);
 
     actingAs($user);
 
     get(ProjectReport::getUrl())->assertForbidden();
 
-    ReportTeamAccess::factory()->create([
+    ReportDepartmentAccess::factory()->create([
         'report_key' => ReportAccessKey::ProjectReport->value,
-        'team_id' => $team->getKey(),
+        'team_id' => $department->getKey(),
     ]);
 
     get(ProjectReport::getUrl())->assertSuccessful();

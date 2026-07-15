@@ -76,6 +76,6 @@ class SetPasswordNotification extends Notification implements ShouldQueue
 
     private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
     {
-        return $notifiable->team?->division?->notificationSetting?->setting;
+        return $notifiable->department?->division?->notificationSetting?->setting;
     }
 }

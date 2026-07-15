@@ -75,7 +75,7 @@ class GroupAppointmentCalendarWidget extends FullCalendarWidget
                 $query->whereHas('users', fn (Builder $query) => $query->where('users.id', $user->id));
 
                 if ($user->team_id) {
-                    $query->orWhereHas('teams', fn (Builder $query) => $query->where('teams.id', $user->team_id));
+                    $query->orWhereHas('departments', fn (Builder $query) => $query->where('teams.id', $user->team_id));
                 }
             });
         } elseif (! empty($this->selectedGroupIds)) {

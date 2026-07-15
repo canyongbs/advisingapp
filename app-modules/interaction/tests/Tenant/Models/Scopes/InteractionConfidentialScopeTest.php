@@ -37,7 +37,7 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\Scopes\InteractionConfidentialScope;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -80,17 +80,17 @@ test('Interactions model with fetch data for created user', function () {
         ->not->toContain(...$privateInteractions->pluck('user_id'));
 });
 
-test('Interactions model with fetch data for team user', function () {
-    $teamUser = User::factory()->licensed(LicenseType::cases())->create();
+test('Interactions model with fetch data for department user', function () {
+    $departmentUser = User::factory()->licensed(LicenseType::cases())->create();
 
-    $team = Team::factory()->create();
+    $department = Department::factory()->create();
 
-    $teamUser->team()->associate($team)->save();
+    $departmentUser->department()->associate($department)->save();
 
-    actingAs($teamUser);
+    actingAs($departmentUser);
 
     $ownedConfidentialInteractions = Interaction::factory()
-        ->hasAttached($team, [], 'confidentialAccessTeams')
+        ->hasAttached($department, [], 'confidentialAccessDepartments')
         ->count(10)
         ->create([
             'is_confidential' => true,

@@ -36,11 +36,11 @@
 
 use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\ListPrompts;
 use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
-use AdvisingApp\Ai\Models\ConfidentialPromptTeam;
 use AdvisingApp\Ai\Models\ConfidentialPromptUser;
+use AdvisingApp\Ai\Models\DepartmentConfidentialPrompt;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\Authenticatable;
 use Filament\Actions\DeleteBulkAction;
 
@@ -193,19 +193,19 @@ test('only shows confidential prompts to authorized users', function () use ($li
         'prompt_id' => $confidentialPrompt->id,
     ]);
 
-    $team = Team::factory()->create();
+    $department = Department::factory()->create();
 
-    ConfidentialPromptTeam::create([
-        'team_id' => $team->id,
+    DepartmentConfidentialPrompt::create([
+        'team_id' => $department->id,
         'prompt_id' => $confidentialPrompt->id,
     ]);
 
-    $confidentialPromptTeamUser = user(
+    $departmentConfidentialPromptUser = user(
         licenses: $licenses,
         permissions: $permissions
     );
-    $confidentialPromptTeamUser->team_id = $team->id;
-    $confidentialPromptTeamUser->save();
+    $departmentConfidentialPromptUser->team_id = $department->id;
+    $departmentConfidentialPromptUser->save();
 
     assertDatabaseCount(Prompt::class, 2);
 
@@ -243,7 +243,7 @@ test('only shows confidential prompts to authorized users', function () use ($li
             $nonConfidentialPrompt,
         ]);
 
-    actingAs($confidentialPromptTeamUser);
+    actingAs($departmentConfidentialPromptUser);
     livewire(ListPrompts::class)
         ->assertSuccessful()
         ->assertCanSeeTableRecords([

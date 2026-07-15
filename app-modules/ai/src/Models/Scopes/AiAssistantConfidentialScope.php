@@ -58,7 +58,7 @@ class AiAssistantConfidentialScope implements Scope
                     $query->where('is_confidential', true)
                         ->where(function (Builder $query) {
                             $query->whereBelongsTo(Auth::user(), 'createdBy')
-                                ->orWhereHas('confidentialAccessTeams', function (Builder $query) {
+                                ->orWhereHas('confidentialAccessDepartments', function (Builder $query) {
                                     $query->whereHas('users', function (Builder $query) {
                                         $query->where('users.id', Auth::id());
                                     });

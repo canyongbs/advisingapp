@@ -38,7 +38,7 @@ use AdvisingApp\MeetingCenter\Filament\Pages\SharedCalendar;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -160,19 +160,19 @@ test("`SharedCalendar` 'My Groups' filter only shows appointments from the user'
         ->assertCanNotSeeTableRecords([$otherAppointment]);
 });
 
-test("`SharedCalendar` 'My Groups' filter includes appointments from groups linked to the user's team", function () {
-    $team = Team::factory()->create();
-    $user = User::factory()->create(['team_id' => $team->id]);
+test("`SharedCalendar` 'My Groups' filter includes appointments from groups linked to the user's department", function () {
+    $department = Department::factory()->create();
+    $user = User::factory()->create(['team_id' => $department->id]);
     $user->givePermissionTo('group_appointment.view-any');
     actingAs($user);
 
-    $teamGroup = BookingGroup::factory()->create();
-    $teamGroup->teams()->attach($team->id);
+    $departmentGroup = BookingGroup::factory()->create();
+    $departmentGroup->departments()->attach($department->id);
 
     $otherGroup = BookingGroup::factory()->create();
 
-    $teamAppointment = BookingGroupAppointment::factory()
-        ->for($teamGroup, 'bookingGroup')
+    $departmentAppointment = BookingGroupAppointment::factory()
+        ->for($departmentGroup, 'bookingGroup')
         ->create(['starts_at' => now()->addDay(), 'ends_at' => now()->addDay()->addHour()]);
 
     $otherAppointment = BookingGroupAppointment::factory()
@@ -186,7 +186,7 @@ test("`SharedCalendar` 'My Groups' filter includes appointments from groups link
             'hidePast' => false,
         ])
         ->assertCountTableRecords(1)
-        ->assertCanSeeTableRecords([$teamAppointment])
+        ->assertCanSeeTableRecords([$departmentAppointment])
         ->assertCanNotSeeTableRecords([$otherAppointment]);
 });
 

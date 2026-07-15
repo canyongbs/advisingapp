@@ -39,7 +39,7 @@ namespace AdvisingApp\Division\Models;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Division\Observers\DivisionObserver;
 use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\BaseModel;
 use App\Models\NotificationSettingPivot;
 use App\Models\User;
@@ -90,11 +90,11 @@ class Division extends BaseModel implements Auditable
     }
 
     /**
-     * @return HasMany<Team, $this>
+     * @return HasMany<Department, $this>
      */
-    public function teams(): HasMany
+    public function departments(): HasMany
     {
-        return $this->hasMany(Team::class);
+        return $this->hasMany(Department::class);
     }
 
     public function notificationSetting(): MorphOne
