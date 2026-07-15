@@ -36,6 +36,7 @@
 
 use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
@@ -79,8 +80,8 @@ return new class () extends Migration {
             });
 
             Schema::dropIfExists('project_files');
-            Schema::dropIfExists('project_milestone_statuses');
             Schema::dropIfExists('project_milestones');
+            Schema::dropIfExists('project_milestone_statuses');
             Schema::dropIfExists('project_manager_users');
             Schema::dropIfExists('project_manager_teams');
             Schema::dropIfExists('project_auditor_users');
