@@ -102,9 +102,7 @@
         return [];
     });
 
-    const currentCrumb = computed(() =>
-        article.value ? truncate(article.value.name, { length: 16 }) : 'Not Found',
-    );
+    const currentCrumb = computed(() => (article.value ? truncate(article.value.name, { length: 16 }) : 'Not Found'));
 
     async function toggleFeedback(type) {
         try {

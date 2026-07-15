@@ -63,7 +63,8 @@ export const useConfigStore = defineStore('config', () => {
     function applyResponse(data, props) {
         searchUrl.value = data.search_url ?? props.searchUrl ?? searchUrl.value;
         apiUrl.value = data.api_url ?? props.apiUrl ?? apiUrl.value;
-        userAuthenticationUrl.value = data.user_authentication_url ?? props.userAuthenticationUrl ?? userAuthenticationUrl.value;
+        userAuthenticationUrl.value =
+            data.user_authentication_url ?? props.userAuthenticationUrl ?? userAuthenticationUrl.value;
         appUrl.value = data.app_url ?? props.appUrl ?? appUrl.value;
 
         appName.value = data.app_name ?? '';

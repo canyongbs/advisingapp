@@ -111,7 +111,8 @@
     ]);
 
     const showSignIn = computed(
-        () => !userIsAuthenticated.value && (requiresAuthentication.value || showLogin.value || route.meta?.requiresAuth),
+        () =>
+            !userIsAuthenticated.value && (requiresAuthentication.value || showLogin.value || route.meta?.requiresAuth),
     );
 
     onMounted(async () => {

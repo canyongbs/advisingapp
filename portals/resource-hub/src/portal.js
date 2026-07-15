@@ -31,8 +31,8 @@
 
 </COPYRIGHT>
 */
-import { PiniaColada } from '@pinia/colada';
 import { defaultConfig, plugin } from '@formkit/vue';
+import { PiniaColada } from '@pinia/colada';
 import { createPinia } from 'pinia';
 import PrimeVue from 'primevue/config';
 import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
@@ -42,7 +42,7 @@ import VueSignaturePad from 'vue-signature-pad';
 import App from './App.vue';
 import { bootPortal } from './Composables/usePortalBoot.js';
 import config from './formkit.config.js';
-import { useCategoriesData, useCategoryData, useArticleData } from './Pages/loaders.js';
+import { useArticleData, useCategoriesData, useCategoryData } from './Pages/loaders.js';
 import './portal.css';
 import getAppContext from './Services/GetAppContext.js';
 
@@ -136,15 +136,6 @@ customElements.define(
 
             return () => h(App, props);
         },
-        props: [
-            'url',
-            'userAuthenticationUrl',
-            'accessUrl',
-            'searchUrl',
-            'appUrl',
-            'apiUrl',
-            'cssUrl',
-            'appTitle',
-        ],
+        props: ['url', 'userAuthenticationUrl', 'accessUrl', 'searchUrl', 'appUrl', 'apiUrl', 'cssUrl', 'appTitle'],
     }),
 );

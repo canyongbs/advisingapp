@@ -38,8 +38,8 @@
     import Pagination from '@common/portal/Pagination.vue';
     import Subheading from '@common/portal/Subheading.vue';
     import Tabs from '@common/portal/Tabs.vue';
-    import { useQuery } from '@pinia/colada';
     import { DocumentTextIcon } from '@heroicons/vue/24/outline';
+    import { useQuery } from '@pinia/colada';
     import { computed, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
     import { apiGet } from '../Services/api.js';
@@ -77,7 +77,8 @@
             activeFilter.value,
             currentPage.value,
         ],
-        query: () => apiGet(`/categories/${route.params.categoryId}`, { filter: activeFilter.value, page: currentPage.value }),
+        query: () =>
+            apiGet(`/categories/${route.params.categoryId}`, { filter: activeFilter.value, page: currentPage.value }),
         enabled: () => currentPage.value > 1,
     });
 
@@ -98,9 +99,7 @@
         { immediate: true },
     );
 
-    const loadingPage = computed(() =>
-        currentPage.value > 1 && pageQuery.isLoading.value ? currentPage.value : null,
-    );
+    const loadingPage = computed(() => (currentPage.value > 1 && pageQuery.isLoading.value ? currentPage.value : null));
 
     const articlesWithRoutes = computed(() =>
         (shownPaginator.value?.data ?? []).map((article) => ({
