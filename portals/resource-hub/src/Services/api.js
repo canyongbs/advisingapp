@@ -31,44 +31,54 @@
 
 </COPYRIGHT>
 */
+
+/**
+ * A small, framework-context-free API client for the resource hub portal.
+ *
+ * Data loaders and Pinia Colada queries run inside navigation guards, outside of
+ * component `setup()`, where the "active" Pinia instance is not guaranteed. This
+ * module therefore holds the resolved API base URL and a token accessor that are
+ * configured once during boot (see `usePortalBoot`), so requests made from loaders
+ * never depend on an active Pinia instance.
+ */
 import axios from '../Globals/Axios.js';
-import { useTokenStore } from '../Stores/token.js';
 
-export function consumer() {
-    async function get(endpoint, data = null) {
-        const { getToken } = useTokenStore();
+let baseUrl = null;
+let tokenGetter = async () => null;
 
-        let token = await getToken();
-
-        return await axios
-            .get(endpoint, {
-                headers: { Authorization: `Bearer ${token}` },
-                params: data,
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
+export function configureApi({ baseUrl: url, getToken } = {}) {
+    if (url !== undefined) {
+        baseUrl = url;
     }
 
-    async function post(endpoint, data) {
-        const { getToken } = useTokenStore();
-
-        let token = await getToken();
-
-        return await axios
-            .post(endpoint, data, {
-                headers: { Authorization: `Bearer ${token}` },
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
+    if (getToken) {
+        tokenGetter = getToken;
     }
+}
 
-    return { get, post };
+export function getApiBaseUrl() {
+    return baseUrl;
+}
+
+async function authHeaders() {
+    const token = await tokenGetter();
+
+    return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+export async function apiGet(path, params = null) {
+    const { data } = await axios.get(baseUrl + path, {
+        headers: await authHeaders(),
+        params,
+    });
+
+    return data;
+}
+
+export async function apiPost(path, body = null) {
+    const { data } = await axios.post(baseUrl + path, body, {
+        headers: await authHeaders(),
+    });
+
+    return data;
 }

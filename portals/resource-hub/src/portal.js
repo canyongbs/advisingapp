@@ -31,18 +31,20 @@
 
 </COPYRIGHT>
 */
+import { PiniaColada } from '@pinia/colada';
 import { defaultConfig, plugin } from '@formkit/vue';
 import { createPinia } from 'pinia';
 import PrimeVue from 'primevue/config';
 import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import { DataLoaderPlugin } from 'vue-router/experimental';
 import VueSignaturePad from 'vue-signature-pad';
 import App from './App.vue';
+import { bootPortal } from './Composables/usePortalBoot.js';
 import config from './formkit.config.js';
+import { useCategoriesData, useCategoryData, useArticleData } from './Pages/loaders.js';
 import './portal.css';
 import getAppContext from './Services/GetAppContext.js';
-import { useNavigationStore } from './Stores/navigation.js';
-import { useResourceHubStore } from './Stores/resourceHub.js';
 
 customElements.define(
     'resource-hub-portal-embed',
@@ -52,6 +54,7 @@ customElements.define(
             const pinia = createPinia();
 
             app.use(pinia);
+            app.use(PiniaColada);
             app.use(VueSignaturePad);
             app.use(PrimeVue, {
                 theme: 'none',
@@ -61,13 +64,28 @@ customElements.define(
 
             const router = createRouter({
                 history: createWebHistory(),
+                scrollBehavior(to, from, savedPosition) {
+                    // Restore the previous position on back/forward navigation.
+                    if (savedPosition) {
+                        return savedPosition;
+                    }
+
+                    // Same page, only the query changed (pagination / tab switches) — leave
+                    // the scroll position where it is.
+                    if (to.path === from.path) {
+                        return false;
+                    }
+
+                    // Visiting a new page — start at the top.
+                    return { top: 0 };
+                },
                 routes: [
                     {
                         path: baseUrl + '/',
                         name: 'home',
                         component: () => import('./Pages/Home.vue'),
                         meta: {
-                            load: (to, store) => store.loadHome(),
+                            loaders: [useCategoriesData],
                         },
                     },
                     {
@@ -75,7 +93,7 @@ customElements.define(
                         name: 'view-category',
                         component: () => import('./Pages/ViewCategory.vue'),
                         meta: {
-                            load: (to, store) => store.loadCategory(to.params.categoryId),
+                            loaders: [useCategoryData],
                         },
                     },
                     {
@@ -83,54 +101,29 @@ customElements.define(
                         name: 'view-subcategory',
                         component: () => import('./Pages/ViewCategory.vue'),
                         meta: {
-                            load: (to, store) => store.loadCategory(to.params.categoryId),
+                            loaders: [useCategoryData],
                         },
                     },
                     {
                         path: baseUrl + '/categories/:categoryId/articles/:articleId',
                         name: 'view-article',
                         component: () => import('./Pages/ViewArticle.vue'),
+                        meta: {
+                            loaders: [useArticleData],
+                        },
                     },
                 ],
             });
 
+            // Boot the portal (config + auth) exactly once, and gate every navigation —
+            // including the initial one — on it so the route data loaders always run with
+            // a resolved API base URL and auth state. Registered before DataLoaderPlugin
+            // so it runs ahead of the loader guard.
+            const configReady = bootPortal(props, pinia);
+            router.beforeEach(() => configReady);
+
+            app.use(DataLoaderPlugin, { router });
             app.use(router);
-
-            const resourceHubStore = useResourceHubStore(pinia);
-            const navigationStore = useNavigationStore(pinia);
-
-            router.beforeEach((to, from) => {
-                // Only show the progress bar for real client-side navigations between
-                // different pages. The initial load is covered by the boot spinner, and
-                // in-page query changes (pagination / tab switches) should not trigger it.
-                if (from.name && to.path !== from.path) {
-                    navigationStore.start();
-                }
-            });
-
-            router.beforeResolve(async (to, from) => {
-                // The initial route's data is fetched during app boot, behind the
-                // full-screen spinner, so there is nothing to load here for it.
-                if (!from.name) {
-                    return;
-                }
-
-                if (typeof to.meta.load === 'function') {
-                    try {
-                        await to.meta.load(to, resourceHubStore);
-                    } catch (error) {
-                        console.error(`Resource Hub Portal navigation ${error}`);
-                    }
-                }
-            });
-
-            router.afterEach(() => {
-                navigationStore.done();
-            });
-
-            router.onError(() => {
-                navigationStore.done();
-            });
 
             app.config.devtools = true;
 
@@ -150,7 +143,6 @@ customElements.define(
             'searchUrl',
             'appUrl',
             'apiUrl',
-            'tags',
             'cssUrl',
             'appTitle',
         ],

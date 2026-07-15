@@ -35,16 +35,13 @@
     import Breadcrumbs from '@common/portal/Breadcrumbs.vue';
     import HelpCenter from '@common/portal/home/HelpCenter.vue';
     import Page from '@common/portal/Page.vue';
-    import { storeToRefs } from 'pinia';
     import { computed } from 'vue';
-    import { useResourceHubStore } from '../Stores/resourceHub.js';
+    import { useCategoriesData } from './loaders.js';
 
-    defineOptions({ inheritAttrs: false });
-
-    const { categories } = storeToRefs(useResourceHubStore());
+    const { data: categories } = useCategoriesData();
 
     const categoriesWithRoutes = computed(() =>
-        Object.values(categories.value).map((category) => ({
+        Object.values(categories.value ?? {}).map((category) => ({
             ...category,
             key: category.id,
             to: { name: 'view-category', params: { categoryId: category.id } },

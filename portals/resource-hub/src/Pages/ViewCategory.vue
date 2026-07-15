@@ -38,37 +38,85 @@
     import Pagination from '@common/portal/Pagination.vue';
     import Subheading from '@common/portal/Subheading.vue';
     import Tabs from '@common/portal/Tabs.vue';
+    import { useQuery } from '@pinia/colada';
     import { DocumentTextIcon } from '@heroicons/vue/24/outline';
-    import { storeToRefs } from 'pinia';
     import { computed, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
-    import { useResourceHubStore } from '../Stores/resourceHub.js';
-
-    defineOptions({ inheritAttrs: false });
+    import { apiGet } from '../Services/api.js';
+    import { useCategoryData } from './loaders.js';
 
     const route = useRoute();
     const router = useRouter();
 
-    const resourceHubStore = useResourceHubStore();
-    const { category, articles } = storeToRefs(resourceHubStore);
+    // Category + page 1 of both filters arrive in a single request via the route data
+    // loader, so switching tabs is instant with no additional loading state.
+    const { data: categoryData } = useCategoryData();
 
-    const loadingPage = ref(null);
-    const activeFilter = ref(route.query.filter || 'all-articles');
+    const category = computed(() => categoryData.value?.category ?? null);
+
+    const activeFilter = computed(() => route.query.filter || 'all-articles');
+    const currentPage = computed(() => parseInt(route.query.page) || 1);
 
     const filterTabs = [
         { label: 'All Articles', value: 'all-articles' },
         { label: 'Most Viewed', value: 'most-viewed' },
     ];
 
-    const currentFilterState = computed(() => articles.value[activeFilter.value]);
+    function firstPageFor(filter) {
+        const key = filter === 'most-viewed' ? 'most_viewed_articles' : 'all_articles';
+
+        return categoryData.value?.[key] ?? null;
+    }
+
+    // Pages beyond the first are fetched (and cached) per filter + page via Pinia Colada.
+    const pageQuery = useQuery({
+        key: () => [
+            'resource-hub',
+            'category-articles',
+            String(route.params.categoryId),
+            activeFilter.value,
+            currentPage.value,
+        ],
+        query: () => apiGet(`/categories/${route.params.categoryId}`, { filter: activeFilter.value, page: currentPage.value }),
+        enabled: () => currentPage.value > 1,
+    });
+
+    const currentPaginator = computed(() =>
+        currentPage.value > 1 ? (pageQuery.data.value?.articles ?? null) : firstPageFor(activeFilter.value),
+    );
+
+    // Keep the previously rendered page visible while a new page loads so content
+    // never disappears during pagination.
+    const shownPaginator = ref(null);
+    watch(
+        currentPaginator,
+        (paginator) => {
+            if (paginator) {
+                shownPaginator.value = paginator;
+            }
+        },
+        { immediate: true },
+    );
+
+    const loadingPage = computed(() =>
+        currentPage.value > 1 && pageQuery.isLoading.value ? currentPage.value : null,
+    );
 
     const articlesWithRoutes = computed(() =>
-        (currentFilterState.value?.data ?? []).map((article) => ({
+        (shownPaginator.value?.data ?? []).map((article) => ({
             ...article,
             key: article.id,
             to: { name: 'view-article', params: { categoryId: article.categoryId, articleId: article.id } },
         })),
     );
+
+    const pagination = computed(() => ({
+        currentPage: shownPaginator.value?.current_page ?? 1,
+        lastPage: shownPaginator.value?.last_page ?? 1,
+        total: shownPaginator.value?.total ?? 0,
+        from: shownPaginator.value?.from ?? 0,
+        to: shownPaginator.value?.to ?? 0,
+    }));
 
     const breadcrumbs = computed(() => {
         if (category.value?.parentCategory) {
@@ -101,9 +149,7 @@
     }
 
     function goToPage(page) {
-        const state = currentFilterState.value;
-
-        if (page === state.currentPage || loadingPage.value !== null) {
+        if (page === pagination.value.currentPage || loadingPage.value !== null) {
             return;
         }
 
@@ -111,53 +157,16 @@
     }
 
     function fetchNextPage() {
-        const state = currentFilterState.value;
-
-        if (state.currentPage < state.lastPage) {
-            goToPage(state.currentPage + 1);
+        if (pagination.value.currentPage < pagination.value.lastPage) {
+            goToPage(pagination.value.currentPage + 1);
         }
     }
 
     function fetchPreviousPage() {
-        const state = currentFilterState.value;
-
-        if (state.currentPage > 1) {
-            goToPage(state.currentPage - 1);
+        if (pagination.value.currentPage > 1) {
+            goToPage(pagination.value.currentPage - 1);
         }
     }
-
-    async function fetchPage(filter, page) {
-        if (loadingPage.value !== null) {
-            return;
-        }
-
-        loadingPage.value = page;
-
-        try {
-            await resourceHubStore.loadArticlePage(route.params.categoryId, filter, page);
-        } catch (error) {
-            console.error('Error fetching page:', error);
-        } finally {
-            loadingPage.value = null;
-        }
-    }
-
-    watch(
-        route,
-        async (newRoute) => {
-            const newFilter = newRoute.query.filter || 'all-articles';
-            const newPage = parseInt(newRoute.query.page) || 1;
-
-            activeFilter.value = newFilter;
-
-            const state = articles.value[newFilter];
-
-            if (state && newPage !== state.currentPage) {
-                await fetchPage(newFilter, newPage);
-            }
-        },
-        { immediate: true },
-    );
 </script>
 
 <template>
@@ -186,20 +195,15 @@
                             <div v-if="articlesWithRoutes.length > 0">
                                 <ul role="list" class="divide-y">
                                     <li v-for="article in articlesWithRoutes" :key="article.key">
-                                        <Article
-                                            :to="article.to"
-                                            :name="article.name"
-                                            :tags="article.tags ?? []"
-                                            :featured="article.featured ?? false"
-                                        />
+                                        <Article :to="article.to" :name="article.name" />
                                     </li>
                                 </ul>
                                 <Pagination
-                                    :currentPage="currentFilterState.currentPage"
-                                    :lastPage="currentFilterState.lastPage"
-                                    :fromItem="currentFilterState.from"
-                                    :toItem="currentFilterState.to"
-                                    :totalItems="currentFilterState.total"
+                                    :currentPage="pagination.currentPage"
+                                    :lastPage="pagination.lastPage"
+                                    :fromItem="pagination.from"
+                                    :toItem="pagination.to"
+                                    :totalItems="pagination.total"
                                     :loadingPage="loadingPage"
                                     @fetchNextPage="fetchNextPage"
                                     @fetchPreviousPage="fetchPreviousPage"

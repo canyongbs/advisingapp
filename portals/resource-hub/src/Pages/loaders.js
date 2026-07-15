@@ -31,25 +31,42 @@
 
 </COPYRIGHT>
 */
-import { defineStore } from 'pinia';
-import { computed, ref } from 'vue';
 
-export const useNavigationStore = defineStore('navigation', () => {
-    const pending = ref(0);
+/**
+ * Route-level data loaders for the resource hub portal.
+ *
+ * These are Pinia Colada data loaders (Vue Router experimental data loaders API).
+ * They are attached to routes via `meta.loaders` in `portal.js` and are awaited
+ * *before* a navigation resolves, which keeps the previous page visible until the
+ * destination's data is ready (no blank flash), and caches results via Pinia Colada
+ * so repeat navigations are instant with background revalidation.
+ */
+import { defineColadaLoader } from 'vue-router/experimental/pinia-colada';
+import { apiGet } from '../Services/api.js';
 
-    const isNavigating = computed(() => pending.value > 0);
+export const useCategoriesData = defineColadaLoader({
+    key: () => ['resource-hub', 'categories'],
+    query: () => apiGet('/categories'),
+});
 
-    function start() {
-        pending.value += 1;
-    }
+export const useCategoryData = defineColadaLoader({
+    key: (to) => ['resource-hub', 'category', String(to.params.categoryId)],
+    query: (to) => apiGet(`/categories/${to.params.categoryId}`),
+});
 
-    function done() {
-        pending.value = Math.max(0, pending.value - 1);
-    }
+export const useArticleData = defineColadaLoader({
+    key: (to) => ['resource-hub', 'article', String(to.params.categoryId), String(to.params.articleId)],
+    query: async (to) => {
+        try {
+            return await apiGet(`/categories/${to.params.categoryId}/articles/${to.params.articleId}`);
+        } catch (error) {
+            // Treat missing / unauthorized articles as "not found" so the navigation still
+            // resolves and the page can render its own 404 state instead of failing.
+            if (error?.response && [401, 404].includes(error.response.status)) {
+                return null;
+            }
 
-    function reset() {
-        pending.value = 0;
-    }
-
-    return { isNavigating, start, done, reset };
+            throw error;
+        }
+    },
 });

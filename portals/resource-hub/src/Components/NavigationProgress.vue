@@ -39,6 +39,12 @@
             type: Boolean,
             default: false,
         },
+        // Only reveal the bar once a navigation has been pending for this long, so
+        // instant (cache-hit) navigations — pagination, tab switches — don't flash it.
+        delay: {
+            type: Number,
+            default: 120,
+        },
     });
 
     const progress = ref(0);
@@ -46,6 +52,14 @@
 
     let trickleTimer = null;
     let hideTimer = null;
+    let showTimer = null;
+
+    function clearShowTimer() {
+        if (showTimer) {
+            clearTimeout(showTimer);
+            showTimer = null;
+        }
+    }
 
     function clearTimers() {
         if (trickleTimer) {
@@ -57,6 +71,8 @@
             clearTimeout(hideTimer);
             hideTimer = null;
         }
+
+        clearShowTimer();
     }
 
     function start() {
@@ -91,9 +107,13 @@
         () => props.active,
         (active) => {
             if (active) {
-                start();
+                clearShowTimer();
+                showTimer = setTimeout(start, props.delay);
             } else if (visible.value) {
                 finish();
+            } else {
+                // Became idle before the delay elapsed — never show the bar.
+                clearShowTimer();
             }
         },
     );
