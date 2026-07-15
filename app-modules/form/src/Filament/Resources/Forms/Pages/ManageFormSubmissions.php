@@ -165,7 +165,7 @@ class ManageFormSubmissions extends ManageRelatedRecords
                         ->modalHeading('Archive Submission')
                         ->modalSubmitActionLabel('Archive')
                         ->authorize(fn (): bool => auth()->user()->can('form.*.update'))
-                        ->action(function (FormSubmission $record) use($owner): void {
+                        ->action(function (FormSubmission $record) use ($owner): void {
                             $record->archive();
                             Cache::tags('{form-submission-count}')
                                 ->forget(
