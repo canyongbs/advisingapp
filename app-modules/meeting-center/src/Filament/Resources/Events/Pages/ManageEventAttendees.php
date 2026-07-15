@@ -77,7 +77,7 @@ class ManageEventAttendees extends ManageRelatedRecords
                 ...(ArchiveSubmissionsFeature::active() ? [
                     Filter::make('withoutArchived')
                         ->label('Without archived')
-                        ->query(fn (Builder $query) => $query->withoutArchived())
+                        ->query(fn (Builder $query) => $query->withoutArchived()) // @phpstan-ignore method.notFound
                         ->default(),
                 ] : []),
             ])
