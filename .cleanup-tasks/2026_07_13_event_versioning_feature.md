@@ -13,21 +13,21 @@ created: 2026-07-13
 
 - In `app-modules/meeting-center/database/migrations/2026_07_13_115355_add_versioning_to_event_registration_forms_table.php`:
     1. Remove the backfill statement and its TODO comment:
-       ```php
-       // TODO: Cleanup Task - EventVersioningFeature - This backfill can be removed once all environments have run this migration
-       DB::update('UPDATE event_registration_forms SET root_id = id WHERE root_id IS NULL');
-       ```
+        ```php
+        // TODO: Cleanup Task - EventVersioningFeature - This backfill can be removed once all environments have run this migration
+        DB::update('UPDATE event_registration_forms SET root_id = id WHERE root_id IS NULL');
+        ```
 
 - In `app-modules/meeting-center/src/Models/Event.php`:
     1. Replace the guarded `eventRegistrationForm()` relationship with an unconditional version — keep `->whereNull('archived_at')` but remove the `if (EventVersioningFeature::active())` wrapper:
-       ```php
-       // Before
-       if (EventVersioningFeature::active()) {
-           $relationship->whereNull('archived_at');
-       }
-       // After — remove the if, keep the whereNull
-       $relationship->whereNull('archived_at');
-       ```
+        ```php
+        // Before
+        if (EventVersioningFeature::active()) {
+            $relationship->whereNull('archived_at');
+        }
+        // After — remove the if, keep the whereNull
+        $relationship->whereNull('archived_at');
+        ```
     2. Remove the `use App\Features\EventVersioningFeature;` import.
 
 - In `app-modules/meeting-center/src/Observers/EventRegistrationFormObserver.php`:
