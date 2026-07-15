@@ -38,12 +38,14 @@ namespace AdvisingApp\Ai\Filament\Pages\Assistant\Concerns;
 
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\AiThreadFolder;
+use App\Features\EmployeeAdvisorPreviewFeature;
 use App\Models\User;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Support\Enums\Size;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\Rules\Unique;
@@ -70,7 +72,11 @@ trait CanManageFolders
             ->where('application', static::APPLICATION)
             ->with([
                 'threads' => fn (HasMany $query) => $query
-                    ->where('is_preview', false)
+                    ->when(
+                        EmployeeAdvisorPreviewFeature::active(),
+                        fn (Builder $query) => $query
+                            ->where('is_preview', false)
+                    )
                     ->latest('updated_at')
                     ->withMax('messages', 'created_at'),
             ])

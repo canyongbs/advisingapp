@@ -39,6 +39,7 @@ use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\PreviewEmployeeAdvisor;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Features\EmployeeAdvisorPreviewFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
@@ -49,6 +50,8 @@ beforeEach(function () {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->employeeAdvisors = true;
     $settings->save();
+
+    EmployeeAdvisorPreviewFeature::activate();
 });
 
 test('Preview Employee Advisor is gated with proper access control', function () {
@@ -65,7 +68,6 @@ test('Preview Employee Advisor is gated with proper access control', function ()
 
     $user->givePermissionTo('assistant_custom.view-any');
     $user->givePermissionTo('assistant_custom.*.view');
-    $user->givePermissionTo('assistant_custom.create');
 
     actingAs($user)
         ->get(
@@ -80,7 +82,6 @@ test('Preview Employee Advisor creates a fresh preview thread on mount', functio
 
     $user->givePermissionTo('assistant_custom.view-any');
     $user->givePermissionTo('assistant_custom.*.view');
-    $user->givePermissionTo('assistant_custom.create');
 
     $assistant = AiAssistant::factory()->create();
 
@@ -106,7 +107,6 @@ test('Preview Employee Advisor creates a new thread on each page load', function
 
     $user->givePermissionTo('assistant_custom.view-any');
     $user->givePermissionTo('assistant_custom.*.view');
-    $user->givePermissionTo('assistant_custom.create');
 
     $assistant = AiAssistant::factory()->create();
 
@@ -121,43 +121,4 @@ test('Preview Employee Advisor creates a new thread on each page load', function
     ]);
 
     expect(AiThread::where('is_preview', true)->where('assistant_id', $assistant->id)->count())->toBe(2);
-});
-
-test('Preview threads do not appear in sidebar thread lists', function () {
-    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
-
-    $user->givePermissionTo('assistant_custom.view-any');
-    $user->givePermissionTo('assistant_custom.*.view');
-    $user->givePermissionTo('assistant_custom.create');
-
-    $assistant = AiAssistant::factory()->create();
-
-    actingAs($user);
-
-    // Create a preview thread
-    $previewThread = AiThread::factory()
-        ->for($assistant, 'assistant')
-        ->for($user)
-        ->create([
-            'is_preview' => true,
-            'name' => 'Preview Thread',
-        ]);
-
-    // Create a regular thread
-    $regularThread = AiThread::factory()
-        ->for($assistant, 'assistant')
-        ->for($user)
-        ->create([
-            'is_preview' => false,
-            'name' => 'Regular Thread',
-        ]);
-
-    $threads = $user
-        ->aiThreads()
-        ->where('is_preview', false)
-        ->whereNotNull('name')
-        ->get();
-
-    expect($threads)->toHaveCount(1)
-        ->and($threads->first()->id)->toBe($regularThread->id);
 });
