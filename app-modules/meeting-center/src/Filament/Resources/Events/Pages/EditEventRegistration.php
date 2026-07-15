@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 
-use AdvisingApp\Form\Actions\SaveSubmissibleFieldsFromContent;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\MeetingCenter\Actions\CreateEventRegistrationFormVersion;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
@@ -68,6 +67,9 @@ class EditEventRegistration extends EditRecord
 
     protected bool $registrationFormVersionedInCurrentSave = false;
 
+    /** @var array<array-key, EventRegistrationFormStep> */
+    protected array $wizardStepVersionMap = [];
+
     public function form(Schema $schema): Schema
     {
         return $schema->components([
@@ -80,38 +82,34 @@ class EditEventRegistration extends EditRecord
 
                     if ($record instanceof EventRegistrationForm) {
                         if (EventVersioningFeature::active()) {
-                            $newVersion = DB::transaction(function () use ($component, $record, $data): EventRegistrationForm {
+                            DB::transaction(function () use ($component, $record, $data): void {
                                 $newVersion = app(CreateEventRegistrationFormVersion::class)->execute($record, $data);
 
                                 if ($newVersion->is_wizard) {
-                                    // The Repeater state inside a nested Fieldset relationship is not
-                                    // reliably dehydrated, so we source step data directly from the
-                                    // old version and let SaveSubmissibleFieldsFromContent recreate
-                                    // the steps and their fields on the new version.
-                                    $stepsData = ! empty($data['steps'])
-                                        ? array_values($data['steps'])
+                                    $sort = 1;
+                                    $wizardStepVersionMap = [];
+
+                                    $steps = ! empty($data['steps'])
+                                        ? $data['steps']
                                         : $record->steps()->orderBy('sort')->get()
-                                            ->map(fn (EventRegistrationFormStep $step) => [
-                                                'label' => $step->label,
-                                                'content' => $step->content,
-                                            ])
+                                            ->mapWithKeys(fn (EventRegistrationFormStep $step) => [$step->id => ['label' => $step->label]])
                                             ->all();
 
-                                    app(SaveSubmissibleFieldsFromContent::class)->execute(
-                                        $newVersion,
-                                        ['steps' => $stepsData],
-                                    );
+                                    foreach ($steps as $key => $stepData) {
+                                        $newStep = $newVersion->steps()->create([
+                                            'label' => $stepData['label'] ?? 'Untitled Step',
+                                            'sort' => $sort++,
+                                        ]);
+                                        $wizardStepVersionMap[$key] = $newStep;
+                                    }
+
+                                    $this->wizardStepVersionMap = $wizardStepVersionMap;
                                 }
 
                                 $component->cachedExistingRecord($newVersion);
-
-                                return $newVersion;
                             });
 
-                            // Only skip the Repeater and RichEditor saves for wizard forms,
-                            // since SaveSubmissibleFieldsFromContent already handled them.
-                            // For non-wizard, the RichEditor saveRelationshipsUsing still runs.
-                            $this->registrationFormVersionedInCurrentSave = $newVersion->is_wizard;
+                            $this->registrationFormVersionedInCurrentSave = ! empty($this->wizardStepVersionMap);
                         } else {
                             $record->fill($data);
                             $record->save();
@@ -159,6 +157,7 @@ class EditEventRegistration extends EditRecord
                         ->visible(fn (Get $get) => $get('is_wizard'))
                         ->disabled(fn (?EventRegistrationForm $record) => ! EventVersioningFeature::active() && $record?->submissions()->exists())
                         ->relationship()
+                        ->orderColumn('sort')
                         ->saveRelationshipsUsing(function (Repeater $component): void {
                             if ($this->registrationFormVersionedInCurrentSave) {
                                 return;
@@ -188,6 +187,21 @@ class EditEventRegistration extends EditRecord
             ->hiddenLabel()
             ->saveRelationshipsUsing(function (RichEditor $component, EventRegistrationForm | EventRegistrationFormStep $record) {
                 if ($this->registrationFormVersionedInCurrentSave) {
+                    if ($record instanceof EventRegistrationFormStep) {
+                        $newStep = $this->wizardStepVersionMap[(string) $record->id] ?? null;
+
+                        if ($newStep !== null) {
+                            if ($component->isDisabled()) {
+                                return;
+                            }
+
+                            $form = $newStep->submissible;
+                            assert($form instanceof EventRegistrationForm);
+
+                            $this->saveFieldContentToRecord($component, $form, $newStep, $newStep, $record->content);
+                        }
+                    }
+
                     return;
                 }
 
@@ -199,31 +213,7 @@ class EditEventRegistration extends EditRecord
                 assert($form instanceof EventRegistrationForm);
                 $formStep = $record instanceof EventRegistrationFormStep ? $record : null;
 
-                EventRegistrationFormField::query()
-                    ->whereBelongsTo($form, 'submissible')
-                    ->when($formStep, fn (EloquentBuilder $query) => $query->whereBelongsTo($formStep, 'step'))
-                    ->delete();
-
-                $content = $component->getState();
-
-                if (is_string($content)) {
-                    $content = json_decode($content, true);
-                }
-
-                if (! is_array($content)) {
-                    $content = [];
-                }
-
-                $content['content'] = $this->saveFieldsFromComponents(
-                    $form,
-                    $content['content'] ?? [],
-                    $formStep,
-                );
-
-                $record->content = $content;
-                $record->save();
-
-                $component->state($content);
+                $this->saveFieldContentToRecord($component, $form, $formStep, $record);
             })
             ->dehydrated(false)
             ->columnSpanFull()
@@ -275,10 +265,44 @@ class EditEventRegistration extends EditRecord
         return $components;
     }
 
+    /**
+     * @param  array<array-key, mixed>|null  $fallbackContent
+     */
+    protected function saveFieldContentToRecord(
+        RichEditor $component,
+        EventRegistrationForm $form,
+        ?EventRegistrationFormStep $step,
+        EventRegistrationForm|EventRegistrationFormStep $target,
+        array|null $fallbackContent = null,
+    ): void {
+        EventRegistrationFormField::query()
+            ->whereBelongsTo($form, 'submissible')
+            ->when($step, fn (EloquentBuilder $query) => $query->whereBelongsTo($step, 'step'))
+            ->delete();
+
+        $content = $component->getState();
+
+        if (is_string($content)) {
+            $content = json_decode($content, true);
+        }
+
+        if (! is_array($content) || empty($content)) {
+            $content = $fallbackContent ?? [];
+        }
+
+        $content['content'] = $this->saveFieldsFromComponents($form, $content['content'] ?? [], $step);
+
+        $target->content = $content;
+        $target->save();
+
+        $component->state($content);
+    }
+
     protected function afterSave(): void
     {
         $this->clearFormContentForWizard();
         $this->registrationFormVersionedInCurrentSave = false;
+        $this->wizardStepVersionMap = [];
     }
 
     protected function clearFormContentForWizard(): void
