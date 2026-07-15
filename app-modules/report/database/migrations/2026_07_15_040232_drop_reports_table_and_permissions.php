@@ -67,18 +67,18 @@ return new class () extends Migration {
 
     public function up(): void
     {
-      DB::transaction(function () {
-        collect($this->guards)
+        DB::transaction(function () {
+            collect($this->guards)
                 ->each(fn (string $guard) => $this->deletePermissions(array_keys($this->permissions), $guard));
 
-        Schema::dropIfExists('reports');
-      });
+            Schema::dropIfExists('reports');
+        });
     }
 
     public function down(): void
     {
-      DB::transaction(function () {
-        collect($this->guards)
+        DB::transaction(function () {
+            collect($this->guards)
                 ->each(function (string $guard) {
                     $permissions = Arr::except($this->permissions, keys: DB::table('permissions')
                         ->where('guard_name', $guard)
@@ -87,22 +87,21 @@ return new class () extends Migration {
 
                     $this->createPermissions($permissions, $guard);
                 });
-                
-        Schema::create('reports', function (Blueprint $table) {
-            $table->uuid('id')->primary();
 
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->jsonb('filters')->nullable();
-            $table->jsonb('columns');
-            $table->string('model');
+            Schema::create('reports', function (Blueprint $table) {
+                $table->uuid('id')->primary();
 
-            $table->foreignUuid('user_id')->constrained('users');
+                $table->string('name');
+                $table->text('description')->nullable();
+                $table->jsonb('filters')->nullable();
+                $table->jsonb('columns');
+                $table->string('model');
 
-            $table->timestamps();
-            $table->softDeletes();
+                $table->foreignUuid('user_id')->constrained('users');
+
+                $table->timestamps();
+                $table->softDeletes();
+            });
         });
-      });
-        
     }
 };
