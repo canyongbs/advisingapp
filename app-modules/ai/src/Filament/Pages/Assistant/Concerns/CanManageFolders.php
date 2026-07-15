@@ -72,8 +72,8 @@ trait CanManageFolders
             ->aiThreadFolders()
             ->where('application', static::APPLICATION)
             ->with([
+                /** @phpstan-ignore argument.type */
                 'threads' => fn (HasMany|Builder $query) => $query
-                    /** @phpstan-ignore argument.type */
                     ->when(
                         EmployeeAdvisorPreviewFeature::active(),
                         fn (HasMany|Builder $query) => $query
