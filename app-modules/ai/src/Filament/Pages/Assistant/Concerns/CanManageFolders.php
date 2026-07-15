@@ -73,6 +73,7 @@ trait CanManageFolders
             ->where('application', static::APPLICATION)
             ->with([
                 'threads' => fn (HasMany|Builder $query) => $query
+                    /** @phpstan-ignore argument.type */
                     ->when(
                         EmployeeAdvisorPreviewFeature::active(),
                         fn (HasMany|Builder $query) => $query
