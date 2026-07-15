@@ -244,8 +244,11 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                         ->modalHeading('Archive Submission')
                         ->modalSubmitActionLabel('Archive')
                         ->authorize(fn (): bool => auth()->user()->can('application.*.update'))
-                        ->action(function (ApplicationSubmission $record): void {
+                        ->action(function (ApplicationSubmission $record) use ($owner): void {
                             $record->archive();
+
+                            Cache::tags('{application-submission-count}')
+                                ->forget("application-submission-count-{$owner->root_id}");
 
                             Notification::make()
                                 ->title('Submission archived')
@@ -278,11 +281,14 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                             ->modalHeading('Archive Submissions')
                             ->modalSubmitActionLabel('Archive')
                             ->authorize(fn () => auth()->user()->can('deleteAny', ApplicationSubmission::class))
-                            ->action(function (Collection $records): void {
+                            ->action(function (Collection $records) use ($owner): void {
                                 /** @phpstan-ignore argument.type */
                                 $records->each(function (ApplicationSubmission $record): void {
                                     $record->archive();
                                 });
+
+                                Cache::tags('{application-submission-count}')
+                                    ->forget("application-submission-count-{$owner->root_id}");
 
                                 Notification::make()
                                     ->title('Submissions archived')

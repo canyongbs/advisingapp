@@ -81,8 +81,6 @@ class ManageEventAttendees extends ManageRelatedRecords
                         ->default(),
                 ] : []),
             ])
-            ->headerActions([
-            ])
             ->recordActions([
                 ViewEventAttendeeAction::make(),
                 ...(ArchiveSubmissionsFeature::active() ? [

@@ -165,9 +165,12 @@ class ManageFormSubmissions extends ManageRelatedRecords
                         ->modalHeading('Archive Submission')
                         ->modalSubmitActionLabel('Archive')
                         ->authorize(fn (): bool => auth()->user()->can('form.*.update'))
-                        ->action(function (FormSubmission $record): void {
+                        ->action(function (FormSubmission $record) use($owner): void {
                             $record->archive();
-
+                            Cache::tags('{form-submission-count}')
+                                ->forget(
+                                    "form-submission-count-{$owner->root_id}"
+                                );
                             Notification::make()
                                 ->title('Submission archived')
                                 ->success()
@@ -199,11 +202,15 @@ class ManageFormSubmissions extends ManageRelatedRecords
                             ->modalHeading('Archive Submissions')
                             ->modalSubmitActionLabel('Archive')
                             ->authorize(fn () => auth()->user()->can('deleteAny', FormSubmission::class))
-                            ->action(function (Collection $records): void {
+                            ->action(function (Collection $records) use ($owner): void {
                                 /** @phpstan-ignore argument.type */
                                 $records->each(function (FormSubmission $record): void {
                                     $record->archive();
                                 });
+                                Cache::tags('{form-submission-count}')
+                                    ->forget(
+                                        "form-submission-count-{$owner->root_id}"
+                                    );
 
                                 Notification::make()
                                     ->title('Submissions archived')
@@ -234,11 +241,7 @@ class ManageFormSubmissions extends ManageRelatedRecords
                         ->whereHas(
                             'submissible',
                             fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $ownerRecord->root_id),
-                        );
-
-                    if (ArchiveSubmissionsFeature::active()) {
-                        $navQuery->withoutArchived();
-                    }
+                        )->when(ArchiveSubmissionsFeature::active(), fn (Builder $query) => $query->withoutArchived());
 
                     return $navQuery->count();
                 },
