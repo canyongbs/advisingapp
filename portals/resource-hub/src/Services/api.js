@@ -1,4 +1,4 @@
-<!--
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
@@ -30,33 +30,55 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
--->
-<script setup>
-    import CategoryCard from '@common/portal/CategoryCard.vue';
+*/
 
-    defineProps({
-        subCategories: {
-            type: Object,
-            required: true,
-        },
+/**
+ * A small, framework-context-free API client for the resource hub portal.
+ *
+ * Data loaders and Pinia Colada queries run inside navigation guards, outside of
+ * component `setup()`, where the "active" Pinia instance is not guaranteed. This
+ * module therefore holds the resolved API base URL and a token accessor that are
+ * configured once during boot (see `usePortalBoot`), so requests made from loaders
+ * never depend on an active Pinia instance.
+ */
+import axios from '../Globals/Axios.js';
+
+let baseUrl = null;
+let tokenGetter = async () => null;
+
+export function configureApi({ baseUrl: url, getToken } = {}) {
+    if (url !== undefined) {
+        baseUrl = url;
+    }
+
+    if (getToken) {
+        tokenGetter = getToken;
+    }
+}
+
+export function getApiBaseUrl() {
+    return baseUrl;
+}
+
+async function authHeaders() {
+    const token = await tokenGetter();
+
+    return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+export async function apiGet(path, params = null) {
+    const { data } = await axios.get(baseUrl + path, {
+        headers: await authHeaders(),
+        params,
     });
-</script>
 
-<template>
-    <div class="grid gap-3 md:grid-cols-2">
-        <CategoryCard
-            v-for="subCategory in subCategories"
-            :key="subCategory.id"
-            :to="{
-                name: 'view-subcategory',
-                params: {
-                    parentCategoryId: subCategory.parentCategory.id,
-                    categoryId: subCategory.id,
-                },
-            }"
-            :icon="subCategory.icon"
-            :name="subCategory.name"
-            :description="subCategory.description"
-        />
-    </div>
-</template>
+    return data;
+}
+
+export async function apiPost(path, body = null) {
+    const { data } = await axios.post(baseUrl + path, body, {
+        headers: await authHeaders(),
+    });
+
+    return data;
+}

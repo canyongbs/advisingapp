@@ -232,6 +232,6 @@
             </div>
         </main>
 
-        <Footer :logo="footerLogo" :appName="appName" />
+        <Footer :logo="footerLogo" :app-name="appName" />
     </div>
 </template>

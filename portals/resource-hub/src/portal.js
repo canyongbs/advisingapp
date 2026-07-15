@@ -32,13 +32,17 @@
 </COPYRIGHT>
 */
 import { defaultConfig, plugin } from '@formkit/vue';
+import { PiniaColada } from '@pinia/colada';
 import { createPinia } from 'pinia';
 import PrimeVue from 'primevue/config';
 import { createApp, defineCustomElement, getCurrentInstance, h } from 'vue';
 import { createRouter, createWebHistory } from 'vue-router';
+import { DataLoaderPlugin } from 'vue-router/experimental';
 import VueSignaturePad from 'vue-signature-pad';
 import App from './App.vue';
+import { bootPortal } from './Composables/usePortalBoot.js';
 import config from './formkit.config.js';
+import { useArticleData, useCategoriesData, useCategoryData } from './Pages/loaders.js';
 import './portal.css';
 import getAppContext from './Services/GetAppContext.js';
 
@@ -50,6 +54,7 @@ customElements.define(
             const pinia = createPinia();
 
             app.use(pinia);
+            app.use(PiniaColada);
             app.use(VueSignaturePad);
             app.use(PrimeVue, {
                 theme: 'none',
@@ -59,30 +64,65 @@ customElements.define(
 
             const router = createRouter({
                 history: createWebHistory(),
+                scrollBehavior(to, from, savedPosition) {
+                    // Restore the previous position on back/forward navigation.
+                    if (savedPosition) {
+                        return savedPosition;
+                    }
+
+                    // Same page, only the query changed (pagination / tab switches) — leave
+                    // the scroll position where it is.
+                    if (to.path === from.path) {
+                        return false;
+                    }
+
+                    // Visiting a new page — start at the top.
+                    return { top: 0 };
+                },
                 routes: [
                     {
                         path: baseUrl + '/',
                         name: 'home',
                         component: () => import('./Pages/Home.vue'),
+                        meta: {
+                            loaders: [useCategoriesData],
+                        },
                     },
                     {
                         path: baseUrl + '/categories/:categoryId',
                         name: 'view-category',
                         component: () => import('./Pages/ViewCategory.vue'),
+                        meta: {
+                            loaders: [useCategoryData],
+                        },
                     },
                     {
                         path: baseUrl + '/categories/:parentCategoryId/:categoryId',
                         name: 'view-subcategory',
                         component: () => import('./Pages/ViewCategory.vue'),
+                        meta: {
+                            loaders: [useCategoryData],
+                        },
                     },
                     {
                         path: baseUrl + '/categories/:categoryId/articles/:articleId',
                         name: 'view-article',
                         component: () => import('./Pages/ViewArticle.vue'),
+                        meta: {
+                            loaders: [useArticleData],
+                        },
                     },
                 ],
             });
 
+            // Boot the portal (config + auth) exactly once, and gate every navigation —
+            // including the initial one — on it so the route data loaders always run with
+            // a resolved API base URL and auth state. Registered before DataLoaderPlugin
+            // so it runs ahead of the loader guard.
+            const configReady = bootPortal(props, pinia);
+            router.beforeEach(() => configReady);
+
+            app.use(DataLoaderPlugin, { router });
             app.use(router);
 
             app.config.devtools = true;
@@ -96,16 +136,6 @@ customElements.define(
 
             return () => h(App, props);
         },
-        props: [
-            'url',
-            'userAuthenticationUrl',
-            'accessUrl',
-            'searchUrl',
-            'appUrl',
-            'apiUrl',
-            'tags',
-            'cssUrl',
-            'appTitle',
-        ],
+        props: ['url', 'userAuthenticationUrl', 'accessUrl', 'searchUrl', 'appUrl', 'apiUrl', 'cssUrl', 'appTitle'],
     }),
 );

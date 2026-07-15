@@ -32,43 +32,45 @@
 </COPYRIGHT>
 */
 import axios from '../Globals/Axios.js';
+import { configureApi } from '../Services/api.js';
+import determineIfUserIsAuthenticated from '../Services/DetermineIfUserIsAuthenticated.js';
+import { useAuthStore } from '../Stores/auth.js';
+import { useConfigStore } from '../Stores/config.js';
 import { useTokenStore } from '../Stores/token.js';
 
-export function consumer() {
-    async function get(endpoint, data = null) {
-        const { getToken } = useTokenStore();
+/**
+ * Boots the portal once, before any route navigation resolves.
+ *
+ * Fetches the portal configuration, hydrates the config / auth stores, configures
+ * the API client used by the data loaders, and determines whether the current user
+ * is authenticated. Route data loaders are gated on the returned promise so they
+ * always run with a resolved API base URL and auth state.
+ *
+ * This never rejects; failures are surfaced via `config.errorLoading` so the shell
+ * can render an error state instead of hanging the navigation.
+ */
+export async function bootPortal(props, pinia) {
+    const config = useConfigStore(pinia);
+    const auth = useAuthStore(pinia);
+    const token = useTokenStore(pinia);
 
-        let token = await getToken();
+    configureApi({ getToken: () => token.getToken() });
 
-        return await axios
-            .get(endpoint, {
-                headers: { Authorization: `Bearer ${token}` },
-                params: data,
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
+    try {
+        const { data } = await axios.get(props.url);
+
+        config.applyResponse(data, props);
+        configureApi({ baseUrl: config.apiUrl });
+
+        await auth.setRequiresAuthentication(data.requires_authentication);
+
+        if (config.userAuthenticationUrl) {
+            auth.setUserIsAuthenticated(await determineIfUserIsAuthenticated(config.userAuthenticationUrl));
+        }
+    } catch (error) {
+        config.errorLoading = true;
+        console.error(`Resource Hub Embed ${error}`);
+    } finally {
+        config.isReady = true;
     }
-
-    async function post(endpoint, data) {
-        const { getToken } = useTokenStore();
-
-        let token = await getToken();
-
-        return await axios
-            .post(endpoint, data, {
-                headers: { Authorization: `Bearer ${token}` },
-            })
-            .then((response) => {
-                return response;
-            })
-            .catch((error) => {
-                return Promise.reject(error);
-            });
-    }
-
-    return { get, post };
 }
