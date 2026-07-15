@@ -15,7 +15,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,16 +34,16 @@
 <script setup>
     import BaseButton from '@common/BaseButton.vue';
     import Breadcrumbs from '@common/portal/Breadcrumbs.vue';
+    import EmptyState from '@common/portal/EmptyState.vue';
     import Page from '@common/portal/Page.vue';
-    import { ClockIcon, EyeIcon } from '@heroicons/vue/20/solid';
-    import { HandThumbDownIcon, HandThumbUpIcon } from '@heroicons/vue/24/solid';
-    import DOMPurify from 'dompurify';
+    import PageCard from '@common/portal/PageCard.vue';
+    import ArticleAttachments from '@common/portal/article/ArticleAttachments.vue';
+    import ArticleContent from '@common/portal/article/ArticleContent.vue';
+    import ArticleMeta from '@common/portal/article/ArticleMeta.vue';
+    // import ArticleFeedback from '@common/portal/article/ArticleFeedback.vue';
     import truncate from 'lodash/truncate';
     import { computed, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
-    import EmptyState from '../Components/EmptyState.vue';
-    import PageCard from '../Components/PageCard.vue';
-    import { apiPost } from '../Services/api.js';
     import { useArticleData } from './loaders.js';
 
     const route = useRoute();
@@ -104,24 +104,24 @@
 
     const currentCrumb = computed(() => (article.value ? truncate(article.value.name, { length: 16 }) : 'Not Found'));
 
-    async function toggleFeedback(type) {
-        try {
-            const data = await apiPost('/resource_hub_article_vote/store', {
-                article_vote: feedback.value === type ? null : type,
-                article_id: route.params.articleId,
-            });
-
-            if (Object.prototype.hasOwnProperty.call(data, 'is_helpful') && data.is_helpful !== null) {
-                feedback.value = data.is_helpful;
-            } else {
-                feedback.value = null;
-            }
-
-            helpfulVotePercentage.value = data.helpful_vote_percentage;
-        } catch (error) {
-            console.error('Error submitting feedback:', error);
-        }
-    }
+    // async function toggleFeedback(type) {
+    //     try {
+    //         const data = await apiPost('/resource_hub_article_vote/store', {
+    //             article_vote: feedback.value === type ? null : type,
+    //             article_id: route.params.articleId,
+    //         });
+    //
+    //         if (Object.prototype.hasOwnProperty.call(data, 'is_helpful') && data.is_helpful !== null) {
+    //             feedback.value = data.is_helpful;
+    //         } else {
+    //             feedback.value = null;
+    //         }
+    //
+    //         helpfulVotePercentage.value = data.helpful_vote_percentage;
+    //     } catch (error) {
+    //         console.error('Error submitting feedback:', error);
+    //     }
+    // }
 </script>
 
 <template>
@@ -131,89 +131,25 @@
         </template>
 
         <template #description>
-            <div class="flex flex-col sm:flex-row sm:items-center gap-y-1 gap-x-4">
-                <div class="flex items-center gap-x-1.5">
-                    <EyeIcon class="size-4 shrink-0" aria-hidden="true" />
-                    <span>{{ portalViewCount }} Views</span>
-                </div>
-                <div class="flex items-center gap-x-1.5">
-                    <ClockIcon class="size-4 shrink-0" aria-hidden="true" />
-                    <span>Last updated: {{ article.lastUpdated }}</span>
-                </div>
-            </div>
+            <ArticleMeta :viewCount="portalViewCount" :lastUpdated="article.lastUpdated" />
         </template>
 
         <template #breadcrumbs>
             <Breadcrumbs :breadcrumbs="breadcrumbs" :currentCrumb="currentCrumb" />
         </template>
 
+        <PageCard v-if="article.attachments && article.attachments.length > 0">
+            <ArticleAttachments :attachments="article.attachments" />
+        </PageCard>
+
         <PageCard>
-            <div
-                class="prose max-w-5xl w-full mx-auto prose-p:leading-snug! prose-p:my-2.5! prose-headings:my-4! prose-hr:my-5! prose-ul:my-3! prose-ol:my-3! prose-li:my-0! [&_li>p]:my-1! [&_td_p]:my-3! [&_th_p]:my-3! prose-table:w-full! prose-table:my-6 prose-table:border-separate prose-table:border-spacing-0 prose-table:rounded-lg prose-table:border prose-table:border-gray-200 prose-table:overflow-hidden prose-table:shadow-xs prose-td:border-b prose-td:border-gray-100 prose-td:align-middle prose-td:px-6 prose-td:py-2 prose-td:text-left prose-td:text-gray-700 prose-th:border-none prose-th:bg-brand-600 prose-th:px-6 prose-th:py-2 prose-th:text-left prose-th:font-bold prose-th:text-white [&_tr:last-child_td]:border-b-[3px]! [&_tr:last-child_td]:border-brand-600! even:prose-tr:bg-gray-50"
-                v-html="
-                    DOMPurify.sanitize(article.content, {
-                        ADD_TAGS: ['iframe', 'video', 'source'],
-                        ADD_ATTR: [
-                            'allow',
-                            'allowfullscreen',
-                            'frameborder',
-                            'controls',
-                            'target',
-                            'rel',
-                            'data-video-embed',
-                            'data-video-type',
-                            'data-video-src',
-                            'data-video-width',
-                            'data-video-height',
-                            'data-cols',
-                            'data-col-span',
-                            'data-from-breakpoint',
-                            'data-color',
-                            'data-id',
-                        ],
-                    })
-                "
-            ></div>
+            <ArticleContent :content="article.content" />
 
-            <div
-                class="max-w-5xl mx-auto w-full flex flex-wrap items-center gap-4 border border-gray-200 rounded-lg p-4 bg-white"
-            >
-                <span class="text-sm font-medium text-gray-700">Was this content helpful?</span>
-
-                <div class="flex items-center gap-2">
-                    <button
-                        type="button"
-                        @click="toggleFeedback(true)"
-                        class="relative inline-grid grid-flow-col items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium outline-none transition duration-75 focus-visible:ring-2"
-                        :class="
-                            feedback === true
-                                ? 'bg-brand-600 text-white hover:bg-brand-500 focus-visible:ring-brand-500/50'
-                                : 'bg-white text-gray-950 ring-1 ring-gray-950/10 hover:bg-gray-50'
-                        "
-                    >
-                        <HandThumbUpIcon class="size-5" />
-                        Yes
-                    </button>
-
-                    <button
-                        type="button"
-                        @click="toggleFeedback(false)"
-                        class="relative inline-grid grid-flow-col items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium outline-none transition duration-75 focus-visible:ring-2"
-                        :class="
-                            feedback === false
-                                ? 'bg-brand-600 text-white hover:bg-brand-500 focus-visible:ring-brand-500/50'
-                                : 'bg-white text-gray-950 ring-1 ring-gray-950/10 hover:bg-gray-50'
-                        "
-                    >
-                        <HandThumbDownIcon class="size-5" />
-                        No
-                    </button>
-                </div>
-
-                <span v-if="helpfulVotePercentage" class="text-sm text-gray-500">
-                    {{ helpfulVotePercentage }}% of visitors found this helpful.
-                </span>
-            </div>
+            <!-- <ArticleFeedback
+                :feedback="feedback"
+                :helpfulVotePercentage="helpfulVotePercentage"
+                @toggle-feedback="toggleFeedback"
+            /> -->
         </PageCard>
     </Page>
 

@@ -32,7 +32,6 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import Breadcrumbs from '@common/portal/Breadcrumbs.vue';
     import HelpCenter from '@common/portal/home/HelpCenter.vue';
     import Page from '@common/portal/Page.vue';
     import { computed } from 'vue';
@@ -52,12 +51,6 @@
 <template>
     <Page>
         <template #heading>Resource Hub</template>
-
-        <template #description>Search our resource hub for advice and answers</template>
-
-        <template #breadcrumbs>
-            <Breadcrumbs currentCrumb="Home" />
-        </template>
 
         <HelpCenter :categories="categoriesWithRoutes" />
     </Page>
