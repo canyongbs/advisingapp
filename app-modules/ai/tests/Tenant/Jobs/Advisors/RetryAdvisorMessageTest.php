@@ -73,7 +73,7 @@ it('retries a message', function () {
 
     dispatch(new RetryAdvisorMessage($thread, $messageContent));
 
-    $messages = AiMessage::oldest()->get();
+    $messages = AiMessage::all();
 
     expect($messages->count())
         ->toBe(2);
@@ -122,7 +122,7 @@ it('does not create a new message if the most recent one has the same content', 
 
     dispatch(new RetryAdvisorMessage($thread, $messageContent));
 
-    $messages = AiMessage::oldest()->get();
+    $messages = AiMessage::all();
 
     expect($messages->count())
         ->toBe(2);
