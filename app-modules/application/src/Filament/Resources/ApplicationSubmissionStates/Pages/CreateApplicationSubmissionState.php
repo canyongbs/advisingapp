@@ -77,11 +77,10 @@ class CreateApplicationSubmissionState extends CreateRecord
                 Toggle::make('is_default')
                     ->label('Default')
                     ->live()
-                    ->hint(function (?bool $state): string {
-                        $basicHint = 'Set this state as the default tab on the Submissions page.';
-
+                    ->helperText('Set this state as the default tab on the Submissions page.')
+                    ->hint(function (?bool $state): ?string {
                         if (! $state) {
-                            return $basicHint;
+                            return null;
                         }
 
                         $currentDefault = ApplicationSubmissionState::query()
@@ -89,10 +88,10 @@ class CreateApplicationSubmissionState extends CreateRecord
                             ->value('name');
 
                         if (blank($currentDefault)) {
-                            return $basicHint;
+                            return null;
                         }
 
-                        return $basicHint . " The current default state is '{$currentDefault}', you are replacing it.";
+                        return "The current default state is '{$currentDefault}', you are replacing it.";
                     })
                     ->hintColor('danger')
                     ->visible(fn () => ApplicationSubmissionStateDefaultViewFeature::active()),

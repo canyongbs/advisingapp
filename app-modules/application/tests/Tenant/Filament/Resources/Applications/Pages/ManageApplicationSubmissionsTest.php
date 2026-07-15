@@ -114,6 +114,29 @@ test('default active tab is the state with is_default true', function () {
     expect($defaultTab)->toBe($defaultState->id);
 });
 
+test('default active tab falls back to all when the default state is archived and unused', function () {
+    asSuperAdmin();
+
+    $defaultState = ApplicationSubmissionState::factory()->create([
+        'classification' => ApplicationSubmissionStateClassification::Received,
+        'is_default' => true,
+    ]);
+
+    $application = Application::factory()->create();
+
+    // Ensure the default state has no submissions so it is treated as unused
+    $application->submissions()->forceDelete();
+
+    // @phpstan-ignore method.notFound
+    $defaultState->archive();
+
+    $defaultTab = livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+        ->instance()
+        ->getDefaultActiveTab();
+
+    expect($defaultTab)->toBe('all');
+});
+
 test('default tab falls back to all when no state has is_default true', function () {
     asSuperAdmin();
 
