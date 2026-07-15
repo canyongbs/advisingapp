@@ -1,4 +1,4 @@
-<!--
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
@@ -30,38 +30,26 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
--->
-<script setup>
-    import Breadcrumbs from '@common/portal/Breadcrumbs.vue';
-    import HelpCenter from '@common/portal/home/HelpCenter.vue';
-    import Page from '@common/portal/Page.vue';
-    import { storeToRefs } from 'pinia';
-    import { computed } from 'vue';
-    import { useResourceHubStore } from '../Stores/resourceHub.js';
+*/
+import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
 
-    defineOptions({ inheritAttrs: false });
+export const useNavigationStore = defineStore('navigation', () => {
+    const pending = ref(0);
 
-    const { categories } = storeToRefs(useResourceHubStore());
+    const isNavigating = computed(() => pending.value > 0);
 
-    const categoriesWithRoutes = computed(() =>
-        Object.values(categories.value).map((category) => ({
-            ...category,
-            key: category.id,
-            to: { name: 'view-category', params: { categoryId: category.id } },
-        })),
-    );
-</script>
+    function start() {
+        pending.value += 1;
+    }
 
-<template>
-    <Page>
-        <template #heading>Resource Hub</template>
+    function done() {
+        pending.value = Math.max(0, pending.value - 1);
+    }
 
-        <template #description>Search our resource hub for advice and answers</template>
+    function reset() {
+        pending.value = 0;
+    }
 
-        <template #breadcrumbs>
-            <Breadcrumbs currentCrumb="Home" />
-        </template>
-
-        <HelpCenter :categories="categoriesWithRoutes" />
-    </Page>
-</template>
+    return { isNavigating, start, done, reset };
+});

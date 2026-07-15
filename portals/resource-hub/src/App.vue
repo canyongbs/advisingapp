@@ -39,12 +39,15 @@
     import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
     import { RouterView, useRoute, useRouter } from 'vue-router';
     import AppLoading from './Components/AppLoading.vue';
+    import NavigationProgress from './Components/NavigationProgress.vue';
     import axios from './Globals/Axios.js';
     import Login from './Pages/Login.vue';
     import { consumer } from './Services/Consumer.js';
     import determineIfUserIsAuthenticated from './Services/DetermineIfUserIsAuthenticated.js';
     import { useAuthStore } from './Stores/auth.js';
     import { useFeatureStore } from './Stores/feature.js';
+    import { useNavigationStore } from './Stores/navigation.js';
+    import { useResourceHubStore } from './Stores/resourceHub.js';
     import { useTokenStore } from './Stores/token.js';
 
     /**
@@ -127,7 +130,6 @@
 
     /** Contrast-safe text colour for primary-variant buttons (adapts to any static palette). */
     const primaryOnColor = computed(() => contrastOnColor(portalPrimaryColor.value?.[500]));
-    const categories = ref({});
     const serviceRequests = ref({});
     const headerLogo = ref('');
     const favicon = ref('');
@@ -147,6 +149,12 @@
 
     const route = useRoute();
     const router = useRouter();
+
+    const resourceHubStore = useResourceHubStore();
+    const { categories } = storeToRefs(resourceHubStore);
+
+    const navigationStore = useNavigationStore();
+    const { isNavigating } = storeToRefs(navigationStore);
 
     const { user } = storeToRefs(useAuthStore());
 
@@ -235,7 +243,7 @@
         if (isAuth) {
             userIsAuthenticated.value = true;
             await getKnowledgeManagementPortal();
-            await getData();
+            await loadInitialRouteData();
         }
     }
 
@@ -277,7 +285,7 @@
         }
 
         if (userIsAuthenticated.value || !requiresAuthentication.value) {
-            await getData();
+            await loadInitialRouteData();
         } else {
             loading.value = false;
         }
@@ -428,35 +436,25 @@
             });
     }
 
-    async function getData() {
-        await getResourceHubPortalCategories()
-            .then((response) => {
-                errorLoading.value = false;
+    async function loadInitialRouteData() {
+        resourceHubStore.setApiUrl(apiUrl.value);
 
-                if (response.error) {
-                    throw new Error(response.error);
-                }
-                categories.value = response;
+        try {
+            errorLoading.value = false;
 
-                loading.value = false;
-            })
-            .catch((error) => {
-                errorLoading.value = true;
-                loading.value = false;
-                console.error(`Resource Hub Portal Embed ${error}`);
-            });
-    }
+            await router.isReady();
 
-    async function getResourceHubPortalCategories() {
-        const { get } = consumer();
+            const currentRoute = router.currentRoute.value;
 
-        return get(`${apiUrl.value}/categories`).then((response) => {
-            if (response.error) {
-                throw new Error(response.error);
+            if (typeof currentRoute.meta.load === 'function') {
+                await currentRoute.meta.load(currentRoute, resourceHubStore);
             }
-
-            return response.data;
-        });
+        } catch (error) {
+            errorLoading.value = true;
+            console.error(`Resource Hub Portal Embed ${error}`);
+        } finally {
+            loading.value = false;
+        }
     }
 
     async function getServiceRequests() {
@@ -581,7 +579,7 @@
 
                         userIsAuthenticated.value = true;
 
-                        getData();
+                        loadInitialRouteData();
                     }
                 })
                 .catch((error) => {
@@ -657,6 +655,8 @@
         </div>
 
         <div v-else>
+            <NavigationProgress :active="isNavigating" />
+
             <Login
                 v-if="!userIsAuthenticated && (requiresAuthentication || showLogin || route.meta.requiresAuth)"
                 v-model:authentication="authentication"

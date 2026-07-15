@@ -41,6 +41,8 @@ import App from './App.vue';
 import config from './formkit.config.js';
 import './portal.css';
 import getAppContext from './Services/GetAppContext.js';
+import { useNavigationStore } from './Stores/navigation.js';
+import { useResourceHubStore } from './Stores/resourceHub.js';
 
 customElements.define(
     'resource-hub-portal-embed',
@@ -64,16 +66,25 @@ customElements.define(
                         path: baseUrl + '/',
                         name: 'home',
                         component: () => import('./Pages/Home.vue'),
+                        meta: {
+                            load: (to, store) => store.loadHome(),
+                        },
                     },
                     {
                         path: baseUrl + '/categories/:categoryId',
                         name: 'view-category',
                         component: () => import('./Pages/ViewCategory.vue'),
+                        meta: {
+                            load: (to, store) => store.loadCategory(to.params.categoryId),
+                        },
                     },
                     {
                         path: baseUrl + '/categories/:parentCategoryId/:categoryId',
                         name: 'view-subcategory',
                         component: () => import('./Pages/ViewCategory.vue'),
+                        meta: {
+                            load: (to, store) => store.loadCategory(to.params.categoryId),
+                        },
                     },
                     {
                         path: baseUrl + '/categories/:categoryId/articles/:articleId',
@@ -84,6 +95,42 @@ customElements.define(
             });
 
             app.use(router);
+
+            const resourceHubStore = useResourceHubStore(pinia);
+            const navigationStore = useNavigationStore(pinia);
+
+            router.beforeEach((to, from) => {
+                // Only show the progress bar for real client-side navigations between
+                // different pages. The initial load is covered by the boot spinner, and
+                // in-page query changes (pagination / tab switches) should not trigger it.
+                if (from.name && to.path !== from.path) {
+                    navigationStore.start();
+                }
+            });
+
+            router.beforeResolve(async (to, from) => {
+                // The initial route's data is fetched during app boot, behind the
+                // full-screen spinner, so there is nothing to load here for it.
+                if (!from.name) {
+                    return;
+                }
+
+                if (typeof to.meta.load === 'function') {
+                    try {
+                        await to.meta.load(to, resourceHubStore);
+                    } catch (error) {
+                        console.error(`Resource Hub Portal navigation ${error}`);
+                    }
+                }
+            });
+
+            router.afterEach(() => {
+                navigationStore.done();
+            });
+
+            router.onError(() => {
+                navigationStore.done();
+            });
 
             app.config.devtools = true;
 

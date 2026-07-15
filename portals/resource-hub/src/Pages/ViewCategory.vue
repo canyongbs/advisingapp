@@ -39,38 +39,28 @@
     import Subheading from '@common/portal/Subheading.vue';
     import Tabs from '@common/portal/Tabs.vue';
     import { DocumentTextIcon } from '@heroicons/vue/24/outline';
+    import { storeToRefs } from 'pinia';
     import { computed, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
-    import AppLoading from '../Components/AppLoading.vue';
-    import { consumer } from '../Services/Consumer.js';
+    import { useResourceHubStore } from '../Stores/resourceHub.js';
+
+    defineOptions({ inheritAttrs: false });
 
     const route = useRoute();
     const router = useRouter();
-    const { get } = consumer();
 
-    const props = defineProps({
-        apiUrl: {
-            type: String,
-            required: true,
-        },
-    });
+    const resourceHubStore = useResourceHubStore();
+    const { category, articles } = storeToRefs(resourceHubStore);
 
-    const category = ref(null);
-    const loadingCategory = ref(true);
     const loadingPage = ref(null);
-    const activeFilter = ref('all-articles');
-
-    const filterState = ref({
-        'all-articles': { data: [], currentPage: 1, lastPage: 1, total: 0, from: 0, to: 0 },
-        'most-viewed': { data: [], currentPage: 1, lastPage: 1, total: 0, from: 0, to: 0 },
-    });
+    const activeFilter = ref(route.query.filter || 'all-articles');
 
     const filterTabs = [
         { label: 'All Articles', value: 'all-articles' },
         { label: 'Most Viewed', value: 'most-viewed' },
     ];
 
-    const currentFilterState = computed(() => filterState.value[activeFilter.value]);
+    const currentFilterState = computed(() => articles.value[activeFilter.value]);
 
     const articlesWithRoutes = computed(() =>
         (currentFilterState.value?.data ?? []).map((article) => ({
@@ -94,71 +84,57 @@
         return [];
     });
 
-    function setFilterPagination(filterKey, pagination) {
-        filterState.value[filterKey] = {
-            ...filterState.value[filterKey],
-            currentPage: pagination.current_page,
-            lastPage: pagination.last_page,
-            total: pagination.total,
-            from: pagination.from ?? 0,
-            to: pagination.to ?? 0,
-        };
-    }
-
-    function mapArticles(rawData) {
-        return rawData.map((article) => ({ ...article }));
+    function pushQuery(page, filter) {
+        router.push({
+            name: route.name,
+            params: route.params,
+            query: {
+                ...route.query,
+                page,
+                filter: filter === 'all-articles' ? undefined : filter,
+            },
+        });
     }
 
     function changeFilter(value) {
-        activeFilter.value = value;
-
-        router.push({
-            name: route.name,
-            params: route.params,
-            query: {
-                ...route.query,
-                page: 1,
-                filter: value === 'all-articles' ? undefined : value,
-            },
-        });
+        pushQuery(1, value);
     }
 
-    const fetchNextPage = () => {
+    function goToPage(page) {
         const state = currentFilterState.value;
-        if (state.currentPage < state.lastPage) fetchPage(state.currentPage + 1);
-    };
 
-    const fetchPreviousPage = () => {
+        if (page === state.currentPage || loadingPage.value !== null) {
+            return;
+        }
+
+        pushQuery(page, activeFilter.value);
+    }
+
+    function fetchNextPage() {
         const state = currentFilterState.value;
-        if (state.currentPage > 1) fetchPage(state.currentPage - 1);
-    };
 
-    const fetchPage = (page) => {
+        if (state.currentPage < state.lastPage) {
+            goToPage(state.currentPage + 1);
+        }
+    }
+
+    function fetchPreviousPage() {
         const state = currentFilterState.value;
-        if (page === state.currentPage || loadingPage.value !== null) return;
 
-        router.push({
-            name: route.name,
-            params: route.params,
-            query: {
-                ...route.query,
-                page,
-                filter: activeFilter.value === 'all-articles' ? undefined : activeFilter.value,
-            },
-        });
-    };
+        if (state.currentPage > 1) {
+            goToPage(state.currentPage - 1);
+        }
+    }
 
-    async function fetchFilterPage(filter, page) {
+    async function fetchPage(filter, page) {
+        if (loadingPage.value !== null) {
+            return;
+        }
+
         loadingPage.value = page;
 
         try {
-            const response = await get(props.apiUrl + '/categories/' + route.params.categoryId, {
-                filter,
-                page,
-            });
-
-            filterState.value[filter].data = mapArticles(response.data.articles.data);
-            setFilterPagination(filter, response.data.articles);
+            await resourceHubStore.loadArticlePage(route.params.categoryId, filter, page);
         } catch (error) {
             console.error('Error fetching page:', error);
         } finally {
@@ -166,47 +142,18 @@
         }
     }
 
-    let lastCategoryId = null;
-
-    async function loadCategory() {
-        loadingCategory.value = true;
-
-        try {
-            const response = await get(props.apiUrl + '/categories/' + route.params.categoryId);
-
-            category.value = response.data.category;
-            filterState.value['all-articles'].data = mapArticles(response.data.all_articles.data);
-            setFilterPagination('all-articles', response.data.all_articles);
-            filterState.value['most-viewed'].data = mapArticles(response.data.most_viewed_articles.data);
-            setFilterPagination('most-viewed', response.data.most_viewed_articles);
-        } catch (error) {
-            console.error('Error loading category:', error);
-        } finally {
-            loadingCategory.value = false;
-        }
-    }
-
     watch(
         route,
         async (newRoute) => {
-            const newCategoryId = newRoute.params.categoryId;
             const newFilter = newRoute.query.filter || 'all-articles';
             const newPage = parseInt(newRoute.query.page) || 1;
 
-            if (newCategoryId !== lastCategoryId) {
-                lastCategoryId = newCategoryId;
-                activeFilter.value = newFilter;
-                await loadCategory();
-                return;
-            }
+            activeFilter.value = newFilter;
 
-            if (newFilter !== activeFilter.value) {
-                activeFilter.value = newFilter;
-            }
+            const state = articles.value[newFilter];
 
-            const currentPage = currentFilterState.value?.currentPage ?? 1;
-            if (newPage !== currentPage) {
-                await fetchFilterPage(newFilter, newPage);
+            if (state && newPage !== state.currentPage) {
+                await fetchPage(newFilter, newPage);
             }
         },
         { immediate: true },
@@ -223,11 +170,7 @@
             <Breadcrumbs v-if="category" :currentCrumb="category.name" :breadcrumbs="breadcrumbs" />
         </template>
 
-        <div v-if="loadingCategory">
-            <AppLoading />
-        </div>
-
-        <div v-else-if="category">
+        <div v-if="category">
             <main class="flex flex-col gap-8">
                 <div class="flex flex-col gap-6">
                     <div class="flex flex-col gap-4">
@@ -260,7 +203,7 @@
                                     :loadingPage="loadingPage"
                                     @fetchNextPage="fetchNextPage"
                                     @fetchPreviousPage="fetchPreviousPage"
-                                    @fetchPage="fetchPage"
+                                    @fetchPage="goToPage"
                                 />
                             </div>
                             <section v-else class="px-6 py-4 flex items-start gap-x-4">
