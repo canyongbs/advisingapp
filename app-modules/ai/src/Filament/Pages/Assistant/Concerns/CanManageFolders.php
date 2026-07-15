@@ -67,14 +67,15 @@ trait CanManageFolders
         /** @var User $user */
         $user = auth()->user();
 
+        // EmployeeAdvisorPreviewFeature clean up: on line number 75, please remove Builder type and leave only HasMany type. This is a temporary fix to avoid the error AdvisingApp\Assistant\Filament\Pages\InstitutionalAdvisor::{closure:AdvisingApp\Ai\Filament\Pages\Assistant\Concerns\CanManageFolders::getFolders():73}(): Argument #1 ($query) must be of type Illuminate\Database\Eloquent\Builder, Illuminate\Database\Eloquent\Relations\HasMany given, called in /var/www/html/vendor/laravel/framework/src/Illuminate/Database/Eloquent/Builder.php on line 1843
         return $user
             ->aiThreadFolders()
             ->where('application', static::APPLICATION)
             ->with([
-                'threads' => fn (HasMany $query) => $query
+                'threads' => fn (HasMany|Builder $query) => $query
                     ->when(
                         EmployeeAdvisorPreviewFeature::active(),
-                        fn (Builder $query) => $query
+                        fn (HasMany|Builder $query) => $query
                             ->where('is_preview', false)
                     )
                     ->latest('updated_at')
