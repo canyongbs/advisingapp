@@ -34,18 +34,60 @@
 </COPYRIGHT>
 */
 
+use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
+    use CanModifyPermissions;
+
+    /**
+     * @var array<string, string> $permissions
+     */
+    private array $permissions = [
+        'report.*.delete' => 'Report',
+        'report.*.force-delete' => 'Report',
+        'report.*.restore' => 'Report',
+        'report.*.update' => 'Report',
+        'report.*.view' => 'Report',
+        'report.create' => 'Report',
+        'report.view-any' => 'Report',
+    ];
+
+    /**
+     * @var array<string> $guards
+     */
+    private array $guards = [
+        'web',
+        'api',
+    ];
+
     public function up(): void
     {
+      DB::transaction(function () {
+        collect($this->guards)
+                ->each(fn (string $guard) => $this->deletePermissions(array_keys($this->permissions), $guard));
+
         Schema::dropIfExists('reports');
+      });
     }
 
     public function down(): void
     {
+      DB::transaction(function () {
+        collect($this->guards)
+                ->each(function (string $guard) {
+                    $permissions = Arr::except($this->permissions, keys: DB::table('permissions')
+                        ->where('guard_name', $guard)
+                        ->pluck('name')
+                        ->all());
+
+                    $this->createPermissions($permissions, $guard);
+                });
+                
         Schema::create('reports', function (Blueprint $table) {
             $table->uuid('id')->primary();
 
@@ -60,5 +102,7 @@ return new class () extends Migration {
             $table->timestamps();
             $table->softDeletes();
         });
+      });
+        
     }
 };
