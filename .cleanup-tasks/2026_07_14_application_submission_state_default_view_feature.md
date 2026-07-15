@@ -9,6 +9,28 @@ created: 2026-07-14
 
 ## Temporary Migrations
 
-- app-modules/application/database/migrations/2026_07_14_000002_activate_application_submission_state_default_view_feature.php
+_(none)_
 
 ## Additional Cleanup
+
+- In `app-modules/application/src/Filament/Resources/Applications/Pages/ManageApplicationSubmissions.php`:
+    1. Remove the `if (! ApplicationSubmissionStateDefaultViewFeature::active()) { ... }` fallback block — keep only the `is_default` query and the `return` statement that follows it.
+    2. Remove the `use App\Features\ApplicationSubmissionStateDefaultViewFeature;` import.
+
+- In `app-modules/application/src/Filament/Resources/ApplicationSubmissionStates/Pages/CreateApplicationSubmissionState.php`:
+    1. Remove `->visible(fn () => ApplicationSubmissionStateDefaultViewFeature::active())` from `Toggle::make('is_default')`.
+    2. Remove the `use App\Features\ApplicationSubmissionStateDefaultViewFeature;` import.
+
+- In `app-modules/application/src/Filament/Resources/ApplicationSubmissionStates/Pages/EditApplicationSubmissionState.php`:
+    1. Remove `->visible(fn () => ApplicationSubmissionStateDefaultViewFeature::active())` from `Toggle::make('is_default')`.
+    2. Remove the `use App\Features\ApplicationSubmissionStateDefaultViewFeature;` import.
+
+- In `app-modules/application/src/Filament/Resources/ApplicationSubmissionStates/Pages/ListApplicationSubmissionStates.php`:
+    1. Remove `->visible(fn () => ApplicationSubmissionStateDefaultViewFeature::active())` from `IconColumn::make('is_default')`.
+    2. Remove the `use App\Features\ApplicationSubmissionStateDefaultViewFeature;` import.
+
+- In `app-modules/application/src/Filament/Resources/ApplicationSubmissionStates/Pages/ViewApplicationSubmissionState.php`:
+    1. Remove `->visible(fn () => ApplicationSubmissionStateDefaultViewFeature::active())` from `IconEntry::make('is_default')`.
+    2. Remove the `use App\Features\ApplicationSubmissionStateDefaultViewFeature;` import.
+
+- Delete the feature flag class itself: `app/Features/ApplicationSubmissionStateDefaultViewFeature.php`.
