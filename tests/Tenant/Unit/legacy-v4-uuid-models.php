@@ -146,7 +146,6 @@ use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\Report\Models\Report;
 use AdvisingApp\Report\Models\TrackedEvent;
 use AdvisingApp\Report\Models\TrackedEventCount;
 use AdvisingApp\Research\Models\ResearchRequest;
@@ -414,7 +413,6 @@ return [
     ProspectPhoneNumber::class,
     ProspectSource::class,
     ProspectStatus::class,
-    Report::class,
     TrackedEvent::class,
     TrackedEventCount::class,
     ResearchRequest::class,
