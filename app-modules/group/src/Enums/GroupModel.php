@@ -42,6 +42,8 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\Tables\ProspectsTable;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Tables\StudentsTable;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\QueryBuilder\Constraints\Constraint;
+use Filament\QueryBuilder\Models\Scopes\QueryBuilderScope;
 use Filament\Support\Contracts\HasLabel;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -89,6 +91,20 @@ enum GroupModel: string implements HasLabel
             static::Student => StudentsTable::class,
             static::Prospect => ProspectsTable::class,
         })::configure($table);
+    }
+
+    /**
+     * The QueryBuilder constraints for this model, used to translate a group's dynamic filters
+     * into a query via {@see QueryBuilderScope}.
+     *
+     * @return array<Constraint>
+     */
+    public function queryBuilderConstraints(): array
+    {
+        return match ($this) {
+            static::Student => StudentsTable::getQueryBuilderConstraints(),
+            static::Prospect => ProspectsTable::getQueryBuilderConstraints(),
+        };
     }
 
     public static function parse(GroupModel | string $value): ?static

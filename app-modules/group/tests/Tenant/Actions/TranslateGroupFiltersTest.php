@@ -37,8 +37,11 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Group\Actions\TranslateGroupFilters;
 use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Enums\TagType;
+use App\Models\Tag;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -58,6 +61,69 @@ function studentLastNameContainsFilters(string $text): array
                         'settings' => [
                             'text' => $text,
                         ],
+                    ],
+                ],
+            ],
+        ],
+    ];
+}
+
+/**
+ * @param array<int, string> $tagIds
+ *
+ * @return array<string, mixed>
+ */
+function studentTaggedWithFilters(array $tagIds): array
+{
+    return [
+        'queryBuilder' => [
+            'rules' => [
+                'aBcD' => [
+                    'type' => 'tags',
+                    'data' => [
+                        'operator' => 'isRelatedTo',
+                        'settings' => [
+                            'value' => $tagIds,
+                        ],
+                    ],
+                ],
+            ],
+        ],
+    ];
+}
+
+/**
+ * @param array<int, string> $lastNames
+ *
+ * @return array<string, mixed>
+ */
+function studentLastNameOrFilters(array $lastNames): array
+{
+    $groups = [];
+
+    foreach (array_values($lastNames) as $index => $lastName) {
+        $groups["group{$index}"] = [
+            'rules' => [
+                "rule{$index}" => [
+                    'type' => 'last',
+                    'data' => [
+                        'operator' => 'contains',
+                        'settings' => [
+                            'text' => $lastName,
+                        ],
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    return [
+        'queryBuilder' => [
+            'rules' => [
+                'orBlock' => [
+                    'type' => 'or',
+                    'data' => [
+                        'groups' => $groups,
                     ],
                 ],
             ],
@@ -115,4 +181,82 @@ it('treats empty ad-hoc live filters as no filter', function () {
         ->all();
 
     expect($ids)->toHaveCount(5);
+});
+
+it('resolves relationship constraints identically for saved and ad-hoc live filters', function () {
+    actingAs(User::factory()->licensed(LicenseType::cases())->create());
+
+    $tag = Tag::factory()->create(['type' => TagType::Student]);
+
+    $tagged = Student::factory()->count(3)->create();
+    $tagged->each(fn (Student $student) => $student->tags()->attach($tag));
+
+    Student::factory()->count(2)->create();
+
+    $filters = studentTaggedWithFilters([$tag->getKey()]);
+
+    $group = Group::factory()->create([
+        'model' => GroupModel::Student,
+        'filters' => $filters,
+    ]);
+
+    $savedIds = app(TranslateGroupFilters::class)->execute($group)->pluck((new Student())->getKeyName())->all();
+    $rawIds = app(TranslateGroupFilters::class)->executeRawFilters(GroupModel::Student, $filters)->pluck((new Student())->getKeyName())->all();
+
+    sort($savedIds);
+    sort($rawIds);
+
+    expect($rawIds)->toHaveCount(3)
+        ->and($rawIds)->toEqual($savedIds);
+});
+
+it('resolves OR blocks identically for saved and ad-hoc live filters', function () {
+    actingAs(User::factory()->licensed(LicenseType::cases())->create());
+
+    Student::factory()->count(3)->create(['last' => 'John']);
+    Student::factory()->count(2)->create(['last' => 'Doe']);
+    Student::factory()->count(4)->create(['last' => 'Smith']);
+
+    $filters = studentLastNameOrFilters(['John', 'Doe']);
+
+    $group = Group::factory()->create([
+        'model' => GroupModel::Student,
+        'filters' => $filters,
+    ]);
+
+    $savedIds = app(TranslateGroupFilters::class)->execute($group)->pluck((new Student())->getKeyName())->all();
+    $rawIds = app(TranslateGroupFilters::class)->executeRawFilters(GroupModel::Student, $filters)->pluck((new Student())->getKeyName())->all();
+
+    sort($savedIds);
+    sort($rawIds);
+
+    expect($rawIds)->toHaveCount(5)
+        ->and($rawIds)->toEqual($savedIds);
+});
+
+it('resolves a static group from its stored subject list', function () {
+    actingAs(User::factory()->licensed(LicenseType::cases())->create());
+
+    $members = Student::factory()->count(3)->create();
+    Student::factory()->count(4)->create();
+
+    $group = Group::factory()->create([
+        'model' => GroupModel::Student,
+        'type' => GroupType::Static,
+    ]);
+
+    $members->each(fn (Student $student) => $group->subjects()->create([
+        'subject_id' => $student->getKey(),
+        'subject_type' => $student->getMorphClass(),
+    ]));
+
+    $ids = app(TranslateGroupFilters::class)->execute($group)->pluck((new Student())->getKeyName())->all();
+
+    sort($ids);
+
+    $expected = $members->modelKeys();
+    sort($expected);
+
+    expect($ids)->toHaveCount(3)
+        ->and($ids)->toEqual($expected);
 });

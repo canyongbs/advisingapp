@@ -37,61 +37,50 @@
 namespace AdvisingApp\Group\Actions;
 
 use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Group\Filament\Resources\Groups\Pages\GetGroupQuery;
-use AdvisingApp\Group\Filament\Resources\Groups\Pages\GetGroupQueryFromFilters;
+use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
+use Filament\QueryBuilder\Models\Scopes\QueryBuilderScope;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-
-use function Livewire\trigger;
 
 class TranslateGroupFilters
 {
     /**
+     * Resolve the members of a group as an Eloquent query.
+     *
      * @return Builder<Model>
      */
     public function execute(Group | string $group): Builder
     {
-        // Create a fake Livewire component to replicate the table on the EditGroup page.
-        $page = app('livewire')->new(GetGroupQuery::class);
+        $group = $this->resolveGroup($group);
 
-        if ($group instanceof Group) {
-            $group = $group->getKey();
-        }
-
-        // Mount the fake Livewire component with the desired group.
-        trigger('mount', $page, [$group], null, null);
-
-        // Extract the filtered table query from the fake Livewire component,
-        // which already respects both dynamic and static populations.
-        return $page->getFilteredTableQuery();
+        return $this->applyFilterToQuery($group, $group->model->query());
     }
 
     /**
-     * @param Builder<Model> $query
+     * Apply a group's population (dynamic QueryBuilder filters, or a static list of members)
+     * onto an existing query.
      *
-     * @return Builder<Model>
+     * @template TModel of Model
+     *
+     * @param Builder<TModel> $query
+     *
+     * @return Builder<TModel>
      */
     public function applyFilterToQuery(Group | string $group, Builder $query): Builder
     {
-        // Create a fake Livewire component to replicate the table on the EditSegment page.
-        $page = app('livewire')->new(GetGroupQuery::class);
+        $group = $this->resolveGroup($group);
 
-        if ($group instanceof Group) {
-            $group = $group->getKey();
+        if ($group->type === GroupType::Static) {
+            return $query->whereKey($group->subjects()->pluck('subject_id'));
         }
 
-        // Mount the fake Livewire component with the desired segment.
-        trigger('mount', $page, [$group], null, null);
-
-        // Extract the filtered table query from the fake Livewire component,
-        // which already respects both dynamic and static populations.
-        return $page->filterTableQuery($query);
+        return $this->applyRawFiltersToQuery($group->model, $group->filters ?? [], $query);
     }
 
     /**
-     * Resolve a query from an ad-hoc (unsaved) set of table filters, using the same
-     * table + QueryBuilder constraints as the Group builder for the given model.
+     * Resolve a query from an ad-hoc (unsaved) set of dynamic filters, using the same
+     * QueryBuilder constraints as the Group builder for the given model.
      *
      * @param array<string, mixed> $filters
      *
@@ -99,16 +88,12 @@ class TranslateGroupFilters
      */
     public function executeRawFilters(GroupModel $model, array $filters): Builder
     {
-        $page = app('livewire')->new(GetGroupQueryFromFilters::class);
-
-        trigger('mount', $page, [$model, $filters], null, null);
-
-        return $page->getFilteredTableQuery();
+        return $this->applyRawFiltersToQuery($model, $filters, $model->query());
     }
 
     /**
-     * Apply an ad-hoc (unsaved) set of table filters onto an existing query, using the
-     * same table + QueryBuilder constraints as the Group builder for the given model.
+     * Apply an ad-hoc (unsaved) set of dynamic filters onto an existing query, using the
+     * same QueryBuilder constraints as the Group builder for the given model.
      *
      * @template TModel of Model
      *
@@ -119,10 +104,21 @@ class TranslateGroupFilters
      */
     public function applyRawFiltersToQuery(GroupModel $model, array $filters, Builder $query): Builder
     {
-        $page = app('livewire')->new(GetGroupQueryFromFilters::class);
+        $rules = data_get($filters, 'queryBuilder.rules', []);
 
-        trigger('mount', $page, [$model, $filters], null, null);
+        if (blank($rules)) {
+            return $query;
+        }
 
-        return $page->filterTableQuery($query);
+        return QueryBuilderScope::make($rules, $model->queryBuilderConstraints())($query);
+    }
+
+    private function resolveGroup(Group | string $group): Group
+    {
+        if ($group instanceof Group) {
+            return $group;
+        }
+
+        return Group::query()->findOrFail($group);
     }
 }
