@@ -78,6 +78,9 @@ function actingAsStudentCaseReportUser(): User
     return $user;
 }
 
+/**
+ * @return array<string, mixed>
+ */
 function populationLastNameFilters(string $text): array
 {
     return [
@@ -168,7 +171,7 @@ it('applies a live population filter onto a widget query', function () {
 
     $widget->groupFilter($query, $widget->getSelectedGroup());
 
-    expect($query->get()->modelKeys())->toHaveCount(3);
+    expect($query->pluck((new Student())->getKeyName())->all())->toHaveCount(3);
 });
 
 it('exposes a live population selection to widgets through the page filters', function () {

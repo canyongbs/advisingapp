@@ -43,6 +43,9 @@ use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
+/**
+ * @return array<string, mixed>
+ */
 function studentLastNameContainsFilters(string $text): array
 {
     return [
@@ -75,8 +78,8 @@ it('resolves ad-hoc live filters to the same records as an equivalent saved grou
         'filters' => $filters,
     ]);
 
-    $savedIds = app(TranslateGroupFilters::class)->execute($group)->get()->modelKeys();
-    $rawIds = app(TranslateGroupFilters::class)->executeRawFilters(GroupModel::Student, $filters)->get()->modelKeys();
+    $savedIds = app(TranslateGroupFilters::class)->execute($group)->pluck((new Student())->getKeyName())->all();
+    $rawIds = app(TranslateGroupFilters::class)->executeRawFilters(GroupModel::Student, $filters)->pluck((new Student())->getKeyName())->all();
 
     sort($savedIds);
     sort($rawIds);
@@ -95,8 +98,8 @@ it('applies ad-hoc live filters onto an existing query', function () {
 
     $matchingIds = app(TranslateGroupFilters::class)
         ->applyRawFiltersToQuery(GroupModel::Student, $filters, Student::query())
-        ->get()
-        ->modelKeys();
+        ->pluck((new Student())->getKeyName())
+        ->all();
 
     expect($matchingIds)->toHaveCount(4);
 });
@@ -108,8 +111,8 @@ it('treats empty ad-hoc live filters as no filter', function () {
 
     $ids = app(TranslateGroupFilters::class)
         ->executeRawFilters(GroupModel::Student, [])
-        ->get()
-        ->modelKeys();
+        ->pluck((new Student())->getKeyName())
+        ->all();
 
     expect($ids)->toHaveCount(5);
 });

@@ -110,10 +110,12 @@ class TranslateGroupFilters
      * Apply an ad-hoc (unsaved) set of table filters onto an existing query, using the
      * same table + QueryBuilder constraints as the Group builder for the given model.
      *
-     * @param array<string, mixed> $filters
-     * @param Builder<Model> $query
+     * @template TModel of Model
      *
-     * @return Builder<Model>
+     * @param array<string, mixed> $filters
+     * @param Builder<TModel> $query
+     *
+     * @return Builder<TModel>
      */
     public function applyRawFiltersToQuery(GroupModel $model, array $filters, Builder $query): Builder
     {
