@@ -42,7 +42,6 @@ use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use App\Models\User;
 use App\Settings\LicenseSettings;
-use Filament\Actions\DeleteBulkAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
