@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Exceptions\FileParsingTooManyPagesException;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class FetchFileParsingResults
@@ -72,6 +73,13 @@ class FetchFileParsingResults
 
         if ($status === 'ERROR' || $status === 'CANCELLED') {
             $errorCode = $statusResponse->json('error_code');
+
+            Log::warning('LlamaParse file parsing failed.', [
+                'file_id' => $fileId,
+                'status' => $status,
+                'error_code' => $errorCode,
+                'error_message' => $statusResponse->json('error_message'),
+            ]);
 
             if ($errorCode === 'TOO_MANY_PAGES') {
                 throw new FileParsingTooManyPagesException($fileId);
