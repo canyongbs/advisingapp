@@ -88,7 +88,7 @@ class EditEventRegistration extends EditRecord
                                 if ($newVersion->is_wizard) {
                                     $sort = 1;
                                     $wizardStepVersionMap = [];
-                                    
+
                                     $repeaterState = collect($component->getChildComponentContainer()->getComponents(withHidden: true, withActions: false))
                                         ->first(fn ($component) => $component instanceof Repeater && $component->getName() === 'steps')
                                         ?->getRawState();
@@ -104,7 +104,7 @@ class EditEventRegistration extends EditRecord
                                             'label' => $stepData['label'] ?? 'Untitled Step',
                                             'sort' => $sort++,
                                         ]);
-                                        
+
                                         $mapKey = str_starts_with((string) $key, 'record-') ? substr((string) $key, 7) : (string) $key;
                                         $wizardStepVersionMap[$mapKey] = $newStep;
 
