@@ -94,7 +94,7 @@ class EditEventRegistration extends EditRecord
                                     // Instead, read steps directly from the Repeater component's raw
                                     // Livewire state, which includes unsaved new items from the UI.
                                     $repeaterState = collect($component->getChildComponentContainer()->getComponents(withHidden: true, withActions: false))
-                                        ->first(fn ($c) => $c instanceof Repeater && $c->getName() === 'steps')
+                                        ->first(fn ($component) => $component instanceof Repeater && $component->getName() === 'steps')
                                         ?->getRawState();
 
                                     $steps = ! empty($repeaterState)
