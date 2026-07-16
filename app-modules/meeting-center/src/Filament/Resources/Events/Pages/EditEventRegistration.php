@@ -88,11 +88,7 @@ class EditEventRegistration extends EditRecord
                                 if ($newVersion->is_wizard) {
                                     $sort = 1;
                                     $wizardStepVersionMap = [];
-
-                                    // $data['steps'] is always null because Repeater::relationship()
-                                    // internally calls ->dehydrated(false), excluding it from $data.
-                                    // Instead, read steps directly from the Repeater component's raw
-                                    // Livewire state, which includes unsaved new items from the UI.
+                                    
                                     $repeaterState = collect($component->getChildComponentContainer()->getComponents(withHidden: true, withActions: false))
                                         ->first(fn ($component) => $component instanceof Repeater && $component->getName() === 'steps')
                                         ?->getRawState();
@@ -108,16 +104,10 @@ class EditEventRegistration extends EditRecord
                                             'label' => $stepData['label'] ?? 'Untitled Step',
                                             'sort' => $sort++,
                                         ]);
-                                        // The Repeater prefixes existing-record keys with 'record-'.
-                                        // Strip it so the key matches $record->id in the RichEditor callback.
+                                        
                                         $mapKey = str_starts_with((string) $key, 'record-') ? substr((string) $key, 7) : (string) $key;
                                         $wizardStepVersionMap[$mapKey] = $newStep;
 
-                                        // For newly added steps (temp key, not yet in DB), save their blocks here.
-                                        // The RichEditor's saveRelationships callback cannot run for new items
-                                        // because getRecord() returns null (model is a class string, not an
-                                        // instance) → Component::saveRelationships() returns early before
-                                        // the callback is ever invoked.
                                         if (! str_starts_with((string) $key, 'record-')) {
                                             $stepContent = $stepData['content'] ?? null;
 

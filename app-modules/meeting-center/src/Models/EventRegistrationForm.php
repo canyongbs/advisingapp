@@ -46,6 +46,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
+ * @property string|null $root_id
+ *
  * @mixin IdeHelperEventRegistrationForm
  */
 #[ObservedBy([EventRegistrationFormObserver::class])]
