@@ -96,7 +96,7 @@ abstract class FormFieldBlock extends RichContentCustomBlock
         // (e.g. dragging a new block in). getPreviewLabel() supplies the block default.
         $config['label'] ??= static::getPreviewLabel($config);
         $config['isRequired'] ??= false;
- 
+
         return view(static::previewView(), $config)->render();
     }
 

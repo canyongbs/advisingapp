@@ -60,6 +60,7 @@ class DuplicateEvent
     {
         $duplicatedEventRegistrationForm = $this->original->eventRegistrationForm->replicate();
         $duplicatedEventRegistrationForm->event_id = $this->replica->id;
+
         if (EventVersioningFeature::active()) {
             // replicate() copies root_id/archived_at, which would place the duplicated
             // form in the original event's version tree. Reset them so the observer

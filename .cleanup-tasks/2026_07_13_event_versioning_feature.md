@@ -45,6 +45,6 @@ created: 2026-07-13
     2. Remove the `use App\Features\EventVersioningFeature;` import.
 
 - In `app-modules/meeting-center/src/Actions/DuplicateEvent.php`
-    1. Remove the condition `if (EventVersioningFeature::active())` and the code inside it should run unconditionally. 
+    1. Remove the condition `if (EventVersioningFeature::active())` and the code inside it should run unconditionally.
 
 - Delete the feature flag class itself: `app/Features/EventVersioningFeature.php`.
