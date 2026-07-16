@@ -34,29 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Database\Factories;
+namespace AdvisingApp\Application\Observers;
 
-use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use CanyonGBS\Common\Enums\Color;
-use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends Factory<ApplicationSubmissionState>
- */
-class ApplicationSubmissionStateFactory extends Factory
+class ApplicationSubmissionStateObserver
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    public function saving(ApplicationSubmissionState $applicationSubmissionState): void
     {
-        return [
-            'classification' => $this->faker->randomElement(ApplicationSubmissionStateClassification::cases()),
-            'name' => $this->faker->word,
-            'color' => $this->faker->randomElement(Color::cases())->value,
-            'description' => $this->faker->sentence,
-            'is_default' => false,
-        ];
+        if ($applicationSubmissionState->is_default) {
+            ApplicationSubmissionState::query()
+                ->where('is_default', true)
+                ->update(['is_default' => false]);
+        }
     }
 }

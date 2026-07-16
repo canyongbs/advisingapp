@@ -34,29 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Database\Factories;
+use App\Features\ApplicationSubmissionStateDefaultViewFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
-use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use CanyonGBS\Common\Enums\Color;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends Factory<ApplicationSubmissionState>
- */
-class ApplicationSubmissionStateFactory extends Factory
-{
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'classification' => $this->faker->randomElement(ApplicationSubmissionStateClassification::cases()),
-            'name' => $this->faker->word,
-            'color' => $this->faker->randomElement(Color::cases())->value,
-            'description' => $this->faker->sentence,
-            'is_default' => false,
-        ];
+        DB::transaction(function () {
+            Schema::table('application_submission_states', function (Blueprint $table) {
+                $table->boolean('is_default')->default(false);
+            });
+
+            DB::statement('
+                CREATE UNIQUE INDEX application_submission_states_is_default_unique
+                ON application_submission_states (is_default)
+                WHERE is_default = true AND deleted_at IS NULL;
+            ');
+
+            ApplicationSubmissionStateDefaultViewFeature::activate();
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            ApplicationSubmissionStateDefaultViewFeature::deactivate();
+
+            DB::statement('DROP INDEX IF EXISTS application_submission_states_is_default_unique;');
+
+            Schema::table('application_submission_states', function (Blueprint $table) {
+                $table->dropColumn('is_default');
+            });
+        });
+    }
+};
