@@ -89,6 +89,8 @@ test('archived attendees are hidden by default', function () {
     asSuperAdmin();
 
     $event = Event::factory()->create();
+    $event->attendees()->delete();
+
     $activeAttendee = EventAttendee::factory()->create(['event_id' => $event->id]);
     $archivedAttendee = EventAttendee::factory()->create(['event_id' => $event->id, 'archived_at' => now()]);
 
@@ -102,6 +104,8 @@ test('archived attendees are visible when the withoutArchived filter is removed'
     asSuperAdmin();
 
     $event = Event::factory()->create();
+    $event->attendees()->delete();
+
     $activeAttendee = EventAttendee::factory()->create(['event_id' => $event->id]);
     $archivedAttendee = EventAttendee::factory()->create(['event_id' => $event->id, 'archived_at' => now()]);
 
