@@ -43,18 +43,22 @@ use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 
 class ListForms extends ListRecords
 {
@@ -112,8 +116,52 @@ class ListForms extends ListRecords
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->authorizeIndividualRecords('delete'),
+                    BulkAction::make('archiveOrDelete')
+                        ->label('Archive / Delete')
+                        ->icon('heroicon-o-archive-box')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->modalHeading('Archive or Delete Selected Forms')
+                        ->modalDescription('Forms with submissions will be archived. Forms without submissions will be deleted.')
+                        ->modalSubmitActionLabel('Confirm')
+                        ->action(function (Collection $records): void {
+                            $archived = 0;
+                            $deleted = 0;
+
+                            /** @var Form $record */
+                            foreach ($records as $record) {
+                                $hasSubmissions = FormSubmission::query()
+                                    ->whereHas(
+                                        'submissible',
+                                        fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $record->root_id),
+                                    )
+                                    ->exists();
+
+                                if ($hasSubmissions) {
+                                    $record->archive();
+                                    $archived++;
+                                } else {
+                                    $record->delete();
+                                    $deleted++;
+                                }
+                            }
+
+                            $parts = [];
+
+                            if ($archived > 0) {
+                                $parts[] = "{$archived} " . str('form')->plural($archived) . ' archived';
+                            }
+
+                            if ($deleted > 0) {
+                                $parts[] = "{$deleted} " . str('form')->plural($deleted) . ' deleted';
+                            }
+
+                            Notification::make()
+                                ->title(implode(', ', $parts))
+                                ->success()
+                                ->send();
+                        })
+                        ->deselectRecordsAfterCompletion(),
                 ]),
             ]);
     }

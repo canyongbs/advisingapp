@@ -42,9 +42,13 @@ use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns\HasSharedFormConfiguration;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns\ValidatesProspectGenerationFields;
 use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Form\Models\FormSubmission;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Filament\Support\Facades\FilamentIcon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -96,7 +100,9 @@ class EditForm extends EditRecord
             $this->getSaveFormAction()
                 ->label('Save')
                 ->formId('form'),
-            DeleteAction::make(),
+            $this->getArchiveFormAction(),
+            DeleteAction::make()
+                ->hidden(fn (): bool => $this->formHasSubmissions()),
             $this->getCancelFormAction()
                 ->url(fn () => FormResource::getUrl('view', ['record' => $this->record])),
         ];
@@ -108,9 +114,44 @@ class EditForm extends EditRecord
             $this->getSaveFormAction()
                 ->label('Save')
                 ->formId('form'),
-            DeleteAction::make(),
+            $this->getArchiveFormAction(),
+            DeleteAction::make()
+                ->hidden(fn (): bool => $this->formHasSubmissions()),
             $this->getCancelFormAction()
                 ->url(fn () => FormResource::getUrl('view', ['record' => $this->record])),
         ];
+    }
+
+    private function getArchiveFormAction(): Action
+    {
+        return Action::make('archive')
+            ->label('Archive')
+            ->icon(FilamentIcon::resolve('actions::delete-action') ?? 'heroicon-o-archive-box')
+            ->color('danger')
+            ->requiresConfirmation()
+            ->modalHeading('Archive Form')
+            ->modalDescription('This form has submissions. Archiving will hide it from active use. This action cannot be undone.')
+            ->modalSubmitActionLabel('Archive')
+            ->visible(fn (): bool => $this->formHasSubmissions())
+            ->action(function (): void {
+                /** @var Form $record */
+                $record = $this->record;
+                $record->archive();
+
+                $this->redirect(FormResource::getUrl('index'));
+            });
+    }
+
+    private function formHasSubmissions(): bool
+    {
+        /** @var Form $record */
+        $record = $this->record;
+
+        return FormSubmission::query()
+            ->whereHas(
+                'submissible',
+                fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $record->root_id),
+            )
+            ->exists();
     }
 }

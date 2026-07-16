@@ -39,7 +39,12 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
+use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use App\Features\EventArchivingFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
@@ -118,5 +123,47 @@ class EditEventDetails extends EditRecord
                 ])
                 ->columns(2),
         ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return EventArchivingFeature::active() ? [
+            $this->getArchiveEventAction(),
+            DeleteAction::make()
+                ->hidden(fn (): bool => $this->eventHasAttendees()),
+        ] : [
+            DeleteAction::make()
+                ->hidden(fn (): bool => $this->eventHasAttendees()),
+        ];
+    }
+
+    private function getArchiveEventAction(): Action
+    {
+        return Action::make('archive')
+            ->label('Archive')
+            ->icon('heroicon-o-archive-box')
+            ->color('danger')
+            ->requiresConfirmation()
+            ->modalHeading('Archive Event')
+            ->modalDescription('This event has attendees. Archiving will hide it from active use. This action cannot be undone.')
+            ->modalSubmitActionLabel('Archive')
+            ->visible(fn (): bool => $this->eventHasAttendees())
+            ->action(function (): void {
+                /** @var Event $record */
+                $record = $this->record;
+                $record->archive();
+
+                $this->redirect(EventResource::getUrl('index'));
+            });
+    }
+
+    private function eventHasAttendees(): bool
+    {
+        /** @var Event $record */
+        $record = $this->record;
+
+        return EventAttendee::query()
+            ->where('event_id', $record->id)
+            ->exists();
     }
 }

@@ -38,6 +38,7 @@ use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ListApplications;
 use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -56,21 +57,6 @@ function listApplicationsTestUser(): User
 
     return User::factory()->licensed(LicenseType::cases())->create();
 }
-
-it('the delete bulk action is gated by the delete permission', function () {
-    $user = listApplicationsTestUser();
-    $user->givePermissionTo('application.view-any');
-
-    actingAs($user);
-
-    livewire(ListApplications::class)
-        ->assertTableBulkActionHidden(DeleteBulkAction::class);
-
-    $user->givePermissionTo('application.*.delete');
-
-    livewire(ListApplications::class)
-        ->assertTableBulkActionVisible(DeleteBulkAction::class);
-});
 
 it('the duplicate action is gated by the create permission', function () {
     seed(ApplicationSubmissionStateSeeder::class);
@@ -188,4 +174,21 @@ test('submissions count does not include submissions from unrelated applications
 
     livewire(ListApplications::class)
         ->assertTableColumnStateSet('submissions_count', $expectedCount, $application);
+});
+it('archives applications with submissions and deletes applications without submissions via the archive or delete bulk action', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    asSuperAdmin();
+
+    $applicationWithSubmissions = Application::factory()->create();
+
+    $applicationWithoutSubmissions = Application::factory()->create();
+    $applicationWithoutSubmissions->submissions()->delete();
+
+    livewire(ListApplications::class)
+        ->callTableBulkAction('archiveOrDelete', collect([$applicationWithSubmissions, $applicationWithoutSubmissions]))
+        ->assertSuccessful();
+
+    expect($applicationWithSubmissions->fresh()->archived_at)->not->toBeNull();
+    expect(Application::find($applicationWithoutSubmissions->id))->toBeNull();
 });

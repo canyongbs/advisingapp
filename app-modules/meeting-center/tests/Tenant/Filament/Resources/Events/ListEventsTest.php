@@ -37,6 +37,7 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ListEvents;
 use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use App\Models\User;
@@ -55,21 +56,6 @@ function listEventsTestUser(): User
 
     return User::factory()->licensed(LicenseType::cases())->create();
 }
-
-it('the delete bulk action is gated by the delete permission', function () {
-    $user = listEventsTestUser();
-    $user->givePermissionTo('event.view-any');
-
-    actingAs($user);
-
-    livewire(ListEvents::class)
-        ->assertTableBulkActionHidden(DeleteBulkAction::class);
-
-    $user->givePermissionTo('event.*.delete');
-
-    livewire(ListEvents::class)
-        ->assertTableBulkActionVisible(DeleteBulkAction::class);
-});
 
 it('the duplicate action is gated by the create permission', function () {
     $user = listEventsTestUser();
@@ -154,4 +140,19 @@ it('gives a duplicated event registration form its own version tree rather than 
     expect($duplicatedForm->root_id)->toBe($duplicatedForm->id);
     expect($duplicatedForm->root_id)->not->toBe($event->eventRegistrationForm->root_id);
     expect($duplicatedForm->archived_at)->toBeNull();
+it('archives events with attendees and deletes events without attendees via the archive or delete bulk action', function () {
+    asSuperAdmin();
+
+    $eventWithAttendees = Event::factory()->create(['starts_at' => now()->addWeek()]);
+    EventAttendee::factory()->create(['event_id' => $eventWithAttendees->id]);
+
+    $eventWithoutAttendees = Event::factory()->create(['starts_at' => now()->addWeek()]);
+
+    livewire(ListEvents::class)
+        ->removeTableFilter('pastEvents')
+        ->callTableBulkAction('archiveOrDelete', collect([$eventWithAttendees, $eventWithoutAttendees]))
+        ->assertSuccessful();
+
+    expect($eventWithAttendees->fresh()->archived_at)->not->toBeNull();
+    expect(Event::find($eventWithoutAttendees->id))->toBeNull();
 });

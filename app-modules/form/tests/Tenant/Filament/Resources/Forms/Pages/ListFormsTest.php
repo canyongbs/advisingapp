@@ -55,21 +55,6 @@ function listFormsTestUser(): User
     return User::factory()->licensed(LicenseType::cases())->create();
 }
 
-it('the delete bulk action is gated by the delete permission', function () {
-    $user = listFormsTestUser();
-    $user->givePermissionTo('form.view-any');
-
-    actingAs($user);
-
-    livewire(ListForms::class)
-        ->assertTableBulkActionHidden(DeleteBulkAction::class);
-
-    $user->givePermissionTo('form.*.delete');
-
-    livewire(ListForms::class)
-        ->assertTableBulkActionVisible(DeleteBulkAction::class);
-});
-
 it('the create action is gated by the create permission', function () {
     $user = listFormsTestUser();
     $user->givePermissionTo('form.view-any');
@@ -203,4 +188,24 @@ it('does not count submissions from unrelated forms in the submissions count', f
 
     livewire(ListForms::class)
         ->assertTableColumnStateSet('submissions_count', 2, $form);
+});
+
+it('archives forms with submissions and deletes forms without submissions via the archive or delete bulk action', function () {
+    asSuperAdmin();
+
+    $formWithSubmissions = Form::factory()->create();
+
+    FormSubmission::factory()->create([
+        'form_id' => $formWithSubmissions->id,
+        'submitted_at' => now(),
+    ]);
+
+    $formWithoutSubmissions = Form::factory()->create();
+
+    livewire(ListForms::class)
+        ->callTableBulkAction('archiveOrDelete', collect([$formWithSubmissions, $formWithoutSubmissions]))
+        ->assertSuccessful();
+
+    expect($formWithSubmissions->fresh()->archived_at)->not->toBeNull();
+    expect(Form::find($formWithoutSubmissions->id))->toBeNull();
 });
