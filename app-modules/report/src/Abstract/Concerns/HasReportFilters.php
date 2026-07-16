@@ -34,42 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Abstract;
+namespace AdvisingApp\Report\Abstract\Concerns;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Report\Abstract\Concerns\HasReportFilters;
 use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
-use AdvisingApp\Report\Enums\ReportAccessKey;
-use App\Features\ReportingFeature;
-use App\Models\User;
-use Filament\Pages\Dashboard;
 
-abstract class ProspectReport extends Dashboard implements HasGroupModel
+/**
+ * Combines the standard report {@see HasFiltersForm} with the {@see HasPopulationFilter}
+ * "Advanced Filtering" experience, for reports that are compatible with population groups.
+ *
+ * The host page must implement {@see HasGroupModel}. The
+ * live-filter builder and saved-group select each own their own nested table components, so the
+ * report page itself does not need to be a table.
+ */
+trait HasReportFilters
 {
-    use HasReportFilters;
-
-    protected string $view = 'report::filament.pages.report';
-
-    public function persistsFiltersInSession(): bool
-    {
-        return false;
-    }
-
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
-
-        if (! ReportingFeature::active()) {
-            return $user->hasLicense(LicenseType::RecruitmentCrm) && $user->can('report-library.view-any');
-        }
-
-        return $user->hasLicense(LicenseType::RecruitmentCrm) && (ReportAccessKey::fromPageClass(static::class)?->userCanAccess($user) ?? false);
-    }
-
-    public function groupModel(): ?GroupModel
-    {
-        return GroupModel::Prospect;
-    }
+    use HasFiltersForm;
+    use HasPopulationFilter;
 }

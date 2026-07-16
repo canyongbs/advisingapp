@@ -36,7 +36,9 @@
 
 namespace AdvisingApp\Group\Actions;
 
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Filament\Resources\Groups\Pages\GetGroupQuery;
+use AdvisingApp\Group\Filament\Resources\Groups\Pages\GetGroupQueryFromFilters;
 use AdvisingApp\Group\Models\Group;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -84,6 +86,41 @@ class TranslateGroupFilters
 
         // Extract the filtered table query from the fake Livewire component,
         // which already respects both dynamic and static populations.
+        return $page->filterTableQuery($query);
+    }
+
+    /**
+     * Resolve a query from an ad-hoc (unsaved) set of table filters, using the same
+     * table + QueryBuilder constraints as the Group builder for the given model.
+     *
+     * @param array<string, mixed> $filters
+     *
+     * @return Builder<Model>
+     */
+    public function executeRawFilters(GroupModel $model, array $filters): Builder
+    {
+        $page = app('livewire')->new(GetGroupQueryFromFilters::class);
+
+        trigger('mount', $page, [$model, $filters], null, null);
+
+        return $page->getFilteredTableQuery();
+    }
+
+    /**
+     * Apply an ad-hoc (unsaved) set of table filters onto an existing query, using the
+     * same table + QueryBuilder constraints as the Group builder for the given model.
+     *
+     * @param array<string, mixed> $filters
+     * @param Builder<Model> $query
+     *
+     * @return Builder<Model>
+     */
+    public function applyRawFiltersToQuery(GroupModel $model, array $filters, Builder $query): Builder
+    {
+        $page = app('livewire')->new(GetGroupQueryFromFilters::class);
+
+        trigger('mount', $page, [$model, $filters], null, null);
+
         return $page->filterTableQuery($query);
     }
 }

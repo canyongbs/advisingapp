@@ -34,42 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Abstract;
+namespace AdvisingApp\Report\Filament\Forms\Components;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Report\Abstract\Concerns\HasReportFilters;
-use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
-use AdvisingApp\Report\Enums\ReportAccessKey;
-use App\Features\ReportingFeature;
-use App\Models\User;
-use Filament\Pages\Dashboard;
+use Closure;
+use Filament\Forms\Components\Field;
+use Filament\Forms\Components\TableSelect;
 
-abstract class ProspectReport extends Dashboard implements HasGroupModel
+/**
+ * A field that recreates the Group builder experience — the subject model's table and its
+ * QueryBuilder constraints — and binds the resulting filter state (rather than selected rows)
+ * to the field. It is a tweaked version of Filament's {@see TableSelect}
+ * that owns its own nested table component (and therefore its own modal stack), so it can be
+ * rendered safely inside an action modal without recursing into that modal.
+ */
+class LiveFilterBuilder extends Field
 {
-    use HasReportFilters;
+    /**
+     * @var view-string
+     */
+    protected string $view = 'report::filament.forms.components.live-filter-builder';
 
-    protected string $view = 'report::filament.pages.report';
+    protected GroupModel | Closure | null $groupModel = null;
 
-    public function persistsFiltersInSession(): bool
+    public function groupModel(GroupModel | Closure | null $model): static
     {
-        return false;
+        $this->groupModel = $model;
+
+        return $this;
     }
 
-    public static function canAccess(): bool
+    public function getGroupModel(): GroupModel
     {
-        /** @var User $user */
-        $user = auth()->user();
-
-        if (! ReportingFeature::active()) {
-            return $user->hasLicense(LicenseType::RecruitmentCrm) && $user->can('report-library.view-any');
-        }
-
-        return $user->hasLicense(LicenseType::RecruitmentCrm) && (ReportAccessKey::fromPageClass(static::class)?->userCanAccess($user) ?? false);
-    }
-
-    public function groupModel(): ?GroupModel
-    {
-        return GroupModel::Prospect;
+        return $this->evaluate($this->groupModel) ?? GroupModel::default();
     }
 }
