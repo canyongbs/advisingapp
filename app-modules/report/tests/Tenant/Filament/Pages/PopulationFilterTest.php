@@ -272,7 +272,8 @@ it('clears the population selection', function () {
 });
 
 it('saves a live filter as a group', function () {
-    actingAsStudentCaseReportUser();
+    $user = actingAsStudentCaseReportUser();
+    $user->givePermissionTo('group.create');
 
     $filters = populationLastNameFilters('John');
 
@@ -290,4 +291,12 @@ it('saves a live filter as a group', function () {
         ->and($group->model)->toBe(GroupModel::Student)
         ->and($group->type)->toBe(GroupType::Dynamic)
         ->and($group->filters)->toBe($filters);
+});
+
+it('hides the save as group action without the create group permission', function () {
+    actingAsStudentCaseReportUser();
+
+    livewire(StudentCaseReport::class)
+        ->set('population', ['type' => 'live', 'liveFilters' => populationLastNameFilters('John')])
+        ->assertActionDoesNotExist(populationAction('saveAsGroup'));
 });

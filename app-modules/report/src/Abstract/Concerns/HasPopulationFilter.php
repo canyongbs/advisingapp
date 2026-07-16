@@ -51,6 +51,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Text;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Url;
 
 /**
@@ -211,7 +212,9 @@ trait HasPopulationFilter
             ->label('Save as group')
             ->icon(Heroicon::Bookmark)
             ->color('gray')
-            ->visible(fn (): bool => $this->getPopulationType() === 'live' && filled($this->getSelectedLiveFilters()))
+            ->visible(fn (): bool => $this->getPopulationType() === 'live'
+                && filled($this->getSelectedLiveFilters())
+                && Gate::allows('create', Group::class))
             ->modalHeading('Save as group')
             ->modalDescription('Save this live filter as a reusable group.')
             ->modalWidth(Width::Medium)

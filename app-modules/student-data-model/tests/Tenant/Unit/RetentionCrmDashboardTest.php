@@ -94,8 +94,6 @@ it('renders all students correctly in the retention dashboard', function () {
 });
 
 it('exposes the advanced filtering population selector on the retention dashboard', function () {
-    ReportingFeature::activate();
-
     $user = User::factory()->licensed([LicenseType::RetentionCrm])->create();
 
     ReportUserAccess::factory()->create([
