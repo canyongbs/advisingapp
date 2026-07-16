@@ -51,7 +51,7 @@ class ProspectStatusSort implements Sort
      */
     public function __invoke(Builder $query, bool $descending, string $property): Builder
     {
-        $direction = $descending ? 'DESC' : 'ASC';
+        $direction = $descending ? 'desc' : 'asc';
 
         return $query
             ->leftJoin('prospect_statuses as ps', 'prospects.status_id', '=', 'ps.id')

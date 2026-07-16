@@ -34,17 +34,19 @@
 </COPYRIGHT>
 */
 
+use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends SettingsMigration {
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        $this->migrator->repository('landlord_database');
+        DB::transaction(function () {
+            $this->migrator->repository('landlord_database');
 
-        $this->migrator->add('brand.color_overrides', []);
-        $this->migrator->add('brand.custom_css');
-        $this->migrator->add('brand.has_dark_mode', true);
+            $this->migrator->add('brand.color_overrides', []);
+            $this->migrator->add('brand.custom_css');
+            $this->migrator->add('brand.has_dark_mode', true);
+        });
     }
 };

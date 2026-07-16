@@ -44,6 +44,9 @@ use Illuminate\Database\Eloquent\Scope;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+/**
+ * @implements Scope<Model>
+ */
 class RetentionCrmRestrictionScope implements Scope
 {
     public function apply(Builder $builder, Model $model): void

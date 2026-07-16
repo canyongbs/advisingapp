@@ -34,48 +34,50 @@
 </COPYRIGHT>
 */
 
+use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends SettingsMigration {
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        // TODO: When we eventually have a paradigm for validating and retrieving license data, change this to both default to null, nothing passed into the second argument
+        DB::transaction(function () {
+            // TODO: When we eventually have a paradigm for validating and retrieving license data, change this to both default to null, nothing passed into the second argument
 
-        $this->migrator->addEncrypted('license.license_key', null);
-        $this->migrator->addEncrypted(
-            'license.data',
-            [
-                'updated_at' => now(),
-                'subscription' => [
-                    'client_name' => null,
-                    'partner_name' => null,
-                    'client_po' => null,
-                    'partner_po' => null,
-                    'start_date' => null,
-                    'end_date' => null,
-                ],
-                'limits' => [
-                    'conversational_ai_seats' => 0,
-                    'retention_crm_seats' => 0,
-                    'recruitment_crm_seats' => 0,
-                    'emails' => 0,
-                    'sms' => 0,
-                    'reset_date' => null,
-                ],
-                'addons' => [
-                    'online_forms' => false,
-                    'online_surveys' => false,
-                    'online_admissions' => false,
-                    'service_management' => false,
-                    'knowledge_management' => false,
-                    'event_management' => false,
-                    'realtime_chat' => false,
-                    'mobileApps' => false,
-                    'schedule_and_appointments' => false,
-                ],
-            ]
-        );
+            $this->migrator->addEncrypted('license.license_key', null);
+            $this->migrator->addEncrypted(
+                'license.data',
+                [
+                    'updated_at' => now(),
+                    'subscription' => [
+                        'client_name' => null,
+                        'partner_name' => null,
+                        'client_po' => null,
+                        'partner_po' => null,
+                        'start_date' => null,
+                        'end_date' => null,
+                    ],
+                    'limits' => [
+                        'conversational_ai_seats' => 0,
+                        'retention_crm_seats' => 0,
+                        'recruitment_crm_seats' => 0,
+                        'emails' => 0,
+                        'sms' => 0,
+                        'reset_date' => null,
+                    ],
+                    'addons' => [
+                        'online_forms' => false,
+                        'online_surveys' => false,
+                        'online_admissions' => false,
+                        'service_management' => false,
+                        'knowledge_management' => false,
+                        'event_management' => false,
+                        'realtime_chat' => false,
+                        'mobileApps' => false,
+                        'schedule_and_appointments' => false,
+                    ],
+                ]
+            );
+        });
     }
 };

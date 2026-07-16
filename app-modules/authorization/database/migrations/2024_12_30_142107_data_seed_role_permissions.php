@@ -40,6 +40,7 @@ use Illuminate\Database\Migrations\Migration;
 return new class () extends Migration {
     use CanModifyPermissions;
 
+    /** @var array<string, string> */
     private array $permissions = [
         'role.*.delete' => 'Role',
         'role.*.force-delete' => 'Role',
@@ -48,6 +49,7 @@ return new class () extends Migration {
         'role.create' => 'Role',
     ];
 
+    /** @var list<string> */
     private array $permissionsToDelete = [
         'role_group.view-any',
         'role_group.create',
@@ -58,12 +60,12 @@ return new class () extends Migration {
         'role_group.*.force-delete',
     ];
 
+    /** @var list<string> */
     private array $guards = [
         'web',
         'api',
     ];
 
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
         collect($this->guards)

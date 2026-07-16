@@ -53,7 +53,7 @@ trait InteractsWithHistory
 
     public static function bootInteractsWithHistory(): void
     {
-        static::observe(HistorySubjectObserver::class);
+        static::whenBooted(fn () => static::observe(HistorySubjectObserver::class));
     }
 
     /**

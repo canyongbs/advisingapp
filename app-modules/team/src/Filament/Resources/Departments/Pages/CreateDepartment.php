@@ -62,7 +62,7 @@ class CreateDepartment extends CreateRecord
                     ->required()
                     ->string(),
                 Select::make('division_id')
-                    ->relationship('division', 'name', modifyQueryUsing: fn (Builder $query) => $query->orderBy('is_default', 'DESC'))
+                    ->relationship('division', 'name', modifyQueryUsing: fn (Builder $query) => $query->orderBy('is_default', 'desc'))
                     ->searchable()
                     ->preload()
                     ->default(

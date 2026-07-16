@@ -49,7 +49,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
 use Prism\Prism\Enums\FinishReason;
-use Prism\Prism\Prism;
+use Prism\Prism\Facades\Prism;
 use Prism\Prism\Testing\TextResponseFake;
 
 use function Tests\asSuperAdmin;

@@ -58,7 +58,7 @@ class StudentTagsAction extends Action
                 Select::make('tag_ids')
                     ->options(
                         fn (): array => Tag::where('type', TagType::Student)
-                            ->orderBy('name', 'ASC')
+                            ->orderBy('name', 'asc')
                             ->pluck('name', 'id')
                             ->toArray()
                     )

@@ -98,7 +98,7 @@ class ProspectPipelineKanban extends Component implements HasForms, HasActions
      */
     public function getStages(): Collection
     {
-        return PipelineStage::orderBy('order', 'ASC')
+        return PipelineStage::orderBy('order', 'asc')
             ->whereHas('pipeline', function (Builder $query) {
                 return $query->where('id', $this->pipeline->getKey());
             })

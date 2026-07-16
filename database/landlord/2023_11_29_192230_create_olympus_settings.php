@@ -34,17 +34,19 @@
 </COPYRIGHT>
 */
 
+use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 /** @phpstan-ignore Common.migrationMissingDownMethod */
 return new class () extends SettingsMigration {
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction
     public function up(): void
     {
-        $this->migrator->repository('landlord_database');
+        DB::transaction(function () {
+            $this->migrator->repository('landlord_database');
 
-        $this->migrator->addEncrypted('olympus.application_id');
-        $this->migrator->addEncrypted('olympus.key');
-        $this->migrator->addEncrypted('olympus.url');
+            $this->migrator->addEncrypted('olympus.application_id');
+            $this->migrator->addEncrypted('olympus.key');
+            $this->migrator->addEncrypted('olympus.url');
+        });
     }
 };
