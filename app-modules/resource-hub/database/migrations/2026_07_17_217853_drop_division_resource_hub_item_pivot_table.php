@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -34,29 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\ResourceHub\Database\Factories;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
-use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends Factory<ResourceHubArticle>
- */
-class ResourceHubArticleFactory extends Factory
+return new class extends Migration
 {
-    public function definition(): array
+    public function up(): void
     {
-        return [
-            'public' => $this->faker->boolean(),
-            'title' => $this->faker->sentence(),
-            'article_details' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->paragraph()]]]]],
-            'notes' => $this->faker->paragraph(),
-            'quality_id' => ResourceHubQuality::factory(),
-            'status_id' => ResourceHubStatus::factory(),
-            'category_id' => ResourceHubCategory::factory(),
-        ];
+        Schema::dropIfExists('division_resource_hub_item');
     }
-}
+
+    public function down(): void
+    {
+        Schema::create('division_resource_hub_item', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('resource_hub_item_id')->references('id')->on('resource_hub_articles');
+            $table->foreignUuid('division_id')->references('id')->on('divisions');
+            $table->timestamps();
+        });
+    }
+};

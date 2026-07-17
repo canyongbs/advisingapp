@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages;
 
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\ResourceHub\Filament\Actions\AssignManagerBulkAction;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
@@ -61,7 +60,6 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Validation\ValidationException;
 
 class ListResourceHubArticles extends ListRecords
 {
@@ -162,26 +160,6 @@ class ListResourceHubArticles extends ListRecords
                                     ->searchable()
                                     ->preload()
                                     ->exists((new ResourceHubCategory())->getTable(), (new ResourceHubCategory())->getKeyName()),
-                                Select::make('division')
-                                    ->label('Division')
-                                    ->multiple()
-                                    ->relationship('division', 'name')
-                                    ->searchable(['name', 'code'])
-                                    ->preload()
-                                    ->default(
-                                        fn () => [
-                                            auth()->user()->department?->division?->getKey()
-                                                ?? Division::query()
-                                                    ->where('is_default', true)
-                                                    ->first()
-                                                    ?->getKey()
-                                                ?? Division::query()->first()?->getKey()
-                                                ?? throw ValidationException::withMessages(['No division found']),
-                                        ]
-                                    )
-                                    ->saveRelationshipsWhenHidden()
-                                    ->visible(fn (): bool => Division::count() > 1)
-                                    ->exists((new Division())->getTable(), (new Division())->getKeyName()),
                             ]),
                     ])
                     ->before(function (array $data, Model $record) {
@@ -190,12 +168,6 @@ class ListResourceHubArticles extends ListRecords
                         $record->notes = $data['notes'];
                     })
                     ->after(function (ResourceHubArticle $replica, ResourceHubArticle $record): void {
-                        $record->load('division');
-
-                        foreach ($record->division as $divison) {
-                            $replica->division()->attach($divison->id);
-                        }
-
                         $media = $record->getMedia('article_details');
                         $uuidMap = [];
 
