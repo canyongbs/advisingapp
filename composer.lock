@@ -4323,7 +4323,7 @@
         },
         {
             "name": "filament/actions",
-            "version": "v4.12.0",
+            "version": "v4.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/actions.git",
@@ -4372,7 +4372,7 @@
         },
         {
             "name": "filament/filament",
-            "version": "v4.12.0",
+            "version": "v4.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/panels.git",
@@ -4429,16 +4429,16 @@
         },
         {
             "name": "filament/forms",
-            "version": "v4.12.0",
+            "version": "v4.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/forms.git",
-                "reference": "60642ce9a900e06dfd1ba3bb28a416744f543dc2"
+                "reference": "edba08804e3e60fed8806e08b2470287d8e08706"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/forms/zipball/60642ce9a900e06dfd1ba3bb28a416744f543dc2",
-                "reference": "60642ce9a900e06dfd1ba3bb28a416744f543dc2",
+                "url": "https://api.github.com/repos/filamentphp/forms/zipball/edba08804e3e60fed8806e08b2470287d8e08706",
+                "reference": "edba08804e3e60fed8806e08b2470287d8e08706",
                 "shasum": ""
             },
             "require": {
@@ -4475,20 +4475,20 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-07-17T11:48:11+00:00"
+            "time": "2026-07-17T13:30:44+00:00"
         },
         {
             "name": "filament/infolists",
-            "version": "v4.12.0",
+            "version": "v4.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/infolists.git",
-                "reference": "d051ca14f590cfc6ba8d3ba867c4cbb2e89a1a28"
+                "reference": "78e792e8336760fbe165442d0e112f9f27036a99"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/infolists/zipball/d051ca14f590cfc6ba8d3ba867c4cbb2e89a1a28",
-                "reference": "d051ca14f590cfc6ba8d3ba867c4cbb2e89a1a28",
+                "url": "https://api.github.com/repos/filamentphp/infolists/zipball/78e792e8336760fbe165442d0e112f9f27036a99",
+                "reference": "78e792e8336760fbe165442d0e112f9f27036a99",
                 "shasum": ""
             },
             "require": {
@@ -4520,11 +4520,11 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-07-17T11:41:07+00:00"
+            "time": "2026-07-17T13:19:09+00:00"
         },
         {
             "name": "filament/notifications",
-            "version": "v4.12.0",
+            "version": "v4.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/notifications.git",
@@ -4571,7 +4571,7 @@
         },
         {
             "name": "filament/query-builder",
-            "version": "v4.12.0",
+            "version": "v4.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/query-builder.git",
@@ -4617,16 +4617,16 @@
         },
         {
             "name": "filament/schemas",
-            "version": "v4.12.0",
+            "version": "v4.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/schemas.git",
-                "reference": "ee86b2c07f29472bcd9cd15564550f3d7d5482b2"
+                "reference": "e9b736636fae793684faad145e522a3ae46f0c99"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/filamentphp/schemas/zipball/ee86b2c07f29472bcd9cd15564550f3d7d5482b2",
-                "reference": "ee86b2c07f29472bcd9cd15564550f3d7d5482b2",
+                "url": "https://api.github.com/repos/filamentphp/schemas/zipball/e9b736636fae793684faad145e522a3ae46f0c99",
+                "reference": "e9b736636fae793684faad145e522a3ae46f0c99",
                 "shasum": ""
             },
             "require": {
@@ -4658,11 +4658,11 @@
                 "issues": "https://github.com/filamentphp/filament/issues",
                 "source": "https://github.com/filamentphp/filament"
             },
-            "time": "2026-07-17T11:47:34+00:00"
+            "time": "2026-07-17T13:31:08+00:00"
         },
         {
             "name": "filament/spatie-laravel-media-library-plugin",
-            "version": "v4.12.0",
+            "version": "v4.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-media-library-plugin.git",
@@ -4699,7 +4699,7 @@
         },
         {
             "name": "filament/spatie-laravel-settings-plugin",
-            "version": "v4.12.0",
+            "version": "v4.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/spatie-laravel-settings-plugin.git",
@@ -4743,7 +4743,7 @@
         },
         {
             "name": "filament/support",
-            "version": "v4.12.0",
+            "version": "v4.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/support.git",
@@ -4801,7 +4801,7 @@
         },
         {
             "name": "filament/tables",
-            "version": "v4.12.0",
+            "version": "v4.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/tables.git",
@@ -4847,7 +4847,7 @@
         },
         {
             "name": "filament/widgets",
-            "version": "v4.12.0",
+            "version": "v4.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/filamentphp/widgets.git",
@@ -5345,22 +5345,22 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "7.14.2",
+            "version": "7.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "fa88c57803501ad0770f5cddb1e60525d49da9a1"
+                "reference": "90bd104afeb0fcc2190c9eb6fd8a441447e4b30d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/fa88c57803501ad0770f5cddb1e60525d49da9a1",
-                "reference": "fa88c57803501ad0770f5cddb1e60525d49da9a1",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/90bd104afeb0fcc2190c9eb6fd8a441447e4b30d",
+                "reference": "90bd104afeb0fcc2190c9eb6fd8a441447e4b30d",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "guzzlehttp/promises": "^2.5.1",
-                "guzzlehttp/psr7": "^2.12.5",
+                "guzzlehttp/psr7": "^2.13",
                 "php": "^7.2.5 || ^8.0",
                 "psr/http-client": "^1.0",
                 "symfony/deprecation-contracts": "^2.5 || ^3.0",
@@ -5373,7 +5373,7 @@
                 "bamarni/composer-bin-plugin": "^1.8.2",
                 "ext-curl": "*",
                 "guzzle/client-integration-tests": "3.0.3",
-                "guzzlehttp/test-server": "^0.6",
+                "guzzlehttp/test-server": "^0.7",
                 "php-http/message-factory": "^1.1",
                 "phpunit/phpunit": "^8.5.52 || ^9.6.34",
                 "psr/log": "^1.1 || ^2.0 || ^3.0"
@@ -5453,7 +5453,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/guzzle/issues",
-                "source": "https://github.com/guzzle/guzzle/tree/7.14.2"
+                "source": "https://github.com/guzzle/guzzle/tree/7.15.0"
             },
             "funding": [
                 {
@@ -5469,7 +5469,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-07-14T18:15:01+00:00"
+            "time": "2026-07-17T12:26:48+00:00"
         },
         {
             "name": "guzzlehttp/promises",
