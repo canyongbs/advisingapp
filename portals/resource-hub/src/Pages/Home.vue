@@ -117,7 +117,12 @@
         loadingResults.value = true;
 
         try {
-            const response = await apiPost(config.searchUrl, {
+            // `searchUrl` is a full signed URL (e.g. `${apiUrl}/search?signature=...`).
+            // `apiPost` expects a path relative to the configured API base URL, so strip
+            // that base URL off, keeping the signature/expiry query string intact.
+            const searchPath = config.searchUrl.replace(config.apiUrl, '');
+
+            const response = await apiPost(searchPath, {
                 search: value,
                 page,
                 filter: filter.value,
