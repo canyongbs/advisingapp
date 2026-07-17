@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\RenameTeamToDepartmentFeature;
 use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
@@ -73,16 +72,12 @@ return new class () extends Migration {
             $this->renamePermissionGroups([
                 'Team' => 'Department',
             ]);
-
-            RenameTeamToDepartmentFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            RenameTeamToDepartmentFeature::deactivate();
-
             collect($this->guards)->each(function (string $guard) {
                 $this->renamePermissions(array_flip($this->permissions), $guard);
             });

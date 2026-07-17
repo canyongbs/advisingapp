@@ -39,7 +39,6 @@ use AdvisingApp\Team\Filament\Resources\Departments\Pages\EditDepartment;
 use AdvisingApp\Team\Filament\Resources\Departments\Pages\ViewDepartment;
 use AdvisingApp\Team\Filament\Resources\Departments\RelationManagers\UsersRelationManager;
 use AdvisingApp\Team\Models\Department;
-use App\Features\RenameTeamToDepartmentFeature;
 use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Actions\AssociateAction;
@@ -67,8 +66,8 @@ test('EditDepartment is gated with proper access control', function () {
     ])
         ->assertForbidden();
 
-    $user->givePermissionTo(RenameTeamToDepartmentFeature::active() ? 'department.view-any' : 'team.view-any');
-    $user->givePermissionTo(RenameTeamToDepartmentFeature::active() ? 'department.*.update' : 'team.*.update');
+    $user->givePermissionTo('department.view-any');
+    $user->givePermissionTo('department.*.update');
 
     actingAs($user)
         ->get(
@@ -100,8 +99,8 @@ test('Non Super Admin Users can be added to a department', function () {
     $user = User::factory()->create();
     $department = Department::factory()->has(User::factory()->count(1))->create();
 
-    $user->givePermissionTo(RenameTeamToDepartmentFeature::active() ? 'department.view-any' : 'team.view-any');
-    $user->givePermissionTo(RenameTeamToDepartmentFeature::active() ? 'department.*.update' : 'team.*.update');
+    $user->givePermissionTo('department.view-any');
+    $user->givePermissionTo('department.*.update');
     $user->givePermissionTo('user.view-any');
     $user->givePermissionTo('user.*.update');
 
@@ -129,8 +128,8 @@ test('Super Admin Users cannot be added to a department', function () {
     $superAdmin = User::factory()->create();
     $department = Department::factory()->create();
 
-    $user->givePermissionTo(RenameTeamToDepartmentFeature::active() ? 'department.view-any' : 'team.view-any');
-    $user->givePermissionTo(RenameTeamToDepartmentFeature::active() ? 'department.*.update' : 'team.*.update');
+    $user->givePermissionTo('department.view-any');
+    $user->givePermissionTo('department.*.update');
     $user->givePermissionTo('user.view-any');
     $user->givePermissionTo('user.*.update');
 
@@ -161,8 +160,8 @@ test('Super Admin Users do not show up in UsersRelationManager for Departments s
     $superAdmin = User::factory()->create();
     $department = Department::factory()->create();
 
-    $user->givePermissionTo(RenameTeamToDepartmentFeature::active() ? 'department.view-any' : 'team.view-any');
-    $user->givePermissionTo(RenameTeamToDepartmentFeature::active() ? 'department.*.update' : 'team.*.update');
+    $user->givePermissionTo('department.view-any');
+    $user->givePermissionTo('department.*.update');
     $user->givePermissionTo('user.view-any');
     $user->givePermissionTo('user.*.update');
 
@@ -194,8 +193,8 @@ test('the associate action in the department users relation manager is gated by 
     $department = Department::factory()->create();
 
     $user = User::factory()->create();
-    $user->givePermissionTo(RenameTeamToDepartmentFeature::active() ? 'department.view-any' : 'team.view-any');
-    $user->givePermissionTo(RenameTeamToDepartmentFeature::active() ? 'department.*.view' : 'team.*.view');
+    $user->givePermissionTo('department.view-any');
+    $user->givePermissionTo('department.*.view');
     $user->givePermissionTo('user.view-any');
 
     actingAs($user);
@@ -205,7 +204,7 @@ test('the associate action in the department users relation manager is gated by 
         'pageClass' => ViewDepartment::class,
     ])->assertTableActionHidden(AssociateAction::class);
 
-    $user->givePermissionTo(RenameTeamToDepartmentFeature::active() ? 'department.*.update' : 'team.*.update');
+    $user->givePermissionTo('department.*.update');
 
     livewire(UsersRelationManager::class, [
         'ownerRecord' => $department,
