@@ -68,7 +68,7 @@ class ViewApplicationSubmissionState extends ViewRecord
                             ->label('Description'),
                         IconEntry::make('is_default')
                             ->label('Default')
-                          ->boolean(),
+                            ->boolean(),
                     ])
                     ->columns(),
             ]);

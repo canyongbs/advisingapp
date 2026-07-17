@@ -92,7 +92,7 @@ class CreateApplicationSubmissionState extends CreateRecord
 
                         return "The current default state is '{$currentDefault}', you are replacing it.";
                     })
-          ->hintColor('danger'),
+                    ->hintColor('danger'),
             ]);
     }
 }

@@ -77,7 +77,7 @@ class ListApplicationSubmissionStates extends ListRecords
                     ->sortable(),
                 IconColumn::make('is_default')
                     ->label('Default')
-                  ->boolean(),
+                    ->boolean(),
             ])
             // @phpstan-ignore argument.templateType
             ->modifyQueryUsing(fn (Builder $query) => $query->withoutArchivedAndUnused()) // @phpstan-ignore method.notFound
