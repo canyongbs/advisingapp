@@ -71,7 +71,8 @@ class UploadFileForParsing
         ]));
 
         $data = [
-            'parse_mode' => $this->isImage($mimeType) ? 'parse_page_with_lvm' : 'parse_page_with_llm',
+            'tier' => $this->isImage($mimeType) ? 'agentic' : 'cost_effective',
+            'version' => 'latest',
             'do_not_cache' => true,
             'user_prompt' => 'If the upload has images retrieve text from it and also describe the image in detail. If the upload seems to be just an image with no text in it, just return the image description.',
         ];

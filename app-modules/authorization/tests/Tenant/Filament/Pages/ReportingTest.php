@@ -36,9 +36,9 @@
 
 use AdvisingApp\Authorization\Filament\Pages\Reporting;
 use AdvisingApp\Report\Enums\ReportAccessKey;
-use AdvisingApp\Report\Models\ReportTeamAccess;
+use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Features\ReportingFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -279,7 +279,7 @@ it('assigns users to a report through the manage action', function () {
     livewire(Reporting::class)
         ->callAction(TestAction::make('manage')->table(ReportAccessKey::UserLoginActivity->value), [
             'users' => [$assignedUser->getKey()],
-            'teams' => [],
+            'departments' => [],
         ])
         ->assertNotified();
 
@@ -291,26 +291,26 @@ it('assigns users to a report through the manage action', function () {
     )->toBeTrue();
 });
 
-it('assigns teams to a report through the manage action', function () {
+it('assigns departments to a report through the manage action', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('reporting.view-any');
     $user->givePermissionTo('reporting.*.update');
 
-    $team = Team::factory()->create();
+    $department = Department::factory()->create();
 
     actingAs($user);
 
     livewire(Reporting::class)
         ->callAction(TestAction::make('manage')->table(ReportAccessKey::UserLoginActivity->value), [
             'users' => [],
-            'teams' => [$team->getKey()],
+            'departments' => [$department->getKey()],
         ])
         ->assertNotified();
 
     expect(
-        ReportTeamAccess::query()
+        ReportDepartmentAccess::query()
             ->where('report_key', ReportAccessKey::UserLoginActivity->value)
-            ->where('team_id', $team->getKey())
+            ->where('team_id', $department->getKey())
             ->exists()
     )->toBeTrue();
 });
@@ -332,7 +332,7 @@ it('removes access that is no longer selected when managing a report', function 
     livewire(Reporting::class)
         ->callAction(TestAction::make('manage')->table(ReportAccessKey::UserLoginActivity->value), [
             'users' => [],
-            'teams' => [],
+            'departments' => [],
         ])
         ->assertNotified();
 
@@ -344,20 +344,140 @@ it('removes access that is no longer selected when managing a report', function 
     )->toBeFalse();
 });
 
-it('counts a user with both direct and team access only once', function () {
-    $team = Team::factory()->create();
+it('counts a user with both direct and department access only once', function () {
+    $department = Department::factory()->create();
 
-    $user = User::factory()->create(['team_id' => $team->getKey()]);
+    $user = User::factory()->create(['team_id' => $department->getKey()]);
 
     ReportUserAccess::factory()->create([
         'report_key' => ReportAccessKey::UserLoginActivity->value,
         'user_id' => $user->getKey(),
     ]);
 
-    ReportTeamAccess::factory()->create([
+    ReportDepartmentAccess::factory()->create([
         'report_key' => ReportAccessKey::UserLoginActivity->value,
-        'team_id' => $team->getKey(),
+        'team_id' => $department->getKey(),
     ]);
 
     expect(ReportAccessKey::UserLoginActivity->accessCount())->toEqual(1);
+});
+
+// Bulk Manage Assignments tests
+
+it('bulk manage assignments action is visible when feature flag is active and user has permission', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('reporting.view-any');
+    $user->givePermissionTo('reporting.*.update');
+
+    actingAs($user);
+
+    livewire(Reporting::class)
+        ->assertTableBulkActionVisible('manageReportAssignments');
+});
+
+it('bulk manage assignments action is not visible for user without update permission', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('reporting.view-any');
+
+    actingAs($user);
+
+    livewire(Reporting::class)
+        ->assertTableBulkActionHidden('manageReportAssignments');
+});
+
+it('bulk manage assignments action adds users and departments to selected reports additively', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('reporting.view-any');
+    $user->givePermissionTo('reporting.*.update');
+
+    $existingUser = User::factory()->create();
+    $newUser = User::factory()->create();
+    $department = Department::factory()->create();
+
+    ReportUserAccess::factory()->create([
+        'report_key' => ReportAccessKey::UserLoginActivity->value,
+        'user_id' => $existingUser->getKey(),
+    ]);
+
+    actingAs($user);
+
+    livewire(Reporting::class)
+        ->callTableBulkAction('manageReportAssignments', [ReportAccessKey::UserLoginActivity->value], [
+            'users' => [$newUser->getKey()],
+            'departments' => [$department->getKey()],
+            'sync' => false,
+        ])
+        ->assertNotified();
+
+    expect(
+        ReportUserAccess::query()
+            ->where('report_key', ReportAccessKey::UserLoginActivity->value)
+            ->where('user_id', $existingUser->getKey())
+            ->exists()
+    )->toBeTrue('Existing user should be preserved in additive mode');
+
+    expect(
+        ReportUserAccess::query()
+            ->where('report_key', ReportAccessKey::UserLoginActivity->value)
+            ->where('user_id', $newUser->getKey())
+            ->exists()
+    )->toBeTrue('New user should be added');
+
+    expect(
+        ReportDepartmentAccess::query()
+            ->where('report_key', ReportAccessKey::UserLoginActivity->value)
+            ->where('team_id', $department->getKey())
+            ->exists()
+    )->toBeTrue('Department should be added');
+});
+
+it('bulk manage assignments action replaces all existing assignments when sync is enabled', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('reporting.view-any');
+    $user->givePermissionTo('reporting.*.update');
+
+    $existingUser = User::factory()->create();
+    $existingDepartment = Department::factory()->create();
+    $newUser = User::factory()->create();
+
+    ReportUserAccess::factory()->create([
+        'report_key' => ReportAccessKey::UserLoginActivity->value,
+        'user_id' => $existingUser->getKey(),
+    ]);
+
+    ReportDepartmentAccess::factory()->create([
+        'report_key' => ReportAccessKey::UserLoginActivity->value,
+        'team_id' => $existingDepartment->getKey(),
+    ]);
+
+    actingAs($user);
+
+    livewire(Reporting::class)
+        ->callTableBulkAction('manageReportAssignments', [ReportAccessKey::UserLoginActivity->value], [
+            'users' => [$newUser->getKey()],
+            'departments' => [],
+            'sync' => true,
+        ])
+        ->assertNotified();
+
+    expect(
+        ReportUserAccess::query()
+            ->where('report_key', ReportAccessKey::UserLoginActivity->value)
+            ->where('user_id', $existingUser->getKey())
+            ->exists()
+    )->toBeFalse('Existing user should be removed in sync mode');
+
+    expect(
+        ReportDepartmentAccess::query()
+            ->where('report_key', ReportAccessKey::UserLoginActivity->value)
+            ->where('team_id', $existingDepartment->getKey())
+            ->exists()
+    )->toBeFalse('Existing department should be removed in sync mode');
+
+    expect(
+        ReportUserAccess::query()
+            ->where('report_key', ReportAccessKey::UserLoginActivity->value)
+            ->where('user_id', $newUser->getKey())
+            ->exists()
+    )->toBeTrue('New user should be assigned');
 });

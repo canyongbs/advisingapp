@@ -102,7 +102,7 @@ class CreateResourceHubArticle extends CreateRecord
                             ->preload()
                             ->default(
                                 fn () => [
-                                    auth()->user()->team?->division?->getKey()
+                                    auth()->user()->department?->division?->getKey()
                                         ?? Division::query()
                                             ->where('is_default', true)
                                             ->first()

@@ -59,7 +59,7 @@ class AllUsersController extends Controller
                             'tenant_id' => $tenant->getKey(),
                             'name' => $user->name,
                             'job_title' => $user->job_title,
-                            'team' => $user->team->name ?? null,
+                            'department' => $user->department->name ?? null,
                             'email' => $user->email,
                             'timezone' => $user->timezone,
                             'first_login_at' => $user->first_login_at,

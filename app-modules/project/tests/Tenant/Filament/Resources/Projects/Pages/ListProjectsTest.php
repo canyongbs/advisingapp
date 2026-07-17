@@ -37,7 +37,7 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Project\Filament\Resources\Projects\Pages\ListProjects;
 use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\DeleteBulkAction;
@@ -143,16 +143,16 @@ it('does not list projects to unauthorized manager users', function () {
         ->assertCanNotSeeTableRecords($unauthorizedProjects);
 });
 
-it('does not list projects to unauthorized manager teams', function () {
+it('does not list projects to unauthorized manager departments', function () {
     $user = User::factory()->create();
 
     $user->givePermissionTo('project.view-any');
     $user->givePermissionTo('project.*.view');
     $user->givePermissionTo('project.create');
 
-    $authorizedTeam = Team::factory()->create();
+    $authorizedDepartment = Department::factory()->create();
 
-    $user->team()->associate($authorizedTeam);
+    $user->department()->associate($authorizedDepartment);
     $user->save();
     $user->refresh();
 
@@ -167,7 +167,7 @@ it('does not list projects to unauthorized manager teams', function () {
 
     actingAs($user);
 
-    $authorizedProjects->each(fn ($project) => $project->managerTeams()->attach($authorizedTeam));
+    $authorizedProjects->each(fn ($project) => $project->managerDepartments()->attach($authorizedDepartment));
 
     livewire(ListProjects::class)
         ->assertSuccessful()
@@ -249,16 +249,16 @@ it('the delete bulk action only deletes the records the user is authorized to de
     assertNotSoftDeleted($protected);
 });
 
-it('does not list projects to unauthorized auditor teams', function () {
+it('does not list projects to unauthorized auditor departments', function () {
     $user = User::factory()->create();
 
     $user->givePermissionTo('project.view-any');
     $user->givePermissionTo('project.*.view');
     $user->givePermissionTo('project.create');
 
-    $authorizedTeam = Team::factory()->create();
+    $authorizedDepartment = Department::factory()->create();
 
-    $user->team()->associate($authorizedTeam);
+    $user->department()->associate($authorizedDepartment);
 
     $user->save();
     $user->refresh();
@@ -273,7 +273,7 @@ it('does not list projects to unauthorized auditor teams', function () {
         ->count(5)
         ->create();
 
-    $authorizedProjects->each(fn ($project) => $project->auditorTeams()->attach($authorizedTeam));
+    $authorizedProjects->each(fn ($project) => $project->auditorDepartments()->attach($authorizedDepartment));
 
     actingAs($user);
     livewire(ListProjects::class)

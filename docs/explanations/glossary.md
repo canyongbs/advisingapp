@@ -18,6 +18,11 @@ References the `app-modules/concern/src/Models/Concern.php` Model.
 
 Used to be called "Alert". Much of the code has been renamed to use the term "concern". But database schema has NOT yet changed.
 
+**Department**:
+References the `app-modules/team/src/Models/Department.php` Model.
+
+Used to be call "Team". Much of the code has been renamed to use the term "department". But the database schema has NOT yet changed.
+
 ---
 
 ## Development Terms

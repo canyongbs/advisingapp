@@ -52,7 +52,7 @@ class ConfidentialPromptScope implements Scope
             $query->where('is_confidential', true)
                 ->where(function (Builder $query) {
                     $query->where('user_id', auth()->id())
-                        ->orWhereHas('confidentialAccessTeams', function (Builder $query) {
+                        ->orWhereHas('confidentialAccessDepartments', function (Builder $query) {
                             $query->whereHas('users', function (Builder $query) {
                                 $query->where('users.id', auth()->id());
                             });

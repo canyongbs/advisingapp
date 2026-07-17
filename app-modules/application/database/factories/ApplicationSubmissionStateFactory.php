@@ -56,6 +56,7 @@ class ApplicationSubmissionStateFactory extends Factory
             'name' => $this->faker->word,
             'color' => $this->faker->randomElement(Color::cases())->value,
             'description' => $this->faker->sentence,
+            'is_default' => false,
         ];
     }
 }

@@ -81,10 +81,10 @@ class ViewBookingGroup extends ViewRecord
                         ->placeholder('N/A')
                         ->badge()
                         ->label('Users'),
-                    TextEntry::make('teams.name')
+                    TextEntry::make('departments.name')
                         ->placeholder('N/A')
                         ->badge()
-                        ->label('Teams'),
+                        ->label('Departments'),
                     Callout::make('Some group members do not have a connected calendar and will be skipped during bookings.')
                         ->warning()
                         ->description(function () use ($bookingGroup): HtmlString {
@@ -92,13 +92,13 @@ class ViewBookingGroup extends ViewRecord
 
                             return new HtmlString(view('meeting-center::filament.components.disconnected-calendar-members', [
                                 'directUsers' => $data['directUsers'],
-                                'teamGroups' => $data['teamGroups'],
+                                'departmentGroups' => $data['departmentGroups'],
                             ])->render());
                         })
                         ->visible(function () use ($bookingGroup): bool {
                             $data = $bookingGroup->disconnectedCalendarMembers();
 
-                            return $data['directUsers']->isNotEmpty() || $data['teamGroups']->isNotEmpty();
+                            return $data['directUsers']->isNotEmpty() || $data['departmentGroups']->isNotEmpty();
                         })
                         ->columnSpanFull(),
                 ]),

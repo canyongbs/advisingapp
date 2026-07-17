@@ -41,7 +41,7 @@ use Filament\Support\Contracts\HasLabel;
 enum AiThreadShareTarget: string implements HasLabel
 {
     case User = 'user';
-    case Team = 'team';
+    case Department = 'department';
 
     public function getLabel(): string
     {

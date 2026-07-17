@@ -53,7 +53,7 @@ class NotifyCaseUsers
             ->where(function (Builder $query) use ($case, $shouldSendToManagers, $shouldSendToAuditors) {
                 if ($shouldSendToManagers) {
                     $query->whereHas(
-                        'team',
+                        'department',
                         fn (Builder $query) => $query->whereHas(
                             'manageableCaseTypes',
                             fn (Builder $query) => $query->where('case_type_id', $case->priority->type->getKey())->whereHas(
@@ -66,7 +66,7 @@ class NotifyCaseUsers
 
                 if ($shouldSendToAuditors) {
                     $query->{$shouldSendToManagers ? 'orWhereHas' : 'whereHas'}(
-                        'team',
+                        'department',
                         fn (Builder $query) => $query->whereHas(
                             'auditableCaseTypes',
                             fn (Builder $query) => $query->where('case_type_id', $case->priority->type->getKey())->whereHas(

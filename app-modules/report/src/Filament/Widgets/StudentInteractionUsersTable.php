@@ -114,7 +114,7 @@ class StudentInteractionUsersTable extends BaseWidget
                         })
                         ->with([
                             'interactions',
-                            'team',
+                            'department',
                         ]);
                 }
             )
@@ -123,14 +123,14 @@ class StudentInteractionUsersTable extends BaseWidget
                     ->label('Name')
                     ->description(function ($record) {
                         $jobTitle = $record->job_title ?? null;
-                        $teamName = $record->team->name ?? null;
+                        $departmentName = $record->department->name ?? null;
 
-                        if ($jobTitle && $teamName) {
-                            return "{$jobTitle} ({$teamName})";
+                        if ($jobTitle && $departmentName) {
+                            return "{$jobTitle} ({$departmentName})";
                         } elseif ($jobTitle) {
                             return $jobTitle;
-                        } elseif ($teamName) {
-                            return $teamName;
+                        } elseif ($departmentName) {
+                            return $departmentName;
                         }
 
                         return null;
@@ -141,8 +141,8 @@ class StudentInteractionUsersTable extends BaseWidget
                             $query->where(function ($query) use ($search) {
                                 $query->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"])
                                     ->orWhereRaw('LOWER(job_title) LIKE ?', ["%{$search}%"])
-                                    ->orWhereHas('team', function ($teamQuery) use ($search) {
-                                        $teamQuery->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"]);
+                                    ->orWhereHas('department', function (Builder $departmentQuery) use ($search) {
+                                        $departmentQuery->whereRaw('LOWER(name) LIKE ?', ["%{$search}%"]);
                                     });
                             });
                         }
@@ -280,11 +280,11 @@ class StudentInteractionUsersTable extends BaseWidget
                             );
                         }
                     }),
-                SelectFilter::make('team')
-                    ->label('Team')
-                    ->relationship('team', 'name')
+                SelectFilter::make('department')
+                    ->label('Department')
+                    ->relationship('department', 'name')
                     ->multiple()
-                    ->placeholder('Select Team')
+                    ->placeholder('Select Department')
                     ->searchable()
                     ->preload(),
             ])

@@ -37,9 +37,9 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Filament\Pages\CustomerAdvisorReport;
-use AdvisingApp\Report\Models\ReportTeamAccess;
+use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Features\ReportingFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
@@ -79,15 +79,15 @@ it('is gated with proper access control', function () {
     get(CustomerAdvisorReport::getUrl())->assertSuccessful();
 });
 
-it('grants access to a user belonging to a team that has been granted access', function () {
+it('grants access to a user belonging to a department that has been granted access', function () {
     $settings = app(LicenseSettings::class);
 
     $settings->data->addons->customerAdvisors = true;
     $settings->save();
 
-    $team = Team::factory()->create();
+    $department = Department::factory()->create();
 
-    $user = User::factory()->create(['team_id' => $team->getKey()]);
+    $user = User::factory()->create(['team_id' => $department->getKey()]);
 
     $user->grantLicense(LicenseType::ConversationalAi);
 
@@ -97,9 +97,9 @@ it('grants access to a user belonging to a team that has been granted access', f
 
     get(CustomerAdvisorReport::getUrl())->assertForbidden();
 
-    ReportTeamAccess::factory()->create([
+    ReportDepartmentAccess::factory()->create([
         'report_key' => ReportAccessKey::CustomerAdvisorReport->value,
-        'team_id' => $team->getKey(),
+        'team_id' => $department->getKey(),
     ]);
 
     get(CustomerAdvisorReport::getUrl())->assertSuccessful();

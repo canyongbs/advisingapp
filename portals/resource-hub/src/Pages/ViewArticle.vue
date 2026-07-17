@@ -33,47 +33,48 @@
 -->
 <script setup>
     import BaseButton from '@common/BaseButton.vue';
-    import { ClockIcon, EyeIcon, PaperClipIcon } from '@heroicons/vue/20/solid';
-    import { HandThumbDownIcon, HandThumbUpIcon } from '@heroicons/vue/24/solid';
-    import DOMPurify from 'dompurify';
+    import Breadcrumbs from '@common/portal/Breadcrumbs.vue';
+    import EmptyState from '@common/portal/EmptyState.vue';
+    import Page from '@common/portal/Page.vue';
+    import PageCard from '@common/portal/PageCard.vue';
+    import ArticleAttachments from '@common/portal/article/ArticleAttachments.vue';
+    import ArticleContent from '@common/portal/article/ArticleContent.vue';
+    import ArticleMeta from '@common/portal/article/ArticleMeta.vue';
+    // import ArticleFeedback from '@common/portal/article/ArticleFeedback.vue';
     import truncate from 'lodash/truncate';
-    import { computed, defineProps, ref, watch } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
-    import AppLoading from '../Components/AppLoading.vue';
-    import Breadcrumbs from '../Components/Breadcrumbs.vue';
-    import EmptyState from '../Components/EmptyState.vue';
-    import Page from '../Components/Page.vue';
-    import PageCard from '../Components/PageCard.vue';
-    import Tags from '../Components/Tags.vue';
-    import { consumer } from '../Services/Consumer.js';
+    import { useArticleData } from './loaders.js';
 
     const route = useRoute();
     const router = useRouter();
 
-    const { get, post } = consumer();
+    const { data: articleData } = useArticleData();
 
-    const props = defineProps({
-        searchUrl: {
-            type: String,
-            required: true,
-        },
-        apiUrl: {
-            type: String,
-            required: true,
-        },
-        categories: {
-            type: Object,
-            required: true,
-        },
-    });
+    const category = computed(() => articleData.value?.category ?? null);
+    const article = computed(() => articleData.value?.article ?? null);
+    const parentCategory = computed(() => articleData.value?.category?.parentCategory ?? null);
+    const portalViewCount = computed(() => articleData.value?.portal_view_count ?? 0);
 
-    const loading = ref(true);
-    const category = ref(null);
-    const article = ref(null);
-    const portalViewCount = ref(0);
     const feedback = ref(null);
     const helpfulVotePercentage = ref(0);
-    const parentCategory = ref(null);
+
+    watch(
+        articleData,
+        (data) => {
+            feedback.value = data?.article?.vote ? data.article.vote.is_helpful : null;
+            helpfulVotePercentage.value = data?.helpful_vote_percentage ?? 0;
+
+            // The API may resolve to a canonical category for the article; keep the URL in sync.
+            if (data?.category && data.category.id !== route.params.categoryId) {
+                router.replace({
+                    name: 'view-article',
+                    params: { categoryId: data.category.id, articleId: route.params.articleId },
+                });
+            }
+        },
+        { immediate: true },
+    );
 
     const breadcrumbs = computed(() => {
         if (article.value && category.value) {
@@ -101,105 +102,36 @@
         return [];
     });
 
-    const currentCrumb = computed(() => {
-        return article.value
-            ? truncate(article.value.name, {
-                  length: 16,
-              })
-            : 'Not Found';
-    });
+    const currentCrumb = computed(() => (article.value ? truncate(article.value.name, { length: 16 }) : 'Not Found'));
 
-    watch(
-        route,
-        function (newRouteValue) {
-            getData();
-        },
-        {
-            immediate: true,
-        },
-    );
-
-    function getData() {
-        loading.value = true;
-
-        get(props.apiUrl + '/categories/' + route.params.categoryId + '/articles/' + route.params.articleId)
-            .then((response) => {
-                if (response.data) {
-                    if (response.data.category.id !== route.params.categoryId) {
-                        router.replace({
-                            name: 'view-article',
-                            params: {
-                                categoryId: response.data.category.id,
-                                articleId: route.params.articleId,
-                            },
-                        });
-                    }
-
-                    category.value = response.data.category;
-                    article.value = response.data.article;
-                    parentCategory.value = response.data.category.parentCategory;
-                    portalViewCount.value = response.data.portal_view_count;
-                    feedback.value = response.data.article.vote ? response.data.article.vote.is_helpful : null;
-                    helpfulVotePercentage.value = response.data.helpful_vote_percentage;
-                }
-
-                loading.value = false;
-            })
-            .catch((error) => {
-                if (error.response && (error.response.status === 401 || error.response.status === 404)) {
-                    loading.value = false;
-                } else {
-                    console.log('An error occurred', error);
-                }
-            });
-    }
-    async function toggleFeedback(type) {
-        await post(props.apiUrl + '/resource_hub_article_vote/store', {
-            article_vote: feedback.value === type ? null : type,
-            article_id: route.params.articleId,
-        })
-            .then((response) => {
-                if (response.status === 200) {
-                    if (response.data.hasOwnProperty('is_helpful') && response.data.is_helpful !== null) {
-                        feedback.value = response.data.is_helpful;
-                    } else {
-                        feedback.value = null;
-                    }
-                }
-
-                helpfulVotePercentage.value = response.data.helpful_vote_percentage;
-            })
-            .catch((error) => {
-                console.error('Error submitting feedback:', error);
-            });
-    }
+    // async function toggleFeedback(type) {
+    //     try {
+    //         const data = await apiPost('/resource_hub_article_vote/store', {
+    //             article_vote: feedback.value === type ? null : type,
+    //             article_id: route.params.articleId,
+    //         });
+    //
+    //         if (Object.prototype.hasOwnProperty.call(data, 'is_helpful') && data.is_helpful !== null) {
+    //             feedback.value = data.is_helpful;
+    //         } else {
+    //             feedback.value = null;
+    //         }
+    //
+    //         helpfulVotePercentage.value = data.helpful_vote_percentage;
+    //     } catch (error) {
+    //         console.error('Error submitting feedback:', error);
+    //     }
+    // }
 </script>
 
 <template>
-    <div v-if="loading">
-        <AppLoading />
-    </div>
-
-    <Page v-if="!loading && category && article">
+    <Page v-if="category && article">
         <template #heading>
             {{ article.name }}
         </template>
 
         <template #description>
-            <div class="flex flex-col sm:flex-row sm:items-center gap-y-1 gap-x-4">
-                <div class="flex items-center gap-x-1.5">
-                    <EyeIcon class="size-4 shrink-0" aria-hidden="true" />
-                    <span>{{ portalViewCount }} Views</span>
-                </div>
-                <div class="flex items-center gap-x-1.5">
-                    <ClockIcon class="size-4 shrink-0" aria-hidden="true" />
-                    <span>Last updated: {{ article.lastUpdated }}</span>
-                </div>
-            </div>
-        </template>
-
-        <template #belowHeaderContent>
-            <Tags :tags="article.tags" :featured="article.featured" variant="hero" />
+            <ArticleMeta :viewCount="portalViewCount" :lastUpdated="article.lastUpdated" />
         </template>
 
         <template #breadcrumbs>
@@ -207,99 +139,21 @@
         </template>
 
         <PageCard v-if="article.attachments && article.attachments.length > 0">
-            <div class="max-w-5xl w-full mx-auto">
-                <h3 class="text-lg font-semibold text-gray-900 mb-3">Article Resources</h3>
-                <div class="divide-y divide-gray-200">
-                    <div
-                        v-for="(attachment, index) in article.attachments"
-                        :key="index"
-                        class="flex items-center gap-x-3 py-3"
-                    >
-                        <PaperClipIcon class="size-5 shrink-0 text-gray-400" aria-hidden="true" />
-                        <a
-                            :href="attachment.url"
-                            class="text-sm font-medium text-brand-600 hover:text-brand-500 underline"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            {{ attachment.name }}
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <ArticleAttachments :attachments="article.attachments" />
         </PageCard>
 
         <PageCard>
-            <div
-                class="prose max-w-5xl w-full mx-auto prose-p:leading-snug! prose-p:my-2.5! prose-headings:my-4! prose-hr:my-5! prose-ul:my-3! prose-ol:my-3! prose-li:my-0! [&_li>p]:my-1! [&_td_p]:my-3! [&_th_p]:my-3! prose-table:w-full! prose-table:my-6 prose-table:border-separate prose-table:border-spacing-0 prose-table:rounded-lg prose-table:border prose-table:border-gray-200 prose-table:overflow-hidden prose-table:shadow-xs prose-td:border-b prose-td:border-gray-100 prose-td:align-middle prose-td:px-6 prose-td:py-2 prose-td:text-left prose-td:text-gray-700 prose-th:border-none prose-th:bg-brand-600 prose-th:px-6 prose-th:py-2 prose-th:text-left prose-th:font-bold prose-th:text-white [&_tr:last-child_td]:border-b-[3px]! [&_tr:last-child_td]:border-brand-600! even:prose-tr:bg-gray-50"
-                v-html="
-                    DOMPurify.sanitize(article.content, {
-                        ADD_TAGS: ['iframe', 'video', 'source'],
-                        ADD_ATTR: [
-                            'allow',
-                            'allowfullscreen',
-                            'frameborder',
-                            'controls',
-                            'target',
-                            'rel',
-                            'data-video-embed',
-                            'data-video-type',
-                            'data-video-src',
-                            'data-video-width',
-                            'data-video-height',
-                            'data-cols',
-                            'data-col-span',
-                            'data-from-breakpoint',
-                            'data-color',
-                            'data-id',
-                        ],
-                    })
-                "
-            ></div>
+            <ArticleContent :content="article.content" />
 
-            <div
-                class="max-w-5xl mx-auto w-full flex flex-wrap items-center gap-4 border border-gray-200 rounded-lg p-4 bg-white"
-            >
-                <span class="text-sm font-medium text-gray-700">Was this content helpful?</span>
-
-                <div class="flex items-center gap-2">
-                    <button
-                        type="button"
-                        @click="toggleFeedback(true)"
-                        class="relative inline-grid grid-flow-col items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium outline-none transition duration-75 focus-visible:ring-2"
-                        :class="
-                            feedback === true
-                                ? 'bg-brand-600 text-white hover:bg-brand-500 focus-visible:ring-brand-500/50'
-                                : 'bg-white text-gray-950 ring-1 ring-gray-950/10 hover:bg-gray-50'
-                        "
-                    >
-                        <HandThumbUpIcon class="size-5" />
-                        Yes
-                    </button>
-
-                    <button
-                        type="button"
-                        @click="toggleFeedback(false)"
-                        class="relative inline-grid grid-flow-col items-center justify-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium outline-none transition duration-75 focus-visible:ring-2"
-                        :class="
-                            feedback === false
-                                ? 'bg-brand-600 text-white hover:bg-brand-500 focus-visible:ring-brand-500/50'
-                                : 'bg-white text-gray-950 ring-1 ring-gray-950/10 hover:bg-gray-50'
-                        "
-                    >
-                        <HandThumbDownIcon class="size-5" />
-                        No
-                    </button>
-                </div>
-
-                <span v-if="helpfulVotePercentage" class="text-sm text-gray-500">
-                    {{ helpfulVotePercentage }}% of visitors found this helpful.
-                </span>
-            </div>
+            <!-- <ArticleFeedback
+                :feedback="feedback"
+                :helpfulVotePercentage="helpfulVotePercentage"
+                @toggle-feedback="toggleFeedback"
+            /> -->
         </PageCard>
     </Page>
 
-    <Page v-if="!loading && (!category || !article)">
+    <Page v-if="!category || !article">
         <template #heading> 404 Not Found </template>
 
         <PageCard>

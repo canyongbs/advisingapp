@@ -37,14 +37,11 @@
 namespace AdvisingApp\Consent\Filament\Resources\ConsentAgreements\Pages;
 
 use AdvisingApp\Consent\Filament\Resources\ConsentAgreements\ConsentAgreementResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Contracts\Support\Htmlable;
 
 class EditConsentAgreement extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = ConsentAgreementResource::class;
 
     public function getTitle(): string | Htmlable

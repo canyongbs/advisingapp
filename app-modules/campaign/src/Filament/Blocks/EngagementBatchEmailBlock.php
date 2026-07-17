@@ -123,8 +123,8 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                                         fn (Builder $query) => $query->whereBelongsTo(auth()->user())
                                     )
                                     ->when(
-                                        $get('onlyMyTeamTemplates'),
-                                        fn (Builder $query) => $query->whereIn('user_id', auth()->user()->team->users->pluck('id'))
+                                        $get('onlyMyDepartmentTemplates'),
+                                        fn (Builder $query) => $query->whereIn('user_id', auth()->user()->department->users->pluck('id'))
                                     )
                                     ->where(new Expression('lower(name)'), 'like', "%{$search}%")
                                     ->orderBy('name')
@@ -143,8 +143,8 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                                         fn (Builder $query) => $query->whereBelongsTo(auth()->user())
                                     )
                                     ->when(
-                                        $get('onlyMyTeamTemplates'),
-                                        fn (Builder $query) => $query->whereIn('user_id', auth()->user()->team->users->pluck('id'))
+                                        $get('onlyMyDepartmentTemplates'),
+                                        fn (Builder $query) => $query->whereIn('user_id', auth()->user()->department->users->pluck('id'))
                                     )
                                     ->whereKey($value)
                                     ->value('name');
@@ -153,8 +153,8 @@ class EngagementBatchEmailBlock extends CampaignActionBlock
                             ->label('Only show my templates')
                             ->live()
                             ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
-                        Checkbox::make('onlyMyTeamTemplates')
-                            ->label("Only show my team's templates")
+                        Checkbox::make('onlyMyDepartmentTemplates')
+                            ->label("Only show my department's templates")
                             ->live()
                             ->afterStateUpdated(fn (Set $set) => $set('emailTemplate', null)),
                     ])

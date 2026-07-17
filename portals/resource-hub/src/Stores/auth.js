@@ -59,6 +59,12 @@ export const useAuthStore = defineStore('auth', () => {
         requiresAuthentication.value = value;
     }
 
+    const userIsAuthenticated = ref(false);
+
+    function setUserIsAuthenticated(value) {
+        userIsAuthenticated.value = value;
+    }
+
     return {
         user,
         getUser,
@@ -67,5 +73,7 @@ export const useAuthStore = defineStore('auth', () => {
         requiresAuthentication,
         getRequiresAuthentication,
         setRequiresAuthentication,
+        userIsAuthenticated,
+        setUserIsAuthenticated,
     };
 });

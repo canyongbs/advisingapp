@@ -51,7 +51,7 @@ class RoundRobinAssigner implements CaseTypeAssigner
         $user = null;
 
         if ($lastAssignee) {
-            $user = User::query()->whereRelation('team.manageableCaseTypes', 'case_types.id', $caseType->getKey())
+            $user = User::query()->whereRelation('department.manageableCaseTypes', 'case_types.id', $caseType->getKey())
                 ->where('name', '>=', $lastAssignee->name)
                 ->where(fn (Builder $query) => $query
                     ->where('name', '!=', $lastAssignee->name)
@@ -60,7 +60,7 @@ class RoundRobinAssigner implements CaseTypeAssigner
         }
 
         if ($user === null) {
-            $user = User::query()->whereRelation('team.manageableCaseTypes', 'case_types.id', $caseType->getKey())
+            $user = User::query()->whereRelation('department.manageableCaseTypes', 'case_types.id', $caseType->getKey())
                 ->orderBy('name')->orderBy('id')->first();
         }
 

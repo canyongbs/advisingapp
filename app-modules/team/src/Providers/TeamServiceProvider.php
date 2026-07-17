@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Team\Providers;
 
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use AdvisingApp\Team\TeamPlugin;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -52,7 +52,7 @@ class TeamServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Relation::morphMap([
-            'team' => Team::class,
+            'team' => Department::class,
         ]);
     }
 }

@@ -42,7 +42,6 @@ use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Rules\CaseTypeAssignmentsIndividualUserMustBeAManager;
 use App\Filament\Forms\Components\Heading;
 use App\Filament\Forms\Components\Paragraph;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Pages\EditRecord;
@@ -54,8 +53,6 @@ use Illuminate\Support\HtmlString;
 
 class EditCaseTypeAssignments extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = CaseTypeResource::class;
 
     protected static ?string $title = 'Assignments';
@@ -102,7 +99,7 @@ class EditCaseTypeAssignments extends EditRecord
                                 name: 'assignmentTypeIndividual',
                                 titleAttribute: 'name',
                                 modifyQueryUsing: fn (Builder $query) => $query->whereRelation(
-                                    'team.manageableCaseTypes',
+                                    'department.manageableCaseTypes',
                                     'case_types.id',
                                     $this->record->getKey(),
                                 )

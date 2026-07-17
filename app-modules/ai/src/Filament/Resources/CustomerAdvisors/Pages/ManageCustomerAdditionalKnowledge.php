@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Actions\UploadFileForParsing;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorFile;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
@@ -60,8 +59,6 @@ use UnitEnum;
 
 class ManageCustomerAdditionalKnowledge extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = CustomerAdvisorResource::class;
 
     protected static ?string $navigationLabel = 'Additional Knowledge';

@@ -39,7 +39,6 @@ namespace AdvisingApp\Ai\Filament\Resources\Prompts\Pages;
 use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
 use AdvisingApp\Ai\Models\Prompt;
 use App\Filament\Forms\Components\UserSelect;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Models\Authenticatable;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -56,8 +55,6 @@ use Filament\Schemas\Schema;
 
 class EditPrompt extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = PromptResource::class;
 
     public function form(Schema $schema): Schema
@@ -105,10 +102,10 @@ class EditPrompt extends EditRecord
                                 ->multiple()
                                 ->exists('users', 'id')
                                 ->visible(fn (Get $get) => $get('is_confidential')),
-                            Select::make('confidential_prompt_teams')
-                                ->relationship('confidentialAccessTeams', 'name')
+                            Select::make('confidential_prompt_departments')
+                                ->relationship('confidentialAccessDepartments', 'name')
                                 ->preload()
-                                ->label('Teams')
+                                ->label('Departments')
                                 ->multiple()
                                 ->exists('teams', 'id')
                                 ->visible(fn (Get $get) => $get('is_confidential')),

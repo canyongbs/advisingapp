@@ -35,7 +35,6 @@
     import { createMessage } from '@formkit/core';
     import axios from 'axios';
     import { computed, nextTick, ref } from 'vue';
-    import { consumer } from '../../../../../portals/resource-hub/src/Services/Consumer.js';
 
     import vueFilePond from 'vue-filepond';
 
@@ -71,7 +70,6 @@
             }
 
             const index = fileIndexCounter.value++;
-            const { get } = consumer();
             try {
                 const data = await axios
                     .get(props.context.uploadUrl, {

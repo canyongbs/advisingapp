@@ -36,9 +36,9 @@
         <li>{{ $user->name }}</li>
     @endforeach
 
-    @foreach ($teamGroups as $teamName => $users)
+    @foreach ($departmentGroups as $departmentName => $users)
         <li class="mt-2">
-            <strong>{{ $teamName }}</strong>
+            <strong>{{ $departmentName }}</strong>
             <ul class="list-none pl-4 mt-1 space-y-1">
                 @foreach ($users as $user)
                     <li>{{ $user->name }}</li>

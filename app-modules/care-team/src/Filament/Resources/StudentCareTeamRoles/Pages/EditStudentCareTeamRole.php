@@ -39,7 +39,6 @@ namespace AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoles\Pages;
 use AdvisingApp\CareTeam\Filament\Resources\StudentCareTeamRoles\StudentCareTeamRoleResource;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
 use App\Enums\CareTeamRoleType;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -48,8 +47,6 @@ use Filament\Schemas\Schema;
 
 class EditStudentCareTeamRole extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = StudentCareTeamRoleResource::class;
 
     public function form(Schema $schema): Schema
