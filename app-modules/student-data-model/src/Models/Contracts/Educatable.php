@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Models\Contracts;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
