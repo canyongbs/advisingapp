@@ -55,7 +55,6 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 
 class ListForms extends ListRecords
 {
@@ -102,8 +101,10 @@ class ListForms extends ListRecords
                                 ->required(),
                         ]);
                     })
-                    ->beforeReplicaSaved(function (Model $replica, array $data): void {
+                    ->beforeReplicaSaved(function (Form $replica, array $data): void {
                         $replica->name = $data['name'];
+                        $replica->setAttribute('root_id', null);
+                        $replica->archived_at = null;
                     })
                     ->after(function (Form $replica, Form $record): void {
                         resolve(DuplicateForm::class, ['original' => $record, 'replica' => $replica])();

@@ -269,7 +269,7 @@ RUN mkdir -p /var/www/html /composer \
 WORKDIR /var/www/html
 
 # Install JS package management
-ENV NVM_VERSION=v0.40.5
+ENV NVM_VERSION=v0.40.6
 # If we change this version, remember to also update the .nvmrc file
 ENV NODE_VERSION=24.18.0
 ENV NPM_VERSION=^11.18.0

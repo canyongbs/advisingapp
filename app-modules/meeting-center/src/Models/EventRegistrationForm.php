@@ -38,15 +38,22 @@ namespace AdvisingApp\MeetingCenter\Models;
 
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Models\Submissible;
+use AdvisingApp\MeetingCenter\Observers\EventRegistrationFormObserver;
+use CanyonGBS\Common\Models\Concerns\CanBeArchived;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
+ * @property string|null $root_id
+ *
  * @mixin IdeHelperEventRegistrationForm
  */
+#[ObservedBy([EventRegistrationFormObserver::class])]
 class EventRegistrationForm extends Submissible
 {
+    use CanBeArchived;
     use SoftDeletes;
 
     protected $fillable = [
@@ -58,6 +65,7 @@ class EventRegistrationForm extends Submissible
         'primary_color',
         'rounding',
         'content',
+        'root_id',
     ];
 
     protected $casts = [
