@@ -1998,41 +1998,6 @@
             }
         },
         {
-            "name": "canyon-gbs/pipeline",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/pipeline",
-                "reference": "5db7fc7c753af31f286ee09b92cf42111f33a03e"
-            },
-            "require": {
-                "filament/filament": "^4.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\Pipeline\\Providers\\PipelineServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\Pipeline\\": "src/",
-                    "AdvisingApp\\Pipeline\\Tests\\": "tests/",
-                    "AdvisingApp\\Pipeline\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\Pipeline\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
             "name": "canyon-gbs/research",
             "version": "1.0",
             "dist": {

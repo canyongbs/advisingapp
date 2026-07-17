@@ -128,9 +128,6 @@ use AdvisingApp\Notification\Models\SmsMessage;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
 use AdvisingApp\Notification\Models\StoredAnonymousNotifiable;
 use AdvisingApp\Notification\Models\Subscription;
-use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
-use AdvisingApp\Pipeline\Models\Pipeline;
-use AdvisingApp\Pipeline\Models\PipelineStage;
 use AdvisingApp\Portal\Models\PortalAuthentication;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectAddress;
@@ -386,9 +383,6 @@ return [
     SmsMessageEvent::class,
     StoredAnonymousNotifiable::class,
     Subscription::class,
-    EducatablePipelineStage::class,
-    Pipeline::class,
-    PipelineStage::class,
     PortalAuthentication::class,
     Prospect::class,
     ProspectAddress::class,

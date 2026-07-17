@@ -49,7 +49,6 @@ export default defineConfig({
                 'app-modules/research/resources/js/results.js',
                 'app-modules/research/resources/js/requests.js',
                 'app-modules/task/resources/js/kanban.js',
-                'app-modules/pipeline/resources/js/kanban.js',
             ],
             assets: ['resources/images/**', 'resources/svg/**'],
             refresh: [
