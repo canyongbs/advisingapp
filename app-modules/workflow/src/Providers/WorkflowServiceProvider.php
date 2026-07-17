@@ -39,7 +39,6 @@ namespace AdvisingApp\Workflow\Providers;
 use AdvisingApp\Workflow\Filament\Forms\WorkflowTypeFormRegistry;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowCareTeamDetails;
-use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
 use AdvisingApp\Workflow\Models\WorkflowEventDetails;
@@ -77,7 +76,6 @@ class WorkflowServiceProvider extends ServiceProvider
             'workflow_run_step' => WorkflowRunStep::class,
             'workflow_run_step_related' => WorkflowRunStepRelated::class,
             'workflow_care_team_details' => WorkflowCareTeamDetails::class,
-            'workflow_case_details' => WorkflowCaseDetails::class,
             'workflow_engagement_email_details' => WorkflowEngagementEmailDetails::class,
             'workflow_engagement_sms_details' => WorkflowEngagementSmsDetails::class,
             'workflow_event_details' => WorkflowEventDetails::class,

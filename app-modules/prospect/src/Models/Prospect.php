@@ -41,7 +41,6 @@ use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\CareTeam\Models\CareTeam;
-use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagementResponses;
 use AdvisingApp\Engagement\Models\Concerns\HasManyMorphedEngagements;
@@ -145,20 +144,6 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     public function identifier(): string
     {
         return $this->id;
-    }
-
-    /**
-     * @return MorphMany<CaseModel, $this>
-     */
-    public function cases(): MorphMany
-    {
-        return $this->morphMany(
-            related: CaseModel::class,
-            name: 'respondent',
-            type: 'respondent_type',
-            id: 'respondent_id',
-            localKey: 'id'
-        );
     }
 
     /**

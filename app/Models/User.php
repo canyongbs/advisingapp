@@ -45,8 +45,6 @@ use AdvisingApp\Authorization\Models\License;
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
-use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
-use AdvisingApp\CaseManagement\Models\CaseAssignment;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\Consent\Models\Concerns\CanConsent;
 use AdvisingApp\Engagement\Models\Concerns\HasManyEngagementBatches;
@@ -361,23 +359,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     public function permissionsFromRoles(): HasManyDeep
     {
         return $this->hasManyDeepFromRelations($this->roles(), (new Role())->permissions());
-    }
-
-    /**
-     * @return HasMany<CaseAssignment, $this>
-     */
-    public function caseAssignments(): HasMany
-    {
-        return $this->hasMany(CaseAssignment::class)
-            ->where('status', CaseAssignmentStatus::Active);
-    }
-
-    /**
-     * @return HasManyDeep<Model, $this>
-     */
-    public function cases(): HasManyDeep
-    {
-        return $this->hasManyDeepFromRelations($this->caseAssignments(), (new CaseAssignment())->case());
     }
 
     /**

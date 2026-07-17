@@ -37,7 +37,6 @@
 namespace AdvisingApp\Prospect\Filament\Widgets;
 
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
-use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
@@ -98,14 +97,6 @@ class ProspectStats extends StatsOverviewWidget
                 )
                 ->whereNotIn('status', [TaskStatus::Completed, TaskStatus::Canceled])
                 ->count())),
-            ...Gate::check(Feature::CaseManagement->getGateName()) ? [Stat::make('Open Cases', Number::format(CaseModel::query()
-                ->whereHasMorph('respondent', Prospect::class, $prospectQuery)
-                ->when(
-                    $startDate && $endDate,
-                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
-                )
-                ->whereRelation('status', 'classification', '!=', SystemCaseClassification::Closed)
-                ->count()))] : [],
             Stat::make('Actioned Messages', Number::format(EngagementResponse::query()
                 ->whereHasMorph('sender', Prospect::class, $prospectQuery)
                 ->when(
@@ -133,15 +124,6 @@ class ProspectStats extends StatsOverviewWidget
                 ->whereIn('status', [TaskStatus::Completed, TaskStatus::Canceled])
                 ->count()))
                 ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary']),
-            ...Gate::check(Feature::CaseManagement->getGateName()) ? [Stat::make('Closed Cases', Number::format(CaseModel::query()
-                ->whereHasMorph('respondent', Prospect::class, $prospectQuery)
-                ->when(
-                    $startDate && $endDate,
-                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
-                )
-                ->whereRelation('status', 'classification', SystemCaseClassification::Closed)
-                ->count()))
-                ->extraAttributes(['class' => 'fi-wi-stats-overview-stat-primary'])] : [],
         ];
     }
 

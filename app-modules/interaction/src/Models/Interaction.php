@@ -37,7 +37,6 @@
 namespace AdvisingApp\Interaction\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Interaction\Models\Scopes\InteractionConfidentialScope;
 use AdvisingApp\Interaction\Observers\InteractionObserver;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
@@ -216,35 +215,9 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
             /** @var Authenticatable $user */
             $user = auth()->user();
 
-            $caseRespondentTypeColumn = app(CaseModel::class)->respondent()->getMorphType();
-
             $builder
                 ->where(fn (Builder $query) => $query
-                    ->tap(new LicensedToEducatable('interactable'))
-                    ->when(
-                        ! $user->hasLicense(Student::getLicenseType()),
-                        fn (Builder $query) => $query->where(fn (Builder $query) => $query->whereHasMorph(
-                            'interactable',
-                            CaseModel::class,
-                            fn (Builder $query) => $query->where($caseRespondentTypeColumn, '!=', app(Student::class)->getMorphClass()),
-                        )->orWhere(
-                            'interactable_type',
-                            '!=',
-                            app(CaseModel::class)->getMorphClass(),
-                        )),
-                    )
-                    ->when(
-                        ! $user->hasLicense(Prospect::getLicenseType()),
-                        fn (Builder $query) => $query->where(fn (Builder $query) => $query->whereHasMorph(
-                            'interactable',
-                            CaseModel::class,
-                            fn (Builder $query) => $query->where($caseRespondentTypeColumn, '!=', app(Prospect::class)->getMorphClass()),
-                        )->orWhere(
-                            'interactable_type',
-                            '!=',
-                            app(CaseModel::class)->getMorphClass(),
-                        )),
-                    ));
+                    ->tap(new LicensedToEducatable('interactable')));
         });
     }
 }

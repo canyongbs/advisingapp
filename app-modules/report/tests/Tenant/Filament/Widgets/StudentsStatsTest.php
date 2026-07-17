@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
@@ -66,15 +65,6 @@ it('returns correct total student stats of students, concerns, groups and tasks 
         'created_at' => $startDate,
     ])->create();
 
-    CaseModel::factory()->count($count)->state([
-        'respondent_id' => Student::factory()
-            ->state([
-                'created_at_source' => $endDate,
-            ]),
-        'respondent_type' => (new Student())->getMorphClass(),
-        'created_at' => $endDate,
-    ])->create();
-
     Task::factory()->count($count)->state([
         'concern_id' => Student::factory()
             ->state([
@@ -96,8 +86,7 @@ it('returns correct total student stats of students, concerns, groups and tasks 
 
     expect($stats[0]->getValue())->toEqual($count * 5)
         ->and($stats[1]->getValue())->toEqual($count)
-        ->and($stats[2]->getValue())->toEqual($count)
-        ->and($stats[3]->getValue())->toEqual($count);
+        ->and($stats[2]->getValue())->toEqual($count);
 });
 
 it('returns correct total student stats of students, concerns, cases and tasks based on group filters', function () {
@@ -146,22 +135,6 @@ it('returns correct total student stats of students, concerns, cases and tasks b
         )
         ->create();
 
-    CaseModel::factory()
-        ->count($count)
-        ->for(
-            Student::factory()->create(['last' => 'John']),
-            'respondent'
-        )
-        ->create();
-
-    CaseModel::factory()
-        ->count($count)
-        ->for(
-            Student::factory()->create(['last' => 'Smith']),
-            'respondent'
-        )
-        ->create();
-
     Task::factory()
         ->count($count)
         ->for(
@@ -188,8 +161,7 @@ it('returns correct total student stats of students, concerns, cases and tasks b
 
     expect($stats[0]->getValue())->toEqual($count + 3)
         ->and($stats[1]->getValue())->toEqual($count)
-        ->and($stats[2]->getValue())->toEqual($count)
-        ->and($stats[3]->getValue())->toEqual($count);
+        ->and($stats[2]->getValue())->toEqual($count);
 });
 
 it('only returns cases information if that feature is active', function () {

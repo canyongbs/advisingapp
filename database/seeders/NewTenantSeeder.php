@@ -40,7 +40,6 @@ use AdvisingApp\Alert\Database\Seeders\AlertConfigurationSeeder;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Authorization\Console\Commands\SetupRoles;
 use AdvisingApp\CaseManagement\Database\Seeders\CaseStatusSeeder;
-use AdvisingApp\CaseManagement\Database\Seeders\CaseTypeSeeder;
 use AdvisingApp\Concern\Database\Seeders\ConcernStatusSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
 use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
@@ -71,7 +70,6 @@ class NewTenantSeeder extends Seeder
         $this->call([
             DivisionSeeder::class,
             CaseStatusSeeder::class,
-            CaseTypeSeeder::class,
             ProspectStatusSeeder::class,
             ProspectSourceSeeder::class,
             ResourceHubCategorySeeder::class,

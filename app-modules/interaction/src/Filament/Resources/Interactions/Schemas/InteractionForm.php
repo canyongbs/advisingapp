@@ -37,7 +37,6 @@
 namespace AdvisingApp\Interaction\Filament\Resources\Interactions\Schemas;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Interaction\Filament\Actions\DraftInteractionWithAiAction;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
@@ -78,15 +77,11 @@ class InteractionForm
     /**
      * @return array<Step>
      */
-    public static function getSteps(Student|Prospect|CaseModel $ownerRecord): array
+    public static function getSteps(Student|Prospect $ownerRecord): array
     {
         $settings = resolve(InteractionManagementSettings::class);
 
         $type = $ownerRecord->getMorphClass();
-
-        if ($ownerRecord instanceof CaseModel) {
-            $type = $ownerRecord->respondent->getMorphClass();
-        }
 
         return [
             Step::make('Confidentiality')
@@ -102,9 +97,6 @@ class InteractionForm
                                 ->titleAttribute(Prospect::displayNameKey())
                                 ->modifyOptionsQueryUsing(fn (Builder $query) => $query->tap(new ExcludeConvertedProspects())),
                             ] : []),
-                            Type::make(CaseModel::class)
-                                ->label('Case')
-                                ->titleAttribute('case_number'),
                         ])
                         ->live()
                         ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
