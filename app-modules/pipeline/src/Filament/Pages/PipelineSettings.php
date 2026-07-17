@@ -40,14 +40,12 @@ use AdvisingApp\Pipeline\Settings\ProspectPipelineSettings;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Enums\Feature;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Toggle;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Gate;
 
 class PipelineSettings extends SettingsPage
 {
