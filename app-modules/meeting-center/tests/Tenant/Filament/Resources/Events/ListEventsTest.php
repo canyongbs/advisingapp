@@ -140,6 +140,7 @@ it('gives a duplicated event registration form its own version tree rather than 
     expect($duplicatedForm->root_id)->not->toBe($event->eventRegistrationForm->root_id);
     expect($duplicatedForm->archived_at)->toBeNull();
 });
+
 it('archives events with attendees and deletes events without attendees via the archive or delete bulk action', function () {
     asSuperAdmin();
 
@@ -147,6 +148,7 @@ it('archives events with attendees and deletes events without attendees via the 
     EventAttendee::factory()->create(['event_id' => $eventWithAttendees->id]);
 
     $eventWithoutAttendees = Event::factory()->create(['starts_at' => now()->addWeek()]);
+    $eventWithoutAttendees->attendees()->delete();
 
     livewire(ListEvents::class)
         ->removeTableFilter('pastEvents')
