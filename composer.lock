@@ -2174,16 +2174,16 @@
         },
         {
             "name": "canyongbs/common",
-            "version": "2.29.0",
+            "version": "2.30.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/common.git",
-                "reference": "6d3f40f1ac556cbe079863ac72f1f4b69fd11319"
+                "reference": "b49b540e0e11306d1dad205ff7e2322bac0aa041"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/common/zipball/6d3f40f1ac556cbe079863ac72f1f4b69fd11319",
-                "reference": "6d3f40f1ac556cbe079863ac72f1f4b69fd11319",
+                "url": "https://api.github.com/repos/canyongbs/common/zipball/b49b540e0e11306d1dad205ff7e2322bac0aa041",
+                "reference": "b49b540e0e11306d1dad205ff7e2322bac0aa041",
                 "shasum": ""
             },
             "require": {
@@ -2236,9 +2236,9 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/common/issues",
-                "source": "https://github.com/canyongbs/common/tree/2.29.0"
+                "source": "https://github.com/canyongbs/common/tree/2.30.0"
             },
-            "time": "2026-07-14T14:19:11+00:00"
+            "time": "2026-07-17T14:11:19+00:00"
         },
         {
             "name": "canyongbs/model-state-machine",
