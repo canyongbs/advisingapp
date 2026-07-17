@@ -53,7 +53,6 @@ $licenses = [
 ];
 
 it('cannot render without a license', function () {
-
     $user = user();
 
     actingAs($user);
@@ -77,7 +76,6 @@ it('cannot render without report access', function () use ($licenses) {
 });
 
 it('can render', function () use ($licenses) {
-
     $user = user(
         licenses: $licenses
     );

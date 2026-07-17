@@ -163,7 +163,6 @@ it('renders care team prospects correctly in the recruitment dashboard for the C
 });
 
 it('is gated with proper access control', function () {
-
     $user = User::factory()->create();
 
     actingAs($user);
@@ -185,7 +184,6 @@ it('is gated with proper access control', function () {
 });
 
 it('grants access to a user belonging to a department that has been granted access', function () {
-
     $department = Department::factory()->create();
 
     $user = User::factory()->create(['team_id' => $department->getKey()]);

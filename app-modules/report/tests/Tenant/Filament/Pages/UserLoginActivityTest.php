@@ -45,7 +45,6 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
 it('is gated with proper access control', function () {
-
     $user = User::factory()->create();
 
     actingAs($user);
