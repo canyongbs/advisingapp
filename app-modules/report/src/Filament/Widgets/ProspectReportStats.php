@@ -39,11 +39,9 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Task\Models\Task;
-use App\Enums\Feature;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Number;
 
 class ProspectReportStats extends StatsOverviewReportWidget

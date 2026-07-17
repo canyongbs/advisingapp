@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Prospect\Filament\Widgets;
 
-use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
@@ -45,11 +44,9 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
-use App\Enums\Feature;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Number;
 use Livewire\Attributes\Reactive;
 

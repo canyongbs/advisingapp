@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Concern\Models\ConcernStatus;
