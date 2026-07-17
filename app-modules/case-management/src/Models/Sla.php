@@ -64,12 +64,4 @@ class Sla extends BaseModel implements Auditable
         'response_seconds' => 'integer',
         'resolution_seconds' => 'integer',
     ];
-
-    /**
-     * @return HasMany<CasePriority, $this>
-     */
-    public function casePriorities(): HasMany
-    {
-        return $this->hasMany(CasePriority::class);
-    }
 }

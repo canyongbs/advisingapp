@@ -42,7 +42,6 @@ use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Authorization\Console\Commands\SetupRoles;
 use AdvisingApp\CaseManagement\Database\Seeders\CaseSeeder;
 use AdvisingApp\CaseManagement\Database\Seeders\CaseStatusSeeder;
-use AdvisingApp\CaseManagement\Database\Seeders\CaseTypeSeeder;
 use AdvisingApp\CaseManagement\Database\Seeders\CaseUpdateSeeder;
 use AdvisingApp\Concern\Database\Seeders\ConcernSeeder;
 use AdvisingApp\Concern\Database\Seeders\ConcernStatusSeeder;
@@ -87,7 +86,6 @@ class DatabaseSeeder extends Seeder
             LocalDevelopmentSeeder::class,
             DivisionSeeder::class,
             CaseStatusSeeder::class,
-            CaseTypeSeeder::class,
             ProspectStatusSeeder::class,
             ProspectSourceSeeder::class,
             ResourceHubCategorySeeder::class,

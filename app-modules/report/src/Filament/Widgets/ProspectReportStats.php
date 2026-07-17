@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
-use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Task\Models\Task;
@@ -99,27 +98,6 @@ class ProspectReportStats extends StatsOverviewReportWidget
                 fn (): int => Concern::query()->whereHasMorph('concern', Prospect::class)->count()
             );
 
-        $casesCount = $shouldBypassCache
-            ? CaseModel::query()
-                ->whereHasMorph('respondent', Prospect::class, function (Builder $query) use ($groupId) {
-                    $query->when(
-                        $groupId,
-                        fn (Builder $query) => $this->groupFilter($query, $groupId)
-                    );
-                })
-                ->when(
-                    $startDate && $endDate,
-                    fn (Builder $query): Builder => $query->whereBetween('created_at', [$startDate, $endDate])
-                )
-                ->count()
-            : Cache::tags(["{{$this->cacheTag}}"])->remember(
-                'total-prospect-cases-count',
-                now()->addHours(24),
-                fn (): int => CaseModel::query()
-                    ->whereHasMorph('respondent', Prospect::class)
-                    ->count()
-            );
-
         $tasksCount = $shouldBypassCache
             ? Task::query()
                 ->whereHasMorph('concern', Prospect::class, function (Builder $query) use ($groupId) {
@@ -145,7 +123,6 @@ class ProspectReportStats extends StatsOverviewReportWidget
                 : Number::format($prospectsCount, maxPrecision: 2)),
 
             Stat::make('Total Concerns', Number::abbreviate($concernsCount, maxPrecision: 2)),
-            ...Gate::check(Feature::CaseManagement->getGateName()) ? [Stat::make('Total Cases', Number::abbreviate($casesCount, maxPrecision: 2))] : [],
             Stat::make('Total Tasks', Number::abbreviate($tasksCount, maxPrecision: 2)),
         ];
     }

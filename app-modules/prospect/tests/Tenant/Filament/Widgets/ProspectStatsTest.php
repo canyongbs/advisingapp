@@ -35,8 +35,6 @@
 */
 
 use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
-use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Concern\Models\ConcernStatus;
@@ -83,15 +81,6 @@ it('returns correct stats for prospects within the given date range', function (
         'created_at' => $startDate,
     ])->create();
 
-    CaseModel::factory()->count($count)->state([
-        'respondent_type' => (new Prospect())->getMorphClass(),
-        'respondent_id' => Prospect::factory(),
-        'status_id' => CaseStatus::factory()->create([
-            'classification' => SystemCaseClassification::Open,
-        ])->getKey(),
-        'created_at' => $startDate,
-    ])->create();
-
     EngagementResponse::factory()->count($count)->state([
         'sender_type' => (new Prospect())->getMorphClass(),
         'status' => EngagementResponseStatus::Actioned,
@@ -112,15 +101,6 @@ it('returns correct stats for prospects within the given date range', function (
         'concern_id' => Prospect::factory(),
         'status' => TaskStatus::Completed,
         'is_confidential' => false,
-        'created_at' => $endDate,
-    ])->create();
-
-    CaseModel::factory()->count($count)->state([
-        'respondent_type' => (new Prospect())->getMorphClass(),
-        'respondent_id' => Prospect::factory(),
-        'status_id' => CaseStatus::factory()->create([
-            'classification' => SystemCaseClassification::Closed,
-        ])->getKey(),
         'created_at' => $endDate,
     ])->create();
 
@@ -155,16 +135,12 @@ it('returns correct stats for prospects within the given date range', function (
         ->and($stats[1]->getValue())->toEqual($count)
         ->and($stats[2]->getLabel())->toEqual('Open Tasks')
         ->and($stats[2]->getValue())->toEqual($count)
-        ->and($stats[3]->getLabel())->toEqual('Open Cases')
+        ->and($stats[3]->getLabel())->toEqual('Actioned Messages')
         ->and($stats[3]->getValue())->toEqual($count)
-        ->and($stats[4]->getLabel())->toEqual('Actioned Messages')
+        ->and($stats[4]->getLabel())->toEqual('Closed Concerns')
         ->and($stats[4]->getValue())->toEqual($count)
-        ->and($stats[5]->getLabel())->toEqual('Closed Concerns')
-        ->and($stats[5]->getValue())->toEqual($count)
-        ->and($stats[6]->getLabel())->toEqual('Closed Tasks')
-        ->and($stats[6]->getValue())->toEqual($count)
-        ->and($stats[7]->getLabel())->toEqual('Closed Cases')
-        ->and($stats[7]->getValue())->toEqual($count);
+        ->and($stats[5]->getLabel())->toEqual('Closed Tasks')
+        ->and($stats[5]->getValue())->toEqual($count);
 });
 
 it('returns correct stats for prospects based on group filter', function () {
@@ -202,12 +178,6 @@ it('returns correct stats for prospects based on group filter', function () {
     $closedConcernStatus = ConcernStatus::factory()->create([
         'classification' => SystemConcernStatusClassification::Resolved,
     ]);
-    $openCaseStatus = CaseStatus::factory()->create([
-        'classification' => SystemCaseClassification::Open,
-    ]);
-    $closedCaseStatus = CaseStatus::factory()->create([
-        'classification' => SystemCaseClassification::Closed,
-    ]);
 
     EngagementResponse::factory()->count($count)->state([
         'sender_type' => (new Prospect())->getMorphClass(),
@@ -243,18 +213,6 @@ it('returns correct stats for prospects based on group filter', function () {
         'is_confidential' => false,
     ])->create();
 
-    CaseModel::factory()->count($count)->state([
-        'respondent_type' => (new Prospect())->getMorphClass(),
-        'respondent_id' => $johnProspect->getKey(),
-        'status_id' => $openCaseStatus->getKey(),
-    ])->create();
-
-    CaseModel::factory()->count($count)->state([
-        'respondent_type' => (new Prospect())->getMorphClass(),
-        'respondent_id' => $johnProspect->getKey(),
-        'status_id' => $closedCaseStatus->getKey(),
-    ])->create();
-
     EngagementResponse::factory()->count($count)->state([
         'sender_type' => (new Prospect())->getMorphClass(),
         'sender_id' => $doeProspect->getKey(),
@@ -272,12 +230,6 @@ it('returns correct stats for prospects based on group filter', function () {
         'is_confidential' => false,
     ])->create();
 
-    CaseModel::factory()->count($count)->state([
-        'respondent_type' => (new Prospect())->getMorphClass(),
-        'respondent_id' => $doeProspect->getKey(),
-        'status_id' => $openCaseStatus->getKey(),
-    ])->create();
-
     $widget = new ProspectStats();
     $widget->activeTab = ActionCenterTab::All->value;
     $widget->pageFilters = [
@@ -293,16 +245,12 @@ it('returns correct stats for prospects based on group filter', function () {
         ->and($stats[1]->getValue())->toEqual($count)
         ->and($stats[2]->getLabel())->toEqual('Open Tasks')
         ->and($stats[2]->getValue())->toEqual($count)
-        ->and($stats[3]->getLabel())->toEqual('Open Cases')
+        ->and($stats[3]->getLabel())->toEqual('Actioned Messages')
         ->and($stats[3]->getValue())->toEqual($count)
-        ->and($stats[4]->getLabel())->toEqual('Actioned Messages')
+        ->and($stats[4]->getLabel())->toEqual('Closed Concerns')
         ->and($stats[4]->getValue())->toEqual($count)
-        ->and($stats[5]->getLabel())->toEqual('Closed Concerns')
-        ->and($stats[5]->getValue())->toEqual($count)
-        ->and($stats[6]->getLabel())->toEqual('Closed Tasks')
-        ->and($stats[6]->getValue())->toEqual($count)
-        ->and($stats[7]->getLabel())->toEqual('Closed Cases')
-        ->and($stats[7]->getValue())->toEqual($count);
+        ->and($stats[5]->getLabel())->toEqual('Closed Tasks')
+        ->and($stats[5]->getValue())->toEqual($count);
 });
 
 it('only shows case stats when the case management feature is active', function () {
