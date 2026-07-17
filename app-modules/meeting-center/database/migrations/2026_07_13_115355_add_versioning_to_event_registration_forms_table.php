@@ -49,6 +49,7 @@ return new class () extends Migration {
                 $table->uuid('root_id')->nullable();
                 $table->timestamp('archived_at')->nullable();
             });
+
             // TODO: Cleanup Task - EventVersioningFeature - This backfill can be removed once all environments have run this migration
             DB::update('UPDATE event_registration_forms SET root_id = id WHERE root_id IS NULL');
 
