@@ -209,7 +209,7 @@ it('only lists a report when the required licenses and addons are enabled for th
 
 it('can search reports by name', function () {
     $settings = app(LicenseSettings::class);
-    $settings->data->addons->caseManagement = true;
+    $settings->data->addons->customerAdvisors = true;
     $settings->save();
 
     $user = User::factory()->create();
@@ -218,8 +218,8 @@ it('can search reports by name', function () {
     actingAs($user);
 
     livewire(Reporting::class)
-        ->searchTable(ReportAccessKey::StudentCaseReport->getName())
-        ->assertCanSeeTableRecords([ReportAccessKey::StudentCaseReport->value])
+        ->searchTable(ReportAccessKey::CustomerAdvisorReport->getName())
+        ->assertCanSeeTableRecords([ReportAccessKey::CustomerAdvisorReport->value])
         ->assertCanNotSeeTableRecords([ReportAccessKey::UserLoginActivity->value]);
 });
 
