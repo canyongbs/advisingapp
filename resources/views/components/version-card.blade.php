@@ -31,27 +31,33 @@
     
     </COPYRIGHT>
 --}}
-@php
-    use AdvisingApp\Assistant\Filament\Pages\InstitutionalAdvisor;
-    use AdvisingApp\Authorization\Enums\LicenseType;
-    use AdvisingApp\Prospect\Filament\Pages\RecruitmentCrmDashboard;
-    use AdvisingApp\StudentDataModel\Filament\Pages\RetentionCrmDashboard;
-    use AdvisingApp\Theme\Settings\ThemeSettings;
-@endphp
 
-<x-filament-widgets::widget class="@container">
-    <div class="@5xl:grid-cols-2 grid w-full gap-2">
-        @php
-            $themeSettings = app(ThemeSettings::class);
+@props([
+    'themeChangelogUrl',
+])
 
-            $themeChangelogUrl = ! empty($themeSettings->changelog_url) ? $themeSettings->changelog_url : 'https://advising.app/changelog/';
-
-            $productResourcehubUrl = ! empty($themeSettings->product_resource_hub_url)
-                ? $themeSettings->product_resource_hub_url
-                : 'https://canyongbs.aiding.app/portal/categories/9bcc47d1-05be-40d2-bf95-9bd719209b06';
-        @endphp
-
-        <x-authorization::login-version-card :themeChangelogUrl="$themeChangelogUrl" />
-        <x-authorization::login-resource-portal-card :productResourcehubUrl="$productResourcehubUrl" />
+<div
+    {{ $attributes->class(['@container flex flex-col rounded-xl bg-turkish-500 p-6 text-white shadow-sm ring-1 ring-turkish-500/50']) }}
+>
+    <div class="@sm:flex-row @sm:items-center flex flex-1 flex-col items-start justify-between gap-x-4 gap-y-6">
+        <div class="flex flex-1 flex-col items-start @sm:self-stretch">
+            <p class="text-sm font-semibold text-white">Version {{ app('current-version') }} is now available!</p>
+            <p class="mt-2 mb-4 text-sm text-white">
+                Your instance of Advising App&#174; was automatically updated with our latest available features.
+            </p>
+            <a
+                class="mt-auto inline-flex items-center gap-1.5 rounded-lg border-2 border-white px-4 py-2 text-sm font-semibold text-white transition duration-75 hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-turkish-500 focus-visible:outline-none"
+                href="{{ $themeChangelogUrl }}"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Learn More
+            </a>
+        </div>
+        <img
+            class="@sm:order-last order-first block max-h-28"
+            src="{{ Vite::asset('resources/images/version.svg') }}"
+            alt="Drawing of a man touching a floating card displaying information"
+        />
     </div>
-</x-filament-widgets::widget>
+</div>
