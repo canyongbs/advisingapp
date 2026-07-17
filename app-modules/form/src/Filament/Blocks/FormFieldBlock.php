@@ -91,6 +91,12 @@ abstract class FormFieldBlock extends RichContentCustomBlock
 
     public static function toPreviewHtml(array $config): ?string
     {
+        // Preview blades reference $label and $isRequired directly, so guarantee they
+        // exist even when the block is previewed before its config has been filled
+        // (e.g. dragging a new block in). getPreviewLabel() supplies the block default.
+        $config['label'] ??= static::getPreviewLabel($config);
+        $config['isRequired'] ??= false;
+
         return view(static::previewView(), $config)->render();
     }
 
