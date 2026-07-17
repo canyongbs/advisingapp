@@ -115,8 +115,6 @@ class ViewResourceHubArticle extends ViewRecord
                                     ->label('Quality'),
                                 TextEntry::make('category.name')
                                     ->label('Category'),
-                                TextEntry::make('division.name')
-                                    ->label('Division'),
                                 TextEntry::make('managers')
                                     ->label('Managers')
                                     ->getStateUsing(fn (ResourceHubArticle $record) => $record->managers->pluck('name')->join(', ')),
