@@ -38,7 +38,6 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates
 
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use App\Features\ApplicationSubmissionStateDefaultViewFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
@@ -78,8 +77,7 @@ class ListApplicationSubmissionStates extends ListRecords
                     ->sortable(),
                 IconColumn::make('is_default')
                     ->label('Default')
-                    ->boolean()
-                    ->visible(fn () => ApplicationSubmissionStateDefaultViewFeature::active()),
+                  ->boolean(),
             ])
             // @phpstan-ignore argument.templateType
             ->modifyQueryUsing(fn (Builder $query) => $query->withoutArchivedAndUnused()) // @phpstan-ignore method.notFound
