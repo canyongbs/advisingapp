@@ -139,6 +139,7 @@ it('gives a duplicated event registration form its own version tree rather than 
     expect($duplicatedForm->root_id)->toBe($duplicatedForm->id);
     expect($duplicatedForm->root_id)->not->toBe($event->eventRegistrationForm->root_id);
     expect($duplicatedForm->archived_at)->toBeNull();
+});
 it('archives events with attendees and deletes events without attendees via the archive or delete bulk action', function () {
     asSuperAdmin();
 
