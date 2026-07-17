@@ -41,9 +41,9 @@ use App\Settings\SettingsWithMedia;
 
 class ThemeSettings extends SettingsWithMedia
 {
-    public const DEFAULT_CHANGELOG_URL = 'https://github.com/canyongbs/aidingapp/releases';
+    public const DEFAULT_CHANGELOG_URL = 'https://advising.app/changelog/';
 
-    public const DEFAULT_PRODUCT_RESOURCE_HUB_URL = 'https://canyongbs.aiding.app/portal';
+    public const DEFAULT_PRODUCT_RESOURCE_HUB_URL = 'https://canyongbs.aiding.app/portal/categories/9bcc47d1-05be-40d2-bf95-9bd719209b06';
 
     public bool $is_logo_active = false;
 

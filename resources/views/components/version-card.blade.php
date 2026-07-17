@@ -56,7 +56,7 @@
         </div>
         <img
             class="@sm:order-last order-first block max-h-28"
-            src="{{ Vite::asset('resources/images/version_image.svg') }}"
+            src="{{ Vite::asset('resources/images/version.svg') }}"
             alt="Drawing of a man touching a floating card displaying information"
         />
     </div>

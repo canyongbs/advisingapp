@@ -56,7 +56,7 @@
         </div>
         <img
             class="@sm:order-last order-first block max-h-28"
-            src="{{ Vite::asset('resources/images/changelog_image.svg') }}"
+            src="{{ Vite::asset('resources/images/changelog.svg') }}"
             alt="Drawing of a man aside an open book"
         />
     </div>
