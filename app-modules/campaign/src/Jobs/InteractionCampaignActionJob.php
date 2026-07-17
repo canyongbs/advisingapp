@@ -71,7 +71,6 @@ class InteractionCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                 'interaction_driver_id' => $action->data['interaction_driver_id'],
                 'interaction_status_id' => $action->data['interaction_status_id'],
                 'interaction_outcome_id' => $action->data['interaction_outcome_id'],
-                'division_id' => $action->data['division_id'],
             ]);
 
             $this->actionEducatable->succeeded_at = now();

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Interaction\Tests\Tenant\Filament\Actions\RequestFactories;
 
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
@@ -51,7 +50,6 @@ class BulkCreateInteractionActionRequestFactory extends RequestFactory
     {
         return [
             'description' => $this->faker->paragraph(),
-            'division_id' => Division::factory(),
             'end_datetime' => now()->addMinutes(5)->seconds(0)->format('Y-m-d H:i:s'),
             'interaction_driver_id' => InteractionDriver::factory(),
             'interaction_initiative_id' => InteractionInitiative::factory(),
