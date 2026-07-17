@@ -44,7 +44,7 @@ return new class () extends Migration {
         Schema::create('pipeline_stages', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->foreignUuid('pipeline_id')->constrained()->onDelete('cascade');
+            $table->foreignUuid('pipeline_id')->constrained('pipelines')->cascadeOnDelete();
             $table->unsignedBigInteger('order');
             $table->timestamps();
             $table->unique(['name', 'pipeline_id']);
