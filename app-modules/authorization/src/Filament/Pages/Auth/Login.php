@@ -40,7 +40,6 @@ use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 use AdvisingApp\MultifactorAuthentication\Services\MultifactorService;
 use AdvisingApp\MultifactorAuthentication\Settings\MultifactorSettings;
-use AdvisingApp\Theme\Settings\ThemeSettings;
 use App\Models\User;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use Filament\Actions\Action;
@@ -69,21 +68,6 @@ class Login extends \Filament\Auth\Pages\Login
 
     #[Locked]
     public bool $usingRecoveryCode = false;
-
-    public string $themeChangelogUrl = '';
-
-    public string $productResourcehubUrl = '';
-
-    public function mount(): void
-    {
-        parent::mount();
-
-        $themeSettings = app(ThemeSettings::class);
-
-        $this->themeChangelogUrl = ! empty($themeSettings->changelog_url) ? $themeSettings->changelog_url : 'https://advising.app/changelog/';
-
-        $this->productResourcehubUrl = ! empty($themeSettings->product_resource_hub_url) ? $themeSettings->product_resource_hub_url : 'https://canyongbs.aiding.app/portal/categories/9bcc47d1-05be-40d2-bf95-9bd719209b06';
-    }
 
     public function authenticate(): ?LoginResponse
     {

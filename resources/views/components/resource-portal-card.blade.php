@@ -31,32 +31,33 @@
     
     </COPYRIGHT>
 --}}
-<x-filament-widgets::widget>
-    <div class="flex flex-col items-center md:flex-row">
-        <div class="flex-1">
-            <h1 class="font-medium">Welcome, {{ auth()->user()->name }}</h1>
 
-            <p class="text-xs">
-                Today is {{ now(auth()->user()->timezone)->format('l, F j, Y') }} and the current time is
-                {{ now(auth()->user()->timezone)->format('g:i A') }}.
+@props([
+    'productResourceHubUrl',
+])
+
+<div
+    {{ $attributes->class(['@container flex flex-col rounded-xl bg-turkish-300 p-6 shadow-sm ring-1 ring-turkish-300/70']) }}
+>
+    <div class="@sm:flex-row @sm:items-center flex flex-1 flex-col items-start justify-between gap-x-4 gap-y-6">
+        <div class="flex flex-1 flex-col items-start @sm:self-stretch">
+            <p class="text-sm font-semibold text-gray-950">Resource Portal</p>
+            <p class="mt-2 mb-4 text-sm text-gray-800">
+                Visit our resource portal for answers to frequently asked product and service questions.
             </p>
+            <a
+                class="mt-auto inline-flex items-center gap-1.5 rounded-lg border-2 border-gray-700 px-4 py-2 text-sm font-semibold text-gray-700 transition duration-75 hover:bg-gray-950/5 focus-visible:ring-2 focus-visible:ring-gray-950/30 focus-visible:ring-offset-2 focus-visible:ring-offset-turkish-300 focus-visible:outline-none"
+                href="{{ $productResourceHubUrl }}"
+                target="_blank"
+                rel="noopener noreferrer"
+            >
+                Visit Resource Portal
+            </a>
         </div>
-
-        <div class="flex-shrink-0">
-            <form class="my-auto" action="{{ filament()->getLogoutUrl() }}" method="post">
-                @csrf
-
-                <x-filament::button
-                    type="submit"
-                    color="gray"
-                    icon="heroicon-m-arrow-left-on-rectangle"
-                    icon-alias="panels::widgets.account.logout-button"
-                    labeled-from="sm"
-                    tag="button"
-                >
-                    {{ __('filament-panels::widgets/account-widget.actions.logout.label') }}
-                </x-filament::button>
-            </form>
-        </div>
+        <img
+            class="@sm:order-last order-first block max-h-28"
+            src="{{ Vite::asset('resources/images/changelog.svg') }}"
+            alt="Drawing of a man aside an open book"
+        />
     </div>
-</x-filament-widgets::widget>
+</div>
