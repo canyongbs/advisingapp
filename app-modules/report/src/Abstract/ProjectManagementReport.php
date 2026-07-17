@@ -39,7 +39,6 @@ namespace AdvisingApp\Report\Abstract;
 use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
 use AdvisingApp\Report\Enums\ReportAccessKey;
 use App\Enums\Feature;
-use App\Features\ReportingFeature;
 use App\Models\User;
 use Filament\Pages\Dashboard;
 use Illuminate\Support\Facades\Gate;
@@ -54,10 +53,6 @@ abstract class ProjectManagementReport extends Dashboard
     {
         /** @var User $user */
         $user = auth()->user();
-
-        if (! ReportingFeature::active()) {
-            return Gate::check(Feature::ProjectManagement->getGateName()) && $user->can('report-library.view-any');
-        }
 
         return Gate::check(Feature::ProjectManagement->getGateName()) && (ReportAccessKey::fromPageClass(static::class)?->userCanAccess($user) ?? false);
     }

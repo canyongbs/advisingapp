@@ -46,7 +46,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Department;
-use App\Features\ReportingFeature;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -91,7 +90,6 @@ it('renders all students correctly in the retention dashboard', function () {
 });
 
 it('is gated with proper access control', function () {
-    ReportingFeature::activate();
 
     $user = User::factory()->create();
 
@@ -114,7 +112,6 @@ it('is gated with proper access control', function () {
 });
 
 it('grants access to a user belonging to a department that has been granted access', function () {
-    ReportingFeature::activate();
 
     $department = Department::factory()->create();
 

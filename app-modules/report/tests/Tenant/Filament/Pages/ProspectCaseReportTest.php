@@ -40,7 +40,6 @@ use AdvisingApp\Report\Filament\Pages\ProspectCaseReport;
 use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\Team\Models\Department;
-use App\Features\ReportingFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
@@ -48,7 +47,6 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 
 it('is gated with proper access control', function () {
-    ReportingFeature::activate();
 
     $settings = app(LicenseSettings::class);
     $user = User::factory()->create();

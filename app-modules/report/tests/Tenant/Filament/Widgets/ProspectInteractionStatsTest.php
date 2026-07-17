@@ -43,7 +43,6 @@ use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Filament\Pages\ProspectInteractionReport;
 use AdvisingApp\Report\Filament\Widgets\ProspectInteractionStats;
 use AdvisingApp\Report\Models\ReportUserAccess;
-use App\Features\ReportingFeature;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -54,7 +53,6 @@ $licenses = [
 ];
 
 it('cannot render without a license', function () {
-    ReportingFeature::activate();
 
     $user = user();
 
@@ -79,7 +77,6 @@ it('cannot render without report access', function () use ($licenses) {
 });
 
 it('can render', function () use ($licenses) {
-    ReportingFeature::activate();
 
     $user = user(
         licenses: $licenses
