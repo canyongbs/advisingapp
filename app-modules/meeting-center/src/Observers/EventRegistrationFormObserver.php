@@ -34,38 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Filament\Resources\Reports;
+namespace AdvisingApp\MeetingCenter\Observers;
 
-use AdvisingApp\Report\Filament\Resources\Reports\Pages\CreateReport;
-use AdvisingApp\Report\Filament\Resources\Reports\Pages\EditReport;
-use AdvisingApp\Report\Filament\Resources\Reports\Pages\ListReports;
-use AdvisingApp\Report\Models\Report;
-use App\Enums\NavigationGroup;
-use Filament\Resources\Resource;
-use UnitEnum;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use App\Features\EventVersioningFeature;
 
-class ReportResource extends Resource
+class EventRegistrationFormObserver
 {
-    protected static ?string $model = Report::class;
-
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::DataAndAnalytics;
-
-    protected static ?int $navigationSort = 50;
-
-    protected static ?string $navigationLabel = 'Custom Reports';
-
-    protected static ?string $breadcrumb = 'Custom Reports';
-
-    protected static ?string $slug = 'custom-reports';
-
-    protected static ?string $modelLabel = 'Custom Report';
-
-    public static function getPages(): array
+    public function creating(EventRegistrationForm $form): void
     {
-        return [
-            'index' => ListReports::route('/'),
-            'create' => CreateReport::route('/create'),
-            'edit' => EditReport::route('/{record}/edit'),
-        ];
+        if (! EventVersioningFeature::active()) {
+            return;
+        }
+
+        if ($form->getAttribute('root_id') === null) {
+            $form->root_id = $form->id;
+        }
     }
 }

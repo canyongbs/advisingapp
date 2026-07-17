@@ -34,27 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Database\Factories;
+namespace AdvisingApp\MeetingCenter\Actions;
 
-use AdvisingApp\Report\Enums\ReportModel;
-use AdvisingApp\Report\Models\Report;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use Illuminate\Support\Facades\DB;
 
-/**
- * @extends Factory<Report>
- */
-class ReportFactory extends Factory
+class CreateEventRegistrationFormVersion
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    /** @param array<string, mixed> $newData */
+    public function execute(EventRegistrationForm $oldVersion, array $newData): EventRegistrationForm
     {
-        return [
-            'name' => $this->faker->words(asText: true),
-            'model' => $this->faker->randomElement(ReportModel::cases()),
-            'user_id' => User::factory(),
-        ];
+        return DB::transaction(function () use ($oldVersion, $newData) {
+            $oldVersion->archive();
+
+            $newVersion = new EventRegistrationForm();
+            $newVersion->embed_enabled = $oldVersion->embed_enabled;
+            $newVersion->allowed_domains = $oldVersion->allowed_domains;
+            $newVersion->primary_color = $oldVersion->primary_color;
+            $newVersion->rounding = $oldVersion->rounding;
+            $newVersion->recaptcha_enabled = $oldVersion->recaptcha_enabled;
+            $newVersion->is_wizard = $oldVersion->is_wizard;
+            $newVersion->fill($newData);
+            $newVersion->root_id = $oldVersion->root_id;
+            $newVersion->event_id = $oldVersion->event_id;
+            $newVersion->save();
+
+            return $newVersion;
+        });
     }
 }

@@ -53,6 +53,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
+ * @property bool $is_default
+ *
  * @mixin IdeHelperApplicationSubmissionState
  */
 #[ObservedBy([ApplicationSubmissionStateObserver::class])]

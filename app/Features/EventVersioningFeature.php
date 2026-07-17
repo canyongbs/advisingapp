@@ -34,61 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Report\Models;
+namespace App\Features;
 
-use AdvisingApp\Report\Enums\ReportModel;
-use AdvisingApp\Report\Observers\ReportObserver;
-use App\Models\Authenticatable;
-use App\Models\BaseModel;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Attributes\ObservedBy;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @mixin IdeHelperReport
- */
-#[ObservedBy([ReportObserver::class])]
-class Report extends BaseModel
+class EventVersioningFeature extends AbstractFeatureFlag
 {
-    protected $fillable = [
-        'query',
-        'columns',
-        'filters',
-        'name',
-        'description',
-        'model',
-    ];
-
-    protected $casts = [
-        'columns' => 'array',
-        'filters' => 'array',
-        'model' => ReportModel::class,
-    ];
-
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
+    public function resolve(mixed $scope): mixed
     {
-        return $this->belongsTo(User::class);
-    }
-
-    protected static function booted(): void
-    {
-        static::addGlobalScope('authorized', function (Builder $builder) {
-            if (! auth()->check()) {
-                return;
-            }
-
-            /** @var Authenticatable $user */
-            $user = auth()->user();
-
-            foreach (ReportModel::cases() as $model) {
-                if (! $model->canBeAccessed($user)) {
-                    $builder->where('model', '!=', $model);
-                }
-            }
-        });
+        return false;
     }
 }
