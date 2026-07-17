@@ -37,6 +37,7 @@
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEventRegistration;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use App\Settings\LicenseSettings;
 
@@ -214,4 +215,115 @@ it('when saving a wizard registration form, the archived version still has its o
 
     expect($archivedVersion->archived_at)->not->toBeNull();
     expect($archivedVersion->steps()->count())->toBe($originalStepCount);
+});
+
+it('carries each wizard step its own fields onto the new version when saving', function () {
+    editEventRegistrationTestSetup();
+
+    asSuperAdmin();
+
+    $event = Event::factory()->create();
+    $form = $event->eventRegistrationForm;
+
+    $form->steps()->delete();
+    $form->fields()->delete();
+    $form->is_wizard = true;
+    $form->content = null;
+    $form->save();
+
+    foreach ([0, 1] as $index) {
+        $step = $form->steps()->create(['label' => "Step {$index}", 'sort' => $index]);
+        $field = EventRegistrationFormField::factory()->create([
+            'form_id' => $form->getKey(),
+            'step_id' => $step->getKey(),
+        ]);
+        $step->content = [
+            'type' => 'doc',
+            'content' => [[
+                'type' => 'customBlock',
+                'attrs' => ['id' => $field->type, 'config' => [
+                    'fieldId' => $field->getKey(),
+                    'label' => $field->label,
+                    'isRequired' => $field->is_required,
+                ]],
+            ]],
+        ];
+        $step->save();
+    }
+
+    $originalRootId = $form->root_id;
+    $originalFieldIds = $form->fields()->pluck('id');
+
+    livewire(EditEventRegistration::class, ['record' => $event->getKey()])
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $newVersion = EventRegistrationForm::withoutGlobalScopes()
+        ->where('root_id', $originalRootId)
+        ->whereNull('archived_at')
+        ->first();
+
+    expect($newVersion->fields()->count())->toBe(2);
+    expect($newVersion->fields()->whereIn('id', $originalFieldIds)->count())->toBe(0);
+
+    $newVersion->steps()->orderBy('sort')->get()->each(function (EventRegistrationFormStep $step) use ($newVersion) {
+        expect($newVersion->fields()->where('step_id', $step->getKey())->count())->toBe(1);
+
+        $fieldId = data_get($step->content, 'content.0.attrs.config.fieldId');
+        expect($newVersion->fields()->whereKey($fieldId)->exists())->toBeTrue();
+    });
+});
+
+it('persists a newly added wizard step and its fields to the new version', function () {
+    editEventRegistrationTestSetup();
+
+    asSuperAdmin();
+
+    $event = Event::factory()->create();
+    $form = $event->eventRegistrationForm;
+
+    $form->steps()->delete();
+    $form->fields()->delete();
+    $form->is_wizard = true;
+    $form->content = null;
+    $form->save();
+
+    EventRegistrationFormStep::factory()
+        ->count(2)
+        ->sequence(fn ($sequence) => ['sort' => $sequence->index, 'label' => "Existing {$sequence->index}"])
+        ->create(['form_id' => $form->getKey()]);
+
+    $originalRootId = $form->root_id;
+
+    $component = livewire(EditEventRegistration::class, ['record' => $event->getKey()]);
+
+    $steps = data_get($component->instance()->form->getRawState(), 'eventRegistrationForm.steps', []);
+    $steps['newStepKey'] = [
+        'label' => 'Brand New Step',
+        'content' => [
+            'type' => 'doc',
+            'content' => [[
+                'type' => 'customBlock',
+                'attrs' => ['id' => 'text_input', 'config' => ['label' => 'New Field', 'isRequired' => false]],
+            ]],
+        ],
+    ];
+
+    $component
+        ->fillForm(['eventRegistrationForm' => ['steps' => $steps]])
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $newVersion = EventRegistrationForm::withoutGlobalScopes()
+        ->where('root_id', $originalRootId)
+        ->whereNull('archived_at')
+        ->first();
+
+    expect($newVersion->steps()->count())->toBe(3);
+    expect($newVersion->steps()->pluck('label'))->toContain('Brand New Step');
+
+    $newStep = $newVersion->steps()->where('label', 'Brand New Step')->first();
+
+    expect($newStep)->not->toBeNull();
+    expect($newVersion->fields()->where('step_id', $newStep->getKey())->count())->toBe(1);
 });
