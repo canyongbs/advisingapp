@@ -63,12 +63,6 @@ class PipelineSettings extends SettingsPage
 
     public static function canAccess(): bool
     {
-        if (! Gate::check(
-            collect([Feature::ProjectManagement])->map(fn (Feature $feature) => $feature->getGateName())
-        )) {
-            return false;
-        }
-
         /** @var User $user */
         $user = auth()->user();
 

@@ -144,7 +144,6 @@ class CreateTenant extends Command
                     realtimeChat: true,
                     mobileApps: true,
                     scheduleAndAppointments: true,
-                    projectManagement: true,
                 ),
             ),
         );
