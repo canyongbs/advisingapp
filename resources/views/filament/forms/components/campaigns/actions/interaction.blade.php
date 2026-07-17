@@ -33,7 +33,6 @@
 --}}
 @php
     use Carbon\Carbon;
-    use AdvisingApp\Division\Models\Division;
     use AdvisingApp\Campaign\Settings\CampaignSettings;
     use AdvisingApp\Interaction\Models\InteractionType;
     use AdvisingApp\Interaction\Models\InteractionStatus;
@@ -68,10 +67,6 @@
             </div>
         @endif
 
-        <div class="flex flex-col pt-3">
-            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Division</dt>
-            <dd class="text-sm font-semibold">{{ Division::find($action['division_id'])?->name }}</dd>
-        </div>
         @if ($settings->is_outcome_enabled)
             <div class="flex flex-col pt-3">
                 <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Outcome</dt>

@@ -37,7 +37,6 @@
 namespace AdvisingApp\Interaction\Filament\Resources\Interactions\Pages;
 
 use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\InteractionResource;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
@@ -108,14 +107,6 @@ class EditInteraction extends EditRecord
                             ->required(fn () => $this->getSettings()->is_driver_required)
                             ->visible(fn () => $this->getSettings()->is_driver_enabled)
                             ->exists((new InteractionDriver())->getTable(), 'id'),
-                        Select::make('division_id')
-                            ->relationship('division', 'name')
-                            ->preload()
-                            ->label('Division')
-                            ->required()
-                            ->exists((new Division())->getTable(), 'id')
-                            ->visible(fn (): bool => Division::count() > 1)
-                            ->dehydratedWhenHidden(),
                         Select::make('interaction_outcome_id')
                             ->relationship('outcome', 'name')
                             ->preload()

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Interaction\Filament\Actions;
 
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
@@ -58,7 +57,6 @@ use Filament\Schemas\Components\Wizard\Step;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Illuminate\Validation\ValidationException;
 
 class BulkCreateInteractionAction
 {
@@ -88,24 +86,6 @@ class BulkCreateInteractionAction
                             ->required(fn () => $settings->is_driver_required)
                             ->visible(fn () => $settings->is_driver_enabled)
                             ->exists((new InteractionDriver())->getTable(), 'id'),
-                        Select::make('division_id')
-                            ->relationship('division', 'name')
-                            ->model(Interaction::class)
-                            ->preload()
-                            ->default(
-                                fn () => auth()->user()->department?->division?->getKey()
-                                    ?? Division::query()
-                                        ->where('is_default', true)
-                                        ->first()
-                                        ?->getKey()
-                                    ?? Division::query()->first()?->getKey()
-                                    ?? throw ValidationException::withMessages(['No division found'])
-                            )
-                            ->label('Division')
-                            ->visible(fn () => Division::count() > 1)
-                            ->dehydratedWhenHidden()
-                            ->required()
-                            ->exists((new Division())->getTable(), 'id'),
                         Select::make('interaction_outcome_id')
                             ->relationship('outcome', 'name')
                             ->model(Interaction::class)
