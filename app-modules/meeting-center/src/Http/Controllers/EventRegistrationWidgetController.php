@@ -146,6 +146,10 @@ class EventRegistrationWidgetController extends Controller
             ],
         );
 
+        if ($attendee->exists && $attendee->isArchived()) {
+            $attendee->unarchive();
+        }
+
         if (empty($attendee->status)) {
             $attendee->status = EventAttendeeStatus::Pending;
         }

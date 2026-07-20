@@ -239,11 +239,11 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                 ...(ArchiveSubmissionsFeature::active() ? [
                     Action::make('archive')
                         ->icon('heroicon-o-archive-box')
-                        ->color('danger')
+                        ->color('warning')
                         ->requiresConfirmation()
                         ->modalHeading('Archive Submission')
                         ->modalSubmitActionLabel('Archive')
-                        ->authorize(fn (): bool => auth()->user()->can('application.*.update'))
+                        ->authorize(fn (ApplicationSubmission $record): bool => auth()->user()->can('archive', $record))
                         ->action(function (ApplicationSubmission $record) use ($owner): void {
                             $record->archive();
 
@@ -284,6 +284,10 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                             ->action(function (Collection $records) use ($owner): void {
                                 /** @phpstan-ignore argument.type */
                                 $records->each(function (ApplicationSubmission $record): void {
+                                    if ($record->isArchived()) {
+                                        return;
+                                    }
+
                                     $record->archive();
                                 });
 

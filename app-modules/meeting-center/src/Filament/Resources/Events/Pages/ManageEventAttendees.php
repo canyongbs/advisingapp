@@ -86,11 +86,11 @@ class ManageEventAttendees extends ManageRelatedRecords
                 ...(ArchiveSubmissionsFeature::active() ? [
                     Action::make('archive')
                         ->icon('heroicon-o-archive-box')
-                        ->color('danger')
+                        ->color('warning')
                         ->requiresConfirmation()
                         ->modalHeading('Archive Attendee')
                         ->modalSubmitActionLabel('Archive')
-                        ->authorize(fn (): bool => auth()->user()->can('event_attendee.*.delete'))
+                        ->authorize(fn (EventAttendee $record): bool => auth()->user()->can('archive', $record))
                         ->action(function (EventAttendee $record): void {
                             $record->archive();
 
@@ -116,6 +116,10 @@ class ManageEventAttendees extends ManageRelatedRecords
                             ->action(function (Collection $records): void {
                                 /** @phpstan-ignore argument.type */
                                 $records->each(function (EventAttendee $record): void {
+                                    if ($record->isArchived()) {
+                                        return;
+                                    }
+
                                     $record->archive();
                                 });
 

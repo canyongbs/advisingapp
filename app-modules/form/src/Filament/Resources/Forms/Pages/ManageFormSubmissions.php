@@ -160,11 +160,11 @@ class ManageFormSubmissions extends ManageRelatedRecords
                 ...(ArchiveSubmissionsFeature::active() ? [
                     Action::make('archive')
                         ->icon('heroicon-o-archive-box')
-                        ->color('danger')
+                        ->color('warning')
                         ->requiresConfirmation()
                         ->modalHeading('Archive Submission')
                         ->modalSubmitActionLabel('Archive')
-                        ->authorize(fn (): bool => auth()->user()->can('form.*.update'))
+                        ->authorize(fn (FormSubmission $record): bool => auth()->user()->can('archive', $record))
                         ->action(function (FormSubmission $record) use ($owner): void {
                             $record->archive();
                             Cache::tags('{form-submission-count}')
@@ -205,6 +205,10 @@ class ManageFormSubmissions extends ManageRelatedRecords
                             ->action(function (Collection $records) use ($owner): void {
                                 /** @phpstan-ignore argument.type */
                                 $records->each(function (FormSubmission $record): void {
+                                    if ($record->isArchived()) {
+                                        return;
+                                    }
+
                                     $record->archive();
                                 });
                                 Cache::tags('{form-submission-count}')
