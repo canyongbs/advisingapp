@@ -1,3 +1,5 @@
+<?php
+
 /*
 <COPYRIGHT>
 
@@ -31,37 +33,15 @@
 
 </COPYRIGHT>
 */
-import laravel, { refreshPaths } from 'laravel-vite-plugin';
-import { defineConfig } from 'vite';
 
-export default defineConfig({
-    plugins: [
-        laravel({
-            input: [
-                'resources/css/app.css',
-                'resources/js/app.js',
-                'resources/js/admin.js',
-                'resources/css/filament/admin/theme.css',
-                'app-modules/ai/resources/js/chat.js',
-                'app-modules/ai/resources/js/chats.js',
-                'app-modules/ai/resources/js/customer-advisor-preview.js',
-                'app-modules/ai/resources/js/employee-advisor-preview.js',
-                'app-modules/research/resources/js/results.js',
-                'app-modules/research/resources/js/requests.js',
-                'app-modules/task/resources/js/kanban.js',
-                'app-modules/pipeline/resources/js/kanban.js',
-            ],
-            assets: ['resources/images/**', 'resources/svg/**'],
-            refresh: [
-                ...refreshPaths,
-                'app/Filament/**',
-                'app/Forms/Components/**',
-                'app/Livewire/**',
-                'app/Infolists/Components/**',
-                'app/Providers/Filament/**',
-                'app/Tables/Columns/**',
-                'portals/**',
-            ],
-        }),
-    ],
-});
+namespace App\Features;
+
+use App\Support\AbstractFeatureFlag;
+
+class EmployeeAdvisorPreviewFeature extends AbstractFeatureFlag
+{
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
+    }
+}
