@@ -34,31 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Tests\Tenant\Filament\Actions\RequestFactories;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Interaction\Models\InteractionDriver;
-use AdvisingApp\Interaction\Models\InteractionInitiative;
-use AdvisingApp\Interaction\Models\InteractionOutcome;
-use AdvisingApp\Interaction\Models\InteractionRelation;
-use AdvisingApp\Interaction\Models\InteractionStatus;
-use AdvisingApp\Interaction\Models\InteractionType;
-use Worksome\RequestFactories\RequestFactory;
-
-class BulkCreateInteractionActionRequestFactory extends RequestFactory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'description' => $this->faker->paragraph(),
-            'end_datetime' => now()->addMinutes(5)->seconds(0)->format('Y-m-d H:i:s'),
-            'interaction_driver_id' => InteractionDriver::factory(),
-            'interaction_initiative_id' => InteractionInitiative::factory(),
-            'interaction_outcome_id' => InteractionOutcome::factory(),
-            'interaction_relation_id' => InteractionRelation::factory(),
-            'interaction_status_id' => InteractionStatus::factory(),
-            'interaction_type_id' => InteractionType::factory(),
-            'start_datetime' => now()->seconds(0)->format('Y-m-d H:i:s'),
-            'subject' => $this->faker->sentence(),
-        ];
+        Schema::table('interactions', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('division_id');
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('interactions', function (Blueprint $table) {
+            $table->foreignUuid('division_id')->nullable()->constrained('divisions');
+        });
+    }
+};

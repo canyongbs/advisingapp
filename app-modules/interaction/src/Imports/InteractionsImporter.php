@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Interaction\Imports;
 
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
@@ -178,18 +177,6 @@ class InteractionsImporter extends Importer
                 )
                 ->requiredMapping()
                 ->example(fn (): ?string => InteractionOutcome::query()->value('name')),
-            ImportColumn::make('division')
-                ->relationship(
-                    resolveUsing: fn (mixed $state) => Division::query()
-                        ->when(
-                            str($state)->isUuid(),
-                            fn (Builder $query) => $query->whereKey($state),
-                            fn (Builder $query) => $query->whereRaw('lower(name) = ?', [strtolower($state)]),
-                        )
-                        ->first(),
-                )
-                ->requiredMapping()
-                ->example(fn (): ?string => Division::query()->value('name')),
             ImportColumn::make('start_datetime')
                 ->rules(['date'])
                 ->example('2023-09-28 16:52:50'),
