@@ -51,14 +51,12 @@
     const searchQuery = ref('');
     const loadingResults = ref(false);
     const searchResults = ref(null);
-    const filter = ref('');
     const currentPage = ref(1);
     const lastPage = ref(1);
     const totalArticles = ref(0);
     const fromArticle = ref(0);
     const toArticle = ref(0);
     const globalSearchInput = ref(null);
-
     const selectedTags = ref([]);
     const tagsArray = computed(() => []);
 
@@ -71,7 +69,7 @@
     );
 
     const articlesWithRoutes = computed(() =>
-        (searchResults.value?.data?.articles ?? []).map((article) => ({
+        (searchResults.value?.articles ?? []).map((article) => ({
             ...article,
             key: article.id,
             to: { name: 'view-article', params: { categoryId: article.categoryId, articleId: article.id } },
@@ -79,20 +77,12 @@
     );
 
     const searchCategoriesWithRoutes = computed(() =>
-        (searchResults.value?.data?.categories ?? []).map((category) => ({
+        (searchResults.value?.categories ?? []).map((category) => ({
             ...category,
             key: category.id,
             to: { name: 'view-category', params: { categoryId: category.id } },
         })),
     );
-
-    const setPagination = (pagination) => {
-        currentPage.value = pagination.current_page;
-        lastPage.value = pagination.last_page;
-        totalArticles.value = pagination.total;
-        fromArticle.value = pagination.from;
-        toArticle.value = pagination.to;
-    };
 
     function debounce(func, delay) {
         let timerId;
@@ -102,15 +92,13 @@
         };
     }
 
-    const debounceSearch = debounce(async (value, page = 1) => {
+    const debounceSearch = debounce(async (value) => {
         if (!value || !value.trim()) {
-            searchQuery.value = null;
             searchResults.value = null;
-            currentPage.value = 1;
-            lastPage.value = 1;
             totalArticles.value = 0;
             fromArticle.value = 0;
             toArticle.value = 0;
+
             return;
         }
 
@@ -122,23 +110,15 @@
             // that base URL off, keeping the signature/expiry query string intact.
             const searchPath = config.searchUrl.replace(config.apiUrl, '');
 
-            const response = await apiPost(searchPath, {
-                search: value,
-                page,
-                filter: filter.value,
-            });
+            const response = await apiPost(searchPath, { search: value });
 
             searchResults.value = {
-                data: {
-                    articles: response?.data?.articles ?? [],
-                    categories: response?.data?.categories ?? [],
-                },
+                articles: response?.data?.articles ?? [],
+                categories: response?.data?.categories ?? [],
             };
 
-            const articleCount = searchResults.value.data.articles.length;
+            const articleCount = searchResults.value.articles.length;
 
-            currentPage.value = 1;
-            lastPage.value = 1;
             totalArticles.value = articleCount;
             fromArticle.value = articleCount > 0 ? 1 : 0;
             toArticle.value = articleCount;
@@ -155,115 +135,45 @@
         }
     }
 
-    const changeSearchFilter = (value) => {
-        filter.value = value;
-        router.push({
-            name: route.name,
-            query: { ...route.query, page: 1, filter: value || undefined },
-        });
-        debounceSearch(searchQuery.value, 1);
-    };
-
-    const fetchNextPage = () => {
-        if (currentPage.value < lastPage.value) {
-            fetchPage(currentPage.value + 1);
-        }
-    };
-
-    const fetchPreviousPage = () => {
-        if (currentPage.value > 1) {
-            fetchPage(currentPage.value - 1);
-        }
-    };
-
-    const fetchPage = (page) => {
-        if (page <= 1) {
-            return;
-        }
-
-        router.push({
-            name: route.name,
-            query: {
-                ...route.query,
-                page,
-                search: searchQuery.value || undefined,
-                filter: filter.value || undefined,
-            },
-        });
-        debounceSearch(searchQuery.value, page);
-    };
-
     watch(
         () => searchQuery.value,
         (newSearch) => {
             const isSearchEmpty = !newSearch || newSearch.trim() === '';
 
-            if (isSearchEmpty) {
-                router.push({ name: route.name, query: {} });
-                return;
-            }
-
-            const urlSearch = route.query.search || '';
-            const isSearchChanged = newSearch !== urlSearch;
-
-            filter.value = route.query.filter || '';
-
-            if (isSearchChanged) {
-                router.push({
-                    name: route.name,
-                    query: {
-                        page: 1,
-                        search: newSearch || undefined,
-                        filter: filter.value || undefined,
-                    },
-                });
-                debounceSearch(newSearch, 1);
-            } else {
-                debounceSearch(searchQuery.value, route.query.page);
-            }
+            router.replace({ name: route.name, query: isSearchEmpty ? {} : { search: newSearch } });
+            debounceSearch(newSearch);
         },
-        { immediate: false },
     );
 
     watch(
-        () => route.query,
-        (newQuery) => {
-            if (Object.keys(newQuery).length === 0) {
-                filter.value = '';
-                searchQuery.value = '';
+        () => route.query.search,
+        (newSearch) => {
+            if ((newSearch || '') !== (searchQuery.value || '')) {
+                searchQuery.value = newSearch || '';
             }
-
-            handleInitialQuery();
         },
     );
 
     onMounted(() => {
-        handleInitialQuery({ setFocus: true });
-    });
-
-    function handleInitialQuery({ setFocus = false } = {}) {
         const search = route.query.search;
 
         if (search) {
-            currentPage.value = parseInt(route.query.page) || 1;
             searchQuery.value = search;
 
-            if (setFocus) {
-                nextTick(() => {
-                    globalSearchInput.value?.focus();
-                });
-            }
+            nextTick(() => {
+                globalSearchInput.value?.focus();
+            });
 
-            debounceSearch(search, currentPage.value);
+            debounceSearch(search);
         }
-    }
+    });
 </script>
 
 <template>
     <Page>
         <template #heading>Resource Hub</template>
 
-        <template #description>Search our knowledge base for advice and answers</template>
+        <template #description>Search our resource hub for advice and answers</template>
 
         <template #breadcrumbs>
             <Breadcrumbs currentCrumb="Home" />
@@ -285,16 +195,11 @@
             :articles="articlesWithRoutes"
             :categories="searchCategoriesWithRoutes"
             :loadingResults="loadingResults"
-            :selectedFilter="filter"
             :currentPage="currentPage"
             :lastPage="lastPage"
             :fromItem="fromArticle"
             :toItem="toArticle"
             :totalItems="totalArticles"
-            @change-filter="changeSearchFilter"
-            @fetchNextPage="fetchNextPage"
-            @fetchPreviousPage="fetchPreviousPage"
-            @fetchPage="fetchPage"
         />
 
         <HelpCenter v-else :categories="categoriesWithRoutes" />
