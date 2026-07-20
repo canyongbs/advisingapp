@@ -40,6 +40,7 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Tables\Operators\IsInApplicationSubmissionStateOperator;
 use AdvisingApp\Prospect\Models\Prospect;
 use Filament\Actions\ViewAction;
+use Filament\QueryBuilder\Constraints\Constraint as BaseConstraint;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\QueryBuilder;
@@ -93,100 +94,7 @@ class ProspectsTable
                 QueryBuilder::make()
                     // WARNING: Removing constraints from this list requires a data migration to clean up
                     // existing Groups that reference the removed filter types. See docs/explanations/maintaining-group-filters.md
-                    ->constraints([
-                        TextConstraint::make('first_name')
-                            ->icon('heroicon-m-user'),
-                        TextConstraint::make('last_name')
-                            ->icon('heroicon-m-user'),
-                        TextConstraint::make('full_name')
-                            ->icon('heroicon-m-user'),
-                        TextConstraint::make('preferred')
-                            ->label('Preferred Name')
-                            ->icon('heroicon-m-user'),
-                        DateConstraint::make('created_at')
-                            ->icon('heroicon-m-calendar'),
-                        TextConstraint::make('email')
-                            ->label('Primary Email')
-                            ->relationship('primaryEmailAddress', 'address')
-                            ->icon('heroicon-m-envelope'),
-                        TextConstraint::make('phone')
-                            ->label('Primary Phone')
-                            ->relationship('primaryPhoneNumber', 'number')
-                            ->icon('heroicon-m-phone'),
-                        TextConstraint::make('address')
-                            ->label('Primary Address line 1')
-                            ->relationship('primaryAddress', 'line_1')
-                            ->icon('heroicon-m-map-pin'),
-                        TextConstraint::make('address_2')
-                            ->label('Primary Address line 2')
-                            ->relationship('primaryAddress', 'line_2')
-                            ->icon('heroicon-m-map-pin'),
-                        RelationshipConstraint::make('tags')
-                            ->label('Tags')
-                            ->icon('heroicon-m-rectangle-group')
-                            ->selectable(
-                                IsRelatedToOperator::make()
-                                    ->titleAttribute('name')
-                                    ->multiple()
-                                    ->preload(),
-                            ),
-                        TextConstraint::make('hsgrad')
-                            ->label('HS Grad')
-                            ->icon('heroicon-m-academic-cap'),
-                        RelationshipConstraint::make('status')
-                            ->icon('heroicon-m-flag')
-                            ->selectable(
-                                IsRelatedToOperator::make()
-                                    ->titleAttribute('name')
-                                    ->multiple()
-                                    ->preload(),
-                            ),
-                        RelationshipConstraint::make('source')
-                            ->icon('heroicon-m-arrow-left-on-rectangle')
-                            ->selectable(
-                                IsRelatedToOperator::make()
-                                    ->titleAttribute('name')
-                                    ->multiple()
-                                    ->preload(),
-                            ),
-                        Constraint::make('subscribed')
-                            ->icon('heroicon-m-bell')
-                            ->operators([
-                                Operator::make('subscribed')
-                                    ->label(fn (bool $isInverse): string => $isInverse ? 'Not subscribed' : 'Subscribed')
-                                    ->summary(fn (bool $isInverse): string => $isInverse ? 'You are not subscribed' : 'You are subscribed')
-                                    ->baseQuery(fn (Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereDoesntHave' : 'whereHas'}(
-                                        'subscriptions.user',
-                                        fn (Builder $query) => $query->whereKey(auth()->user()),
-                                    )),
-                            ]),
-                        Constraint::make('careTeam')
-                            ->icon('heroicon-m-user-group')
-                            ->operators([
-                                Operator::make('careTeam')
-                                    ->label(fn (bool $isInverse): string => $isInverse ? 'Not my care team' : 'My care team')
-                                    ->summary('Care team')
-                                    ->baseQuery(fn (Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereDoesntHave' : 'whereHas'}(
-                                        'careTeam',
-                                        fn (Builder $query) => $query->whereKey(auth()->user()),
-                                    )),
-                            ]),
-                        Constraint::make('conversionStatus')
-                            ->label('Conversion Status')
-                            ->icon('heroicon-m-arrow-path')
-                            ->operators([
-                                Operator::make('conversionStatus')
-                                    ->label(fn (bool $isInverse): string => $isInverse ? 'Not Converted' : 'Converted')
-                                    ->summary(fn (bool $isInverse): string => $isInverse ? 'Not Converted' : 'Converted')
-                                    ->baseQuery(fn (Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereNull' : 'whereNotNull'}('student_id')),
-                            ]),
-                        Constraint::make('applicationSubmissionState')
-                            ->label('Admission States')
-                            ->icon('heroicon-m-document-text')
-                            ->operators([
-                                IsInApplicationSubmissionStateOperator::make(),
-                            ]),
-                    ])
+                    ->constraints(static::getQueryBuilderConstraints())
                     ->constraintPickerColumns([
                         'md' => 2,
                         'lg' => 3,
@@ -199,5 +107,111 @@ class ProspectsTable
                     ->authorize('view')
                     ->url(fn (Prospect $record) => ProspectResource::getUrl('view', ['record' => $record])),
             ]);
+    }
+
+    /**
+     * The QueryBuilder constraints used both by this table's filter and by group filter translation.
+     *
+     * WARNING: Removing constraints from this list requires a data migration to clean up
+     * existing Groups that reference the removed filter types. See docs/explanations/maintaining-group-filters.md
+     *
+     * @return array<BaseConstraint>
+     */
+    public static function getQueryBuilderConstraints(): array
+    {
+        return [
+            TextConstraint::make('first_name')
+                ->icon('heroicon-m-user'),
+            TextConstraint::make('last_name')
+                ->icon('heroicon-m-user'),
+            TextConstraint::make('full_name')
+                ->icon('heroicon-m-user'),
+            TextConstraint::make('preferred')
+                ->label('Preferred Name')
+                ->icon('heroicon-m-user'),
+            DateConstraint::make('created_at')
+                ->icon('heroicon-m-calendar'),
+            TextConstraint::make('email')
+                ->label('Primary Email')
+                ->relationship('primaryEmailAddress', 'address')
+                ->icon('heroicon-m-envelope'),
+            TextConstraint::make('phone')
+                ->label('Primary Phone')
+                ->relationship('primaryPhoneNumber', 'number')
+                ->icon('heroicon-m-phone'),
+            TextConstraint::make('address')
+                ->label('Primary Address line 1')
+                ->relationship('primaryAddress', 'line_1')
+                ->icon('heroicon-m-map-pin'),
+            TextConstraint::make('address_2')
+                ->label('Primary Address line 2')
+                ->relationship('primaryAddress', 'line_2')
+                ->icon('heroicon-m-map-pin'),
+            RelationshipConstraint::make('tags')
+                ->label('Tags')
+                ->icon('heroicon-m-rectangle-group')
+                ->selectable(
+                    IsRelatedToOperator::make()
+                        ->titleAttribute('name')
+                        ->multiple()
+                        ->preload(),
+                ),
+            TextConstraint::make('hsgrad')
+                ->label('HS Grad')
+                ->icon('heroicon-m-academic-cap'),
+            RelationshipConstraint::make('status')
+                ->icon('heroicon-m-flag')
+                ->selectable(
+                    IsRelatedToOperator::make()
+                        ->titleAttribute('name')
+                        ->multiple()
+                        ->preload(),
+                ),
+            RelationshipConstraint::make('source')
+                ->icon('heroicon-m-arrow-left-on-rectangle')
+                ->selectable(
+                    IsRelatedToOperator::make()
+                        ->titleAttribute('name')
+                        ->multiple()
+                        ->preload(),
+                ),
+            Constraint::make('subscribed')
+                ->icon('heroicon-m-bell')
+                ->operators([
+                    Operator::make('subscribed')
+                        ->label(fn (bool $isInverse): string => $isInverse ? 'Not subscribed' : 'Subscribed')
+                        ->summary(fn (bool $isInverse): string => $isInverse ? 'You are not subscribed' : 'You are subscribed')
+                        ->baseQuery(fn (Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereDoesntHave' : 'whereHas'}(
+                            'subscriptions.user',
+                            fn (Builder $query) => $query->whereKey(auth()->user()),
+                        )),
+                ]),
+            Constraint::make('careTeam')
+                ->icon('heroicon-m-user-group')
+                ->operators([
+                    Operator::make('careTeam')
+                        ->label(fn (bool $isInverse): string => $isInverse ? 'Not my care team' : 'My care team')
+                        ->summary('Care team')
+                        ->baseQuery(fn (Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereDoesntHave' : 'whereHas'}(
+                            'careTeam',
+                            fn (Builder $query) => $query->whereKey(auth()->user()),
+                        )),
+                ]),
+            Constraint::make('conversionStatus')
+                ->label('Conversion Status')
+                ->icon('heroicon-m-arrow-path')
+                ->operators([
+                    Operator::make('conversionStatus')
+                        ->label(fn (bool $isInverse): string => $isInverse ? 'Not Converted' : 'Converted')
+                        ->summary(fn (bool $isInverse): string => $isInverse ? 'Not Converted' : 'Converted')
+                        ->baseQuery(fn (Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereNull' : 'whereNotNull'}('student_id')),
+                ]),
+            Constraint::make('applicationSubmissionState')
+                ->label('Admission States')
+                ->icon('heroicon-m-document-text')
+                ->operators([
+                    IsInApplicationSubmissionStateOperator::make(),
+                ]),
+        ];
     }
 }

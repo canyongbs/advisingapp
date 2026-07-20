@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\ResourceHub\Database\Factories;
 
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
@@ -59,17 +58,5 @@ class ResourceHubArticleFactory extends Factory
             'status_id' => ResourceHubStatus::factory(),
             'category_id' => ResourceHubCategory::factory(),
         ];
-    }
-
-    public function configure(): static
-    {
-        return $this->afterMaking(function (ResourceHubArticle $resourceHubArticle) {
-            // ...
-        })->afterCreating(function (ResourceHubArticle $resourceHubArticle) {
-            if ($resourceHubArticle->division->isEmpty()) {
-                $resourceHubArticle->division()->attach(Division::factory()->create()->id);
-                $resourceHubArticle->save();
-            }
-        });
     }
 }

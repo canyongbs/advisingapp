@@ -77,13 +77,9 @@ test('CreateResourceHubArticle is gated with proper access control', function ()
 
     assertCount(1, ResourceHubArticle::all());
 
-    $data = $request->except('division')->toArray();
+    $data = $request->toArray();
 
     assertDatabaseHas(ResourceHubArticle::class, $data);
-
-    $resourceHubArticle = ResourceHubArticle::first();
-
-    expect($resourceHubArticle->division->pluck('id')->toArray())->toEqual($request['division']);
 });
 
 test('CreateResourceHubArticle is gated with proper feature access control', function () {
@@ -118,11 +114,7 @@ test('CreateResourceHubArticle is gated with proper feature access control', fun
 
     assertCount(1, ResourceHubArticle::all());
 
-    $data = $request->except('division')->toArray();
+    $data = $request->toArray();
 
     assertDatabaseHas(ResourceHubArticle::class, $data);
-
-    $resourceHubArticle = ResourceHubArticle::first();
-
-    expect($resourceHubArticle->division->pluck('id')->toArray())->toEqual($request['division']);
 });

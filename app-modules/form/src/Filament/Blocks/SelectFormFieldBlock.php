@@ -49,6 +49,11 @@ class SelectFormFieldBlock extends FormFieldBlock
         return 'select';
     }
 
+    public static function getLabel(): string
+    {
+        return 'Drop Down';
+    }
+
     public static function fields(): array
     {
         return [

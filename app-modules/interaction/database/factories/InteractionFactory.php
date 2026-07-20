@@ -37,7 +37,6 @@
 namespace AdvisingApp\Interaction\Database\Factories;
 
 use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionDriver;
@@ -60,7 +59,6 @@ class InteractionFactory extends Factory
     {
         return [
             'description' => $this->faker->paragraph(),
-            'division_id' => Division::factory(),
             'end_datetime' => now()->addMinutes(5),
             'interactable_type' => $this->faker->randomElement([
                 (new Student())->getMorphClass(),

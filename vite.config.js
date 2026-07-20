@@ -45,6 +45,7 @@ export default defineConfig({
                 'app-modules/ai/resources/js/chat.js',
                 'app-modules/ai/resources/js/chats.js',
                 'app-modules/ai/resources/js/customer-advisor-preview.js',
+                'app-modules/ai/resources/js/employee-advisor-preview.js',
                 'app-modules/research/resources/js/results.js',
                 'app-modules/research/resources/js/requests.js',
                 'app-modules/task/resources/js/kanban.js',

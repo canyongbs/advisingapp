@@ -44,8 +44,6 @@ use App\Filament\Clusters\ReportLibrary;
 use App\Filament\Clusters\ReportLibraryNavigationGroup;
 use App\Models\User;
 use BackedEnum;
-use Filament\Forms\Components\Select;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Symfony\Component\HttpFoundation\Response;
 use UnitEnum;
@@ -88,21 +86,9 @@ class RetentionCrmDashboard extends StudentReport
 
     public function filtersForm(Schema $schema): Schema
     {
-        $groupModel = $this->groupModel();
-
         return $schema
             ->components([
-                Section::make()
-                    ->schema([
-                        Select::make('populationGroup')
-                            ->label('Select Group')
-                            ->options(fn (): array => $this->getGroupOptions($groupModel))
-                            ->getSearchResultsUsing(fn (string $search): array => $this->getGroupOptions($groupModel, $search))
-                            ->getOptionLabelUsing(fn (string | int | null $value): ?string => $this->getGroupOptionLabel($groupModel, $value))
-                            ->searchable(),
-                    ])
-                    ->heading('Advanced Filtering')
-                    ->columns(1),
+                $this->getPopulationFilterSection(),
             ]);
     }
 
@@ -117,11 +103,7 @@ class RetentionCrmDashboard extends StudentReport
     public function getWidgetData(): array
     {
         return [
-            'filters' => array_merge([
-                'startDate' => null,
-                'endDate' => null,
-                'populationGroup' => null,
-            ], $this->filters),
+            'filters' => $this->getPageFilters(),
         ];
     }
 }

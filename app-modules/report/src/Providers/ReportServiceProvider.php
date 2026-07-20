@@ -36,12 +36,14 @@
 
 namespace AdvisingApp\Report\Providers;
 
+use AdvisingApp\Report\Filament\Forms\Components\LiveFilterBuilder\LiveFilterBuilderComponent;
 use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\Report\ReportPlugin;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
+use Livewire\Livewire;
 
 class ReportServiceProvider extends ServiceProvider
 {
@@ -52,6 +54,8 @@ class ReportServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        Livewire::component('report::live-filter-builder', LiveFilterBuilderComponent::class);
+
         Relation::morphMap([
             'report_user_access' => ReportUserAccess::class,
             'report_team_access' => ReportDepartmentAccess::class,
