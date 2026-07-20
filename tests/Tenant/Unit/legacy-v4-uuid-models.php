@@ -50,14 +50,6 @@ use AdvisingApp\Campaign\Models\CampaignActionEducatable;
 use AdvisingApp\Campaign\Models\CampaignActionEducatableRelated;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
-use AdvisingApp\CaseManagement\Models\CaseForm;
-use AdvisingApp\CaseManagement\Models\CaseFormAuthentication;
-use AdvisingApp\CaseManagement\Models\CaseFormField;
-use AdvisingApp\CaseManagement\Models\CaseFormStep;
-use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\CaseManagement\Models\CaseTypeAuditor;
-use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
-use AdvisingApp\CaseManagement\Models\CaseTypeManager;
 use AdvisingApp\CaseManagement\Models\Sla;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Concern\Models\ConcernStatus;
@@ -296,14 +288,6 @@ return [
     CampaignActionEducatableRelated::class,
     CareTeam::class,
     CareTeamRole::class,
-    CaseForm::class,
-    CaseFormAuthentication::class,
-    CaseFormField::class,
-    CaseFormStep::class,
-    CaseType::class,
-    CaseTypeAuditor::class,
-    CaseTypeEmailTemplate::class,
-    CaseTypeManager::class,
     Sla::class,
     Concern::class,
     ConcernStatus::class,

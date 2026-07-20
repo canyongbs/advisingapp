@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\CaseManagement\Enums\CaseAssignmentStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -50,7 +49,7 @@ return new class () extends Migration {
             $table->foreignUuid('user_id')->constrained('users');
             $table->foreignUuid('assigned_by_id')->nullable()->constrained('users');
             $table->timestamp('assigned_at');
-            $table->string('status')->default(CaseAssignmentStatus::Active);
+            $table->string('status')->default('active');
 
             $table->timestamps();
             $table->softDeletes();
