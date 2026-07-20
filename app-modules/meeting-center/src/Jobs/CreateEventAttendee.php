@@ -72,17 +72,30 @@ class CreateEventAttendee implements ShouldQueue
 
     public function handle(): void
     {
-        if ($this->event->attendees()->where('email', $this->email)->exists()) {
+        /** @var ?EventAttendee $attendee */
+        $attendee = $this->event->attendees()->where('email', $this->email)->first();
+
+        if ($attendee && ! $attendee->isArchived()) {
             $this->fail("{$this->email} has already been invited to this event.");
 
             return;
         }
 
-        /** @var EventAttendee $attendee */
-        $attendee = $this->event->attendees()->create([
-            'email' => $this->email,
-            'status' => EventAttendeeStatus::Invited,
-        ]);
+        if ($attendee) {
+            // The attendee was archived, so re-inviting them restores the existing
+            // record rather than creating a duplicate, which the unique index on
+            // (email, event_id) would reject anyway.
+            $attendee->unarchive();
+
+            $attendee->status = EventAttendeeStatus::Invited;
+            $attendee->save();
+        } else {
+            /** @var EventAttendee $attendee */
+            $attendee = $this->event->attendees()->create([
+                'email' => $this->email,
+                'status' => EventAttendeeStatus::Invited,
+            ]);
+        }
 
         $attendee->notify(new RegistrationLinkToEventAttendeeNotification($this->event, $this->sender));
     }

@@ -34,43 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Policies;
+use App\Features\ArchiveSubmissionsFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Form\Models\FormSubmission;
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
-
-class FormSubmissionPolicy
-{
-    public function update(Authenticatable $authenticatable, FormSubmission $formSubmission): Response
+return new class () extends Migration {
+    public function up(): void
     {
-        return $authenticatable->canOrElse(
-            abilities: ['form.*.update'],
-            denyResponse: 'You do not have permission to update this form submission.'
-        );
+        ArchiveSubmissionsFeature::activate();
     }
 
-    public function delete(Authenticatable $authenticatable, FormSubmission $formSubmission): Response
+    public function down(): void
     {
-        return $authenticatable->canOrElse(
-            abilities: ['form.*.update'],
-            denyResponse: 'You do not have permission to delete this form submission.'
-        );
+        ArchiveSubmissionsFeature::deactivate();
     }
-
-    public function deleteAny(Authenticatable $authenticatable): Response
-    {
-        return $authenticatable->canOrElse(
-            abilities: ['form.*.update'],
-            denyResponse: 'You do not have permission to delete form submissions.'
-        );
-    }
-
-    public function archive(Authenticatable $authenticatable, FormSubmission $formSubmission): Response
-    {
-        return $authenticatable->canOrElse(
-            abilities: ['form.*.update'],
-            denyResponse: 'You do not have permission to archive this form submission.'
-        );
-    }
-}
+};

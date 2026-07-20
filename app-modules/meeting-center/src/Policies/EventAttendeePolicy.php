@@ -111,6 +111,14 @@ class EventAttendeePolicy implements PerformsChecksBeforeAuthorization
         );
     }
 
+    public function archive(Authenticatable $authenticatable, EventAttendee $eventAttendee): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['event_attendee.*.delete'],
+            denyResponse: 'You do not have permissions to archive this event attendee.'
+        );
+    }
+
     public function restore(Authenticatable $authenticatable, EventAttendee $eventAttendee): Response
     {
         return $authenticatable->canOrElse(
