@@ -37,7 +37,6 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -47,8 +46,6 @@ use Filament\Schemas\Schema;
 
 class EditEventPage extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = EventResource::class;
 
     protected static ?string $navigationLabel = 'Landing Page';

@@ -87,7 +87,7 @@ class CalendarRequiresReconnectNotification extends Notification implements Shou
     private function resolveNotificationSetting(object $notifiable): ?NotificationSetting
     {
         return $notifiable instanceof User
-            ? $notifiable->team?->division?->notificationSetting?->setting
+            ? $notifiable->department?->division?->notificationSetting?->setting
             : null;
     }
 }

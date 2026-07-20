@@ -37,14 +37,11 @@
 namespace AdvisingApp\CaseManagement\Filament\Resources\Slas\Pages;
 
 use AdvisingApp\CaseManagement\Filament\Resources\Slas\SlaResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 
 class EditSla extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = SlaResource::class;
 
     protected function getHeaderActions(): array

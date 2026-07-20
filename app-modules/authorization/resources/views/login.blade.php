@@ -32,6 +32,15 @@
     </COPYRIGHT>
 --}}
 
+@php
+    use AdvisingApp\Theme\Settings\ThemeSettings;
+
+    $themeSettings = app(ThemeSettings::class);
+
+    $themeChangelogUrl = ! empty($themeSettings->changelog_url) ? $themeSettings->changelog_url : ThemeSettings::DEFAULT_CHANGELOG_URL;
+    $productResourceHubUrl = ! empty($themeSettings->product_resource_hub_url) ? $themeSettings->product_resource_hub_url : ThemeSettings::DEFAULT_PRODUCT_RESOURCE_HUB_URL;
+@endphp
+
 <div class="flex w-full flex-col items-center justify-center gap-8 lg:flex-row">
     <div class="w-full lg:w-1/2 lg:pr-8">
         <form class="grid gap-y-6" wire:submit="authenticate">
@@ -82,7 +91,7 @@
     </div>
 
     <div class="flex w-full flex-col gap-6 lg:w-1/2">
-        <x-authorization::login-version-card :themeChangelogUrl="$themeChangelogUrl" />
-        <x-authorization::login-resource-portal-card :productResourcehubUrl="$productResourcehubUrl" />
+        <x-version-card :theme-changelog-url="$themeChangelogUrl" />
+        <x-resource-portal-card :product-resource-hub-url="$productResourceHubUrl" />
     </div>
 </div>

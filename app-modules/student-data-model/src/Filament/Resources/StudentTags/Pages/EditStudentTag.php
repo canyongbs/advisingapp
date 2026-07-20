@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentTags\Pages;
 
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentTags\StudentTagResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
@@ -45,8 +44,6 @@ use Filament\Schemas\Schema;
 
 class EditStudentTag extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = StudentTagResource::class;
 
     public function form(Schema $schema): Schema

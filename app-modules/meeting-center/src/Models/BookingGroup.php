@@ -39,7 +39,7 @@ namespace AdvisingApp\MeetingCenter\Models;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\MeetingCenter\Database\Factories\BookingGroupFactory;
 use AdvisingApp\MeetingCenter\Enums\BookingGroupBookWith;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\BaseModel;
 use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
@@ -104,15 +104,16 @@ class BookingGroup extends BaseModel implements Auditable
     }
 
     /**
-     * @return BelongsToMany<Team, $this, covariant BookingGroupTeam>
+     * @return BelongsToMany<Department, $this, covariant BookingGroupDepartment>
      */
-    public function teams(): BelongsToMany
+    public function departments(): BelongsToMany
     {
         return $this->belongsToMany(
-            related: Team::class,
-            table: 'booking_group_teams'
+            related: Department::class,
+            table: 'booking_group_teams',
+            relatedPivotKey: 'team_id'
         )
-            ->using(BookingGroupTeam::class)
+            ->using(BookingGroupDepartment::class)
             ->withPivot('id')
             ->withTimestamps();
     }
@@ -147,13 +148,13 @@ class BookingGroup extends BaseModel implements Auditable
     public function eligibleMeetingOwnerIds(): Collection
     {
         $directUserIds = $this->users()->pluck('users.id');
-        $teamIds = $this->teams()->pluck('teams.id');
+        $departmentIds = $this->departments()->pluck('teams.id');
 
-        $teamUserIds = $teamIds->isNotEmpty()
-            ? User::query()->whereIn('team_id', $teamIds)->pluck('id')
+        $departmentUserIds = $departmentIds->isNotEmpty()
+            ? User::query()->whereIn('team_id', $departmentIds)->pluck('id')
             : collect();
 
-        return $directUserIds->merge($teamUserIds)->unique()->values();
+        return $directUserIds->merge($departmentUserIds)->unique()->values();
     }
 
     /**
@@ -163,13 +164,13 @@ class BookingGroup extends BaseModel implements Auditable
     {
         $directUsers = $this->users()->get();
 
-        $teamIds = $this->teams()->pluck('teams.id');
+        $departmentIds = $this->departments()->pluck('teams.id');
 
-        $teamMembers = $teamIds->isNotEmpty()
-            ? User::query()->whereIn('team_id', $teamIds)->get()
+        $departmentMembers = $departmentIds->isNotEmpty()
+            ? User::query()->whereIn('team_id', $departmentIds)->get()
             : new Collection();
 
-        return $directUsers->merge($teamMembers)->unique('id')->values();
+        return $directUsers->merge($departmentMembers)->unique('id')->values();
     }
 
     /**
@@ -181,20 +182,20 @@ class BookingGroup extends BaseModel implements Auditable
             ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
             ->get();
 
-        $teamIds = $this->teams()->pluck('teams.id');
+        $departmentIds = $this->departments()->pluck('teams.id');
 
-        $teamMembers = $teamIds->isNotEmpty()
+        $departmentMembers = $departmentIds->isNotEmpty()
             ? User::query()
-                ->whereIn('team_id', $teamIds)
+                ->whereIn('team_id', $departmentIds)
                 ->whereHas('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
                 ->get()
             : new Collection();
 
-        return $directUsers->merge($teamMembers)->unique('id')->values();
+        return $directUsers->merge($departmentMembers)->unique('id')->values();
     }
 
     /**
-     * @return array{directUsers: Collection<int, User>, teamGroups: Collection<string, Collection<int, User>>}
+     * @return array{directUsers: Collection<int, User>, departmentGroups: Collection<string, Collection<int, User>>}
      */
     public function disconnectedCalendarMembers(): array
     {
@@ -203,26 +204,26 @@ class BookingGroup extends BaseModel implements Auditable
             ->orderBy('name')
             ->get();
 
-        $teamIds = $this->teams()->pluck('teams.id');
-        $teamsWithDisconnected = collect();
+        $departmentIds = $this->departments()->pluck('teams.id');
+        $departmentsWithDisconnected = collect();
 
-        if ($teamIds->isNotEmpty()) {
-            foreach ($this->teams()->orderBy('name')->get() as $team) {
+        if ($departmentIds->isNotEmpty()) {
+            foreach ($this->departments()->orderBy('name')->get() as $department) {
                 $disconnected = User::query()
-                    ->where('team_id', $team->id)
+                    ->where('team_id', $department->id)
                     ->whereDoesntHave('calendar', fn (Builder $query) => $query->whereNotNull('oauth_token'))
                     ->orderBy('name')
                     ->get();
 
                 if ($disconnected->isNotEmpty()) {
-                    $teamsWithDisconnected->put($team->name, $disconnected);
+                    $departmentsWithDisconnected->put($department->name, $disconnected);
                 }
             }
         }
 
         return [
             'directUsers' => $disconnectedDirectUsers,
-            'teamGroups' => $teamsWithDisconnected,
+            'departmentGroups' => $departmentsWithDisconnected,
         ];
     }
 }

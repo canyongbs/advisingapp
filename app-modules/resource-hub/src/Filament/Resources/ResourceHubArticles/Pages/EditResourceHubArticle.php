@@ -37,14 +37,12 @@
 namespace AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\ResourceHub\Filament\Actions\DraftResourceHubArticleWithAiAction;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use App\Filament\Forms\Components\UserSelect;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\Action as BaseAction;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
@@ -62,8 +60,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class EditResourceHubArticle extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = ResourceHubArticleResource::class;
 
     public function form(Schema $schema): Schema
@@ -164,14 +160,6 @@ class EditResourceHubArticle extends EditRecord
                                     ->searchable()
                                     ->preload()
                                     ->exists((new ResourceHubCategory())->getTable(), (new ResourceHubCategory())->getKeyName()),
-                                Select::make('division')
-                                    ->label('Division')
-                                    ->multiple()
-                                    ->relationship('division', 'name')
-                                    ->searchable(['name', 'code'])
-                                    ->preload()
-                                    ->visible(fn (): bool => Division::count() > 1)
-                                    ->exists((new Division())->getTable(), (new Division())->getKeyName()),
                                 UserSelect::make('manager_ids')
                                     ->label('Managers')
                                     ->relationship('managers', 'name')

@@ -37,7 +37,7 @@
 namespace AdvisingApp\CaseManagement\Tests\Tenant\RequestFactories;
 
 use AdvisingApp\CaseManagement\Enums\CaseTypeAssignmentTypes;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Worksome\RequestFactories\RequestFactory;
 
@@ -64,14 +64,14 @@ class EditCaseTypeAssignmentsRequestFactory extends RequestFactory
         ]);
     }
 
-    public function withIndividualId(?Team $team = null): static
+    public function withIndividualId(?Department $department = null): static
     {
         $userFactory = User::factory();
 
-        if ($team) {
+        if ($department) {
             $userFactory = $userFactory->for(
-                factory: $team,
-                relationship: 'team'
+                factory: $department,
+                relationship: 'department'
             );
         }
 

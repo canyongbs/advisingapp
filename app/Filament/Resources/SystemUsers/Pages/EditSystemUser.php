@@ -36,7 +36,6 @@
 
 namespace App\Filament\Resources\SystemUsers\Pages;
 
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use App\Filament\Resources\SystemUsers\SystemUserResource;
 use App\Models\SystemUser;
 use Filament\Actions\Action;
@@ -47,8 +46,6 @@ use Filament\Schemas\Schema;
 
 class EditSystemUser extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = SystemUserResource::class;
 
     protected ?string $heading = 'Edit Programmatic (API) User';

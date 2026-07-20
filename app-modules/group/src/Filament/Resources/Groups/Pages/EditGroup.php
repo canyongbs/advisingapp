@@ -44,7 +44,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -67,7 +66,6 @@ class EditGroup extends EditRecord implements HasTable
     use InteractsWithTable {
         bootedInteractsWithTable as baseBootedInteractsWithTable;
     }
-    use EditPageRedirection;
 
     protected static string $resource = GroupResource::class;
 

@@ -35,25 +35,13 @@
     import Breadcrumbs from '@common/portal/Breadcrumbs.vue';
     import HelpCenter from '@common/portal/home/HelpCenter.vue';
     import Page from '@common/portal/Page.vue';
-    import { computed, defineProps } from 'vue';
+    import { computed } from 'vue';
+    import { useCategoriesData } from './loaders.js';
 
-    const props = defineProps({
-        searchUrl: {
-            type: String,
-            required: true,
-        },
-        apiUrl: {
-            type: String,
-            required: true,
-        },
-        categories: {
-            type: Object,
-            required: true,
-        },
-    });
+    const { data: categories } = useCategoriesData();
 
     const categoriesWithRoutes = computed(() =>
-        Object.values(props.categories).map((category) => ({
+        Object.values(categories.value ?? {}).map((category) => ({
             ...category,
             key: category.id,
             to: { name: 'view-category', params: { categoryId: category.id } },

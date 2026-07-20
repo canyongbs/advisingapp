@@ -37,8 +37,8 @@
 namespace App\Observers;
 
 use AdvisingApp\Authorization\Settings\LocalPasswordSettings;
+use App\Events\UserDepartmentChanged;
 use App\Events\UserRetentionCrmRestrictionSet;
-use App\Events\UserTeamChanged;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 
@@ -66,7 +66,7 @@ class UserObserver
     public function saved(User $user): void
     {
         if ($user->wasChanged('team_id')) {
-            UserTeamChanged::dispatch(
+            UserDepartmentChanged::dispatch(
                 $user,
                 $user->getOriginal('team_id'),
                 $user->team_id,

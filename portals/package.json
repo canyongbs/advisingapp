@@ -47,6 +47,7 @@
         "@formkit/themes": "^1.2.2",
         "@formkit/vue": "^1.2.2",
         "@heroicons/vue": "^2.1.1",
+        "@pinia/colada": "^1.4.1",
         "@ryangjchandler/alpine-clipboard": "^2.3.0",
         "@tailwindcss/forms": "^0.5.11",
         "@tailwindcss/typography": "^0.5.19",
@@ -64,7 +65,7 @@
         "laravel-vite-plugin": "^3.1.0",
         "lodash": "^4.18.1",
         "marked": "^12.0.0",
-        "pinia": "^2.1.7",
+        "pinia": "^3.0.4",
         "primevue": "^4.3.2",
         "sortablejs": "^1.15.0",
         "tailwindcss-primeui": "^0.6.1",
@@ -72,6 +73,6 @@
         "vite": "^8.0.16",
         "vue": "^3.3.4",
         "vue-filepond": "^7.0.4",
-        "vue-router": "^4.2.5"
+        "vue-router": "^5.2.0"
     }
 }

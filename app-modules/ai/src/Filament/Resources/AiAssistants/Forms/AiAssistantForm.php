@@ -159,10 +159,10 @@ class AiAssistantForm
                             ->multiple()
                             ->exists('users', 'id')
                             ->visible(fn (Get $get) => $get('is_confidential')),
-                        Select::make('ai_assistant_confidential_teams')
-                            ->relationship('confidentialAccessTeams', 'name')
+                        Select::make('ai_assistant_confidential_departments')
+                            ->relationship('confidentialAccessDepartments', 'name')
                             ->preload()
-                            ->label('Teams')
+                            ->label('Departments')
                             ->multiple()
                             ->exists('teams', 'id')
                             ->visible(fn (Get $get) => $get('is_confidential')),

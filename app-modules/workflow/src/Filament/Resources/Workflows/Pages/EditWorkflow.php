@@ -42,15 +42,12 @@ use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\WorkflowResource;
 use AdvisingApp\Workflow\Models\Workflow;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 
 class EditWorkflow extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = WorkflowResource::class;
 
     public function getBreadcrumbs(): array

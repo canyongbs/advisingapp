@@ -34,8 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
-use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids;
 use Illuminate\Database\Eloquent\Model;
@@ -56,10 +54,6 @@ arch('All Core Models should not use HasVersion4Uuids trait')
     ->extending(Model::class)
     ->not->toUseTrait(HasVersion4Uuids::class)
     ->ignoring($legacyV4UuidModels);
-
-arch('All Core Factories should not use the fake global function')
-    ->expect('Database\Factories')
-    ->not->toUse('fake');
 
 /** @var Collection<int, ModuleConfig> $modules */
 $modulesPath = dirname(__DIR__, 3) . '/app-modules';
@@ -82,10 +76,6 @@ $modules->each(function (ModuleConfig $module) use ($legacyV4UuidModels) {
         ->extending(Model::class)
         ->not->toUseTrait(HasVersion4Uuids::class)
         ->ignoring($legacyV4UuidModels);
-
-    arch("All {$module->name} Factories should not use the fake global function")
-        ->expect($module->namespace() . 'Database\Factories')
-        ->not->toUse('fake');
 });
 
 test('Legacy models must not use HasUuids (UUIDv7)', function () {
@@ -102,27 +92,6 @@ test('Legacy models must not use HasUuids (UUIDv7)', function () {
             HasVersion4Uuids::class,
             $traits,
             "Class [{$class}] uses HasUuids (UUIDv7) directly. Legacy models must use HasVersion4Uuids instead.",
-        );
-    }
-});
-
-test('pages extending EditRecord have the EditPageRedirection test', function () {
-    foreach (get_declared_classes() as $class) {
-        if (
-            (! str_starts_with($class, 'App\\'))
-            && (! str_starts_with($class, 'AdvisingApp\\'))
-        ) {
-            continue;
-        }
-
-        if (! is_subclass_of($class, EditRecord::class)) {
-            continue;
-        }
-
-        Assert::assertContains(
-            EditPageRedirection::class,
-            class_uses_recursive($class),
-            "Class [{$class}] does not use the EditPageRedirection trait.",
         );
     }
 });

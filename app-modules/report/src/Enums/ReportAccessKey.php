@@ -58,7 +58,7 @@ use AdvisingApp\Report\Filament\Pages\StudentMessagesOverviewReport;
 use AdvisingApp\Report\Filament\Pages\Students;
 use AdvisingApp\Report\Filament\Pages\StudentTaskManagement;
 use AdvisingApp\Report\Filament\Pages\UserLoginActivity;
-use AdvisingApp\Report\Models\ReportTeamAccess;
+use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\StudentDataModel\Filament\Pages\RetentionCrmDashboard;
 use App\Models\User;
@@ -244,7 +244,7 @@ enum ReportAccessKey: string
             ->where('user_id', $user->getKey())
             ->selectRaw('1')
             ->union(
-                ReportTeamAccess::query()
+                ReportDepartmentAccess::query()
                     ->where('report_key', $this->value)
                     ->where('team_id', $user->team_id)
                     ->selectRaw('1')
@@ -254,7 +254,7 @@ enum ReportAccessKey: string
 
     /**
      * The number of distinct users that have access to the report, counting both
-     * direct user assignments and members of assigned teams (deduplicated).
+     * direct user assignments and members of assigned departments (deduplicated).
      */
     public function accessCount(): int
     {
@@ -268,7 +268,7 @@ enum ReportAccessKey: string
                 )
                     ->orWhereIn(
                         'team_id',
-                        ReportTeamAccess::query()
+                        ReportDepartmentAccess::query()
                             ->where('report_key', $this->value)
                             ->select('team_id')
                     );

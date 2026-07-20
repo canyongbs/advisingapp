@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Models\Scopes\ConfidentialPromptScope;
 use AdvisingApp\Ai\Observers\PromptObserver;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -105,15 +105,12 @@ class Prompt extends BaseModel
     }
 
     /**
-     * @return BelongsToMany<Team, $this, covariant ConfidentialPromptTeam>
+     * @return BelongsToMany<Department, $this, covariant DepartmentConfidentialPrompt>
      */
-    public function confidentialAccessTeams(): BelongsToMany
+    public function confidentialAccessDepartments(): BelongsToMany
     {
-        return $this->belongsToMany(
-            Team::class,
-            'confidential_prompt_teams'
-        )
-            ->using(ConfidentialPromptTeam::class)
+        return $this->belongsToMany(Department::class, 'confidential_prompt_teams', 'prompt_id', 'team_id')
+            ->using(DepartmentConfidentialPrompt::class)
             ->withTimestamps();
     }
 

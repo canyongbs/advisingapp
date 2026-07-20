@@ -37,7 +37,6 @@
 namespace AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages;
 
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\BasicNeedsProgramResource;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -49,8 +48,6 @@ use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class EditBasicNeedsProgram extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = BasicNeedsProgramResource::class;
 
     protected static ?string $navigationLabel = 'Edit';

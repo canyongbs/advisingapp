@@ -39,7 +39,7 @@ namespace AdvisingApp\Workflow\Database\Factories;
 use AdvisingApp\CaseManagement\Models\CasePriority;
 use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\Division\Models\Division;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -58,7 +58,7 @@ class WorkflowCaseDetailsFactory extends Factory
             'division_id' => Division::factory(),
             'status_id' => CaseStatus::factory(),
             'priority_id' => CasePriority::factory(),
-            'assigned_to_id' => fn (array $attributes) => User::factory()->for(Team::factory()->hasAttached(CasePriority::find($attributes['priority_id'])->type, relationship: 'manageableCaseTypes')),
+            'assigned_to_id' => fn (array $attributes) => User::factory()->for(Department::factory()->hasAttached(CasePriority::find($attributes['priority_id'])->type, relationship: 'manageableCaseTypes')),
             'close_details' => $this->faker->sentence(),
             'res_details' => $this->faker->sentence(),
         ];

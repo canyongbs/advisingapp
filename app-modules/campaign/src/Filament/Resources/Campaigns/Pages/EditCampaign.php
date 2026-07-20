@@ -39,7 +39,6 @@ namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 use AdvisingApp\Campaign\Filament\Actions\ArchiveCampaignAction;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Group\Models\Group;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -50,8 +49,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 class EditCampaign extends EditRecord
 {
-    use EditPageRedirection;
-
     protected static string $resource = CampaignResource::class;
 
     public function form(Schema $schema): Schema
@@ -65,7 +62,7 @@ class EditCampaign extends EditRecord
                     ->options(function () {
                         return Group::query()
                             ->whereHas('user', function (Builder $query) {
-                                $query->whereKey(auth()->id())->orWhereRelation('team.users', 'id', auth()->id());
+                                $query->whereKey(auth()->id())->orWhereRelation('department.users', 'id', auth()->id());
                             })
                             ->pluck('name', 'id');
                     })

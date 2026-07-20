@@ -79,8 +79,8 @@ class ListBookingGroups extends ListRecords
                                             ->whereColumn('booking_group_users.user_id', 'users.id')
                                             ->whereColumn('booking_group_users.booking_group_id', 'booking_groups.id');
                                     })
-                                    ->orWhereExists(function (Builder $teamMembershipQuery): void {
-                                        $teamMembershipQuery
+                                    ->orWhereExists(function (Builder $departmentMembershipQuery): void {
+                                        $departmentMembershipQuery
                                             ->select(DB::raw(1))
                                             ->from('booking_group_teams')
                                             ->join('teams', 'booking_group_teams.team_id', '=', 'teams.id')

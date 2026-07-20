@@ -42,7 +42,6 @@ use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\DataTransferObjects\AutocompletedAddress;
 use App\Filament\Forms\Components\AddressInput;
-use App\Filament\Resources\Pages\EditRecord\Concerns\EditPageRedirection;
 use DefStudio\SearchableInput\DTO\SearchResult;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -67,7 +66,6 @@ use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 
 class EditStudent extends EditRecord
 {
-    use EditPageRedirection;
     use HasStudentHeader;
 
     protected static string $resource = StudentResource::class;

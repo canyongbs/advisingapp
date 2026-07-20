@@ -41,6 +41,7 @@ use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ResourceHubPortalCategoryController extends Controller
 {
@@ -63,25 +64,44 @@ class ResourceHubPortalCategoryController extends Controller
         );
     }
 
-    public function show(ResourceHubCategory $category): JsonResponse
+    public function show(Request $request, ResourceHubCategory $category): JsonResponse
     {
+        $mapArticle = function (ResourceHubArticle $article) {
+            $article->name = $article->title;
+            $article->categoryId = $article->category_id;
+            $article->id = $article->getKey();
+
+            return $article;
+        };
+
+        $baseQuery = fn () => $category->resourceHubArticles()
+            ->select(['title', 'category_id', 'id', 'portal_view_count'])
+            ->public();
+
+        $filter = $request->query('filter', '');
+        $page = (int) $request->query('page', 1);
+
+        if ($filter !== '') {
+            $query = $baseQuery();
+
+            if ($filter === 'most-viewed') {
+                $query->orderByDesc('portal_view_count');
+            }
+
+            return response()->json([
+                'articles' => $query->paginate(10, ['*'], 'page', $page)->through($mapArticle),
+            ]);
+        }
+
         return response()->json([
             'category' => ResourceHubCategoryData::from([
                 'id' => $category->getKey(),
                 'name' => $category->name,
                 'description' => $category->description,
+                'icon' => $category->icon ? svg($category->icon, 'h-6 w-6')->toHtml() : null,
             ]),
-            'articles' => $category->resourceHubArticles()
-                ->select(['title', 'category_id', 'id'])
-                ->public()
-                ->paginate(10)
-                ->through(function (ResourceHubArticle $article) {
-                    $article->name = $article->title;
-                    $article->categoryId = $article->category_id;
-                    $article->id = $article->getKey();
-
-                    return $article;
-                }),
+            'all_articles' => $baseQuery()->paginate(10)->through($mapArticle),
+            'most_viewed_articles' => $baseQuery()->orderByDesc('portal_view_count')->paginate(10)->through($mapArticle),
         ]);
     }
 }

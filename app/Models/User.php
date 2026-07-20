@@ -73,7 +73,7 @@ use AdvisingApp\ResourceHub\Models\ManagerResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use App\Enums\RetentionCrmRestriction;
 use App\Filament\Resources\Users\UserResource;
@@ -458,10 +458,10 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->hasMany(CalendarEvent::class);
     }
 
-    /** @return BelongsTo<Team, $this> */
-    public function team(): BelongsTo
+    /** @return BelongsTo<Department, $this> */
+    public function department(): BelongsTo
     {
-        return $this->belongsTo(Team::class);
+        return $this->belongsTo(Department::class, 'team_id');
     }
 
     /**
@@ -643,9 +643,9 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
         return $this->phone_number;
     }
 
-    public function assignTeam(int|string $teamId): void
+    public function assignDepartment(int|string $departmentId): void
     {
-        $this->team()->associate($teamId)->save();
+        $this->department()->associate($departmentId)->save();
     }
 
     public function canReceiveSms(): bool

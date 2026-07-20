@@ -38,11 +38,13 @@ namespace AdvisingApp\Application\Models;
 
 use AdvisingApp\Application\Database\Factories\ApplicationSubmissionStateFactory;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
+use AdvisingApp\Application\Observers\ApplicationSubmissionStateObserver;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\BaseModel;
 use CanyonGBS\Common\Enums\Color;
 use CanyonGBS\Common\Models\Concerns\CanBeArchived;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -51,8 +53,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
+ * @property bool $is_default
+ *
  * @mixin IdeHelperApplicationSubmissionState
  */
+#[ObservedBy([ApplicationSubmissionStateObserver::class])]
 class ApplicationSubmissionState extends BaseModel implements Auditable
 {
     /** @use  HasFactory<ApplicationSubmissionStateFactory> */
@@ -67,11 +72,13 @@ class ApplicationSubmissionState extends BaseModel implements Auditable
         'name',
         'color',
         'description',
+        'is_default',
     ];
 
     protected $casts = [
         'classification' => ApplicationSubmissionStateClassification::class,
         'color' => Color::class,
+        'is_default' => 'boolean',
     ];
 
     /**

@@ -137,3 +137,21 @@ it('will not duplicate event registration form submissions if they exist', funct
 
     expect($duplicatedEvent->eventRegistrationForm->submissions()->count())->toBe(0);
 });
+
+it('gives a duplicated event registration form its own version tree rather than sharing the original', function () {
+    asSuperAdmin();
+
+    $event = Event::factory()->create();
+
+    livewire(ListEvents::class)
+        ->assertStatus(200)
+        ->removeTableFilter('pastEvents')
+        ->callTableAction('Duplicate', $event);
+
+    $duplicatedForm = Event::where('id', '<>', $event->id)->first()->eventRegistrationForm;
+
+    // The duplicated form must root to itself, not the original event's version tree.
+    expect($duplicatedForm->root_id)->toBe($duplicatedForm->id);
+    expect($duplicatedForm->root_id)->not->toBe($event->eventRegistrationForm->root_id);
+    expect($duplicatedForm->archived_at)->toBeNull();
+});

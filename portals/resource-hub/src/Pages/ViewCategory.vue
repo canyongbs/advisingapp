@@ -32,204 +32,90 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import HeroSearch from '@common/portal/HeroSearch.vue';
+    import Breadcrumbs from '@common/portal/Breadcrumbs.vue';
+    import Article from '@common/portal/category/Article.vue';
+    import Page from '@common/portal/Page.vue';
+    import Pagination from '@common/portal/Pagination.vue';
     import Subheading from '@common/portal/Subheading.vue';
+    import Tabs from '@common/portal/Tabs.vue';
     import { DocumentTextIcon } from '@heroicons/vue/24/outline';
-    import { computed, defineProps, ref, watch } from 'vue';
+    import { useQuery } from '@pinia/colada';
+    import { computed, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
-    import AppLoading from '../Components/AppLoading.vue';
-    import Article from '../Components/Article.vue';
-    import Breadcrumbs from '../Components/Breadcrumbs.vue';
-    import Page from '../Components/Page.vue';
-    import Pagination from '../Components/Pagination.vue';
-    import SearchResults from '../Components/SearchResults.vue';
-    import SubCategories from '../Components/SubCategories.vue';
-    import Tabs from '../Components/Tabs.vue';
-    import { consumer } from '../Services/Consumer.js';
+    import { apiGet } from '../Services/api.js';
+    import { useCategoryData } from './loaders.js';
 
     const route = useRoute();
     const router = useRouter();
 
-    const props = defineProps({
-        searchUrl: {
-            type: String,
-            required: true,
-        },
-        apiUrl: {
-            type: String,
-            required: true,
-        },
-        categories: {
-            type: Object,
-            required: true,
-        },
-        tags: {
-            type: Object,
-            required: true,
-        },
-    });
+    // Category + page 1 of both filters arrive in a single request via the route data
+    // loader, so switching tabs is instant with no additional loading state.
+    const { data: categoryData } = useCategoryData();
 
-    const loadingResults = ref(true);
-    const loadingeSearchResults = ref(true);
-    const category = ref(null);
-    const articles = ref(null);
-    const searchQuery = ref('');
-    const searchResults = ref(null);
-    const selectedTags = ref([]);
-    const currentPage = ref(1);
-    const nextPageUrl = ref(null);
-    const prevPageUrl = ref(null);
-    const lastPage = ref(null);
-    const totalArticles = ref(0);
-    const fromArticle = ref(0);
-    const toArticle = ref(0);
-    const filter = ref('');
-    const fromSearch = ref(false);
+    const category = computed(() => categoryData.value?.category ?? null);
+
+    const activeFilter = computed(() => route.query.filter || 'all-articles');
+    const currentPage = computed(() => parseInt(route.query.page) || 1);
 
     const filterTabs = [
         { label: 'All Articles', value: 'all-articles' },
-        { label: 'Featured', value: 'featured' },
         { label: 'Most Viewed', value: 'most-viewed' },
     ];
 
-    const debounceSearch = debounce((value, page = 1) => {
-        const { post } = consumer();
+    function firstPageFor(filter) {
+        const key = filter === 'most-viewed' ? 'most_viewed_articles' : 'all_articles';
 
-        fromSearch.value = true;
+        return categoryData.value?.[key] ?? null;
+    }
 
-        if (!value && selectedTags.value.length < 1) {
-            searchQuery.value = null;
-            searchResults.value = null;
-            return;
-        }
+    // Pages beyond the first are fetched (and cached) per filter + page via Pinia Colada.
+    const pageQuery = useQuery({
+        key: () => [
+            'resource-hub',
+            'category-articles',
+            String(route.params.categoryId),
+            activeFilter.value,
+            currentPage.value,
+        ],
+        query: () =>
+            apiGet(`/categories/${route.params.categoryId}`, { filter: activeFilter.value, page: currentPage.value }),
+        enabled: () => currentPage.value > 1,
+    });
 
-        loadingeSearchResults.value = true;
-
-        post(props.searchUrl, {
-            search: JSON.stringify(value),
-            tags: selectedTags.value.join(','),
-            filter: filter.value,
-            page: page,
-        }).then((response) => {
-            searchResults.value = response.data;
-            loadingeSearchResults.value = false;
-            setPagination(response.data.data.articles.meta);
-        });
-    }, 500);
-
-    const setPagination = (pagination) => {
-        currentPage.value = pagination.current_page;
-        prevPageUrl.value = pagination.prev_page_url;
-        nextPageUrl.value = pagination.next_page_url;
-        lastPage.value = pagination.last_page;
-        totalArticles.value = pagination.total;
-        fromArticle.value = pagination.from;
-        toArticle.value = pagination.to;
-    };
-
-    watch(
-        () => [searchQuery.value, [...selectedTags.value]],
-        ([newSearch, newTags]) => {
-            const urlSearch = route.query.search || '';
-            const urlTags = route.query.tags ? route.query.tags.split(',') : [];
-
-            const isSearchChanged = newSearch !== urlSearch;
-            const isTagsChanged = newTags.length !== urlTags.length || newTags.some((tag, i) => tag !== urlTags[i]);
-
-            if (isSearchChanged || isTagsChanged) {
-                fromSearch.value = !!(newSearch || newTags.length);
-
-                router.push({
-                    name: route.name,
-                    params: route.params,
-                    query: {
-                        ...route.query,
-                        page: 1,
-                        search: newSearch || undefined,
-                        tags: newTags.join(',') || undefined,
-                        filter: filter.value || undefined,
-                    },
-                });
-
-                debounceSearch(newSearch, 1);
-            }
-        },
-        { immediate: false },
+    const currentPaginator = computed(() =>
+        currentPage.value > 1 ? (pageQuery.data.value?.articles ?? null) : firstPageFor(activeFilter.value),
     );
 
-    function debounce(func, delay) {
-        let timerId;
-        return function (...args) {
-            if (timerId) {
-                clearTimeout(timerId);
+    // Keep the previously rendered page visible while a new page loads so content
+    // never disappears during pagination.
+    const shownPaginator = ref(null);
+    watch(
+        currentPaginator,
+        (paginator) => {
+            if (paginator) {
+                shownPaginator.value = paginator;
             }
-            timerId = setTimeout(() => {
-                func(...args);
-            }, delay);
-        };
-    }
+        },
+        { immediate: true },
+    );
 
-    function toggleTag(tag) {
-        if (selectedTags.value.includes(tag)) {
-            selectedTags.value = selectedTags.value.filter((t) => t !== tag);
-        } else {
-            selectedTags.value = [...selectedTags.value, tag];
-        }
-    }
+    const loadingPage = computed(() => (currentPage.value > 1 && pageQuery.isLoading.value ? currentPage.value : null));
 
-    const fetchNextPage = () => {
-        if (currentPage.value < lastPage.value) {
-            const newPage = currentPage.value + 1;
-            fetchPage(newPage);
-        }
-    };
+    const articlesWithRoutes = computed(() =>
+        (shownPaginator.value?.data ?? []).map((article) => ({
+            ...article,
+            key: article.id,
+            to: { name: 'view-article', params: { categoryId: article.categoryId, articleId: article.id } },
+        })),
+    );
 
-    const fetchPreviousPage = () => {
-        if (currentPage.value > 1) {
-            const newPage = currentPage.value - 1;
-            fetchPage(newPage);
-        }
-    };
-
-    const fetchPage = (page) => {
-        if (page === currentPage.value) return;
-
-        router.push({
-            name: route.name,
-            params: route.params,
-            query: {
-                ...route.query,
-                page,
-                search: searchQuery.value || undefined,
-                tags: selectedTags.value.join(',') || undefined,
-                filter: filter.value || undefined,
-            },
-        });
-    };
-
-    const changeFilter = (value) => {
-        filter.value = value;
-
-        filterRouteChange();
-    };
-
-    const changeSearchFilter = (value) => {
-        filter.value = value;
-        filterRouteChange();
-        debounceSearch(searchQuery.value);
-    };
-
-    const filterRouteChange = () => {
-        router.push({
-            name: route.name,
-            params: route.params,
-            query: {
-                ...route.query,
-                page: 1,
-                filter: filter.value,
-            },
-        });
-    };
+    const pagination = computed(() => ({
+        currentPage: shownPaginator.value?.current_page ?? 1,
+        lastPage: shownPaginator.value?.last_page ?? 1,
+        total: shownPaginator.value?.total ?? 0,
+        from: shownPaginator.value?.from ?? 0,
+        to: shownPaginator.value?.to ?? 0,
+    }));
 
     const breadcrumbs = computed(() => {
         if (category.value?.parentCategory) {
@@ -245,146 +131,82 @@
         return [];
     });
 
-    watch(
-        route,
-        async (newRoute) => {
-            const page = parseInt(newRoute.query.page) || 1;
-            const search = newRoute.query.search || '';
-            const tags = newRoute.query.tags ? newRoute.query.tags.split(',') : [];
-            const appliedFilter = newRoute.query.filter || '';
-            const isSearchMode = !!search || tags.length > 0;
+    function pushQuery(page, filter) {
+        router.push({
+            name: route.name,
+            params: route.params,
+            query: {
+                ...route.query,
+                page,
+                filter: filter === 'all-articles' ? undefined : filter,
+            },
+        });
+    }
 
-            currentPage.value = page;
-            searchQuery.value = search;
+    function changeFilter(value) {
+        pushQuery(1, value);
+    }
 
-            selectedTags.value.splice(0, selectedTags.value.length, ...tags);
-
-            filter.value = appliedFilter;
-            fromSearch.value = isSearchMode;
-            await getData(page);
-        },
-        { immediate: true },
-    );
-
-    async function getData(page = 1) {
-        if (fromSearch.value) {
-            loadingResults.value = false;
-            debounceSearch(searchQuery.value, page);
+    function goToPage(page) {
+        if (page === pagination.value.currentPage || loadingPage.value !== null) {
             return;
         }
 
-        loadingResults.value = true;
+        pushQuery(page, activeFilter.value);
+    }
 
-        const { get } = consumer();
+    function fetchNextPage() {
+        if (pagination.value.currentPage < pagination.value.lastPage) {
+            goToPage(pagination.value.currentPage + 1);
+        }
+    }
 
-        await get(props.apiUrl + '/categories/' + route.params.categoryId, {
-            page: page,
-            filter: filter.value,
-        })
-            .then((response) => {
-                if (route.params.categoryId && route.params.parentCategoryId) {
-                    router.replace({
-                        name: 'view-subcategory',
-                        params: {
-                            parentCategoryId: response.data.category.parentCategory.id,
-                            categoryId: response.data.category.id,
-                        },
-                        query: { ...route.query },
-                    });
-                } else if (route.params.categoryId) {
-                    router.replace({
-                        name: 'view-category',
-                        params: { categoryId: response.data.category.id },
-                        query: { ...route.query },
-                    });
-                }
-
-                category.value = response.data.category;
-                articles.value = response.data.articles.data;
-                setPagination(response.data.articles);
-                loadingResults.value = false;
-            })
-            .catch((error) => {
-                console.error('Error loading category:', error);
-                loadingResults.value = false;
-            });
+    function fetchPreviousPage() {
+        if (pagination.value.currentPage > 1) {
+            goToPage(pagination.value.currentPage - 1);
+        }
     }
 </script>
 
 <template>
     <Page>
-        <template #heading> Need help? </template>
+        <template #heading>{{ category?.name ?? '' }}</template>
 
-        <template #description> Search our resource hub for advice and answers </template>
-
-        <template #belowHeaderContent>
-            <HeroSearch v-model="searchQuery" :tags="tags" :selectedTags="selectedTags" @toggle-tag="toggleTag" />
-        </template>
+        <template v-if="category?.description" #description>{{ category.description }}</template>
 
         <template #breadcrumbs>
-            <Breadcrumbs
-                :currentCrumb="category?.name"
-                :breadcrumbs="breadcrumbs"
-                v-if="!loadingResults && category && !(searchQuery || selectedTags.length > 0)"
-            />
+            <Breadcrumbs v-if="category" :currentCrumb="category.name" :breadcrumbs="breadcrumbs" />
         </template>
 
-        <div v-if="loadingResults">
-            <AppLoading />
-        </div>
-        <div v-else-if="category">
+        <div v-if="category">
             <main class="flex flex-col gap-8">
-                <div v-if="searchQuery || selectedTags.length > 0" class="flex flex-col gap-6">
-                    <SearchResults
-                        :searchQuery="searchQuery"
-                        :searchResults="searchResults"
-                        :loadingResults="loadingeSearchResults"
-                        @change-filter="changeSearchFilter"
-                        :selected-filter="filter"
-                        :currentPage="currentPage"
-                        :lastPage="lastPage"
-                        :fromItem="fromArticle"
-                        :toItem="toArticle"
-                        :totalItems="totalArticles"
-                        @fetchNextPage="fetchNextPage"
-                        @fetchPreviousPage="fetchPreviousPage"
-                        @fetchPage="fetchPage"
-                    >
-                    </SearchResults>
-                </div>
-                <div v-else class="flex flex-col gap-6">
+                <div class="flex flex-col gap-6">
                     <div class="flex flex-col gap-4">
-                        <div class="flex flex-col gap-1">
-                            <Subheading :title="category.name" />
-                            <p v-if="category.description" class="text-sm text-gray-500">{{ category.description }}</p>
-                        </div>
-                        <SubCategories
-                            v-if="category.subCategories?.length > 0"
-                            :subCategories="category.subCategories"
-                        ></SubCategories>
+                        <Subheading :title="category.name" />
                         <div class="flex flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">
                             <Tabs
                                 :tabs="filterTabs"
-                                :modelValue="filter || 'all-articles'"
+                                :modelValue="activeFilter"
                                 @update:modelValue="changeFilter"
                                 :contained="true"
                             />
 
-                            <div v-if="articles?.length > 0">
+                            <div v-if="articlesWithRoutes.length > 0">
                                 <ul role="list" class="divide-y">
-                                    <li v-for="article in articles" :key="article.id">
-                                        <Article :article="article" />
+                                    <li v-for="article in articlesWithRoutes" :key="article.key">
+                                        <Article :to="article.to" :name="article.name" />
                                     </li>
                                 </ul>
                                 <Pagination
-                                    :currentPage="currentPage"
-                                    :lastPage="lastPage"
-                                    :fromItem="fromArticle"
-                                    :toItem="toArticle"
-                                    :totalItems="totalArticles"
+                                    :currentPage="pagination.currentPage"
+                                    :lastPage="pagination.lastPage"
+                                    :fromItem="pagination.from"
+                                    :toItem="pagination.to"
+                                    :totalItems="pagination.total"
+                                    :loadingPage="loadingPage"
                                     @fetchNextPage="fetchNextPage"
                                     @fetchPreviousPage="fetchPreviousPage"
-                                    @fetchPage="fetchPage"
+                                    @fetchPage="goToPage"
                                 />
                             </div>
                             <section v-else class="px-6 py-4 flex items-start gap-x-4">

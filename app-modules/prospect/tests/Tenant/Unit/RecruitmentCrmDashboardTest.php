@@ -42,12 +42,12 @@ use AdvisingApp\Prospect\Filament\Widgets\ProspectsActionCenterWidget;
 use AdvisingApp\Prospect\Filament\Widgets\ProspectStats;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Enums\ReportAccessKey;
-use AdvisingApp\Report\Models\ReportTeamAccess;
+use AdvisingApp\Report\Models\ReportDepartmentAccess;
 use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Features\ReportingFeature;
 use App\Models\User;
 
@@ -186,12 +186,12 @@ it('is gated with proper access control', function () {
     get(RecruitmentCrmDashboard::getUrl())->assertSuccessful();
 });
 
-it('grants access to a user belonging to a team that has been granted access', function () {
+it('grants access to a user belonging to a department that has been granted access', function () {
     ReportingFeature::activate();
 
-    $team = Team::factory()->create();
+    $department = Department::factory()->create();
 
-    $user = User::factory()->create(['team_id' => $team->getKey()]);
+    $user = User::factory()->create(['team_id' => $department->getKey()]);
 
     $user->grantLicense(LicenseType::RecruitmentCrm);
 
@@ -201,9 +201,9 @@ it('grants access to a user belonging to a team that has been granted access', f
 
     get(RecruitmentCrmDashboard::getUrl())->assertForbidden();
 
-    ReportTeamAccess::factory()->create([
+    ReportDepartmentAccess::factory()->create([
         'report_key' => ReportAccessKey::ProspectActionCenter->value,
-        'team_id' => $team->getKey(),
+        'team_id' => $department->getKey(),
     ]);
 
     get(RecruitmentCrmDashboard::getUrl())->assertSuccessful();

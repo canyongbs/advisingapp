@@ -37,7 +37,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\CaseTypeResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages\ManageCaseTypeAuditors;
 use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Filament\Actions\AttachAction;
 
@@ -49,7 +49,7 @@ it('can attach audit member to case type', function () {
 
     $caseType = CaseType::factory()->create();
 
-    $team = Team::factory()->create();
+    $department = Department::factory()->create();
 
     actingAs($user)
         ->get(
@@ -60,20 +60,20 @@ it('can attach audit member to case type', function () {
 
     $user->givePermissionTo('settings.view-any');
     $user->givePermissionTo('settings.*.update');
-    $user->givePermissionTo('team.view-any');
+    $user->givePermissionTo('department.view-any');
 
     livewire(ManageCaseTypeAuditors::class, [
         'record' => $caseType->getRouteKey(),
     ])
         ->callTableAction(
             AttachAction::class,
-            data: ['recordId' => $team->getKey()]
+            data: ['recordId' => $department->getKey()]
         )->assertSuccessful();
 
     expect(
         $caseType->refresh()
             ->auditors
             ->pluck('id')
-            ->contains($team->getKey())
+            ->contains($department->getKey())
     )->toBeTrue();
 });

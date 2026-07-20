@@ -46,7 +46,7 @@ use AdvisingApp\Ai\Models\Scopes\AiAssistantConfidentialScope;
 use AdvisingApp\Ai\Observers\AiAssistantObserver;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\BaseModel;
 use App\Models\Media;
 use App\Models\User;
@@ -206,12 +206,12 @@ class AiAssistant extends BaseModel implements HasMedia, Auditable
     }
 
     /**
-     * @return BelongsToMany<Team, $this, covariant AiAssistantConfidentialTeam>
+     * @return BelongsToMany<Department, $this, covariant AiAssistantConfidentialDepartment>
      */
-    public function confidentialAccessTeams(): BelongsToMany
+    public function confidentialAccessDepartments(): BelongsToMany
     {
-        return $this->belongsToMany(Team::class, 'ai_assistant_confidential_teams')
-            ->using(AiAssistantConfidentialTeam::class)
+        return $this->belongsToMany(Department::class, 'ai_assistant_confidential_teams', 'ai_assistant_id', 'team_id')
+            ->using(AiAssistantConfidentialDepartment::class)
             ->withTimestamps();
     }
 

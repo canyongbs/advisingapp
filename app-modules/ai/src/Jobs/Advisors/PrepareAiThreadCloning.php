@@ -38,7 +38,7 @@ namespace AdvisingApp\Ai\Jobs\Advisors;
 
 use AdvisingApp\Ai\Enums\AiThreadShareTarget;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Team\Models\Team;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Batch;
@@ -73,7 +73,7 @@ class PrepareAiThreadCloning implements ShouldQueue
         Bus::batch(
             match ($this->targetType) {
                 AiThreadShareTarget::User => $this->generateSingleUserShareJobs(),
-                AiThreadShareTarget::Team => $this->generateTeamShareJobs(),
+                AiThreadShareTarget::Department => $this->generateDepartmentShareJobs(),
             },
         )
             ->name("AiThreadCloning batch for {$this->targetType->getLabel()}")
@@ -126,14 +126,17 @@ class PrepareAiThreadCloning implements ShouldQueue
             ->all();
     }
 
-    protected function generateTeamShareJobs(): array
+    /**
+     * @return array<Department>
+     */
+    protected function generateDepartmentShareJobs(): array
     {
-        return Team::query()
+        return Department::query()
             ->whereKey($this->targetIds)
             ->with('users')
             ->get()
-            ->map(function (Team $team) {
-                return $team->users()
+            ->map(function (Department $department) {
+                return $department->users()
                     ->whereKeyNot($this->sender)
                     ->get()
                     ->map(fn (User $recipient) => new CloneAiThread($this->thread, $this->sender, $recipient))
