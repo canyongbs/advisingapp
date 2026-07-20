@@ -63,7 +63,7 @@
 
             <x-filament-widgets::widgets
                 :columns="$this->getColumns()"
-                :data="['pageFilters' => $this->filters, ...$this->getWidgetData()]"
+                :data="['pageFilters' => $this->getPageFilters(), ...$this->getWidgetData()]"
                 :widgets="$alertWidgets"
             />
         </x-filament::section>
@@ -71,7 +71,7 @@
 
     <x-filament-widgets::widgets
         :columns="$this->getColumns()"
-        :data="['pageFilters' => $this->filters, ...$this->getWidgetData()]"
+        :data="['pageFilters' => $this->getPageFilters(), ...$this->getWidgetData()]"
         :widgets="$tableWidgets"
     />
 </x-filament-panels::page>

@@ -34,19 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Group\Filament\Resources\Groups;
+namespace AdvisingApp\Report\Abstract\Concerns;
 
-use AdvisingApp\Group\Models\Group;
-use Filament\Resources\Resource;
+use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
 
-class GroupResourceForProcesses extends Resource
+/**
+ * Combines the standard report {@see HasFiltersForm} with the {@see HasPopulationFilter}
+ * "Advanced Filtering" experience, for reports that are compatible with population groups.
+ *
+ * The host page must implement {@see HasGroupModel}. The
+ * live-filter builder and saved-group select each own their own nested table components, so the
+ * report page itself does not need to be a table.
+ */
+trait HasReportFilters
 {
-    protected static ?string $model = Group::class;
-
-    protected static bool $shouldRegisterNavigation = false;
-
-    public static function canAccess(array $parameters = []): bool
-    {
-        return true;
-    }
+    use HasFiltersForm;
+    use HasPopulationFilter;
 }

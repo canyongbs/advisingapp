@@ -32,23 +32,26 @@
     </COPYRIGHT>
 --}}
 @php
-    use AdvisingApp\Report\Filament\Widgets\RefreshWidget;
+    use AdvisingApp\Report\Filament\Forms\Components\LiveFilterBuilder\LiveFilterBuilderComponent;
 
-    $visibleWidgets = collect($this->getVisibleWidgets())
-        ->reject(fn ($widget) => $widget->widget === RefreshWidget::class)
-        ->all();
+    $id = $getId();
 @endphp
 
-<x-filament-panels::page class="fi-dashboard-page">
-    <div>
-        @livewire(RefreshWidget::class, ['cacheTag' => $this->cacheTag])
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
+    <div
+        {{
+            $attributes
+                ->merge(['id' => $id], escape: false)
+                ->merge($getExtraAttributes(), escape: false)
+        }}
+    >
+        @livewire(
+            LiveFilterBuilderComponent::class,
+            [
+                'groupModel' => $getGroupModel()->value,
+                $applyStateBindingModifiers('wire:model') => $getStatePath(),
+            ],
+            key($getLivewireKey())
+        )
     </div>
-
-    {{ $this->filtersForm }}
-
-    <x-filament-widgets::widgets
-        :columns="$this->getColumns()"
-        :data="['pageFilters' => $this->getPageFilters(), ...$this->getWidgetData()]"
-        :widgets="$visibleWidgets"
-    />
-</x-filament-panels::page>
+</x-dynamic-component>

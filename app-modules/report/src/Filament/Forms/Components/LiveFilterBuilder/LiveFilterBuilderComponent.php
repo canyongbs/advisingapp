@@ -34,66 +34,72 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Group\Filament\Resources\Groups\Pages;
+namespace AdvisingApp\Report\Filament\Forms\Components\LiveFilterBuilder;
 
-use AdvisingApp\Group\Enums\GroupType;
-use AdvisingApp\Group\Filament\Resources\Groups\GroupResourceForProcesses;
-use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Report\Filament\Forms\Components\LiveFilterBuilder;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
+use Livewire\Attributes\Locked;
+use Livewire\Attributes\Modelable;
+use Livewire\Component;
 
-class GetGroupQuery extends EditRecord implements HasTable
+/**
+ * The nested Livewire component behind {@see LiveFilterBuilder}.
+ *
+ * It renders the subject model's table + QueryBuilder constraints and binds its filter state
+ * ($tableFilters) back to the parent field via a modelable $state property. Because it owns its
+ * own table (and therefore its own action/modal stack), it can be embedded inside another action
+ * modal without recursion — exactly like Filament's own TableSelect component.
+ */
+class LiveFilterBuilderComponent extends Component implements HasActions, HasForms, HasTable
 {
+    use InteractsWithActions;
+    use InteractsWithForms;
     use InteractsWithTable {
-        bootedInteractsWithTable as baseBootedInteractsWithTable;
+        updatedTableFilters as baseUpdatedTableFilters;
     }
 
-    protected static string $resource = GroupResourceForProcesses::class;
+    #[Locked]
+    public string $groupModel;
 
-    public function mount(int | string $record): void
+    /**
+     * The bound filter state, shared with the parent field via `wire:model`.
+     *
+     * @var array<string, mixed> | null
+     */
+    #[Modelable]
+    public ?array $state = null;
+
+    public function mount(): void
     {
-        $this->record = $this->resolveRecord($record);
-
-        $this->fillForm();
-
-        $this->previousUrl = url()->previous();
+        if (filled($this->state)) {
+            $this->tableFilters = $this->state;
+        }
     }
 
     public function table(Table $table): Table
     {
-        $group = $this->getRecord();
-
-        $table = $group->model->table($table);
-
-        if ($group->type === GroupType::Static) {
-            // TODO: Look into changing this. It is inefficient and may break with large datasets.
-            $keys = $group->subjects()->pluck('subject_id');
-
-            $table->modifyQueryUsing(fn (Builder $query) => $query->whereKey($keys));
-        }
-
-        return $table;
+        return GroupModel::from($this->groupModel)->table($table)
+            ->headerActions([])
+            ->recordActions([])
+            ->toolbarActions([]);
     }
 
-    public function bootedInteractsWithTable(): void
+    public function updatedTableFilters(): void
     {
-        if ($this->shouldMountInteractsWithTable) {
-            $this->tableFilters = $this->getRecord()->filters;
-        }
+        $this->baseUpdatedTableFilters();
 
-        $this->baseBootedInteractsWithTable();
+        $this->state = $this->tableFilters;
     }
 
-    protected function mutateFormDataBeforeFill(array $data): array
+    public function render(): string
     {
-        $group = $this->getRecord();
-
-        $data['model'] = $group->model;
-        $data['type'] = $group->type;
-        $data['user']['name'] = $group->user ? $group->user->name : 'N/A';
-
-        return $data;
+        return '{{ $this->table }}';
     }
 }
