@@ -34,19 +34,36 @@
 <script setup>
     import Breadcrumbs from '@common/portal/Breadcrumbs.vue';
     import Article from '@common/portal/category/Article.vue';
+    import HeroSearch from '@common/portal/HeroSearch.vue';
     import Page from '@common/portal/Page.vue';
     import Pagination from '@common/portal/Pagination.vue';
+    import SearchResults from '@common/portal/SearchResults.vue';
     import Subheading from '@common/portal/Subheading.vue';
     import Tabs from '@common/portal/Tabs.vue';
     import { DocumentTextIcon } from '@heroicons/vue/24/outline';
     import { useQuery } from '@pinia/colada';
     import { computed, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
+    import { useResourceHubSearch } from '../Composables/useResourceHubSearch.js';
     import { apiGet } from '../Services/api.js';
     import { useCategoryData } from './loaders.js';
 
     const route = useRoute();
     const router = useRouter();
+
+    const {
+        searchQuery,
+        loadingResults,
+        globalSearchInput,
+        selectedTags,
+        tagsArray,
+        toggleTag,
+        searchResultArticles,
+        searchResultCategories,
+        totalArticles,
+        fromArticle,
+        toArticle,
+    } = useResourceHubSearch();
 
     // Category + page 1 of both filters arrive in a single request via the route data
     // loader, so switching tabs is instant with no additional loading state.
@@ -178,9 +195,30 @@
             <Breadcrumbs v-if="category" :currentCrumb="category.name" :breadcrumbs="breadcrumbs" />
         </template>
 
+        <template #belowHeaderContent>
+            <HeroSearch
+                ref="globalSearchInput"
+                v-model="searchQuery"
+                :tags="tagsArray"
+                :selectedTags="selectedTags"
+                @toggle-tag="toggleTag"
+            />
+        </template>
+
         <div v-if="category">
             <main class="flex flex-col gap-8">
-                <div class="flex flex-col gap-6">
+                <SearchResults
+                    v-if="searchQuery"
+                    :searchQuery="searchQuery"
+                    :articles="searchResultArticles"
+                    :categories="searchResultCategories"
+                    :loadingResults="loadingResults"
+                    :fromItem="fromArticle"
+                    :toItem="toArticle"
+                    :totalItems="totalArticles"
+                />
+
+                <div v-else class="flex flex-col gap-6">
                     <div class="flex flex-col gap-4">
                         <Subheading :title="category.name" />
                         <div class="flex flex-col overflow-hidden rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5">

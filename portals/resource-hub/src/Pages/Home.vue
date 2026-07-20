@@ -37,28 +37,11 @@
     import HelpCenter from '@common/portal/home/HelpCenter.vue';
     import Page from '@common/portal/Page.vue';
     import SearchResults from '@common/portal/SearchResults.vue';
-    import { computed, nextTick, onMounted, ref, watch } from 'vue';
-    import { useRoute, useRouter } from 'vue-router';
-    import { apiPost } from '../Services/api.js';
-    import { useConfigStore } from '../Stores/config.js';
+    import { computed } from 'vue';
+    import { useResourceHubSearch } from '../Composables/useResourceHubSearch.js';
     import { useCategoriesData } from './loaders.js';
 
-    const route = useRoute();
-    const router = useRouter();
-    const config = useConfigStore();
     const { data: categories } = useCategoriesData();
-
-    const searchQuery = ref('');
-    const loadingResults = ref(false);
-    const searchResults = ref(null);
-    const currentPage = ref(1);
-    const lastPage = ref(1);
-    const totalArticles = ref(0);
-    const fromArticle = ref(0);
-    const toArticle = ref(0);
-    const globalSearchInput = ref(null);
-    const selectedTags = ref([]);
-    const tagsArray = computed(() => []);
 
     const categoriesWithRoutes = computed(() =>
         Object.values(categories.value ?? {}).map((category) => ({
@@ -68,105 +51,19 @@
         })),
     );
 
-    const articlesWithRoutes = computed(() =>
-        (searchResults.value?.articles ?? []).map((article) => ({
-            ...article,
-            key: article.id,
-            to: { name: 'view-article', params: { categoryId: article.categoryId, articleId: article.id } },
-        })),
-    );
-
-    const searchCategoriesWithRoutes = computed(() =>
-        (searchResults.value?.categories ?? []).map((category) => ({
-            ...category,
-            key: category.id,
-            to: { name: 'view-category', params: { categoryId: category.id } },
-        })),
-    );
-
-    function debounce(func, delay) {
-        let timerId;
-        return function (...args) {
-            if (timerId) clearTimeout(timerId);
-            timerId = setTimeout(() => func(...args), delay);
-        };
-    }
-
-    const debounceSearch = debounce(async (value) => {
-        if (!value || !value.trim()) {
-            searchResults.value = null;
-            totalArticles.value = 0;
-            fromArticle.value = 0;
-            toArticle.value = 0;
-
-            return;
-        }
-
-        loadingResults.value = true;
-
-        try {
-            // `searchUrl` is a full signed URL (e.g. `${apiUrl}/search?signature=...`).
-            // `apiPost` expects a path relative to the configured API base URL, so strip
-            // that base URL off, keeping the signature/expiry query string intact.
-            const searchPath = config.searchUrl.replace(config.apiUrl, '');
-
-            const response = await apiPost(searchPath, { search: value });
-
-            searchResults.value = {
-                articles: response?.data?.articles ?? [],
-                categories: response?.data?.categories ?? [],
-            };
-
-            const articleCount = searchResults.value.articles.length;
-
-            totalArticles.value = articleCount;
-            fromArticle.value = articleCount > 0 ? 1 : 0;
-            toArticle.value = articleCount;
-        } finally {
-            loadingResults.value = false;
-        }
-    }, 500);
-
-    function toggleTag(tag) {
-        if (selectedTags.value.includes(tag)) {
-            selectedTags.value = selectedTags.value.filter((t) => t !== tag);
-        } else {
-            selectedTags.value = [...selectedTags.value, tag];
-        }
-    }
-
-    watch(
-        () => searchQuery.value,
-        (newSearch) => {
-            const isSearchEmpty = !newSearch || newSearch.trim() === '';
-
-            router.replace({ name: route.name, query: isSearchEmpty ? {} : { search: newSearch } });
-            debounceSearch(newSearch);
-        },
-    );
-
-    watch(
-        () => route.query.search,
-        (newSearch) => {
-            if ((newSearch || '') !== (searchQuery.value || '')) {
-                searchQuery.value = newSearch || '';
-            }
-        },
-    );
-
-    onMounted(() => {
-        const search = route.query.search;
-
-        if (search) {
-            searchQuery.value = search;
-
-            nextTick(() => {
-                globalSearchInput.value?.focus();
-            });
-
-            debounceSearch(search);
-        }
-    });
+    const {
+        searchQuery,
+        loadingResults,
+        globalSearchInput,
+        selectedTags,
+        tagsArray,
+        toggleTag,
+        searchResultArticles,
+        searchResultCategories,
+        totalArticles,
+        fromArticle,
+        toArticle,
+    } = useResourceHubSearch();
 </script>
 
 <template>
@@ -192,11 +89,9 @@
         <SearchResults
             v-if="searchQuery"
             :searchQuery="searchQuery"
-            :articles="articlesWithRoutes"
-            :categories="searchCategoriesWithRoutes"
+            :articles="searchResultArticles"
+            :categories="searchResultCategories"
             :loadingResults="loadingResults"
-            :currentPage="currentPage"
-            :lastPage="lastPage"
             :fromItem="fromArticle"
             :toItem="toArticle"
             :totalItems="totalArticles"
