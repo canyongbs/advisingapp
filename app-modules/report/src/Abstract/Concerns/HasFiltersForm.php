@@ -36,18 +36,14 @@
 
 namespace AdvisingApp\Report\Abstract\Concerns;
 
-use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
 use AdvisingApp\Report\Filament\Pages\ProspectCaseReport;
 use AdvisingApp\Report\Filament\Pages\StudentCaseReport;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Select;
 use Filament\Pages\Dashboard\Concerns\HasFiltersForm as ConcernsHasFiltersForm;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
-use Illuminate\Database\Eloquent\Builder;
 
 trait HasFiltersForm
 {
@@ -57,72 +53,52 @@ trait HasFiltersForm
     {
         $heading = ($this instanceof StudentCaseReport || $this instanceof ProspectCaseReport) ? 'Date Created' : null;
 
-        $groupModel = $this instanceof HasGroupModel ? $this->groupModel() : null;
+        $components = [
+            Section::make()
+                ->schema([
+                    DatePicker::make('startDate')
+                        ->maxDate(fn (Get $get) => $get('endDate') ?: now())
+                        ->afterStateUpdated(function (callable $set, mixed $state, Get $get) {
+                            if (blank($get('endDate')) && filled($state)) {
+                                $set('endDate', $state);
+                            }
+                        }),
+                    DatePicker::make('endDate')
+                        ->minDate(fn (Get $get) => $get('startDate') ?: now())
+                        ->maxDate(now())
+                        ->afterStateUpdated(function (callable $set, mixed $state, Get $get) {
+                            if (blank($get('startDate')) && filled($state)) {
+                                $set('startDate', $state);
+                            }
+                        }),
+                ])
+                ->heading($heading)
+                ->columns(2),
+        ];
 
-        return $schema
-            ->components([
-                Section::make()
-                    ->schema([
-                        DatePicker::make('startDate')
-                            ->maxDate(fn (Get $get) => $get('endDate') ?: now())
-                            ->afterStateUpdated(function (callable $set, mixed $state, Get $get) {
-                                if (blank($get('endDate')) && filled($state)) {
-                                    $set('endDate', $state);
-                                }
-                            }),
-                        DatePicker::make('endDate')
-                            ->minDate(fn (Get $get) => $get('startDate') ?: now())
-                            ->maxDate(now())
-                            ->afterStateUpdated(function (callable $set, mixed $state, Get $get) {
-                                if (blank($get('startDate')) && filled($state)) {
-                                    $set('startDate', $state);
-                                }
-                            }),
-                    ])
-                    ->heading($heading)
-                    ->columns(2),
-                Section::make()
-                    ->schema([
-                        Select::make('populationGroup')
-                            ->label('Select Group')
-                            ->options(fn (): array => $this->getGroupOptions($groupModel))
-                            ->getSearchResultsUsing(fn (string $search): array => $this->getGroupOptions($groupModel, $search))
-                            ->getOptionLabelUsing(fn (string | int | null $value): ?string => $this->getGroupOptionLabel($groupModel, $value))
-                            ->searchable(),
-                    ])
-                    ->heading('Advanced Filtering')
-                    ->visible($this instanceof HasGroupModel)
-                    ->columns(1),
-            ]);
+        if ($this instanceof HasGroupModel && method_exists($this, 'getPopulationFilterSection')) {
+            $components[] = $this->getPopulationFilterSection();
+        }
+
+        return $schema->components($components);
     }
 
     /**
-     * @return array<int, string>
+     * The filters passed to each widget via the reactive `pageFilters` property.
+     *
+     * This augments the dashboard filters form state with the current population selection so
+     * that widgets can filter their query by the selected saved group or live filter.
+     *
+     * @return array<string, mixed>
      */
-    protected function getGroupOptions(?GroupModel $model, ?string $search = null): array
+    public function getPageFilters(): array
     {
-        if (! $model) {
-            return [];
+        $filters = $this->filters ?? [];
+
+        if ($this instanceof HasGroupModel && method_exists($this, 'getPopulationPayload')) {
+            $filters['population'] = $this->getPopulationPayload();
         }
 
-        return Group::query()
-            ->where('model', $model)
-            ->when($search, fn (Builder $query) => $query->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($search) . '%']))
-            ->orderByDesc('created_at')
-            ->limit(20)
-            ->pluck('name', 'id')
-            ->all();
-    }
-
-    protected function getGroupOptionLabel(?GroupModel $model, string|int|null $value): ?string
-    {
-        if (! $model || blank($value)) {
-            return null;
-        }
-
-        return Group::query()
-            ->where('model', $model)
-            ->whereKey($value)
-            ->value('name');
+        return $filters;
     }
 }

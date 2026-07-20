@@ -48,7 +48,7 @@
 
     <x-filament-widgets::widgets
         :columns="$this->getColumns()"
-        :data="['pageFilters' => $this->filters, ...$this->getWidgetData()]"
+        :data="['pageFilters' => $this->getPageFilters(), ...$this->getWidgetData()]"
         :widgets="$visibleWidgets"
     />
 </x-filament-panels::page>

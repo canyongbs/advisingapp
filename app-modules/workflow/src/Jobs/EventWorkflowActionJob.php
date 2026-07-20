@@ -79,7 +79,9 @@ class EventWorkflowActionJob extends ExecuteWorkflowActionJob
 
             $event = Event::query()->findOrFail($details->event_id);
 
-            if ($event->attendees()->where('email', $email)->exists()) {
+            $existingAttendee = $event->attendees()->where('email', $email)->first();
+
+            if ($existingAttendee && ! $existingAttendee->isArchived()) {
                 //The Educatable is already an attendee, so we can skip the action.
                 $workflowRunStepRelated = new WorkflowRunStepRelated();
 
@@ -99,10 +101,21 @@ class EventWorkflowActionJob extends ExecuteWorkflowActionJob
 
             assert($user instanceof User);
 
-            $attendee = $event->attendees()->create([
-                'email' => $email,
-                'status' => EventAttendeeStatus::Invited,
-            ]);
+            if ($existingAttendee) {
+                // The attendee was archived, so restore the existing record rather than
+                // creating a duplicate, which the unique index on (email, event_id) rejects.
+                $existingAttendee->unarchive();
+
+                $existingAttendee->status = EventAttendeeStatus::Invited;
+                $existingAttendee->save();
+
+                $attendee = $existingAttendee;
+            } else {
+                $attendee = $event->attendees()->create([
+                    'email' => $email,
+                    'status' => EventAttendeeStatus::Invited,
+                ]);
+            }
 
             $attendee->notify(new RegistrationLinkToEventAttendeeNotification($event, $user));
 

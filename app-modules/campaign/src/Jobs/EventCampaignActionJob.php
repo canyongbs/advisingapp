@@ -77,7 +77,9 @@ class EventCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
 
             $event = Event::query()->findOrFail($action->data['event']);
 
-            if ($event->attendees()->where('email', $email)->exists()) {
+            $existingAttendee = $event->attendees()->where('email', $email)->first();
+
+            if ($existingAttendee && ! $existingAttendee->isArchived()) {
                 // The Educatable is already an attendee, so we can skip the action.
                 $this->actionEducatable->succeeded_at = now();
                 $this->actionEducatable->save();
@@ -94,10 +96,21 @@ class EventCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
                 new Exception('The user must be an instance of User.')
             );
 
-            $attendee = $event->attendees()->create([
-                'email' => $email,
-                'status' => EventAttendeeStatus::Invited,
-            ]);
+            if ($existingAttendee) {
+                // The attendee was archived, so restore the existing record rather than
+                // creating a duplicate, which the unique index on (email, event_id) rejects.
+                $existingAttendee->unarchive();
+
+                $existingAttendee->status = EventAttendeeStatus::Invited;
+                $existingAttendee->save();
+
+                $attendee = $existingAttendee;
+            } else {
+                $attendee = $event->attendees()->create([
+                    'email' => $email,
+                    'status' => EventAttendeeStatus::Invited,
+                ]);
+            }
 
             $attendee->notify(new RegistrationLinkToEventAttendeeNotification($event, $user));
 

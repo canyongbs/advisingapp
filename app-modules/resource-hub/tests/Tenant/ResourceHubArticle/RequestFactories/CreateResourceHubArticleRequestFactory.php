@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\ResourceHub\Tests\Tenant\ResourceHubArticle\RequestFactories;
 
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
@@ -53,7 +52,6 @@ class CreateResourceHubArticleRequestFactory extends RequestFactory
             'quality_id' => ResourceHubQuality::factory()->create()->id,
             'status_id' => ResourceHubStatus::factory()->create()->id,
             'category_id' => ResourceHubCategory::factory()->create()->id,
-            'division' => [Division::factory()->create()->id],
         ];
     }
 }

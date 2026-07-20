@@ -74,7 +74,7 @@ class ResourceHubArticleResource extends Resource
     public static function getGlobalSearchEloquentQuery(): Builder
     {
         return parent::getGlobalSearchEloquentQuery()
-            ->with(['quality', 'status', 'category', 'division']);
+            ->with(['quality', 'status', 'category']);
     }
 
     public static function getGlobalSearchResultDetails(Model $record): array
@@ -83,7 +83,6 @@ class ResourceHubArticleResource extends Resource
             'Quality' => $record->quality?->name,
             'Status' => $record->status?->name,
             'Category' => $record->category?->name,
-            'Division' => $record->division->pluck('name')->implode(', '),
         ], fn (mixed $value): bool => filled($value));
     }
 

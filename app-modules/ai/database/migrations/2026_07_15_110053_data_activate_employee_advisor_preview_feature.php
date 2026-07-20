@@ -34,19 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Group\Filament\Resources\Groups;
+use App\Features\EmployeeAdvisorPreviewFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use AdvisingApp\Group\Models\Group;
-use Filament\Resources\Resource;
-
-class GroupResourceForProcesses extends Resource
-{
-    protected static ?string $model = Group::class;
-
-    protected static bool $shouldRegisterNavigation = false;
-
-    public static function canAccess(array $parameters = []): bool
+return new class () extends Migration {
+    public function up(): void
     {
-        return true;
+        EmployeeAdvisorPreviewFeature::activate();
     }
-}
+
+    public function down(): void
+    {
+        EmployeeAdvisorPreviewFeature::deactivate();
+    }
+};

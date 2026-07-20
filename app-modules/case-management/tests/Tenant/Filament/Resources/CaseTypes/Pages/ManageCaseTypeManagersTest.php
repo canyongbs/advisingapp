@@ -38,7 +38,6 @@ use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\CaseTypeResource;
 use AdvisingApp\CaseManagement\Filament\Resources\CaseTypes\Pages\ManageCaseTypeManagers;
 use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\Team\Models\Department;
-use App\Features\RenameTeamToDepartmentFeature;
 use App\Models\User;
 use Filament\Actions\AttachAction;
 
@@ -61,7 +60,7 @@ it('can attach department member to case type', function () {
 
     $user->givePermissionTo('settings.view-any');
     $user->givePermissionTo('settings.*.update');
-    $user->givePermissionTo(RenameTeamToDepartmentFeature::active() ? 'department.view-any' : 'team.view-any');
+    $user->givePermissionTo('department.view-any');
 
     livewire(ManageCaseTypeManagers::class, [
         'record' => $caseType->getRouteKey(),

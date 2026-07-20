@@ -82,9 +82,6 @@ trait HasManyMorphedInteractionsTrait
                             ->label('Driver')
                             ->placeholder('N/A')
                             ->visible(fn () => $this->getSettings()->is_driver_enabled),
-                        TextEntry::make('division.name')
-                            ->label('Division')
-                            ->placeholder('N/A'),
                         TextEntry::make('outcome.name')
                             ->label('Outcome')
                             ->placeholder('N/A')
@@ -177,8 +174,6 @@ trait HasManyMorphedInteractionsTrait
                 TextColumn::make('driver.name')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->visible(fn () => $this->getSettings()->is_driver_enabled),
-                TextColumn::make('division.name')
-                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('outcome.name')
                     ->toggleable(isToggledHiddenByDefault: true)
                     ->visible(fn () => $this->getSettings()->is_outcome_enabled),

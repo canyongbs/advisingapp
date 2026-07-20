@@ -38,7 +38,7 @@ namespace AdvisingApp\Report\Abstract;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Report\Abstract\Concerns\HasFiltersForm;
+use AdvisingApp\Report\Abstract\Concerns\HasReportFilters;
 use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
 use AdvisingApp\Report\Enums\ReportAccessKey;
 use App\Features\ReportingFeature;
@@ -47,7 +47,7 @@ use Filament\Pages\Dashboard;
 
 abstract class ProspectReport extends Dashboard implements HasGroupModel
 {
-    use HasFiltersForm;
+    use HasReportFilters;
 
     protected string $view = 'report::filament.pages.report';
 

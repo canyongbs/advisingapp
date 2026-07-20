@@ -49,6 +49,7 @@ class AddressInput
     {
         return SearchableInput::make('address')
             ->label('Address')
+            ->fieldWrapperView('searchable-input::wrapper')
             ->searchUsing(function (string $search) {
                 if (strlen($search) < 3) {
                     return [];
