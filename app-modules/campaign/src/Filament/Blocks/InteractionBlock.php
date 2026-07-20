@@ -37,7 +37,6 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
@@ -53,7 +52,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Fieldset;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Validation\ValidationException;
 
 class InteractionBlock extends CampaignActionBlock
 {
@@ -93,24 +91,6 @@ class InteractionBlock extends CampaignActionBlock
                         ->required(fn () => $settings->is_driver_required)
                         ->visible(fn () => $settings->is_driver_enabled)
                         ->exists((new InteractionDriver())->getTable(), 'id'),
-                    Select::make('division_id')
-                        ->relationship('division', 'name')
-                        ->model(Interaction::class)
-                        ->preload()
-                        ->default(
-                            fn () => auth()->user()->department?->division?->getKey()
-                                ?? Division::query()
-                                    ->where('is_default', true)
-                                    ->first()
-                                    ?->getKey()
-                                ?? Division::query()->first()?->getKey()
-                                ?? throw ValidationException::withMessages(['No division found'])
-                        )
-                        ->label('Division')
-                        ->visible(fn (): bool => Division::count() > 1)
-                        ->dehydratedWhenHidden()
-                        ->required()
-                        ->exists((new Division())->getTable(), 'id'),
                     Select::make('interaction_outcome_id')
                         ->relationship('outcome', 'name')
                         ->model(Interaction::class)

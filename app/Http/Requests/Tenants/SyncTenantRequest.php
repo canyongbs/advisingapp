@@ -88,7 +88,7 @@ class SyncTenantRequest extends FormRequest
             'subscription.partnerName' => ['required', 'string'],
             'subscription.startDate' => ['required', 'string'],
             'subscription.endDate' => ['required', 'string'],
-            'subscriptionStatus' => ['nullable', Rule::enum(SubscriptionStatus::class)],
+            'subscriptionStatus' => ['required', Rule::enum(SubscriptionStatus::class)],
             'expirationBannerText' => ['nullable', 'string'],
         ];
     }

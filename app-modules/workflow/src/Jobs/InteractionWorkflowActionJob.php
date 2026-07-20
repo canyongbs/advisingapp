@@ -76,7 +76,6 @@ class InteractionWorkflowActionJob extends ExecuteWorkflowActionJob
                 'interaction_driver_id' => $details->interaction_driver_id,
                 'interaction_status_id' => $details->interaction_status_id,
                 'interaction_outcome_id' => $details->interaction_outcome_id,
-                'division_id' => $details->division_id,
             ]);
 
             $workflowRunStepRelated = new WorkflowRunStepRelated();

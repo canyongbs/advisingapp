@@ -38,7 +38,6 @@ namespace AdvisingApp\Interaction\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Interaction\Models\Scopes\InteractionConfidentialScope;
 use AdvisingApp\Interaction\Observers\InteractionObserver;
 use AdvisingApp\Notification\Models\Contracts\CanTriggerAutoSubscription;
@@ -78,7 +77,6 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
 
     protected $fillable = [
         'description',
-        'division_id',
         'end_datetime',
         'interactable_id',
         'interactable_type',
@@ -154,14 +152,6 @@ class Interaction extends BaseModel implements Auditable, CanTriggerAutoSubscrip
     public function driver(): BelongsTo
     {
         return $this->belongsTo(InteractionDriver::class, 'interaction_driver_id');
-    }
-
-    /**
-     * @return BelongsTo<Division, $this>
-     */
-    public function division(): BelongsTo
-    {
-        return $this->belongsTo(Division::class, 'division_id');
     }
 
     /**

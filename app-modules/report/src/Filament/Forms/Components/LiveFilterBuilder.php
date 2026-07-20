@@ -34,31 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Tests\Tenant\Filament\Actions\RequestFactories;
+namespace AdvisingApp\Report\Filament\Forms\Components;
 
-use AdvisingApp\Interaction\Models\InteractionDriver;
-use AdvisingApp\Interaction\Models\InteractionInitiative;
-use AdvisingApp\Interaction\Models\InteractionOutcome;
-use AdvisingApp\Interaction\Models\InteractionRelation;
-use AdvisingApp\Interaction\Models\InteractionStatus;
-use AdvisingApp\Interaction\Models\InteractionType;
-use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\Group\Enums\GroupModel;
+use Closure;
+use Filament\Forms\Components\Field;
+use Filament\Forms\Components\TableSelect;
 
-class BulkCreateInteractionActionRequestFactory extends RequestFactory
+/**
+ * A field that recreates the Group builder experience — the subject model's table and its
+ * QueryBuilder constraints — and binds the resulting filter state (rather than selected rows)
+ * to the field. It is a tweaked version of Filament's {@see TableSelect}
+ * that owns its own nested table component (and therefore its own modal stack), so it can be
+ * rendered safely inside an action modal without recursing into that modal.
+ */
+class LiveFilterBuilder extends Field
 {
-    public function definition(): array
+    /**
+     * @var view-string
+     */
+    protected string $view = 'report::filament.forms.components.live-filter-builder';
+
+    protected GroupModel | Closure | null $groupModel = null;
+
+    public function groupModel(GroupModel | Closure | null $model): static
     {
-        return [
-            'description' => $this->faker->paragraph(),
-            'end_datetime' => now()->addMinutes(5)->seconds(0)->format('Y-m-d H:i:s'),
-            'interaction_driver_id' => InteractionDriver::factory(),
-            'interaction_initiative_id' => InteractionInitiative::factory(),
-            'interaction_outcome_id' => InteractionOutcome::factory(),
-            'interaction_relation_id' => InteractionRelation::factory(),
-            'interaction_status_id' => InteractionStatus::factory(),
-            'interaction_type_id' => InteractionType::factory(),
-            'start_datetime' => now()->seconds(0)->format('Y-m-d H:i:s'),
-            'subject' => $this->faker->sentence(),
-        ];
+        $this->groupModel = $model;
+
+        return $this;
+    }
+
+    public function getGroupModel(): GroupModel
+    {
+        return $this->evaluate($this->groupModel) ?? GroupModel::default();
     }
 }

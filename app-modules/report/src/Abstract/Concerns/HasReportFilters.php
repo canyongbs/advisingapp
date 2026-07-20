@@ -34,31 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Interaction\Tests\Tenant\Filament\Actions\RequestFactories;
+namespace AdvisingApp\Report\Abstract\Concerns;
 
-use AdvisingApp\Interaction\Models\InteractionDriver;
-use AdvisingApp\Interaction\Models\InteractionInitiative;
-use AdvisingApp\Interaction\Models\InteractionOutcome;
-use AdvisingApp\Interaction\Models\InteractionRelation;
-use AdvisingApp\Interaction\Models\InteractionStatus;
-use AdvisingApp\Interaction\Models\InteractionType;
-use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
 
-class BulkCreateInteractionActionRequestFactory extends RequestFactory
+/**
+ * Combines the standard report {@see HasFiltersForm} with the {@see HasPopulationFilter}
+ * "Advanced Filtering" experience, for reports that are compatible with population groups.
+ *
+ * The host page must implement {@see HasGroupModel}. The
+ * live-filter builder and saved-group select each own their own nested table components, so the
+ * report page itself does not need to be a table.
+ */
+trait HasReportFilters
 {
-    public function definition(): array
-    {
-        return [
-            'description' => $this->faker->paragraph(),
-            'end_datetime' => now()->addMinutes(5)->seconds(0)->format('Y-m-d H:i:s'),
-            'interaction_driver_id' => InteractionDriver::factory(),
-            'interaction_initiative_id' => InteractionInitiative::factory(),
-            'interaction_outcome_id' => InteractionOutcome::factory(),
-            'interaction_relation_id' => InteractionRelation::factory(),
-            'interaction_status_id' => InteractionStatus::factory(),
-            'interaction_type_id' => InteractionType::factory(),
-            'start_datetime' => now()->seconds(0)->format('Y-m-d H:i:s'),
-            'subject' => $this->faker->sentence(),
-        ];
-    }
+    use HasFiltersForm;
+    use HasPopulationFilter;
 }
