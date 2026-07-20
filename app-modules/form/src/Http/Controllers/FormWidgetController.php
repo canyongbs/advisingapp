@@ -259,6 +259,7 @@ class FormWidgetController extends Controller
                     'submissible',
                     fn ($query) => $query->withoutGlobalScopes()->where('root_id', $form->root_id),
                 )
+                ->withoutArchived()
                 ->submitted()
                 ->whereMorphedTo('author', $author)
                 ->count();
@@ -503,6 +504,7 @@ class FormWidgetController extends Controller
                 'submissible',
                 fn ($query) => $query->withoutGlobalScopes()->where('root_id', $form->root_id),
             )
+            ->withoutArchived()
             ->submitted()
             ->whereMorphedTo('author', $author)
             ->orderByDesc('submitted_at')

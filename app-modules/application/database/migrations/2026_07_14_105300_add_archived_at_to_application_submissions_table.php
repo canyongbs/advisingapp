@@ -34,43 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Policies;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Form\Models\FormSubmission;
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
-
-class FormSubmissionPolicy
-{
-    public function update(Authenticatable $authenticatable, FormSubmission $formSubmission): Response
+return new class () extends Migration {
+    public function up(): void
     {
-        return $authenticatable->canOrElse(
-            abilities: ['form.*.update'],
-            denyResponse: 'You do not have permission to update this form submission.'
-        );
+        Schema::table('application_submissions', function (Blueprint $table) {
+            $table->timestamp('archived_at')->nullable();
+        });
     }
 
-    public function delete(Authenticatable $authenticatable, FormSubmission $formSubmission): Response
+    public function down(): void
     {
-        return $authenticatable->canOrElse(
-            abilities: ['form.*.update'],
-            denyResponse: 'You do not have permission to delete this form submission.'
-        );
+        Schema::table('application_submissions', function (Blueprint $table) {
+            $table->dropColumn('archived_at');
+        });
     }
-
-    public function deleteAny(Authenticatable $authenticatable): Response
-    {
-        return $authenticatable->canOrElse(
-            abilities: ['form.*.update'],
-            denyResponse: 'You do not have permission to delete form submissions.'
-        );
-    }
-
-    public function archive(Authenticatable $authenticatable, FormSubmission $formSubmission): Response
-    {
-        return $authenticatable->canOrElse(
-            abilities: ['form.*.update'],
-            denyResponse: 'You do not have permission to archive this form submission.'
-        );
-    }
-}
+};

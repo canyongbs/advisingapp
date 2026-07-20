@@ -43,6 +43,7 @@ use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use App\Models\BaseModel;
+use CanyonGBS\Common\Models\Concerns\CanBeArchived;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -53,6 +54,7 @@ use Illuminate\Notifications\Notifiable;
  */
 class EventAttendee extends BaseModel implements CanBeNotified
 {
+    use CanBeArchived;
     use Notifiable;
 
     protected $fillable = [

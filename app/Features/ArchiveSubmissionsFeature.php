@@ -34,43 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Policies;
+namespace App\Features;
 
-use AdvisingApp\Form\Models\FormSubmission;
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
+use App\Support\AbstractFeatureFlag;
 
-class FormSubmissionPolicy
+class ArchiveSubmissionsFeature extends AbstractFeatureFlag
 {
-    public function update(Authenticatable $authenticatable, FormSubmission $formSubmission): Response
+    public function resolve(mixed $scope): mixed
     {
-        return $authenticatable->canOrElse(
-            abilities: ['form.*.update'],
-            denyResponse: 'You do not have permission to update this form submission.'
-        );
-    }
-
-    public function delete(Authenticatable $authenticatable, FormSubmission $formSubmission): Response
-    {
-        return $authenticatable->canOrElse(
-            abilities: ['form.*.update'],
-            denyResponse: 'You do not have permission to delete this form submission.'
-        );
-    }
-
-    public function deleteAny(Authenticatable $authenticatable): Response
-    {
-        return $authenticatable->canOrElse(
-            abilities: ['form.*.update'],
-            denyResponse: 'You do not have permission to delete form submissions.'
-        );
-    }
-
-    public function archive(Authenticatable $authenticatable, FormSubmission $formSubmission): Response
-    {
-        return $authenticatable->canOrElse(
-            abilities: ['form.*.update'],
-            denyResponse: 'You do not have permission to archive this form submission.'
-        );
+        return false;
     }
 }
