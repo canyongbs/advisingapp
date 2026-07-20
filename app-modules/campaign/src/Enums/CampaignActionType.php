@@ -38,7 +38,6 @@ namespace AdvisingApp\Campaign\Enums;
 
 use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
 use AdvisingApp\Campaign\Filament\Blocks\CareTeamBlock;
-use AdvisingApp\Campaign\Filament\Blocks\CaseBlock;
 use AdvisingApp\Campaign\Filament\Blocks\EngagementBatchEmailBlock;
 use AdvisingApp\Campaign\Filament\Blocks\EngagementBatchSmsBlock;
 use AdvisingApp\Campaign\Filament\Blocks\EventBlock;
@@ -48,7 +47,6 @@ use AdvisingApp\Campaign\Filament\Blocks\SubscriptionBlock;
 use AdvisingApp\Campaign\Filament\Blocks\TagsBlock;
 use AdvisingApp\Campaign\Filament\Blocks\TaskBlock;
 use AdvisingApp\Campaign\Jobs\CareTeamCampaignActionJob;
-use AdvisingApp\Campaign\Jobs\CaseCampaignActionJob;
 use AdvisingApp\Campaign\Jobs\EngagementCampaignActionJob;
 use AdvisingApp\Campaign\Jobs\EventCampaignActionJob;
 use AdvisingApp\Campaign\Jobs\ExecuteCampaignActionOnEducatableJob;
@@ -59,7 +57,6 @@ use AdvisingApp\Campaign\Jobs\TagsCampaignActionJob;
 use AdvisingApp\Campaign\Jobs\TaskCampaignActionJob;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
 use AdvisingApp\CareTeam\Models\CareTeam;
-use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Interaction\Models\Interaction;
@@ -74,8 +71,6 @@ enum CampaignActionType: string implements HasLabel
     case BulkEngagementEmail = 'bulk_engagement_email';
 
     case BulkEngagementSms = 'bulk_engagement_sms';
-
-    case Case = 'case';
 
     case ProactiveConcern = 'proactive_concern';
 
@@ -103,10 +98,6 @@ enum CampaignActionType: string implements HasLabel
             SubscriptionBlock::make(),
         ];
 
-        if (app(LicenseSettings::class)->data->addons->caseManagement) {
-            $blocks[] = CaseBlock::make();
-        }
-
         if (app(LicenseSettings::class)->data->addons->eventManagement) {
             $blocks[] = EventBlock::make();
         }
@@ -121,7 +112,6 @@ enum CampaignActionType: string implements HasLabel
         return match ($this) {
             CampaignActionType::BulkEngagementEmail => 'Email',
             CampaignActionType::BulkEngagementSms => 'Text Message',
-            CampaignActionType::Case => 'Case',
             CampaignActionType::ProactiveConcern => 'Proactive Concern',
             CampaignActionType::CareTeam => 'Care Team',
             default => $this->name,
@@ -133,7 +123,6 @@ enum CampaignActionType: string implements HasLabel
         return match ($this) {
             CampaignActionType::BulkEngagementEmail => EngagementBatch::class,
             CampaignActionType::BulkEngagementSms => EngagementBatch::class,
-            CampaignActionType::Case => CaseModel::class,
             CampaignActionType::ProactiveConcern => Concern::class,
             CampaignActionType::Interaction => Interaction::class,
             CampaignActionType::CareTeam => CareTeam::class,
@@ -149,7 +138,6 @@ enum CampaignActionType: string implements HasLabel
         return match ($this) {
             CampaignActionType::BulkEngagementEmail => EngagementBatchEmailBlock::make(),
             CampaignActionType::BulkEngagementSms => EngagementBatchSmsBlock::make(),
-            CampaignActionType::Case => CaseBlock::make(),
             CampaignActionType::ProactiveConcern => ProactiveConcernBlock::make(),
             CampaignActionType::Interaction => InteractionBlock::make(),
             CampaignActionType::CareTeam => CareTeamBlock::make(),
@@ -170,7 +158,6 @@ enum CampaignActionType: string implements HasLabel
         return match ($this) {
             CampaignActionType::BulkEngagementEmail => 'filament.forms.components.campaigns.actions.bulk-engagement',
             CampaignActionType::BulkEngagementSms => 'filament.forms.components.campaigns.actions.bulk-engagement',
-            CampaignActionType::Case => 'filament.forms.components.campaigns.actions.case',
             CampaignActionType::ProactiveConcern => 'filament.forms.components.campaigns.actions.proactive-concern',
             CampaignActionType::Interaction => 'filament.forms.components.campaigns.actions.interaction',
             CampaignActionType::CareTeam => 'filament.forms.components.campaigns.actions.care-team',
@@ -186,7 +173,6 @@ enum CampaignActionType: string implements HasLabel
         return match ($this) {
             CampaignActionType::BulkEngagementEmail, CampaignActionType::BulkEngagementSms => new EngagementCampaignActionJob($campaignActionEducatable),
             CampaignActionType::Event => new EventCampaignActionJob($campaignActionEducatable),
-            CampaignActionType::Case => new CaseCampaignActionJob($campaignActionEducatable),
             CampaignActionType::ProactiveConcern => new ProactiveConcernCampaignActionJob($campaignActionEducatable),
             CampaignActionType::Interaction => new InteractionCampaignActionJob($campaignActionEducatable),
             CampaignActionType::CareTeam => new CareTeamCampaignActionJob($campaignActionEducatable),

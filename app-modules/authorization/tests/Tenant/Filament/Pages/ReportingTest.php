@@ -147,13 +147,6 @@ it('only lists a report when the required licenses and addons are enabled for th
         fn (LicenseSettings $settings) => $settings->data->limits->retentionCrmSeats = 10,
         ReportAccessKey::Students,
     ],
-    ReportAccessKey::StudentCaseReport->value => [
-        function (LicenseSettings $settings) {
-            $settings->data->limits->retentionCrmSeats = 10;
-            $settings->data->addons->caseManagement = true;
-        },
-        ReportAccessKey::StudentCaseReport,
-    ],
     ReportAccessKey::StudentDeliverabilityReport->value => [
         fn (LicenseSettings $settings) => $settings->data->limits->retentionCrmSeats = 10,
         ReportAccessKey::StudentDeliverabilityReport,
@@ -181,13 +174,6 @@ it('only lists a report when the required licenses and addons are enabled for th
     ReportAccessKey::ProspectReport->value => [
         fn (LicenseSettings $settings) => $settings->data->limits->recruitmentCrmSeats = 10,
         ReportAccessKey::ProspectReport,
-    ],
-    ReportAccessKey::ProspectCaseReport->value => [
-        function (LicenseSettings $settings) {
-            $settings->data->limits->recruitmentCrmSeats = 10;
-            $settings->data->addons->caseManagement = true;
-        },
-        ReportAccessKey::ProspectCaseReport,
     ],
     ReportAccessKey::ProspectInteractionReport->value => [
         fn (LicenseSettings $settings) => $settings->data->limits->recruitmentCrmSeats = 10,

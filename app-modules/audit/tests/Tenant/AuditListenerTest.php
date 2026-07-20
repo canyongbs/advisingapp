@@ -35,30 +35,30 @@
 */
 
 use AdvisingApp\Audit\Settings\AuditSettings;
-use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Engagement\Models\Engagement;
 
 use function Tests\asSuperAdmin;
 
 test('Audit logs are only created if the Model is not set to be excluded from Auditing by audit settings', function () {
     asSuperAdmin();
 
-    $case = CaseModel::factory()->make();
+    $engagement = Engagement::factory()->make();
 
     $auditSettings = resolve(AuditSettings::class);
 
-    $auditSettings->audited_models_exclude = [$case->getMorphClass()];
+    $auditSettings->audited_models_exclude = [$engagement->getMorphClass()];
 
     $auditSettings->save();
 
-    expect($case->audits)->toHaveCount(0);
+    expect($engagement->audits)->toHaveCount(0);
 
     $auditSettings->audited_models_exclude = [];
 
     $auditSettings->save();
 
-    $case->save();
+    $engagement->save();
 
-    $case->refresh();
+    $engagement->refresh();
 
-    expect($case->audits)->toHaveCount(1);
+    expect($engagement->audits)->toHaveCount(1);
 });

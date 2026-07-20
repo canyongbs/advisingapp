@@ -40,9 +40,6 @@ use AdvisingApp\Ai\Database\Seeders\PromptSeeder;
 use AdvisingApp\Ai\Database\Seeders\PromptTypeSeeder;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Authorization\Console\Commands\SetupRoles;
-use AdvisingApp\CaseManagement\Database\Seeders\CaseSeeder;
-use AdvisingApp\CaseManagement\Database\Seeders\CaseStatusSeeder;
-use AdvisingApp\CaseManagement\Database\Seeders\CaseUpdateSeeder;
 use AdvisingApp\Concern\Database\Seeders\ConcernSeeder;
 use AdvisingApp\Concern\Database\Seeders\ConcernStatusSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
@@ -85,7 +82,6 @@ class DatabaseSeeder extends Seeder
             SampleSuperAdminUserSeeder::class,
             LocalDevelopmentSeeder::class,
             DivisionSeeder::class,
-            CaseStatusSeeder::class,
             ProspectStatusSeeder::class,
             ProspectSourceSeeder::class,
             ResourceHubCategorySeeder::class,
@@ -95,8 +91,6 @@ class DatabaseSeeder extends Seeder
             ConsentAgreementSeeder::class,
             PronounsSeeder::class,
 
-            CaseSeeder::class,
-            CaseUpdateSeeder::class,
             ProspectSeeder::class,
             ResourceHubArticleSeeder::class,
             TaskSeeder::class,

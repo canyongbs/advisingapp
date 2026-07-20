@@ -36,9 +36,6 @@
 
 namespace AdvisingApp\Team\Models;
 
-use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\CaseManagement\Models\CaseTypeAuditor;
-use AdvisingApp\CaseManagement\Models\CaseTypeManager;
 use AdvisingApp\Division\Models\Division;
 use App\Models\BaseModel;
 use App\Models\User;
@@ -70,25 +67,5 @@ class Department extends BaseModel
     public function division(): BelongsTo
     {
         return $this->belongsTo(Division::class);
-    }
-
-    /**
-     * @return BelongsToMany<CaseType, $this, covariant CaseTypeManager>
-     */
-    public function manageableCaseTypes(): BelongsToMany
-    {
-        return $this->belongsToMany(CaseType::class, 'case_type_managers', 'team_id', 'case_type_id')
-            ->using(CaseTypeManager::class)
-            ->withTimestamps();
-    }
-
-    /**
-     * @return BelongsToMany<CaseType, $this, CaseTypeAuditor>
-     */
-    public function auditableCaseTypes(): BelongsToMany
-    {
-        return $this->belongsToMany(CaseType::class, 'case_type_auditors', 'team_id', 'case_type_id')
-            ->using(CaseTypeAuditor::class)
-            ->withTimestamps();
     }
 }
