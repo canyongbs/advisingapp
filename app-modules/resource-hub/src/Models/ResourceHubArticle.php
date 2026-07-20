@@ -38,7 +38,6 @@ namespace AdvisingApp\ResourceHub\Models;
 
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use AdvisingApp\ResourceHub\Observers\ResourceHubArticleObserver;
 use App\Models\BaseModel;
@@ -123,14 +122,6 @@ class ResourceHubArticle extends BaseModel implements AiFile, Auditable, HasMedi
     public function category(): BelongsTo
     {
         return $this->belongsTo(ResourceHubCategory::class);
-    }
-
-    /**
-     * @return BelongsToMany<Division, $this>
-     */
-    public function division(): BelongsToMany
-    {
-        return $this->belongsToMany(Division::class, 'division_resource_hub_item', 'resource_hub_item_id', 'division_id');
     }
 
     /**

@@ -34,14 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use App\Support\AbstractFeatureFlag;
-
-class RenameTeamToDepartmentFeature extends AbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
+return new class () extends Migration {
+    public function up(): void
     {
-        return false;
+        Schema::dropIfExists('division_resource_hub_item');
     }
-}
+
+    public function down(): void
+    {
+        Schema::create('division_resource_hub_item', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('resource_hub_item_id')->references('id')->on('resource_hub_articles');
+            $table->foreignUuid('division_id')->references('id')->on('divisions');
+            $table->timestamps();
+        });
+    }
+};
