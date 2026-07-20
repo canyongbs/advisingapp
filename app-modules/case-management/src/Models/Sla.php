@@ -42,9 +42,6 @@ use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use OwenIt\Auditing\Contracts\Auditable;
 
-/**
- * @mixin IdeHelperSla
- */
 class Sla extends BaseModel implements Auditable
 {
     use SoftDeletes;
