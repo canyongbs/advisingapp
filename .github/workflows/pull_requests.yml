@@ -32,13 +32,21 @@ jobs:
             php-version: ${{ env.php-version }}
 
         steps:
+            - name: Generate GitHub App Token
+              id: app-token
+              if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'dependabot[bot]' }}
+              uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+              with:
+                  client-id: ${{ secrets.CGBS_AUTOMATION_APP_CLIENT_ID }} # zizmor: ignore[secrets-outside-env]
+                  private-key: ${{ secrets.CGBS_AUTOMATION_APP_PRIVATE_KEY }} # zizmor: ignore[secrets-outside-env]
+                  permission-contents: write
+
             - name: Checkout code | Internal
               if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'dependabot[bot]' }}
               uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
               with:
                   ref: ${{ github.head_ref }}
-                  token: ${{ secrets.PAT }} # zizmor: ignore[secrets-outside-env]
-                  persist-credentials: true # zizmor: ignore[artipacked] -- credentials needed for git-auto-commit-action to push
+                  persist-credentials: false
 
             - name: Checkout code | External
               if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name != github.repository || github.event.pull_request.user.login == 'dependabot[bot]' }}
@@ -114,19 +122,39 @@ jobs:
             - name: Run Formatters
               run: composer format
 
+            - name: Get GitHub App User ID
+              id: get-user-id
+              if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'dependabot[bot]' }}
+              env:
+                  APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+                  GH_TOKEN: ${{ steps.app-token.outputs.token }}
+              run: echo "user-id=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+
             - name: Commit changes
               if: ${{ github.event_name != 'merge_group' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'dependabot[bot]' }}
+              env:
+                  APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+                  APP_USER_ID: ${{ steps.get-user-id.outputs.user-id }}
+                  APP_TOKEN: ${{ steps.app-token.outputs.token }}
+                  GH_REPOSITORY: ${{ github.repository }}
               run: |
-                  git config user.name "github-actions[bot]"
-                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git config user.name "${APP_SLUG}[bot]"
+                  git config user.email "${APP_USER_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
+                  git remote set-url origin "https://x-access-token:${APP_TOKEN}@github.com/${GH_REPOSITORY}.git"
                   git add -A
                   git diff --cached --quiet || (git commit -m "Update code formatting and copyright headers" && git push)
 
             - name: Check for changes
               if: ${{ github.event_name == 'merge_group' || github.event.pull_request.head.repo.full_name != github.repository || github.event.pull_request.user.login == 'dependabot[bot]' }}
-              uses: tj-actions/verify-changed-files@a1c6acee9df209257a246f2cc6ae8cb6581c1edf # v20.0.4
-              with:
-                  fail-if-changed: 'true'
+              run: |
+                  git add -A
+                  if ! git diff --cached --quiet; then
+                      echo "::error::Formatting changes were detected. Run 'composer format' locally and commit the changes."
+                      echo "::group::Diff"
+                      git --no-pager diff --cached --color
+                      echo "::endgroup::"
+                      exit 1
+                  fi
 
     test:
         name: Test

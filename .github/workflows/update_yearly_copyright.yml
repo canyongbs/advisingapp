@@ -19,11 +19,19 @@ jobs:
         timeout-minutes: 10
 
         steps:
+            - name: Generate GitHub App Token
+              id: app-token
+              uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+              with:
+                  client-id: ${{ secrets.CGBS_AUTOMATION_APP_CLIENT_ID }} # zizmor: ignore[secrets-outside-env]
+                  private-key: ${{ secrets.CGBS_AUTOMATION_APP_PRIVATE_KEY }} # zizmor: ignore[secrets-outside-env]
+                  permission-contents: write
+                  permission-pull-requests: write
+
             - name: Checkout `main` Branch
               uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
               with:
-                  token: ${{ secrets.PAT }} # zizmor: ignore[secrets-outside-env]
-                  persist-credentials: true # zizmor: ignore[artipacked] -- credentials needed for git push
+                  persist-credentials: false
 
             - name: Set up Ruby
               uses: ruby/setup-ruby@d45b1a4e94b71acab930e56e79c6aa188764e7f9 # v1.316.0
@@ -31,13 +39,25 @@ jobs:
             - name: Run copyright script
               run: ruby ./copyright.rb
 
+            - name: Get GitHub App User ID
+              id: get-user-id
+              env:
+                  APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+                  GH_TOKEN: ${{ steps.app-token.outputs.token }}
+              run: echo "user-id=$(gh api "/users/${APP_SLUG}[bot]" --jq .id)" >> "$GITHUB_OUTPUT"
+
             - name: Create Pull Request
               env:
-                  GH_TOKEN: ${{ secrets.PAT }} # zizmor: ignore[secrets-outside-env]
+                  APP_SLUG: ${{ steps.app-token.outputs.app-slug }}
+                  APP_USER_ID: ${{ steps.get-user-id.outputs.user-id }}
+                  APP_TOKEN: ${{ steps.app-token.outputs.token }}
+                  GH_REPOSITORY: ${{ github.repository }}
+                  GH_TOKEN: ${{ steps.app-token.outputs.token }}
               run: |
                   BRANCH="update-yearly-copyright-$(date +%s)"
-                  git config user.name "github-actions[bot]"
-                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git config user.name "${APP_SLUG}[bot]"
+                  git config user.email "${APP_USER_ID}+${APP_SLUG}[bot]@users.noreply.github.com"
+                  git remote set-url origin "https://x-access-token:${APP_TOKEN}@github.com/${GH_REPOSITORY}.git"
                   git checkout -b "${BRANCH}"
                   git add -A
                   git diff --cached --quiet && echo "No changes" && exit 0
