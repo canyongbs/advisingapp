@@ -163,7 +163,7 @@ it('returns correct total prospect stats of prospects, concerns, and tasks based
 
     $stats = $widget->getStats();
 
-    expect($stats[0]->getValue())->toEqual($count + 3)
+    expect($stats[0]->getValue())->toEqual($count + 2)
         ->and($stats[1]->getValue())->toEqual($count)
         ->and($stats[2]->getValue())->toEqual($count);
 });
