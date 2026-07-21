@@ -228,7 +228,7 @@ it('returns correct stats for prospects based on group filter', function () {
 
     $stats = $widget->getStats();
 
-    expect($stats)->toHaveCount(8)
+    expect($stats)->toHaveCount(6)
         ->and($stats[0]->getLabel())->toEqual('New Messages')
         ->and($stats[0]->getValue())->toEqual($count)
         ->and($stats[1]->getLabel())->toEqual('Open Concerns')
