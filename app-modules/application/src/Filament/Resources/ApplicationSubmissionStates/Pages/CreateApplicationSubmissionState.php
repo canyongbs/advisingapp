@@ -39,7 +39,6 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use App\Features\ApplicationSubmissionStateDefaultViewFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -93,8 +92,7 @@ class CreateApplicationSubmissionState extends CreateRecord
 
                         return "The current default state is '{$currentDefault}', you are replacing it.";
                     })
-                    ->hintColor('danger')
-                    ->visible(fn () => ApplicationSubmissionStateDefaultViewFeature::active()),
+                    ->hintColor('danger'),
             ]);
     }
 }
