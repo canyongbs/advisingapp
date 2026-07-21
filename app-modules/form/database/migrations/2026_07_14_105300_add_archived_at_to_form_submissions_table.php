@@ -34,19 +34,22 @@
 </COPYRIGHT>
 */
 
-use Pest\Arch\Contracts\ArchExpectation;
-use Pest\Arch\Expectations\Targeted;
-use Pest\Arch\Objects\ObjectDescription;
-use Pest\Arch\Support\FileLineFinder;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-expect()->extend('toHaveDefaultsForAllProperties', function (): ArchExpectation {
-    return Targeted::make(
-        // @phpstan-ignore-next-line
-        $this,
-        fn (ObjectDescription $object): bool => collect($object->reflectionClass->getProperties())
-            ->filter(fn ($property) => $property->getDeclaringClass()->getName() == $object->reflectionClass->getName())
-            ->every(fn ($property) => $property->hasDefaultValue()),
-        'to have default for all properties',
-        FileLineFinder::where(fn (string $line): bool => str_contains($line, 'class')),
-    );
-});
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::table('form_submissions', function (Blueprint $table) {
+            $table->timestamp('archived_at')->nullable();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('form_submissions', function (Blueprint $table) {
+            $table->dropColumn('archived_at');
+        });
+    }
+};

@@ -37,6 +37,7 @@
 namespace AdvisingApp\Report\Filament\Widgets\Concerns;
 
 use AdvisingApp\Group\Actions\TranslateGroupFilters;
+use AdvisingApp\Group\Enums\GroupModel;
 use Carbon\Carbon;
 use Filament\Widgets\Concerns\InteractsWithPageFilters as InteractsWithPageFiltersBase;
 use Illuminate\Database\Eloquent\Builder;
@@ -81,7 +82,20 @@ trait InteractsWithPageFilters
 
     public function getSelectedGroup(): ?string
     {
-        return $this->filters['populationGroup'] ?? null;
+        $population = $this->filters['population'] ?? null;
+
+        if (! is_array($population)) {
+            // Backwards compatibility with the previous `populationGroup` select.
+            return $this->filters['populationGroup'] ?? null;
+        }
+
+        return match ($population['type'] ?? null) {
+            'saved' => $population['groupId'] ?? null,
+            // A live filter has no group id, so we return a sentinel that keeps the widget's
+            // `->when($groupId, ...)` calls truthy. `groupFilter()` resolves it below.
+            'live' => filled($population['liveFilters'] ?? null) ? 'live' : null,
+            default => null,
+        };
     }
 
     /**
@@ -95,6 +109,23 @@ trait InteractsWithPageFilters
     public function groupFilter(Builder $query, string $groupId): void
     {
         if (blank($groupId)) {
+            return;
+        }
+
+        $population = $this->filters['population'] ?? null;
+
+        if (
+            $groupId === 'live'
+            && is_array($population)
+            && filled($population['liveFilters'] ?? null)
+            && filled($population['model'] ?? null)
+        ) {
+            app(TranslateGroupFilters::class)->applyRawFiltersToQuery(
+                GroupModel::from($population['model']),
+                $population['liveFilters'],
+                $query,
+            );
+
             return;
         }
 

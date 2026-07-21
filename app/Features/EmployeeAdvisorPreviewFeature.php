@@ -34,19 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Group\Filament\Resources\Groups;
+namespace App\Features;
 
-use AdvisingApp\Group\Models\Group;
-use Filament\Resources\Resource;
+use App\Support\AbstractFeatureFlag;
 
-class GroupResourceForProcesses extends Resource
+class EmployeeAdvisorPreviewFeature extends AbstractFeatureFlag
 {
-    protected static ?string $model = Group::class;
-
-    protected static bool $shouldRegisterNavigation = false;
-
-    public static function canAccess(array $parameters = []): bool
+    public function resolve(mixed $scope): mixed
     {
-        return true;
+        return false;
     }
 }

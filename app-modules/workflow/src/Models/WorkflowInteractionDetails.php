@@ -57,7 +57,6 @@ class WorkflowInteractionDetails extends WorkflowDetails implements Auditable
     protected $fillable = [
         'interaction_initiative_id',
         'interaction_driver_id',
-        'division_id',
         'interaction_outcome_id',
         'interaction_relation_id',
         'interaction_status_id',

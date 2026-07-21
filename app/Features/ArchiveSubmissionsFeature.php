@@ -34,17 +34,14 @@
 </COPYRIGHT>
 */
 
-use App\Features\SubscriptionExpirationFeature;
-use Illuminate\Database\Migrations\Migration;
+namespace App\Features;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        SubscriptionExpirationFeature::activate();
-    }
+use App\Support\AbstractFeatureFlag;
 
-    public function down(): void
+class ArchiveSubmissionsFeature extends AbstractFeatureFlag
+{
+    public function resolve(mixed $scope): mixed
     {
-        SubscriptionExpirationFeature::deactivate();
+        return false;
     }
-};
+}

@@ -40,6 +40,7 @@ use AdvisingApp\Application\Models\Concerns\HasRelationBasedStateMachine;
 use AdvisingApp\Application\Observers\ApplicationSubmissionObserver;
 use AdvisingApp\Form\Models\Submission;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
+use CanyonGBS\Common\Models\Concerns\CanBeArchived;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -52,6 +53,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 #[ObservedBy([ApplicationSubmissionObserver::class])]
 class ApplicationSubmission extends Submission
 {
+    use CanBeArchived;
     use HasRelationBasedStateMachine;
 
     /**

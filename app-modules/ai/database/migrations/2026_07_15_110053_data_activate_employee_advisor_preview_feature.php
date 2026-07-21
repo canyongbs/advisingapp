@@ -34,14 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use App\Features\EmployeeAdvisorPreviewFeature;
+use Illuminate\Database\Migrations\Migration;
 
-use App\Support\AbstractFeatureFlag;
-
-class ApplicationSubmissionStateDefaultViewFeature extends AbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
+return new class () extends Migration {
+    public function up(): void
     {
-        return false;
+        EmployeeAdvisorPreviewFeature::activate();
     }
-}
+
+    public function down(): void
+    {
+        EmployeeAdvisorPreviewFeature::deactivate();
+    }
+};

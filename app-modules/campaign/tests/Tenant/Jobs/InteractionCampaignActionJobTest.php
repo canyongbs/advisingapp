@@ -41,7 +41,6 @@ use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Campaign\Models\CampaignActionEducatable;
 use AdvisingApp\Campaign\Models\CampaignActionEducatableRelated;
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
@@ -81,7 +80,6 @@ it('will execute appropriately on each educatable in the group', function (Educa
     $interactionDriver = InteractionDriver::factory()->create();
     $interactionStatus = InteractionStatus::factory()->create();
     $interactionOutcome = InteractionOutcome::factory()->create();
-    $division = Division::factory()->create();
 
     /** @var CampaignAction $action */
     $action = CampaignAction::factory()
@@ -95,7 +93,6 @@ it('will execute appropriately on each educatable in the group', function (Educa
                 'interaction_driver_id' => $interactionDriver->getKey(),
                 'interaction_status_id' => $interactionStatus->getKey(),
                 'interaction_outcome_id' => $interactionOutcome->getKey(),
-                'division_id' => $division->getKey(),
             ],
         ]);
 
@@ -120,8 +117,7 @@ it('will execute appropriately on each educatable in the group', function (Educa
         ->and($interactions->first()->relation->getKey())->toEqual($interactionRelation->getKey())
         ->and($interactions->first()->driver->getKey())->toEqual($interactionDriver->getKey())
         ->and($interactions->first()->status->getKey())->toEqual($interactionStatus->getKey())
-        ->and($interactions->first()->outcome->getKey())->toEqual($interactionOutcome->getKey())
-        ->and($interactions->first()->division->getKey())->toEqual($division->getKey());
+        ->and($interactions->first()->outcome->getKey())->toEqual($interactionOutcome->getKey());
 
     expect($campaignActionEducatable->succeeded_at)->not()->toBeNull()
         ->and($campaignActionEducatable->last_failed_at)->toBeNull()

@@ -38,7 +38,6 @@ namespace AdvisingApp\Interaction\Filament\Resources\Interactions\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Interaction\Filament\Actions\DraftInteractionWithAiAction;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\InteractionResource;
 use AdvisingApp\Interaction\Models\InteractionDriver;
@@ -68,7 +67,6 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard\Step;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Carbon;
-use Illuminate\Validation\ValidationException;
 
 class CreateInteraction extends CreateRecord
 {
@@ -154,23 +152,6 @@ class CreateInteraction extends CreateRecord
                                 ?->getKey()
                         )
                         ->exists((new InteractionDriver())->getTable(), 'id'),
-                    Select::make('division_id')
-                        ->relationship('division', 'name')
-                        ->default(
-                            fn () => auth()->user()->department?->division?->getKey()
-                                ?? Division::query()
-                                    ->where('is_default', true)
-                                    ->first()
-                                    ?->getKey()
-                                ?? Division::query()->first()?->getKey()
-                                ?? throw ValidationException::withMessages(['No division found'])
-                        )
-                        ->preload()
-                        ->label('Division')
-                        ->required()
-                        ->exists((new Division())->getTable(), 'id')
-                        ->visible(fn (): bool => Division::count() > 1)
-                        ->dehydratedWhenHidden(),
                     Select::make('interaction_outcome_id')
                         ->reactive()
                         ->relationship('outcome', 'name')

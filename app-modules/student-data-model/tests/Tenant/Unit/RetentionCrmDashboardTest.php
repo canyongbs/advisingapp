@@ -36,6 +36,8 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Report\Enums\ReportAccessKey;
 use AdvisingApp\Report\Models\ReportDepartmentAccess;
@@ -46,8 +48,8 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Department;
-use App\Features\ReportingFeature;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -90,9 +92,37 @@ it('renders all students correctly in the retention dashboard', function () {
         );
 });
 
-it('is gated with proper access control', function () {
-    ReportingFeature::activate();
+it('exposes the advanced filtering population selector on the retention dashboard', function () {
+    $user = User::factory()->licensed([LicenseType::RetentionCrm])->create();
 
+    ReportUserAccess::factory()->create([
+        'report_key' => ReportAccessKey::StudentActionCenter->value,
+        'user_id' => $user->getKey(),
+    ]);
+
+    actingAs($user);
+
+    $group = Group::factory()->create([
+        'model' => GroupModel::Student,
+        'user_id' => $user->getKey(),
+    ]);
+
+    $component = livewire(RetentionCrmDashboard::class)
+        ->callAction(
+            TestAction::make('selectSavedGroup')->schemaComponent(schema: 'filtersForm'),
+            data: ['groupId' => (string) $group->getKey()],
+        )
+        ->assertHasNoActionErrors()
+        ->assertSet('population.type', 'saved')
+        ->assertSet('population.groupId', (string) $group->getKey());
+
+    expect($component->instance()->getPopulationPayload())->toMatchArray([
+        'type' => 'saved',
+        'groupId' => (string) $group->getKey(),
+    ]);
+});
+
+it('is gated with proper access control', function () {
     $user = User::factory()->create();
 
     actingAs($user);
@@ -114,8 +144,6 @@ it('is gated with proper access control', function () {
 });
 
 it('grants access to a user belonging to a department that has been granted access', function () {
-    ReportingFeature::activate();
-
     $department = Department::factory()->create();
 
     $user = User::factory()->create(['team_id' => $department->getKey()]);

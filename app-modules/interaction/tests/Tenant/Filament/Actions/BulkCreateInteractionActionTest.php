@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Tests\Tenant\Filament\Actions\RequestFactories\BulkCreateInteractionActionRequestFactory;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ListProspects;
@@ -50,8 +49,6 @@ use function Tests\asSuperAdmin;
 
 it('shows the form and validation', function (BulkCreateInteractionActionRequestFactory $data, array $errors) {
     asSuperAdmin();
-
-    Division::factory()->create(['is_default' => true]);
 
     $student = Student::factory()->create();
 
@@ -80,14 +77,6 @@ it('shows the form and validation', function (BulkCreateInteractionActionRequest
     'interaction_driver_id exists' => [
         BulkCreateInteractionActionRequestFactory::new()->state(['interaction_driver_id' => (string) Str::uuid()]),
         ['interaction_driver_id'],
-    ],
-    'division_id required' => [
-        BulkCreateInteractionActionRequestFactory::new()->state(['division_id' => null]),
-        ['division_id' => 'required'],
-    ],
-    'division_id exists' => [
-        BulkCreateInteractionActionRequestFactory::new()->state(['division_id' => (string) Str::uuid()]),
-        ['division_id'],
     ],
     'interaction_outcome_id required' => [
         BulkCreateInteractionActionRequestFactory::new()->without('interaction_outcome_id'),
@@ -157,7 +146,6 @@ it('can successfully create bulk interaction with student', function () {
     $expected = [
         'interaction_initiative_id' => $request['interaction_initiative_id'],
         'interaction_driver_id' => $request['interaction_driver_id'],
-        'division_id' => $request['division_id'],
         'interaction_outcome_id' => $request['interaction_outcome_id'],
         'interaction_relation_id' => $request['interaction_relation_id'],
         'interaction_status_id' => $request['interaction_status_id'],
@@ -191,7 +179,6 @@ it('can successfully create bulk interaction with prospect', function () {
     $expected = [
         'interaction_initiative_id' => $request['interaction_initiative_id'],
         'interaction_driver_id' => $request['interaction_driver_id'],
-        'division_id' => $request['division_id'],
         'interaction_outcome_id' => $request['interaction_outcome_id'],
         'interaction_relation_id' => $request['interaction_relation_id'],
         'interaction_status_id' => $request['interaction_status_id'],

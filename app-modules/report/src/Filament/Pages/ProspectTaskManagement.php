@@ -39,6 +39,7 @@ namespace AdvisingApp\Report\Filament\Pages;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Report\Abstract\Concerns\HasReportFilters;
 use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
 use AdvisingApp\Report\Abstract\EngagementReport;
 use AdvisingApp\Report\Filament\Widgets\MostRecentTasksTable;
@@ -49,6 +50,8 @@ use UnitEnum;
 
 class ProspectTaskManagement extends EngagementReport implements HasGroupModel
 {
+    use HasReportFilters;
+
     protected static ?string $cluster = ReportLibrary::class;
 
     protected static string | UnitEnum | null $navigationGroup = ReportLibraryNavigationGroup::Prospects;

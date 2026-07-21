@@ -43,6 +43,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use CanyonGBS\Common\Models\Concerns\CanBeArchived;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -56,6 +57,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 #[ObservedBy([FormSubmissionObserver::class])]
 class FormSubmission extends Submission
 {
+    use CanBeArchived;
+
     protected $fillable = [
         'canceled_at',
         'form_id',

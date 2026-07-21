@@ -39,7 +39,6 @@ namespace AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\ApplicationSubmissionStateResource;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use App\Features\ApplicationSubmissionStateDefaultViewFeature;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Actions\DeleteAction;
@@ -100,8 +99,7 @@ class EditApplicationSubmissionState extends EditRecord
 
                         return "The current default state is '{$currentDefault}', you are replacing it.";
                     })
-                    ->hintColor('danger')
-                    ->visible(fn () => ApplicationSubmissionStateDefaultViewFeature::active()),
+                    ->hintColor('danger'),
             ]);
     }
 

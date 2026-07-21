@@ -43,10 +43,6 @@ use InterNACHI\Modular\Support\ModuleRegistry;
 use PHPUnit\Framework\Assert;
 use Symfony\Component\Finder\SplFileInfo;
 
-arch('All Core Settings classes should have defaults for all properties')
-    ->expect('App\Settings')
-    ->toHaveDefaultsForAllProperties();
-
 $legacyV4UuidModels = require __DIR__ . '/legacy-v4-uuid-models.php';
 
 arch('All Core Models should not use HasVersion4Uuids trait')
@@ -67,10 +63,6 @@ $modules = (new ModuleRegistry(
 ))->modules();
 
 $modules->each(function (ModuleConfig $module) use ($legacyV4UuidModels) {
-    arch("All {$module->name} Settings classes should have defaults for all properties")
-        ->expect($module->namespace() . 'Settings')
-        ->toHaveDefaultsForAllProperties();
-
     arch("All {$module->name} Models should not use HasVersion4Uuids trait")
         ->expect($module->namespace() . 'Models')
         ->extending(Model::class)

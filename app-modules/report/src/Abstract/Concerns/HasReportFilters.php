@@ -34,14 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\Report\Abstract\Concerns;
 
-use App\Support\AbstractFeatureFlag;
+use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
 
-class ReportingFeature extends AbstractFeatureFlag
+/**
+ * Combines the standard report {@see HasFiltersForm} with the {@see HasPopulationFilter}
+ * "Advanced Filtering" experience, for reports that are compatible with population groups.
+ *
+ * The host page must implement {@see HasGroupModel}. The
+ * live-filter builder and saved-group select each own their own nested table components, so the
+ * report page itself does not need to be a table.
+ */
+trait HasReportFilters
 {
-    public function resolve(mixed $scope): mixed
-    {
-        return false;
-    }
+    use HasFiltersForm;
+    use HasPopulationFilter;
 }

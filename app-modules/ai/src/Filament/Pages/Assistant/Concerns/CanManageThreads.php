@@ -44,6 +44,7 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
 use AdvisingApp\Team\Models\Department;
+use App\Features\EmployeeAdvisorPreviewFeature;
 use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Exception;
@@ -56,6 +57,7 @@ use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\Size;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Computed;
@@ -230,6 +232,11 @@ trait CanManageThreads
             ->aiThreads()
             ->withMax('messages', 'created_at')
             ->whereRelation('assistant', 'application', static::APPLICATION)
+            ->when(
+                EmployeeAdvisorPreviewFeature::active(),
+                fn (Builder $query) => $query
+                    ->where('is_preview', false)
+            )
             ->whereNotNull('name')
             ->doesntHave('folder')
             ->latest('updated_at')

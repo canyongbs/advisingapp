@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\ApplicationSubmissionStateDefaultViewFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -53,16 +52,12 @@ return new class () extends Migration {
                 ON application_submission_states (is_default)
                 WHERE is_default = true AND deleted_at IS NULL;
             ');
-
-            ApplicationSubmissionStateDefaultViewFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            ApplicationSubmissionStateDefaultViewFeature::deactivate();
-
             DB::statement('DROP INDEX IF EXISTS application_submission_states_is_default_unique;');
 
             Schema::table('application_submission_states', function (Blueprint $table) {

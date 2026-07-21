@@ -43,6 +43,7 @@ use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ListAiAssistants;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ManageAiAssistantAdditionalKnowledge;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ManageEmployeeAdvisorCategories;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ManageEmployeeAdvisorQuestions;
+use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\PreviewEmployeeAdvisor;
 use AdvisingApp\Ai\Models\AiAssistant;
 use App\Enums\NavigationGroup;
 use Filament\Pages\Page;
@@ -73,6 +74,7 @@ class AiAssistantResource extends Resource
             'edit-websites' => EditAiAssistantLinks::route('/{record}/websites'),
             'manage-categories' => ManageEmployeeAdvisorCategories::route('/{record}/categories'),
             'manage-questions' => ManageEmployeeAdvisorQuestions::route('/{record}/questions'),
+            'preview' => PreviewEmployeeAdvisor::route('/{record}/preview'),
         ];
     }
 
@@ -84,6 +86,7 @@ class AiAssistantResource extends Resource
             ManageEmployeeAdvisorQuestions::class,
             ManageAiAssistantAdditionalKnowledge::class,
             EditAiAssistantLinks::class,
+            PreviewEmployeeAdvisor::class,
         ]);
     }
 }

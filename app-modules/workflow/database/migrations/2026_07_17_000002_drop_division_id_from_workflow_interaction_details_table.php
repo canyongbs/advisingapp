@@ -34,14 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use App\Support\LandlordAbstractFeatureFlag;
-
-class SubscriptionExpirationFeature extends LandlordAbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
+return new class () extends Migration {
+    public function up(): void
     {
-        return false;
+        Schema::table('workflow_interaction_details', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('division_id');
+        });
     }
-}
+
+    public function down(): void
+    {
+        Schema::table('workflow_interaction_details', function (Blueprint $table) {
+            $table->foreignUuid('division_id')->nullable()->constrained('divisions');
+        });
+    }
+};
