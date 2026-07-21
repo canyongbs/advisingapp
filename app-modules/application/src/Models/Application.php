@@ -68,12 +68,12 @@ class Application extends Submissible implements HasMedia, HasRichContent
     use CanBeArchived;
     use HasRelationships;
 
-    protected ?bool $hasSubmissions = null;
-
     /** @use InteractsWithMedia<Media> */
     use InteractsWithMedia;
 
     use InteractsWithRichContent;
+
+    protected ?bool $hasSubmissions = null;
 
     protected $fillable = [
         'name',

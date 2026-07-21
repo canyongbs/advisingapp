@@ -186,9 +186,9 @@ class Form extends Submissible
             ->first();
     }
 
-     /**
-     * @param Builder<Form> $query
-     */
+    /**
+    * @param Builder<Form> $query
+    */
     public function used(Builder $query): void
     {
         $query->whereHas(
