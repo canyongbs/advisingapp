@@ -43,7 +43,6 @@ use AdvisingApp\Report\Filament\Pages\StudentCaseReport;
 use AdvisingApp\Report\Filament\Widgets\StudentCaseStats;
 use AdvisingApp\Report\Models\ReportUserAccess;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\ReportingFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
@@ -60,8 +59,6 @@ function populationAction(string $name): TestAction
 
 function actingAsStudentCaseReportUser(): User
 {
-    ReportingFeature::activate();
-
     $settings = app(LicenseSettings::class);
     $settings->data->addons->caseManagement = true;
     $settings->save();
