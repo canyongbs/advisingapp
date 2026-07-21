@@ -46,7 +46,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Enums\ActionCenterTab;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
-use App\Settings\LicenseSettings;
 
 it('returns correct stats for prospects within the given date range', function () {
     $startDate = now()->subDays(10);

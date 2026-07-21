@@ -40,7 +40,6 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
 use AdvisingApp\Task\Models\Task;
-use App\Settings\LicenseSettings;
 
 it('returns correct total prospect stats of prospects, concerns, and tasks within the given date range', function () {
     $startDate = now()->subDays(10);
