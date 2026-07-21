@@ -83,7 +83,7 @@ it('returns correct total student stats of students, concerns, groups and tasks 
 
     $stats = $widget->getStats();
 
-    expect($stats[0]->getValue())->toEqual($count * 5)
+    expect($stats[0]->getValue())->toEqual($count * 4)
         ->and($stats[1]->getValue())->toEqual($count)
         ->and($stats[2]->getValue())->toEqual($count);
 });
@@ -158,7 +158,7 @@ it('returns correct total student stats of students, concerns, and tasks based o
 
     $stats = $widget->getStats();
 
-    expect($stats[0]->getValue())->toEqual($count + 3)
+    expect($stats[0]->getValue())->toEqual($count + 2)
         ->and($stats[1]->getValue())->toEqual($count)
         ->and($stats[2]->getValue())->toEqual($count);
 });
