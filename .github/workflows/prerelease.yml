@@ -22,12 +22,24 @@ jobs:
             image: ${{ steps.build-image.outputs.image }}
 
         steps:
+            - name: Generate GitHub App Token
+              id: app-token
+              uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+              with:
+                  client-id: ${{ secrets.CGBS_AUTOMATION_APP_CLIENT_ID }} # zizmor: ignore[secrets-outside-env]
+                  private-key: ${{ secrets.CGBS_AUTOMATION_APP_PRIVATE_KEY }} # zizmor: ignore[secrets-outside-env]
+                  owner: canyongbs
+                  repositories: |
+                      advisingapp
+                      devops
+                  permission-contents: read
+
             - name: Checkout
               uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
-                  token: ${{ secrets.PAT }}
+                  token: ${{ steps.app-token.outputs.token }}
                   persist-credentials: false
 
             - name: Login to Docker Hub
@@ -68,12 +80,24 @@ jobs:
         environment: staging
 
         steps:
+            - name: Generate GitHub App Token
+              id: app-token
+              uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+              with:
+                  client-id: ${{ secrets.CGBS_AUTOMATION_APP_CLIENT_ID }} # zizmor: ignore[secrets-outside-env]
+                  private-key: ${{ secrets.CGBS_AUTOMATION_APP_PRIVATE_KEY }} # zizmor: ignore[secrets-outside-env]
+                  owner: canyongbs
+                  repositories: |
+                      advisingapp
+                      devops
+                  permission-contents: read
+
             - name: Checkout
               uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
-                  token: ${{ secrets.PAT }}
+                  token: ${{ steps.app-token.outputs.token }}
                   persist-credentials: false
 
             - name: Configure AWS credentials
@@ -122,12 +146,24 @@ jobs:
             image: ${{ steps.build-image.outputs.image }}
 
         steps:
+            - name: Generate GitHub App Token
+              id: app-token
+              uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+              with:
+                  client-id: ${{ secrets.CGBS_AUTOMATION_APP_CLIENT_ID }} # zizmor: ignore[secrets-outside-env]
+                  private-key: ${{ secrets.CGBS_AUTOMATION_APP_PRIVATE_KEY }} # zizmor: ignore[secrets-outside-env]
+                  owner: canyongbs
+                  repositories: |
+                      advisingapp
+                      devops
+                  permission-contents: read
+
             - name: Checkout
               uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
-                  token: ${{ secrets.PAT }}
+                  token: ${{ steps.app-token.outputs.token }}
                   persist-credentials: false
 
             - name: Login to Docker Hub
@@ -168,12 +204,24 @@ jobs:
         environment: staging
 
         steps:
+            - name: Generate GitHub App Token
+              id: app-token
+              uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+              with:
+                  client-id: ${{ secrets.CGBS_AUTOMATION_APP_CLIENT_ID }} # zizmor: ignore[secrets-outside-env]
+                  private-key: ${{ secrets.CGBS_AUTOMATION_APP_PRIVATE_KEY }} # zizmor: ignore[secrets-outside-env]
+                  owner: canyongbs
+                  repositories: |
+                      advisingapp
+                      devops
+                  permission-contents: read
+
             - name: Checkout
               uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
-                  token: ${{ secrets.PAT }}
+                  token: ${{ steps.app-token.outputs.token }}
                   persist-credentials: false
 
             - name: Configure AWS credentials
@@ -222,12 +270,24 @@ jobs:
         environment: staging
 
         steps:
+            - name: Generate GitHub App Token
+              id: app-token
+              uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+              with:
+                  client-id: ${{ secrets.CGBS_AUTOMATION_APP_CLIENT_ID }} # zizmor: ignore[secrets-outside-env]
+                  private-key: ${{ secrets.CGBS_AUTOMATION_APP_PRIVATE_KEY }} # zizmor: ignore[secrets-outside-env]
+                  owner: canyongbs
+                  repositories: |
+                      advisingapp
+                      devops
+                  permission-contents: read
+
             - name: Checkout
               uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
-                  token: ${{ secrets.PAT }}
+                  token: ${{ steps.app-token.outputs.token }}
                   persist-credentials: false
 
             - name: Login to Docker Hub
@@ -268,12 +328,24 @@ jobs:
         environment: staging
 
         steps:
+            - name: Generate GitHub App Token
+              id: app-token
+              uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+              with:
+                  client-id: ${{ secrets.CGBS_AUTOMATION_APP_CLIENT_ID }} # zizmor: ignore[secrets-outside-env]
+                  private-key: ${{ secrets.CGBS_AUTOMATION_APP_PRIVATE_KEY }} # zizmor: ignore[secrets-outside-env]
+                  owner: canyongbs
+                  repositories: |
+                      advisingapp
+                      devops
+                  permission-contents: read
+
             - name: Checkout
               uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
-                  token: ${{ secrets.PAT }}
+                  token: ${{ steps.app-token.outputs.token }}
                   persist-credentials: false
 
             - name: Configure AWS credentials
@@ -322,12 +394,24 @@ jobs:
         environment: staging
 
         steps:
+            - name: Generate GitHub App Token
+              id: app-token
+              uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+              with:
+                  client-id: ${{ secrets.CGBS_AUTOMATION_APP_CLIENT_ID }} # zizmor: ignore[secrets-outside-env]
+                  private-key: ${{ secrets.CGBS_AUTOMATION_APP_PRIVATE_KEY }} # zizmor: ignore[secrets-outside-env]
+                  owner: canyongbs
+                  repositories: |
+                      advisingapp
+                      devops
+                  permission-contents: read
+
             - name: Checkout
               uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
-                  token: ${{ secrets.PAT }}
+                  token: ${{ steps.app-token.outputs.token }}
                   persist-credentials: false
 
             - name: Login to Docker Hub
@@ -368,12 +452,24 @@ jobs:
         environment: staging
 
         steps:
+            - name: Generate GitHub App Token
+              id: app-token
+              uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+              with:
+                  client-id: ${{ secrets.CGBS_AUTOMATION_APP_CLIENT_ID }} # zizmor: ignore[secrets-outside-env]
+                  private-key: ${{ secrets.CGBS_AUTOMATION_APP_PRIVATE_KEY }} # zizmor: ignore[secrets-outside-env]
+                  owner: canyongbs
+                  repositories: |
+                      advisingapp
+                      devops
+                  permission-contents: read
+
             - name: Checkout
               uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
               with:
                   submodules: true
                   ref: ${{ github.head_ref }}
-                  token: ${{ secrets.PAT }}
+                  token: ${{ steps.app-token.outputs.token }}
                   persist-credentials: false
 
             - name: Configure AWS credentials
