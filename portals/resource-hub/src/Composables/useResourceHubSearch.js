@@ -131,11 +131,15 @@ export function useResourceHubSearch() {
     watch(searchQuery, (newSearch) => {
         const isSearchEmpty = !newSearch || newSearch.trim() === '';
 
-        router.replace({
+        // Use the History API instead of router.replace() so syncing the URL doesn't
+        // re-trigger route data loaders and flash the navigation progress bar.
+        const resolved = router.resolve({
             name: route.name,
             params: route.params,
             query: { ...route.query, search: isSearchEmpty ? undefined : newSearch },
         });
+
+        history.replaceState(history.state, '', resolved.href);
 
         search(newSearch);
     });

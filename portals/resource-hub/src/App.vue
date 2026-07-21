@@ -115,6 +115,13 @@
             !userIsAuthenticated.value && (requiresAuthentication.value || showLogin.value || route.meta?.requiresAuth),
     );
 
+    // Hide navbar search on pages that already show their own hero search.
+    const hideHeaderSearch = computed(() => ['home', 'view-category', 'view-subcategory'].includes(route.name));
+
+    function onHeaderSearch(query) {
+        router.push({ name: 'home', query: { search: query } });
+    }
+
     onMounted(async () => {
         if (props.appTitle) {
             document.title = props.appTitle;
@@ -161,8 +168,10 @@
                     :user="user"
                     :requires-authentication="requiresAuthentication"
                     :menu-items="menuItems"
+                    :hide-search="hideHeaderSearch"
                     @show-login="showLogin = true"
                     @logout="logout"
+                    @search="onHeaderSearch"
                 />
 
                 <main class="flex-1">
