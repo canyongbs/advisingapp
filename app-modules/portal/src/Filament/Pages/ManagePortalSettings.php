@@ -173,7 +173,6 @@ class ManagePortalSettings extends SettingsPage
                         Toggle::make('resource_hub_portal_requires_authentication')
                             ->label('Require Authentication')
                             ->visible(fn (Get $get) => $get('resource_hub_portal_enabled'))
-                            ->disabled(! Gate::check(Feature::CaseManagement->getGateName()))
                             ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->columnSpanFull(),
                         Actions::make([
