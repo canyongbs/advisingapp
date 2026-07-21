@@ -50,7 +50,6 @@ use AdvisingApp\Campaign\Models\CampaignActionEducatable;
 use AdvisingApp\Campaign\Models\CampaignActionEducatableRelated;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
-use AdvisingApp\CaseManagement\Models\Sla;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\Consent\Models\ConsentAgreement;
@@ -288,7 +287,6 @@ return [
     CampaignActionEducatableRelated::class,
     CareTeam::class,
     CareTeamRole::class,
-    Sla::class,
     Concern::class,
     ConcernStatus::class,
     ConsentAgreement::class,

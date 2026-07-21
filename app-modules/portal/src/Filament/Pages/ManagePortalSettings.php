@@ -176,12 +176,6 @@ class ManagePortalSettings extends SettingsPage
                             ->disabled(! Gate::check(Feature::CaseManagement->getGateName()))
                             ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
                             ->columnSpanFull(),
-                        Toggle::make('resource_hub_portal_case_management')
-                            ->label('Case Management')
-                            ->visible(fn (Get $get) => $get('resource_hub_portal_enabled'))
-                            ->disabled(! Gate::check(Feature::CaseManagement->getGateName()))
-                            ->hintIcon(fn (Toggle $component) => $component->isDisabled() ? 'heroicon-m-lock-closed' : null)
-                            ->columnSpanFull(),
                         Actions::make([
                             Action::make('view')
                                 ->url(fn () => route('portal.resource-hub.show'))

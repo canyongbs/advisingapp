@@ -42,7 +42,7 @@ use AdvisingApp\Report\Filament\Widgets\ProspectReportStats;
 use AdvisingApp\Task\Models\Task;
 use App\Settings\LicenseSettings;
 
-it('returns correct total prospect stats of prospects, concerns, cases and tasks within the given date range', function () {
+it('returns correct total prospect stats of prospects, concerns, and tasks within the given date range', function () {
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
 
@@ -86,7 +86,7 @@ it('returns correct total prospect stats of prospects, concerns, cases and tasks
         ->and($stats[2]->getValue())->toEqual($taskCount);
 });
 
-it('returns correct total prospect stats of prospects, concerns, cases and tasks based on group filter', function () {
+it('returns correct total prospect stats of prospects, concerns, and tasks based on group filter', function () {
     $count = random_int(1, 5);
 
     $group = Group::factory()->create([
@@ -167,31 +167,4 @@ it('returns correct total prospect stats of prospects, concerns, cases and tasks
     expect($stats[0]->getValue())->toEqual($count + 3)
         ->and($stats[1]->getValue())->toEqual($count)
         ->and($stats[2]->getValue())->toEqual($count);
-});
-
-it('only returns cases information if that feature is active', function () {
-    $settings = app(LicenseSettings::class);
-    $settings->data->addons->caseManagement = false;
-    $settings->save();
-
-    $widget = new ProspectReportStats();
-    $widget->cacheTag = 'prospect-report-cache';
-
-    $stats = $widget->getStats();
-
-    expect($stats[0]->getLabel())->toEqual('Total Prospects')
-        ->and($stats[1]->getLabel())->toEqual('Total Concerns')
-        ->and($stats[2]->getLabel())->toEqual('Total Tasks');
-
-    $settings->data->addons->caseManagement = true;
-    $settings->save();
-
-    // @phpstan-ignore method.resultUnused
-    $widget->refreshWidget();
-    $stats = $widget->getStats();
-
-    expect($stats[0]->getLabel())->toEqual('Total Prospects')
-        ->and($stats[1]->getLabel())->toEqual('Total Concerns')
-        ->and($stats[2]->getLabel())->toEqual('Total Cases')
-        ->and($stats[3]->getLabel())->toEqual('Total Tasks');
 });

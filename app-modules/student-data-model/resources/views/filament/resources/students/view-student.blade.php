@@ -48,7 +48,6 @@
     use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\FormSubmissionsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\InteractionsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\ProgramsRelationManager;
-    use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\CasesRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Widgets\StudentAcademicStats;
     use App\Enums\Feature;
     use Illuminate\Support\Facades\Gate;
@@ -92,7 +91,6 @@
                     'enrollments' => EnrollmentsRelationManager::class,
                     'messages' => EngagementsRelationManager::class,
                     'interactions' => InteractionsRelationManager::class,
-                    'cases' => CasesRelationManager::class,
                     'files' => EngagementFilesRelationManager::class,
                 ]"
             />

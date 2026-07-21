@@ -34,43 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\Slas\Pages;
+namespace App\Enums;
 
-use AdvisingApp\CaseManagement\Filament\Resources\Slas\SlaResource;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use Filament\Support\Contracts\HasLabel;
 
-class ListSlas extends ListRecords
+enum ColumnColorOptions: string implements HasLabel
 {
-    protected static string $resource = SlaResource::class;
+    case Success = 'success';
 
-    public function table(Table $table): Table
-    {
-        return $table
-            ->columns([
-                TextColumn::make('name')
-                    ->searchable(),
-            ])
-            ->recordActions([
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->authorizeIndividualRecords('delete'),
-                ]),
-            ]);
-    }
+    case Danger = 'danger';
 
-    protected function getHeaderActions(): array
+    case Warning = 'warning';
+
+    case Info = 'info';
+
+    case Primary = 'primary';
+
+    case Gray = 'gray';
+
+    public function getLabel(): string
     {
-        return [
-            CreateAction::make(),
-        ];
+        return $this->value;
     }
 }
