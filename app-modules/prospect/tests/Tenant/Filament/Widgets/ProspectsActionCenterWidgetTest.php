@@ -34,13 +34,6 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Prospect\Filament\Widgets\ProspectsActionCenterWidget;
-use AdvisingApp\Prospect\Models\Prospect;
-use App\Settings\LicenseSettings;
-
-use function Pest\Livewire\livewire;
-use function Tests\asSuperAdmin;
-
 it('returns data', function () {})->todo();
 
 it('can filter for messages', function () {})->todo();

@@ -40,7 +40,6 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentsStats;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
-use App\Settings\LicenseSettings;
 
 it('returns correct total student stats of students, concerns, groups and tasks within the given date range', function () {
     $startDate = now()->subDays(10);
