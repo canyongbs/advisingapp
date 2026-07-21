@@ -49,10 +49,6 @@ use AdvisingApp\Task\Models\Task;
 use App\Settings\LicenseSettings;
 
 it('returns correct stats for prospects within the given date range', function () {
-    $settings = app(LicenseSettings::class);
-    $settings->data->addons->caseManagement = true;
-    $settings->save();
-
     $startDate = now()->subDays(10);
     $endDate = now()->subDays(5);
     $count = random_int(1, 5);
@@ -143,10 +139,6 @@ it('returns correct stats for prospects within the given date range', function (
 });
 
 it('returns correct stats for prospects based on group filter', function () {
-    $settings = app(LicenseSettings::class);
-    $settings->data->addons->caseManagement = true;
-    $settings->save();
-
     $count = random_int(1, 5);
 
     $group = Group::factory()->create([
@@ -250,38 +242,4 @@ it('returns correct stats for prospects based on group filter', function () {
         ->and($stats[4]->getValue())->toEqual($count)
         ->and($stats[5]->getLabel())->toEqual('Closed Tasks')
         ->and($stats[5]->getValue())->toEqual($count);
-});
-
-it('only shows case stats when the case management feature is active', function () {
-    $settings = app(LicenseSettings::class);
-    $settings->data->addons->caseManagement = false;
-    $settings->save();
-
-    $widget = new ProspectStats();
-    $widget->activeTab = ActionCenterTab::All->value;
-
-    $stats = $widget->getStats();
-
-    expect($stats)->toHaveCount(6)
-        ->and($stats[0]->getLabel())->toEqual('New Messages')
-        ->and($stats[1]->getLabel())->toEqual('Open Concerns')
-        ->and($stats[2]->getLabel())->toEqual('Open Tasks')
-        ->and($stats[3]->getLabel())->toEqual('Actioned Messages')
-        ->and($stats[4]->getLabel())->toEqual('Closed Concerns')
-        ->and($stats[5]->getLabel())->toEqual('Closed Tasks');
-
-    $settings->data->addons->caseManagement = true;
-    $settings->save();
-
-    $stats = $widget->getStats();
-
-    expect($stats)->toHaveCount(8)
-        ->and($stats[0]->getLabel())->toEqual('New Messages')
-        ->and($stats[1]->getLabel())->toEqual('Open Concerns')
-        ->and($stats[2]->getLabel())->toEqual('Open Tasks')
-        ->and($stats[3]->getLabel())->toEqual('Open Cases')
-        ->and($stats[4]->getLabel())->toEqual('Actioned Messages')
-        ->and($stats[5]->getLabel())->toEqual('Closed Concerns')
-        ->and($stats[6]->getLabel())->toEqual('Closed Tasks')
-        ->and($stats[7]->getLabel())->toEqual('Closed Cases');
 });

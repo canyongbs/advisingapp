@@ -70,7 +70,6 @@ it('always lists reports that require no license or addon', function () {
     $settings->data->limits->conversationalAiSeats = 0;
     $settings->data->limits->retentionCrmSeats = 0;
     $settings->data->limits->recruitmentCrmSeats = 0;
-    $settings->data->addons->caseManagement = false;
     $settings->data->addons->customerAdvisors = false;
     $settings->data->addons->employeeAdvisors = false;
     $settings->data->addons->researchAdvisor = false;
@@ -90,7 +89,6 @@ it('only lists a report when the required licenses and addons are enabled for th
     $settings->data->limits->conversationalAiSeats = 0;
     $settings->data->limits->retentionCrmSeats = 0;
     $settings->data->limits->recruitmentCrmSeats = 0;
-    $settings->data->addons->caseManagement = false;
     $settings->data->addons->customerAdvisors = false;
     $settings->data->addons->employeeAdvisors = false;
     $settings->data->addons->researchAdvisor = false;
