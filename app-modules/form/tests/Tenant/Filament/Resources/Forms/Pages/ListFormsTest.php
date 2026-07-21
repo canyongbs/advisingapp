@@ -40,6 +40,8 @@ use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Actions\Testing\TestAction;
+use Illuminate\Database\Eloquent\Builder;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -201,10 +203,75 @@ it('archives forms with submissions and deletes forms without submissions via th
 
     $formWithoutSubmissions = Form::factory()->create();
 
+    $records = collect([$formWithSubmissions, $formWithoutSubmissions]);
+
     livewire(ListForms::class)
-        ->callTableBulkAction('archiveOrDelete', collect([$formWithSubmissions, $formWithoutSubmissions]))
-        ->assertSuccessful();
+        ->selectTableRecords($records->pluck('id')->all())
+        ->callAction(TestAction::make('archive')->table()->bulk())
+        ->assertNotified();
 
     expect($formWithSubmissions->fresh()->archived_at)->not->toBeNull();
     expect(Form::find($formWithoutSubmissions->id))->toBeNull();
+});
+
+it('marks a form as used when any version has submissions', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    $archivedVersion = Form::factory()->create([
+        'root_id' => $form->root_id,
+        'archived_at' => now(),
+    ]);
+
+    FormSubmission::factory()->create([
+        'form_id' => $archivedVersion->id,
+        'submitted_at' => now(),
+    ]);
+
+    expect($form->isUsed())->toBeTrue();
+});
+
+it('marks a form as unused when no version has submissions', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    Form::factory()->create([
+        'root_id' => $form->root_id,
+        'archived_at' => now(),
+    ]);
+
+    expect($form->isUsed())->toBeFalse();
+});
+
+it('used query includes form roots that have submissions on any version', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    $archivedVersion = Form::factory()->create([
+        'root_id' => $form->root_id,
+        'archived_at' => now(),
+    ]);
+
+    FormSubmission::factory()->create([
+        'form_id' => $archivedVersion->id,
+        'submitted_at' => now(),
+    ]);
+
+    $unusedForm = Form::factory()->create();
+
+    Form::factory()->create([
+        'root_id' => $unusedForm->root_id,
+        'archived_at' => now(),
+    ]);
+
+    $usedRootIds = Form::query()
+        ->tap(fn (Builder $query) => $form->used($query))
+        ->pluck('root_id')
+        ->unique();
+
+    expect($usedRootIds)->toContain($form->root_id)
+        ->not->toContain($unusedForm->root_id);
 });

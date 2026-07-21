@@ -42,6 +42,8 @@ use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Actions\Testing\TestAction;
+use Illuminate\Database\Eloquent\Builder;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -150,11 +152,48 @@ it('archives events with attendees and deletes events without attendees via the 
     $eventWithoutAttendees = Event::factory()->create(['starts_at' => now()->addWeek()]);
     $eventWithoutAttendees->attendees()->delete();
 
+    $records = collect([$eventWithAttendees, $eventWithoutAttendees]);
+
     livewire(ListEvents::class)
         ->removeTableFilter('pastEvents')
-        ->callTableBulkAction('archiveOrDelete', collect([$eventWithAttendees, $eventWithoutAttendees]))
-        ->assertSuccessful();
+        ->selectTableRecords($records->pluck('id')->all())
+        ->callAction(TestAction::make('archive')->table()->bulk())
+        ->assertNotified();
 
     expect($eventWithAttendees->fresh()->archived_at)->not->toBeNull();
     expect(Event::find($eventWithoutAttendees->id))->toBeNull();
+});
+
+it('marks an event as used when it has attendees', function () {
+    asSuperAdmin();
+
+    $event = Event::factory()->create(['starts_at' => now()->addWeek()]);
+    EventAttendee::factory()->create(['event_id' => $event->id]);
+
+    expect($event->isUsed())->toBeTrue();
+});
+
+it('marks an event as unused when it has no attendees', function () {
+    asSuperAdmin();
+
+    $event = Event::factory()->create(['starts_at' => now()->addWeek()]);
+    $event->attendees()->delete();
+
+    expect($event->isUsed())->toBeFalse();
+});
+
+it('used query includes only events that have attendees', function () {
+    asSuperAdmin();
+
+    $usedEvent = Event::factory()->create(['starts_at' => now()->addWeek()]);
+
+    $unusedEvent = Event::factory()->create(['starts_at' => now()->addWeek()]);
+    $unusedEvent->attendees()->delete();
+
+    $usedEventIds = Event::query()
+        ->tap(fn (Builder $query) => $usedEvent->used($query))
+        ->pluck('id');
+
+    expect($usedEventIds)->toContain($usedEvent->id)
+        ->not->toContain($unusedEvent->id);
 });

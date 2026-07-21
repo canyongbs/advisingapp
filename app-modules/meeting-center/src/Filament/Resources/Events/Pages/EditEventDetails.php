@@ -42,8 +42,8 @@ use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use App\Features\EventArchivingFeature;
+use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
-use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -128,42 +128,17 @@ class EditEventDetails extends EditRecord
     protected function getHeaderActions(): array
     {
         return EventArchivingFeature::active() ? [
-            $this->getArchiveEventAction(),
-            DeleteAction::make()
-                ->hidden(fn (): bool => $this->eventHasAttendees()),
+            ArchiveAction::make(),
         ] : [
             DeleteAction::make()
-                ->hidden(fn (): bool => $this->eventHasAttendees()),
+                ->hidden(function (): bool {
+                    /** @var Event $record */
+                    $record = $this->record;
+
+                    return EventAttendee::query()
+                        ->where('event_id', $record->id)
+                        ->exists();
+                }),
         ];
-    }
-
-    private function getArchiveEventAction(): Action
-    {
-        return Action::make('archive')
-            ->label('Archive')
-            ->icon('heroicon-o-archive-box')
-            ->color('danger')
-            ->requiresConfirmation()
-            ->modalHeading('Archive Event')
-            ->modalDescription('This event has attendees. Archiving will hide it from active use. This action cannot be undone.')
-            ->modalSubmitActionLabel('Archive')
-            ->visible(fn (): bool => $this->eventHasAttendees())
-            ->action(function (): void {
-                /** @var Event $record */
-                $record = $this->record;
-                $record->archive();
-
-                $this->redirect(EventResource::getUrl('index'));
-            });
-    }
-
-    private function eventHasAttendees(): bool
-    {
-        /** @var Event $record */
-        $record = $this->record;
-
-        return EventAttendee::query()
-            ->where('event_id', $record->id)
-            ->exists();
     }
 }

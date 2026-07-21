@@ -43,6 +43,7 @@ use App\Enums\FontWeight;
 use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\CanBeArchived;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -60,6 +61,8 @@ class Form extends Submissible
 {
     use CanBeArchived;
     use HasRelationships;
+
+    protected ?bool $hasSubmissions = null;
 
     protected $fillable = [
         'name',
@@ -181,5 +184,28 @@ class Form extends Submissible
         return Form::query()->where('root_id', $this->root_id)
             ->whereNull('archived_at')
             ->first();
+    }
+
+     /**
+     * @param Builder<Form> $query
+     */
+    public function used(Builder $query): void
+    {
+        $query->whereHas(
+            'versions',
+            fn (Builder $query) => $query
+                ->withoutGlobalScopes()
+                ->whereHas('submissions'),
+        );
+    }
+
+    public function isUsed(): bool
+    {
+        return (bool) ($this->hasSubmissions ??= FormSubmission::query()
+            ->whereHas(
+                'submissible',
+                fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $this->root_id),
+            )
+            ->exists());
     }
 }

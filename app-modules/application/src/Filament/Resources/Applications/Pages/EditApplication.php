@@ -40,13 +40,10 @@ use AdvisingApp\Application\Actions\CreateApplicationVersion;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\Concerns\HasSharedFormConfiguration;
 use AdvisingApp\Application\Models\Application;
-use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Form\Actions\SaveSubmissibleFieldsFromContent;
-use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
+use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
@@ -99,9 +96,6 @@ class EditApplication extends EditRecord
             $this->getSaveFormAction()
                 ->label('Save')
                 ->formId('form'),
-            $this->getArchiveApplicationAction(),
-            DeleteAction::make()
-                ->hidden(fn (): bool => $this->applicationHasSubmissions()),
             $this->getCancelFormAction()
                 ->url(fn () => ApplicationResource::getUrl('view', ['record' => $this->record])),
         ];
@@ -113,45 +107,10 @@ class EditApplication extends EditRecord
             $this->getSaveFormAction()
                 ->label('Save')
                 ->formId('form'),
-            $this->getArchiveApplicationAction(),
-            DeleteAction::make()
-                ->hidden(fn (): bool => $this->applicationHasSubmissions()),
+            ArchiveAction::make(),
             $this->getCancelFormAction()
                 ->url(fn () => ApplicationResource::getUrl('view', ['record' => $this->record])),
         ];
-    }
-
-    private function getArchiveApplicationAction(): Action
-    {
-        return Action::make('archive')
-            ->label('Archive')
-            ->icon('heroicon-o-archive-box')
-            ->color('danger')
-            ->requiresConfirmation()
-            ->modalHeading('Archive Application')
-            ->modalDescription('This application has submissions. Archiving will hide it from active use. This action cannot be undone.')
-            ->modalSubmitActionLabel('Archive')
-            ->visible(fn (): bool => $this->applicationHasSubmissions())
-            ->action(function (): void {
-                /** @var Application $record */
-                $record = $this->record;
-                $record->archive();
-
-                $this->redirect(ApplicationResource::getUrl('index'));
-            });
-    }
-
-    private function applicationHasSubmissions(): bool
-    {
-        /** @var Application $record */
-        $record = $this->record;
-
-        return ApplicationSubmission::query()
-            ->whereHas(
-                'submissible',
-                fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $record->root_id),
-            )
-            ->exists();
     }
 
     private function copyMedia(Application $oldVersion, Application $newVersion): void

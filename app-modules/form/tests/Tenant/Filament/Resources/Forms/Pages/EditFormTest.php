@@ -36,7 +36,6 @@
 
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\EditForm;
-use AdvisingApp\Form\Filament\Resources\Forms\Pages\ListForms;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 
@@ -44,7 +43,7 @@ use function Pest\Laravel\assertModelMissing;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-it('shows the archive action and hides the delete action in the header when the form has submissions', function () {
+it('shows archive mode for the header archive action when the form has submissions', function () {
     asSuperAdmin();
 
     $form = Form::factory()->create();
@@ -56,17 +55,17 @@ it('shows the archive action and hides the delete action in the header when the 
 
     livewire(EditForm::class, ['record' => $form->getRouteKey()])
         ->assertActionVisible('archive')
-        ->assertActionHidden('delete');
+        ->assertActionHasLabel('archive', 'Archive');
 });
 
-it('shows the delete action and hides the archive action in the header when the form has no submissions', function () {
+it('shows delete mode for the header archive action when the form has no submissions', function () {
     asSuperAdmin();
 
     $form = Form::factory()->create();
 
     livewire(EditForm::class, ['record' => $form->getRouteKey()])
-        ->assertActionHidden('archive')
-        ->assertActionVisible('delete');
+        ->assertActionVisible('archive')
+        ->assertActionHasLabel('archive', 'Delete');
 });
 
 it('archive action archives the form and redirects to the index when the form has submissions', function () {
@@ -86,14 +85,14 @@ it('archive action archives the form and redirects to the index when the form ha
     expect($form->fresh()->isArchived())->toBeTrue();
 });
 
-it('delete action deletes the form and redirects to the index when the form has no submissions', function () {
+it('archive action deletes the form and redirects to the index when the form has no submissions', function () {
     asSuperAdmin();
 
     $form = Form::factory()->create();
 
     livewire(EditForm::class, ['record' => $form->getRouteKey()])
-        ->callAction('delete')
-        ->assertRedirect(ListForms::getUrl());
+        ->callAction('archive')
+        ->assertRedirect(FormResource::getUrl('index'));
 
     assertModelMissing($form);
 });
