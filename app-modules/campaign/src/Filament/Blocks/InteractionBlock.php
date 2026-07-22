@@ -159,8 +159,10 @@ class InteractionBlock extends CampaignActionBlock
     {
         return function (Builder $query, Get $get, mixed $livewire) {
             $interactableType = $this->resolveInteractableType($get, $livewire);
+
             if (blank($interactableType)) {
                 $query->whereRaw('1 = 0');
+
                 return;
             }
             $query->where('interactable_type', $interactableType);
