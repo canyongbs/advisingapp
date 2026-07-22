@@ -318,7 +318,7 @@ jobs:
         services:
             postgres:
                 # Docker Hub image
-                image: postgres:15@sha256:1b92e7a80c021647bf70f5d3eb66066a998e4f5cf43c07bb9dc9f729782cf88e
+                image: postgres:15@sha256:74e110c41804365e3915fcc09d5e7a1eff50161aaa94d5da0e58e0cd75ae509c
                 ports:
                     - 5432:5432
                 # Provide the password for postgres
@@ -416,7 +416,7 @@ jobs:
 
         timeout-minutes: 15
         container:
-            image: ghcr.io/renovatebot/renovate:43.191.2@sha256:539b0ce5f22bcd4b0a42681c0c984afd1c293e2ce5bb12bcb4c01e0f608d60c9
+            image: ghcr.io/renovatebot/renovate:43.191.3@sha256:56bf1df9d2437f8bae5b96c211d44f55c772fcce0e1f0db5153d816c7f804da7
             # github hosted runners are running as `1001:127` (ubuntu:docker)
             options: -u 1001:0 --group-add 1000 --group-add 12021 --group-add 127
 

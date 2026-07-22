@@ -48,7 +48,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Department;
-use App\Features\ReportingFeature;
 use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 
@@ -124,8 +123,6 @@ it('exposes the advanced filtering population selector on the retention dashboar
 });
 
 it('is gated with proper access control', function () {
-    ReportingFeature::activate();
-
     $user = User::factory()->create();
 
     actingAs($user);
@@ -147,8 +144,6 @@ it('is gated with proper access control', function () {
 });
 
 it('grants access to a user belonging to a department that has been granted access', function () {
-    ReportingFeature::activate();
-
     $department = Department::factory()->create();
 
     $user = User::factory()->create(['team_id' => $department->getKey()]);
