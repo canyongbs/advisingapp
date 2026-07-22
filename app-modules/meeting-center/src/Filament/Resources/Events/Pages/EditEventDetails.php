@@ -39,7 +39,12 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
+use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use App\Features\EventArchivingFeature;
+use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
@@ -118,5 +123,22 @@ class EditEventDetails extends EditRecord
                 ])
                 ->columns(2),
         ]);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return EventArchivingFeature::active() ? [
+            ArchiveAction::make(),
+        ] : [
+            DeleteAction::make()
+                ->hidden(function (): bool {
+                    /** @var Event $record */
+                    $record = $this->record;
+
+                    return EventAttendee::query()
+                        ->where('event_id', $record->id)
+                        ->exists();
+                }),
+        ];
     }
 }

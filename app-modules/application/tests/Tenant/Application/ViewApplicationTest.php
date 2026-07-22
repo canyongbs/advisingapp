@@ -36,99 +36,14 @@
 
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
-use AdvisingApp\Application\Filament\Resources\Applications\Pages\EditApplication;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\ViewApplication;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
-use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Models\User;
-use App\Settings\LicenseSettings;
 
-use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertModelMissing;
 use function Pest\Laravel\seed;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
-
-// TODO: Write EditApplication tests
-//test('A successful action on the EditApplication page', function () {});
-//
-//test('EditApplication requires valid data', function ($data, $errors) {})->with([]);
-
-// Permission Tests
-
-test('EditApplication is gated with proper access control', function () {
-    seed(ApplicationSubmissionStateSeeder::class);
-
-    $user = User::factory()->licensed(LicenseType::cases())->create();
-
-    $application = Application::factory()->create();
-
-    actingAs($user)
-        ->get(
-            ApplicationResource::getUrl('edit', [
-                'record' => $application,
-            ])
-        )->assertForbidden();
-
-    livewire(EditApplication::class, [
-        'record' => $application->getRouteKey(),
-    ])
-        ->assertForbidden();
-
-    $user->givePermissionTo('application.view-any');
-    $user->givePermissionTo('application.*.update');
-
-    actingAs($user)
-        ->get(
-            ApplicationResource::getUrl('edit', [
-                'record' => $application,
-            ])
-        )->assertSuccessful();
-
-    // TODO: Finish the test by adding the request factory EditApplicationRequestFactory
-});
-
-test('EditApplication is gated with proper feature access control', function () {
-    seed(ApplicationSubmissionStateSeeder::class);
-
-    $settings = app(LicenseSettings::class);
-
-    $settings->data->addons->onlineAdmissions = false;
-
-    $settings->save();
-
-    $user = User::factory()->licensed(LicenseType::cases())->create();
-
-    $user->givePermissionTo('application.view-any');
-    $user->givePermissionTo('application.*.update');
-
-    $application = Application::factory()->create();
-
-    actingAs($user)
-        ->get(
-            ApplicationResource::getUrl('edit', [
-                'record' => $application,
-            ])
-        )->assertForbidden();
-
-    livewire(EditApplication::class, [
-        'record' => $application->getRouteKey(),
-    ])
-        ->assertForbidden();
-
-    $settings->data->addons->onlineAdmissions = true;
-
-    $settings->save();
-
-    actingAs($user)
-        ->get(
-            ApplicationResource::getUrl('edit', [
-                'record' => $application,
-            ])
-        )->assertSuccessful();
-
-    // TODO: Finish the test by adding the request factory EditApplicationRequestFactory
-});
 
 it('shows archive mode for the header archive action when the application has submissions', function () {
     seed(ApplicationSubmissionStateSeeder::class);
@@ -141,7 +56,7 @@ it('shows archive mode for the header archive action when the application has su
         'application_id' => $application->id,
     ]);
 
-    livewire(EditApplication::class, ['record' => $application->getRouteKey()])
+    livewire(ViewApplication::class, ['record' => $application->getRouteKey()])
         ->assertActionVisible('archive')
         ->assertActionHasLabel('archive', 'Archive');
 });
@@ -154,7 +69,7 @@ it('shows delete mode for the header archive action when the application has no 
     $application = Application::factory()->create();
     $application->submissions()->delete();
 
-    livewire(EditApplication::class, ['record' => $application->getRouteKey()])
+    livewire(ViewApplication::class, ['record' => $application->getRouteKey()])
         ->assertActionVisible('archive')
         ->assertActionHasLabel('archive', 'Delete');
 });
@@ -166,7 +81,11 @@ it('archive action archives the application and redirects to the index when the 
 
     $application = Application::factory()->create();
 
-    livewire(EditApplication::class, ['record' => $application->getRouteKey()])
+    ApplicationSubmission::factory()->create([
+        'application_id' => $application->id,
+    ]);
+
+    livewire(ViewApplication::class, ['record' => $application->getRouteKey()])
         ->callAction('archive')
         ->assertRedirect(ApplicationResource::getUrl('index'));
 
@@ -181,7 +100,7 @@ it('archive action deletes the application and redirects to the index when the a
     $application = Application::factory()->create();
     $application->submissions()->delete();
 
-    livewire(EditApplication::class, ['record' => $application->getRouteKey()])
+    livewire(ViewApplication::class, ['record' => $application->getRouteKey()])
         ->callAction('archive')
         ->assertRedirect(ApplicationResource::getUrl('index'));
 

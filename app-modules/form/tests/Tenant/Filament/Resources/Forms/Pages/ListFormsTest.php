@@ -40,7 +40,8 @@ use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use App\Models\User;
 use App\Settings\LicenseSettings;
-use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\Testing\TestAction;
+use Illuminate\Database\Eloquent\Builder;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -54,21 +55,6 @@ function listFormsTestUser(): User
 
     return User::factory()->licensed(LicenseType::cases())->create();
 }
-
-it('the delete bulk action is gated by the delete permission', function () {
-    $user = listFormsTestUser();
-    $user->givePermissionTo('form.view-any');
-
-    actingAs($user);
-
-    livewire(ListForms::class)
-        ->assertTableBulkActionHidden(DeleteBulkAction::class);
-
-    $user->givePermissionTo('form.*.delete');
-
-    livewire(ListForms::class)
-        ->assertTableBulkActionVisible(DeleteBulkAction::class);
-});
 
 it('the create action is gated by the create permission', function () {
     $user = listFormsTestUser();
@@ -203,4 +189,107 @@ it('does not count submissions from unrelated forms in the submissions count', f
 
     livewire(ListForms::class)
         ->assertTableColumnStateSet('submissions_count', 2, $form);
+});
+
+it('does not count archived submissions in the submissions count', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    FormSubmission::factory()->count(5)->create([
+        'form_id' => $form->id,
+        'submitted_at' => now(),
+    ]);
+
+    $form->submissions()
+        ->limit(2)
+        ->update(['archived_at' => now()]);
+
+    livewire(ListForms::class)
+        ->assertTableColumnStateSet('submissions_count', 3, $form);
+});
+
+it('archives forms with submissions and deletes forms without submissions via the archive or delete bulk action', function () {
+    asSuperAdmin();
+
+    $formWithSubmissions = Form::factory()->create();
+
+    FormSubmission::factory()->create([
+        'form_id' => $formWithSubmissions->id,
+        'submitted_at' => now(),
+    ]);
+
+    $formWithoutSubmissions = Form::factory()->create();
+
+    $records = collect([$formWithSubmissions, $formWithoutSubmissions]);
+
+    livewire(ListForms::class)
+        ->selectTableRecords($records->pluck('id')->all())
+        ->callAction(TestAction::make('archive')->table()->bulk())
+        ->assertNotified();
+
+    expect($formWithSubmissions->fresh()->archived_at)->not->toBeNull();
+    expect(Form::find($formWithoutSubmissions->id))->toBeNull();
+});
+
+it('marks a form as used when any version has submissions', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    $archivedVersion = Form::factory()->create([
+        'root_id' => $form->root_id,
+        'archived_at' => now(),
+    ]);
+
+    FormSubmission::factory()->create([
+        'form_id' => $archivedVersion->id,
+        'submitted_at' => now(),
+    ]);
+
+    expect($form->isUsed())->toBeTrue();
+});
+
+it('marks a form as unused when no version has submissions', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    Form::factory()->create([
+        'root_id' => $form->root_id,
+        'archived_at' => now(),
+    ]);
+
+    expect($form->isUsed())->toBeFalse();
+});
+
+it('used query includes form roots that have submissions on any version', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    $archivedVersion = Form::factory()->create([
+        'root_id' => $form->root_id,
+        'archived_at' => now(),
+    ]);
+
+    FormSubmission::factory()->create([
+        'form_id' => $archivedVersion->id,
+        'submitted_at' => now(),
+    ]);
+
+    $unusedForm = Form::factory()->create();
+
+    Form::factory()->create([
+        'root_id' => $unusedForm->root_id,
+        'archived_at' => now(),
+    ]);
+
+    $usedRootIds = Form::query()
+        ->tap(fn (Builder $query) => $form->used($query))
+        ->pluck('root_id')
+        ->unique();
+
+    expect($usedRootIds)->toContain($form->root_id)
+        ->not->toContain($unusedForm->root_id);
 });

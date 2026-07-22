@@ -39,10 +39,11 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 use AdvisingApp\MeetingCenter\Actions\DuplicateEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Models\Event;
+use App\Features\EventArchivingFeature;
 use App\Filament\Tables\Columns\IdColumn;
+use CanyonGBS\Common\Filament\Actions\ArchiveBulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\ViewAction;
@@ -105,7 +106,6 @@ class ListEvents extends ListRecords
             ])
             ->recordActions([
                 ViewAction::make(),
-                DeleteAction::make(),
                 ReplicateAction::make('Duplicate')
                     ->modalHeading('Duplicate Event')
                     ->mutateRecordDataUsing(function (array $data): array {
@@ -129,8 +129,10 @@ class ListEvents extends ListRecords
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->authorizeIndividualRecords('delete'),
+                    ...(EventArchivingFeature::active() ? [
+                        ArchiveBulkAction::make(),
+                    ] : [DeleteBulkAction::make()
+                        ->authorizeIndividualRecords('delete')]),
                 ]),
             ])
             ->defaultSort('starts_at');

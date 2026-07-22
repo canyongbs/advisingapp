@@ -38,6 +38,8 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Models\Event;
+use App\Features\EventArchivingFeature;
+use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Infolists\Components\TextEntry;
@@ -91,7 +93,7 @@ class ViewEvent extends ViewRecord
                 ->url(fn (Event $record): string => route('event-registration.show', ['event' => $record]))
                 ->icon('heroicon-m-arrow-top-right-on-square')
                 ->openUrlInNewTab(),
-            DeleteAction::make(),
+            EventArchivingFeature::active() ? ArchiveAction::make() : DeleteAction::make(),
         ];
     }
 }

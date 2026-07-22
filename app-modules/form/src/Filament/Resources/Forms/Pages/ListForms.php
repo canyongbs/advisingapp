@@ -42,9 +42,9 @@ use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use App\Filament\Tables\Columns\IdColumn;
+use CanyonGBS\Common\Filament\Actions\ArchiveBulkAction;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\ViewAction;
@@ -69,6 +69,7 @@ class ListForms extends ListRecords
                 $submissionsCountQuery = FormSubmission::query()
                     ->join('forms as version_forms', 'form_submissions.form_id', '=', 'version_forms.id')
                     ->whereColumn('version_forms.root_id', 'forms.root_id')
+                    ->whereNull('form_submissions.archived_at')
                     ->selectRaw('count(*)');
 
                 $query->addSelect([
@@ -112,8 +113,7 @@ class ListForms extends ListRecords
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->authorizeIndividualRecords('delete'),
+                    ArchiveBulkAction::make(),
                 ]),
             ]);
     }

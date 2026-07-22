@@ -34,24 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Listeners;
+use App\Features\EventArchivingFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Form\Events\FormSubmissionCreated;
-use AdvisingApp\Form\Models\Form;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Cache;
-
-class ClearFormFormSubmissionCountCache implements ShouldQueue
-{
-    public function handle(FormSubmissionCreated $event): void
+return new class () extends Migration {
+    public function up(): void
     {
-        $event->submission->loadMissing('submissible');
+        DB::transaction(function () {
+            Schema::table('events', function (Blueprint $table) {
+                $table->timestamp('archived_at')->nullable();
+            });
 
-        if ($event->submission->submissible instanceof Form) {
-            Cache::tags('{form-submission-count}')
-                ->forget(
-                    "form-submission-count-{$event->submission->submissible->root_id}"
-                );
-        }
+            EventArchivingFeature::activate();
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            Schema::table('events', function (Blueprint $table) {
+                $table->dropColumn('archived_at');
+            });
+
+            EventArchivingFeature::deactivate();
+        });
+    }
+};

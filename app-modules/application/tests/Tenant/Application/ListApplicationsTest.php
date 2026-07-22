@@ -41,7 +41,8 @@ use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
-use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\Testing\TestAction;
+use Illuminate\Database\Eloquent\Builder;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\seed;
@@ -56,21 +57,6 @@ function listApplicationsTestUser(): User
 
     return User::factory()->licensed(LicenseType::cases())->create();
 }
-
-it('the delete bulk action is gated by the delete permission', function () {
-    $user = listApplicationsTestUser();
-    $user->givePermissionTo('application.view-any');
-
-    actingAs($user);
-
-    livewire(ListApplications::class)
-        ->assertTableBulkActionHidden(DeleteBulkAction::class);
-
-    $user->givePermissionTo('application.*.delete');
-
-    livewire(ListApplications::class)
-        ->assertTableBulkActionVisible(DeleteBulkAction::class);
-});
 
 it('the duplicate action is gated by the create permission', function () {
     seed(ApplicationSubmissionStateSeeder::class);
@@ -188,4 +174,102 @@ test('submissions count does not include submissions from unrelated applications
 
     livewire(ListApplications::class)
         ->assertTableColumnStateSet('submissions_count', $expectedCount, $application);
+});
+
+test('submissions count does not include archived submissions', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+
+    $totalSubmissions = $application->submissions()->count();
+
+    $application->submissions()
+        ->limit((int) ($totalSubmissions / 2))
+        ->update(['archived_at' => now()]);
+
+    $expectedCount = $totalSubmissions - (int) ($totalSubmissions / 2);
+
+    livewire(ListApplications::class)
+        ->assertTableColumnStateSet('submissions_count', $expectedCount, $application);
+});
+
+it('archives applications with submissions and deletes applications without submissions via the archive or delete bulk action', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    asSuperAdmin();
+
+    $applicationWithSubmissions = Application::factory()->create();
+
+    $applicationWithoutSubmissions = Application::factory()->create();
+    $applicationWithoutSubmissions->submissions()->delete();
+
+    $records = collect([$applicationWithSubmissions, $applicationWithoutSubmissions]);
+
+    livewire(ListApplications::class)
+        ->selectTableRecords($records->pluck('id')->all())
+        ->callAction(TestAction::make('archive')->table()->bulk())
+        ->assertNotified();
+
+    expect($applicationWithSubmissions->fresh()->archived_at)->not->toBeNull();
+    expect(Application::find($applicationWithoutSubmissions->id))->toBeNull();
+});
+
+it('marks an application as used when any version has submitted forms', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    $application = Application::factory()->create();
+    $application->submissions()->delete();
+
+    Application::factory()->create([
+        'root_id' => $application->root_id,
+        'archived_at' => now(),
+    ]);
+
+    expect($application->isUsed())->toBeTrue();
+});
+
+it('marks an application as unused when no version has submitted forms', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    $application = Application::factory()->create();
+    $application->submissions()->delete();
+
+    $archivedVersion = Application::factory()->create([
+        'root_id' => $application->root_id,
+        'archived_at' => now(),
+    ]);
+    $archivedVersion->submissions()->delete();
+
+    expect($application->isUsed())->toBeFalse();
+});
+
+it('used query includes application roots that have submissions on any version', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    $application = Application::factory()->create();
+    $application->submissions()->delete();
+
+    Application::factory()->create([
+        'root_id' => $application->root_id,
+        'archived_at' => now(),
+    ]);
+
+    $unusedApplication = Application::factory()->create();
+    $unusedApplication->submissions()->delete();
+
+    $unusedArchivedVersion = Application::factory()->create([
+        'root_id' => $unusedApplication->root_id,
+        'archived_at' => now(),
+    ]);
+    $unusedArchivedVersion->submissions()->delete();
+
+    $usedRootIds = Application::query()
+        ->tap(fn (Builder $query) => $application->used($query))
+        ->pluck('root_id')
+        ->unique();
+
+    expect($usedRootIds)->toContain($application->root_id)
+        ->not->toContain($unusedApplication->root_id);
 });

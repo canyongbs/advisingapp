@@ -40,6 +40,7 @@ use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
 use AdvisingApp\Application\Events\ApplicationSubmissionStateEntered;
 use AdvisingApp\Application\Events\ApplicationSubmissionStateExited;
+use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use Illuminate\Support\Facades\Cache;
@@ -84,10 +85,12 @@ class ApplicationSubmissionObserver
             )
         );
 
-        if (! is_null($submission->author)) {
+        $submission->loadMissing('submissible');
+
+        if ($submission->submissible instanceof Application) {
             Cache::tags('{application-submission-count}')
                 ->forget(
-                    "application-submission-count-{$submission->author->getKey()}"
+                    "application-submission-count-{$submission->submissible->root_id}"
                 );
         }
     }

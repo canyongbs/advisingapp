@@ -48,6 +48,7 @@ use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibr
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -186,5 +187,38 @@ class Application extends Submissible implements HasMedia, HasRichContent
         return Application::query()->where('root_id', $this->root_id)
             ->whereNull('archived_at')
             ->first();
+    }
+
+    /**
+     * @param Builder<Application> $query
+     */
+    public function used(Builder $query): void
+    {
+        $query->whereHas(
+            'versions',
+            fn (Builder $query) => $query
+                ->withoutGlobalScopes()
+                ->whereHas('submissions'),
+        );
+    }
+
+    public function isUsed(): bool
+    {
+        $submissionsExists = $this->getAttribute('submissions_exists');
+
+        if ($submissionsExists === null) {
+            $submissionsExists = ApplicationSubmission::query()
+                ->whereHas(
+                    'submissible',
+                    fn (Builder $query) => $query
+                        ->withoutGlobalScopes()
+                        ->where('root_id', $this->root_id),
+                )
+                ->exists();
+
+            $this->setAttribute('submissions_exists', $submissionsExists);
+        }
+
+        return (bool) $submissionsExists;
     }
 }
