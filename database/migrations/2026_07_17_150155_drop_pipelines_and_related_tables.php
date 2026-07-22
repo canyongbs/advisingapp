@@ -38,10 +38,11 @@ use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-return new class () extends Migration {
+return new class () extends SettingsMigration {
     use CanModifyPermissions;
 
     /**
@@ -71,9 +72,15 @@ return new class () extends Migration {
             collect($this->guards)
                 ->each(fn (string $guard) => $this->deletePermissions(array_keys($this->permissions), $guard));
 
+            $this->migrator->deleteIfExists('prospect_pipeline.is_enabled');
+
             Schema::dropIfExists('educatable_pipeline_stages');
             Schema::dropIfExists('pipeline_stages');
             Schema::dropIfExists('pipelines');
+
+            DB::table('audits')->where('auditable_type', 'educatable_pipeline_stages')->delete();
+            DB::table('audits')->where('auditable_type', 'pipeline_stages')->delete();
+            DB::table('audits')->where('auditable_type', 'pipelines')->delete();
         });
     }
 
@@ -90,14 +97,15 @@ return new class () extends Migration {
                     $this->createPermissions($permissions, $guard);
                 });
 
+            $this->migrator->add('prospect_pipeline.is_enabled', false);
+
             Schema::create('pipelines', function (Blueprint $table) {
                 $table->uuid('id')->primary();
                 $table->string('name');
                 $table->text('description');
                 $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
-                $table->foreignUuid('segment_id')->constrained('segments')->cascadeOnDelete();
-                $table->string('default_stage');
-                $table->unsignedBigInteger('order');
+                $table->foreignUuid('segment_id')->constrained()->onDelete('cascade');
+                $table->string('default_stage')->nullable();
                 $table->timestamps();
             });
 

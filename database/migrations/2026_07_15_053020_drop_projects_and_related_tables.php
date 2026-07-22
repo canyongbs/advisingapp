@@ -88,6 +88,14 @@ return new class () extends Migration {
             Schema::dropIfExists('project_auditor_teams');
             Schema::dropIfExists('confidential_task_projects');
             Schema::dropIfExists('projects');
+
+            DB::table('report_team_accesses')->where('report_key', 'project-report')->delete();
+            DB::table('report_user_accesses')->where('report_key', 'project-report')->delete();
+
+            DB::table('audits')->where('auditable_type', 'project_files')->delete();
+            DB::table('audits')->where('auditable_type', 'project_milestones')->delete();
+            DB::table('audits')->where('auditable_type', 'project_milestone_statuses')->delete();
+            DB::table('audits')->where('auditable_type', 'projects')->delete();
         });
     }
 
