@@ -37,6 +37,7 @@
 namespace AdvisingApp\Form\Listeners;
 
 use AdvisingApp\Form\Events\FormSubmissionCreated;
+use AdvisingApp\Form\Models\Form;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Facades\Cache;
 
@@ -44,9 +45,13 @@ class ClearFormFormSubmissionCountCache implements ShouldQueue
 {
     public function handle(FormSubmissionCreated $event): void
     {
-        Cache::tags('{form-submission-count}')
-            ->forget(
-                "form-submission-count-{$event->submission->submissible->getKey()}"
-            );
+        $event->submission->loadMissing('submissible');
+
+        if ($event->submission->submissible instanceof Form) {
+            Cache::tags('{form-submission-count}')
+                ->forget(
+                    "form-submission-count-{$event->submission->submissible->root_id}"
+                );
+        }
     }
 }

@@ -175,6 +175,26 @@ test('submissions count does not include submissions from unrelated applications
     livewire(ListApplications::class)
         ->assertTableColumnStateSet('submissions_count', $expectedCount, $application);
 });
+
+test('submissions count does not include archived submissions', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+
+    $totalSubmissions = $application->submissions()->count();
+
+    $application->submissions()
+        ->limit((int) ($totalSubmissions / 2))
+        ->update(['archived_at' => now()]);
+
+    $expectedCount = $totalSubmissions - (int) ($totalSubmissions / 2);
+
+    livewire(ListApplications::class)
+        ->assertTableColumnStateSet('submissions_count', $expectedCount, $application);
+});
+
 it('archives applications with submissions and deletes applications without submissions via the archive or delete bulk action', function () {
     seed(ApplicationSubmissionStateSeeder::class);
 

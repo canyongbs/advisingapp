@@ -68,6 +68,7 @@ class ListApplications extends ListRecords
                 $submissionsCountQuery = ApplicationSubmission::query()
                     ->join('applications as version_applications', 'application_submissions.application_id', '=', 'version_applications.id')
                     ->whereColumn('version_applications.root_id', 'applications.root_id')
+                    ->whereNull('application_submissions.archived_at')
                     ->selectRaw('count(*)');
 
                 $query->addSelect([

@@ -191,6 +191,24 @@ it('does not count submissions from unrelated forms in the submissions count', f
         ->assertTableColumnStateSet('submissions_count', 2, $form);
 });
 
+it('does not count archived submissions in the submissions count', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    FormSubmission::factory()->count(5)->create([
+        'form_id' => $form->id,
+        'submitted_at' => now(),
+    ]);
+
+    $form->submissions()
+        ->limit(2)
+        ->update(['archived_at' => now()]);
+
+    livewire(ListForms::class)
+        ->assertTableColumnStateSet('submissions_count', 3, $form);
+});
+
 it('archives forms with submissions and deletes forms without submissions via the archive or delete bulk action', function () {
     asSuperAdmin();
 

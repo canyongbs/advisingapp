@@ -69,6 +69,7 @@ class ListForms extends ListRecords
                 $submissionsCountQuery = FormSubmission::query()
                     ->join('forms as version_forms', 'form_submissions.form_id', '=', 'version_forms.id')
                     ->whereColumn('version_forms.root_id', 'forms.root_id')
+                    ->whereNull('form_submissions.archived_at')
                     ->selectRaw('count(*)');
 
                 $query->addSelect([
