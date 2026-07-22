@@ -188,7 +188,7 @@ class ViewForm extends ViewRecord
                 )
                 ->modalSubmitAction(false)
                 ->modalCancelActionLabel('Close')
-                ->hidden(fn (Form $form) => ! $form->embed_enabled),            
+                ->hidden(fn (Form $form) => ! $form->embed_enabled),
             ArchiveAction::make(),
         ];
     }
