@@ -37,6 +37,12 @@ import { apiPost } from '../Services/api.js';
 import { useConfigStore } from '../Stores/config.js';
 import { useTokenStore } from '../Stores/token.js';
 
+/**
+ * Handles the passwordless (email code) authentication flow and logout for the
+ * portal. On successful authentication the token is persisted and the portal is
+ * reloaded, which re-boots it in the authenticated state so the route data loaders
+ * refetch with the token.
+ */
 export function usePortalAuth() {
     const config = useConfigStore();
 
