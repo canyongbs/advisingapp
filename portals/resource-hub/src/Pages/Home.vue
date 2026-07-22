@@ -33,9 +33,12 @@
 -->
 <script setup>
     import Breadcrumbs from '@common/portal/Breadcrumbs.vue';
+    import HeroSearch from '@common/portal/HeroSearch.vue';
     import HelpCenter from '@common/portal/home/HelpCenter.vue';
     import Page from '@common/portal/Page.vue';
+    import SearchResults from '@common/portal/SearchResults.vue';
     import { computed } from 'vue';
+    import { useResourceHubSearch } from '../Composables/useResourceHubSearch.js';
     import { useCategoriesData } from './loaders.js';
 
     const { data: categories } = useCategoriesData();
@@ -47,6 +50,20 @@
             to: { name: 'view-category', params: { categoryId: category.id } },
         })),
     );
+
+    const {
+        searchQuery,
+        loadingResults,
+        globalSearchInput,
+        selectedTags,
+        tagsArray,
+        toggleTag,
+        searchResultArticles,
+        searchResultCategories,
+        totalArticles,
+        fromArticle,
+        toArticle,
+    } = useResourceHubSearch();
 </script>
 
 <template>
@@ -59,6 +76,27 @@
             <Breadcrumbs currentCrumb="Home" />
         </template>
 
-        <HelpCenter :categories="categoriesWithRoutes" />
+        <template #belowHeaderContent>
+            <HeroSearch
+                ref="globalSearchInput"
+                v-model="searchQuery"
+                :tags="tagsArray"
+                :selectedTags="selectedTags"
+                @toggle-tag="toggleTag"
+            />
+        </template>
+
+        <SearchResults
+            v-if="searchQuery"
+            :searchQuery="searchQuery"
+            :articles="searchResultArticles"
+            :categories="searchResultCategories"
+            :loadingResults="loadingResults"
+            :fromItem="fromArticle"
+            :toItem="toArticle"
+            :totalItems="totalArticles"
+        />
+
+        <HelpCenter v-else :categories="categoriesWithRoutes" />
     </Page>
 </template>
