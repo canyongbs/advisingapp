@@ -180,7 +180,9 @@
                         <p class="text-lg text-red-500">Please try again later</p>
                     </div>
 
-                    <RouterView v-else />
+                    <RouterView v-else v-slot="{ Component, route: activeRoute }">
+                        <component :is="Component" :key="activeRoute.path" />
+                    </RouterView>
                 </main>
 
                 <Footer :logo="footerLogo" :app-name="appName" />
