@@ -96,6 +96,7 @@ class EditApplication extends EditRecord
             $this->getSaveFormAction()
                 ->label('Save')
                 ->formId('form'),
+            ArchiveAction::make(),
             $this->getCancelFormAction()
                 ->url(fn () => ApplicationResource::getUrl('view', ['record' => $this->record])),
         ];
