@@ -37,12 +37,6 @@ import { apiPost } from '../Services/api.js';
 import { useConfigStore } from '../Stores/config.js';
 import { useTokenStore } from '../Stores/token.js';
 
-/**
- * Handles the passwordless (email code) authentication flow and logout for the
- * portal. On successful authentication the token is persisted and the portal is
- * reloaded, which re-boots it in the authenticated state so the route data loaders
- * refetch with the token.
- */
 export function usePortalAuth() {
     const config = useConfigStore();
 
@@ -52,13 +46,13 @@ export function usePortalAuth() {
         isRequested: false,
         requestedMessage: null,
         url: null,
-        registrationAllowed: false,
     });
 
     function requestCode(formData, node, done) {
         axios
             .post(config.authenticationRequestUrl, {
                 email: formData.email,
+                isSpa: true,
             })
             .then((response) => {
                 if (!response.data.authentication_url) {
@@ -72,19 +66,7 @@ export function usePortalAuth() {
                 authentication.value.url = response.data.authentication_url;
             })
             .catch((error) => {
-                const status = error.response.status;
-                const data = error.response.data;
-
-                if (status === 404 && data.registrationAllowed === true) {
-                    authentication.value.registrationAllowed = true;
-                    authentication.value.isRequested = true;
-                    authentication.value.requestedMessage = data.message;
-                    authentication.value.url = data.authentication_url;
-
-                    return;
-                }
-
-                node.setErrors([], data.errors);
+                node.setErrors([], error.response.data.errors);
             })
             .finally(() => done());
     }
@@ -92,22 +74,9 @@ export function usePortalAuth() {
     function verifyCode(formData, node, done) {
         const { setToken } = useTokenStore();
 
-        let data = {
+        const data = {
             code: formData.code,
         };
-
-        if (authentication.value.registrationAllowed) {
-            data = {
-                ...data,
-                email: formData.email,
-                first_name: formData.first_name,
-                last_name: formData.last_name,
-                preferred: formData.preferred,
-                mobile: formData.mobile,
-                phone: formData.phone,
-                sms_opt_out: formData.sms_opt_out,
-            };
-        }
 
         axios
             .post(authentication.value.url, data)
@@ -124,7 +93,6 @@ export function usePortalAuth() {
                     authentication.value.isRequested = false;
                     authentication.value.requestedMessage = null;
                     authentication.value.url = null;
-                    authentication.value.registrationAllowed = false;
 
                     return;
                 }
@@ -154,7 +122,7 @@ export function usePortalAuth() {
     function logout() {
         const { removeToken } = useTokenStore();
 
-        apiPost('/logout').then((data) => {
+        apiPost('/authenticate/logout').then((data) => {
             if (!data.success) {
                 return;
             }
