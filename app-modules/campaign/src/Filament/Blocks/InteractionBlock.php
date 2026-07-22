@@ -37,6 +37,10 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
+use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\CreateCampaign;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
+use AdvisingApp\Interaction\Enums\InteractableType;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
@@ -51,6 +55,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Utilities\Get;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class InteractionBlock extends CampaignActionBlock
@@ -77,14 +83,14 @@ class InteractionBlock extends CampaignActionBlock
             Fieldset::make('Details')
                 ->schema([
                     Select::make('interaction_initiative_id')
-                        ->relationship('initiative', 'name')
+                        ->relationship('initiative', 'name', $this->filterByInteractableType())
                         ->model(Interaction::class)
                         ->label('Initiative')
                         ->required(fn () => $settings->is_initiative_required)
                         ->visible(fn () => $settings->is_initiative_enabled)
                         ->exists((new InteractionInitiative())->getTable(), 'id'),
                     Select::make('interaction_driver_id')
-                        ->relationship('driver', 'name')
+                        ->relationship('driver', 'name', $this->filterByInteractableType())
                         ->model(Interaction::class)
                         ->preload()
                         ->label('Driver')
@@ -92,7 +98,7 @@ class InteractionBlock extends CampaignActionBlock
                         ->visible(fn () => $settings->is_driver_enabled)
                         ->exists((new InteractionDriver())->getTable(), 'id'),
                     Select::make('interaction_outcome_id')
-                        ->relationship('outcome', 'name')
+                        ->relationship('outcome', 'name', $this->filterByInteractableType())
                         ->model(Interaction::class)
                         ->preload()
                         ->label('Outcome')
@@ -100,7 +106,7 @@ class InteractionBlock extends CampaignActionBlock
                         ->visible(fn () => $settings->is_outcome_enabled)
                         ->exists((new InteractionOutcome())->getTable(), 'id'),
                     Select::make('interaction_relation_id')
-                        ->relationship('relation', 'name')
+                        ->relationship('relation', 'name', $this->filterByInteractableType())
                         ->model(Interaction::class)
                         ->preload()
                         ->label('Relation')
@@ -108,7 +114,7 @@ class InteractionBlock extends CampaignActionBlock
                         ->visible(fn () => $settings->is_relation_enabled)
                         ->exists((new InteractionRelation())->getTable(), 'id'),
                     Select::make('interaction_status_id')
-                        ->relationship('status', 'name')
+                        ->relationship('status', 'name', $this->filterByInteractableType())
                         ->model(Interaction::class)
                         ->preload()
                         ->label('Status')
@@ -116,7 +122,7 @@ class InteractionBlock extends CampaignActionBlock
                         ->visible(fn () => $settings->is_status_enabled)
                         ->exists((new InteractionStatus())->getTable(), 'id'),
                     Select::make('interaction_type_id')
-                        ->relationship('type', 'name')
+                        ->relationship('type', 'name', $this->filterByInteractableType())
                         ->model(Interaction::class)
                         ->preload()
                         ->label('Type')
@@ -147,5 +153,50 @@ class InteractionBlock extends CampaignActionBlock
     public static function type(): string
     {
         return 'interaction';
+    }
+
+    private function filterByInteractableType(): Closure
+    {
+        return function (Builder $query, Get $get, mixed $livewire) {
+            $interactableType = $this->resolveInteractableType($get, $livewire);
+            if (blank($interactableType)) {
+                $query->whereRaw('1 = 0');
+                return;
+            }
+            $query->where('interactable_type', $interactableType);
+        };
+    }
+
+    private function resolveInteractableType(Get $get, mixed $livewire): ?InteractableType
+    {
+        $groupId = $this->resolveGroupId($get, $livewire);
+
+        if (blank($groupId)) {
+            return null;
+        }
+
+        $group = Group::query()->find($groupId);
+
+        if (! $group) {
+            return null;
+        }
+
+        return match ($group->model) {
+            GroupModel::Student => InteractableType::Student,
+            GroupModel::Prospect => InteractableType::Prospect,
+        };
+    }
+
+    private function resolveGroupId(Get $get, mixed $livewire): mixed
+    {
+        if ($livewire instanceof CreateCampaign) {
+            return $get('../../../segment_id');
+        }
+
+        if (method_exists($livewire, 'getOwnerRecord')) {
+            return $livewire->getOwnerRecord()?->segment_id;
+        }
+
+        return null;
     }
 }
