@@ -62,8 +62,6 @@ class Form extends Submissible
     use CanBeArchived;
     use HasRelationships;
 
-    protected ?bool $hasSubmissions = null;
-
     protected $fillable = [
         'name',
         'description',
@@ -201,11 +199,21 @@ class Form extends Submissible
 
     public function isUsed(): bool
     {
-        return (bool) ($this->hasSubmissions ??= FormSubmission::query()
-            ->whereHas(
-                'submissible',
-                fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $this->root_id),
-            )
-            ->exists());
+        $submissionsExists = $this->getAttribute('submissions_exists');
+
+        if ($submissionsExists === null) {
+            $submissionsExists = FormSubmission::query()
+                ->whereHas(
+                    'submissible',
+                    fn (Builder $query) => $query
+                        ->withoutGlobalScopes()
+                        ->where('root_id', $this->root_id),
+                )
+                ->exists();
+
+            $this->setAttribute('submissions_exists', $submissionsExists);
+        }
+
+        return (bool) $submissionsExists;
     }
 }

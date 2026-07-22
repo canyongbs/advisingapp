@@ -112,7 +112,7 @@ class ListApplications extends ListRecords
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    ArchiveBulkAction::make()->authorizeIndividualRecords('delete'),
+                    ArchiveBulkAction::make(),
                 ]),
             ])
             ->defaultSort('created_at', 'desc');

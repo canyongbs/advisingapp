@@ -65,8 +65,6 @@ class Event extends BaseModel implements HasMedia, HasRichContent
 
     use InteractsWithRichContent;
 
-    protected ?bool $hasAttendees = null;
-
     protected $fillable = [
         'title',
         'description',
@@ -135,6 +133,14 @@ class Event extends BaseModel implements HasMedia, HasRichContent
 
     public function isUsed(): bool
     {
-        return (bool) ($this->hasAttendees ??= $this->attendees()->exists());
+        $attendeesExists = $this->getAttribute('attendees_exists');
+
+        if ($attendeesExists === null) {
+            $attendeesExists = $this->attendees()->exists();
+
+            $this->setAttribute('attendees_exists', $attendeesExists);
+        }
+
+        return (bool) $attendeesExists;
     }
 }

@@ -130,7 +130,7 @@ class ListEvents extends ListRecords
             ->toolbarActions([
                 BulkActionGroup::make([
                     ...(EventArchivingFeature::active() ? [
-                        ArchiveBulkAction::make()->authorizeIndividualRecords('delete'),
+                        ArchiveBulkAction::make(),
                     ] : [DeleteBulkAction::make()
                         ->authorizeIndividualRecords('delete')]),
                 ]),

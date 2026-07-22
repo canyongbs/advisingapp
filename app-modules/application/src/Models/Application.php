@@ -73,8 +73,6 @@ class Application extends Submissible implements HasMedia, HasRichContent
 
     use InteractsWithRichContent;
 
-    protected ?bool $hasSubmissions = null;
-
     protected $fillable = [
         'name',
         'description',
@@ -206,11 +204,21 @@ class Application extends Submissible implements HasMedia, HasRichContent
 
     public function isUsed(): bool
     {
-        return (bool) ($this->hasSubmissions ??= ApplicationSubmission::query()
-            ->whereHas(
-                'submissible',
-                fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $this->root_id),
-            )
-            ->exists());
+        $submissionsExists = $this->getAttribute('submissions_exists');
+
+        if ($submissionsExists === null) {
+            $submissionsExists = ApplicationSubmission::query()
+                ->whereHas(
+                    'submissible',
+                    fn (Builder $query) => $query
+                        ->withoutGlobalScopes()
+                        ->where('root_id', $this->root_id),
+                )
+                ->exists();
+
+            $this->setAttribute('submissions_exists', $submissionsExists);
+        }
+
+        return (bool) $submissionsExists;
     }
 }
