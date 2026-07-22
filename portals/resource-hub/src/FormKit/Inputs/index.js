@@ -31,8 +31,8 @@
 
 </COPYRIGHT>
 */
-import { createInput } from '@formkit/vue';
 import OneTimePassword from '@common/portal/login/OneTimePassword.vue';
+import { createInput } from '@formkit/vue';
 
 export default {
     otp: createInput(OneTimePassword, {
