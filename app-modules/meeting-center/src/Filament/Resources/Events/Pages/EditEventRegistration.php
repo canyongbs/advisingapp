@@ -43,7 +43,6 @@ use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
-use App\Features\EventVersioningFeature;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
@@ -81,59 +80,54 @@ class EditEventRegistration extends EditRecord
                     $data = $component->getChildComponentContainer()->getState(shouldCallHooksBefore: false);
 
                     if ($record instanceof EventRegistrationForm) {
-                        if (EventVersioningFeature::active()) {
-                            DB::transaction(function () use ($component, $record, $data): void {
-                                $newVersion = app(CreateEventRegistrationFormVersion::class)->execute($record, $data);
+                        DB::transaction(function () use ($component, $record, $data): void {
+                            $newVersion = app(CreateEventRegistrationFormVersion::class)->execute($record, $data);
 
-                                if ($newVersion->is_wizard) {
-                                    $sort = 1;
-                                    $wizardStepVersionMap = [];
+                            if ($newVersion->is_wizard) {
+                                $sort = 1;
+                                $wizardStepVersionMap = [];
 
-                                    $repeaterState = collect($component->getChildComponentContainer()->getComponents(withHidden: true, withActions: false))
-                                        ->first(fn ($component) => $component instanceof Repeater && $component->getName() === 'steps')
-                                        ?->getRawState();
+                                $repeaterState = collect($component->getChildComponentContainer()->getComponents(withHidden: true, withActions: false))
+                                    ->first(fn ($component) => $component instanceof Repeater && $component->getName() === 'steps')
+                                    ?->getRawState();
 
-                                    $steps = ! empty($repeaterState)
-                                        ? $repeaterState
-                                        : $record->steps()->orderBy('sort')->get()
-                                            ->mapWithKeys(fn (EventRegistrationFormStep $step) => [$step->id => ['label' => $step->label]])
-                                            ->all();
+                                $steps = ! empty($repeaterState)
+                                    ? $repeaterState
+                                    : $record->steps()->orderBy('sort')->get()
+                                        ->mapWithKeys(fn (EventRegistrationFormStep $step) => [$step->id => ['label' => $step->label]])
+                                        ->all();
 
-                                    foreach ($steps as $key => $stepData) {
-                                        $newStep = $newVersion->steps()->create([
-                                            'label' => $stepData['label'] ?? 'Untitled Step',
-                                            'sort' => $sort++,
-                                        ]);
+                                foreach ($steps as $key => $stepData) {
+                                    $newStep = $newVersion->steps()->create([
+                                        'label' => $stepData['label'] ?? 'Untitled Step',
+                                        'sort' => $sort++,
+                                    ]);
 
-                                        $mapKey = str_starts_with((string) $key, 'record-') ? substr((string) $key, 7) : (string) $key;
-                                        $wizardStepVersionMap[$mapKey] = $newStep;
+                                    $mapKey = str_starts_with((string) $key, 'record-') ? substr((string) $key, 7) : (string) $key;
+                                    $wizardStepVersionMap[$mapKey] = $newStep;
 
-                                        if (! str_starts_with((string) $key, 'record-')) {
-                                            $stepContent = $stepData['content'] ?? null;
+                                    if (! str_starts_with((string) $key, 'record-')) {
+                                        $stepContent = $stepData['content'] ?? null;
 
-                                            if (is_string($stepContent)) {
-                                                $stepContent = json_decode($stepContent, true);
-                                            }
+                                        if (is_string($stepContent)) {
+                                            $stepContent = json_decode($stepContent, true);
+                                        }
 
-                                            if (is_array($stepContent) && ! empty($stepContent)) {
-                                                $stepContent['content'] = $this->saveFieldsFromComponents($newVersion, $stepContent['content'] ?? [], $newStep);
-                                                $newStep->content = $stepContent;
-                                                $newStep->save();
-                                            }
+                                        if (is_array($stepContent) && ! empty($stepContent)) {
+                                            $stepContent['content'] = $this->saveFieldsFromComponents($newVersion, $stepContent['content'] ?? [], $newStep);
+                                            $newStep->content = $stepContent;
+                                            $newStep->save();
                                         }
                                     }
-
-                                    $this->wizardStepVersionMap = $wizardStepVersionMap;
                                 }
 
-                                $component->cachedExistingRecord($newVersion);
-                            });
+                                $this->wizardStepVersionMap = $wizardStepVersionMap;
+                            }
 
-                            $this->registrationFormVersionedInCurrentSave = ! empty($this->wizardStepVersionMap);
-                        } else {
-                            $record->fill($data);
-                            $record->save();
-                        }
+                            $component->cachedExistingRecord($newVersion);
+                        });
+
+                        $this->registrationFormVersionedInCurrentSave = ! empty($this->wizardStepVersionMap);
                     } else {
                         $data = $component->mutateRelationshipDataBeforeCreate($data);
 
@@ -152,14 +146,14 @@ class EditEventRegistration extends EditRecord
                     Toggle::make('is_wizard')
                         ->label('Multi-step form')
                         ->live()
-                        ->disabled(fn (?EventRegistrationForm $record) => ! EventVersioningFeature::active() && $record?->submissions()->exists()),
+                        ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
 
                     Section::make('Form Fields')
                         ->schema([
                             $this->fieldBuilder(),
                         ])
                         ->hidden(fn (Get $get) => $get('is_wizard'))
-                        ->disabled(fn (?EventRegistrationForm $record) => ! EventVersioningFeature::active() && $record?->submissions()->exists()),
+                        ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
 
                     Repeater::make('steps')
                         ->schema([
@@ -175,7 +169,7 @@ class EditEventRegistration extends EditRecord
                         ->addActionLabel('New step')
                         ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
                         ->visible(fn (Get $get) => $get('is_wizard'))
-                        ->disabled(fn (?EventRegistrationForm $record) => ! EventVersioningFeature::active() && $record?->submissions()->exists())
+                        ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists())
                         ->relationship()
                         ->orderColumn('sort')
                         ->saveRelationshipsUsing(function (Repeater $component): void {
