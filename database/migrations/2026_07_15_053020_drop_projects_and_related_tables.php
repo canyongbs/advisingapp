@@ -92,10 +92,12 @@ return new class () extends Migration {
             DB::table('report_team_accesses')->where('report_key', 'project-report')->delete();
             DB::table('report_user_accesses')->where('report_key', 'project-report')->delete();
 
-            DB::table('audits')->where('auditable_type', 'project_files')->delete();
-            DB::table('audits')->where('auditable_type', 'project_milestones')->delete();
-            DB::table('audits')->where('auditable_type', 'project_milestone_statuses')->delete();
-            DB::table('audits')->where('auditable_type', 'projects')->delete();
+            DB::table('audits')->whereIn('auditable_type', [
+                'project',
+                'project_file',
+                'project_milestone',
+                'project_milestone_status',
+            ])->delete();
         });
     }
 

@@ -77,9 +77,11 @@ return new class () extends SettingsMigration {
             Schema::dropIfExists('pipeline_stages');
             Schema::dropIfExists('pipelines');
 
-            DB::table('audits')->where('auditable_type', 'educatable_pipeline_stages')->delete();
-            DB::table('audits')->where('auditable_type', 'pipeline_stages')->delete();
-            DB::table('audits')->where('auditable_type', 'pipelines')->delete();
+            DB::table('audits')->whereIn('auditable_type', [
+                'pipeline',
+                'pipeline_stage',
+                'educatable_pipeline_stage',
+            ])->delete();
         });
     }
 
