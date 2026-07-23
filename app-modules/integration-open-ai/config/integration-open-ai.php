@@ -112,4 +112,10 @@ return [
     'gpt_54_nano_api_key' => env('OPEN_AI_GPT_54_NANO_API_KEY'),
 
     'gpt_54_nano_model' => env('OPEN_AI_GPT_54_NANO_MODEL'),
+
+    'gpt_56_luna_base_uri' => env('OPEN_AI_GPT_56_LUNA_BASE_URI'),
+
+    'gpt_56_luna_api_key' => env('OPEN_AI_GPT_56_LUNA_API_KEY'),
+
+    'gpt_56_luna_model' => env('OPEN_AI_GPT_56_LUNA_MODEL'),
 ];
