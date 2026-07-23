@@ -58,6 +58,7 @@ export function usePortalAuth() {
         axios
             .post(config.authenticationRequestUrl, {
                 email: formData.email,
+                isSpa: true,
             })
             .then((response) => {
                 if (!response.data.authentication_url) {
