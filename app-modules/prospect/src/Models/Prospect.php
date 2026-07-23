@@ -56,8 +56,6 @@ use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Models\Subscription;
-use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
-use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Prospect\Database\Factories\ProspectFactory;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Observers\ProspectObserver;
@@ -424,23 +422,6 @@ class Prospect extends BaseAuthenticatable implements Auditable, Subscribable, E
     public static function getLabel(): string
     {
         return 'prospect';
-    }
-
-    /**
-     * @return MorphToMany<Pipeline, $this, EducatablePipelineStage>
-     */
-    public function educatablePipelineStages(): MorphToMany
-    {
-        return $this->morphToMany(
-            related: Pipeline::class,
-            name: 'educatable',
-            table: 'educatable_pipeline_stages',
-            foreignPivotKey: 'educatable_id',
-            relatedPivotKey: 'pipeline_id',
-        )
-            ->using(EducatablePipelineStage::class)
-            ->withPivot(['pipeline_stage_id'])
-            ->withTimestamps();
     }
 
     public function canReceiveEmail(): bool

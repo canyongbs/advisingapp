@@ -40,7 +40,6 @@ use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\ViewCampaign;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\RelationManagers\CampaignActionsRelationManager;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
-use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Team\Models\Department;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
@@ -91,7 +90,6 @@ it('can edit a non-confidential task campaign journey step without error', funct
                 'due' => null,
                 'assigned_to' => $assignedTo->getKey(),
                 'is_confidential' => false,
-                'confidential_task_projects' => [],
                 'confidential_task_users' => [],
                 'department_confidential_task' => [],
             ],
@@ -113,7 +111,6 @@ it('can edit a confidential task campaign journey step and persist confidential 
         ->create();
 
     $assignedTo = User::factory()->create();
-    $projects = Project::factory()->count(2)->create();
     $users = User::factory()->count(2)->create();
     $departments = Department::factory()->count(2)->create();
 
@@ -147,7 +144,6 @@ it('can edit a confidential task campaign journey step and persist confidential 
                 'due' => null,
                 'assigned_to' => $assignedTo->getKey(),
                 'is_confidential' => true,
-                'confidential_task_projects' => $projects->pluck('id')->toArray(),
                 'confidential_task_users' => $users->pluck('id')->toArray(),
                 'department_confidential_task' => $departments->pluck('id')->toArray(),
             ],
@@ -158,7 +154,6 @@ it('can edit a confidential task campaign journey step and persist confidential 
 
     expect($action->data['title'])->toEqual($updatedTitle)
         ->and($action->data['is_confidential'])->toBeTrue()
-        ->and($action->data['confidential_task_projects'])->toEqual($projects->pluck('id')->toArray())
         ->and($action->data['confidential_task_users'])->toEqual($users->pluck('id')->toArray())
         ->and($action->data['department_confidential_task'])->toEqual($departments->pluck('id')->toArray());
 });

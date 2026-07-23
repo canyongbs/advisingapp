@@ -42,7 +42,6 @@ use AdvisingApp\Report\Filament\Pages\ArtificialIntelligence;
 use AdvisingApp\Report\Filament\Pages\CustomerAdvisorReport;
 use AdvisingApp\Report\Filament\Pages\EmployeeAdvisorReport;
 use AdvisingApp\Report\Filament\Pages\InstitutionalAdvisorReport;
-use AdvisingApp\Report\Filament\Pages\ProjectReport;
 use AdvisingApp\Report\Filament\Pages\ProspectCaseReport;
 use AdvisingApp\Report\Filament\Pages\ProspectInteractionReport;
 use AdvisingApp\Report\Filament\Pages\ProspectMessagesDetailReport;
@@ -72,7 +71,6 @@ enum ReportAccessKey: string
     case EmployeeAdvisorReport = 'employee-advisor-report';
     case InstitutionalAdvisorReport = 'institutional-advisor-report';
     case ResearchAdvisorReport = 'research-advisor-report';
-    case ProjectReport = 'project-report';
     case StudentActionCenter = 'student-action-center';
     case Students = 'students';
     case StudentCaseReport = 'student-case-report';
@@ -101,7 +99,6 @@ enum ReportAccessKey: string
             self::EmployeeAdvisorReport => EmployeeAdvisorReport::class,
             self::InstitutionalAdvisorReport => InstitutionalAdvisorReport::class,
             self::ResearchAdvisorReport => ResearchAdvisorReport::class,
-            self::ProjectReport => ProjectReport::class,
             self::StudentActionCenter => RetentionCrmDashboard::class,
             self::Students => Students::class,
             self::StudentCaseReport => StudentCaseReport::class,
@@ -129,7 +126,6 @@ enum ReportAccessKey: string
             self::EmployeeAdvisorReport => 'Employee Advisor',
             self::InstitutionalAdvisorReport => 'Institutional Advisor',
             self::ResearchAdvisorReport => 'Research Advisor',
-            self::ProjectReport => 'Projects',
             self::StudentActionCenter => 'Action Center (Students)',
             self::Students => 'Students (Overview)',
             self::StudentCaseReport => 'Cases (Students)',
@@ -157,8 +153,6 @@ enum ReportAccessKey: string
             self::EmployeeAdvisorReport,
             self::InstitutionalAdvisorReport,
             self::ResearchAdvisorReport => 'Enterprise AI',
-
-            self::ProjectReport => 'Project Management',
 
             self::StudentActionCenter,
             self::Students,
@@ -215,8 +209,6 @@ enum ReportAccessKey: string
             self::EmployeeAdvisorReport => LicenseType::ConversationalAi->isLicensable() && $addons->employeeAdvisors,
 
             self::ResearchAdvisorReport => LicenseType::ConversationalAi->isLicensable() && $addons->researchAdvisor,
-
-            self::ProjectReport => $addons->projectManagement,
 
             self::UserLoginActivity => true,
         };

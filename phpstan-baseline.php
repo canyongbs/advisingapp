@@ -4406,12 +4406,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/notification/tests/Fixtures/TestDatabaseNotification.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$query of class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany constructor expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TRelatedModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/pipeline/src/Models/Pipeline.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Portal\\\\DataTransferObjects\\\\ResourceHubSearchData\\:\\:\\$articles with generic class Spatie\\\\LaravelData\\\\DataCollection does not specify its types\\: TKey, TValue$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -4506,30 +4500,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/portal/src/Settings/PortalSettings.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$query of class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany constructor expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TRelatedModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/project/src/Models/Project.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$query of class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany constructor expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TRelatedModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/project/src/Models/ProjectFile.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$query of class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany constructor expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TRelatedModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/project/src/Models/ProjectMilestone.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$query of class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany constructor expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TRelatedModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/project/src/Models/ProjectMilestoneStatus.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Faker\\\\Generator\\:\\:state\\(\\)\\.$#',
@@ -5256,12 +5226,6 @@ $ignoreErrors[] = [
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/PieChartReportWidget.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/ProjectManagementTable.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
@@ -6396,18 +6360,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app/Filament/Widgets/Notifications.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Pipeline\\\\Models\\\\EducatablePipelineStage\\:\\:\\$pivot\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$relations of method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:with\\(\\) expects array\\<array\\|\\(Closure\\(Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\Relation\\<\\*, \\*, \\*\\>\\)\\: mixed\\)\\|string\\>\\|string, array\\{educatablePipelineStages\\: Closure\\(AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany\\)\\: AdvisingApp\\\\Audit\\\\Overrides\\\\MorphToMany\\} given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Livewire/ProspectPipelineKanban.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\Authenticatable\\:\\:roles\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany does not specify its types\\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \\(2\\-4 required\\)$#',

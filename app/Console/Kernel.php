@@ -51,7 +51,6 @@ use AdvisingApp\Engagement\Models\EngagementFile;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
 use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
-use AdvisingApp\Project\Models\ProjectFile;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionStepsJob;
 use App\Models\HealthCheckResultHistoryItem;
 use App\Models\MonitoredScheduledTaskLogItem;
@@ -193,7 +192,6 @@ class Kernel extends ConsoleKernel
                         FailedImportRow::class,
                         FormAuthentication::class,
                         HealthCheckResultHistoryItem::class,
-                        ProjectFile::class,
                         OtpLoginCode::class,
                     ])
                         ->join(',');
@@ -213,12 +211,6 @@ class Kernel extends ConsoleKernel
                         ->daily()
                         ->name("Refresh Calendar Refresh Tokens | Tenant {$tenant->domain}")
                         ->monitorName("Refresh Calendar Refresh Tokens | Tenant {$tenant->domain}")
-                        ->withoutOverlapping(720);
-
-                    $schedule->command("tenants:artisan \"prospect:prune-eductable-pipeline-stages\" --tenant={$tenant->id}")
-                        ->daily()
-                        ->name("Prune Educatable Pipeline Stages | Tenant {$tenant->domain}")
-                        ->monitorName("Prune Educatable Pipeline Stages | Tenant {$tenant->domain}")
                         ->withoutOverlapping(720);
 
                     $schedule->command("tenants:artisan \"health:check\" --tenant={$tenant->id}")

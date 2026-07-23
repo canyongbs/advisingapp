@@ -70,8 +70,6 @@ enum Feature: string
 
     case DataAdvisor = 'data-advisor';
 
-    case ProjectManagement = 'project-management';
-
     case EarlyAlert = 'early-alert';
 
     case PublicProfiles = 'public-profiles';

@@ -58,27 +58,6 @@ class ConfidentialTaskScope implements Scope
                 })
                 ->orWhereHas('confidentialAccessUsers', function (Builder $query) {
                     $query->where('user_id', auth()->id());
-                })
-                ->orWhereHas('confidentialAccessProjects', function (Builder $query) {
-                    $query->whereHas('createdBy', function (Builder $query) {
-                        $query->where('created_by_id', auth()->id());
-                    })
-                        ->orWhereHas('managerUsers', function (Builder $query) {
-                            $query->where('user_id', auth()->id());
-                        })
-                        ->orWhereHas('managerDepartments', function (Builder $query) {
-                            $query->whereHas('users', function (Builder $query) {
-                                $query->where('users.id', auth()->id());
-                            });
-                        })
-                        ->orWhereHas('auditorUsers', function (Builder $query) {
-                            $query->where('user_id', auth()->id());
-                        })
-                        ->orWhereHas('auditorDepartments', function (Builder $query) {
-                            $query->whereHas('users', function (Builder $query) {
-                                $query->where('users.id', auth()->id());
-                            });
-                        });
                 });
         });
     }
