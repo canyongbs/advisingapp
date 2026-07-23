@@ -81,6 +81,11 @@ it('will execute appropriately on each educatable in the group', function (Educa
     $interactionStatus = InteractionStatus::factory()->create();
     $interactionOutcome = InteractionOutcome::factory()->create();
 
+    $subject = 'Test Subject';
+    $description = 'Test Description';
+    $startDateTime = now()->addDay();
+    $endDateTime = $startDateTime->clone()->addHour();
+
     /** @var CampaignAction $action */
     $action = CampaignAction::factory()
         ->for($campaign, 'campaign')
@@ -93,6 +98,10 @@ it('will execute appropriately on each educatable in the group', function (Educa
                 'interaction_driver_id' => $interactionDriver->getKey(),
                 'interaction_status_id' => $interactionStatus->getKey(),
                 'interaction_outcome_id' => $interactionOutcome->getKey(),
+                'subject' => $subject,
+                'description' => $description,
+                'start_datetime' => $startDateTime->toDateTimeString(),
+                'end_datetime' => $endDateTime->toDateTimeString(),
             ],
         ]);
 
@@ -111,13 +120,20 @@ it('will execute appropriately on each educatable in the group', function (Educa
 
     $interactions = $educatable->interactions()->get();
 
-    expect($interactions)->toHaveCount(1)
-        ->and($interactions->first()->type->getKey())->toEqual($interactionType->getKey())
-        ->and($interactions->first()->initiative->getKey())->toEqual($interactionInitiative->getKey())
-        ->and($interactions->first()->relation->getKey())->toEqual($interactionRelation->getKey())
-        ->and($interactions->first()->driver->getKey())->toEqual($interactionDriver->getKey())
-        ->and($interactions->first()->status->getKey())->toEqual($interactionStatus->getKey())
-        ->and($interactions->first()->outcome->getKey())->toEqual($interactionOutcome->getKey());
+    expect($interactions)->toHaveCount(1);
+
+    $interaction = $interactions->first();
+
+    expect($interaction->type->getKey())->toEqual($interactionType->getKey())
+        ->and($interaction->initiative->getKey())->toEqual($interactionInitiative->getKey())
+        ->and($interaction->relation->getKey())->toEqual($interactionRelation->getKey())
+        ->and($interaction->driver->getKey())->toEqual($interactionDriver->getKey())
+        ->and($interaction->status->getKey())->toEqual($interactionStatus->getKey())
+        ->and($interaction->outcome->getKey())->toEqual($interactionOutcome->getKey())
+        ->and($interaction->subject)->toEqual($subject)
+        ->and($interaction->description)->toEqual($description)
+        ->and($interaction->start_datetime->toDateTimeString())->toEqual($startDateTime->toDateTimeString())
+        ->and($interaction->end_datetime->toDateTimeString())->toEqual($endDateTime->toDateTimeString());
 
     expect($campaignActionEducatable->succeeded_at)->not()->toBeNull()
         ->and($campaignActionEducatable->last_failed_at)->toBeNull()
