@@ -40,8 +40,8 @@ use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Models\Form;
+use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
@@ -189,7 +189,7 @@ class ViewForm extends ViewRecord
                 ->modalSubmitAction(false)
                 ->modalCancelActionLabel('Close')
                 ->hidden(fn (Form $form) => ! $form->embed_enabled),
-            DeleteAction::make(),
+            ArchiveAction::make(),
         ];
     }
 }

@@ -42,7 +42,7 @@ use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns\HasSharedFormConfiguration;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\Concerns\ValidatesProspectGenerationFields;
 use AdvisingApp\Form\Models\Form;
-use Filament\Actions\DeleteAction;
+use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
@@ -96,7 +96,7 @@ class EditForm extends EditRecord
             $this->getSaveFormAction()
                 ->label('Save')
                 ->formId('form'),
-            DeleteAction::make(),
+            ArchiveAction::make(),
             $this->getCancelFormAction()
                 ->url(fn () => FormResource::getUrl('view', ['record' => $this->record])),
         ];
@@ -108,7 +108,7 @@ class EditForm extends EditRecord
             $this->getSaveFormAction()
                 ->label('Save')
                 ->formId('form'),
-            DeleteAction::make(),
+            ArchiveAction::make(),
             $this->getCancelFormAction()
                 ->url(fn () => FormResource::getUrl('view', ['record' => $this->record])),
         ];

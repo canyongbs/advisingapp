@@ -41,9 +41,9 @@ use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use App\Filament\Tables\Columns\IdColumn;
+use CanyonGBS\Common\Filament\Actions\ArchiveBulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\ViewAction;
@@ -68,6 +68,7 @@ class ListApplications extends ListRecords
                 $submissionsCountQuery = ApplicationSubmission::query()
                     ->join('applications as version_applications', 'application_submissions.application_id', '=', 'version_applications.id')
                     ->whereColumn('version_applications.root_id', 'applications.root_id')
+                    ->whereNull('application_submissions.archived_at')
                     ->selectRaw('count(*)');
 
                 $query->addSelect([
@@ -112,8 +113,7 @@ class ListApplications extends ListRecords
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->authorizeIndividualRecords('delete'),
+                    ArchiveBulkAction::make(),
                 ]),
             ])
             ->defaultSort('created_at', 'desc');

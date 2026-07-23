@@ -34,24 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Listeners;
+namespace App\Features;
 
-use AdvisingApp\Form\Events\FormSubmissionCreated;
-use AdvisingApp\Form\Models\Form;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Cache;
+use App\Support\AbstractFeatureFlag;
 
-class ClearFormFormSubmissionCountCache implements ShouldQueue
+class EventArchivingFeature extends AbstractFeatureFlag
 {
-    public function handle(FormSubmissionCreated $event): void
+    public function resolve(mixed $scope): mixed
     {
-        $event->submission->loadMissing('submissible');
-
-        if ($event->submission->submissible instanceof Form) {
-            Cache::tags('{form-submission-count}')
-                ->forget(
-                    "form-submission-count-{$event->submission->submissible->root_id}"
-                );
-        }
+        return false;
     }
 }

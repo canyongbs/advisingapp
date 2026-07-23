@@ -41,7 +41,7 @@ use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\Concerns\HasSharedFormConfiguration;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Form\Actions\SaveSubmissibleFieldsFromContent;
-use Filament\Actions\DeleteAction;
+use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
@@ -96,7 +96,7 @@ class EditApplication extends EditRecord
             $this->getSaveFormAction()
                 ->label('Save')
                 ->formId('form'),
-            DeleteAction::make(),
+            ArchiveAction::make(),
             $this->getCancelFormAction()
                 ->url(fn () => ApplicationResource::getUrl('view', ['record' => $this->record])),
         ];
@@ -108,7 +108,7 @@ class EditApplication extends EditRecord
             $this->getSaveFormAction()
                 ->label('Save')
                 ->formId('form'),
-            DeleteAction::make(),
+            ArchiveAction::make(),
             $this->getCancelFormAction()
                 ->url(fn () => ApplicationResource::getUrl('view', ['record' => $this->record])),
         ];
