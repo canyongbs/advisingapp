@@ -74,7 +74,6 @@ it('always lists reports that require no license or addon', function () {
     $settings->data->addons->customerAdvisors = false;
     $settings->data->addons->employeeAdvisors = false;
     $settings->data->addons->researchAdvisor = false;
-    $settings->data->addons->projectManagement = false;
     $settings->save();
 
     $user = User::factory()->create();
@@ -95,7 +94,6 @@ it('only lists a report when the required licenses and addons are enabled for th
     $settings->data->addons->customerAdvisors = false;
     $settings->data->addons->employeeAdvisors = false;
     $settings->data->addons->researchAdvisor = false;
-    $settings->data->addons->projectManagement = false;
     $settings->save();
 
     $user = User::factory()->create();
@@ -140,10 +138,6 @@ it('only lists a report when the required licenses and addons are enabled for th
             $settings->data->addons->researchAdvisor = true;
         },
         ReportAccessKey::ResearchAdvisorReport,
-    ],
-    ReportAccessKey::ProjectReport->value => [
-        fn (LicenseSettings $settings) => $settings->data->addons->projectManagement = true,
-        ReportAccessKey::ProjectReport,
     ],
     ReportAccessKey::StudentActionCenter->value => [
         fn (LicenseSettings $settings) => $settings->data->limits->retentionCrmSeats = 10,
@@ -215,7 +209,7 @@ it('only lists a report when the required licenses and addons are enabled for th
 
 it('can search reports by name', function () {
     $settings = app(LicenseSettings::class);
-    $settings->data->addons->projectManagement = true;
+    $settings->data->addons->customerAdvisors = true;
     $settings->save();
 
     $user = User::factory()->create();
@@ -224,8 +218,8 @@ it('can search reports by name', function () {
     actingAs($user);
 
     livewire(Reporting::class)
-        ->searchTable(ReportAccessKey::ProjectReport->getName())
-        ->assertCanSeeTableRecords([ReportAccessKey::ProjectReport->value])
+        ->searchTable(ReportAccessKey::CustomerAdvisorReport->getName())
+        ->assertCanSeeTableRecords([ReportAccessKey::CustomerAdvisorReport->value])
         ->assertCanNotSeeTableRecords([ReportAccessKey::UserLoginActivity->value]);
 });
 

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cb63bb171ec723aff4b346200eebbf25",
+    "content-hash": "e057a7bab1a0388aff9f17b6f7930736",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -1396,41 +1396,6 @@
             }
         },
         {
-            "name": "canyon-gbs/advising-app-project",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/project",
-                "reference": "26c6a13b8cf2c24fcad0d8d10e0c3d2021c7ef48"
-            },
-            "require": {
-                "filament/filament": "^4.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\Project\\Providers\\ProjectServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\Project\\": "src/",
-                    "AdvisingApp\\Project\\Tests\\": "tests/",
-                    "AdvisingApp\\Project\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\Project\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
             "name": "canyon-gbs/advising-app-prospect",
             "version": "1.0",
             "dist": {
@@ -2022,41 +1987,6 @@
                     "AdvisingApp\\MultifactorAuthentication\\Tests\\": "tests/",
                     "AdvisingApp\\MultifactorAuthentication\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\MultifactorAuthentication\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "canyon-gbs/pipeline",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/pipeline",
-                "reference": "5db7fc7c753af31f286ee09b92cf42111f33a03e"
-            },
-            "require": {
-                "filament/filament": "^4.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\Pipeline\\Providers\\PipelineServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\Pipeline\\": "src/",
-                    "AdvisingApp\\Pipeline\\Tests\\": "tests/",
-                    "AdvisingApp\\Pipeline\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\Pipeline\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

@@ -128,18 +128,7 @@ use AdvisingApp\Notification\Models\SmsMessage;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
 use AdvisingApp\Notification\Models\StoredAnonymousNotifiable;
 use AdvisingApp\Notification\Models\Subscription;
-use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
-use AdvisingApp\Pipeline\Models\Pipeline;
-use AdvisingApp\Pipeline\Models\PipelineStage;
 use AdvisingApp\Portal\Models\PortalAuthentication;
-use AdvisingApp\Project\Models\DepartmentProjectAuditor;
-use AdvisingApp\Project\Models\DepartmentProjectManager;
-use AdvisingApp\Project\Models\Project;
-use AdvisingApp\Project\Models\ProjectAuditorUser;
-use AdvisingApp\Project\Models\ProjectFile;
-use AdvisingApp\Project\Models\ProjectManagerUser;
-use AdvisingApp\Project\Models\ProjectMilestone;
-use AdvisingApp\Project\Models\ProjectMilestoneStatus;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectAddress;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
@@ -181,7 +170,6 @@ use AdvisingApp\Survey\Models\SurveyField;
 use AdvisingApp\Survey\Models\SurveyFieldSubmission;
 use AdvisingApp\Survey\Models\SurveyStep;
 use AdvisingApp\Survey\Models\SurveySubmission;
-use AdvisingApp\Task\Models\ConfidentialTasksProjects;
 use AdvisingApp\Task\Models\ConfidentialTasksUsers;
 use AdvisingApp\Task\Models\DepartmentsConfidentialTasks;
 use AdvisingApp\Task\Models\Task;
@@ -395,18 +383,7 @@ return [
     SmsMessageEvent::class,
     StoredAnonymousNotifiable::class,
     Subscription::class,
-    EducatablePipelineStage::class,
-    Pipeline::class,
-    PipelineStage::class,
     PortalAuthentication::class,
-    Project::class,
-    DepartmentProjectAuditor::class,
-    ProjectAuditorUser::class,
-    ProjectFile::class,
-    DepartmentProjectManager::class,
-    ProjectManagerUser::class,
-    ProjectMilestone::class,
-    ProjectMilestoneStatus::class,
     Prospect::class,
     ProspectAddress::class,
     ProspectEmailAddress::class,
@@ -448,7 +425,6 @@ return [
     SurveyFieldSubmission::class,
     SurveyStep::class,
     SurveySubmission::class,
-    ConfidentialTasksProjects::class,
     DepartmentsConfidentialTasks::class,
     ConfidentialTasksUsers::class,
     Task::class,

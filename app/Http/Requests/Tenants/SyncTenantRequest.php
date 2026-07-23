@@ -73,7 +73,6 @@ class SyncTenantRequest extends FormRequest
             'addons.scheduleAndAppointments' => ['required', 'boolean'],
             'addons.researchAdvisor' => ['required', 'boolean'],
             'addons.dataAdvisor' => ['required', 'boolean'],
-            'addons.projectManagement' => ['required', 'boolean'],
             'addons.earlyAlert' => ['required', 'boolean'],
             'addons.publicProfiles' => ['required', 'boolean'],
             'smartPrompts' => ['nullable', 'array'],

@@ -44,7 +44,6 @@ enum ReportLibraryNavigationGroup implements HasLabel
     case Prospects;
     case Students;
     case Users;
-    case ProjectManagement;
 
     public function getLabel(): string
     {
@@ -53,7 +52,6 @@ enum ReportLibraryNavigationGroup implements HasLabel
             self::Prospects => 'Prospects',
             self::Students => 'Students',
             self::Users => 'Users',
-            self::ProjectManagement => 'Project Management',
         };
     }
 }

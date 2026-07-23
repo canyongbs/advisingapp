@@ -37,7 +37,6 @@
 namespace AdvisingApp\Campaign\Filament\Blocks;
 
 use AdvisingApp\Campaign\Filament\Forms\Components\CampaignDateTimeInput;
-use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Department;
 use App\Filament\Forms\Components\UserSelect;
@@ -82,29 +81,6 @@ class TaskBlock extends CampaignActionBlock
                             Checkbox::make('is_confidential')
                                 ->label('Confidential')
                                 ->live(),
-                            Select::make('confidential_task_projects')
-                                ->options(fn () => Project::query()
-                                    ->orderBy('name')
-                                    ->limit(50)
-                                    ->pluck('name', 'id')
-                                    ->all())
-                                ->searchable()
-                                ->getSearchResultsUsing(fn (string $search): array => Project::query()
-                                    ->where(new Expression('lower(name)'), 'like', '%' . strtolower($search) . '%')
-                                    ->limit(50)
-                                    ->pluck('name', 'id')
-                                    ->all())
-                                ->getOptionLabelsUsing(
-                                    fn (array $values): array => Project::query()
-                                        ->whereKey($values)
-                                        ->pluck('name', 'id')
-                                        ->all(),
-                                )
-                                ->label('Projects')
-                                ->multiple()
-                                ->dehydrated(true)
-                                ->exists('projects', 'id')
-                                ->visible(fn (Get $get) => $get('is_confidential')),
                             Select::make('confidential_task_users')
                                 ->options(fn (Select $component) => User::query()
                                     ->where(function (Builder $query) use ($component) {

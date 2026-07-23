@@ -39,8 +39,6 @@ namespace App\Providers;
 use AdvisingApp\Campaign\Jobs\EngagementCampaignActionJob;
 use AdvisingApp\Engagement\Jobs\CreateBatchedEngagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
-use AdvisingApp\Pipeline\Models\Pipeline;
-use AdvisingApp\Pipeline\Models\PipelineStage;
 use AdvisingApp\Workflow\Jobs\EngagementEmailWorkflowActionJob;
 use AdvisingApp\Workflow\Jobs\EngagementSmsWorkflowActionJob;
 use App\Models\SystemUser;
@@ -137,8 +135,6 @@ class AppServiceProvider extends ServiceProvider
         Relation::morphMap([
             'system_user' => SystemUser::class,
             'tenant' => Tenant::class,
-            'pipeline' => Pipeline::class,
-            'pipeline_stage' => PipelineStage::class,
         ]);
 
         Feature::resolveScopeUsing(fn ($driver) => null);
