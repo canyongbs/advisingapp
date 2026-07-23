@@ -83,7 +83,6 @@ class TaskCampaignActionJob extends ExecuteCampaignActionOnEducatableJob
             $task->save();
 
             if ($isConfidential) {
-                $this->syncConfidentialAccess($task, 'confidentialAccessProjects', $action->data['confidential_task_projects'] ?? []);
                 $this->syncConfidentialAccess($task, 'confidentialAccessUsers', $action->data['confidential_task_users'] ?? []);
                 $this->syncConfidentialAccess($task, 'confidentialAccessDepartments', $action->data['department_confidential_task'] ?? []);
             }

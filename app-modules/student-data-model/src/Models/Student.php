@@ -58,8 +58,6 @@ use AdvisingApp\Notification\Models\Concerns\NotifiableViaSms;
 use AdvisingApp\Notification\Models\Contracts\CanBeNotified;
 use AdvisingApp\Notification\Models\Contracts\Subscribable;
 use AdvisingApp\Notification\Models\Subscription;
-use AdvisingApp\Pipeline\Models\EducatablePipelineStage;
-use AdvisingApp\Pipeline\Models\Pipeline;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Database\Factories\StudentFactory;
 use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
@@ -610,23 +608,6 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     public function routeNotificationForMail(Notification $notification): ?string
     {
         return $this->primaryEmailAddress?->address;
-    }
-
-    /**
-     * @return MorphToMany<Pipeline, $this, EducatablePipelineStage>
-     */
-    public function educatablePipelineStages(): MorphToMany
-    {
-        return $this->morphToMany(
-            related: Pipeline::class,
-            name: 'educatable',
-            table: 'educatable_pipeline_stages',
-            foreignPivotKey: 'educatable_id',
-            relatedPivotKey: 'pipeline_id',
-        )
-            ->using(EducatablePipelineStage::class)
-            ->withPivot(['pipeline_stage_id'])
-            ->withTimestamps();
     }
 
     protected static function booted(): void

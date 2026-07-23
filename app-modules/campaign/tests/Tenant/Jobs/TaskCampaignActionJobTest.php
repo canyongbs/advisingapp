@@ -44,7 +44,6 @@ use AdvisingApp\Campaign\Models\CampaignActionEducatableRelated;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
-use AdvisingApp\Project\Models\Project;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -174,7 +173,6 @@ it('creates a non-confidential task when is_confidential is not set', function (
     $tasks = $educatable->tasks()->get();
 
     expect($tasks->first()->is_confidential)->toBeFalse()
-        ->and($tasks->first()->confidentialAccessProjects)->toHaveCount(0)
         ->and($tasks->first()->confidentialAccessUsers)->toHaveCount(0)
         ->and($tasks->first()->confidentialAccessDepartments)->toHaveCount(0);
 })
@@ -203,7 +201,6 @@ it('creates a confidential task and syncs confidential access relationships', fu
         ->for($user, 'createdBy')
         ->create();
 
-    $projects = Project::factory()->count(2)->for($user, 'createdBy')->create();
     $users = User::factory()->count(2)->create();
     $departments = Department::factory()->count(2)->create();
 
@@ -218,7 +215,6 @@ it('creates a confidential task and syncs confidential access relationships', fu
                 'due' => now()->addDay(),
                 'assigned_to' => User::factory()->create()->getKey(),
                 'is_confidential' => true,
-                'confidential_task_projects' => $projects->pluck('id')->toArray(),
                 'confidential_task_users' => $users->pluck('id')->toArray(),
                 'department_confidential_task' => $departments->pluck('id')->toArray(),
             ],
@@ -237,9 +233,6 @@ it('creates a confidential task and syncs confidential access relationships', fu
     $tasks = $educatable->tasks()->get();
 
     expect($tasks->first()->is_confidential)->toBeTrue();
-
-    expect($tasks->first()->confidentialAccessProjects->pluck('id')->sort()->values())
-        ->toEqual($projects->pluck('id')->sort()->values());
 
     expect($tasks->first()->confidentialAccessUsers->pluck('id')->sort()->values())
         ->toEqual($users->pluck('id')->sort()->values());

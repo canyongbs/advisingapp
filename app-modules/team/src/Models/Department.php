@@ -40,9 +40,6 @@ use AdvisingApp\CaseManagement\Models\CaseType;
 use AdvisingApp\CaseManagement\Models\CaseTypeAuditor;
 use AdvisingApp\CaseManagement\Models\CaseTypeManager;
 use AdvisingApp\Division\Models\Division;
-use AdvisingApp\Project\Models\DepartmentProjectAuditor;
-use AdvisingApp\Project\Models\DepartmentProjectManager;
-use AdvisingApp\Project\Models\Project;
 use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -92,28 +89,6 @@ class Department extends BaseModel
     {
         return $this->belongsToMany(CaseType::class, 'case_type_auditors', 'team_id', 'case_type_id')
             ->using(CaseTypeAuditor::class)
-            ->withTimestamps();
-    }
-
-    /**
-    * @return BelongsToMany<Project, $this, DepartmentProjectManager>
-    */
-    public function managedProjects(): BelongsToMany
-    {
-        return $this
-            ->belongsToMany(Project::class, 'project_manager_teams', 'team_id', 'project_id')
-            ->using(DepartmentProjectManager::class)
-            ->withTimestamps();
-    }
-
-    /**
-     * @return BelongsToMany<Project, $this, DepartmentProjectAuditor>
-     */
-    public function auditedProjects(): BelongsToMany
-    {
-        return $this
-            ->belongsToMany(Project::class, 'project_auditor_teams', 'team_id', 'project_id')
-            ->using(DepartmentProjectAuditor::class)
             ->withTimestamps();
     }
 }
