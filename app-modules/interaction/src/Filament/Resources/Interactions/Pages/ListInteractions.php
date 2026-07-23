@@ -78,7 +78,8 @@ class ListInteractions extends ListRecords
                     ->label('End Time')
                     ->dateTime(),
                 TextColumn::make('created_at')
-                    ->state(fn ($record) => filled($record->end_datetime) && filled($record->start_datetime) 
+                    ->state(
+                        fn ($record) => filled($record->end_datetime) && filled($record->start_datetime)
                         ? $record->end_datetime->diffForHumans($record->start_datetime, CarbonInterface::DIFF_ABSOLUTE, true, 6)
                         : '-'
                     )
