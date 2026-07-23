@@ -156,8 +156,6 @@ class ManageLicenseSettings extends SettingsPage
                                 ->label('Online Surveys'),
                             Toggle::make('data.addons.onlineAdmissions')
                                 ->label('Online Admissions'),
-                            Toggle::make('data.addons.caseManagement')
-                                ->label('Case Management'),
                             Toggle::make('data.addons.resourceHub')
                                 ->label('Resource Hub'),
                             Toggle::make('data.addons.supportPrograms')

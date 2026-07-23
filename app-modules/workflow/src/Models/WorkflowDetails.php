@@ -37,7 +37,6 @@
 namespace AdvisingApp\Workflow\Models;
 
 use AdvisingApp\Workflow\Filament\Blocks\CareTeamBlock;
-use AdvisingApp\Workflow\Filament\Blocks\CaseBlock;
 use AdvisingApp\Workflow\Filament\Blocks\EngagementEmailBlock;
 use AdvisingApp\Workflow\Filament\Blocks\EngagementSmsBlock;
 use AdvisingApp\Workflow\Filament\Blocks\EventBlock;
@@ -76,10 +75,6 @@ abstract class WorkflowDetails extends BaseModel
             TagsBlock::make(),
             TaskBlock::make(),
         ];
-
-        if (app(LicenseSettings::class)->data->addons->caseManagement) {
-            $blocks[] = CaseBlock::make();
-        }
 
         //        if (app(LicenseSettings::class)->data->addons->eventManagement) {
         //            $blocks[] = EventBlock::make();

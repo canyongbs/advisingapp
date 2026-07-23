@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e057a7bab1a0388aff9f17b6f7930736",
+    "content-hash": "caa5982005c6c0f5325aa3f6d0c98252",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -889,41 +889,6 @@
                     "AdvisingApp\\CareTeam\\Tests\\": "tests/",
                     "AdvisingApp\\CareTeam\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\CareTeam\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "canyon-gbs/advising-app-case-management",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/case-management",
-                "reference": "8e99f17b730073268f16427cf672d9e551360383"
-            },
-            "require": {
-                "filament/filament": "^4.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\CaseManagement\\Providers\\CaseManagementServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\CaseManagement\\": "src/",
-                    "AdvisingApp\\CaseManagement\\Tests\\": "tests/",
-                    "AdvisingApp\\CaseManagement\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\CaseManagement\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

@@ -37,8 +37,6 @@
 namespace AdvisingApp\Report\Abstract\Concerns;
 
 use AdvisingApp\Report\Abstract\Contracts\HasGroupModel;
-use AdvisingApp\Report\Filament\Pages\ProspectCaseReport;
-use AdvisingApp\Report\Filament\Pages\StudentCaseReport;
 use Filament\Forms\Components\DatePicker;
 use Filament\Pages\Dashboard\Concerns\HasFiltersForm as ConcernsHasFiltersForm;
 use Filament\Schemas\Components\Section;
@@ -51,7 +49,7 @@ trait HasFiltersForm
 
     public function filtersForm(Schema $schema): Schema
     {
-        $heading = ($this instanceof StudentCaseReport || $this instanceof ProspectCaseReport) ? 'Date Created' : null;
+        $heading = null;
 
         $components = [
             Section::make()

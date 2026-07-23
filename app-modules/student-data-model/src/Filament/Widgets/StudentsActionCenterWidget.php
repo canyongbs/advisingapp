@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Widgets;
 
-use AdvisingApp\CaseManagement\Enums\SystemCaseClassification;
 use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
@@ -107,11 +106,6 @@ class StudentsActionCenterWidget extends TableWidget
                     ->label('Open Tasks')
                     ->counts(['tasks' => fn (Builder $query): Builder => $query->whereNotIn('status', [TaskStatus::Completed, TaskStatus::Canceled])])
                     ->sortable(),
-                TextColumn::make('cases_count')
-                    ->label('Open Cases')
-                    ->visible(Gate::check(Feature::CaseManagement->getGateName()))
-                    ->counts(['cases' => fn (Builder $query): Builder => $query->whereRelation('status', 'classification', '!=', SystemCaseClassification::Closed)])
-                    ->sortable(),
             ])
             ->filters([
                 SelectFilter::make('messages')
@@ -122,26 +116,6 @@ class StudentsActionCenterWidget extends TableWidget
                         }
 
                         return $query->whereRelation('engagementResponses', 'status', $data['value']);
-                    }),
-                SelectFilter::make('cases')
-                    ->options(['open' => 'Open', 'closed' => 'Closed'])
-                    ->visible(Gate::check(Feature::CaseManagement->getGateName()))
-                    ->query(function (Builder $query, array $data): Builder {
-                        if (blank($data['value'] ?? null)) {
-                            return $query;
-                        }
-
-                        return $query->whereHas('cases', function (Builder $query) use ($data): Builder {
-                            if ($data['value'] === 'open') {
-                                return $query->whereRelation('status', 'classification', '!=', SystemCaseClassification::Closed);
-                            }
-
-                            if ($data['value'] === 'closed') {
-                                return $query->whereRelation('status', 'classification', SystemCaseClassification::Closed);
-                            }
-
-                            return $query;
-                        });
                     }),
                 SelectFilter::make('concerns')
                     ->options(['open' => 'Open', 'closed' => 'Closed'])

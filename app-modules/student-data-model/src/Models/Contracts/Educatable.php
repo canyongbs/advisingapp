@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Models\Contracts;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
@@ -72,7 +71,6 @@ use Illuminate\Database\Eloquent\Relations\MorphToMany;
  * @property-read Collection<int, Task> $tasks
  * @property-read Collection<int, Tag> $tags
  * @property-read Collection<int, Interaction> $interactions
- * @property-read Collection<int, CaseModel> $cases
  * @property-read Collection<int, ProspectEmailAddress|StudentEmailAddress> $emailAddresses
  * @property-read Collection<int, ProspectPhoneNumber|StudentPhoneNumber> $phoneNumbers
  */
@@ -144,9 +142,4 @@ interface Educatable extends Identifiable, CanBeNotified
      * @return MorphMany<Interaction, covariant Model>
      */
     public function interactions(): MorphMany;
-
-    /**
-     * @return MorphMany<CaseModel, covariant Model>
-     */
-    public function cases(): MorphMany;
 }

@@ -34,22 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\CaseForms\Pages;
+namespace App\Enums;
 
-use AdvisingApp\CaseManagement\Filament\Resources\CaseForms\CaseFormResource;
-use AdvisingApp\CaseManagement\Filament\Resources\CaseForms\Pages\Concerns\HasSharedFormConfiguration;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Schemas\Schema;
+use Filament\Support\Contracts\HasLabel;
 
-class CreateCaseForm extends CreateRecord
+enum ColumnColorOptions: string implements HasLabel
 {
-    use HasSharedFormConfiguration;
+    case Success = 'success';
 
-    protected static string $resource = CaseFormResource::class;
+    case Danger = 'danger';
 
-    public function form(Schema $schema): Schema
+    case Warning = 'warning';
+
+    case Info = 'info';
+
+    case Primary = 'primary';
+
+    case Gray = 'gray';
+
+    public function getLabel(): string
     {
-        return $schema
-            ->components($this->fields());
+        return $this->value;
     }
 }

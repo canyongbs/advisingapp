@@ -34,43 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\CaseManagement\Filament\Resources\Slas\Pages;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\CaseManagement\Filament\Resources\Slas\SlaResource;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Resources\Pages\ListRecords;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-
-class ListSlas extends ListRecords
-{
-    protected static string $resource = SlaResource::class;
-
-    public function table(Table $table): Table
+/** @phpstan-ignore Common.migrationMissingDownMethod */
+return new class () extends Migration {
+    public function up(): void
     {
-        return $table
-            ->columns([
-                TextColumn::make('name')
-                    ->searchable(),
-            ])
-            ->recordActions([
-                EditAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->authorizeIndividualRecords('delete'),
-                ]),
-            ]);
-    }
+        Schema::create('service_request_assignments', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
+            $table->foreignUuid('service_request_id')->constrained('service_requests');
+            $table->foreignUuid('user_id')->constrained('users');
+            $table->foreignUuid('assigned_by_id')->nullable()->constrained('users');
+            $table->timestamp('assigned_at');
+            $table->string('status')->default('active');
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
-}
+};

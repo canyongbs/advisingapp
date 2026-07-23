@@ -50,23 +50,6 @@ use AdvisingApp\Campaign\Models\CampaignActionEducatable;
 use AdvisingApp\Campaign\Models\CampaignActionEducatableRelated;
 use AdvisingApp\CareTeam\Models\CareTeam;
 use AdvisingApp\CareTeam\Models\CareTeamRole;
-use AdvisingApp\CaseManagement\Models\CaseAssignment;
-use AdvisingApp\CaseManagement\Models\CaseFeedback;
-use AdvisingApp\CaseManagement\Models\CaseForm;
-use AdvisingApp\CaseManagement\Models\CaseFormAuthentication;
-use AdvisingApp\CaseManagement\Models\CaseFormField;
-use AdvisingApp\CaseManagement\Models\CaseFormStep;
-use AdvisingApp\CaseManagement\Models\CaseFormSubmission;
-use AdvisingApp\CaseManagement\Models\CaseHistory;
-use AdvisingApp\CaseManagement\Models\CaseModel;
-use AdvisingApp\CaseManagement\Models\CasePriority;
-use AdvisingApp\CaseManagement\Models\CaseStatus;
-use AdvisingApp\CaseManagement\Models\CaseType;
-use AdvisingApp\CaseManagement\Models\CaseTypeAuditor;
-use AdvisingApp\CaseManagement\Models\CaseTypeEmailTemplate;
-use AdvisingApp\CaseManagement\Models\CaseTypeManager;
-use AdvisingApp\CaseManagement\Models\CaseUpdate;
-use AdvisingApp\CaseManagement\Models\Sla;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\Consent\Models\ConsentAgreement;
@@ -180,7 +163,6 @@ use AdvisingApp\Webhook\Models\InboundWebhook;
 use AdvisingApp\Webhook\Models\LandlordInboundWebhook;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowCareTeamDetails;
-use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
 use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
@@ -305,23 +287,6 @@ return [
     CampaignActionEducatableRelated::class,
     CareTeam::class,
     CareTeamRole::class,
-    CaseAssignment::class,
-    CaseFeedback::class,
-    CaseForm::class,
-    CaseFormAuthentication::class,
-    CaseFormField::class,
-    CaseFormStep::class,
-    CaseFormSubmission::class,
-    CaseHistory::class,
-    CaseModel::class,
-    CasePriority::class,
-    CaseStatus::class,
-    CaseType::class,
-    CaseTypeAuditor::class,
-    CaseTypeEmailTemplate::class,
-    CaseTypeManager::class,
-    CaseUpdate::class,
-    Sla::class,
     Concern::class,
     ConcernStatus::class,
     ConsentAgreement::class,
@@ -435,7 +400,6 @@ return [
     LandlordInboundWebhook::class,
     Workflow::class,
     WorkflowCareTeamDetails::class,
-    WorkflowCaseDetails::class,
     WorkflowDetails::class,
     WorkflowEngagementEmailDetails::class,
     WorkflowEngagementSmsDetails::class,

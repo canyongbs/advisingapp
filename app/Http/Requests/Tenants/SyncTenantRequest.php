@@ -64,7 +64,6 @@ class SyncTenantRequest extends FormRequest
             'addons.onlineForms' => ['required', 'boolean'],
             'addons.onlineSurveys' => ['required', 'boolean'],
             'addons.onlineAdmissions' => ['required', 'boolean'],
-            'addons.caseManagement' => ['required', 'boolean'],
             'addons.resourceHub' => ['required', 'boolean'],
             'addons.supportPrograms' => ['required', 'boolean'],
             'addons.eventManagement' => ['required', 'boolean'],

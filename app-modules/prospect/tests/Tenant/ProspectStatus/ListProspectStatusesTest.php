@@ -48,7 +48,6 @@ use function Tests\asSuperAdmin;
 test('The correct details are displayed on the ListProspectStatuses page', function () {
     $prospectStatuses = ProspectStatus::factory()
         // TODO: Fix this once Prospect factory is created
-        //->has(CaseModel::factory()->count(fake()->randomNumber(1)), 'cases')
         ->count(10)
         ->create();
 
@@ -85,7 +84,6 @@ test('The correct details are displayed on the ListProspectStatuses page', funct
                 $prospectStatus->color->getLabel(),
                 $prospectStatus
             )
-        // Currently setting not test for cases_count as there is no easy way to check now, relying on underlying package tests
     );
 });
 
