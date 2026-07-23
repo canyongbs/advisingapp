@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\EventVersioningFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -49,9 +48,6 @@ return new class () extends Migration {
                 $table->uuid('root_id')->nullable();
                 $table->timestamp('archived_at')->nullable();
             });
-
-            // TODO: Cleanup Task - EventVersioningFeature - This backfill can be removed once all environments have run this migration
-            DB::update('UPDATE event_registration_forms SET root_id = id WHERE root_id IS NULL');
 
             Schema::table('event_registration_forms', function (Blueprint $table) {
                 $table->uuid('root_id')->nullable(false)->change();
@@ -76,16 +72,12 @@ return new class () extends Migration {
             Schema::table('event_registration_forms', function (Blueprint $table) {
                 $table->uniqueIndex(['event_id'])->where(fn (Builder $condition) => $condition->whereNull('archived_at'));
             });
-
-            EventVersioningFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            EventVersioningFeature::deactivate();
-
             Schema::table('event_registration_forms', function (Blueprint $table) {
                 $table->dropIndex('event_registration_forms_event_id_unique');
             });

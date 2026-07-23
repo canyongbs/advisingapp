@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\MeetingCenter\Models;
 
-use App\Features\EventVersioningFeature;
 use App\Models\BaseModel;
 use App\Models\Media;
 use CanyonGBS\Common\Models\Concerns\CanBeArchived;
@@ -108,9 +107,7 @@ class Event extends BaseModel implements HasMedia, HasRichContent
     {
         $relationship = $this->hasOne(EventRegistrationForm::class, 'event_id');
 
-        if (EventVersioningFeature::active()) {
-            $relationship->whereNull('archived_at');
-        }
+        $relationship->whereNull('archived_at');
 
         return $relationship;
     }
