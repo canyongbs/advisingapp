@@ -68,6 +68,7 @@ use AdvisingApp\Task\Models\Task;
 use App\Http\Middleware\CheckOlympusKey;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Mockery;
 use Mockery\MockInterface;
 
 use function Pest\Laravel\actingAs;
