@@ -48,6 +48,7 @@ use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\Event;
@@ -122,6 +123,7 @@ class UtilizationMetricsApiController extends Controller
                     'journey_steps_executed' => CampaignAction::whereNotNull('execution_finished_at')->count(),
                     'tasks' => Task::count(),
                     'concerns' => Concern::count(),
+                    'interactions' => Interaction::count(),
                     'groups' => Group::count(),
                     'resource_hub_articles' => ResourceHubArticle::count(),
                     'events_created' => Event::count(),

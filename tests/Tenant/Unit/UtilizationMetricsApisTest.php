@@ -49,6 +49,7 @@ use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
@@ -67,6 +68,7 @@ use AdvisingApp\Task\Models\Task;
 use App\Http\Middleware\CheckOlympusKey;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Mockery;
 use Mockery\MockInterface;
 
 use function Pest\Laravel\actingAs;
@@ -332,6 +334,20 @@ it('checks the API returns Concerns', function () {
     $response->assertStatus(200);
 
     expect($data['concerns'])->toBe($randomRecords);
+});
+
+it('checks the API returns Interactions', function () {
+    $randomRecords = random_int(1, 10);
+
+    Interaction::factory()->count($randomRecords)->create();
+
+    $response = get(route('utilization-metrics'));
+
+    $data = $response->json('data');
+
+    $response->assertStatus(200);
+
+    expect($data['interactions'])->toBe($randomRecords);
 });
 
 it('checks the API returns Alerts Grouped by Alert Type', function () {
