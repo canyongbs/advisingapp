@@ -56,7 +56,6 @@ use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\Prospect\Models\Prospect;
-use Mockery\MockInterface;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Models\TrackedEventCount;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
@@ -68,6 +67,7 @@ use AdvisingApp\Task\Models\Task;
 use App\Http\Middleware\CheckOlympusKey;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Mockery\MockInterface;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -456,7 +456,7 @@ it('checks the API returns Group Appointments', function () {
 it('checks the API returns Personal Appointments', function () {
     $randomRecords = random_int(1, 10);
 
-    $mockDriver = \Mockery::mock(CalendarInterface::class);
+    $mockDriver = Mockery::mock(CalendarInterface::class);
     /** @phpstan-ignore method.notFound */
     $mockDriver->shouldReceive('createEvent')->andReturnUsing(function (CalendarEvent $event) {
         $event->updateQuietly([
@@ -467,7 +467,7 @@ it('checks the API returns Personal Appointments', function () {
     $mockDriver->shouldReceive('updateEvent')->andReturn(null);
     $mockDriver->shouldReceive('deleteEvent')->andReturn(null);
 
-    $mockManager = \Mockery::mock(CalendarManager::class, function (MockInterface $mock) use ($mockDriver) {
+    $mockManager = Mockery::mock(CalendarManager::class, function (MockInterface $mock) use ($mockDriver) {
         $mock->shouldReceive('driver')->andReturn($mockDriver);
     });
 
