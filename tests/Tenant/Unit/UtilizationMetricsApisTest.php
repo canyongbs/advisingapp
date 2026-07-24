@@ -37,18 +37,29 @@
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptUse;
+use AdvisingApp\Alert\Actions\GenerateStudentAlertsView;
+use AdvisingApp\Alert\Models\AlertConfiguration;
+use AdvisingApp\Alert\Presets\AlertPreset;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Concern\Models\Concern;
+use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\MeetingCenter\Managers\CalendarManager;
+use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
+use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Models\TrackedEventCount;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Survey\Models\SurveySubmission;
@@ -56,7 +67,9 @@ use AdvisingApp\Task\Models\Task;
 use App\Http\Middleware\CheckOlympusKey;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Mockery\MockInterface;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Pest\Laravel\withoutMiddleware;
 
@@ -321,6 +334,37 @@ it('checks the API returns Concerns', function () {
     expect($data['concerns'])->toBe($randomRecords);
 });
 
+it('checks the API returns Alerts Grouped by Alert Type', function () {
+    AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::ConcernRaised])
+        ->enabled()
+        ->create();
+
+    $activeStatus = ConcernStatus::factory()->create([
+        'classification' => SystemConcernStatusClassification::Active,
+    ]);
+
+    $student = Student::factory()->create();
+
+    Concern::factory()->create([
+        'concern_type' => $student->getMorphClass(),
+        'concern_id' => $student->getKey(),
+        'status_id' => $activeStatus->id,
+    ]);
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    $response = get(route('utilization-metrics'));
+
+    $data = $response->json('data');
+
+    $response->assertStatus(200);
+
+    expect($data['alerts_by_alert_type'])->toBeArray();
+    expect($data['alerts_by_alert_type']['concern_raised'])->toBe(1);
+    expect($data['alerts_by_alert_type']['new_student'])->toBeInt();
+});
+
 it('checks the API returns Groups', function () {
     $randomRecords = random_int(1, 10);
 
@@ -355,6 +399,29 @@ it('checks the API returns Resource Hub Articles', function () {
     expect($data['resource_hub_articles'])->toBe($randomRecords);
 });
 
+it('checks the API returns Resource Hub Articles Grouped by Category', function () {
+    $categoryA = ResourceHubCategory::factory()->create(['name' => 'Category A']);
+    $categoryB = ResourceHubCategory::factory()->create(['name' => 'Category B']);
+
+    ResourceHubArticle::factory()->count(2)->create([
+        'category_id' => $categoryA->id,
+    ]);
+
+    ResourceHubArticle::factory()->count(3)->create([
+        'category_id' => $categoryB->id,
+    ]);
+
+    $response = get(route('utilization-metrics'));
+
+    $data = $response->json('data');
+
+    $response->assertStatus(200);
+
+    expect($data['resource_hub_articles_by_category'])->toBeArray();
+    expect($data['resource_hub_articles_by_category']['Category A'])->toBe(2);
+    expect($data['resource_hub_articles_by_category']['Category B'])->toBe(3);
+});
+
 it('checks the API returns Events Created', function () {
     $randomRecords = random_int(1, 10);
 
@@ -370,6 +437,69 @@ it('checks the API returns Events Created', function () {
     $response->assertStatus(200);
 
     expect($data['events_created'])->toBe($randomRecords);
+});
+
+it('checks the API returns Group Appointments', function () {
+    $randomRecords = random_int(1, 10);
+
+    BookingGroupAppointment::factory()->count($randomRecords)->create();
+
+    $response = get(route('utilization-metrics'));
+
+    $data = $response->json('data');
+
+    $response->assertStatus(200);
+
+    expect($data['group_appointments'])->toBe($randomRecords);
+});
+
+it('checks the API returns Personal Appointments', function () {
+    $randomRecords = random_int(1, 10);
+
+    $mockDriver = Mockery::mock(CalendarInterface::class);
+    /** @phpstan-ignore method.notFound */
+    $mockDriver->shouldReceive('createEvent')->andReturnUsing(function (CalendarEvent $event) {
+        $event->updateQuietly([
+            'provider_id' => 'mock-provider-id',
+            'provider_uid' => 'mock-provider-uid',
+        ]);
+    });
+    $mockDriver->shouldReceive('updateEvent')->andReturn(null);
+    $mockDriver->shouldReceive('deleteEvent')->andReturn(null);
+
+    $mockManager = Mockery::mock(CalendarManager::class, function (MockInterface $mock) use ($mockDriver) {
+        $mock->shouldReceive('driver')->andReturn($mockDriver);
+    });
+
+    app()->instance(CalendarManager::class, $mockManager);
+
+    $user = User::factory()->create();
+    $calendar = Calendar::factory()->for($user)->create();
+
+    actingAs($user);
+
+    CalendarEvent::factory()->count($randomRecords)->create([
+        'calendar_id' => $calendar->id,
+    ]);
+
+    CalendarEvent::factory()->create([
+        'calendar_id' => $calendar->id,
+    ]);
+
+    $otherUser = User::factory()->create();
+    $otherCalendar = Calendar::factory()->for($otherUser)->create();
+
+    CalendarEvent::factory()->create([
+        'calendar_id' => $otherCalendar->id,
+    ]);
+
+    $response = get(route('utilization-metrics'));
+
+    $data = $response->json('data');
+
+    $response->assertStatus(200);
+
+    expect($data['personal_appointments'])->toBe($randomRecords + 2);
 });
 
 it('checks the API returns Forms Created', function () {
