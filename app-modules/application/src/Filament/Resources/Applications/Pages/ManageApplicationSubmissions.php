@@ -42,13 +42,10 @@ use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use App\Features\ArchiveSubmissionsFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
@@ -167,12 +164,10 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                         'student' => 'Student',
                         'prospect' => 'Prospect',
                     ]),
-                ...(ArchiveSubmissionsFeature::active() ? [
-                    Filter::make('withoutArchived')
-                        ->label('Without archived')
-                        ->query(fn (Builder $query) => $query->withoutArchived()) // @phpstan-ignore method.notFound
-                        ->default(),
-                ] : []),
+                Filter::make('withoutArchived')
+                    ->label('Without archived')
+                    ->query(fn (Builder $query) => $query->withoutArchived()) // @phpstan-ignore method.notFound
+                    ->default(),
             ])
             ->headerActions([
                 Action::make('export')
@@ -224,29 +219,25 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                         fn (ApplicationSubmission $record) => view('application::submission', ['submission' => $record])
                     )
                     ->extraModalFooterActions(ApplicationAdmissionActions::get()),
-                ...(ArchiveSubmissionsFeature::active() ? [
-                    Action::make('archive')
-                        ->icon('heroicon-o-archive-box')
-                        ->color('warning')
-                        ->requiresConfirmation()
-                        ->modalHeading('Archive Submission')
-                        ->modalSubmitActionLabel('Archive')
-                        ->authorize(fn (ApplicationSubmission $record): bool => auth()->user()->can('archive', $record))
-                        ->action(function (ApplicationSubmission $record) use ($owner): void {
-                            $record->archive();
+                Action::make('archive')
+                    ->icon('heroicon-o-archive-box')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalHeading('Archive Submission')
+                    ->modalSubmitActionLabel('Archive')
+                    ->authorize(fn (ApplicationSubmission $record): bool => auth()->user()->can('archive', $record))
+                    ->action(function (ApplicationSubmission $record) use ($owner): void {
+                        $record->archive();
 
-                            Cache::tags('{application-submission-count}')
-                                ->forget("application-submission-count-{$owner->root_id}");
+                        Cache::tags('{application-submission-count}')
+                            ->forget("application-submission-count-{$owner->root_id}");
 
-                            Notification::make()
-                                ->title('Submission archived')
-                                ->success()
-                                ->send();
-                        })
-                        ->hidden(fn (ApplicationSubmission $record): bool => $record->isArchived()),
-                ] : [
-                    DeleteAction::make(),
-                ]),
+                        Notification::make()
+                            ->title('Submission archived')
+                            ->success()
+                            ->send();
+                    })
+                    ->hidden(fn (ApplicationSubmission $record): bool => $record->isArchived()),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
@@ -260,37 +251,32 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
 
                             return Excel::download(new ApplicationSubmissionExport($records), $filename);
                         }),
-                    ...(ArchiveSubmissionsFeature::active() ? [
-                        BulkAction::make('archive')
-                            ->label('Archive')
-                            ->icon('heroicon-o-archive-box')
-                            ->color('warning')
-                            ->requiresConfirmation()
-                            ->modalHeading('Archive Submissions')
-                            ->modalSubmitActionLabel('Archive')
-                            ->authorize(fn () => auth()->user()->can('deleteAny', ApplicationSubmission::class))
-                            ->action(function (Collection $records) use ($owner): void {
-                                /** @phpstan-ignore argument.type */
-                                $records->each(function (ApplicationSubmission $record): void {
-                                    if ($record->isArchived()) {
-                                        return;
-                                    }
+                    BulkAction::make('archive')
+                        ->label('Archive')
+                        ->icon('heroicon-o-archive-box')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->modalHeading('Archive Submissions')
+                        ->modalSubmitActionLabel('Archive')
+                        ->authorize(fn () => auth()->user()->can('deleteAny', ApplicationSubmission::class))
+                        ->action(function (Collection $records) use ($owner): void {
+                            /** @phpstan-ignore argument.type */
+                            $records->each(function (ApplicationSubmission $record): void {
+                                if ($record->isArchived()) {
+                                    return;
+                                }
 
-                                    $record->archive();
-                                });
+                                $record->archive();
+                            });
 
-                                Cache::tags('{application-submission-count}')
-                                    ->forget("application-submission-count-{$owner->root_id}");
+                            Cache::tags('{application-submission-count}')
+                                ->forget("application-submission-count-{$owner->root_id}");
 
-                                Notification::make()
-                                    ->title('Submissions archived')
-                                    ->success()
-                                    ->send();
-                            }),
-                    ] : [
-                        DeleteBulkAction::make()
-                            ->authorizeIndividualRecords('delete'),
-                    ]),
+                            Notification::make()
+                                ->title('Submissions archived')
+                                ->success()
+                                ->send();
+                        }),
                 ]),
             ]);
     }
@@ -312,7 +298,7 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                             'submissible',
                             fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $ownerRecord->root_id),
                         )
-                        ->when(ArchiveSubmissionsFeature::active(), fn (Builder $query) => $query->withoutArchived())
+                        ->withoutArchived()
                         ->count();
                 },
             );
