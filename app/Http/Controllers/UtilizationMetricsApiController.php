@@ -39,6 +39,8 @@ namespace App\Http\Controllers;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptUse;
+use AdvisingApp\Alert\Models\AlertConfiguration;
+use AdvisingApp\Alert\Presets\AlertPreset;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
@@ -46,6 +48,8 @@ use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\SmsMessage;
@@ -53,6 +57,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Models\TrackedEventCount;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Survey\Models\SurveySubmission;
@@ -79,6 +84,27 @@ class UtilizationMetricsApiController extends Controller
             ->whereBetween('created_at', [$resetWindow['start'], $resetWindow['end']])
             ->sum('quota_usage');
 
+        $alertsByAlertType = collect(AlertPreset::cases())
+            ->mapWithKeys(fn (AlertPreset $preset): array => [$preset->value => 0])
+            ->replace(
+                AlertConfiguration::query()
+                    ->selectRaw('alert_configurations.preset, COUNT(student_alerts.sisid) AS alert_count')
+                    ->leftJoin('student_alerts', 'student_alerts.alert_configuration_id', '=', 'alert_configurations.id')
+                    ->groupBy('alert_configurations.preset')
+                    ->pluck('alert_count', 'alert_configurations.preset')
+                    ->map(fn (int|string $count): int => (int) $count)
+                    ->all()
+            )
+            ->all();
+
+        $resourceHubArticlesByCategory = ResourceHubCategory::query()
+            ->leftJoin('resource_hub_articles', 'resource_hub_articles.category_id', '=', 'resource_hub_categories.id')
+            ->selectRaw('resource_hub_categories.name, COUNT(resource_hub_articles.id) AS article_count')
+            ->groupBy('resource_hub_categories.id', 'resource_hub_categories.name')
+            ->pluck('article_count', 'resource_hub_categories.name')
+            ->map(fn (int|string $count): int => (int) $count)
+            ->all();
+
         try {
             return response()->json([
                 'data' => [
@@ -99,10 +125,14 @@ class UtilizationMetricsApiController extends Controller
                     'groups' => Group::count(),
                     'resource_hub_articles' => ResourceHubArticle::count(),
                     'events_created' => Event::count(),
+                    'group_appointments' => BookingGroupAppointment::count(),
+                    'personal_appointments' => CalendarEvent::count(),
                     'forms_created' => Form::count(),
                     'forms_submitted' => FormSubmission::count(),
                     'surveys_created' => Survey::count(),
                     'surveys_submitted' => SurveySubmission::count(),
+                    'alerts_by_alert_type' => $alertsByAlertType,
+                    'resource_hub_articles_by_category' => $resourceHubArticlesByCategory,
                     'emails' => $currentQuotaUsageOfEmail . '/' . $licenseSettings->data->limits->emails,
                     'text_messages' => $currentQuotaUsageOfSms . '/' . $licenseSettings->data->limits->sms,
                     'messages_reset' => $licenseSettings->data->limits->resetDate,
