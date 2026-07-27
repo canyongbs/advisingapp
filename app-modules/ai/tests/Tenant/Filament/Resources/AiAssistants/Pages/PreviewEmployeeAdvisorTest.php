@@ -39,7 +39,6 @@ use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\PreviewEmployeeAdvisor;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Authorization\Enums\LicenseType;
-use App\Features\EmployeeAdvisorPreviewFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
@@ -50,8 +49,6 @@ beforeEach(function () {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->employeeAdvisors = true;
     $settings->save();
-
-    EmployeeAdvisorPreviewFeature::activate();
 });
 
 test('Preview Employee Advisor is gated with proper access control', function () {
