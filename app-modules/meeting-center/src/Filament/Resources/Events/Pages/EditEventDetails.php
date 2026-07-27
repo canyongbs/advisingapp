@@ -41,7 +41,6 @@ use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
-use App\Features\EventArchivingFeature;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Actions\DeleteAction;
@@ -127,9 +126,8 @@ class EditEventDetails extends EditRecord
 
     protected function getHeaderActions(): array
     {
-        return EventArchivingFeature::active() ? [
+        return [
             ArchiveAction::make(),
-        ] : [
             DeleteAction::make()
                 ->hidden(function (): bool {
                     /** @var Event $record */

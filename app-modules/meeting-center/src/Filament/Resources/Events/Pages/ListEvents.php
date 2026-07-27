@@ -39,12 +39,10 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 use AdvisingApp\MeetingCenter\Actions\DuplicateEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Models\Event;
-use App\Features\EventArchivingFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use CanyonGBS\Common\Filament\Actions\ArchiveBulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
@@ -129,10 +127,7 @@ class ListEvents extends ListRecords
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    ...(EventArchivingFeature::active() ? [
-                        ArchiveBulkAction::make(),
-                    ] : [DeleteBulkAction::make()
-                        ->authorizeIndividualRecords('delete')]),
+                    ArchiveBulkAction::make(),
                 ]),
             ])
             ->defaultSort('starts_at');
