@@ -102,3 +102,58 @@ it('shows interaction options only for campaign population model type when editi
             return true;
         });
 });
+
+it('shows correct interaction options when creating campaign with prospect population group', function () {
+    asSuperAdmin();
+
+    $prospectGroup = Group::factory()->state(['model' => GroupModel::Prospect])->create();
+
+    $studentInitiative = InteractionInitiative::factory()->create(['interactable_type' => InteractableType::Student]);
+    $prospectInitiative = InteractionInitiative::factory()->create(['interactable_type' => InteractableType::Prospect]);
+    $studentDriver = InteractionDriver::factory()->create(['interactable_type' => InteractableType::Student]);
+    $prospectDriver = InteractionDriver::factory()->create(['interactable_type' => InteractableType::Prospect]);
+
+    /** @var CampaignAction $action */
+    $action = CampaignAction::factory()
+        ->for(
+            Campaign::factory()
+                ->for(User::factory()->licensed(LicenseType::cases()), 'createdBy')
+                ->for($prospectGroup, 'group')
+                ->create(),
+            'campaign'
+        )
+        ->create([
+            'type' => CampaignActionType::Interaction,
+            'execute_at' => now()->addDay(),
+            'data' => [
+                'interaction_initiative_id' => $prospectInitiative->getKey(),
+                'interaction_driver_id' => $prospectDriver->getKey(),
+                'start_datetime' => now()->toDateTimeString(),
+                'end_datetime' => now()->addHour()->toDateTimeString(),
+                'subject' => 'Test subject',
+                'description' => 'Test description',
+            ],
+        ]);
+
+    livewire(CampaignActionsRelationManager::class, [
+        'ownerRecord' => $action->campaign,
+        'pageClass' => ViewCampaign::class,
+    ])
+        ->mountTableAction('edit', record: $action->getKey())
+        ->assertFormFieldExists('data.interaction_initiative_id', checkFieldUsing: function (Select $field) use ($studentInitiative, $prospectInitiative) {
+            $optionKeys = array_keys($field->getOptions());
+
+            expect($optionKeys)->toContain($prospectInitiative->getKey())
+                ->and($optionKeys)->not->toContain($studentInitiative->getKey());
+
+            return true;
+        })
+        ->assertFormFieldExists('data.interaction_driver_id', checkFieldUsing: function (Select $field) use ($studentDriver, $prospectDriver) {
+            $optionKeys = array_keys($field->getOptions());
+
+            expect($optionKeys)->toContain($prospectDriver->getKey())
+                ->and($optionKeys)->not->toContain($studentDriver->getKey());
+
+            return true;
+        });
+});

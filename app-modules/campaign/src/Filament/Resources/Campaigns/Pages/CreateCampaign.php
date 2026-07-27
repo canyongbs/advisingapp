@@ -50,6 +50,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ViewField;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -113,7 +114,11 @@ class CreateCampaign extends CreateRecord
                                 ->pluck('name', 'id');
                         })
                         ->searchable()
-                        ->required(),
+                        ->required()
+                        ->live()
+                        ->afterStateUpdated(function (Set $set) {
+                            $set('actions', []);
+                        }),
                 ]),
             Step::make('Define Journey')
                 ->schema([
