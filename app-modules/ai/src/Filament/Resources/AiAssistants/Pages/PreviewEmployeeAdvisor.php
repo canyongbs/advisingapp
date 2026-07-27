@@ -39,7 +39,6 @@ namespace AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\AiAssistantResource;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiThread;
-use App\Features\EmployeeAdvisorPreviewFeature;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Locked;
@@ -64,15 +63,11 @@ class PreviewEmployeeAdvisor extends ViewRecord
 
     public static function canAccess(array $parameters = []): bool
     {
-        return EmployeeAdvisorPreviewFeature::active() && parent::canAccess($parameters);
+        return parent::canAccess($parameters);
     }
 
     public function mount(int | string $record): void
     {
-        if (! EmployeeAdvisorPreviewFeature::active()) {
-            abort(403);
-        }
-
         parent::mount($record);
 
         /** @var AiAssistant $assistant */
