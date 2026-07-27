@@ -61,11 +61,6 @@ class PreviewEmployeeAdvisor extends ViewRecord
     #[Locked]
     public ?AiThread $thread = null;
 
-    public static function canAccess(array $parameters = []): bool
-    {
-        return parent::canAccess($parameters);
-    }
-
     public function mount(int | string $record): void
     {
         parent::mount($record);
