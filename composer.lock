@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e057a7bab1a0388aff9f17b6f7930736",
+    "content-hash": "cb22832493f697b13161d1223e281bbf",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -2104,16 +2104,16 @@
         },
         {
             "name": "canyongbs/common",
-            "version": "2.31.1",
+            "version": "2.32.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/common.git",
-                "reference": "24461b1ab17213c394832641181286f7ab89209d"
+                "reference": "027e01eafd312d3eb3d1a0bd47c7f05b6ac65111"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/common/zipball/24461b1ab17213c394832641181286f7ab89209d",
-                "reference": "24461b1ab17213c394832641181286f7ab89209d",
+                "url": "https://api.github.com/repos/canyongbs/common/zipball/027e01eafd312d3eb3d1a0bd47c7f05b6ac65111",
+                "reference": "027e01eafd312d3eb3d1a0bd47c7f05b6ac65111",
                 "shasum": ""
             },
             "require": {
@@ -2166,9 +2166,9 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/common/issues",
-                "source": "https://github.com/canyongbs/common/tree/2.31.1"
+                "source": "https://github.com/canyongbs/common/tree/2.32.0"
             },
-            "time": "2026-07-22T08:18:16+00:00"
+            "time": "2026-07-22T16:38:32+00:00"
         },
         {
             "name": "canyongbs/model-state-machine",

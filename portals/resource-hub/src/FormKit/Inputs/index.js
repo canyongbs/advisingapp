@@ -1,4 +1,4 @@
-<!--
+/*
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
@@ -30,48 +30,12 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
--->
-<script setup>
-    import LoginForm from '@common/portal/login/LoginForm.vue';
-    import { FormKit } from '@formkit/vue';
+*/
+import OneTimePassword from '@common/portal/login/OneTimePassword.vue';
+import { createInput } from '@formkit/vue';
 
-    const authentication = defineModel('authentication', {
-        type: Object,
-        required: true,
-    });
-
-    defineProps({
-        requiresAuthentication: {
-            type: Boolean,
-            required: true,
-        },
-        headerLogo: {
-            type: String,
-            required: true,
-        },
-        footerLogo: {
-            type: String,
-            required: true,
-        },
-        appName: {
-            type: String,
-            required: true,
-        },
-    });
-
-    const emit = defineEmits(['authenticate', 'cancel']);
-</script>
-
-<template>
-    <LoginForm
-        v-model:authentication="authentication"
-        title="Login to Resource Hub"
-        :header-logo="headerLogo"
-        :footer-logo="footerLogo"
-        :app-name="appName"
-        :requires-authentication="requiresAuthentication"
-        :form-kit="FormKit"
-        @authenticate="(...args) => emit('authenticate', ...args)"
-        @cancel="emit('cancel')"
-    />
-</template>
+export default {
+    otp: createInput(OneTimePassword, {
+        props: ['digits'],
+    }),
+};

@@ -36,8 +36,10 @@
 
 namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ResourceHubPortalLogoutController extends Controller
 {
@@ -52,6 +54,9 @@ class ResourceHubPortalLogoutController extends Controller
         }
 
         $user->tokens()->where('name', 'resource-hub-portal-access-token')->delete();
+
+        $guard = $user instanceof Student ? 'student' : 'prospect';
+        Auth::guard($guard)->logout();
 
         return response()->json([
             'success' => true,
