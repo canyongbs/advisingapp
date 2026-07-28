@@ -37,16 +37,11 @@
 namespace AdvisingApp\MeetingCenter\Observers;
 
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
-use App\Features\EventVersioningFeature;
 
 class EventRegistrationFormObserver
 {
     public function creating(EventRegistrationForm $form): void
     {
-        if (! EventVersioningFeature::active()) {
-            return;
-        }
-
         if ($form->getAttribute('root_id') === null) {
             $form->root_id = $form->id;
         }
