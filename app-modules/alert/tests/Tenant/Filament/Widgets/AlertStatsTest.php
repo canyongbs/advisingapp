@@ -442,3 +442,87 @@ it('filters alerts by population group', function () {
         ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
         ->and($stats[0]->getValue())->toBe((string) $inGroupCount);
 });
+
+it('updates alert stats reactively when population filter changes', function () {
+    $firstGroupCount = fake()->numberBetween(2, 4);
+    $secondGroupCount = fake()->numberBetween(2, 4);
+
+    $firstGroup = Group::factory()
+        ->state([
+            'model' => GroupModel::Student,
+            'filters' => [
+                'queryBuilder' => [
+                    'rules' => [
+                        'C0Cy' => [
+                            'type' => 'last',
+                            'data' => [
+                                'operator' => 'contains',
+                                'settings' => [
+                                    'text' => 'Smith',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ])
+        ->create();
+
+    $secondGroup = Group::factory()
+        ->state([
+            'model' => GroupModel::Student,
+            'filters' => [
+                'queryBuilder' => [
+                    'rules' => [
+                        'C0Cy' => [
+                            'type' => 'last',
+                            'data' => [
+                                'operator' => 'contains',
+                                'settings' => [
+                                    'text' => 'Jones',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ])
+        ->create();
+
+    $alertConfig = AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::FirstGenerationStudent])
+        ->enabled()
+        ->create();
+
+    Student::factory()
+        ->count($firstGroupCount)
+        ->state(['last' => 'Smith', 'firstgen' => true])
+        ->create();
+
+    Student::factory()
+        ->count($secondGroupCount)
+        ->state(['last' => 'Jones', 'firstgen' => true])
+        ->create();
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    $widget = new AlertStats();
+
+    $widget->pageFilters = ['population' => ['type' => 'saved', 'groupId' => $firstGroup->getKey()]];
+    $firstStats = $widget->getStats();
+
+    expect($firstStats)->toHaveCount(1)
+        ->and($firstStats[0]->getValue())->toBe((string) $firstGroupCount);
+
+    $widget->pageFilters = ['population' => ['type' => 'saved', 'groupId' => $secondGroup->getKey()]];
+    $secondStats = $widget->getStats();
+
+    expect($secondStats)->toHaveCount(1)
+        ->and($secondStats[0]->getValue())->toBe((string) $secondGroupCount);
+
+    $widget->pageFilters = [];
+    $allStats = $widget->getStats();
+
+    expect($allStats)->toHaveCount(1)
+        ->and((int) str_replace(',', '', $allStats[0]->getValue()))->toBe($firstGroupCount + $secondGroupCount);
+});
