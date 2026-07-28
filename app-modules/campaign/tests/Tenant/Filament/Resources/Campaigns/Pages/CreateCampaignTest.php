@@ -39,50 +39,60 @@ namespace AdvisingApp\Campaign\Tests\Tenant\Filament\Resources\Campaigns\Pages;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\CreateCampaign;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
-use App\Models\User;
+use AdvisingApp\Interaction\Enums\InteractableType;
+use AdvisingApp\Interaction\Models\InteractionDriver;
+use AdvisingApp\Interaction\Models\InteractionInitiative;
+use AdvisingApp\Interaction\Models\InteractionOutcome;
+use AdvisingApp\Interaction\Models\InteractionRelation;
+use AdvisingApp\Interaction\Models\InteractionStatus;
+use AdvisingApp\Interaction\Models\InteractionType;
 
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-it('clears journey steps when population group is changed', function () {
+beforeEach(function () {
     asSuperAdmin();
+});
 
-    // Create groups owned by the current user
-    $studentGroup = Group::factory()
-        ->for(User::factory(), 'user')
-        ->state(['model' => GroupModel::Student])
-        ->create();
-
-    $prospectGroup = Group::factory()
-        ->for(User::factory(), 'user')
-        ->state(['model' => GroupModel::Prospect])
-        ->create();
-
-    // Make groups accessible by making the current user owner
-    $studentGroup->update(['user_id' => auth()->id()]);
-    $prospectGroup->update(['user_id' => auth()->id()]);
+it('clears journey steps when the population group is changed', function (GroupModel $newPopulationModel) {
+    $studentGroup = Group::factory()->create(['model' => GroupModel::Student, 'user_id' => auth()->id()]);
+    $newGroup = Group::factory()->create(['model' => $newPopulationModel, 'user_id' => auth()->id()]);
 
     livewire(CreateCampaign::class)
         ->fillForm([
             'name' => 'Test Campaign',
-            'segment_id' => $studentGroup->id,
+            'segment_id' => $studentGroup->getKey(),
+            'actions' => [
+                'step-one' => [
+                    'type' => 'interaction',
+                    'data' => [
+                        'interaction_initiative_id' => InteractionInitiative::factory()->create(['interactable_type' => InteractableType::Student])->getKey(),
+                        'interaction_driver_id' => InteractionDriver::factory()->create(['interactable_type' => InteractableType::Student])->getKey(),
+                        'interaction_outcome_id' => InteractionOutcome::factory()->create(['interactable_type' => InteractableType::Student])->getKey(),
+                        'interaction_relation_id' => InteractionRelation::factory()->create(['interactable_type' => InteractableType::Student])->getKey(),
+                        'interaction_status_id' => InteractionStatus::factory()->create(['interactable_type' => InteractableType::Student])->getKey(),
+                        'interaction_type_id' => InteractionType::factory()->create(['interactable_type' => InteractableType::Student])->getKey(),
+                        'start_datetime' => now()->toDateTimeString(),
+                        'end_datetime' => now()->addHour()->toDateTimeString(),
+                        'subject' => 'Test subject',
+                        'description' => 'Test description',
+                        'execute_at' => now()->addDay()->toDateTimeString(),
+                    ],
+                ],
+            ],
         ])
-        ->assertFormSet([
-            'segment_id' => $studentGroup->id,
-        ])
-        // Change to prospect group — actions should be cleared
-        ->fillForm([
-            'segment_id' => $prospectGroup->id,
-        ])
-        ->assertFormSet([
-            'segment_id' => $prospectGroup->id,
+        ->assertSchemaStateSet(['actions.step-one.data.subject' => 'Test subject'])
+        ->fillForm(['segment_id' => $newGroup->getKey()])
+        ->assertSchemaStateSet([
+            'segment_id' => $newGroup->getKey(),
             'actions' => [],
         ]);
-});
+})->with([
+    'to a group of a different population model type' => GroupModel::Prospect,
+    'to another group of the same population model type' => GroupModel::Student,
+]);
 
 it('requires population group on campaign creation', function () {
-    asSuperAdmin();
-
     livewire(CreateCampaign::class)
         ->fillForm([
             'name' => 'Test Campaign',
