@@ -42,14 +42,11 @@ use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Tables\Filters\FormSubmissionStatusFilter;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
-use App\Features\ArchiveSubmissionsFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Carbon\CarbonInterface;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
@@ -117,12 +114,10 @@ class ManageFormSubmissions extends ManageRelatedRecords
                         'student' => 'Student',
                         'prospect' => 'Prospect',
                     ]),
-                ...(ArchiveSubmissionsFeature::active() ? [
-                    Filter::make('withoutArchived')
-                        ->label('Without archived')
-                        ->query(fn (Builder $query) => $query->withoutArchived()) // @phpstan-ignore method.notFound
-                        ->default(),
-                ] : []),
+                Filter::make('withoutArchived')
+                    ->label('Without archived')
+                    ->query(fn (Builder $query) => $query->withoutArchived()) // @phpstan-ignore method.notFound
+                    ->default(),
             ])
             ->headerActions([
                 Action::make('export')
@@ -157,29 +152,25 @@ class ManageFormSubmissions extends ManageRelatedRecords
                     ] : null)
                     ->modalContent(fn (FormSubmission $record) => view('form::submission', ['submission' => $record]))
                     ->visible(fn (FormSubmission $record) => $record->submitted_at),
-                ...(ArchiveSubmissionsFeature::active() ? [
-                    Action::make('archive')
-                        ->icon('heroicon-o-archive-box')
-                        ->color('warning')
-                        ->requiresConfirmation()
-                        ->modalHeading('Archive Submission')
-                        ->modalSubmitActionLabel('Archive')
-                        ->authorize(fn (FormSubmission $record): bool => auth()->user()->can('archive', $record))
-                        ->action(function (FormSubmission $record) use ($owner): void {
-                            $record->archive();
-                            Cache::tags('{form-submission-count}')
-                                ->forget(
-                                    "form-submission-count-{$owner->root_id}"
-                                );
-                            Notification::make()
-                                ->title('Submission archived')
-                                ->success()
-                                ->send();
-                        })
-                        ->hidden(fn (FormSubmission $record): bool => $record->isArchived()),
-                ] : [
-                    DeleteAction::make(),
-                ]),
+                Action::make('archive')
+                    ->icon('heroicon-o-archive-box')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalHeading('Archive Submission')
+                    ->modalSubmitActionLabel('Archive')
+                    ->authorize(fn (FormSubmission $record): bool => auth()->user()->can('archive', $record))
+                    ->action(function (FormSubmission $record) use ($owner): void {
+                        $record->archive();
+                        Cache::tags('{form-submission-count}')
+                            ->forget(
+                                "form-submission-count-{$owner->root_id}"
+                            );
+                        Notification::make()
+                            ->title('Submission archived')
+                            ->success()
+                            ->send();
+                    })
+                    ->hidden(fn (FormSubmission $record): bool => $record->isArchived()),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
@@ -193,38 +184,33 @@ class ManageFormSubmissions extends ManageRelatedRecords
 
                             return Excel::download(new FormSubmissionExport($records), $filename);
                         }),
-                    ...(ArchiveSubmissionsFeature::active() ? [
-                        BulkAction::make('archive')
-                            ->label('Archive')
-                            ->icon('heroicon-o-archive-box')
-                            ->color('warning')
-                            ->requiresConfirmation()
-                            ->modalHeading('Archive Submissions')
-                            ->modalSubmitActionLabel('Archive')
-                            ->authorize(fn () => auth()->user()->can('deleteAny', FormSubmission::class))
-                            ->action(function (Collection $records) use ($owner): void {
-                                /** @phpstan-ignore argument.type */
-                                $records->each(function (FormSubmission $record): void {
-                                    if ($record->isArchived()) {
-                                        return;
-                                    }
+                    BulkAction::make('archive')
+                        ->label('Archive')
+                        ->icon('heroicon-o-archive-box')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->modalHeading('Archive Submissions')
+                        ->modalSubmitActionLabel('Archive')
+                        ->authorize(fn () => auth()->user()->can('deleteAny', FormSubmission::class))
+                        ->action(function (Collection $records) use ($owner): void {
+                            /** @phpstan-ignore argument.type */
+                            $records->each(function (FormSubmission $record): void {
+                                if ($record->isArchived()) {
+                                    return;
+                                }
 
-                                    $record->archive();
-                                });
-                                Cache::tags('{form-submission-count}')
-                                    ->forget(
-                                        "form-submission-count-{$owner->root_id}"
-                                    );
+                                $record->archive();
+                            });
+                            Cache::tags('{form-submission-count}')
+                                ->forget(
+                                    "form-submission-count-{$owner->root_id}"
+                                );
 
-                                Notification::make()
-                                    ->title('Submissions archived')
-                                    ->success()
-                                    ->send();
-                            }),
-                    ] : [
-                        DeleteBulkAction::make()
-                            ->authorizeIndividualRecords('delete'),
-                    ]),
+                            Notification::make()
+                                ->title('Submissions archived')
+                                ->success()
+                                ->send();
+                        }),
                 ]),
             ]);
     }
@@ -245,7 +231,7 @@ class ManageFormSubmissions extends ManageRelatedRecords
                         ->whereHas(
                             'submissible',
                             fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $ownerRecord->root_id),
-                        )->when(ArchiveSubmissionsFeature::active(), fn (Builder $query) => $query->withoutArchived());
+                        )->withoutArchived();
 
                     return $navQuery->count();
                 },
