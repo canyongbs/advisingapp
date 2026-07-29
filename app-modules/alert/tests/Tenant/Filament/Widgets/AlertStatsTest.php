@@ -392,7 +392,7 @@ it('only shows enabled alert configurations', function () {
         ->and($stats[0]->getLabel())->toBe('No Alerts Configured');
 });
 
-it('filters alerts by population group', function () {
+it('calculates stats with population group filter applied', function () {
     $inGroupCount = fake()->numberBetween(2, 4);
     $outGroupCount = fake()->numberBetween(2, 4);
 
@@ -434,95 +434,39 @@ it('filters alerts by population group', function () {
 
     app(GenerateStudentAlertsView::class)->execute();
 
+    $totalCount = $inGroupCount + $outGroupCount;
+
+    // Test with no filter - should show all students with alerts
     $widget = new AlertStats();
+    $widget->pageFilters = [];
+    $unfileredStats = $widget->getStats();
+
+    expect($unfileredStats)->toHaveCount(1)
+        ->and($unfileredStats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
+        ->and((int) str_replace(',', '', $unfileredStats[0]->getValue()))->toBe($totalCount);
+
+    // Test with populationGroup filter format
     $widget->pageFilters = ['populationGroup' => $group->getKey()];
     $stats = $widget->getStats();
 
     expect($stats)->toHaveCount(1)
         ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
         ->and($stats[0]->getValue())->toBe((string) $inGroupCount);
-});
 
-it('updates alert stats reactively when population filter changes', function () {
-    $firstGroupCount = fake()->numberBetween(2, 4);
-    $secondGroupCount = fake()->numberBetween(2, 4);
+    // Test with population => ['type' => 'saved', ...] filter format
+    $widget->pageFilters = ['population' => ['type' => 'saved', 'groupId' => $group->getKey()]];
+    $stats = $widget->getStats();
 
-    $firstGroup = Group::factory()
-        ->state([
-            'model' => GroupModel::Student,
-            'filters' => [
-                'queryBuilder' => [
-                    'rules' => [
-                        'C0Cy' => [
-                            'type' => 'last',
-                            'data' => [
-                                'operator' => 'contains',
-                                'settings' => [
-                                    'text' => 'Smith',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ])
-        ->create();
+    expect($stats)->toHaveCount(1)
+        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
+        ->and($stats[0]->getValue())->toBe((string) $inGroupCount);
 
-    $secondGroup = Group::factory()
-        ->state([
-            'model' => GroupModel::Student,
-            'filters' => [
-                'queryBuilder' => [
-                    'rules' => [
-                        'C0Cy' => [
-                            'type' => 'last',
-                            'data' => [
-                                'operator' => 'contains',
-                                'settings' => [
-                                    'text' => 'Jones',
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-        ])
-        ->create();
-
-    $alertConfig = AlertConfiguration::factory()
-        ->state(['preset' => AlertPreset::FirstGenerationStudent])
-        ->enabled()
-        ->create();
-
-    Student::factory()
-        ->count($firstGroupCount)
-        ->state(['last' => 'Smith', 'firstgen' => true])
-        ->create();
-
-    Student::factory()
-        ->count($secondGroupCount)
-        ->state(['last' => 'Jones', 'firstgen' => true])
-        ->create();
-
-    app(GenerateStudentAlertsView::class)->execute();
-
-    $widget = new AlertStats();
-
-    $widget->pageFilters = ['population' => ['type' => 'saved', 'groupId' => $firstGroup->getKey()]];
-    $firstStats = $widget->getStats();
-
-    expect($firstStats)->toHaveCount(1)
-        ->and($firstStats[0]->getValue())->toBe((string) $firstGroupCount);
-
-    $widget->pageFilters = ['population' => ['type' => 'saved', 'groupId' => $secondGroup->getKey()]];
-    $secondStats = $widget->getStats();
-
-    expect($secondStats)->toHaveCount(1)
-        ->and($secondStats[0]->getValue())->toBe((string) $secondGroupCount);
-
+    // Test clearing the filter returns to original full count
     $widget->pageFilters = [];
-    $allStats = $widget->getStats();
+    $clearedStats = $widget->getStats();
 
-    expect($allStats)->toHaveCount(1)
-        ->and((int) str_replace(',', '', $allStats[0]->getValue()))->toBe($firstGroupCount + $secondGroupCount);
+    expect($clearedStats)->toHaveCount(1)
+        ->and($clearedStats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
+        ->and((int) str_replace(',', '', $clearedStats[0]->getValue()))->toBe($totalCount);
 });
+
