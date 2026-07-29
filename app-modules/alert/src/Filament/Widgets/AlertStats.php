@@ -43,7 +43,6 @@ use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Number;
-use Livewire\Attributes\Computed;
 
 /**
  * @property-read Stat[] $stats
@@ -55,27 +54,7 @@ class AlertStats extends StatsOverviewWidget
     /**
      * @return Stat[]
      */
-    #[Computed]
-    public function stats(): array
-    {
-        return $this->calculateStats();
-    }
-
-    /**
-     * @return Stat[]
-     */
     public function getStats(): array
-    {
-        return $this->calculateStats();
-    }
-
-    /**
-     * Calculate alert statistics for the current filter state.
-     * This method is testable and can be called directly in tests.
-     *
-     * @return Stat[]
-     */
-    protected function calculateStats(): array
     {
         $groupId = $this->getSelectedGroup();
 
