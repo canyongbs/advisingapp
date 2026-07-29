@@ -76,11 +76,15 @@ class ManageFormWorkflows extends ManageRelatedRecords
             ])
             ->recordActions([
                 EditAction::make()
-                    ->url(fn (Workflow $record) => WorkflowResource::getUrl('edit', [$record])),
+                    ->url(fn (Workflow $record): string => WorkflowResource::getUrl('edit', [
+                        'record' => $record,
+                    ])),
                 DeleteAction::make()
                     ->modalHeading(fn (Workflow $record) => 'Delete ' . $record->name),
             ])
-            ->recordUrl(fn (Workflow $record) => WorkflowResource::getUrl('edit', [$record]));
+            ->recordUrl(fn (Workflow $record): string => WorkflowResource::getUrl('edit', [
+                'record' => $record,
+            ]));
     }
 
     /**
@@ -120,7 +124,9 @@ class ManageFormWorkflows extends ManageRelatedRecords
                         throw $throw;
                     }
 
-                    redirect(WorkflowResource::getUrl('edit', [$workflow]));
+                    redirect(WorkflowResource::getUrl('edit', [
+                        'record' => $workflow,
+                    ]));
                 }),
         ];
     }

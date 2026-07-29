@@ -64,13 +64,13 @@ class EditWorkflow extends EditRecord
             $breadcrumbs = match ($record->workflowTrigger->related_type) {
                 app(Form::class)->getMorphClass() => [
                     FormResource::getUrl() => FormResource::getBreadcrumb(),
-                    FormResource::getUrl('edit', [$record->workflowTrigger->related_id]) => FormResource::getRecordTitle($related),
-                    FormResource::getUrl('manage-form-workflows', [$record->workflowTrigger->related_id]) => 'Manage Form Workflows',
+                    FormResource::getUrl('edit', ['record' => $record->workflowTrigger->related_id]) => FormResource::getRecordTitle($related),
+                    FormResource::getUrl('manage-form-workflows', ['record' => $record->workflowTrigger->related_id]) => 'Manage Form Workflows',
                 ],
                 app(Application::class)->getMorphClass() => [
                     ApplicationResource::getUrl() => ApplicationResource::getBreadcrumb(),
-                    ApplicationResource::getUrl('edit', [$record->workflowTrigger->related_id]) => ApplicationResource::getRecordTitle($related),
-                    ApplicationResource::getUrl('manage-application-workflows', [$record->workflowTrigger->related_id]) => 'Manage Application Workflows',
+                    ApplicationResource::getUrl('edit', ['record' => $record->workflowTrigger->related_id]) => ApplicationResource::getRecordTitle($related),
+                    ApplicationResource::getUrl('manage-application-workflows', ['record' => $record->workflowTrigger->related_id]) => 'Manage Application Workflows',
                 ],
                 default => [$resource::getUrl() => $resource::getBreadcrumb()],
             };
@@ -89,8 +89,8 @@ class EditWorkflow extends EditRecord
             DeleteAction::make()
                 ->successRedirectUrl(function (Workflow $record) {
                     return match ($record->workflowTrigger->related_type) {
-                        app(Form::class)->getMorphClass() => FormResource::getUrl('manage-form-workflows', [$record->workflowTrigger->related_id]),
-                        app(Application::class)->getMorphClass() => ApplicationResource::getUrl('manage-application-workflows', [$record->workflowTrigger->related_id]),
+                        app(Form::class)->getMorphClass() => FormResource::getUrl('manage-form-workflows', ['record' => $record->workflowTrigger->related_id]),
+                        app(Application::class)->getMorphClass() => ApplicationResource::getUrl('manage-application-workflows', ['record' => $record->workflowTrigger->related_id]),
                         default => route('filament.admin.pages.dashboard'),
                     };
                 }),

@@ -80,7 +80,7 @@ class WorkflowResource extends Resource
     public static function getRelations(): array
     {
         return [
-            WorkflowStepsRelationManager::class,
+            'workflowSteps' => WorkflowStepsRelationManager::class,
         ];
     }
 

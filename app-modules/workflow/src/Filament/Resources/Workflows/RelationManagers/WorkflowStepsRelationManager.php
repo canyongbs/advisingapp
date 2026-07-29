@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Workflow\Filament\Resources\Workflows\RelationManagers;
 
+use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowDetails;
@@ -67,6 +68,8 @@ class WorkflowStepsRelationManager extends RelationManager
     protected static string $relationship = 'workflowSteps';
 
     protected static ?string $title = 'Workflow Steps';
+
+    protected static ?string $relatedResource = FormResource::class;
 
     public function form(Schema $schema): Schema
     {
