@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Filament\Pages;
 
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use App\Features\Gpt56LunaFeature;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Forms\Components\Select;
@@ -368,6 +369,34 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                 TextInput::make('open_ai_gpt_54_nano_image_generation_deployment')
                                     ->label('Image generation model'),
                                 Select::make('open_ai_gpt_54_nano_applicable_features')
+                                    ->label('Applicability')
+                                    ->options(AiModelApplicabilityFeature::class)
+                                    ->multiple()
+                                    ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
+                            ]),
+                        Section::make('GPT 5.6 luna')
+                            ->collapsible()
+                            ->visible(Gpt56LunaFeature::active())
+                            ->schema([
+                                TextInput::make('open_ai_gpt_56_luna_model_name')
+                                    ->label('Model Name')
+                                    ->placeholder('Canyon 5.6 luna')
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->nullable(),
+                                TextInput::make('open_ai_gpt_56_luna_base_uri')
+                                    ->label('Base URI')
+                                    ->placeholder('https://example.openai.azure.com/openai')
+                                    ->url(),
+                                TextInput::make('open_ai_gpt_56_luna_api_key')
+                                    ->label('API Key')
+                                    ->password()
+                                    ->autocomplete(false),
+                                TextInput::make('open_ai_gpt_56_luna_model')
+                                    ->label('Model'),
+                                TextInput::make('open_ai_gpt_56_luna_image_generation_deployment')
+                                    ->label('Image generation model'),
+                                Select::make('open_ai_gpt_56_luna_applicable_features')
                                     ->label('Applicability')
                                     ->options(AiModelApplicabilityFeature::class)
                                     ->multiple()
