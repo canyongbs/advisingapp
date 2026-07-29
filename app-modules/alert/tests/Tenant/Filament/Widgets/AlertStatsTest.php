@@ -469,4 +469,3 @@ it('calculates stats with population group filter applied', function () {
         ->and($clearedStats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
         ->and((int) str_replace(',', '', $clearedStats[0]->getValue()))->toBe($totalCount);
 });
-
