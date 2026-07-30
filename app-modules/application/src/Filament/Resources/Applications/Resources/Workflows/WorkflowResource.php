@@ -56,6 +56,8 @@ class WorkflowResource extends Resource
 
     protected static ?string $slug = 'workflows';
 
+    protected static ?string $breadcrumb = 'Manage Application Workflows';
+
     public static function getParentResourceRegistration(): ?ParentResourceRegistration
     {
         return ApplicationResource::asParent(childResource: self::class)
