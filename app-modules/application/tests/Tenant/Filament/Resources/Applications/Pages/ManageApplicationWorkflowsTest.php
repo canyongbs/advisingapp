@@ -39,6 +39,7 @@ use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationWorkflows;
 use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\WorkflowResource;
+use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\Pages\EditWorkflow as ApplicationNestedEditWorkflow;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -347,12 +348,13 @@ test('workflow deletion succeeds with proper permissions', function () {
 
     actingAs($user);
 
-    livewire(EditWorkflow::class, [
+    livewire(ApplicationNestedEditWorkflow::class, [
         'record' => $workflow->getRouteKey(),
     ])
         ->assertActionExists(DeleteAction::class)
         ->assertActionEnabled(DeleteAction::class)
-        ->callAction(DeleteAction::class);
+        ->callAction(DeleteAction::class)
+        ->assertRedirected(ApplicationResource::getUrl('manage-application-workflows', ['record' => $application]));
 
     assertSoftDeleted($workflow);
 
@@ -444,7 +446,7 @@ test('manage application workflows page links to nested workflow edit route', fu
     $nestedEditUrl = WorkflowResource::getUrl('edit', [
         'application' => $application,
         'record' => $workflow,
-    ]);
+    ], shouldGuessMissingParameters: true);
 
     get(ApplicationResource::getUrl('manage-application-workflows', ['record' => $application]))
         ->assertOk()
@@ -474,10 +476,10 @@ test('nested application workflow edit route is scoped to owner application', fu
     get(WorkflowResource::getUrl('edit', [
         'application' => $ownerApplication,
         'record' => $workflow,
-    ]))->assertOk();
+    ], shouldGuessMissingParameters: true))->assertOk();
 
     get(WorkflowResource::getUrl('edit', [
         'application' => $otherApplication,
         'record' => $workflow,
-    ]))->assertNotFound();
+    ], shouldGuessMissingParameters: true))->assertNotFound();
 });

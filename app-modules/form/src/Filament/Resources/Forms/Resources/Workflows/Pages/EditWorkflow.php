@@ -36,10 +36,25 @@
 
 namespace AdvisingApp\Form\Filament\Resources\Forms\Resources\Workflows\Pages;
 
+use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Resources\Workflows\WorkflowResource;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\EditWorkflow as BaseEditWorkflow;
+use AdvisingApp\Workflow\Models\Workflow;
+use Filament\Actions\DeleteAction;
 
 class EditWorkflow extends BaseEditWorkflow
 {
     protected static string $resource = WorkflowResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            DeleteAction::make()
+                ->successRedirectUrl(function (Workflow $record) {
+                    return FormResource::getUrl('manage-form-workflows', [
+                        'record' => $record->workflowTrigger->related_id,
+                    ]);
+                }),
+        ];
+    }
 }

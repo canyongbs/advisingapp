@@ -36,66 +36,14 @@
 
 namespace AdvisingApp\Workflow\Filament\Resources\Workflows\Pages;
 
-use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
-use AdvisingApp\Application\Models\Application;
-use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
-use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\WorkflowResource;
 use AdvisingApp\Workflow\Models\Workflow;
-use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
 
 class EditWorkflow extends EditRecord
 {
     protected static string $resource = WorkflowResource::class;
-
-    public function getBreadcrumbs(): array
-    {
-        $resource = static::getResource();
-
-        $record = $this->getRecord();
-
-        assert($record instanceof Workflow);
-
-        if ($record->workflowTrigger->related_type && $record->workflowTrigger->related_id) {
-            $related = $record->workflowTrigger->related;
-
-            $breadcrumbs = match ($record->workflowTrigger->related_type) {
-                app(Form::class)->getMorphClass() => [
-                    FormResource::getUrl() => FormResource::getBreadcrumb(),
-                    FormResource::getUrl('edit', ['record' => $record->workflowTrigger->related_id]) => FormResource::getRecordTitle($related),
-                    FormResource::getUrl('manage-form-workflows', ['record' => $record->workflowTrigger->related_id]) => 'Manage Form Workflows',
-                ],
-                app(Application::class)->getMorphClass() => [
-                    ApplicationResource::getUrl() => ApplicationResource::getBreadcrumb(),
-                    ApplicationResource::getUrl('edit', ['record' => $record->workflowTrigger->related_id]) => ApplicationResource::getRecordTitle($related),
-                    ApplicationResource::getUrl('manage-application-workflows', ['record' => $record->workflowTrigger->related_id]) => 'Manage Application Workflows',
-                ],
-                default => [$resource::getUrl() => $resource::getBreadcrumb()],
-            };
-
-            $breadcrumbs[] = 'Edit';
-
-            return $breadcrumbs;
-        }
-
-        return parent::getBreadcrumbs();
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            DeleteAction::make()
-                ->successRedirectUrl(function (Workflow $record) {
-                    return match ($record->workflowTrigger->related_type) {
-                        app(Form::class)->getMorphClass() => FormResource::getUrl('manage-form-workflows', ['record' => $record->workflowTrigger->related_id]),
-                        app(Application::class)->getMorphClass() => ApplicationResource::getUrl('manage-application-workflows', ['record' => $record->workflowTrigger->related_id]),
-                        default => route('filament.admin.pages.dashboard'),
-                    };
-                }),
-        ];
-    }
 
     protected function mutateFormDataBeforeFill(array $data): array
     {

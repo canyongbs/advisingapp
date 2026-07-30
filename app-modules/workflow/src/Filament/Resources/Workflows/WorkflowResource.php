@@ -36,8 +36,6 @@
 
 namespace AdvisingApp\Workflow\Filament\Resources\Workflows;
 
-use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\EditWorkflow;
-use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\ListWorkflows;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\RelationManagers\WorkflowStepsRelationManager;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\Schemas\WorkflowForm;
 use AdvisingApp\Workflow\Models\Workflow;
@@ -59,14 +57,6 @@ class WorkflowResource extends Resource
     {
         return [
             'workflowSteps' => WorkflowStepsRelationManager::class,
-        ];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListWorkflows::route('/'),
-            'edit' => EditWorkflow::route('/{record}/edit'),
         ];
     }
 }

@@ -37,7 +37,8 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageFormWorkflows;
-use AdvisingApp\Form\Filament\Resources\Forms\Resources\Workflows\WorkflowResource as NestedFormWorkflowResource;
+use AdvisingApp\Form\Filament\Resources\Forms\Resources\Workflows\WorkflowResource as FormWorkflowResource;
+use AdvisingApp\Form\Filament\Resources\Forms\Resources\Workflows\Pages\EditWorkflow as FormNestedEditWorkflow;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\EditWorkflow;
@@ -306,12 +307,13 @@ test('form workflow deletion succeeds with proper permissions', function () {
 
     actingAs($user);
 
-    livewire(EditWorkflow::class, [
+    livewire(FormNestedEditWorkflow::class, [
         'record' => $workflow->getRouteKey(),
     ])
         ->assertActionExists(DeleteAction::class)
         ->assertActionEnabled(DeleteAction::class)
-        ->callAction(DeleteAction::class);
+        ->callAction(DeleteAction::class)
+        ->assertRedirected(FormResource::getUrl('manage-form-workflows', ['record' => $form]));
 
     assertSoftDeleted($workflow);
 
@@ -331,10 +333,10 @@ test('manage form workflows page links to nested workflow edit route', function 
         )
         ->create();
 
-    $nestedEditUrl = NestedFormWorkflowResource::getUrl('edit', [
+    $nestedEditUrl = FormWorkflowResource::getUrl('edit', [
         'form' => $form,
         'record' => $workflow,
-    ]);
+    ], shouldGuessMissingParameters: true);
 
     get(FormResource::getUrl('manage-form-workflows', ['record' => $form]))
         ->assertOk()
@@ -356,13 +358,13 @@ test('nested form workflow edit route is scoped to owner form', function () {
         )
         ->create();
 
-    get(NestedFormWorkflowResource::getUrl('edit', [
+    get(FormWorkflowResource::getUrl('edit', [
         'form' => $ownerForm,
         'record' => $workflow,
-    ]))->assertOk();
+    ], shouldGuessMissingParameters: true))->assertOk();
 
-    get(NestedFormWorkflowResource::getUrl('edit', [
+    get(FormWorkflowResource::getUrl('edit', [
         'form' => $otherForm,
         'record' => $workflow,
-    ]))->assertNotFound();
+    ], shouldGuessMissingParameters: true))->assertNotFound();
 });
