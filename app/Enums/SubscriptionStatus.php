@@ -55,6 +55,8 @@ enum SubscriptionStatus: string
 
     case Expired = 'expired';
 
+    case Renewed = 'renewed';
+
     case NotApplicable = 'not_applicable';
 
     /**
