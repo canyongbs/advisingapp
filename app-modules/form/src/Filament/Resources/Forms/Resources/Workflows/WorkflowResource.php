@@ -96,4 +96,15 @@ class WorkflowResource extends Resource
             'edit' => EditWorkflow::route('/{record}/edit'),
         ];
     }
+
+    public static function getIndexUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false): string
+    {
+        $record = $parameters['form'] ?? null;
+        unset($parameters['form']);
+
+        return FormResource::getUrl('manage-form-workflows', [
+            ...$parameters,
+            'record' => $record,
+        ], $isAbsolute, $panel, $tenant, $shouldGuessMissingParameters);
+    }
 }
