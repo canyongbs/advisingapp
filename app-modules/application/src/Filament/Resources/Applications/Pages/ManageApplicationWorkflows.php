@@ -142,11 +142,11 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
             ])
             ->recordActions([
                 EditAction::make()
-                    ->url(fn (Workflow $record) => WorkflowResource::getUrl('edit', ['record' => $record], shouldGuessMissingParameters: true)),
+                    ->url(fn (Workflow $record) => WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $record])),
                 DeleteAction::make()
                     ->modalHeading(fn (Workflow $record) => 'Delete ' . $record->name),
             ])
-            ->recordUrl(fn (Workflow $record) => WorkflowResource::getUrl('edit', ['record' => $record], shouldGuessMissingParameters: true));
+            ->recordUrl(fn (Workflow $record) => WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $record]));
     }
 
     /**
@@ -214,7 +214,7 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
                     throw $throw;
                 }
 
-                redirect(WorkflowResource::getUrl('edit', ['record' => $workflow], shouldGuessMissingParameters: true));
+                redirect(WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $workflow]));
             }),
         ];
     }

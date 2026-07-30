@@ -41,6 +41,7 @@ use AdvisingApp\Workflow\Filament\Resources\Workflows\Schemas\WorkflowForm;
 use AdvisingApp\Workflow\Models\Workflow;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
 
 class WorkflowResource extends Resource
 {
@@ -58,5 +59,10 @@ class WorkflowResource extends Resource
         return [
             'workflowSteps' => WorkflowStepsRelationManager::class,
         ];
+    }
+
+    public static function getIndexUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false): string
+    {
+        return '';
     }
 }

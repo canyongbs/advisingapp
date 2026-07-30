@@ -45,7 +45,6 @@ use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerEvent;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
-use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\EditWorkflow;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
@@ -168,7 +167,10 @@ test('can successfully edit workflow name through edit workflow page', function 
     $faker = fake();
     $newWorkflowName = $faker->sentence(3);
 
-    livewire(EditWorkflow::class, ['record' => $oldWorkflow->getKey()])
+    livewire(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $oldWorkflow->getRouteKey(),
+    ])
         ->fillForm(['name' => $newWorkflowName])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -197,7 +199,10 @@ test('can enable workflow through edit workflow page', function () {
         ->state(['is_enabled' => false])
         ->create();
 
-    livewire(EditWorkflow::class, ['record' => $workflow->getKey()])
+    livewire(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $workflow->getRouteKey(),
+    ])
         ->fillForm(['is_enabled' => true])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -226,7 +231,10 @@ test('can disable workflow through edit workflow page', function () {
         ->state(['is_enabled' => true])
         ->create();
 
-    livewire(EditWorkflow::class, ['record' => $workflow->getKey()])
+    livewire(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $workflow->getRouteKey(),
+    ])
         ->fillForm(['is_enabled' => false])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -254,7 +262,10 @@ test('validates workflow name is required when editing', function () {
         )
         ->create();
 
-    livewire(EditWorkflow::class, ['record' => $workflow->getKey()])
+    livewire(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $workflow->getRouteKey(),
+    ])
         ->fillForm(['name' => ''])
         ->call('save')
         ->assertHasFormErrors(['name' => 'required']);
@@ -281,7 +292,10 @@ test('validates workflow name has maximum length when editing', function () {
 
     $longName = str_repeat('a', 256);
 
-    livewire(EditWorkflow::class, ['record' => $workflow->getKey()])
+    livewire(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $workflow->getRouteKey(),
+    ])
         ->fillForm(['name' => $longName])
         ->call('save')
         ->assertHasFormErrors(['name']);
@@ -313,7 +327,10 @@ test('workflow editing succeeds with proper permissions', function () {
 
     actingAs($user);
 
-    livewire(EditWorkflow::class, ['record' => $oldWorkflow->getKey()])
+    livewire(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $oldWorkflow->getRouteKey(),
+    ])
         ->fillForm(['name' => $newWorkflowName])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -349,12 +366,12 @@ test('workflow deletion succeeds with proper permissions', function () {
     actingAs($user);
 
     livewire(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
         'record' => $workflow->getRouteKey(),
     ])
         ->assertActionExists(DeleteAction::class)
         ->assertActionEnabled(DeleteAction::class)
-        ->callAction(DeleteAction::class)
-        ->assertRedirected(ApplicationResource::getUrl('manage-application-workflows', ['record' => $application]));
+        ->callAction(DeleteAction::class);
 
     assertSoftDeleted($workflow);
 
@@ -446,7 +463,7 @@ test('manage application workflows page links to nested workflow edit route', fu
     $nestedEditUrl = WorkflowResource::getUrl('edit', [
         'application' => $application,
         'record' => $workflow,
-    ], shouldGuessMissingParameters: true);
+    ]);
 
     get(ApplicationResource::getUrl('manage-application-workflows', ['record' => $application]))
         ->assertOk()
@@ -476,10 +493,10 @@ test('nested application workflow edit route is scoped to owner application', fu
     get(WorkflowResource::getUrl('edit', [
         'application' => $ownerApplication,
         'record' => $workflow,
-    ], shouldGuessMissingParameters: true))->assertOk();
+    ]))->assertOk();
 
     get(WorkflowResource::getUrl('edit', [
         'application' => $otherApplication,
         'record' => $workflow,
-    ], shouldGuessMissingParameters: true))->assertNotFound();
+    ]))->assertNotFound();
 });

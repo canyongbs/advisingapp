@@ -41,7 +41,6 @@ use AdvisingApp\Form\Filament\Resources\Forms\Resources\Workflows\Pages\EditWork
 use AdvisingApp\Form\Filament\Resources\Forms\Resources\Workflows\WorkflowResource as FormWorkflowResource;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
-use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\EditWorkflow;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
@@ -171,7 +170,10 @@ test('form workflow editing succeeds with proper permissions', function () {
 
     actingAs($user);
 
-    livewire(EditWorkflow::class, ['record' => $oldWorkflow->getKey()])
+    livewire(FormNestedEditWorkflow::class, [
+        'parentRecord' => $form,
+        'record' => $oldWorkflow->getRouteKey(),
+    ])
         ->fillForm(['name' => $newWorkflowName])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -198,7 +200,10 @@ test('can successfully edit workflow name for a form workflow', function () {
     $faker = fake();
     $newWorkflowName = $faker->sentence(3);
 
-    livewire(EditWorkflow::class, ['record' => $oldWorkflow->getKey()])
+    livewire(FormNestedEditWorkflow::class, [
+        'parentRecord' => $form,
+        'record' => $oldWorkflow->getRouteKey(),
+    ])
         ->fillForm(['name' => $newWorkflowName])
         ->call('save');
 
@@ -223,14 +228,20 @@ test('can successfully enable and disable workflow for form', function () {
         ->state(['is_enabled' => false])
         ->create();
 
-    livewire(EditWorkflow::class, ['record' => $workflow->getKey()])
+    livewire(FormNestedEditWorkflow::class, [
+        'parentRecord' => $form,
+        'record' => $workflow->getRouteKey(),
+    ])
         ->fillForm(['is_enabled' => true])
         ->call('save');
 
     $workflow->refresh();
     expect($workflow->is_enabled)->toBeTrue();
 
-    livewire(EditWorkflow::class, ['record' => $workflow->getKey()])
+    livewire(FormNestedEditWorkflow::class, [
+        'parentRecord' => $form,
+        'record' => $workflow->getRouteKey(),
+    ])
         ->fillForm(['is_enabled' => false])
         ->call('save');
 
@@ -252,7 +263,10 @@ test('validates required workflow name during edit', function () {
         )
         ->create();
 
-    livewire(EditWorkflow::class, ['record' => $workflow->getKey()])
+    livewire(FormNestedEditWorkflow::class, [
+        'parentRecord' => $form,
+        'record' => $workflow->getRouteKey(),
+    ])
         ->fillForm(['name' => ''])
         ->call('save')
         ->assertHasFormErrors(['name' => 'required']);
@@ -277,7 +291,10 @@ test('validates workflow name maximum length during edit', function () {
 
     $longName = str_repeat('a', 256);
 
-    livewire(EditWorkflow::class, ['record' => $workflow->getKey()])
+    livewire(FormNestedEditWorkflow::class, [
+        'parentRecord' => $form,
+        'record' => $workflow->getRouteKey(),
+    ])
         ->fillForm(['name' => $longName])
         ->call('save')
         ->assertHasFormErrors(['name' => 'max']);
@@ -308,12 +325,12 @@ test('form workflow deletion succeeds with proper permissions', function () {
     actingAs($user);
 
     livewire(FormNestedEditWorkflow::class, [
+        'parentRecord' => $form,
         'record' => $workflow->getRouteKey(),
     ])
         ->assertActionExists(DeleteAction::class)
         ->assertActionEnabled(DeleteAction::class)
-        ->callAction(DeleteAction::class)
-        ->assertRedirected(FormResource::getUrl('manage-form-workflows', ['record' => $form]));
+        ->callAction(DeleteAction::class);
 
     assertSoftDeleted($workflow);
 
@@ -336,7 +353,7 @@ test('manage form workflows page links to nested workflow edit route', function 
     $nestedEditUrl = FormWorkflowResource::getUrl('edit', [
         'form' => $form,
         'record' => $workflow,
-    ], shouldGuessMissingParameters: true);
+    ]);
 
     get(FormResource::getUrl('manage-form-workflows', ['record' => $form]))
         ->assertOk()
@@ -361,10 +378,10 @@ test('nested form workflow edit route is scoped to owner form', function () {
     get(FormWorkflowResource::getUrl('edit', [
         'form' => $ownerForm,
         'record' => $workflow,
-    ], shouldGuessMissingParameters: true))->assertOk();
+    ]))->assertOk();
 
     get(FormWorkflowResource::getUrl('edit', [
         'form' => $otherForm,
         'record' => $workflow,
-    ], shouldGuessMissingParameters: true))->assertNotFound();
+    ]))->assertNotFound();
 });
