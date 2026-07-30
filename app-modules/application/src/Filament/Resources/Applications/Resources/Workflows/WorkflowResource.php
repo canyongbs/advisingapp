@@ -34,21 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Filament\Resources\Workflows;
+namespace AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows;
 
-use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\EditWorkflow;
-use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\ListWorkflows;
+use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
+use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\Pages\EditWorkflow;
+use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\RelationManagers\WorkflowStepsRelationManager;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\Schemas\WorkflowForm;
 use AdvisingApp\Workflow\Models\Workflow;
+use Filament\Resources\ParentResourceRegistration;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class WorkflowResource extends Resource
 {
     protected static ?string $model = Workflow::class;
 
     protected static bool $shouldRegisterNavigation = false;
+
+    protected static ?string $slug = 'workflows';
+
+    public static function getParentResourceRegistration(): ?ParentResourceRegistration
+    {
+        return ApplicationResource::asParent(childResource: self::class)
+            ->relationship('workflows')
+            ->inverseRelationship('application');
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -62,10 +75,24 @@ class WorkflowResource extends Resource
         ];
     }
 
+    /**
+     * @param Builder<Workflow> $query
+     *
+     * @return Builder<Workflow>
+     */
+    public static function scopeEloquentQueryToParent(Builder $query, Model $parentRecord): Builder
+    {
+        assert($parentRecord instanceof Application);
+
+        return $query->whereHas(
+            'workflowTrigger',
+            fn (Builder $query): Builder => $query->whereMorphedTo('related', $parentRecord),
+        );
+    }
+
     public static function getPages(): array
     {
         return [
-            'index' => ListWorkflows::route('/'),
             'edit' => EditWorkflow::route('/{record}/edit'),
         ];
     }

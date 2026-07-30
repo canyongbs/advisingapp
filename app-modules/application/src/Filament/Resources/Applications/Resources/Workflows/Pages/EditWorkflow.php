@@ -34,39 +34,12 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Filament\Resources\Workflows;
+namespace AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\Pages;
 
-use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\EditWorkflow;
-use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\ListWorkflows;
-use AdvisingApp\Workflow\Filament\Resources\Workflows\RelationManagers\WorkflowStepsRelationManager;
-use AdvisingApp\Workflow\Filament\Resources\Workflows\Schemas\WorkflowForm;
-use AdvisingApp\Workflow\Models\Workflow;
-use Filament\Resources\Resource;
-use Filament\Schemas\Schema;
+use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\WorkflowResource;
+use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\EditWorkflow as BaseEditWorkflow;
 
-class WorkflowResource extends Resource
+class EditWorkflow extends BaseEditWorkflow
 {
-    protected static ?string $model = Workflow::class;
-
-    protected static bool $shouldRegisterNavigation = false;
-
-    public static function form(Schema $schema): Schema
-    {
-        return WorkflowForm::configure($schema);
-    }
-
-    public static function getRelations(): array
-    {
-        return [
-            'workflowSteps' => WorkflowStepsRelationManager::class,
-        ];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListWorkflows::route('/'),
-            'edit' => EditWorkflow::route('/{record}/edit'),
-        ];
-    }
+    protected static string $resource = WorkflowResource::class;
 }

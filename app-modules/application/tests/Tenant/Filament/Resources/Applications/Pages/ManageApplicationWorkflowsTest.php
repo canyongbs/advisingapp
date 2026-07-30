@@ -36,7 +36,9 @@
 
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
+use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationWorkflows;
+use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\WorkflowResource;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -50,6 +52,7 @@ use Filament\Actions\DeleteAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertSoftDeleted;
+use function Pest\Laravel\get;
 use function Pest\Laravel\seed;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
@@ -418,4 +421,63 @@ test('tabs render one per non-archived submission state plus All', function () {
     }
 
     expect($tabs)->toHaveKey('all');
+});
+
+test('manage application workflows page links to nested workflow edit route', function () {
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()->state([
+                'related_type' => $application->getMorphClass(),
+                'related_id' => $application->id,
+                'sub_related_type' => 'application_submission_state',
+                'sub_related_id' => ApplicationSubmissionState::query()
+                    ->where('classification', ApplicationSubmissionStateClassification::Received)
+                    ->value('id'),
+                'event' => WorkflowTriggerEvent::Enter,
+            ])
+        )
+        ->create();
+
+    $nestedEditUrl = WorkflowResource::getUrl('edit', [
+        'application' => $application,
+        'record' => $workflow,
+    ]);
+
+    get(ApplicationResource::getUrl('manage-application-workflows', ['record' => $application]))
+        ->assertOk()
+        ->assertSee($nestedEditUrl, false);
+});
+
+test('nested application workflow edit route is scoped to owner application', function () {
+    asSuperAdmin();
+
+    $ownerApplication = Application::factory()->create();
+    $otherApplication = Application::factory()->create();
+
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()->state([
+                'related_type' => $ownerApplication->getMorphClass(),
+                'related_id' => $ownerApplication->id,
+                'sub_related_type' => 'application_submission_state',
+                'sub_related_id' => ApplicationSubmissionState::query()
+                    ->where('classification', ApplicationSubmissionStateClassification::Received)
+                    ->value('id'),
+                'event' => WorkflowTriggerEvent::Enter,
+            ])
+        )
+        ->create();
+
+    get(WorkflowResource::getUrl('edit', [
+        'application' => $ownerApplication,
+        'record' => $workflow,
+    ]))->assertOk();
+
+    get(WorkflowResource::getUrl('edit', [
+        'application' => $otherApplication,
+        'record' => $workflow,
+    ]))->assertNotFound();
 });

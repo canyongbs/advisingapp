@@ -34,39 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Filament\Resources\Workflows;
+namespace AdvisingApp\Workflow\Filament\Resources\Workflows\Schemas;
 
-use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\EditWorkflow;
-use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\ListWorkflows;
-use AdvisingApp\Workflow\Filament\Resources\Workflows\RelationManagers\WorkflowStepsRelationManager;
-use AdvisingApp\Workflow\Filament\Resources\Workflows\Schemas\WorkflowForm;
+use AdvisingApp\Workflow\Filament\Forms\WorkflowTypeFormRegistry;
 use AdvisingApp\Workflow\Models\Workflow;
-use Filament\Resources\Resource;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 
-class WorkflowResource extends Resource
+class WorkflowForm
 {
-    protected static ?string $model = Workflow::class;
-
-    protected static bool $shouldRegisterNavigation = false;
-
-    public static function form(Schema $schema): Schema
+    public static function configure(Schema $schema): Schema
     {
-        return WorkflowForm::configure($schema);
-    }
+        $schema = $schema->components([
+            TextInput::make('name')
+                ->required()
+                ->maxLength(255),
+            Toggle::make('is_enabled')
+                ->label('Enabled?')
+                ->inline(false),
+        ]);
 
-    public static function getRelations(): array
-    {
-        return [
-            'workflowSteps' => WorkflowStepsRelationManager::class,
-        ];
-    }
+        $record = $schema->getRecord();
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListWorkflows::route('/'),
-            'edit' => EditWorkflow::route('/{record}/edit'),
-        ];
+        if ($record instanceof Workflow) {
+            $typeFormClass = app(WorkflowTypeFormRegistry::class)
+                ->for($record->workflowTrigger->related_type);
+
+            if ($typeFormClass !== null) {
+                $schema = $typeFormClass::configureForm($schema);
+            }
+        }
+
+        return $schema;
     }
 }
