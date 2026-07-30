@@ -37,8 +37,8 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageFormWorkflows;
-use AdvisingApp\Form\Filament\Resources\Forms\Resources\Workflows\WorkflowResource as FormWorkflowResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Resources\Workflows\Pages\EditWorkflow as FormNestedEditWorkflow;
+use AdvisingApp\Form\Filament\Resources\Forms\Resources\Workflows\WorkflowResource as FormWorkflowResource;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\EditWorkflow;
