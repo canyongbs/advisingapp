@@ -75,6 +75,7 @@ class DuplicateForm
 
     /**
      * @param  array<string, string>  $stepMap
+     *
      * @return array<string, string>
      */
     private function replicateFields(array $stepMap): array
