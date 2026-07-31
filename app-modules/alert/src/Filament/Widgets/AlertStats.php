@@ -44,18 +44,12 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Number;
 
-/**
- * @property-read Stat[] $stats
- */
 class AlertStats extends StatsOverviewWidget
 {
     use InteractsWithPageFilters;
 
   protected ?string $pollingInterval = null;
 
-    /**
-     * @return Stat[]
-     */
     public function getStats(): array
     {
         $groupId = $this->getSelectedGroup();

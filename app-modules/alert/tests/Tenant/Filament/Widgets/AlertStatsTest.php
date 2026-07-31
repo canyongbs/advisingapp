@@ -439,11 +439,11 @@ it('calculates stats with population group filter applied', function () {
     // Test with no filter - should show all students with alerts
     $widget = new AlertStats();
     $widget->pageFilters = [];
-    $unfileredStats = $widget->getStats();
+    $unfilteredStats = $widget->getStats();
 
-    expect($unfileredStats)->toHaveCount(1)
-        ->and($unfileredStats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
-        ->and((int) str_replace(',', '', $unfileredStats[0]->getValue()))->toBe($totalCount);
+    expect($unfilteredStats)->toHaveCount(1)
+        ->and($unfilteredStats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
+        ->and((int) str_replace(',', '', $unfilteredStats[0]->getValue()))->toBe($totalCount);
 
     // Test with populationGroup filter format
     $widget->pageFilters = ['populationGroup' => $group->getKey()];
