@@ -55,6 +55,9 @@ class DuplicateForm
         $this->replicateEmailAutoReply();
     }
 
+    /**
+     * @return array<string, string>
+     */
     private function replicateSteps(): array
     {
         $stepMap = [];
@@ -70,6 +73,10 @@ class DuplicateForm
         return $stepMap;
     }
 
+    /**
+     * @param  array<string, string>  $stepMap
+     * @return array<string, string>
+     */
     private function replicateFields(array $stepMap): array
     {
         $fieldMap = [];
@@ -86,6 +93,9 @@ class DuplicateForm
         return $fieldMap;
     }
 
+    /**
+     * @param  array<string, string>  $fieldMap
+     */
     private function updateStepContent(array $fieldMap): void
     {
         $this->replica->steps()->each(function (FormStep $step) use ($fieldMap) {
@@ -104,7 +114,10 @@ class DuplicateForm
         }
     }
 
-    private function replaceIdsInContent(&$content, $fieldMap)
+    /**
+     * @param  array<string, string>  $fieldMap
+     */
+    private function replaceIdsInContent(mixed &$content, array $fieldMap): mixed
     {
         if (is_array($content)) {
             foreach ($content as $key => &$value) {

@@ -1098,46 +1098,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/DataTransferObjects/CampaignActionsCreationData.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Enums\\\\CampaignActionType\\:\\:blocks\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Enums/CampaignActionType.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Enums\\\\CampaignActionType\\:\\:getGenerateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Enums/CampaignActionType.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Enums\\\\CampaignActionType\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
-    'identifier' => 'return.unusedType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Enums/CampaignActionType.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\CampaignActionBlock\\:\\:generateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/CampaignActionBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\CareTeamBlock\\:\\:generateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/CareTeamBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$livewire of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/CareTeamBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#3 \\$livewire of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/CareTeamBlock.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\CaseBlock\\:\\:generateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -1271,24 +1235,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.property',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/care-team/src/Rules/UniqueCareTeamRule.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Database\\\\Factories\\\\CasePriorityFactory\\:\\:high\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Factories\\\\Factory does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/database/factories/CasePriorityFactory.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Database\\\\Factories\\\\CasePriorityFactory\\:\\:low\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Factories\\\\Factory does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/database/factories/CasePriorityFactory.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Database\\\\Factories\\\\CasePriorityFactory\\:\\:medium\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Factories\\\\Factory does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/case-management/database/factories/CasePriorityFactory.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\CaseManagement\\\\Actions\\\\CreateCaseHistory\\:\\:__construct\\(\\) has parameter \\$changes with no value type specified in iterable type array\\.$#',
@@ -2317,48 +2263,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/tests/Tenant/Feature/Jobs/CreateBatchedEngagementTest.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Actions\\\\DuplicateForm\\:\\:replaceIdsInContent\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Actions/DuplicateForm.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Actions\\\\DuplicateForm\\:\\:replaceIdsInContent\\(\\) has parameter \\$content with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Actions/DuplicateForm.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Actions\\\\DuplicateForm\\:\\:replaceIdsInContent\\(\\) has parameter \\$fieldMap with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Actions/DuplicateForm.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Actions\\\\DuplicateForm\\:\\:replicateFields\\(\\) has parameter \\$stepMap with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Actions/DuplicateForm.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Actions\\\\DuplicateForm\\:\\:replicateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Actions/DuplicateForm.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Actions\\\\DuplicateForm\\:\\:replicateSteps\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Actions/DuplicateForm.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Actions\\\\DuplicateForm\\:\\:updateStepContent\\(\\) has parameter \\$fieldMap with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Actions/DuplicateForm.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Form\\\\Actions\\\\GenerateFormKitSchema\\:\\:__invoke\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -2681,30 +2585,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/EmailFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\FormFieldBlock\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/FormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\FormFieldBlock\\:\\:getFormKitSchema\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/FormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\FormFieldBlock\\:\\:getSubmissionState\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/FormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\FormFieldBlock\\:\\:getValidationRules\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/FormFieldBlock.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\NumberFormFieldBlock\\:\\:getFormKitSchema\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -4106,54 +3986,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/multifactor-authentication/src/Providers/MultifactorAuthenticationServiceProvider.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\MultifactorAuthentication\\\\Services\\\\MultifactorService\\:\\:generateSecretKey\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/multifactor-authentication/src/Services/MultifactorService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\MultifactorAuthentication\\\\Services\\\\MultifactorService\\:\\:getEngine\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/multifactor-authentication/src/Services/MultifactorService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\MultifactorAuthentication\\\\Services\\\\MultifactorService\\:\\:getMultifactorQrCodeSvg\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/multifactor-authentication/src/Services/MultifactorService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\MultifactorAuthentication\\\\Services\\\\MultifactorService\\:\\:getQrCodeUrl\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/multifactor-authentication/src/Services/MultifactorService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\MultifactorAuthentication\\\\Services\\\\MultifactorService\\:\\:getQrCodeUrl\\(\\) has parameter \\$companyEmail with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/multifactor-authentication/src/Services/MultifactorService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\MultifactorAuthentication\\\\Services\\\\MultifactorService\\:\\:getQrCodeUrl\\(\\) has parameter \\$companyName with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/multifactor-authentication/src/Services/MultifactorService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\MultifactorAuthentication\\\\Services\\\\MultifactorService\\:\\:getQrCodeUrl\\(\\) has parameter \\$secret with no type specified\\.$#',
-    'identifier' => 'missingType.parameter',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/multifactor-authentication/src/Services/MultifactorService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\MultifactorAuthentication\\\\Services\\\\MultifactorService\\:\\:verify\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/multifactor-authentication/src/Services/MultifactorService.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/notification/database/migrations/2025_02_10_233057_seed_permissions_remove_outbound_deliverable_permissions\\.php\\:42\\:\\:\\$guards type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -5234,36 +5066,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/ProspectCaseTable.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$interaction of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/ProspectInteractionUsersTable.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$query of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/ProspectInteractionUsersTable.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 6,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/ProspectInteractionUsersTable.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$teamQuery of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/ProspectInteractionUsersTable.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/ProspectInteractionUsersTable.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
@@ -5346,36 +5148,6 @@ $ignoreErrors[] = [
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StudentDeliverableTable.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$interaction of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StudentInteractionUsersTable.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$query of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StudentInteractionUsersTable.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$record of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 6,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StudentInteractionUsersTable.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$teamQuery of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StudentInteractionUsersTable.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StudentInteractionUsersTable.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',

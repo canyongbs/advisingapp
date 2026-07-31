@@ -105,15 +105,25 @@ abstract class FormFieldBlock extends RichContentCustomBlock
         return view(static::renderedView(), $config)->render();
     }
 
-    public static function fields(): array
+    /**
+     * @return array<int, mixed>
+     */
+    p
+ublic static function fields(): array
     {
         return [];
     }
 
     abstract public static function type(): string;
 
+    /**
+     * @return array<string, mixed>
+     */
     abstract public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array;
 
+    /**
+     * @return array<int, string>
+     */
     public static function getValidationRules(SubmissibleField $field): array
     {
         return [];
@@ -127,6 +137,9 @@ abstract class FormFieldBlock extends RichContentCustomBlock
         return [];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public static function getSubmissionState(SubmissibleField $field, mixed $response): array
     {
         return [
