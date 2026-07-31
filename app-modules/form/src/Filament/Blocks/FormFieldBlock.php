@@ -108,8 +108,7 @@ abstract class FormFieldBlock extends RichContentCustomBlock
     /**
      * @return array<int, mixed>
      */
-    p
-ublic static function fields(): array
+    public static function fields(): array
     {
         return [];
     }
