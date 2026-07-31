@@ -51,6 +51,8 @@ class AlertStats extends StatsOverviewWidget
 {
     use InteractsWithPageFilters;
 
+  protected ?string $pollingInterval = null;
+
     /**
      * @return Stat[]
      */

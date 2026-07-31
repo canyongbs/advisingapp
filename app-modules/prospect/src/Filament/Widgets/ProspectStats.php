@@ -58,6 +58,8 @@ class ProspectStats extends StatsOverviewWidget
 {
     use InteractsWithPageFilters;
 
+    protected ?string $pollingInterval = null;
+
     #[Reactive]
     public string $activeTab;
 
