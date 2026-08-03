@@ -42,6 +42,8 @@ use AdvisingApp\Ai\Tests\RequestFactories\CustomerAdvisorCategoryRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ImportAction;
 use Filament\Forms\Components\Repeater;
 
 use function Pest\Laravel\actingAs;
@@ -316,6 +318,10 @@ test('Edit Customer Advisor Category validates the inputs', function (CustomerAd
                 CustomerAdvisorCategoryRequestFactory::new()->state(['name' => 'Education']),
                 ['name' => 'unique'],
             ],
+            'name unique case insensitive' => [
+                CustomerAdvisorCategoryRequestFactory::new()->state(['name' => 'education']),
+                ['name' => 'unique'],
+            ],
             'name max' => [
                 CustomerAdvisorCategoryRequestFactory::new()->state(['name' => str()->random(257)]),
                 ['name' => 'max'],
@@ -330,3 +336,41 @@ test('Edit Customer Advisor Category validates the inputs', function (CustomerAd
             ],
         ]
     );
+
+test('shows import and export actions for customer advisor categories', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->customerAdvisors = true;
+
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
+
+    $customerAdvisor = CustomerAdvisor::factory()->create();
+
+    actingAs($user);
+
+    livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
+        ->assertTableActionVisible(ImportAction::class)
+        ->assertTableActionVisible(ExportAction::class);
+});
+
+test('hides import action when user lacks create permission', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->customerAdvisors = true;
+
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view']);
+
+    $customerAdvisor = CustomerAdvisor::factory()->create();
+
+    actingAs($user);
+
+    livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
+        ->assertTableActionHidden(ImportAction::class)
+        ->assertTableActionVisible(ExportAction::class);
+});
