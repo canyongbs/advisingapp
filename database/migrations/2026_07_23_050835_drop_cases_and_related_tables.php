@@ -55,6 +55,20 @@ return new class () extends SettingsMigration {
         'case.*.delete' => 'Case',
         'case.*.restore' => 'Case',
         'case.*.force-delete' => 'Case',
+        'case-update.view-any' => 'Case Update',
+        'case-update.create' => 'Case Update',
+        'case-update.*.view' => 'Case Update',
+        'case-update.*.update' => 'Case Update',
+        'case-update.*.delete' => 'Case Update',
+        'case-update.*.restore' => 'Case Update',
+        'case-update.*.force-delete' => 'Case Update',
+        'case-assignment.view-any' => 'Case Assignment',
+        'case-assignment.create' => 'Case Assignment',
+        'case-assignment.*.view' => 'Case Assignment',
+        'case-assignment.*.update' => 'Case Assignment',
+        'case-assignment.*.delete' => 'Case Assignment',
+        'case-assignment.*.restore' => 'Case Assignment',
+        'case-assignment.*.force-delete' => 'Case Assignment',
     ];
 
     /**
@@ -72,6 +86,8 @@ return new class () extends SettingsMigration {
                 ->each(fn (string $guard) => $this->deletePermissions(array_keys($this->permissions), $guard));
 
             DB::table('permission_groups')->where('name', 'Case')->delete();
+            DB::table('permission_groups')->where('name', 'Case Update')->delete();
+            DB::table('permission_groups')->where('name', 'Case Assignment')->delete();
 
             $this->migrator->deleteIfExists('portal.resource_hub_portal_case_management');
 
@@ -127,6 +143,8 @@ return new class () extends SettingsMigration {
                 });
 
             DB::table('permission_groups')->insert(['name' => 'Case']);
+            DB::table('permission_groups')->insert(['name' => 'Case Update']);
+            DB::table('permission_groups')->insert(['name' => 'Case Assignment']);
 
             $this->migrator->add('portal.resource_hub_portal_case_management', false);
 
