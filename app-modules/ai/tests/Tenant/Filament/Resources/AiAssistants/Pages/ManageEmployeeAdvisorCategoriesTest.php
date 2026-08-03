@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Tests\RequestFactories\EmployeeAdvisorCategoryRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Actions\Testing\TestAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -93,8 +94,8 @@ test('can create an employee advisor category', function () {
     $categoryData = collect(EmployeeAdvisorCategoryRequestFactory::new()->create());
 
     livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
-        ->callTableAction('create', data: $categoryData->toArray())
-        ->assertHasNoTableActionErrors();
+        ->callAction('create', $categoryData->toArray())
+        ->assertHasNoActionErrors();
 
     assertCount(1, EmployeeAdvisorCategory::all());
 
@@ -116,8 +117,8 @@ test('creating an employee advisor category validates the inputs', function (Emp
     $categoryData = collect(EmployeeAdvisorCategoryRequestFactory::new($data)->create());
 
     livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
-        ->callTableAction('create', data: $categoryData->toArray())
-        ->assertHasTableActionErrors($errors);
+        ->callAction('create', $categoryData->toArray())
+        ->assertHasActionErrors($errors);
 
     assertDatabaseMissing(
         EmployeeAdvisorCategory::class,
@@ -167,8 +168,8 @@ test('can edit an employee advisor category', function () {
     actingAs($user);
 
     livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
-        ->callTableAction('edit', record: $category->getKey(), data: $request->toArray())
-        ->assertHasNoTableActionErrors();
+        ->callAction(TestAction::make('edit')->schemaComponent('categories')->arguments(['item' => $category->getKey()]), $request->toArray())
+        ->assertHasNoActionErrors();
 
     assertDatabaseHas(
         EmployeeAdvisorCategory::class,
@@ -201,8 +202,8 @@ test('editing an employee advisor category validates the inputs', function (Empl
     actingAs($user);
 
     livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
-        ->callTableAction('edit', record: $category->getKey(), data: $request)
-        ->assertHasTableActionErrors($errors);
+        ->callAction(TestAction::make('edit')->schemaComponent('categories')->arguments(['item' => $category->getKey()]), $request)
+        ->assertHasActionErrors($errors);
 })
     ->with(
         [

@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Tests\RequestFactories\CustomerAdvisorCategoryRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Actions\Testing\TestAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -99,8 +100,8 @@ test('can create Customer Advisor Category', function () {
     $customerAdvisorCategory = collect(CustomerAdvisorCategoryRequestFactory::new()->create());
 
     livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
-        ->callTableAction('create', data: $customerAdvisorCategory->toArray())
-        ->assertHasNoTableActionErrors();
+        ->callAction('create', $customerAdvisorCategory->toArray())
+        ->assertHasNoActionErrors();
 
     assertCount(1, CustomerAdvisorCategory::all());
 
@@ -144,8 +145,8 @@ test('Create Customer Advisor Category validates the inputs', function (Customer
     $customerAdvisorCategory = collect(CustomerAdvisorCategoryRequestFactory::new($data)->create());
 
     livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
-        ->callTableAction('create', data: $customerAdvisorCategory->toArray())
-        ->assertHasTableActionErrors($errors);
+        ->callAction('create', $customerAdvisorCategory->toArray())
+        ->assertHasActionErrors($errors);
 
     assertDatabaseMissing(
         CustomerAdvisorCategory::class,
@@ -195,8 +196,8 @@ test('can edit Customer Advisor Category', function () {
     actingAs($user);
 
     livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
-        ->callTableAction('edit', record: $customerAdvisorCategory->getKey(), data: $request->toArray())
-        ->assertHasNoTableActionErrors();
+        ->callAction(TestAction::make('edit')->schemaComponent('categories')->arguments(['item' => $customerAdvisorCategory->getKey()]), $request->toArray())
+        ->assertHasNoActionErrors();
 
     assertDatabaseHas(
         CustomerAdvisorCategory::class,
@@ -229,8 +230,8 @@ test('Edit Customer Advisor Category validates the inputs', function (CustomerAd
     actingAs($user);
 
     livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
-        ->callTableAction('edit', record: $customerAdvisorCategory->getKey(), data: $request)
-        ->assertHasTableActionErrors($errors);
+        ->callAction(TestAction::make('edit')->schemaComponent('categories')->arguments(['item' => $customerAdvisorCategory->getKey()]), $request)
+        ->assertHasActionErrors($errors);
 })
     ->with(
         [
