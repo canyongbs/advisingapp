@@ -51,7 +51,6 @@ class VerifyCsrfToken extends Middleware
         '/api/surveys/*',
         '/api/ai/customer-advisors/*',
         '/api/event-registration/*',
-        '/api/cases/*',
         '/api/v1/*',
     ];
 }

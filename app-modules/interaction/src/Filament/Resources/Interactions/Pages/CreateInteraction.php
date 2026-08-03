@@ -37,7 +37,6 @@
 namespace AdvisingApp\Interaction\Filament\Resources\Interactions\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Interaction\Filament\Actions\DraftInteractionWithAiAction;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\InteractionResource;
 use AdvisingApp\Interaction\Models\InteractionDriver;
@@ -95,9 +94,6 @@ class CreateInteraction extends CreateRecord
                                 ->titleAttribute(Prospect::displayNameKey())
                                 ->modifyOptionsQueryUsing(fn (Builder $query) => $query->tap(new ExcludeConvertedProspects())),
                             ] : []),
-                            Type::make(CaseModel::class)
-                                ->label('Case')
-                                ->titleAttribute('case_number'),
                         ])
                         ->live(),
                     Fieldset::make('Confidentiality')

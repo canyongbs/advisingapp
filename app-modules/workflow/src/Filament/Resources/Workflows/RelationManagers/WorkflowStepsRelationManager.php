@@ -38,7 +38,6 @@ namespace AdvisingApp\Workflow\Filament\Resources\Workflows\RelationManagers;
 
 use AdvisingApp\Workflow\Filament\Blocks\WorkflowActionBlock;
 use AdvisingApp\Workflow\Models\Workflow;
-use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
 use AdvisingApp\Workflow\Models\WorkflowDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
@@ -232,14 +231,6 @@ class WorkflowStepsRelationManager extends RelationManager
         $transformedData = $block->beforeCreate($data);
 
         $action = match ($block->type()) {
-            'workflow_case_details' => WorkflowCaseDetails::create([
-                'division_id' => $transformedData['division_id'],
-                'status_id' => $transformedData['status_id'],
-                'priority_id' => $transformedData['priority_id'],
-                'assigned_to_id' => $transformedData['assigned_to_id'],
-                'close_details' => $transformedData['close_details'],
-                'res_details' => $transformedData['res_details'],
-            ]),
             'workflow_engagement_email_details' => WorkflowEngagementEmailDetails::create([
                 'channel' => $transformedData['channel'],
                 'email_type' => $transformedData['email_type'],
