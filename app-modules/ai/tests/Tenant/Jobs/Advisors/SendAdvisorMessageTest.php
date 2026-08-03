@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Jobs\Advisors\SendAdvisorMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\Prompt;
 use Illuminate\Support\Facades\Event;
 
 use function Tests\asSuperAdmin;
@@ -93,4 +94,45 @@ it('sends a message', function () {
 
     Event::assertDispatched(AdvisorMessageChunk::class);
     Event::assertDispatched(AdvisorMessageFinished::class);
+});
+
+it('builds smart prompt content from the editable instructions setting', function () {
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
+
+    asSuperAdmin();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->for(auth()->user())
+        ->create();
+
+    $prompt = Prompt::factory()->create([
+        'is_smart' => true,
+        'title' => 'Draft An Email',
+        'description' => 'Helps you write an email',
+    ]);
+
+    dispatch(new SendAdvisorMessage(
+        $thread,
+        $prompt,
+    ));
+
+    $message = AiMessage::query()
+        ->whereNotNull('prompt_id')
+        ->first();
+
+    expect($message->content)
+        ->toContain($prompt->title)
+        ->toContain($prompt->type->title)
+        ->toContain($prompt->description)
+        ->toEndWith($prompt->prompt);
 });
