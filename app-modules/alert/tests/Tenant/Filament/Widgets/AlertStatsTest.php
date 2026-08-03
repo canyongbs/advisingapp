@@ -392,7 +392,7 @@ it('only shows enabled alert configurations', function () {
         ->and($stats[0]->getLabel())->toBe('No Alerts Configured');
 });
 
-it('filters alerts by population group', function () {
+it('calculates stats with population group filter applied', function () {
     $inGroupCount = fake()->numberBetween(2, 4);
     $outGroupCount = fake()->numberBetween(2, 4);
 
@@ -434,11 +434,38 @@ it('filters alerts by population group', function () {
 
     app(GenerateStudentAlertsView::class)->execute();
 
+    $totalCount = $inGroupCount + $outGroupCount;
+
+    // Test with no filter - should show all students with alerts
     $widget = new AlertStats();
+    $widget->pageFilters = [];
+    $unfilteredStats = $widget->getStats();
+
+    expect($unfilteredStats)->toHaveCount(1)
+        ->and($unfilteredStats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
+        ->and($unfilteredStats[0]->getValue())->toBe((string) $totalCount);
+
+    // Test with populationGroup filter format
     $widget->pageFilters = ['populationGroup' => $group->getKey()];
     $stats = $widget->getStats();
 
     expect($stats)->toHaveCount(1)
         ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
         ->and($stats[0]->getValue())->toBe((string) $inGroupCount);
+
+    // Test with population => ['type' => 'saved', ...] filter format
+    $widget->pageFilters = ['population' => ['type' => 'saved', 'groupId' => $group->getKey()]];
+    $stats = $widget->getStats();
+
+    expect($stats)->toHaveCount(1)
+        ->and($stats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
+        ->and($stats[0]->getValue())->toBe((string) $inGroupCount);
+
+    // Test clearing the filter returns to original full count
+    $widget->pageFilters = [];
+    $clearedStats = $widget->getStats();
+
+    expect($clearedStats)->toHaveCount(1)
+        ->and($clearedStats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
+        ->and($clearedStats[0]->getValue())->toBe((string) $totalCount);
 });
