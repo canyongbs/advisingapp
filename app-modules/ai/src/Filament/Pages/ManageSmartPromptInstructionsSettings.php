@@ -118,20 +118,6 @@ class ManageSmartPromptInstructionsSettings extends SettingsPage
             ->disabled(! auth()->user()->canAccessAiSettings());
     }
 
-    /**
-     * @param array<string, mixed> $data
-     *
-     * @return array<string, mixed>
-     */
-    protected function mutateFormDataBeforeFill(array $data): array
-    {
-        if (blank($data['smart_prompt_instructions'] ?? null)) {
-            $data['smart_prompt_instructions'] = AiSettings::defaultSmartPromptInstructions();
-        }
-
-        return $data;
-    }
-
     public function save(): void
     {
         if (! auth()->user()->canAccessAiSettings()) {
@@ -151,5 +137,19 @@ class ManageSmartPromptInstructionsSettings extends SettingsPage
         }
 
         return parent::getFormActions();
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     *
+     * @return array<string, mixed>
+     */
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        if (blank($data['smart_prompt_instructions'] ?? null)) {
+            $data['smart_prompt_instructions'] = AiSettings::defaultSmartPromptInstructions();
+        }
+
+        return $data;
     }
 }
