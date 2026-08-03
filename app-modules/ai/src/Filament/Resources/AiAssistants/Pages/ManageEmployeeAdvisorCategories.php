@@ -36,18 +36,25 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages;
 
+use AdvisingApp\Ai\Filament\Exports\EmployeeAdvisorCategoryExporter;
+use AdvisingApp\Ai\Filament\Imports\EmployeeAdvisorCategoryImporter;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\AiAssistantResource;
 use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\EmployeeAdvisorCategory;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
+use Filament\Actions\ExportAction;
+use Filament\Actions\Exports\Enums\ExportFormat;
+use Filament\Actions\ImportAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
 use UnitEnum;
@@ -125,6 +132,17 @@ class ManageEmployeeAdvisorCategories extends ManageRelatedRecords
 
                         $assistant->categories()->createMany($data['categories']);
                     }),
+                ImportAction::make()
+                    ->importer(EmployeeAdvisorCategoryImporter::class)
+                    ->authorize('create', EmployeeAdvisorCategory::class)
+                    ->options(['employee_advisor_id' => $this->getOwnerRecord()->getKey()]),
+                ExportAction::make()
+                    ->exporter(EmployeeAdvisorCategoryExporter::class)
+                    ->authorize('viewAny', EmployeeAdvisorCategory::class)
+                    ->formats([
+                        ExportFormat::Csv,
+                    ])
+                    ->modifyQueryUsing(fn (Builder $query): Builder => $query->where('employee_advisor_id', $this->getOwnerRecord()->getKey())),
             ])
             ->recordActions([
                 EditAction::make()
