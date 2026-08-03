@@ -38,27 +38,44 @@ namespace AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
-use Filament\Actions\CreateAction;
-use Filament\Actions\EditAction;
+use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use Filament\Support\Icons\Heroicon;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
 use UnitEnum;
 
-class ManageCategories extends ManageRelatedRecords
+class ManageCategories extends EditRecord
 {
     protected static string $resource = CustomerAdvisorResource::class;
 
     protected static ?string $title = 'Categories';
 
-    protected static string $relationship = 'categories';
+    protected static ?string $navigationLabel = 'Categories';
 
     protected static string | UnitEnum | null $navigationGroup = 'Configuration';
+
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    public static function canAccess(array $parameters = []): bool
+    {
+        return Gate::allows('viewAny', CustomerAdvisorCategory::class);
+    }
+
+    /**
+     * @param  array<string, mixed>  $parameters
+     */
+    public static function shouldRegisterNavigation(array $parameters = []): bool
+    {
+        return Gate::allows('viewAny', CustomerAdvisorCategory::class);
+    }
 
     /**
      * @return array<int|string, string|null>
@@ -87,48 +104,126 @@ class ManageCategories extends ManageRelatedRecords
     {
         return $schema
             ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->string()
-                    ->unique(
-                        table: 'customer_advisor_categories',
-                        column: 'name',
-                        ignoreRecord: true,
-                        modifyRuleUsing: function (Unique $rule) {
-                            /** @var CustomerAdvisor $customerAdvisor */
-                            $customerAdvisor = $this->getOwnerRecord();
+                Repeater::make('categories')
+                    ->relationship()
+                    ->hiddenLabel()
+                    ->addable(false)
+                    ->deletable(false)
+                    ->reorderable(false)
+                    ->collapsible()
+                    ->itemLabel(fn (array $state): ?string => $state['name'] ?? null)
+                    ->schema([
+                        TextInput::make('name')
+                            ->disabled()
+                            ->dehydrated(),
+                        Textarea::make('description')
+                            ->disabled()
+                            ->dehydrated(),
+                    ])
+                    ->extraItemActions([
+                        Action::make('edit')
+                            ->icon(Heroicon::PencilSquare)
+                            ->modalHeading('Edit Customer Advisor Category')
+                            ->slideOver()
+                            ->authorize(fn (): bool => Gate::allows('update', CustomerAdvisorCategory::class))
+                            ->fillForm(fn (array $arguments): array => $this->getRecord()
+                                ->categories()
+                                ->whereKey($this->getCategoryKeyFromItemArgument($arguments))
+                                ->firstOrFail()
+                                ->only(['name', 'description']))
+                            ->schema(fn (array $arguments): array => $this->getCategoryFormComponents(ignoreId: $this->getCategoryKeyFromItemArgument($arguments)))
+                            ->action(function (array $arguments, array $data): void {
+                                $this->getRecord()
+                                    ->categories()
+                                    ->whereKey($this->getCategoryKeyFromItemArgument($arguments))
+                                    ->firstOrFail()
+                                    ->update($data);
 
-                            $rule->where('customer_advisor_id', $customerAdvisor->getKey());
-                        }
-                    )
-                    ->maxLength(255)
-                    ->columnSpanFull(),
-                Textarea::make('description')
-                    ->required()
-                    ->string()
-                    ->maxLength(65535)
+                                $this->refreshCategories();
+                            }),
+                    ])
                     ->columnSpanFull(),
             ]);
     }
 
-    public function table(Table $table): Table
+    public function getRedirectUrl(): ?string
     {
-        return $table
-            ->recordTitleAttribute('name')
-            ->columns([
-                TextColumn::make('name'),
-                TextColumn::make('description')
-                    ->limit(50)
-                    ->wrap(),
-            ])
-            ->headerActions([
-                CreateAction::make()
-                    ->modalHeading('Create Customer Advisor Category'),
-            ])
-            ->recordActions([
-                EditAction::make(),
-            ])
-            ->emptyStateHeading('No Customer Advisor Categories Found')
-            ->emptyStateDescription('');
+        return null;
+    }
+
+    protected function authorizeAccess(): void
+    {
+        abort_unless(static::canAccess(['record' => $this->getRecord()]), 403);
+    }
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('create')
+                ->label('New category')
+                ->modalHeading('Create Customer Advisor Category')
+                ->slideOver()
+                ->authorize(fn (): bool => Gate::allows('create', CustomerAdvisorCategory::class))
+                ->schema($this->getCategoryFormComponents())
+                ->action(function (array $data): void {
+                    $this->getRecord()->categories()->create($data);
+
+                    $this->refreshCategories();
+                }),
+        ];
+    }
+
+    protected function getFormActions(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return array<int, TextInput|Textarea>
+     */
+    protected function getCategoryFormComponents(?string $ignoreId = null): array
+    {
+        return [
+            TextInput::make('name')
+                ->required()
+                ->string()
+                ->unique(
+                    table: 'customer_advisor_categories',
+                    column: 'name',
+                    ignoreRecord: false,
+                    modifyRuleUsing: function (Unique $rule) use ($ignoreId): void {
+                        /** @var CustomerAdvisor $customerAdvisor */
+                        $customerAdvisor = $this->getRecord();
+
+                        $rule->where('customer_advisor_id', $customerAdvisor->getKey());
+
+                        if (filled($ignoreId)) {
+                            $rule->ignore($ignoreId);
+                        }
+                    }
+                )
+                ->maxLength(255)
+                ->columnSpanFull(),
+            Textarea::make('description')
+                ->required()
+                ->string()
+                ->maxLength(65535)
+                ->columnSpanFull(),
+        ];
+    }
+
+    /**
+     * @param  array<string, mixed>  $arguments
+     */
+    protected function getCategoryKeyFromItemArgument(array $arguments): string
+    {
+        return Str::after($arguments['item'], 'record-');
+    }
+
+    protected function refreshCategories(): void
+    {
+        $this->getRecord()->refresh();
+
+        $this->fillForm();
     }
 }
