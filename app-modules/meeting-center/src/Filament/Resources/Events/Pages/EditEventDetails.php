@@ -128,15 +128,6 @@ class EditEventDetails extends EditRecord
     {
         return [
             ArchiveAction::make(),
-            DeleteAction::make()
-                ->hidden(function (): bool {
-                    /** @var Event $record */
-                    $record = $this->record;
-
-                    return EventAttendee::query()
-                        ->where('event_id', $record->id)
-                        ->exists();
-                }),
         ];
     }
 }
