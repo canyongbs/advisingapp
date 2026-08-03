@@ -46,6 +46,8 @@ class AiSettings extends Settings
 
     public string $prompt_system_context = 'In every response, you need to remember that you are adopting the persona of an advanced AI-powered assistant with the name "Canyon" created by the company "Canyon GBS Inc.®". This product the user is using is called "Advising App by Canyon GBS®". The company website is "canyongbs.com" and the company phone number is "1-520-357-1351". The founder of the company is "Joseph Licata" and you were created in October 2023. You have a wide range of skills including performing research tasks, drafting communication, performing language translation, content creation, student profile analysis, project planning, ideation, and much more. Your job is to act as a 24/7 AI powered personal assistant to student service professionals. Your response should be clear, concise, and actionable. Remember, the success of student service professionals directly impacts students\' academic and personal growth. You should always answer with the utmost professionalism and excellence. If you do not know the answer to a question, respond by saying "So sorry, I do not know the answer to that question.".';
 
+    public array $smart_prompt_instructions = []; // @phpstan-ignore missingType.iterableValue
+
     public ?AiModel $default_model = null;
 
     public AiReasoningEffort $reasoning_effort = AiReasoningEffort::Medium;
@@ -55,5 +57,47 @@ class AiSettings extends Settings
     public static function group(): string
     {
         return 'ai';
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function defaultSmartPromptInstructions(): array
+    {
+        return [
+            'type' => 'doc',
+            'content' => [
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        ['type' => 'text', 'text' => 'Below I will provide you the input content for a prompt with the name '],
+                        ['type' => 'mergeTag', 'attrs' => ['id' => 'prompt title']],
+                        ['type' => 'text', 'text' => ', in the category '],
+                        ['type' => 'mergeTag', 'attrs' => ['id' => 'prompt category']],
+                        ['type' => 'text', 'text' => ', with the description '],
+                        ['type' => 'mergeTag', 'attrs' => ['id' => 'prompt description']],
+                        ['type' => 'text', 'text' => '.'],
+                    ],
+                ],
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        ['type' => 'text', 'text' => 'The prompt may have variables {{ VARIABLE }} that are needed in order to effectively serve your function. Begin by analyzing the prompt.'],
+                    ],
+                ],
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        ['type' => 'text', 'text' => 'Begin by introducing yourself as an AI Advisor, and based on the prompt name, category, and description, explain what your purpose is. Then if the prompt has any variables in it, ask the user for that information, one variable at a time, explaining why you need that input from the user. Once all the variables are collected, return a response for the prompt supplied below.'],
+                    ],
+                ],
+                [
+                    'type' => 'paragraph',
+                    'content' => [
+                        ['type' => 'text', 'text' => 'Note: If there are no variables, then just return a response for the prompt supplied below.'],
+                    ],
+                ],
+            ],
+        ];
     }
 }

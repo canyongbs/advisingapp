@@ -152,8 +152,10 @@ trait CanManagePromptLibrary
                                 ->when(
                                     $get('myDepartmentPrompts'),
                                     function (Builder $query) {
-                                        /** @var User $user */
                                         $user = auth()->user();
+
+                                        assert($user instanceof User);
+
                                         $departmentUsers = $user->department?->users;
 
                                         if ($departmentUsers) {
@@ -187,8 +189,24 @@ trait CanManagePromptLibrary
                                 fn (Builder $query) => $query->where('type_id', $get('typeId')),
                             )
                             ->when(
-                                filled($get('myPrompts')),
+                                $get('myPrompts'),
                                 fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
+                            )
+                            ->when(
+                                $get('myDepartmentPrompts'),
+                                function (Builder $query) {
+                                    $user = auth()->user();
+
+                                    assert($user instanceof User);
+
+                                    $departmentUsers = $user->department?->users;
+
+                                    if ($departmentUsers) {
+                                        $query->whereHas('user', function (Builder $query) use ($departmentUsers) {
+                                            return $query->whereIn('id', $departmentUsers->pluck('id'));
+                                        });
+                                    }
+                                },
                             ));
                     })
                     ->getOptionLabelUsing(function (Get $get, string | int | null $value) use ($getPromptOptions): ?string {
@@ -212,14 +230,16 @@ trait CanManagePromptLibrary
                                 fn (Builder $query) => $query->where('type_id', $get('typeId')),
                             )
                             ->when(
-                                filled($get('myPrompts')),
+                                $get('myPrompts'),
                                 fn (Builder $query) => $query->whereBelongsTo(auth()->user()),
                             )
                             ->when(
                                 $get('myDepartmentPrompts'),
                                 function (Builder $query) {
-                                    /** @var User $user */
                                     $user = auth()->user();
+
+                                    assert($user instanceof User);
+
                                     $departmentmUsers = $user->department?->users;
 
                                     if ($departmentmUsers) {
