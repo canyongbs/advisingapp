@@ -374,7 +374,7 @@ class ManageAiIntegrationsSettings extends SettingsPage
                                     ->multiple()
                                     ->nestedRecursiveRules([Rule::enum(AiModelApplicabilityFeature::class)]),
                             ]),
-                        Section::make('GPT 5.6 luna')
+                        Section::make('GPT 5.6 Luna')
                             ->collapsible()
                             ->visible(Gpt56LunaFeature::active())
                             ->schema([
