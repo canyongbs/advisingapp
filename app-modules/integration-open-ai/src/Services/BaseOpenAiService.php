@@ -58,6 +58,7 @@ use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns\InteractsW
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use App\Models\User;
+use Carbon\CarbonInterface;
 use Closure;
 use Exception;
 use Generator;
@@ -95,6 +96,8 @@ abstract class BaseOpenAiService implements AiService
     use InteractsWithResearchRequests;
 
     public const FORMATTING_INSTRUCTIONS = 'When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.';
+
+    protected const RATE_LIMIT_FALLBACK_RETRY_SECONDS = 15;
 
     public function __construct(
         protected AiIntegrationsSettings $settings,
@@ -282,17 +285,11 @@ abstract class BaseOpenAiService implements AiService
                             ]);
                         }
                     } catch (PrismRateLimitedException $exception) {
-                        foreach ($exception->rateLimits as $rateLimit) {
-                            if ($rateLimit->resetsAt?->isFuture()) {
-                                yield json_encode(['type' => 'rate_limited', 'message' => 'Heavy traffic, just a few more moments...', 'retry_after_seconds' => now()->diffInSeconds($rateLimit->resetsAt) + 1]);
+                        $resetsAt = $this->resolveRateLimitResetsAt($exception);
 
-                                return;
-                            }
-                        }
+                        yield json_encode(['type' => 'rate_limited', 'message' => 'Heavy traffic, just a few more moments...', 'retry_after_seconds' => now()->diffInSeconds($resetsAt) + 1]);
 
-                        yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
-
-                        report(new MessageResponseException('Thread run was rate limited, but the system was unable to extract the number of retry seconds: [' . $exception->getMessage() . '].'));
+                        return;
                     } catch (Throwable $exception) {
                         // Throw to bubble up to the retry handling
                         throw $exception;
@@ -435,21 +432,11 @@ abstract class BaseOpenAiService implements AiService
                                 error: ($response->finishReason === FinishReason::Error) ? 'Something went wrong' : null,
                             );
                         } catch (PrismRateLimitedException $exception) {
-                            foreach ($exception->rateLimits as $rateLimit) {
-                                if ($rateLimit->resetsAt?->isFuture()) {
-                                    yield new Finish(
-                                        rateLimitResetsAt: $rateLimit->resetsAt,
-                                    );
-
-                                    return;
-                                }
-                            }
-
-                            report(new MessageResponseException('Thread run was rate limited, but the system was unable to extract the number of retry seconds: [' . $exception->getMessage() . '].'));
-
                             yield new Finish(
-                                error: 'Something went wrong',
+                                rateLimitResetsAt: $this->resolveRateLimitResetsAt($exception),
                             );
+
+                            return;
                         } catch (PrismException $exception) {
                             // Throw to pass up to the caller
                             throw $exception;
@@ -541,21 +528,11 @@ abstract class BaseOpenAiService implements AiService
                             ]);
                         }
                     } catch (PrismRateLimitedException $exception) {
-                        foreach ($exception->rateLimits as $rateLimit) {
-                            if ($rateLimit->resetsAt?->isFuture()) {
-                                yield new Finish(
-                                    rateLimitResetsAt: $rateLimit->resetsAt,
-                                );
-
-                                return;
-                            }
-                        }
-
-                        report(new MessageResponseException('Thread run was rate limited, but the system was unable to extract the number of retry seconds: [' . $exception->getMessage() . '].'));
-
                         yield new Finish(
-                            error: 'Something went wrong',
+                            rateLimitResetsAt: $this->resolveRateLimitResetsAt($exception),
                         );
+
+                        return;
                     } catch (PrismException $exception) {
                         // Throw to pass up to the caller
                         throw $exception;
@@ -1020,6 +997,17 @@ abstract class BaseOpenAiService implements AiService
         }
 
         return $effort->value;
+    }
+
+    protected function resolveRateLimitResetsAt(PrismRateLimitedException $exception): CarbonInterface
+    {
+        foreach ($exception->rateLimits as $rateLimit) {
+            if ($rateLimit->resetsAt?->isFuture()) {
+                return $rateLimit->resetsAt;
+            }
+        }
+
+        return now()->addSeconds($exception->retryAfter ?? self::RATE_LIMIT_FALLBACK_RETRY_SECONDS);
     }
 
     private function isIgnorableStreamEvent(StreamEvent $chunk): bool

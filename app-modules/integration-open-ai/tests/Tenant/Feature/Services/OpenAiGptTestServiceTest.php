@@ -465,12 +465,12 @@ it('captures the OpenAI response id from the stream so a conversation can contin
         ->and($meta->nextRequestOptions)->toBe(['previous_response_id' => 'resp_test_12345']);
 });
 
-it('yields a finish chunk when the stream is rate limited without a known reset time', function () {
+it('falls back to a default retry delay when the stream is rate limited without a parseable retry time', function () {
     asSuperAdmin();
 
     $sse = implode("\n\n", [
         'data: ' . json_encode(['type' => 'response.created', 'response' => ['model' => 'test']]),
-        'data: ' . json_encode(['type' => 'error', 'error' => ['code' => 'rate_limit_exceeded', 'message' => 'Rate limited']]),
+        'data: ' . json_encode(['type' => 'error', 'error' => ['code' => 'rate_limit_exceeded', 'message' => 'Rate limit exceeded.']]),
         'data: [DONE]',
     ]) . "\n\n";
 
@@ -485,5 +485,33 @@ it('yields a finish chunk when the stream is rate limited without a known reset 
     $finish = collect($chunks)->first(fn (object $chunk): bool => $chunk instanceof Finish);
 
     expect($finish)->not->toBeNull()
-        ->and($finish->error)->not->toBeNull();
+        ->and($finish->error)->toBeNull()
+        ->and($finish->rateLimitResetsAt)->not->toBeNull()
+        ->and(now()->diffInSeconds($finish->rateLimitResetsAt))->toBeGreaterThanOrEqual(13)
+        ->and(now()->diffInSeconds($finish->rateLimitResetsAt))->toBeLessThanOrEqual(15);
+});
+
+it('extracts the retry delay from the rate limit error message', function () {
+    asSuperAdmin();
+
+    $sse = implode("\n\n", [
+        'data: ' . json_encode(['type' => 'response.created', 'response' => ['model' => 'test']]),
+        'data: ' . json_encode(['type' => 'error', 'error' => ['code' => 'rate_limit_exceeded', 'message' => 'Rate limit reached. Please try again in 30s. Visit the docs to learn more.']]),
+        'data: [DONE]',
+    ]) . "\n\n";
+
+    Http::fake([
+        '*/responses*' => Http::response($sse, 200, ['Content-Type' => 'text/event-stream']),
+    ]);
+
+    $service = app(OpenAiGptTestService::class);
+
+    $chunks = iterator_to_array(($service->streamRaw(content: 'Hi', shouldTrack: false))());
+
+    $finish = collect($chunks)->first(fn (object $chunk): bool => $chunk instanceof Finish);
+
+    expect($finish)->not->toBeNull()
+        ->and($finish->rateLimitResetsAt)->not->toBeNull()
+        ->and(now()->diffInSeconds($finish->rateLimitResetsAt))->toBeGreaterThanOrEqual(28)
+        ->and(now()->diffInSeconds($finish->rateLimitResetsAt))->toBeLessThanOrEqual(30);
 });
