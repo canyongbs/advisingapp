@@ -443,7 +443,7 @@ it('calculates stats with population group filter applied', function () {
 
     expect($unfilteredStats)->toHaveCount(1)
         ->and($unfilteredStats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
-        ->and((int) str_replace(',', '', $unfilteredStats[0]->getValue()))->toBe($totalCount);
+        ->and($unfilteredStats[0]->getValue())->toBe((string) $totalCount);
 
     // Test with populationGroup filter format
     $widget->pageFilters = ['populationGroup' => $group->getKey()];
@@ -467,5 +467,5 @@ it('calculates stats with population group filter applied', function () {
 
     expect($clearedStats)->toHaveCount(1)
         ->and($clearedStats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
-        ->and((int) str_replace(',', '', $clearedStats[0]->getValue()))->toBe($totalCount);
+        ->and($clearedStats[0]->getValue())->toBe((string) $totalCount);
 });
