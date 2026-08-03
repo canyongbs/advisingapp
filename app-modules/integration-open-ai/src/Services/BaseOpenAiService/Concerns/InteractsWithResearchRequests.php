@@ -55,7 +55,6 @@ use Prism\Prism\Schema\ArraySchema;
 use Prism\Prism\Schema\ObjectSchema;
 use Prism\Prism\Schema\StringSchema;
 use Prism\Prism\Streaming\Events\StreamEndEvent;
-use Prism\Prism\Streaming\Events\StreamStartEvent;
 use Prism\Prism\Streaming\Events\TextDeltaEvent;
 use Throwable;
 
@@ -212,15 +211,6 @@ trait InteractsWithResearchRequests
                 ->asStream();
 
             foreach ($stream as $chunk) {
-                if (
-                    ($chunk instanceof StreamStartEvent) &&
-                    filled($chunk->id)
-                ) {
-                    $nextRequestOptions(['previous_response_id' => $chunk->id]);
-
-                    continue;
-                }
-
                 if ($chunk instanceof TextDeltaEvent) {
                     yield $chunk->delta;
 
@@ -228,6 +218,10 @@ trait InteractsWithResearchRequests
                 }
 
                 if ($chunk instanceof StreamEndEvent) {
+                    if (filled($responseId = $chunk->additionalContent['response_id'] ?? null)) {
+                        $nextRequestOptions(['previous_response_id' => $responseId]);
+                    }
+
                     if ($chunk->finishReason === FinishReason::Error) {
                         report(new MessageResponseException('Stream not successful.'));
                     }

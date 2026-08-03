@@ -40,6 +40,8 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Support\StreamingChunks\Finish;
+use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
@@ -436,4 +438,52 @@ it('can upload a file and create a new vector store', function () {
     expect($file->openAiVectorStores->first())
         ->vector_store_file_id->toBe($fileId)
         ->vector_store_id->toBe($vectorStoreId);
+});
+
+it('captures the OpenAI response id from the stream so a conversation can continue', function () {
+    asSuperAdmin();
+
+    $sse = implode("\n\n", [
+        'data: ' . json_encode(['type' => 'response.created', 'response' => ['model' => 'test']]),
+        'data: ' . json_encode(['type' => 'response.output_text.delta', 'delta' => 'Hello']),
+        'data: ' . json_encode(['type' => 'response.completed', 'response' => ['id' => 'resp_test_12345', 'usage' => ['input_tokens' => 1, 'output_tokens' => 1]]]),
+        'data: [DONE]',
+    ]) . "\n\n";
+
+    Http::fake([
+        '*/responses*' => Http::response($sse, 200, ['Content-Type' => 'text/event-stream']),
+    ]);
+
+    $service = app(OpenAiGptTestService::class);
+
+    $chunks = iterator_to_array(($service->streamRaw(content: 'Hi', shouldTrack: false))());
+
+    $meta = collect($chunks)->first(fn (object $chunk): bool => $chunk instanceof Meta);
+
+    expect($meta)->not->toBeNull()
+        ->and($meta->messageId)->toBe('resp_test_12345')
+        ->and($meta->nextRequestOptions)->toBe(['previous_response_id' => 'resp_test_12345']);
+});
+
+it('yields a finish chunk when the stream is rate limited without a known reset time', function () {
+    asSuperAdmin();
+
+    $sse = implode("\n\n", [
+        'data: ' . json_encode(['type' => 'response.created', 'response' => ['model' => 'test']]),
+        'data: ' . json_encode(['type' => 'error', 'error' => ['code' => 'rate_limit_exceeded', 'message' => 'Rate limited']]),
+        'data: [DONE]',
+    ]) . "\n\n";
+
+    Http::fake([
+        '*/responses*' => Http::response($sse, 200, ['Content-Type' => 'text/event-stream']),
+    ]);
+
+    $service = app(OpenAiGptTestService::class);
+
+    $chunks = iterator_to_array(($service->streamRaw(content: 'Hi', shouldTrack: false))());
+
+    $finish = collect($chunks)->first(fn (object $chunk): bool => $chunk instanceof Finish);
+
+    expect($finish)->not->toBeNull()
+        ->and($finish->error)->not->toBeNull();
 });
