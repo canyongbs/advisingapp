@@ -114,11 +114,15 @@ class UtilizationMetricsApiController extends Controller
             ->groupByRaw("date_trunc('month', submitted_at)")
             ->orderBy('month')
             ->get()
-            ->map(fn (object $item): array => [
-                'month' => CarbonImmutable::parse($item->month)->format('Y-m'),
-                'count' => (int) $item->monthly_total,
-                'label' => CarbonImmutable::parse($item->month)->format('Y, F'),
-            ])
+            ->map(function (FormSubmission $item): array {
+                $month = (string) data_get($item, 'month');
+
+                return [
+                    'month' => CarbonImmutable::parse($month)->format('Y-m'),
+                    'count' => (int) data_get($item, 'monthly_total'),
+                    'label' => CarbonImmutable::parse($month)->format('Y, F'),
+                ];
+            })
             ->values()
             ->all();
 
@@ -127,11 +131,15 @@ class UtilizationMetricsApiController extends Controller
             ->groupByRaw("date_trunc('month', created_at)")
             ->orderBy('month')
             ->get()
-            ->map(fn (object $item): array => [
-                'month' => CarbonImmutable::parse($item->month)->format('Y-m'),
-                'count' => (int) $item->monthly_total,
-                'label' => CarbonImmutable::parse($item->month)->format('Y, F'),
-            ])
+            ->map(function (ApplicationSubmission $item): array {
+                $month = (string) data_get($item, 'month');
+
+                return [
+                    'month' => CarbonImmutable::parse($month)->format('Y-m'),
+                    'count' => (int) data_get($item, 'monthly_total'),
+                    'label' => CarbonImmutable::parse($month)->format('Y, F'),
+                ];
+            })
             ->values()
             ->all();
 
