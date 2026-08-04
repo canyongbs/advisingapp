@@ -725,6 +725,24 @@ it('can insert a prompt from the library', function () use ($setUp) {
         ->assertDispatched('set-chat-message', content: $prompt->prompt);
 });
 
+it('can insert a prompt owned by another user when "my prompts only" is unchecked', function () use ($setUp) {
+    $setUp();
+
+    $prompt = Prompt::factory()->create();
+    $prompt->user()->associate(User::factory()->create())->save();
+
+    Livewire::test(InstitutionalAdvisor::class)
+        ->mountAction('insertFromPromptLibrary')
+        ->setActionData([
+            'isSmart' => 0,
+            'myPrompts' => false,
+            'promptId' => $prompt->getKey(),
+        ])
+        ->callMountedAction()
+        ->assertHasNoActionErrors()
+        ->assertDispatched('set-chat-message', content: $prompt->prompt);
+});
+
 it('can not insert a missing prompt from the library', function () use ($setUp) {
     $setUp();
 
