@@ -37,7 +37,7 @@
 namespace AdvisingApp\Audit\Database\Factories;
 
 use AdvisingApp\Audit\Models\Audit;
-use AdvisingApp\CaseManagement\Models\CaseModel;
+use AdvisingApp\Engagement\Models\Engagement;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -52,8 +52,8 @@ class AuditFactory extends Factory
             'change_agent_type' => (new User())->getMorphClass(),
             'change_agent_id' => User::factory(),
             'event' => $this->faker->randomElement(['created', 'updated', 'deleted']),
-            'auditable_type' => (new CaseModel())->getMorphClass(),
-            'auditable_id' => CaseModel::factory(),
+            'auditable_type' => (new Engagement())->getMorphClass(),
+            'auditable_id' => Engagement::factory(),
             'old_values' => ['name' => $this->faker->word()],
             'new_values' => ['name' => $this->faker->word()],
             'url' => $this->faker->url(),

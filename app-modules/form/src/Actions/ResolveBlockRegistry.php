@@ -37,8 +37,6 @@
 namespace AdvisingApp\Form\Actions;
 
 use AdvisingApp\Application\Models\Application;
-use AdvisingApp\CaseManagement\Models\CaseForm;
-use AdvisingApp\Form\Filament\Blocks\DefaultFieldBlockRegistry;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\Submissible;
@@ -54,7 +52,6 @@ class ResolveBlockRegistry
             Form::class, Application::class => FormFieldBlockRegistry::keyByType(),
             Survey::class => SurveyFieldBlockRegistry::keyByType(),
             EventRegistrationForm::class => FormFieldBlockRegistry::keyByTypeForEvents(),
-            CaseForm::class => DefaultFieldBlockRegistry::keyByType(),
         };
     }
 }

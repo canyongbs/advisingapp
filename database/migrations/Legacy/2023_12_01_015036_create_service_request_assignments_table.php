@@ -34,55 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace App\Enums;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use App\Models\Authenticatable;
-use App\Settings\LicenseSettings;
-use Illuminate\Support\Facades\Gate;
-
-enum Feature: string
-{
-    case OnlineForms = 'online-forms';
-
-    case OnlineSurveys = 'online-surveys';
-
-    case OnlineAdmissions = 'online-admissions';
-
-    case ResourceHub = 'resource-hub';
-
-    case SupportPrograms = 'support-programs';
-
-    case EventManagement = 'event-management';
-
-    case RealtimeChat = 'realtime-chat';
-
-    case MobileApps = 'mobile-apps';
-
-    case ScheduleAndAppointments = 'schedule-and-appointments';
-
-    case EmployeeAdvisors = 'employee-advisors';
-
-    case ResearchAdvisor = 'research-advisor';
-
-    case CustomerAdvisors = 'customer-advisors';
-
-    case DataAdvisor = 'data-advisor';
-
-    case EarlyAlert = 'early-alert';
-
-    case PublicProfiles = 'public-profiles';
-
-    public function generateGate(): void
+/** @phpstan-ignore Common.migrationMissingDownMethod */
+return new class () extends Migration {
+    public function up(): void
     {
-        // If features are added that are not based on a License Addon we will need to update this
-        Gate::define(
-            $this->getGateName(),
-            fn (?Authenticatable $authenticatable) => app(LicenseSettings::class)->data->addons->{str($this->value)->camel()}
-        );
-    }
+        Schema::create('service_request_assignments', function (Blueprint $table) {
+            $table->uuid('id')->primary();
 
-    public function getGateName(): string
-    {
-        return "feature-{$this->value}";
+            $table->foreignUuid('service_request_id')->constrained('service_requests');
+            $table->foreignUuid('user_id')->constrained('users');
+            $table->foreignUuid('assigned_by_id')->nullable()->constrained('users');
+            $table->timestamp('assigned_at');
+            $table->string('status')->default('active');
+
+            $table->timestamps();
+            $table->softDeletes();
+        });
     }
-}
+};

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Workflow\Database\Factories;
 
-use AdvisingApp\Workflow\Models\WorkflowCaseDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementEmailDetails;
 use AdvisingApp\Workflow\Models\WorkflowEngagementSmsDetails;
 use AdvisingApp\Workflow\Models\WorkflowProactiveConcernDetails;
@@ -58,7 +57,6 @@ class WorkflowRunStepFactory extends Factory
             WorkflowEngagementSmsDetails::factory(),
             WorkflowProactiveConcernDetails::factory(),
             // WorkflowCareTeamDetails::factory(),
-            WorkflowCaseDetails::factory(),
             WorkflowTagsDetails::factory(),
             // WorkflowTaskDetails::factory(),
             // Add more as factories are created
@@ -73,7 +71,6 @@ class WorkflowRunStepFactory extends Factory
                     WorkflowEngagementSmsDetails::class,
                     WorkflowProactiveConcernDetails::class,
                     // WorkflowCareTeamDetails::class,
-                    WorkflowCaseDetails::class,
                     WorkflowTagsDetails::class,
                     // WorkflowTaskDetails::class,
                 ];

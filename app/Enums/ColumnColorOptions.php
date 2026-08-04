@@ -36,53 +36,24 @@
 
 namespace App\Enums;
 
-use App\Models\Authenticatable;
-use App\Settings\LicenseSettings;
-use Illuminate\Support\Facades\Gate;
+use Filament\Support\Contracts\HasLabel;
 
-enum Feature: string
+enum ColumnColorOptions: string implements HasLabel
 {
-    case OnlineForms = 'online-forms';
+    case Success = 'success';
 
-    case OnlineSurveys = 'online-surveys';
+    case Danger = 'danger';
 
-    case OnlineAdmissions = 'online-admissions';
+    case Warning = 'warning';
 
-    case ResourceHub = 'resource-hub';
+    case Info = 'info';
 
-    case SupportPrograms = 'support-programs';
+    case Primary = 'primary';
 
-    case EventManagement = 'event-management';
+    case Gray = 'gray';
 
-    case RealtimeChat = 'realtime-chat';
-
-    case MobileApps = 'mobile-apps';
-
-    case ScheduleAndAppointments = 'schedule-and-appointments';
-
-    case EmployeeAdvisors = 'employee-advisors';
-
-    case ResearchAdvisor = 'research-advisor';
-
-    case CustomerAdvisors = 'customer-advisors';
-
-    case DataAdvisor = 'data-advisor';
-
-    case EarlyAlert = 'early-alert';
-
-    case PublicProfiles = 'public-profiles';
-
-    public function generateGate(): void
+    public function getLabel(): string
     {
-        // If features are added that are not based on a License Addon we will need to update this
-        Gate::define(
-            $this->getGateName(),
-            fn (?Authenticatable $authenticatable) => app(LicenseSettings::class)->data->addons->{str($this->value)->camel()}
-        );
-    }
-
-    public function getGateName(): string
-    {
-        return "feature-{$this->value}";
+        return $this->value;
     }
 }

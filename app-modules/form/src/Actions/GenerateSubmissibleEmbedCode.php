@@ -37,7 +37,6 @@
 namespace AdvisingApp\Form\Actions;
 
 use AdvisingApp\Application\Models\Application;
-use AdvisingApp\CaseManagement\Models\CaseForm;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
@@ -134,26 +133,6 @@ class GenerateSubmissibleEmbedCode
 
                 return <<<EOD
                 <event-registration-embed url="{$assetsUrl}"></event-registration-embed>
-                <script src="{$loaderScriptUrl}"></script>
-                EOD;
-            })(),
-            CaseForm::class => (function () use ($submissible) {
-                /** @var CaseForm $submissible */
-                $manifestPath = Storage::disk('public')->get('widgets/case-forms/.vite/manifest.json');
-
-                if (is_null($manifestPath)) {
-                    throw new Exception('Vite manifest file not found.');
-                }
-
-                /** @var array<string, array{file: string, name: string, src: string, isEntry: bool}> $manifest */
-                $manifest = json_decode($manifestPath, true, 512, JSON_THROW_ON_ERROR);
-
-                $loaderScriptUrl = url("widgets/case-forms/{$manifest['src/loader.js']['file']}");
-
-                $assetsUrl = route(name: 'widgets.case-forms.api.assets', parameters: ['caseForm' => $submissible]);
-
-                return <<<EOD
-                <case-form-embed url="{$assetsUrl}"></case-form-embed>
                 <script src="{$loaderScriptUrl}"></script>
                 EOD;
             })(),
