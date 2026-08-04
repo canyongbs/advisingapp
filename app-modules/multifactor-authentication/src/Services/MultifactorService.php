@@ -59,17 +59,17 @@ class MultifactorService
         return app(static::class);
     }
 
-    public function getEngine()
+    public function getEngine(): Google2FA
     {
         return $this->engine;
     }
 
-    public function generateSecretKey()
+    public function generateSecretKey(): string
     {
         return $this->engine->generateSecretKey();
     }
 
-    public function getMultifactorQrCodeSvg(string $url)
+    public function getMultifactorQrCodeSvg(string $url): string
     {
         $svg = (new Writer(
             new ImageRenderer(
@@ -81,12 +81,12 @@ class MultifactorService
         return trim(substr($svg, strpos($svg, "\n") + 1));
     }
 
-    public function getQrCodeUrl($companyName, $companyEmail, $secret)
+    public function getQrCodeUrl(string $companyName, string $companyEmail, string $secret): string
     {
         return $this->engine->getQRCodeUrl($companyName, $companyEmail, $secret);
     }
 
-    public function verify(string $code, ?User $user = null)
+    public function verify(string $code, ?User $user = null): bool
     {
         if (is_null($user)) {
             $user = Filament::auth()->user();

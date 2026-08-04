@@ -86,6 +86,9 @@ enum CampaignActionType: string implements HasLabel
 
     case Tags = 'tags';
 
+    /**
+     * @return array<int, CampaignActionBlock>
+     */
     public static function blocks(): array
     {
         $blocks = [
@@ -107,7 +110,7 @@ enum CampaignActionType: string implements HasLabel
         return $blocks;
     }
 
-    public function getLabel(): ?string
+    public function getLabel(): string
     {
         return match ($this) {
             CampaignActionType::BulkEngagementEmail => 'Email',
@@ -148,6 +151,9 @@ enum CampaignActionType: string implements HasLabel
         };
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function getGenerateFields(): array
     {
         return $this->getBlock()->generateFields();

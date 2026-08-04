@@ -65,6 +65,9 @@ class CareTeamBlock extends CampaignActionBlock
         $this->schema($this->generateFields());
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function generateFields(): array
     {
         return [
@@ -73,7 +76,7 @@ class CareTeamBlock extends CampaignActionBlock
                 ->schema([
                     Select::make('user_id')
                         ->label('User')
-                        ->options(function (Get $get, $livewire, string $operation) {
+                        ->options(function (Get $get, mixed $livewire, string $operation) {
                             if ($livewire instanceof CreateCampaign) {
                                 $groupId = $get('../../../../../segment_id');
                             } else {
@@ -92,7 +95,7 @@ class CareTeamBlock extends CampaignActionBlock
                         ->exists('users', 'id'),
                     Select::make('care_team_role_id')
                         ->label('Role')
-                        ->relationship('careTeamRole', 'name', function (Builder $query, Get $get, $livewire, string $operation) {
+                        ->relationship('careTeamRole', 'name', function (Builder $query, Get $get, mixed $livewire, string $operation) {
                             if ($livewire instanceof CreateCampaign) {
                                 $groupId = $get('../../../../../segment_id');
                             } else {
@@ -109,7 +112,7 @@ class CareTeamBlock extends CampaignActionBlock
                         ->preload()
                         ->optionsLimit(20)
                         ->searchable()
-                        ->default(function (Get $get, $livewire, string $operation) {
+                        ->default(function (Get $get, mixed $livewire, string $operation) {
                             if ($livewire instanceof CreateCampaign) {
                                 $groupId = $get('../../../../../segment_id');
                             } else {
@@ -124,7 +127,7 @@ class CareTeamBlock extends CampaignActionBlock
                             };
                         })
                         ->model(CareTeam::class)
-                        ->visible(function (Get $get, $livewire, string $operation) {
+                        ->visible(function (Get $get, mixed $livewire, string $operation) {
                             if ($livewire instanceof CreateCampaign) {
                                 $groupId = $get('../../../../../segment_id');
                             } else {
