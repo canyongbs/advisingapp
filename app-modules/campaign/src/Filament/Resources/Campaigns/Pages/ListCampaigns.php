@@ -50,6 +50,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class ListCampaigns extends ListRecords
 {
@@ -60,9 +61,18 @@ class ListCampaigns extends ListRecords
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('name'),
-                TextColumn::make('group.name')
-                    ->label('Group'),
+                TextColumn::make('name')
+                    ->description(function (Campaign $record): ?string {
+                        $group = $record->group;
+
+                        if ($group === null) {
+                            return null;
+                        }
+
+                        $population = Str::of($group->model->getPluralLabel())->ucfirst();
+
+                        return "{$group->name} (" . number_format($group->subjects_count) . " {$population})";
+                    }),
                 TextColumn::make('enabled')
                     ->label('Enabled')
                     ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No')
@@ -86,7 +96,8 @@ class ListCampaigns extends ListRecords
             // @phpstan-ignore argument.templateType
             ->modifyQueryUsing(function (Builder $query) {
                 /** @var Builder<Campaign> $query */
-                $query->withoutArchived();
+                $query->withoutArchived()
+                    ->with(['group' => fn ($query) => $query->withCount('subjects')]);
 
                 return $query;
             })

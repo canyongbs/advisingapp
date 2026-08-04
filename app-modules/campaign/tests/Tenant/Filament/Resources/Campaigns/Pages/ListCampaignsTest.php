@@ -40,6 +40,10 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\ListCampaigns;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Enums\GroupType;
+use AdvisingApp\Group\Models\Group;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 
 use function Pest\Livewire\livewire;
@@ -193,4 +197,29 @@ it('excludes archived campaigns from the list', function () {
         ->assertCanSeeTableRecords([$activeCampaign])
         ->assertCanNotSeeTableRecords([$archivedCampaign])
         ->assertCountTableRecords(1);
+});
+
+it('shows the group name and population as the name column description', function () {
+    asSuperAdmin();
+
+    $students = Student::factory()->count(3)->create();
+
+    $group = Group::factory()->create([
+        'name' => 'Everyone',
+        'model' => GroupModel::Student,
+        'type' => GroupType::Static,
+    ]);
+
+    $students->each(fn (Student $student) => $group->subjects()->create([
+        'subject_id' => $student->getKey(),
+        'subject_type' => $student->getMorphClass(),
+    ]));
+
+    $campaign = Campaign::factory()->create([
+        'segment_id' => $group->getKey(),
+    ]);
+
+    livewire(ListCampaigns::class)
+        ->assertCanSeeTableRecords([$campaign])
+        ->assertSee('Everyone (3 Students)');
 });
