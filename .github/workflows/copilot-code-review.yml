@@ -1,0 +1,80 @@
+name: Copilot Code Review Setup
+
+# Runs before Copilot code review to prepare its ephemeral environment. This installs PHP and
+# Composer, then lets Composer's post-autoload-dump hook run Laravel Boost so the generated
+# AGENTS.md, skills, and guidelines are available to the reviewer.
+on: # zizmor: ignore[concurrency-limits]
+    workflow_dispatch:
+    push:
+        paths:
+            - .github/workflows/copilot-code-review.yml
+    pull_request:
+        paths:
+            - .github/workflows/copilot-code-review.yml
+
+permissions: {}
+
+jobs:
+    # The job MUST be named `copilot-setup-steps` or Copilot will not pick it up.
+    copilot-setup-steps:
+        name: Copilot Code Review Setup
+        runs-on: ubuntu-22.04
+
+        permissions:
+            contents: read
+
+        timeout-minutes: 15
+
+        env:
+            php-extensions: gd, gmp, redis, mailparse
+            php-extensions-key: ext-cache-copilot-v1
+            php-version: '8.4'
+
+        steps:
+            - name: Setup cache environment
+              id: extcache
+              uses: shivammathur/cache-extensions@9b476298b44f2e4d4268dd103ff4c3e216314e27 #1.14.6
+              with:
+                  php-version: ${{ env.php-version }}
+                  extensions: ${{ env.php-extensions }}
+                  key: ${{ env.php-extensions-key }}
+
+            - name: Cache extensions
+              uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+              with:
+                  path: ${{ steps.extcache.outputs.dir }}
+                  key: ${{ runner.os }}-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
+                  restore-keys: ${{ runner.os }}-phpext-${{ env.php-version }}
+
+            - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
+              with:
+                  php-version: ${{ env.php-version }}
+                  coverage: none
+                  extensions: ${{ env.php-extensions }}
+
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
+
+            - name: Copy .env
+              run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+            - name: Cache dependencies
+              id: cache-composer
+              uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+              with:
+                  path: vendor
+                  key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
+
+            - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
+              name: Install Dependencies
+              run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+              shell: bash
+
+            - name: Generate key
+              run: php artisan key:generate
+
+            # Fires the post-autoload-dump hook (common:publish + boost:update) which generates
+            # AGENTS.md, .github/skills, and .ai/guidelines used by the code reviewer.
+            - name: Publish Boost instructions and skills
+              run: composer dump-autoload

@@ -20,7 +20,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode/*
-!/.vscode/mcp.json
+!/.vscode/mcp.override.json
 public/css/
 public/fonts/
 public/js/
@@ -39,3 +39,12 @@ app-modules/**/resources/js/dist/*
 /.bash_history
 **/psysh_history
 .pdepend/
+
+# BEGIN canyongbs/common (common:publish) — do not edit this block manually.
+/boost.json
+/.vscode/mcp.json
+/AGENTS.md
+/.github/skills/
+/.ai/skills/
+/.ai/guidelines/
+# END canyongbs/common (common:publish)
