@@ -39,7 +39,7 @@ jobs:
 
         services:
             cache:
-                image: redis:7.4.9-alpine@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99
+                image: redis:7.4.10@sha256:595cc6f2bb3af6e03347b90deb6123c6aa2c81dea05ce08128de8a174b6ac67b
                 ports:
                     - 6379:6379
                 options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
