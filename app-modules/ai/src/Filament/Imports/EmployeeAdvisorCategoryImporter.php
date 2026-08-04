@@ -40,8 +40,8 @@ use AdvisingApp\Ai\Models\EmployeeAdvisorCategory;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
-use InvalidArgumentException;
 use Illuminate\Validation\Rule;
+use InvalidArgumentException;
 
 class EmployeeAdvisorCategoryImporter extends Importer
 {
@@ -92,12 +92,12 @@ class EmployeeAdvisorCategoryImporter extends Importer
 
     protected function getEmployeeAdvisorId(): string
     {
-      $id = $this->options['employee_advisor_id'] ?? null;
+        $id = $this->options['employee_advisor_id'] ?? null;
 
-      if (blank($id)) {
-        throw new InvalidArgumentException('The employee_advisor_id option is required for this import.');
-      }
+        if (blank($id)) {
+            throw new InvalidArgumentException('The employee_advisor_id option is required for this import.');
+        }
 
-      return (string) $id;
+        return (string) $id;
     }
 }
