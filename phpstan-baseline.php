@@ -78,6 +78,18 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/Prompts/Pages/ViewPrompt.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:categories\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 3,
+    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/AiAssistants/Pages/ManageEmployeeAdvisorCategories.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:categories\\(\\)\\.$#',
+    'identifier' => 'method.notFound',
+    'count' => 3,
+    'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/CustomerAdvisors/Pages/ManageCategories.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:toggleUpvote\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
