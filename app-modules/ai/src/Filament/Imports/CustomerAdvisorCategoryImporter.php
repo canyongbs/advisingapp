@@ -40,8 +40,8 @@ use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
-use InvalidArgumentException;
 use Illuminate\Validation\Rule;
+use InvalidArgumentException;
 
 class CustomerAdvisorCategoryImporter extends Importer
 {
@@ -92,12 +92,12 @@ class CustomerAdvisorCategoryImporter extends Importer
 
     protected function getCustomerAdvisorId(): string
     {
-      $id = $this->options['customer_advisor_id'] ?? null;
+        $id = $this->options['customer_advisor_id'] ?? null;
 
-      if (blank($id)) {
-        throw new InvalidArgumentException('The customer_advisor_id option is required for this import.');
-      }
+        if (blank($id)) {
+            throw new InvalidArgumentException('The customer_advisor_id option is required for this import.');
+        }
 
-      return (string) $id;
+        return (string) $id;
     }
 }
