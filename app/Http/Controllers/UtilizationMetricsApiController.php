@@ -110,27 +110,27 @@ class UtilizationMetricsApiController extends Controller
 
         $formsSubmittedByMonth = FormSubmission::query()
             ->submitted()
-            ->select('submitted_at')
-            ->orderBy('submitted_at')
+            ->selectRaw("date_trunc('month', submitted_at) as month, COUNT(*) as monthly_total")
+            ->groupByRaw("date_trunc('month', submitted_at)")
+            ->orderBy('month')
             ->get()
-            ->countBy(fn (FormSubmission $submission): string => $submission->submitted_at->format('Y-m'))
-            ->map(fn (int $count, string $month): array => [
-                'month' => $month,
-                'count' => $count,
-                'label' => CarbonImmutable::createFromFormat('Y-m', $month)->format('Y, F'),
+            ->map(fn (object $item): array => [
+                'month' => CarbonImmutable::parse($item->month)->format('Y-m'),
+                'count' => (int) $item->monthly_total,
+                'label' => CarbonImmutable::parse($item->month)->format('Y, F'),
             ])
             ->values()
             ->all();
 
         $applicationSubmissionsByMonth = ApplicationSubmission::query()
-            ->select('created_at')
-            ->orderBy('created_at')
+            ->selectRaw("date_trunc('month', created_at) as month, COUNT(*) as monthly_total")
+            ->groupByRaw("date_trunc('month', created_at)")
+            ->orderBy('month')
             ->get()
-            ->countBy(fn (ApplicationSubmission $submission): string => $submission->created_at->format('Y-m'))
-            ->map(fn (int $count, string $month): array => [
-                'month' => $month,
-                'count' => $count,
-                'label' => CarbonImmutable::createFromFormat('Y-m', $month)->format('Y, F'),
+            ->map(fn (object $item): array => [
+                'month' => CarbonImmutable::parse($item->month)->format('Y-m'),
+                'count' => (int) $item->monthly_total,
+                'label' => CarbonImmutable::parse($item->month)->format('Y, F'),
             ])
             ->values()
             ->all();
