@@ -55,7 +55,6 @@ return new class () extends Migration {
             DB::statement('ALTER TABLE customer_advisor_categories ALTER COLUMN name TYPE citext');
             DB::statement('ALTER TABLE employee_advisor_categories ALTER COLUMN name TYPE citext');
         });
-        
     }
 
     public function down(): void
@@ -64,7 +63,6 @@ return new class () extends Migration {
             DB::statement('ALTER TABLE customer_advisor_categories ALTER COLUMN name TYPE VARCHAR(255)');
             DB::statement('ALTER TABLE employee_advisor_categories ALTER COLUMN name TYPE VARCHAR(255)');
         });
-        
     }
 
     private function renameCaseInsensitiveDuplicates(string $table, string $ownerColumn): void
