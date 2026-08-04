@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Report\Filament\Exports;
 
-use AdvisingApp\CaseManagement\Models\CaseStatus;
 use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
@@ -132,14 +131,6 @@ class StudentExporter extends Exporter
             static::notDefault($type::make('care_team_count')
                 ->label('Count of Care Team Members')
                 ->counts('careTeam')),
-            static::notDefault($type::make('cases_count')
-                ->label('Count of Cases')
-                ->counts('cases')),
-            ...CaseStatus::all()->map(fn (CaseStatus $status): TextColumn | ExportColumn => static::notDefault($type::make("cases_{$status->getKey()}_count")
-                ->label("Count of {$status->name} Cases")
-                ->counts([
-                    "cases as cases_{$status->getKey()}_count" => fn (Builder $query) => $query->whereBelongsTo($status, 'status'),
-                ]))),
             static::notDefault($type::make('event_attendee_records_count')
                 ->label('Count of Events')
                 ->counts('eventAttendeeRecords')),

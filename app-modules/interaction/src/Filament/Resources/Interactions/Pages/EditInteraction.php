@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Interaction\Filament\Resources\Interactions\Pages;
 
-use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\InteractionResource;
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use AdvisingApp\Interaction\Models\InteractionInitiative;
@@ -86,9 +85,6 @@ class EditInteraction extends EditRecord
                                         ->orWhere('id', '=', $record->interactable_id)
                                 ),
                         ] : []),
-                        Type::make(CaseModel::class)
-                            ->label('Case')
-                            ->titleAttribute('case_number'),
                     ])
                     ->columnSpanFull(),
                 Fieldset::make('Details')

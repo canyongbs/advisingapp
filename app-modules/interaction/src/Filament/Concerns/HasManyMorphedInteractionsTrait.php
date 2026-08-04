@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Interaction\Filament\Concerns;
 
-use AdvisingApp\CaseManagement\Models\CaseModel;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\Schemas\InteractionForm;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
@@ -128,11 +127,7 @@ trait HasManyMorphedInteractionsTrait
     {
         $ownerRecord = $this->getOwnerRecord();
 
-        assert(
-            $ownerRecord instanceof Student ||
-            $ownerRecord instanceof Prospect ||
-            $ownerRecord instanceof CaseModel
-        );
+        assert($ownerRecord instanceof Student || $ownerRecord instanceof Prospect);
 
         return $table
             ->recordTitleAttribute('id')
@@ -215,10 +210,6 @@ trait HasManyMorphedInteractionsTrait
                         function (Builder $query) use ($ownerRecord) {
                             $type = $ownerRecord->getMorphClass();
 
-                            if ($ownerRecord instanceof CaseModel) {
-                                $type = $ownerRecord->respondent->getMorphClass();
-                            }
-
                             return $query->where('interactable_type', $type);
                         }
                     )
@@ -231,10 +222,6 @@ trait HasManyMorphedInteractionsTrait
                         'name',
                         function (Builder $query) use ($ownerRecord) {
                             $type = $ownerRecord->getMorphClass();
-
-                            if ($ownerRecord instanceof CaseModel) {
-                                $type = $ownerRecord->respondent->getMorphClass();
-                            }
 
                             return $query->where('interactable_type', $type);
                         }
@@ -250,10 +237,6 @@ trait HasManyMorphedInteractionsTrait
                         function (Builder $query) use ($ownerRecord) {
                             $type = $ownerRecord->getMorphClass();
 
-                            if ($ownerRecord instanceof CaseModel) {
-                                $type = $ownerRecord->respondent->getMorphClass();
-                            }
-
                             return $query->where('interactable_type', $type);
                         }
                     )
@@ -265,10 +248,6 @@ trait HasManyMorphedInteractionsTrait
                         'name',
                         function (Builder $query) use ($ownerRecord) {
                             $type = $ownerRecord->getMorphClass();
-
-                            if ($ownerRecord instanceof CaseModel) {
-                                $type = $ownerRecord->respondent->getMorphClass();
-                            }
 
                             return $query->where('interactable_type', $type);
                         }

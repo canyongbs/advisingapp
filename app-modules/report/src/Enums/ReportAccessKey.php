@@ -42,14 +42,12 @@ use AdvisingApp\Report\Filament\Pages\ArtificialIntelligence;
 use AdvisingApp\Report\Filament\Pages\CustomerAdvisorReport;
 use AdvisingApp\Report\Filament\Pages\EmployeeAdvisorReport;
 use AdvisingApp\Report\Filament\Pages\InstitutionalAdvisorReport;
-use AdvisingApp\Report\Filament\Pages\ProspectCaseReport;
 use AdvisingApp\Report\Filament\Pages\ProspectInteractionReport;
 use AdvisingApp\Report\Filament\Pages\ProspectMessagesDetailReport;
 use AdvisingApp\Report\Filament\Pages\ProspectMessagesOverviewReport;
 use AdvisingApp\Report\Filament\Pages\ProspectReport;
 use AdvisingApp\Report\Filament\Pages\ProspectTaskManagement;
 use AdvisingApp\Report\Filament\Pages\ResearchAdvisorReport;
-use AdvisingApp\Report\Filament\Pages\StudentCaseReport;
 use AdvisingApp\Report\Filament\Pages\StudentDeliverabilityReport;
 use AdvisingApp\Report\Filament\Pages\StudentInteractionReport;
 use AdvisingApp\Report\Filament\Pages\StudentMessagesDetailReport;
@@ -73,7 +71,6 @@ enum ReportAccessKey: string
     case ResearchAdvisorReport = 'research-advisor-report';
     case StudentActionCenter = 'student-action-center';
     case Students = 'students';
-    case StudentCaseReport = 'student-case-report';
     case StudentDeliverabilityReport = 'student-deliverability-report';
     case StudentInteractionReport = 'student-interaction-report';
     case StudentMessagesDetailReport = 'student-messages-detail-report';
@@ -81,7 +78,6 @@ enum ReportAccessKey: string
     case StudentTaskManagement = 'student-task-management';
     case ProspectActionCenter = 'prospect-action-center';
     case ProspectReport = 'prospect-report';
-    case ProspectCaseReport = 'prospect-case-report';
     case ProspectInteractionReport = 'prospect-interaction-report';
     case ProspectMessagesDetailReport = 'prospect-messages-detail-report';
     case ProspectMessagesOverviewReport = 'prospect-messages-overview-report';
@@ -101,7 +97,6 @@ enum ReportAccessKey: string
             self::ResearchAdvisorReport => ResearchAdvisorReport::class,
             self::StudentActionCenter => RetentionCrmDashboard::class,
             self::Students => Students::class,
-            self::StudentCaseReport => StudentCaseReport::class,
             self::StudentDeliverabilityReport => StudentDeliverabilityReport::class,
             self::StudentInteractionReport => StudentInteractionReport::class,
             self::StudentMessagesDetailReport => StudentMessagesDetailReport::class,
@@ -109,7 +104,6 @@ enum ReportAccessKey: string
             self::StudentTaskManagement => StudentTaskManagement::class,
             self::ProspectActionCenter => RecruitmentCrmDashboard::class,
             self::ProspectReport => ProspectReport::class,
-            self::ProspectCaseReport => ProspectCaseReport::class,
             self::ProspectInteractionReport => ProspectInteractionReport::class,
             self::ProspectMessagesDetailReport => ProspectMessagesDetailReport::class,
             self::ProspectMessagesOverviewReport => ProspectMessagesOverviewReport::class,
@@ -128,7 +122,6 @@ enum ReportAccessKey: string
             self::ResearchAdvisorReport => 'Research Advisor',
             self::StudentActionCenter => 'Action Center (Students)',
             self::Students => 'Students (Overview)',
-            self::StudentCaseReport => 'Cases (Students)',
             self::StudentDeliverabilityReport => 'Deliverability (Students)',
             self::StudentInteractionReport => 'Interactions (Students)',
             self::StudentMessagesDetailReport => 'Messages Detail (Students)',
@@ -136,7 +129,6 @@ enum ReportAccessKey: string
             self::StudentTaskManagement => 'Tasks (Students)',
             self::ProspectActionCenter => 'Action Center (Prospects)',
             self::ProspectReport => 'Prospects (Overview)',
-            self::ProspectCaseReport => 'Cases (Prospects)',
             self::ProspectInteractionReport => 'Interactions (Prospects)',
             self::ProspectMessagesDetailReport => 'Messages Detail (Prospects)',
             self::ProspectMessagesOverviewReport => 'Messages Overview (Prospects)',
@@ -156,7 +148,6 @@ enum ReportAccessKey: string
 
             self::StudentActionCenter,
             self::Students,
-            self::StudentCaseReport,
             self::StudentDeliverabilityReport,
             self::StudentInteractionReport,
             self::StudentMessagesDetailReport,
@@ -165,7 +156,6 @@ enum ReportAccessKey: string
 
             self::ProspectActionCenter,
             self::ProspectReport,
-            self::ProspectCaseReport,
             self::ProspectInteractionReport,
             self::ProspectMessagesDetailReport,
             self::ProspectMessagesOverviewReport,
@@ -187,8 +177,6 @@ enum ReportAccessKey: string
             self::StudentMessagesDetailReport,
             self::StudentMessagesOverviewReport => LicenseType::RetentionCrm->isLicensable(),
 
-            self::StudentCaseReport => LicenseType::RetentionCrm->isLicensable() && $addons->caseManagement,
-
             self::StudentTaskManagement => LicenseType::RetentionCrm->isLicensable() || LicenseType::RecruitmentCrm->isLicensable(),
 
             self::ProspectActionCenter,
@@ -196,8 +184,6 @@ enum ReportAccessKey: string
             self::ProspectInteractionReport,
             self::ProspectMessagesDetailReport,
             self::ProspectMessagesOverviewReport => LicenseType::RecruitmentCrm->isLicensable(),
-
-            self::ProspectCaseReport => LicenseType::RecruitmentCrm->isLicensable() && $addons->caseManagement,
 
             self::ProspectTaskManagement => LicenseType::RecruitmentCrm->isLicensable(),
 

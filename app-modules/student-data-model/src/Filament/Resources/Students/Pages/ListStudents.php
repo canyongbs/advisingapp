@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages;
 
 use AdvisingApp\CareTeam\Filament\Actions\AddCareTeamMemberAction;
-use AdvisingApp\CaseManagement\Filament\Actions\BulkCreateCaseAction;
 use AdvisingApp\Concern\Filament\Actions\BulkCreateConcernAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkEmailAction;
 use AdvisingApp\Engagement\Filament\Actions\BulkTextAction;
@@ -208,8 +207,6 @@ class ListStudents extends ListRecords
                         BulkTextAction::make(context: 'students')->authorize(fn () => Gate::allows('update', [auth()->user(), Student::class])),
                     ])->dropdown(false),
                     ActionGroup::make([
-                        BulkCreateCaseAction::make()
-                            ->authorize(fn () => auth()->user()->can('student.*.update')),
                         BulkCreateConcernAction::make()
                             ->visible(fn (): bool => auth()->user()->can('student.*.update')),
                         BulkCreateInteractionAction::make()

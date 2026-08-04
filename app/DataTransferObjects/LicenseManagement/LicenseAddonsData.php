@@ -47,7 +47,6 @@ class LicenseAddonsData extends Data
         public bool $onlineForms = false,
         public bool $onlineSurveys = false,
         public bool $onlineAdmissions = false,
-        public bool $caseManagement = false,
         public bool $resourceHub = false,
         public bool $supportPrograms = false,
         public bool $eventManagement = false,
