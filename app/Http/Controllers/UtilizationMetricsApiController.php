@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptUse;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Alert\Presets\AlertPreset;
+use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
@@ -65,6 +66,7 @@ use AdvisingApp\Survey\Models\SurveySubmission;
 use AdvisingApp\Task\Models\Task;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -106,6 +108,33 @@ class UtilizationMetricsApiController extends Controller
             ->map(fn (int|string $count): int => (int) $count)
             ->all();
 
+        $formsSubmittedByMonth = FormSubmission::query()
+            ->submitted()
+            ->select('submitted_at')
+            ->orderBy('submitted_at')
+            ->get()
+            ->countBy(fn (FormSubmission $submission): string => $submission->submitted_at->format('Y-m'))
+            ->map(fn (int $count, string $month): array => [
+                'month' => $month,
+                'count' => $count,
+                'label' => CarbonImmutable::createFromFormat('Y-m', $month)->format('Y, F'),
+            ])
+            ->values()
+            ->all();
+
+        $applicationSubmissionsByMonth = ApplicationSubmission::query()
+            ->select('created_at')
+            ->orderBy('created_at')
+            ->get()
+            ->countBy(fn (ApplicationSubmission $submission): string => $submission->created_at->format('Y-m'))
+            ->map(fn (int $count, string $month): array => [
+                'month' => $month,
+                'count' => $count,
+                'label' => CarbonImmutable::createFromFormat('Y-m', $month)->format('Y, F'),
+            ])
+            ->values()
+            ->all();
+
         try {
             return response()->json([
                 'data' => [
@@ -131,6 +160,8 @@ class UtilizationMetricsApiController extends Controller
                     'personal_appointments' => CalendarEvent::count(),
                     'forms_created' => Form::count(),
                     'forms_submitted' => FormSubmission::count(),
+                    'forms_submitted_by_month' => $formsSubmittedByMonth,
+                    'applications_submitted_by_month' => $applicationSubmissionsByMonth,
                     'surveys_created' => Survey::count(),
                     'surveys_submitted' => SurveySubmission::count(),
                     'alerts_by_alert_type' => $alertsByAlertType,

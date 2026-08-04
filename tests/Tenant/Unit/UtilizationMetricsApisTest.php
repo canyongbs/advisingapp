@@ -40,6 +40,8 @@ use AdvisingApp\Ai\Models\PromptUse;
 use AdvisingApp\Alert\Actions\GenerateStudentAlertsView;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Alert\Presets\AlertPreset;
+use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
+use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
@@ -68,10 +70,12 @@ use AdvisingApp\Task\Models\Task;
 use App\Http\Middleware\CheckOlympusKey;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Carbon\CarbonImmutable;
 use Mockery\MockInterface;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
+use function Pest\Laravel\seed;
 use function Pest\Laravel\withoutMiddleware;
 
 beforeEach(function () {
@@ -543,6 +547,68 @@ it('checks the API returns Forms Submitted', function () {
     $response->assertStatus(200);
 
     expect($data['forms_submitted'])->toBe($randomRecords);
+});
+
+it('checks the API returns Forms Submitted By Month', function () {
+    FormSubmission::factory()
+        ->count(2)
+        ->state(['submitted_at' => CarbonImmutable::parse('2026-01-10 10:00:00')])
+        ->create();
+
+    FormSubmission::factory()
+        ->count(3)
+        ->state(['submitted_at' => CarbonImmutable::parse('2026-02-15 10:00:00')])
+        ->create();
+
+    $response = get(route('utilization-metrics'));
+
+    $data = $response->json('data');
+
+    $response->assertStatus(200);
+
+    expect($data['forms_submitted_by_month'])
+        ->toContain([
+            'month' => '2026-01',
+            'count' => 2,
+            'label' => '2026, January',
+        ])
+        ->toContain([
+            'month' => '2026-02',
+            'count' => 3,
+            'label' => '2026, February',
+        ]);
+});
+
+it('checks the API returns Applications Submitted By Month', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    ApplicationSubmission::factory()
+        ->count(2)
+        ->state(['created_at' => CarbonImmutable::parse('2026-03-10 10:00:00')])
+        ->create();
+
+    ApplicationSubmission::factory()
+        ->count(3)
+        ->state(['created_at' => CarbonImmutable::parse('2026-04-15 10:00:00')])
+        ->create();
+
+    $response = get(route('utilization-metrics'));
+
+    $data = $response->json('data');
+
+    $response->assertStatus(200);
+
+    expect($data['applications_submitted_by_month'])
+        ->toContain([
+            'month' => '2026-03',
+            'count' => 2,
+            'label' => '2026, March',
+        ])
+        ->toContain([
+            'month' => '2026-04',
+            'count' => 3,
+            'label' => '2026, April',
+        ]);
 });
 
 it('checks the API returns Surveys Created', function () {
