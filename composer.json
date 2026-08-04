@@ -162,7 +162,7 @@
             "@php artisan package:discover --ansi",
             "@php artisan filament:upgrade",
             "@php artisan common:publish --ansi",
-            "@php artisan boost:update --ansi"
+            "@php -r \"if (getenv('COMPOSER_DEV_MODE') === '1') { passthru(PHP_BINARY . ' artisan boost:update --ansi', $code); exit($code); }\""
         ],
         "post-install-cmd": [
             "@php -r \"if (file_exists('vendor/telnyx/telnyx-php/composer.lock')) { unlink('vendor/telnyx/telnyx-php/composer.lock'); }\"",
