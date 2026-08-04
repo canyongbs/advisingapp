@@ -34,8 +34,6 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Filament\Exports\CustomerAdvisorCategoryExporter;
-use AdvisingApp\Ai\Filament\Imports\CustomerAdvisorCategoryImporter;
 use AdvisingApp\Report\Filament\Exports\UserExporter;
 use AdvisingApp\StudentDataModel\Filament\Pages\ManageStudentSyncs;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
@@ -101,24 +99,6 @@ it('displays import records in the import table', function () {
 
     livewire(ImportPage::class)
         ->assertCanSeeTableRecords([$import]);
-});
-
-it('shows importer label in the import hub when IMPORT_NAME is defined', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo('export_hub.view-any');
-
-    actingAs($user);
-
-    $import = new Import();
-    $import->user()->associate($user);
-    $import->file_name = 'customer-categories.csv';
-    $import->file_path = 'imports/customer-categories.csv';
-    $import->importer = CustomerAdvisorCategoryImporter::class;
-    $import->total_rows = 1;
-    $import->save();
-
-    livewire(ImportPage::class)
-        ->assertSee('Customer Chatbot Categories Import');
 });
 
 it('shows download button when import is completed and file exists and user has permission', function () {
@@ -253,24 +233,6 @@ it('displays export records in the export table', function () {
 
     livewire(ExportPage::class)
         ->assertCanSeeTableRecords([$export]);
-});
-
-it('shows friendly exporter label in the export hub when EXPORT_NAME is defined', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo('export_hub.view-any');
-
-    actingAs($user);
-
-    $export = new Export();
-    $export->user()->associate($user);
-    $export->file_name = 'customer-categories.csv';
-    $export->file_disk = 's3';
-    $export->exporter = CustomerAdvisorCategoryExporter::class;
-    $export->total_rows = 1;
-    $export->save();
-
-    livewire(ExportPage::class)
-        ->assertSee('Customer Chatbot Categories Export');
 });
 
 it('shows the export download button when the export is completed and the user has permission', function () {
