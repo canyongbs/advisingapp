@@ -41,24 +41,30 @@ use Illuminate\Support\Str;
 return new class () extends Migration {
     public function up(): void
     {
-        $this->renameCaseInsensitiveDuplicates(
-            table: 'customer_advisor_categories',
-            ownerColumn: 'customer_advisor_id',
-        );
+        DB::transaction(function () {
+            $this->renameCaseInsensitiveDuplicates(
+                table: 'customer_advisor_categories',
+                ownerColumn: 'customer_advisor_id',
+            );
 
-        $this->renameCaseInsensitiveDuplicates(
-            table: 'employee_advisor_categories',
-            ownerColumn: 'employee_advisor_id',
-        );
+            $this->renameCaseInsensitiveDuplicates(
+                table: 'employee_advisor_categories',
+                ownerColumn: 'employee_advisor_id',
+            );
 
-        DB::statement('ALTER TABLE customer_advisor_categories ALTER COLUMN name TYPE citext');
-        DB::statement('ALTER TABLE employee_advisor_categories ALTER COLUMN name TYPE citext');
+            DB::statement('ALTER TABLE customer_advisor_categories ALTER COLUMN name TYPE citext');
+            DB::statement('ALTER TABLE employee_advisor_categories ALTER COLUMN name TYPE citext');
+        });
+        
     }
 
     public function down(): void
     {
-        DB::statement('ALTER TABLE customer_advisor_categories ALTER COLUMN name TYPE VARCHAR(255)');
-        DB::statement('ALTER TABLE employee_advisor_categories ALTER COLUMN name TYPE VARCHAR(255)');
+        DB::transaction(function () {
+            DB::statement('ALTER TABLE customer_advisor_categories ALTER COLUMN name TYPE VARCHAR(255)');
+            DB::statement('ALTER TABLE employee_advisor_categories ALTER COLUMN name TYPE VARCHAR(255)');
+        });
+        
     }
 
     private function renameCaseInsensitiveDuplicates(string $table, string $ownerColumn): void
