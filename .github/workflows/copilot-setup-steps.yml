@@ -1,0 +1,135 @@
+name: Copilot Setup Steps
+
+# Runs before the Copilot cloud agent starts to prepare its ephemeral environment. In addition
+# to installing PHP, Composer, and npm (and running Boost via the post-autoload-dump hook), this
+# provisions Postgres and Redis services and prepares landlord/tenant testing databases so the
+# agent can execute the app's commands, tests, linting, and formatters.
+on: # zizmor: ignore[concurrency-limits]
+    workflow_dispatch:
+    push:
+        paths:
+            - .github/workflows/copilot-setup-steps.yml
+    pull_request:
+        paths:
+            - .github/workflows/copilot-setup-steps.yml
+
+permissions: {}
+
+jobs:
+    # The job MUST be named `copilot-setup-steps` or Copilot will not pick it up.
+    copilot-setup-steps:
+        name: Copilot Setup Steps
+        runs-on: ubuntu-22.04
+
+        permissions:
+            contents: read
+
+        timeout-minutes: 20
+
+        env:
+            php-extensions: gd, gmp, redis, mailparse
+            php-extensions-key: ext-cache-copilot-v1
+            php-version: '8.4'
+            DB_PORT: 5432
+            DB_HOST: 127.0.0.1
+            DB_USERNAME: root
+            DB_PASSWORD: root
+            DB_DATABASE: testing_landlord
+            REDIS_HOST: 127.0.0.1
+
+        services:
+            cache:
+                image: redis:7.4.9-alpine@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99
+                ports:
+                    - 6379:6379
+                options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+            postgres:
+                image: postgres:15@sha256:74e110c41804365e3915fcc09d5e7a1eff50161aaa94d5da0e58e0cd75ae509c
+                ports:
+                    - 5432:5432
+                env:
+                    POSTGRES_DB: testing_landlord
+                    POSTGRES_USER: root
+                    POSTGRES_PASSWORD: root
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+
+        steps:
+            - name: Create tenant database
+              run: psql -h 127.0.0.1 -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
+              env:
+                  PGPASSWORD: root
+
+            - name: Setup cache environment
+              id: extcache
+              uses: shivammathur/cache-extensions@9b476298b44f2e4d4268dd103ff4c3e216314e27 #1.14.6
+              with:
+                  php-version: ${{ env.php-version }}
+                  extensions: ${{ env.php-extensions }}
+                  key: ${{ env.php-extensions-key }}
+
+            - name: Cache extensions
+              uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+              with:
+                  path: ${{ steps.extcache.outputs.dir }}
+                  key: ${{ runner.os }}-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
+                  restore-keys: ${{ runner.os }}-phpext-${{ env.php-version }}
+
+            - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
+              with:
+                  php-version: ${{ env.php-version }}
+                  coverage: none
+                  extensions: ${{ env.php-extensions }}
+
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 0
+                  fetch-tags: true
+                  persist-credentials: false
+
+            - name: Copy .env
+              run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+            - name: Cache dependencies
+              id: cache-composer
+              uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+              with:
+                  path: vendor
+                  key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
+
+            - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
+              name: Install Dependencies
+              run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+              shell: bash
+
+            - name: Generate key
+              run: php artisan key:generate
+
+            # Fires the post-autoload-dump hook (common:publish + boost:update) which generates
+            # AGENTS.md, .github/skills, and .ai/guidelines used by the agent.
+            - name: Publish Boost instructions and skills
+              run: composer dump-autoload
+
+            - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+              with:
+                  node-version-file: '.nvmrc'
+                  cache: 'npm'
+
+            - name: Install JavaScript dependencies
+              run: npm install
+
+            - name: Build Assets
+              run: npm run build
+
+            - name: Migrate Landlord Database
+              run: php artisan migrate --database=landlord --path=database/landlord --force
+
+            - name: Set up Tenant
+              run: php artisan tenants:create test test.advisingapp.local -y
+
+            - name: Generate Helper Files
+              run: php artisan app:generate-helper-files

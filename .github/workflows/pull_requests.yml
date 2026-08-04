@@ -407,6 +407,54 @@ jobs:
                   path: .cache/phpstan
                   key: 'linting-result-cache-${{ github.run_id }}'
 
+    request-copilot-review:
+        name: Request Copilot Review
+        runs-on: ubuntu-22.04
+
+        permissions: {}
+
+        # Only request a review once the code is known to be green, so Copilot never reviews
+        # code that is failing tests or linting. Automatic review must be disabled in the repo
+        # settings so this gated job is the only path that requests Copilot.
+        needs: [test, lint]
+
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'dependabot[bot]' }}
+
+        timeout-minutes: 5
+
+        steps:
+            # The default GITHUB_TOKEN cannot reliably request Copilot as a reviewer, so act as the
+            # GitHub App instead. App tokens are exempt from the "GITHUB_TOKEN can't trigger further
+            # automation" rule, which lets Copilot's review actually start.
+            - name: Generate GitHub App Token
+              id: app-token
+              uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+              with:
+                  client-id: ${{ secrets.CGBS_AUTOMATION_APP_CLIENT_ID }} # zizmor: ignore[secrets-outside-env]
+                  private-key: ${{ secrets.CGBS_AUTOMATION_APP_PRIVATE_KEY }} # zizmor: ignore[secrets-outside-env]
+                  permission-pull-requests: write
+
+            - name: Request review from Copilot
+              env:
+                  GH_TOKEN: ${{ steps.app-token.outputs.token }}
+                  GH_REPOSITORY: ${{ github.repository }}
+                  PR_NUMBER: ${{ github.event.pull_request.number }}
+              run: |
+                  existing=$(gh api "/repos/${GH_REPOSITORY}/pulls/${PR_NUMBER}/requested_reviewers" --jq '.users[].login')
+                  if echo "$existing" | grep -q 'copilot-pull-request-reviewer'; then
+                      echo 'Copilot review already requested.'
+                      exit 0
+                  fi
+                  if ! output=$(gh api \
+                      --method POST \
+                      -H 'Accept: application/vnd.github+json' \
+                      "/repos/${GH_REPOSITORY}/pulls/${PR_NUMBER}/requested_reviewers" \
+                      -f 'reviewers[]=copilot-pull-request-reviewer[bot]' 2>&1); then
+                      echo "$output"
+                      # Tolerate the reviewer already being assigned; fail on anything else.
+                      echo "$output" | grep -qiE 'already|not a collaborator|review cannot be requested' || exit 1
+                  fi
+
     renovate-config-validator:
         name: Renovate Config Validator
         runs-on: ubuntu-latest

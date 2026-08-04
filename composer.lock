@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cb22832493f697b13161d1223e281bbf",
+    "content-hash": "b83bcea7284632576aa3674951abb383",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -2104,23 +2104,23 @@
         },
         {
             "name": "canyongbs/common",
-            "version": "2.32.0",
+            "version": "2.36.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/canyongbs/common.git",
-                "reference": "027e01eafd312d3eb3d1a0bd47c7f05b6ac65111"
+                "reference": "f79dffde6153bbd077b5ea1d51720c8d0fd5c950"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/canyongbs/common/zipball/027e01eafd312d3eb3d1a0bd47c7f05b6ac65111",
-                "reference": "027e01eafd312d3eb3d1a0bd47c7f05b6ac65111",
+                "url": "https://api.github.com/repos/canyongbs/common/zipball/f79dffde6153bbd077b5ea1d51720c8d0fd5c950",
+                "reference": "f79dffde6153bbd077b5ea1d51720c8d0fd5c950",
                 "shasum": ""
             },
             "require": {
                 "filament/filament": "^4.11.6 || ^5.0",
-                "internachi/modular": "^2.0 || ^3.0",
+                "internachi/modular": "^3.0",
                 "internachi/modularize": "^1.1",
-                "laravel/framework": "^11.0|^12.0|^13.0",
+                "laravel/framework": "^12.0|^13.0",
                 "laravel/pennant": "^1.0",
                 "laravel/prompts": "^0.3",
                 "php": "8.4.*|8.5.*",
@@ -2131,21 +2131,23 @@
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.75",
                 "larastan/larastan": "^3.0",
-                "orchestra/testbench": "^10.4",
+                "laravel/boost": "^2.4",
+                "orchestra/testbench": "^10.4 || ^11.0",
                 "orrison/meliorstan": "^0.3.2",
-                "pestphp/pest": "^3.8.5",
-                "pestphp/pest-plugin-laravel": "^3.2",
+                "pestphp/pest": "^4.0",
+                "pestphp/pest-plugin-laravel": "^4.0",
                 "php-coveralls/php-coveralls": "^0.1.0",
                 "php-mock/php-mock-phpunit": "^2.13",
                 "phpstan/phpstan": "^2.1",
-                "phpunit/phpunit": "^11.5.50",
+                "phpunit/phpunit": "^12.0",
                 "rector/rector": "^2.0"
             },
             "type": "package",
             "extra": {
                 "laravel": {
                     "providers": [
-                        "CanyonGBS\\Common\\CommonServiceProvider"
+                        "CanyonGBS\\Common\\CommonServiceProvider",
+                        "CanyonGBS\\Common\\CommonBoostServiceProvider"
                     ]
                 }
             },
@@ -2166,9 +2168,9 @@
             ],
             "support": {
                 "issues": "https://github.com/canyongbs/common/issues",
-                "source": "https://github.com/canyongbs/common/tree/2.32.0"
+                "source": "https://github.com/canyongbs/common/tree/2.36.1"
             },
-            "time": "2026-07-22T16:38:32+00:00"
+            "time": "2026-08-04T13:52:08+00:00"
         },
         {
             "name": "canyongbs/model-state-machine",
@@ -6897,16 +6899,16 @@
         },
         {
             "name": "league/commonmark",
-            "version": "2.8.3",
+            "version": "2.9.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/thephpleague/commonmark.git",
-                "reference": "1902f60f984235023acbe03db6ad614a37b3c3e7"
+                "reference": "5703d83ba3da3b2e356a5fedc848ed6d8ffb6529"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/1902f60f984235023acbe03db6ad614a37b3c3e7",
-                "reference": "1902f60f984235023acbe03db6ad614a37b3c3e7",
+                "url": "https://api.github.com/repos/thephpleague/commonmark/zipball/5703d83ba3da3b2e356a5fedc848ed6d8ffb6529",
+                "reference": "5703d83ba3da3b2e356a5fedc848ed6d8ffb6529",
                 "shasum": ""
             },
             "require": {
@@ -6943,7 +6945,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-main": "2.9-dev"
+                    "dev-main": "2.10-dev"
                 }
             },
             "autoload": {
@@ -7000,7 +7002,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-07-12T15:29:16+00:00"
+            "time": "2026-08-03T13:42:31+00:00"
         },
         {
             "name": "league/config",
@@ -7916,16 +7918,16 @@
         },
         {
             "name": "livewire/livewire",
-            "version": "v3.8.2",
+            "version": "v3.8.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/livewire/livewire.git",
-                "reference": "e77fce60d0615d68dc6b8fafe98a6739d9752a24"
+                "reference": "ab9c2ac9305008aa9ab0f1beecec8ed6c3a591b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/livewire/livewire/zipball/e77fce60d0615d68dc6b8fafe98a6739d9752a24",
-                "reference": "e77fce60d0615d68dc6b8fafe98a6739d9752a24",
+                "url": "https://api.github.com/repos/livewire/livewire/zipball/ab9c2ac9305008aa9ab0f1beecec8ed6c3a591b2",
+                "reference": "ab9c2ac9305008aa9ab0f1beecec8ed6c3a591b2",
                 "shasum": ""
             },
             "require": {
@@ -7980,7 +7982,7 @@
             "description": "A front-end framework for Laravel.",
             "support": {
                 "issues": "https://github.com/livewire/livewire/issues",
-                "source": "https://github.com/livewire/livewire/tree/v3.8.2"
+                "source": "https://github.com/livewire/livewire/tree/v3.8.3"
             },
             "funding": [
                 {
@@ -7988,7 +7990,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-06-27T03:14:20+00:00"
+            "time": "2026-07-31T00:08:18+00:00"
         },
         {
             "name": "lorisleiva/cron-translator",
@@ -12152,16 +12154,16 @@
         },
         {
             "name": "seld/phar-utils",
-            "version": "1.2.1",
+            "version": "1.2.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/phar-utils.git",
-                "reference": "ea2f4014f163c1be4c601b9b7bd6af81ba8d701c"
+                "reference": "990bbd0e92caa216d52eca0935f6e35e589bfaa5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Seldaek/phar-utils/zipball/ea2f4014f163c1be4c601b9b7bd6af81ba8d701c",
-                "reference": "ea2f4014f163c1be4c601b9b7bd6af81ba8d701c",
+                "url": "https://api.github.com/repos/Seldaek/phar-utils/zipball/990bbd0e92caa216d52eca0935f6e35e589bfaa5",
+                "reference": "990bbd0e92caa216d52eca0935f6e35e589bfaa5",
                 "shasum": ""
             },
             "require": {
@@ -12194,9 +12196,9 @@
             ],
             "support": {
                 "issues": "https://github.com/Seldaek/phar-utils/issues",
-                "source": "https://github.com/Seldaek/phar-utils/tree/1.2.1"
+                "source": "https://github.com/Seldaek/phar-utils/tree/1.2.2"
             },
-            "time": "2022-08-31T10:31:18+00:00"
+            "time": "2026-08-01T12:48:55+00:00"
         },
         {
             "name": "seld/signal-handler",
@@ -15149,16 +15151,16 @@
         },
         {
             "name": "symfony/filesystem",
-            "version": "v8.1.0",
+            "version": "v8.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/filesystem.git",
-                "reference": "99aec13b82b4967ec5088222c4a3ecca955949c2"
+                "reference": "17856b7a222664a26a5ea1cb06ee0721c2438217"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/filesystem/zipball/99aec13b82b4967ec5088222c4a3ecca955949c2",
-                "reference": "99aec13b82b4967ec5088222c4a3ecca955949c2",
+                "url": "https://api.github.com/repos/symfony/filesystem/zipball/17856b7a222664a26a5ea1cb06ee0721c2438217",
+                "reference": "17856b7a222664a26a5ea1cb06ee0721c2438217",
                 "shasum": ""
             },
             "require": {
@@ -15196,7 +15198,7 @@
             "description": "Provides basic utilities for the filesystem",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/filesystem/tree/v8.1.0"
+                "source": "https://github.com/symfony/filesystem/tree/v8.1.2"
             },
             "funding": [
                 {
@@ -15216,7 +15218,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2026-05-29T05:06:50+00:00"
+            "time": "2026-07-22T15:42:13+00:00"
         },
         {
             "name": "symfony/finder",
