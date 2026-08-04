@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptUse;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Alert\Presets\AlertPreset;
+use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
@@ -65,6 +66,7 @@ use AdvisingApp\Survey\Models\SurveySubmission;
 use AdvisingApp\Task\Models\Task;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Carbon\CarbonImmutable;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -106,6 +108,41 @@ class UtilizationMetricsApiController extends Controller
             ->map(fn (int|string $count): int => (int) $count)
             ->all();
 
+        $formsSubmittedByMonth = FormSubmission::query()
+            ->submitted()
+            ->selectRaw("date_trunc('month', submitted_at) as month, COUNT(*) as monthly_total")
+            ->groupByRaw("date_trunc('month', submitted_at)")
+            ->orderBy('month')
+            ->get()
+            ->map(function (FormSubmission $item): array {
+                $month = (string) data_get($item, 'month');
+
+                return [
+                    'month' => CarbonImmutable::parse($month)->format('Y-m'),
+                    'count' => (int) data_get($item, 'monthly_total'),
+                    'label' => CarbonImmutable::parse($month)->format('Y, F'),
+                ];
+            })
+            ->values()
+            ->all();
+
+        $applicationSubmissionsByMonth = ApplicationSubmission::query()
+            ->selectRaw("date_trunc('month', created_at) as month, COUNT(*) as monthly_total")
+            ->groupByRaw("date_trunc('month', created_at)")
+            ->orderBy('month')
+            ->get()
+            ->map(function (ApplicationSubmission $item): array {
+                $month = (string) data_get($item, 'month');
+
+                return [
+                    'month' => CarbonImmutable::parse($month)->format('Y-m'),
+                    'count' => (int) data_get($item, 'monthly_total'),
+                    'label' => CarbonImmutable::parse($month)->format('Y, F'),
+                ];
+            })
+            ->values()
+            ->all();
+
         try {
             return response()->json([
                 'data' => [
@@ -131,6 +168,8 @@ class UtilizationMetricsApiController extends Controller
                     'personal_appointments' => CalendarEvent::count(),
                     'forms_created' => Form::count(),
                     'forms_submitted' => FormSubmission::count(),
+                    'forms_submitted_by_month' => $formsSubmittedByMonth,
+                    'applications_submitted_by_month' => $applicationSubmissionsByMonth,
                     'surveys_created' => Survey::count(),
                     'surveys_submitted' => SurveySubmission::count(),
                     'alerts_by_alert_type' => $alertsByAlertType,
