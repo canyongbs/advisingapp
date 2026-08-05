@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -109,6 +110,10 @@ class ManageEmployeeAdvisorCategories extends ManageRelatedRecords
                     ->schema([
                         Repeater::make('categories')
                             ->hiddenLabel()
+                            ->table([
+                                TableColumn::make('Name'),
+                                TableColumn::make('Description'),
+                            ])
                             ->schema($this->getCategoryFormComponents())
                             ->addActionLabel('Add another category')
                             ->defaultItems(1)
