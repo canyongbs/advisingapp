@@ -41,10 +41,12 @@ use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
@@ -110,8 +112,10 @@ class ManageCategories extends EditRecord
                     ->addable(false)
                     ->deletable(false)
                     ->reorderable(false)
-                    ->collapsible()
-                    ->itemLabel(fn (array $state): ?string => $state['name'] ?? null)
+                    ->table([
+                        TableColumn::make('Name'),
+                        TableColumn::make('Description'),
+                    ])
                     ->schema([
                         TextInput::make('name')
                             ->disabled()
@@ -125,6 +129,7 @@ class ManageCategories extends EditRecord
                             ->icon(Heroicon::PencilSquare)
                             ->modalHeading('Edit Customer Advisor Category')
                             ->slideOver()
+                            ->modalWidth(Width::TwoExtraLarge)
                             ->authorize(fn (): bool => Gate::allows('update', CustomerAdvisorCategory::class))
                             ->fillForm(fn (array $arguments): array => $this->getRecord()
                                 ->categories()
@@ -163,6 +168,7 @@ class ManageCategories extends EditRecord
                 ->label('New category')
                 ->modalHeading('Create Customer Advisor Category')
                 ->slideOver()
+                ->modalWidth(Width::TwoExtraLarge)
                 ->authorize(fn (): bool => Gate::allows('create', CustomerAdvisorCategory::class))
                 ->schema($this->getCategoryFormComponents())
                 ->action(function (array $data): void {
