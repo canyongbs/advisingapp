@@ -180,7 +180,10 @@ class ManageEmployeeAdvisorCategories extends EditRecord
                 ->authorize(fn (): bool => Gate::allows('create', EmployeeAdvisorCategory::class))
                 ->schema($this->getCategoryFormComponents())
                 ->action(function (array $data): void {
-                    $this->getRecord()->categories()->create($data);
+                    /** @var AiAssistant $assistant */
+                    $assistant = $this->getRecord();
+
+                    $assistant->categories()->create($data);
 
                     $this->refreshCategories();
                 }),
