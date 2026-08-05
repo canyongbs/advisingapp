@@ -131,14 +131,22 @@ class ManageCategories extends EditRecord
                             ->slideOver()
                             ->modalWidth(Width::TwoExtraLarge)
                             ->authorize(fn (): bool => Gate::allows('update', CustomerAdvisorCategory::class))
-                            ->fillForm(fn (array $arguments): array => $this->getRecord()
-                                ->categories()
-                                ->whereKey($this->getCategoryKeyFromItemArgument($arguments))
-                                ->firstOrFail()
-                                ->only(['name', 'description']))
+                            ->fillForm(function (array $arguments): array {
+                                /** @var CustomerAdvisor $customerAdvisor */
+                                $customerAdvisor = $this->getRecord();
+
+                                return $customerAdvisor
+                                    ->categories()
+                                    ->whereKey($this->getCategoryKeyFromItemArgument($arguments))
+                                    ->firstOrFail()
+                                    ->only(['name', 'description']);
+                            })
                             ->schema(fn (array $arguments): array => $this->getCategoryFormComponents(ignoreId: $this->getCategoryKeyFromItemArgument($arguments)))
                             ->action(function (array $arguments, array $data): void {
-                                $this->getRecord()
+                                /** @var CustomerAdvisor $customerAdvisor */
+                                $customerAdvisor = $this->getRecord();
+
+                                $customerAdvisor
                                     ->categories()
                                     ->whereKey($this->getCategoryKeyFromItemArgument($arguments))
                                     ->firstOrFail()
