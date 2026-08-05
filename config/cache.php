@@ -115,5 +115,5 @@ return [
     |
     */
 
-    'serializable_classes' => true,
+    'serializable_classes' => false,
 ];

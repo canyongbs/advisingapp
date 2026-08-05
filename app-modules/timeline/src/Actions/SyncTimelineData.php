@@ -80,7 +80,7 @@ class SyncTimelineData
 
         cache()->put(
             "timeline.synced.{$recordModel->getMorphClass()}.{$recordModel->getKey()}",
-            now(),
+            now()->timestamp,
             now()->addMinutes(60)
         );
     }
