@@ -34,13 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Filament\Resources\Workflows;
+namespace AdvisingApp\Form\Filament\Resources\Forms\Resources\Workflows;
 
+use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
+use AdvisingApp\Form\Filament\Resources\Forms\Resources\Workflows\Pages\EditWorkflow;
+use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\RelationManagers\WorkflowStepsRelationManager;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\Schemas\WorkflowForm;
 use AdvisingApp\Workflow\Models\Workflow;
+use Filament\Resources\ParentResourceRegistration;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class WorkflowResource extends Resource
@@ -48,6 +53,14 @@ class WorkflowResource extends Resource
     protected static ?string $model = Workflow::class;
 
     protected static bool $shouldRegisterNavigation = false;
+
+    protected static ?string $slug = 'workflows';
+
+    public static function getParentResourceRegistration(): ?ParentResourceRegistration
+    {
+        return FormResource::asParent(childResource: self::class)
+            ->relationship('workflows');
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -61,10 +74,36 @@ class WorkflowResource extends Resource
         ];
     }
 
+    /**
+     * @param Builder<Workflow> $query
+     *
+     * @return Builder<Workflow>
+     */
+    public static function scopeEloquentQueryToParent(Builder $query, Model $parentRecord): Builder
+    {
+        assert($parentRecord instanceof Form);
+
+        return $query->whereHas(
+            'workflowTrigger',
+            fn (Builder $query): Builder => $query->whereMorphedTo('related', $parentRecord),
+        );
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'edit' => EditWorkflow::route('/{record}/edit'),
+        ];
+    }
+
     public static function getIndexUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false): string
     {
-        $panelId = $panel ?? config('filament.default_panel') ?? 'admin';
+        $record = $parameters['form'] ?? null;
+        unset($parameters['form']);
 
-        return filament()->getPanel($panelId)->getUrl();
+        return FormResource::getUrl('manage-form-workflows', [
+            ...$parameters,
+            'record' => $record,
+        ], $isAbsolute, $panel, $tenant, $shouldGuessMissingParameters);
     }
 }

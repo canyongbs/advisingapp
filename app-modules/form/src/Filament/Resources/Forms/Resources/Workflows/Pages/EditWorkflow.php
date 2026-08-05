@@ -34,45 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Filament\Resources\Workflows\Pages;
+namespace AdvisingApp\Form\Filament\Resources\Forms\Resources\Workflows\Pages;
 
-use AdvisingApp\Workflow\Filament\Resources\Workflows\WorkflowResource;
+use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
+use AdvisingApp\Form\Filament\Resources\Forms\Resources\Workflows\WorkflowResource;
+use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\EditWorkflow as BaseEditWorkflow;
 use AdvisingApp\Workflow\Models\Workflow;
-use Filament\Resources\Pages\EditRecord;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Actions\DeleteAction;
 
-class EditWorkflow extends EditRecord
+class EditWorkflow extends BaseEditWorkflow
 {
     protected static string $resource = WorkflowResource::class;
 
-    protected function mutateFormDataBeforeFill(array $data): array
+    protected function getHeaderActions(): array
     {
-        $record = $this->getRecord();
-
-        assert($record instanceof Workflow);
-
-        $data['workflowTrigger'] = [
-            'sub_related_type' => $record->workflowTrigger->sub_related_type,
-            'sub_related_id' => $record->workflowTrigger->sub_related_id,
-            'event' => $record->workflowTrigger->event?->value,
+        return [
+            DeleteAction::make()
+                ->successRedirectUrl(function (Workflow $record) {
+                    return FormResource::getUrl('manage-form-workflows', [
+                        'record' => $record->workflowTrigger->related_id,
+                    ]);
+                }),
         ];
-
-        return $data;
-    }
-
-    protected function handleRecordUpdate(Model $record, array $data): Model
-    {
-        assert($record instanceof Workflow);
-
-        $triggerData = $data['workflowTrigger'] ?? [];
-        unset($data['workflowTrigger']);
-
-        $record->update($data);
-
-        if (! empty($triggerData)) {
-            $record->workflowTrigger->update($triggerData);
-        }
-
-        return $record;
     }
 }

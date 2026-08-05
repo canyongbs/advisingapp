@@ -36,13 +36,15 @@
 
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
+use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationWorkflows;
+use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\Pages\EditWorkflow as ApplicationNestedEditWorkflow;
+use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\WorkflowResource;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerEvent;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
-use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\EditWorkflow;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
@@ -50,6 +52,7 @@ use Filament\Actions\DeleteAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertSoftDeleted;
+use function Pest\Laravel\get;
 use function Pest\Laravel\seed;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
@@ -164,7 +167,10 @@ test('can successfully edit workflow name through edit workflow page', function 
     $faker = fake();
     $newWorkflowName = $faker->sentence(3);
 
-    livewire(EditWorkflow::class, ['record' => $oldWorkflow->getKey()])
+    livewire(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $oldWorkflow->getRouteKey(),
+    ])
         ->fillForm(['name' => $newWorkflowName])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -193,7 +199,10 @@ test('can enable workflow through edit workflow page', function () {
         ->state(['is_enabled' => false])
         ->create();
 
-    livewire(EditWorkflow::class, ['record' => $workflow->getKey()])
+    livewire(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $workflow->getRouteKey(),
+    ])
         ->fillForm(['is_enabled' => true])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -222,7 +231,10 @@ test('can disable workflow through edit workflow page', function () {
         ->state(['is_enabled' => true])
         ->create();
 
-    livewire(EditWorkflow::class, ['record' => $workflow->getKey()])
+    livewire(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $workflow->getRouteKey(),
+    ])
         ->fillForm(['is_enabled' => false])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -250,7 +262,10 @@ test('validates workflow name is required when editing', function () {
         )
         ->create();
 
-    livewire(EditWorkflow::class, ['record' => $workflow->getKey()])
+    livewire(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $workflow->getRouteKey(),
+    ])
         ->fillForm(['name' => ''])
         ->call('save')
         ->assertHasFormErrors(['name' => 'required']);
@@ -277,7 +292,10 @@ test('validates workflow name has maximum length when editing', function () {
 
     $longName = str_repeat('a', 256);
 
-    livewire(EditWorkflow::class, ['record' => $workflow->getKey()])
+    livewire(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $workflow->getRouteKey(),
+    ])
         ->fillForm(['name' => $longName])
         ->call('save')
         ->assertHasFormErrors(['name']);
@@ -309,7 +327,10 @@ test('workflow editing succeeds with proper permissions', function () {
 
     actingAs($user);
 
-    livewire(EditWorkflow::class, ['record' => $oldWorkflow->getKey()])
+    livewire(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $oldWorkflow->getRouteKey(),
+    ])
         ->fillForm(['name' => $newWorkflowName])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -344,7 +365,8 @@ test('workflow deletion succeeds with proper permissions', function () {
 
     actingAs($user);
 
-    livewire(EditWorkflow::class, [
+    livewire(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
         'record' => $workflow->getRouteKey(),
     ])
         ->assertActionExists(DeleteAction::class)
@@ -418,4 +440,63 @@ test('tabs render one per non-archived submission state plus All', function () {
     }
 
     expect($tabs)->toHaveKey('all');
+});
+
+test('manage application workflows page links to nested workflow edit route', function () {
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()->state([
+                'related_type' => $application->getMorphClass(),
+                'related_id' => $application->id,
+                'sub_related_type' => 'application_submission_state',
+                'sub_related_id' => ApplicationSubmissionState::query()
+                    ->where('classification', ApplicationSubmissionStateClassification::Received)
+                    ->value('id'),
+                'event' => WorkflowTriggerEvent::Enter,
+            ])
+        )
+        ->create();
+
+    $nestedEditUrl = WorkflowResource::getUrl('edit', [
+        'application' => $application,
+        'record' => $workflow,
+    ]);
+
+    get(ApplicationResource::getUrl('manage-application-workflows', ['record' => $application]))
+        ->assertOk()
+        ->assertSee($nestedEditUrl, false);
+});
+
+test('nested application workflow edit route is scoped to owner application', function () {
+    asSuperAdmin();
+
+    $ownerApplication = Application::factory()->create();
+    $otherApplication = Application::factory()->create();
+
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()->state([
+                'related_type' => $ownerApplication->getMorphClass(),
+                'related_id' => $ownerApplication->id,
+                'sub_related_type' => 'application_submission_state',
+                'sub_related_id' => ApplicationSubmissionState::query()
+                    ->where('classification', ApplicationSubmissionStateClassification::Received)
+                    ->value('id'),
+                'event' => WorkflowTriggerEvent::Enter,
+            ])
+        )
+        ->create();
+
+    get(WorkflowResource::getUrl('edit', [
+        'application' => $ownerApplication,
+        'record' => $workflow,
+    ]))->assertOk();
+
+    get(WorkflowResource::getUrl('edit', [
+        'application' => $otherApplication,
+        'record' => $workflow,
+    ]))->assertNotFound();
 });

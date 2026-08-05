@@ -34,20 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Workflow\Filament\Resources\Workflows\Pages;
+namespace AdvisingApp\Workflow\Filament\Resources\Workflows\Schemas;
 
-use AdvisingApp\Workflow\Filament\Resources\Workflows\WorkflowResource;
-use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
+use AdvisingApp\Workflow\Filament\Forms\WorkflowTypeFormRegistry;
+use AdvisingApp\Workflow\Models\Workflow;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Schema;
 
-class ListWorkflows extends ListRecords
+class WorkflowForm
 {
-    protected static string $resource = WorkflowResource::class;
-
-    protected function getHeaderActions(): array
+    public static function configure(Schema $schema): Schema
     {
-        return [
-            CreateAction::make(),
-        ];
+        $schema = $schema->components([
+            TextInput::make('name')
+                ->required()
+                ->maxLength(255),
+            Toggle::make('is_enabled')
+                ->label('Enabled?')
+                ->inline(false),
+        ]);
+
+        $record = $schema->getRecord();
+
+        if ($record instanceof Workflow) {
+            $typeFormClass = app(WorkflowTypeFormRegistry::class)
+                ->for($record->workflowTrigger->related_type);
+
+            if ($typeFormClass !== null) {
+                $schema = $typeFormClass::configureForm($schema);
+            }
+        }
+
+        return $schema;
     }
 }

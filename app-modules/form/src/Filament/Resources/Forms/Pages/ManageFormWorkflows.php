@@ -37,8 +37,8 @@
 namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
 
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
+use AdvisingApp\Form\Filament\Resources\Forms\Resources\Workflows\WorkflowResource as FormWorkflowResource;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
-use AdvisingApp\Workflow\Filament\Resources\Workflows\WorkflowResource;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use Filament\Actions\Action;
@@ -56,6 +56,8 @@ class ManageFormWorkflows extends ManageRelatedRecords
     protected static string $resource = FormResource::class;
 
     protected static string $relationship = 'workflows';
+
+    protected static ?string $relatedResource = FormWorkflowResource::class;
 
     public static function getNavigationLabel(): string
     {
@@ -76,11 +78,11 @@ class ManageFormWorkflows extends ManageRelatedRecords
             ])
             ->recordActions([
                 EditAction::make()
-                    ->url(fn (Workflow $record) => WorkflowResource::getUrl('edit', [$record])),
+                    ->url(fn (Workflow $record): string => FormWorkflowResource::getUrl('edit', ['form' => $this->getOwnerRecord(), 'record' => $record])),
                 DeleteAction::make()
                     ->modalHeading(fn (Workflow $record) => 'Delete ' . $record->name),
             ])
-            ->recordUrl(fn (Workflow $record) => WorkflowResource::getUrl('edit', [$record]));
+            ->recordUrl(fn (Workflow $record): string => FormWorkflowResource::getUrl('edit', ['form' => $this->getOwnerRecord(), 'record' => $record]));
     }
 
     /**
@@ -120,7 +122,7 @@ class ManageFormWorkflows extends ManageRelatedRecords
                         throw $throw;
                     }
 
-                    redirect(WorkflowResource::getUrl('edit', [$workflow]));
+                    redirect(FormWorkflowResource::getUrl('edit', ['form' => $this->getOwnerRecord(), 'record' => $workflow]));
                 }),
         ];
     }

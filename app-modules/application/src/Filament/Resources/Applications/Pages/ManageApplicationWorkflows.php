@@ -37,10 +37,10 @@
 namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
+use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\WorkflowResource;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerEvent;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
-use AdvisingApp\Workflow\Filament\Resources\Workflows\WorkflowResource;
 use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use Filament\Actions\Action;
@@ -62,6 +62,8 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
     protected static string $resource = ApplicationResource::class;
 
     protected static string $relationship = 'workflows';
+
+    protected static ?string $relatedResource = WorkflowResource::class;
 
     public static function getNavigationLabel(): string
     {
@@ -140,11 +142,11 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
             ])
             ->recordActions([
                 EditAction::make()
-                    ->url(fn (Workflow $record) => WorkflowResource::getUrl('edit', [$record])),
+                    ->url(fn (Workflow $record) => WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $record])),
                 DeleteAction::make()
                     ->modalHeading(fn (Workflow $record) => 'Delete ' . $record->name),
             ])
-            ->recordUrl(fn (Workflow $record) => WorkflowResource::getUrl('edit', [$record]));
+            ->recordUrl(fn (Workflow $record) => WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $record]));
     }
 
     /**
@@ -212,7 +214,7 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
                     throw $throw;
                 }
 
-                redirect(WorkflowResource::getUrl('edit', [$workflow]));
+                redirect(WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $workflow]));
             }),
         ];
     }
