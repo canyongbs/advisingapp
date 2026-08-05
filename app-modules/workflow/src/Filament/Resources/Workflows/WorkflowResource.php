@@ -63,6 +63,8 @@ class WorkflowResource extends Resource
 
     public static function getIndexUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null, bool $shouldGuessMissingParameters = false): string
     {
-        return filament()->getPanel($panel ?? config('filament.default_panel'))->getUrl();
+        $panelId = $panel ?? config('filament.default_panel') ?? 'admin';
+
+        return filament()->getPanel($panelId)->getUrl();
     }
 }
