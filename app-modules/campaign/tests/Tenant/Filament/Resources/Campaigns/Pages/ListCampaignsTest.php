@@ -37,14 +37,18 @@
 namespace AdvisingApp\Campaign\Tests\Tenant\Filament\Resources\Campaigns\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\ListCampaigns;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
 use Illuminate\Database\Eloquent\Model;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertModelExists;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
@@ -269,3 +273,87 @@ it('shows the group name and population as the name column description for a dyn
     'students' => [GroupModel::Student, 'Students', 'last'],
     'prospects' => [GroupModel::Prospect, 'Prospects', 'last_name'],
 ]);
+
+it('archives and disables every selected campaign without deleting any', function () {
+    asSuperAdmin();
+
+    $executed = Campaign::factory()->enabled()
+        ->has(CampaignAction::factory()->finishedAt(), 'actions')
+        ->create();
+
+    $neverExecuted = Campaign::factory()->enabled()->create();
+
+    $records = collect([$executed, $neverExecuted]);
+
+    // Establish starting state: both enabled and not archived.
+    foreach ($records as $record) {
+        expect($record->enabled)->toBeTrue()
+            ->and($record->archived_at)->toBeNull();
+    }
+
+    livewire(ListCampaigns::class)
+        ->selectTableRecords($records->pluck('id')->all())
+        ->callAction(TestAction::make('archive')->table()->bulk())
+        ->assertNotified();
+
+    foreach ($records as $record) {
+        // Still present — archive-only never deletes, even the never-executed one.
+        assertModelExists($record);
+
+        $record->refresh();
+
+        expect($record->archived_at)->not->toBeNull()
+            ->and($record->enabled)->toBeFalse();
+    }
+});
+
+it('shows the disable and archive confirmation copy with the selected count', function () {
+    asSuperAdmin();
+
+    $campaigns = Campaign::factory()->count(2)->create();
+
+    livewire(ListCampaigns::class)
+        ->mountTableBulkAction('archive', $campaigns->pluck('id')->all())
+        ->assertMountedActionModalSee('This action will disable and archive 2 selected campaign(s).');
+});
+
+it('does not render per-row view, edit, or delete actions', function () {
+    asSuperAdmin();
+
+    $campaign = Campaign::factory()->create();
+
+    livewire(ListCampaigns::class)
+        ->assertCanSeeTableRecords([$campaign])
+        ->assertTableActionDoesNotExist('view')
+        ->assertTableActionDoesNotExist('edit')
+        ->assertTableActionDoesNotExist('delete');
+});
+
+it('links each row to the campaign view page', function () {
+    asSuperAdmin();
+
+    $campaign = Campaign::factory()->create();
+
+    livewire(ListCampaigns::class)
+        ->assertCanSeeTableRecords([$campaign])
+        ->assertSee(CampaignResource::getUrl('view', ['record' => $campaign]));
+});
+
+it('hides the archive bulk action from users without delete permission', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('campaign.view-any');
+
+    actingAs($user);
+
+    $campaigns = Campaign::factory()->count(2)->create();
+
+    livewire(ListCampaigns::class)
+        ->assertCanSeeTableRecords($campaigns)
+        ->assertTableBulkActionHidden('archive');
+
+    $user->givePermissionTo('campaign.*.delete');
+
+    livewire(ListCampaigns::class)
+        ->assertCanSeeTableRecords($campaigns)
+        ->assertTableBulkActionVisible('archive');
+});
