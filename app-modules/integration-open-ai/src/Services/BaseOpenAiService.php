@@ -58,6 +58,7 @@ use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns\InteractsW
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use App\Models\User;
+use Carbon\CarbonInterface;
 use Closure;
 use Exception;
 use Generator;
@@ -68,11 +69,22 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Prism\Prism\Contracts\Message;
 use Prism\Prism\Contracts\Schema;
-use Prism\Prism\Enums\ChunkType;
 use Prism\Prism\Enums\FinishReason;
 use Prism\Prism\Exceptions\PrismException;
 use Prism\Prism\Exceptions\PrismRateLimitedException;
-use Prism\Prism\Prism;
+use Prism\Prism\Facades\Prism;
+use Prism\Prism\Streaming\Events\ProviderToolEvent;
+use Prism\Prism\Streaming\Events\StepFinishEvent;
+use Prism\Prism\Streaming\Events\StepStartEvent;
+use Prism\Prism\Streaming\Events\StreamEndEvent;
+use Prism\Prism\Streaming\Events\StreamEvent;
+use Prism\Prism\Streaming\Events\StreamStartEvent;
+use Prism\Prism\Streaming\Events\TextCompleteEvent;
+use Prism\Prism\Streaming\Events\TextDeltaEvent;
+use Prism\Prism\Streaming\Events\TextStartEvent;
+use Prism\Prism\Streaming\Events\ThinkingCompleteEvent;
+use Prism\Prism\Streaming\Events\ThinkingEvent;
+use Prism\Prism\Streaming\Events\ThinkingStartEvent;
 use Prism\Prism\Text\PendingRequest;
 use Prism\Prism\ValueObjects\Messages\AssistantMessage;
 use Prism\Prism\ValueObjects\Messages\UserMessage;
@@ -84,6 +96,8 @@ abstract class BaseOpenAiService implements AiService
     use InteractsWithResearchRequests;
 
     public const FORMATTING_INSTRUCTIONS = 'When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.';
+
+    protected const RATE_LIMIT_FALLBACK_RETRY_SECONDS = 15;
 
     public function __construct(
         protected AiIntegrationsSettings $settings,
@@ -234,47 +248,48 @@ abstract class BaseOpenAiService implements AiService
                         $stream = $clonedRequest->asStream();
 
                         foreach ($stream as $chunk) {
-                            if (
-                                ($chunk->chunkType === ChunkType::Meta) &&
-                                filled($chunk->meta?->id)
-                            ) {
-                                yield json_encode(['type' => 'next_request_options', 'options' => base64_encode(json_encode(['previous_response_id' => $chunk->meta->id]))]);
+                            if ($chunk instanceof ThinkingEvent) {
+                                continue;
+                            }
+
+                            if ($chunk instanceof TextDeltaEvent) {
+                                yield json_encode(['type' => 'content', 'content' => base64_encode($chunk->delta)]);
 
                                 continue;
                             }
 
-                            if ($chunk->chunkType !== ChunkType::Text) {
-                                Log::info('Received unhandled AI stream chunk.', [
-                                    'chunk' => $chunk,
-                                ]);
+                            if ($chunk instanceof StreamEndEvent) {
+                                if (filled($responseId = $chunk->additionalContent['response_id'] ?? null)) {
+                                    yield json_encode(['type' => 'next_request_options', 'options' => base64_encode(json_encode(['previous_response_id' => $responseId]))]);
+                                }
+
+                                if ($chunk->finishReason === FinishReason::Length) {
+                                    yield json_encode(['type' => 'content', 'content' => base64_encode('...'), 'incomplete' => true]);
+                                }
+
+                                if ($chunk->finishReason === FinishReason::Error) {
+                                    yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
+
+                                    report(new MessageResponseException('Stream not successful.'));
+                                }
 
                                 continue;
                             }
 
-                            yield json_encode(['type' => 'content', 'content' => base64_encode($chunk->text)]);
-
-                            if ($chunk->finishReason === FinishReason::Length) {
-                                yield json_encode(['type' => 'content', 'content' => base64_encode('...'), 'incomplete' => true]);
+                            if ($this->isIgnorableStreamEvent($chunk)) {
+                                continue;
                             }
 
-                            if ($chunk->finishReason === FinishReason::Error) {
-                                yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
-
-                                report(new MessageResponseException('Stream not successful.'));
-                            }
+                            Log::info('Received unhandled AI stream chunk.', [
+                                'chunk' => $chunk,
+                            ]);
                         }
                     } catch (PrismRateLimitedException $exception) {
-                        foreach ($exception->rateLimits as $rateLimit) {
-                            if ($rateLimit->resetsAt?->isFuture()) {
-                                yield json_encode(['type' => 'rate_limited', 'message' => 'Heavy traffic, just a few more moments...', 'retry_after_seconds' => now()->diffInSeconds($rateLimit->resetsAt) + 1]);
+                        $resetsAt = $this->resolveRateLimitResetsAt($exception);
 
-                                return;
-                            }
-                        }
+                        yield json_encode(['type' => 'rate_limited', 'message' => 'Heavy traffic, just a few more moments...', 'retry_after_seconds' => now()->diffInSeconds($resetsAt) + 1]);
 
-                        yield json_encode(['type' => 'failed', 'message' => 'An error happened when sending your message.']);
-
-                        report(new MessageResponseException('Thread run was rate limited, but the system was unable to extract the number of retry seconds: [' . $exception->getMessage() . '].'));
+                        return;
                     } catch (Throwable $exception) {
                         // Throw to bubble up to the retry handling
                         throw $exception;
@@ -417,15 +432,11 @@ abstract class BaseOpenAiService implements AiService
                                 error: ($response->finishReason === FinishReason::Error) ? 'Something went wrong' : null,
                             );
                         } catch (PrismRateLimitedException $exception) {
-                            foreach ($exception->rateLimits as $rateLimit) {
-                                if ($rateLimit->resetsAt?->isFuture()) {
-                                    yield new Finish(
-                                        rateLimitResetsAt: $rateLimit->resetsAt,
-                                    );
+                            yield new Finish(
+                                rateLimitResetsAt: $this->resolveRateLimitResetsAt($exception),
+                            );
 
-                                    break;
-                                }
-                            }
+                            return;
                         } catch (PrismException $exception) {
                             // Throw to pass up to the caller
                             throw $exception;
@@ -480,35 +491,26 @@ abstract class BaseOpenAiService implements AiService
                         $stream = $clonedRequest->asStream();
 
                         foreach ($stream as $chunk) {
-                            if (
-                                ($chunk->chunkType === ChunkType::Meta) &&
-                                filled($chunk->meta?->id)
-                            ) {
-                                yield new Meta(
-                                    messageId: $chunk->meta->id,
-                                    nextRequestOptions: ['previous_response_id' => $chunk->meta->id],
-                                );
+                            if ($chunk instanceof ThinkingEvent) {
+                                yield new Thinking($chunk->delta);
 
                                 continue;
                             }
 
-                            if ($chunk->chunkType === ChunkType::Thinking) {
-                                yield new Thinking($chunk->text);
+                            if ($chunk instanceof TextDeltaEvent) {
+                                yield new Text($chunk->delta);
 
                                 continue;
                             }
 
-                            if ($chunk->chunkType !== ChunkType::Text) {
-                                Log::info('Received unhandled AI stream chunk.', [
-                                    'chunk' => $chunk,
-                                ]);
+                            if ($chunk instanceof StreamEndEvent) {
+                                if (filled($responseId = $chunk->additionalContent['response_id'] ?? null)) {
+                                    yield new Meta(
+                                        messageId: $responseId,
+                                        nextRequestOptions: ['previous_response_id' => $responseId],
+                                    );
+                                }
 
-                                continue;
-                            }
-
-                            yield new Text($chunk->text);
-
-                            if ($chunk->finishReason) {
                                 yield new Finish(
                                     isIncomplete: $chunk->finishReason === FinishReason::Length,
                                     error: ($chunk->finishReason === FinishReason::Error) ? 'Something went wrong' : null,
@@ -516,17 +518,21 @@ abstract class BaseOpenAiService implements AiService
 
                                 break;
                             }
+
+                            if ($this->isIgnorableStreamEvent($chunk)) {
+                                continue;
+                            }
+
+                            Log::info('Received unhandled AI stream chunk.', [
+                                'chunk' => $chunk,
+                            ]);
                         }
                     } catch (PrismRateLimitedException $exception) {
-                        foreach ($exception->rateLimits as $rateLimit) {
-                            if ($rateLimit->resetsAt?->isFuture()) {
-                                yield new Finish(
-                                    rateLimitResetsAt: $rateLimit->resetsAt,
-                                );
+                        yield new Finish(
+                            rateLimitResetsAt: $this->resolveRateLimitResetsAt($exception),
+                        );
 
-                                break;
-                            }
-                        }
+                        return;
                     } catch (PrismException $exception) {
                         // Throw to pass up to the caller
                         throw $exception;
@@ -991,5 +997,28 @@ abstract class BaseOpenAiService implements AiService
         }
 
         return $effort->value;
+    }
+
+    protected function resolveRateLimitResetsAt(PrismRateLimitedException $exception): CarbonInterface
+    {
+        foreach ($exception->rateLimits as $rateLimit) {
+            if ($rateLimit->resetsAt?->isFuture()) {
+                return $rateLimit->resetsAt;
+            }
+        }
+
+        return now()->addSeconds($exception->retryAfter ?? self::RATE_LIMIT_FALLBACK_RETRY_SECONDS);
+    }
+
+    private function isIgnorableStreamEvent(StreamEvent $chunk): bool
+    {
+        return $chunk instanceof StreamStartEvent
+            || $chunk instanceof StepStartEvent
+            || $chunk instanceof StepFinishEvent
+            || $chunk instanceof TextStartEvent
+            || $chunk instanceof TextCompleteEvent
+            || $chunk instanceof ThinkingStartEvent
+            || $chunk instanceof ThinkingCompleteEvent
+            || $chunk instanceof ProviderToolEvent;
     }
 }

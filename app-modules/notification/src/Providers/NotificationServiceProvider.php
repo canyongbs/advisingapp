@@ -68,7 +68,7 @@ class NotificationServiceProvider extends ServiceProvider
         $this->app->bind(BaseMailChannel::class, MailChannel::class);
         $this->app->bind(BaseDatabaseChannel::class, DatabaseChannel::class);
         $this->app->singleton(BaseChannelManager::class, fn (Container $app) => (new ChannelManager($app))
-            ->extend('sms', fn (): SmsChannel => $this->app->make(SmsChannel::class)));
+            ->extend('sms', fn (): SmsChannel => $app->make(SmsChannel::class)));
     }
 
     public function boot(): void

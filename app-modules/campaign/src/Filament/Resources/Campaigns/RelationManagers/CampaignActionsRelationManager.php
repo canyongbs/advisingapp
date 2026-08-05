@@ -84,7 +84,7 @@ class CampaignActionsRelationManager extends RelationManager
 
         return $table
             ->recordTitleAttribute('id')
-            ->modifyQueryUsing(fn (QueryBuilder $query) => $query->orderBy('execute_at', 'ASC'))
+            ->modifyQueryUsing(fn (QueryBuilder $query) => $query->orderBy('execute_at', 'asc'))
             ->columns([
                 TextColumn::make('type')->label('Step Type'),
                 TextColumn::make('cancelled_at')

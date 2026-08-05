@@ -51,7 +51,7 @@ class ProspectSourceSort implements Sort
      */
     public function __invoke(Builder $query, bool $descending, string $property): Builder
     {
-        $direction = $descending ? 'DESC' : 'ASC';
+        $direction = $descending ? 'desc' : 'asc';
 
         return $query
             ->leftJoin('prospect_sources as ps', 'prospects.source_id', '=', 'ps.id')

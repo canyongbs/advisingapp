@@ -51,7 +51,7 @@ it('busts the timeline cache for the associated educatable', function () {
     // And our educatable has a timeline synced cache key
     cache()->put(
         "timeline.synced.{$initialResponse->sender->getMorphClass()}.{$initialResponse->sender->getKey()}",
-        now(),
+        now()->timestamp,
         now()->addMinutes(60)
     );
 

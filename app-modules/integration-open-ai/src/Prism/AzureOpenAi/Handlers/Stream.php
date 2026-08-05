@@ -39,9 +39,11 @@ namespace AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi\Handlers;
 use AdvisingApp\IntegrationOpenAi\Prism\AzureOpenAi\Maps\MessageMap;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Arr;
+use Prism\Prism\Exceptions\PrismRateLimitedException;
 use Prism\Prism\Providers\OpenAI\Handlers\Stream as BaseStream;
 use Prism\Prism\Providers\OpenAI\Maps\ToolChoiceMap;
 use Prism\Prism\Text\Request;
+use Psr\Http\Message\StreamInterface;
 
 class Stream extends BaseStream
 {
@@ -71,5 +73,59 @@ class Stream extends BaseStream
                     'tool_choice' => $request->providerOptions('tool_choice'),
                 ]))
             );
+    }
+
+    /**
+     * @return array<string, mixed>|null
+     */
+    protected function parseNextDataLine(StreamInterface $stream): ?array
+    {
+        $data = parent::parseNextDataLine($stream);
+
+        // Prism discards the provider's message when it throws for a rate limit, so we capture the retry delay here first.
+        if (is_array($data) && data_get($data, 'error.code') === 'rate_limit_exceeded') {
+            throw new PrismRateLimitedException([], $this->extractRetryAfterSeconds(data_get($data, 'error.message')));
+        }
+
+        return $data;
+    }
+
+    private function extractRetryAfterSeconds(mixed $message): ?int
+    {
+        if (! is_string($message) || blank($message)) {
+            return null;
+        }
+
+        // Azure phrasing, e.g. "Please retry after 26 seconds."
+        if (preg_match('/retry after (\d+)\s*second/i', $message, $matches)) {
+            return max(1, (int) $matches[1]);
+        }
+
+        // OpenAI phrasing, e.g. "Please try again in 1.5s" or "2m30s" or "200ms".
+        if (preg_match('/try again in\s+([0-9hms.\s]+)/i', $message, $matches)) {
+            return $this->sumDurationToSeconds($matches[1]);
+        }
+
+        return null;
+    }
+
+    private function sumDurationToSeconds(string $duration): ?int
+    {
+        if (preg_match_all('/(\d+(?:\.\d+)?)\s*(ms|h|m|s)/i', $duration, $matches, PREG_SET_ORDER) === 0) {
+            return null;
+        }
+
+        $seconds = 0.0;
+
+        foreach ($matches as $match) {
+            $seconds += match (strtolower($match[2])) {
+                'ms' => ((float) $match[1]) / 1000,
+                'm' => ((float) $match[1]) * 60,
+                'h' => ((float) $match[1]) * 3600,
+                default => (float) $match[1],
+            };
+        }
+
+        return max(1, (int) ceil($seconds));
     }
 }

@@ -40,6 +40,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Scope;
 
+/**
+ * @implements Scope<Model>
+ */
 class ConfidentialTaskScope implements Scope
 {
     public function apply(Builder $builder, Model $model)

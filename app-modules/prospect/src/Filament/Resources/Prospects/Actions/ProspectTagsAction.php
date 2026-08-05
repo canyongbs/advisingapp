@@ -58,7 +58,7 @@ class ProspectTagsAction extends Action
                 Select::make('tag_ids')
                     ->options(
                         fn (): array => Tag::where('type', TagType::Prospect)
-                            ->orderBy('name', 'ASC')
+                            ->orderBy('name', 'asc')
                             ->pluck('name', 'id')
                             ->toArray()
                     )

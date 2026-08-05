@@ -48,13 +48,14 @@ use Generator;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-use Prism\Prism\Enums\ChunkType;
 use Prism\Prism\Enums\FinishReason;
 use Prism\Prism\Exceptions\PrismRateLimitedException;
-use Prism\Prism\Prism;
+use Prism\Prism\Facades\Prism;
 use Prism\Prism\Schema\ArraySchema;
 use Prism\Prism\Schema\ObjectSchema;
 use Prism\Prism\Schema\StringSchema;
+use Prism\Prism\Streaming\Events\StreamEndEvent;
+use Prism\Prism\Streaming\Events\TextDeltaEvent;
 use Throwable;
 
 trait InteractsWithResearchRequests
@@ -210,23 +211,22 @@ trait InteractsWithResearchRequests
                 ->asStream();
 
             foreach ($stream as $chunk) {
-                if (
-                    ($chunk->chunkType === ChunkType::Meta) &&
-                    filled($chunk->meta?->id)
-                ) {
-                    $nextRequestOptions(['previous_response_id' => $chunk->meta->id]);
+                if ($chunk instanceof TextDeltaEvent) {
+                    yield $chunk->delta;
 
                     continue;
                 }
 
-                if ($chunk->chunkType !== ChunkType::Text) {
+                if ($chunk instanceof StreamEndEvent) {
+                    if (filled($responseId = $chunk->additionalContent['response_id'] ?? null)) {
+                        $nextRequestOptions(['previous_response_id' => $responseId]);
+                    }
+
+                    if ($chunk->finishReason === FinishReason::Error) {
+                        report(new MessageResponseException('Stream not successful.'));
+                    }
+
                     continue;
-                }
-
-                yield $chunk->text;
-
-                if ($chunk->finishReason === FinishReason::Error) {
-                    report(new MessageResponseException('Stream not successful.'));
                 }
             }
         } catch (PrismRateLimitedException $exception) {
