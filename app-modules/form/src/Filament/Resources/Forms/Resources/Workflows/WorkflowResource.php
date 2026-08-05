@@ -61,8 +61,7 @@ class WorkflowResource extends Resource
     public static function getParentResourceRegistration(): ?ParentResourceRegistration
     {
         return FormResource::asParent(childResource: self::class)
-            ->relationship('workflows')
-            ->inverseRelationship('form');
+            ->relationship('workflows');
     }
 
     public static function form(Schema $schema): Schema
