@@ -115,5 +115,12 @@ class Campaign extends BaseModel implements Auditable
 
             $builder->whereHas('group');
         });
+
+        static::archiving(function (Campaign $campaign): void {
+            if ($campaign->enabled) {
+                $campaign->enabled = false;
+                $campaign->save();
+            }
+        });
     }
 }
