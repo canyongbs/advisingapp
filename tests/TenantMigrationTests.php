@@ -128,3 +128,63 @@ test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements
         }
     );
 });
+
+test('2026_08_05_233648_tmp_delete_case_timeline_records removes timeline records for removed case models', function () {
+    isolatedMigration(
+        '2026_08_05_233648_tmp_delete_case_timeline_records',
+        function () {
+            $caseTimelineIds = collect(['case_assignment', 'case_history', 'case_update'])
+                ->map(function (string $timelineableType): string {
+                    $id = (string) Str::uuid();
+
+                    DB::table('timelines')->insert([
+                        'id' => $id,
+                        'entity_type' => 'student',
+                        'entity_id' => (string) Str::uuid(),
+                        'timelineable_type' => $timelineableType,
+                        'timelineable_id' => (string) Str::uuid(),
+                        'record_sortable_date' => now(),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ]);
+
+                    return $id;
+                });
+
+            $softDeletedCaseTimelineId = (string) Str::uuid();
+
+            DB::table('timelines')->insert([
+                'id' => $softDeletedCaseTimelineId,
+                'entity_type' => 'student',
+                'entity_id' => (string) Str::uuid(),
+                'timelineable_type' => 'case_update',
+                'timelineable_id' => (string) Str::uuid(),
+                'record_sortable_date' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+                'deleted_at' => now(),
+            ]);
+
+            $engagementTimelineId = (string) Str::uuid();
+
+            DB::table('timelines')->insert([
+                'id' => $engagementTimelineId,
+                'entity_type' => 'student',
+                'entity_id' => (string) Str::uuid(),
+                'timelineable_type' => 'engagement',
+                'timelineable_id' => (string) Str::uuid(),
+                'record_sortable_date' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            $migrate = Artisan::call('migrate', ['--path' => 'database/migrations/2026_08_05_233648_tmp_delete_case_timeline_records.php']);
+
+            expect($migrate)->toBe(Command::SUCCESS);
+
+            expect(DB::table('timelines')->whereIn('id', $caseTimelineIds->all())->count())->toBe(0);
+            expect(DB::table('timelines')->where('id', $softDeletedCaseTimelineId)->count())->toBe(0);
+            expect(DB::table('timelines')->where('id', $engagementTimelineId)->count())->toBe(1);
+        }
+    );
+});
