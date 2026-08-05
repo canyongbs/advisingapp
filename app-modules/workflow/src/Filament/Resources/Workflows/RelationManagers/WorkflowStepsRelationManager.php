@@ -68,8 +68,6 @@ class WorkflowStepsRelationManager extends RelationManager
 
     protected static ?string $title = 'Workflow Steps';
 
-    protected static ?string $relatedResource = null;
-
     public function form(Schema $schema): Schema
     {
         return $schema
