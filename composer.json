@@ -58,7 +58,7 @@
         "canyon-gbs/stock-media": "*",
         "canyon-gbs/workflow": "*",
         "canyongbs/common": "^2.36.1",
-        "canyongbs/model-state-machine": "^2.0.8",
+        "canyongbs/model-state-machine": "^2.1.0",
         "cknow/laravel-money": "^8.1",
         "composer/composer": "^2.7",
         "dedoc/scramble": "^0.13",
@@ -274,36 +274,6 @@
     "prefer-stable": true,
     "minimum-stability": "stable",
     "repositories": [
-        {
-            "type": "package",
-            "package": {
-                "name": "canyongbs/model-state-machine",
-                "version": "2.1.0",
-                "source": {
-                    "url": "https://github.com/canyongbs/model-state-machine.git",
-                    "type": "git",
-                    "reference": "83db630293ab0ca5442967f4066f3812adb281ea"
-                },
-                "require": {
-                    "php": "^8.2",
-                    "spatie/laravel-package-tools": "^1.16.6",
-                    "illuminate/contracts": "^11.0|^12.0|^13.0"
-                },
-                "autoload": {
-                    "psr-4": {
-                        "Bvtterfly\\ModelStateMachine\\": "src",
-                        "Bvtterfly\\ModelStateMachine\\Database\\Factories\\": "database/factories"
-                    }
-                },
-                "extra": {
-                    "laravel": {
-                        "providers": [
-                            "Bvtterfly\\ModelStateMachine\\ModelStateMachineServiceProvider"
-                        ]
-                    }
-                }
-            }
-        },
         {
             "type": "path",
             "url": "app-modules/*",

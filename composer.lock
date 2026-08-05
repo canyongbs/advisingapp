@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e711d6b49953d2e00ab5e11b1f0cba85",
+    "content-hash": "536a8b771af8392516ec9fde63bc56d7",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -2158,14 +2158,33 @@
                 "url": "https://github.com/canyongbs/model-state-machine.git",
                 "reference": "83db630293ab0ca5442967f4066f3812adb281ea"
             },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/canyongbs/model-state-machine/zipball/83db630293ab0ca5442967f4066f3812adb281ea",
+                "reference": "83db630293ab0ca5442967f4066f3812adb281ea",
+                "shasum": ""
+            },
             "require": {
-                "illuminate/contracts": "^11.0|^12.0|^13.0",
+                "illuminate/contracts": "^12.0|^13.0",
                 "php": "^8.2",
                 "spatie/laravel-package-tools": "^1.16.6"
+            },
+            "require-dev": {
+                "larastan/larastan": "^3.0.2",
+                "nunomaduro/collision": "^7.0|^8.0|^9.0",
+                "orchestra/testbench": "^10.0|^11.0",
+                "pestphp/pest": "^3.8.5|^4.4.1",
+                "pestphp/pest-plugin-laravel": "^3.0|^4.1",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan-deprecation-rules": "^2.0",
+                "phpstan/phpstan-phpunit": "^2.0"
             },
             "type": "library",
             "extra": {
                 "laravel": {
+                    "aliases": {
+                        "StateMachine": "Bvtterfly\\StateMachine\\Facades\\StateMachine"
+                    },
                     "providers": [
                         "Bvtterfly\\ModelStateMachine\\ModelStateMachineServiceProvider"
                     ]
@@ -2176,7 +2195,34 @@
                     "Bvtterfly\\ModelStateMachine\\": "src",
                     "Bvtterfly\\ModelStateMachine\\Database\\Factories\\": "database/factories"
                 }
-            }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Canyon GBS",
+                    "role": "Developers and Maintainers"
+                },
+                {
+                    "name": "Ari",
+                    "email": "thearihdrn@gmail.com",
+                    "role": "Original Developer"
+                }
+            ],
+            "description": "Model State Machine",
+            "homepage": "https://github.com/canyongbs/model-state-machine",
+            "keywords": [
+                "bvtterfly",
+                "laravel",
+                "model-state-machine"
+            ],
+            "support": {
+                "issues": "https://github.com/canyongbs/model-state-machine/issues",
+                "source": "https://github.com/canyongbs/model-state-machine/tree/2.1.0"
+            },
+            "time": "2026-07-10T00:17:06+00:00"
         },
         {
             "name": "carbonphp/carbon-doctrine-types",
