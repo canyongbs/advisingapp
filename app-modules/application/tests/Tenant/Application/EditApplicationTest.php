@@ -44,7 +44,6 @@ use App\Models\User;
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Laravel\assertModelMissing;
 use function Pest\Laravel\seed;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
@@ -130,33 +129,27 @@ test('EditApplication is gated with proper feature access control', function () 
     // TODO: Finish the test by adding the request factory EditApplicationRequestFactory
 });
 
-it('shows archive mode for the header archive action when the application has submissions', function () {
+it('archive action is always visible and labeled Archive', function () {
     seed(ApplicationSubmissionStateSeeder::class);
 
     asSuperAdmin();
 
-    $application = Application::factory()->create();
+    $applicationWithSubmissions = Application::factory()->create();
 
     ApplicationSubmission::factory()->create([
-        'application_id' => $application->id,
+        'application_id' => $applicationWithSubmissions->id,
     ]);
 
-    livewire(EditApplication::class, ['record' => $application->getRouteKey()])
+    $applicationWithoutSubmissions = Application::factory()->create();
+    $applicationWithoutSubmissions->submissions()->delete();
+
+    livewire(EditApplication::class, ['record' => $applicationWithSubmissions->getRouteKey()])
         ->assertActionVisible('archive')
         ->assertActionHasLabel('archive', 'Archive');
-});
 
-it('shows delete mode for the header archive action when the application has no submissions', function () {
-    seed(ApplicationSubmissionStateSeeder::class);
-
-    asSuperAdmin();
-
-    $application = Application::factory()->create();
-    $application->submissions()->delete();
-
-    livewire(EditApplication::class, ['record' => $application->getRouteKey()])
+    livewire(EditApplication::class, ['record' => $applicationWithoutSubmissions->getRouteKey()])
         ->assertActionVisible('archive')
-        ->assertActionHasLabel('archive', 'Delete');
+        ->assertActionHasLabel('archive', 'Archive');
 });
 
 it('archive action archives the application and redirects to the index when the application has submissions', function () {
@@ -171,19 +164,4 @@ it('archive action archives the application and redirects to the index when the 
         ->assertRedirect(ApplicationResource::getUrl('index'));
 
     expect($application->fresh()->isArchived())->toBeTrue();
-});
-
-it('archive action deletes the application and redirects to the index when the application has no submissions', function () {
-    seed(ApplicationSubmissionStateSeeder::class);
-
-    asSuperAdmin();
-
-    $application = Application::factory()->create();
-    $application->submissions()->delete();
-
-    livewire(EditApplication::class, ['record' => $application->getRouteKey()])
-        ->callAction('archive')
-        ->assertRedirect(ApplicationResource::getUrl('index'));
-
-    assertModelMissing($application);
 });

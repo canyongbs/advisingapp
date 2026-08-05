@@ -39,30 +39,25 @@ use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ViewEvent;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 
-use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-it('shows archive mode for the header archive action when the event has attendees', function () {
+it('archive action is always visible and labeled Archive', function () {
     asSuperAdmin();
 
-    $event = Event::factory()->create(['starts_at' => now()->addWeek()]);
-    EventAttendee::factory()->create(['event_id' => $event->id]);
+    $eventWithAttendees = Event::factory()->create(['starts_at' => now()->addWeek()]);
+    EventAttendee::factory()->create(['event_id' => $eventWithAttendees->id]);
 
-    livewire(ViewEvent::class, ['record' => $event->getRouteKey()])
+    $eventWithoutAttendees = Event::factory()->create(['starts_at' => now()->addWeek()]);
+    $eventWithoutAttendees->attendees()->delete();
+
+    livewire(ViewEvent::class, ['record' => $eventWithAttendees->getRouteKey()])
         ->assertActionVisible('archive')
         ->assertActionHasLabel('archive', 'Archive');
-});
 
-it('shows delete mode for the header archive action when the event has no attendees', function () {
-    asSuperAdmin();
-
-    $event = Event::factory()->create(['starts_at' => now()->addWeek()]);
-    $event->attendees()->delete();
-
-    livewire(ViewEvent::class, ['record' => $event->getRouteKey()])
+    livewire(ViewEvent::class, ['record' => $eventWithoutAttendees->getRouteKey()])
         ->assertActionVisible('archive')
-        ->assertActionHasLabel('archive', 'Delete');
+        ->assertActionHasLabel('archive', 'Archive');
 });
 
 it('archive action archives the event and redirects to the index when the event has attendees', function () {
@@ -76,17 +71,4 @@ it('archive action archives the event and redirects to the index when the event 
         ->assertRedirect(EventResource::getUrl('index'));
 
     expect($event->fresh()->isArchived())->toBeTrue();
-});
-
-it('archive action deletes the event and redirects to the index when the event has no attendees', function () {
-    asSuperAdmin();
-
-    $event = Event::factory()->create(['starts_at' => now()->addWeek()]);
-    $event->attendees()->delete();
-
-    livewire(ViewEvent::class, ['record' => $event->getRouteKey()])
-        ->callAction('archive')
-        ->assertRedirect(EventResource::getUrl('index'));
-
-    assertSoftDeleted($event);
 });
