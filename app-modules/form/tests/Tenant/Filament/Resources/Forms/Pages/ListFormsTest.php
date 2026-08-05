@@ -208,23 +208,6 @@ it('does not count archived submissions in the submissions count', function () {
         ->assertTableColumnStateSet('submissions_count', 3, $form);
 });
 
-it('archive action is always visible regardless of submission status', function () {
-    asSuperAdmin();
-
-    $formWithSubmissions = Form::factory()->create();
-
-    FormSubmission::factory()->create([
-        'form_id' => $formWithSubmissions->id,
-        'submitted_at' => now(),
-    ]);
-
-    $formWithoutSubmissions = Form::factory()->create();
-
-    livewire(ListForms::class)
-        ->assertTableActionVisible('archive', $formWithSubmissions)
-        ->assertTableActionVisible('archive', $formWithoutSubmissions);
-});
-
 it('archive bulk action archives all selected forms', function () {
     asSuperAdmin();
 

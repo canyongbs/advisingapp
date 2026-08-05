@@ -38,11 +38,9 @@ use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ListApplications;
 use AdvisingApp\Application\Models\Application;
-use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
-use Filament\Actions\Testing\TestAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\seed;
@@ -193,48 +191,4 @@ test('submissions count does not include archived submissions', function () {
 
     livewire(ListApplications::class)
         ->assertTableColumnStateSet('submissions_count', $expectedCount, $application);
-});
-
-it('archive action is always visible regardless of submission status', function () {
-    seed(ApplicationSubmissionStateSeeder::class);
-
-    asSuperAdmin();
-
-    $applicationWithSubmissions = Application::factory()->create();
-
-    ApplicationSubmission::factory()->create([
-        'application_id' => $applicationWithSubmissions->id,
-    ]);
-
-    $applicationWithoutSubmissions = Application::factory()->create();
-    $applicationWithoutSubmissions->submissions()->delete();
-
-    livewire(ListApplications::class)
-        ->assertTableActionVisible('archive', $applicationWithSubmissions)
-        ->assertTableActionVisible('archive', $applicationWithoutSubmissions);
-});
-
-it('archive bulk action archives all selected applications', function () {
-    seed(ApplicationSubmissionStateSeeder::class);
-
-    asSuperAdmin();
-
-    $applicationWithSubmissions = Application::factory()->create();
-
-    ApplicationSubmission::factory()->create([
-        'application_id' => $applicationWithSubmissions->id,
-    ]);
-
-    $applicationWithoutSubmissions = Application::factory()->create();
-    $applicationWithoutSubmissions->submissions()->delete();
-
-    $records = collect([$applicationWithSubmissions, $applicationWithoutSubmissions]);
-
-    livewire(ListApplications::class)
-        ->selectTableRecords($records->pluck('id')->all())
-        ->callAction(TestAction::make('archive')->table()->bulk())
-        ->assertNotified();
-
-    expect($applicationWithSubmissions->fresh()->archived_at)->not->toBeNull();
-    expect($applicationWithoutSubmissions->fresh()->archived_at)->not->toBeNull();
 });

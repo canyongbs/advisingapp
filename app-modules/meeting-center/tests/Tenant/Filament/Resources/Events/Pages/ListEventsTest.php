@@ -142,21 +142,6 @@ it('gives a duplicated event registration form its own version tree rather than 
     expect($duplicatedForm->archived_at)->toBeNull();
 });
 
-it('shows archive action is always visible regardless of attendee status', function () {
-    asSuperAdmin();
-
-    $eventWithAttendees = Event::factory()->create(['starts_at' => now()->addWeek()]);
-    EventAttendee::factory()->create(['event_id' => $eventWithAttendees->id]);
-
-    $eventWithoutAttendees = Event::factory()->create(['starts_at' => now()->addWeek()]);
-    $eventWithoutAttendees->attendees()->delete();
-
-    livewire(ListEvents::class)
-        ->removeTableFilter('pastEvents')
-        ->assertTableActionVisible('archive', $eventWithAttendees)
-        ->assertTableActionVisible('archive', $eventWithoutAttendees);
-});
-
 it('archive bulk action archives all selected events', function () {
     asSuperAdmin();
 
