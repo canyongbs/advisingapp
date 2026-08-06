@@ -43,6 +43,10 @@ class ArchiveCampaignBulkAction
 {
     public static function make(): BulkAction
     {
+        // Relies on the default per-record fetching: the action must call $record->archive()
+        // per record so Campaign's archiving event fires and disables enabled campaigns. Do not
+        // set fetchSelectedRecords(false) — query-level archive bypasses model events and would
+        // archive campaigns while leaving them enabled.
         return ArchiveBulkAction::make()
             ->modalDescription(function (ArchiveBulkAction $action): string {
                 $count = $action->getSelectedRecordsQuery()->count();
