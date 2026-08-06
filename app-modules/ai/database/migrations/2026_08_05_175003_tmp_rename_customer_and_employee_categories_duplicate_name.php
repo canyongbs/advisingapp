@@ -41,15 +41,17 @@ use Illuminate\Support\Str;
 return new class () extends Migration {
     public function up(): void
     {
-        $this->renameCaseInsensitiveDuplicates(
-            table: 'customer_advisor_categories',
-            ownerColumn: 'customer_advisor_id',
-        );
+        DB::transaction(function () {
+            $this->renameCaseInsensitiveDuplicates(
+                table: 'customer_advisor_categories',
+                ownerColumn: 'customer_advisor_id',
+            );
 
-        $this->renameCaseInsensitiveDuplicates(
-            table: 'employee_advisor_categories',
-            ownerColumn: 'employee_advisor_id',
-        );
+            $this->renameCaseInsensitiveDuplicates(
+                table: 'employee_advisor_categories',
+                ownerColumn: 'employee_advisor_id',
+            );
+        });
     }
 
     public function down(): void {}
