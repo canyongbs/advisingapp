@@ -38,6 +38,7 @@ namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Group\Actions\TranslateGroupFilters;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
 use Filament\Actions\CreateAction;
@@ -69,9 +70,13 @@ class ListCampaigns extends ListRecords
                             return null;
                         }
 
+                        if ($group->getAttributeValue('population_count') === null) {
+                            $group->setAttribute('population_count', app(TranslateGroupFilters::class)->execute($group)->count());
+                        }
+
                         $population = Str::of($group->model->getPluralLabel())->ucfirst();
 
-                        return "{$group->name} (" . number_format($group->subjects_count) . " {$population})";
+                        return "{$group->name} (" . number_format($group->getAttributeValue('population_count')) . " {$population})";
                     }),
                 TextColumn::make('enabled')
                     ->label('Enabled')
@@ -97,7 +102,7 @@ class ListCampaigns extends ListRecords
             ->modifyQueryUsing(function (Builder $query) {
                 /** @var Builder<Campaign> $query */
                 $query->withoutArchived()
-                    ->with(['group' => fn ($query) => $query->withCount('subjects')]);
+                    ->with('group');
 
                 return $query;
             })

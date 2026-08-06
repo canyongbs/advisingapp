@@ -43,7 +43,6 @@ use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
-use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 
 use function Pest\Livewire\livewire;
@@ -199,20 +198,22 @@ it('excludes archived campaigns from the list', function () {
         ->assertCountTableRecords(1);
 });
 
-it('shows the group name and population as the name column description', function () {
+it('shows the group name and population as the name column description for a static group', function (GroupModel $model, string $expectedLabel) {
     asSuperAdmin();
 
-    $students = Student::factory()->count(3)->create();
+    $modelClass = $model->class();
+
+    $subjects = $modelClass::factory()->count(3)->create();
 
     $group = Group::factory()->create([
         'name' => 'Everyone',
-        'model' => GroupModel::Student,
+        'model' => $model,
         'type' => GroupType::Static,
     ]);
 
-    $students->each(fn (Student $student) => $group->subjects()->create([
-        'subject_id' => $student->getKey(),
-        'subject_type' => $student->getMorphClass(),
+    $subjects->each(fn ($subject) => $group->subjects()->create([
+        'subject_id' => $subject->getKey(),
+        'subject_type' => $subject->getMorphClass(),
     ]));
 
     $campaign = Campaign::factory()->create([
@@ -221,5 +222,34 @@ it('shows the group name and population as the name column description', functio
 
     livewire(ListCampaigns::class)
         ->assertCanSeeTableRecords([$campaign])
-        ->assertSee('Everyone (3 Students)');
-});
+        ->assertSee("Everyone (3 {$expectedLabel})");
+})->with([
+    'students' => [GroupModel::Student, 'Students'],
+    'prospects' => [GroupModel::Prospect, 'Prospects'],
+]);
+
+it('resolves the population through the group filters for a dynamic group', function (GroupModel $model, string $expectedLabel) {
+    asSuperAdmin();
+
+    $modelClass = $model->class();
+
+    $modelClass::factory()->count(4)->create();
+
+    $group = Group::factory()->create([
+        'name' => 'Everyone',
+        'model' => $model,
+        'type' => GroupType::Dynamic,
+        'filters' => [],
+    ]);
+
+    $campaign = Campaign::factory()->create([
+        'segment_id' => $group->getKey(),
+    ]);
+
+    livewire(ListCampaigns::class)
+        ->assertCanSeeTableRecords([$campaign])
+        ->assertSee("Everyone (4 {$expectedLabel})");
+})->with([
+    'students' => [GroupModel::Student, 'Students'],
+    'prospects' => [GroupModel::Prospect, 'Prospects'],
+]);
