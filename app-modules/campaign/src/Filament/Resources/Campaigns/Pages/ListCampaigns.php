@@ -70,13 +70,19 @@ class ListCampaigns extends ListRecords
                             return null;
                         }
 
-                        if ($group->getAttributeValue('population_count') === null) {
-                            $group->setAttribute('population_count', app(TranslateGroupFilters::class)->execute($group)->count());
-                        }
+                        static $populationCountsByGroupId = [];
 
-                        $population = Str::of($group->model->getPluralLabel())->ucfirst();
+                        $groupId = (string) $group->getKey();
+                        $populationCount = $populationCountsByGroupId[$groupId] ??= ($group->type === \AdvisingApp\Group\Enums\GroupType::Static)
+                             ? $group->model->query()->whereIn(
+                                 $group->model->instance()->getQualifiedKeyName(),
+                                 $group->subjects()->select('subject_id'),
+                             )->count()
+                             : app(TranslateGroupFilters::class)->execute($group)->count();
 
-                        return "{$group->name} (" . number_format($group->getAttributeValue('population_count')) . " {$population})";
+                         $populationLabel = Str::plural($group->model->getLabel(), $populationCount);
+
+                         return "{$group->name} (" . number_format($populationCount) . " {$populationLabel})";
                     }),
                 TextColumn::make('enabled')
                     ->label('Enabled')
