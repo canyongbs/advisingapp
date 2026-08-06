@@ -38,24 +38,24 @@ use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use Illuminate\Database\UniqueConstraintViolationException;
 
-it('does not allow duplicate category names for the same advisor', function () {
-    $customerAdvisor = CustomerAdvisor::factory()->create();
+it('does not allow duplicate category names for the same customer advisor case-insensitively', function () {
+    $advisor = CustomerAdvisor::factory()->create();
 
     CustomerAdvisorCategory::factory()->state([
-        'customer_advisor_id' => $customerAdvisor->getKey(),
-        'name' => 'Admissions',
+        'customer_advisor_id' => $advisor->getKey(),
+        'name' => 'Support',
     ])->create();
 
     CustomerAdvisorCategory::factory()->state([
-        'customer_advisor_id' => $customerAdvisor->getKey(),
-        'name' => 'Admissions',
+        'customer_advisor_id' => $advisor->getKey(),
+        'name' => 'support',
     ])->create();
 })->throws(UniqueConstraintViolationException::class);
 
-it('allow duplicate category names for the different advisor', function () {
-    $customerAdvisor = CustomerAdvisor::factory()->has(CustomerAdvisorCategory::factory()->state(['name' => 'Admission']), 'categories')->create();
-    $customerAdvisor2 = CustomerAdvisor::factory()->has(CustomerAdvisorCategory::factory()->state(['name' => 'Admission']), 'categories')->create();
+it('allows duplicate category names for different customer advisors', function () {
+    $advisor = CustomerAdvisor::factory()->has(CustomerAdvisorCategory::factory()->state(['name' => 'Support']), 'categories')->create();
+    $advisorTwo = CustomerAdvisor::factory()->has(CustomerAdvisorCategory::factory()->state(['name' => 'support']), 'categories')->create();
 
-    expect($customerAdvisor->categories->first()->name)->toBe('Admission');
-    expect($customerAdvisor2->categories->first()->name)->toBe('Admission');
+    expect($advisor->categories->first()->name)->toBe('Support');
+    expect($advisorTwo->categories->first()->name)->toBe('support');
 });
