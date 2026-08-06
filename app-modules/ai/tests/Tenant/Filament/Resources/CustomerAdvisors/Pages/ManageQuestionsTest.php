@@ -43,6 +43,7 @@ use AdvisingApp\Ai\Tests\RequestFactories\CustomerAdvisorQuestionRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Forms\Components\Repeater;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -99,9 +100,13 @@ test('can create Customer Advisor Question', function () {
 
     actingAs($user);
 
+    $undoRepeaterFake = Repeater::fake();
+
     livewire(ManageCustomerQuestions::class, ['record' => $customerAdvisor->getKey()])
-        ->callTableAction('create', data: $customerAdvisorQuestion->toArray())
+        ->callTableAction('create', data: ['questions' => [$customerAdvisorQuestion->toArray()]])
         ->assertHasNoTableActionErrors();
+
+    $undoRepeaterFake();
 
     assertCount(1, CustomerAdvisorQuestion::all());
 
@@ -109,6 +114,38 @@ test('can create Customer Advisor Question', function () {
         CustomerAdvisorQuestion::class,
         $customerAdvisorQuestion->toArray()
     );
+});
+
+test('can create multiple Customer Advisor Questions at once', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->customerAdvisors = true;
+
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+
+    $customerAdvisor = CustomerAdvisor::factory()->create();
+
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
+
+    $firstQuestion = collect(CustomerAdvisorQuestionRequestFactory::new()->create());
+    $secondQuestion = collect(CustomerAdvisorQuestionRequestFactory::new()->create());
+
+    actingAs($user);
+
+    $undoRepeaterFake = Repeater::fake();
+
+    livewire(ManageCustomerQuestions::class, ['record' => $customerAdvisor->getKey()])
+        ->callTableAction('create', data: ['questions' => [$firstQuestion->toArray(), $secondQuestion->toArray()]])
+        ->assertHasNoTableActionErrors();
+
+    $undoRepeaterFake();
+
+    assertCount(2, CustomerAdvisorQuestion::all());
+
+    assertDatabaseHas(CustomerAdvisorQuestion::class, $firstQuestion->toArray());
+    assertDatabaseHas(CustomerAdvisorQuestion::class, $secondQuestion->toArray());
 });
 
 test('Create Customer Advisor Question validates the inputs', function (CustomerAdvisorQuestionRequestFactory $data, array $errors) {
@@ -128,9 +165,13 @@ test('Create Customer Advisor Question validates the inputs', function (Customer
 
     actingAs($user);
 
+    $undoRepeaterFake = Repeater::fake();
+
     livewire(ManageCustomerQuestions::class, ['record' => $customerAdvisor->getKey()])
-        ->callTableAction('create', data: $customerAdvisorQuestion->toArray())
-        ->assertHasTableActionErrors($errors);
+        ->callTableAction('create', data: ['questions' => [$customerAdvisorQuestion->toArray()]])
+        ->assertHasTableActionErrors(collect($errors)->mapWithKeys(fn (string $rule, string $field) => ["questions.0.{$field}" => $rule])->toArray());
+
+    $undoRepeaterFake();
 
     assertDatabaseMissing(
         CustomerAdvisorQuestion::class,
