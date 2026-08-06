@@ -39,33 +39,28 @@ use AdvisingApp\Form\Filament\Resources\Forms\Pages\ViewForm;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 
-use function Pest\Laravel\assertModelMissing;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-it('shows archive mode for the header archive action when the form has submissions', function () {
+it('archive action is always visible and labeled Archive', function () {
     asSuperAdmin();
 
-    $form = Form::factory()->create();
+    $formWithSubmissions = Form::factory()->create();
 
     FormSubmission::factory()->create([
-        'form_id' => $form->id,
+        'form_id' => $formWithSubmissions->id,
         'submitted_at' => now(),
     ]);
 
-    livewire(ViewForm::class, ['record' => $form->getRouteKey()])
+    $formWithoutSubmissions = Form::factory()->create();
+
+    livewire(ViewForm::class, ['record' => $formWithSubmissions->getRouteKey()])
         ->assertActionVisible('archive')
         ->assertActionHasLabel('archive', 'Archive');
-});
 
-it('shows delete mode for the header archive action when the form has no submissions', function () {
-    asSuperAdmin();
-
-    $form = Form::factory()->create();
-
-    livewire(ViewForm::class, ['record' => $form->getRouteKey()])
+    livewire(ViewForm::class, ['record' => $formWithoutSubmissions->getRouteKey()])
         ->assertActionVisible('archive')
-        ->assertActionHasLabel('archive', 'Delete');
+        ->assertActionHasLabel('archive', 'Archive');
 });
 
 it('archive action archives the form and redirects to the index when the form has submissions', function () {
@@ -83,16 +78,4 @@ it('archive action archives the form and redirects to the index when the form ha
         ->assertRedirect(FormResource::getUrl('index'));
 
     expect($form->fresh()->isArchived())->toBeTrue();
-});
-
-it('archive action deletes the form and redirects to the index when the form has no submissions', function () {
-    asSuperAdmin();
-
-    $form = Form::factory()->create();
-
-    livewire(ViewForm::class, ['record' => $form->getRouteKey()])
-        ->callAction('archive')
-        ->assertRedirect(FormResource::getUrl('index'));
-
-    assertModelMissing($form);
 });

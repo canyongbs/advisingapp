@@ -43,7 +43,6 @@ use CanyonGBS\Common\Models\Concerns\HasUserSaveTracking;
 use Filament\Forms\Components\RichEditor\FileAttachmentProviders\SpatieMediaLibraryFileAttachmentProvider;
 use Filament\Forms\Components\RichEditor\Models\Concerns\InteractsWithRichContent;
 use Filament\Forms\Components\RichEditor\Models\Contracts\HasRichContent;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -118,26 +117,5 @@ class Event extends BaseModel implements HasMedia, HasRichContent
     public function attendees(): HasMany
     {
         return $this->hasMany(EventAttendee::class, 'event_id');
-    }
-
-    /**
-     * @param Builder<Event> $query
-     */
-    public function used(Builder $query): void
-    {
-        $query->whereHas('attendees');
-    }
-
-    public function isUsed(): bool
-    {
-        $attendeesExists = $this->getAttribute('attendees_exists');
-
-        if ($attendeesExists === null) {
-            $attendeesExists = $this->attendees()->exists();
-
-            $this->setAttribute('attendees_exists', $attendeesExists);
-        }
-
-        return (bool) $attendeesExists;
     }
 }
