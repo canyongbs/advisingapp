@@ -42,6 +42,8 @@ use AdvisingApp\Ai\Tests\RequestFactories\EmployeeAdvisorCategoryRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Actions\ExportAction;
+use Filament\Actions\ImportAction;
 use Filament\Forms\Components\Repeater;
 
 use function Pest\Laravel\actingAs;
@@ -276,6 +278,10 @@ test('editing an employee advisor category validates the inputs', function (Empl
                 EmployeeAdvisorCategoryRequestFactory::new()->state(['name' => 'Education']),
                 ['name' => 'unique'],
             ],
+            'name unique case insensitive' => [
+                EmployeeAdvisorCategoryRequestFactory::new()->state(['name' => 'education']),
+                ['name' => 'unique'],
+            ],
             'name max' => [
                 EmployeeAdvisorCategoryRequestFactory::new()->state(['name' => str()->random(257)]),
                 ['name' => 'max'],
@@ -290,3 +296,30 @@ test('editing an employee advisor category validates the inputs', function (Empl
             ],
         ]
     );
+
+test('shows import and export actions for employee advisor categories', function () {
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+
+    $assistant = AiAssistant::factory()->create();
+
+    $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view', 'assistant_custom.create']);
+
+    actingAs($user);
+
+    livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
+        ->assertTableActionVisible(ImportAction::class)
+        ->assertTableActionVisible(ExportAction::class);
+});
+
+test('hides import action when user lacks create permission', function () {
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+    $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view']);
+
+    $assistant = AiAssistant::factory()->create();
+
+    actingAs($user);
+
+    livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
+        ->assertTableActionHidden(ImportAction::class)
+        ->assertTableActionVisible(ExportAction::class);
+});

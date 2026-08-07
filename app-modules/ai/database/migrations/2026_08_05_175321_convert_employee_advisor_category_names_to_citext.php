@@ -34,28 +34,49 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Models\CustomerAdvisor;
-use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
-use Illuminate\Database\UniqueConstraintViolationException;
+use Database\Migrations\Concerns\FixesDuplicateNames;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-it('does not allow duplicate category names for the same customer advisor case-insensitively', function () {
-    $advisor = CustomerAdvisor::factory()->create();
+return new class () extends Migration {
+    use FixesDuplicateNames;
 
-    CustomerAdvisorCategory::factory()->state([
-        'customer_advisor_id' => $advisor->getKey(),
-        'name' => 'Support',
-    ])->create();
+    protected string $table = 'employee_advisor_categories';
 
-    CustomerAdvisorCategory::factory()->state([
-        'customer_advisor_id' => $advisor->getKey(),
-        'name' => 'support',
-    ])->create();
-})->throws(UniqueConstraintViolationException::class);
+    protected string $column = 'name';
 
-it('allows duplicate category names for different customer advisors', function () {
-    $advisor = CustomerAdvisor::factory()->has(CustomerAdvisorCategory::factory()->state(['name' => 'Support']), 'categories')->create();
-    $advisorTwo = CustomerAdvisor::factory()->has(CustomerAdvisorCategory::factory()->state(['name' => 'support']), 'categories')->create();
+    /** @var array<int, string> */
+    protected array $groupByColumns = ['employee_advisor_id'];
 
-    expect($advisor->categories->first()->name)->toBe('Support');
-    expect($advisorTwo->categories->first()->name)->toBe('support');
-});
+    protected int $chunkSize = 500;
+
+    protected bool $usesSoftDeletes = false;
+
+    public function up(): void
+    {
+        DB::transaction(function () {
+            $this->fixDuplicates();
+
+            DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
+
+            Schema::table($this->table, function (Blueprint $table) {
+                $table->uniqueIndex([...$this->groupByColumns, $this->column], 'employee_advisor_categories_employee_advisor_id_foreign')
+                    ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
+            });
+        });
+    }
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            Schema::table($this->table, function (Blueprint $table) {
+                $table->dropUniqueIndex('employee_advisor_categories_employee_advisor_id_foreign');
+            });
+
+            DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE varchar(255)");
+        });
+    }
+};

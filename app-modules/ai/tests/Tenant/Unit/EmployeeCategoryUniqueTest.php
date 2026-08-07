@@ -34,28 +34,28 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Models\CustomerAdvisor;
-use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
+use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\EmployeeAdvisorCategory;
 use Illuminate\Database\UniqueConstraintViolationException;
 
-it('does not allow duplicate category names for the same customer advisor case-insensitively', function () {
-    $advisor = CustomerAdvisor::factory()->create();
+it('does not allow duplicate category names for the same employee advisor case-insensitively', function () {
+    $assistant = AiAssistant::factory()->create();
 
-    CustomerAdvisorCategory::factory()->state([
-        'customer_advisor_id' => $advisor->getKey(),
+    EmployeeAdvisorCategory::factory()->state([
+        'employee_advisor_id' => $assistant->getKey(),
         'name' => 'Support',
     ])->create();
 
-    CustomerAdvisorCategory::factory()->state([
-        'customer_advisor_id' => $advisor->getKey(),
+    EmployeeAdvisorCategory::factory()->state([
+        'employee_advisor_id' => $assistant->getKey(),
         'name' => 'support',
     ])->create();
 })->throws(UniqueConstraintViolationException::class);
 
-it('allows duplicate category names for different customer advisors', function () {
-    $advisor = CustomerAdvisor::factory()->has(CustomerAdvisorCategory::factory()->state(['name' => 'Support']), 'categories')->create();
-    $advisorTwo = CustomerAdvisor::factory()->has(CustomerAdvisorCategory::factory()->state(['name' => 'support']), 'categories')->create();
+it('allows duplicate category names for different employee advisors', function () {
+    $assistant = AiAssistant::factory()->has(EmployeeAdvisorCategory::factory()->state(['name' => 'Support']), 'categories')->create();
+    $assistantTwo = AiAssistant::factory()->has(EmployeeAdvisorCategory::factory()->state(['name' => 'support']), 'categories')->create();
 
-    expect($advisor->categories->first()->name)->toBe('Support');
-    expect($advisorTwo->categories->first()->name)->toBe('support');
+    expect($assistant->categories->first()->name)->toBe('Support');
+    expect($assistantTwo->categories->first()->name)->toBe('support');
 });

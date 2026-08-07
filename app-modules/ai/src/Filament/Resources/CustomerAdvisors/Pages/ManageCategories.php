@@ -36,10 +36,16 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages;
 
+use AdvisingApp\Ai\Filament\Exports\CustomerAdvisorCategoryExporter;
+use AdvisingApp\Ai\Filament\Imports\CustomerAdvisorCategoryImporter;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
+use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\Exports\Enums\ExportFormat;
+use Filament\Actions\ImportAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Textarea;
@@ -48,6 +54,7 @@ use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Unique;
 use UnitEnum;
@@ -125,6 +132,17 @@ class ManageCategories extends ManageRelatedRecords
 
                         $customerAdvisor->categories()->createMany($data['categories']);
                     }),
+                ImportAction::make()
+                    ->importer(CustomerAdvisorCategoryImporter::class)
+                    ->authorize('create', CustomerAdvisorCategory::class)
+                    ->options(['customer_advisor_id' => $this->getOwnerRecord()->getKey()]),
+                ExportAction::make()
+                    ->exporter(CustomerAdvisorCategoryExporter::class)
+                    ->authorize('viewAny', CustomerAdvisorCategory::class)
+                    ->formats([
+                        ExportFormat::Csv,
+                    ])
+                    ->modifyQueryUsing(fn (Builder $query): Builder => $query->where('customer_advisor_id', $this->getOwnerRecord()->getKey())),
             ])
             ->recordActions([
                 EditAction::make()

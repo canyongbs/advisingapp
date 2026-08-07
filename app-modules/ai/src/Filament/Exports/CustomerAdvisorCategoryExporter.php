@@ -34,28 +34,35 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Models\CustomerAdvisor;
+namespace AdvisingApp\Ai\Filament\Exports;
+
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
-use Illuminate\Database\UniqueConstraintViolationException;
+use Filament\Actions\Exports\ExportColumn;
+use Filament\Actions\Exports\Exporter;
+use Filament\Actions\Exports\Models\Export;
 
-it('does not allow duplicate category names for the same customer advisor case-insensitively', function () {
-    $advisor = CustomerAdvisor::factory()->create();
+class CustomerAdvisorCategoryExporter extends Exporter
+{
+    public const EXPORT_NAME = 'Customer Chatbot Categories';
 
-    CustomerAdvisorCategory::factory()->state([
-        'customer_advisor_id' => $advisor->getKey(),
-        'name' => 'Support',
-    ])->create();
+    protected static ?string $model = CustomerAdvisorCategory::class;
 
-    CustomerAdvisorCategory::factory()->state([
-        'customer_advisor_id' => $advisor->getKey(),
-        'name' => 'support',
-    ])->create();
-})->throws(UniqueConstraintViolationException::class);
+    public static function getColumns(): array
+    {
+        return [
+            ExportColumn::make('name'),
+            ExportColumn::make('description'),
+        ];
+    }
 
-it('allows duplicate category names for different customer advisors', function () {
-    $advisor = CustomerAdvisor::factory()->has(CustomerAdvisorCategory::factory()->state(['name' => 'Support']), 'categories')->create();
-    $advisorTwo = CustomerAdvisor::factory()->has(CustomerAdvisorCategory::factory()->state(['name' => 'support']), 'categories')->create();
+    public static function getCompletedNotificationBody(Export $export): string
+    {
+        $body = 'Your ' . static::EXPORT_NAME . ' export has completed and ' . number_format($export->successful_rows) . ' ' . str('row')->plural($export->successful_rows) . ' exported.';
 
-    expect($advisor->categories->first()->name)->toBe('Support');
-    expect($advisorTwo->categories->first()->name)->toBe('support');
-});
+        if ($failedRowsCount = $export->getFailedRowsCount()) {
+            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to export.';
+        }
+
+        return $body;
+    }
+}
