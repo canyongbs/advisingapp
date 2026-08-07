@@ -43,6 +43,7 @@ use AdvisingApp\Ai\Tests\RequestFactories\EmployeeAdvisorQuestionRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Forms\Components\Repeater;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -101,9 +102,13 @@ test('can create an employee advisor question', function () {
 
     actingAs($user);
 
+    $undoRepeaterFake = Repeater::fake();
+
     livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
-        ->callTableAction('create', data: $questionData->toArray())
+        ->callTableAction('create', data: ['questions' => [$questionData->toArray()]])
         ->assertHasNoTableActionErrors();
+
+    $undoRepeaterFake();
 
     assertCount(1, EmployeeAdvisorQuestion::all());
 
@@ -111,6 +116,36 @@ test('can create an employee advisor question', function () {
         EmployeeAdvisorQuestion::class,
         $questionData->toArray()
     );
+});
+
+test('can create multiple employee advisor questions at once', function () {
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+
+    $assistant = AiAssistant::factory()->create();
+
+    $user->givePermissionTo([
+        'assistant_custom.view-any',
+        'assistant_custom.*.view',
+        'assistant_custom.create',
+    ]);
+
+    $firstQuestion = collect(EmployeeAdvisorQuestionRequestFactory::new()->create());
+    $secondQuestion = collect(EmployeeAdvisorQuestionRequestFactory::new()->create());
+
+    actingAs($user);
+
+    $undoRepeaterFake = Repeater::fake();
+
+    livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
+        ->callTableAction('create', data: ['questions' => [$firstQuestion->toArray(), $secondQuestion->toArray()]])
+        ->assertHasNoTableActionErrors();
+
+    $undoRepeaterFake();
+
+    assertCount(2, EmployeeAdvisorQuestion::all());
+
+    assertDatabaseHas(EmployeeAdvisorQuestion::class, $firstQuestion->toArray());
+    assertDatabaseHas(EmployeeAdvisorQuestion::class, $secondQuestion->toArray());
 });
 
 test('creating an employee advisor question validates the inputs', function (EmployeeAdvisorQuestionRequestFactory $data, array $errors) {
@@ -128,9 +163,13 @@ test('creating an employee advisor question validates the inputs', function (Emp
 
     actingAs($user);
 
+    $undoRepeaterFake = Repeater::fake();
+
     livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
-        ->callTableAction('create', data: $questionData->toArray())
-        ->assertHasTableActionErrors($errors);
+        ->callTableAction('create', data: ['questions' => [$questionData->toArray()]])
+        ->assertHasTableActionErrors(collect($errors)->mapWithKeys(fn (string $rule, string $field) => ["questions.0.{$field}" => $rule])->toArray());
+
+    $undoRepeaterFake();
 
     assertDatabaseMissing(
         EmployeeAdvisorQuestion::class,

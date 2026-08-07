@@ -38,11 +38,14 @@ namespace AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\AiAssistantResource;
 use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Models\EmployeeAdvisorQuestion;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn as RepeaterTableColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -68,31 +71,7 @@ class ManageEmployeeAdvisorQuestions extends ManageRelatedRecords
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->components([
-                Select::make('category_id')
-                    ->label('Category')
-                    ->relationship('category', 'name', modifyQueryUsing: function (Builder $query) {
-                        $assistant = $this->getOwnerRecord();
-
-                        assert($assistant instanceof AiAssistant);
-
-                        $query->where('employee_advisor_id', $assistant->getKey());
-                    })
-                    ->required()
-                    ->preload()
-                    ->searchable()
-                    ->columnSpanFull(),
-                TextInput::make('question')
-                    ->required()
-                    ->string()
-                    ->maxLength(255)
-                    ->columnSpanFull(),
-                Textarea::make('answer')
-                    ->required()
-                    ->string()
-                    ->maxLength(65535)
-                    ->columnSpanFull(),
-            ]);
+            ->components($this->getQuestionFormComponents());
     }
 
     /**
@@ -149,10 +128,35 @@ class ManageEmployeeAdvisorQuestions extends ManageRelatedRecords
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->modalHeading('Create Employee Advisor Question'),
+                    ->label('New question')
+                    ->modalHeading('Create Employee Advisor Questions')
+                    ->slideOver()
+                    ->createAnother(false)
+                    ->schema([
+                        Repeater::make('questions')
+                            ->hiddenLabel()
+                            ->table([
+                                RepeaterTableColumn::make('Category'),
+                                RepeaterTableColumn::make('Question'),
+                                RepeaterTableColumn::make('Answer'),
+                            ])
+                            ->schema($this->getQuestionFormComponents())
+                            ->addActionLabel('Add another question')
+                            ->defaultItems(1)
+                            ->columnSpanFull(),
+                    ])
+                    ->action(function (array $data): void {
+                        /** @var array<int, array<string, mixed>> $questions */
+                        $questions = $data['questions'];
+
+                        collect($questions)->each(
+                            fn (array $question) => EmployeeAdvisorQuestion::query()->create($question)
+                        );
+                    }),
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->slideOver(),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
@@ -163,5 +167,37 @@ class ManageEmployeeAdvisorQuestions extends ManageRelatedRecords
             ])
             ->emptyStateHeading('No Employee Advisor Questions Found')
             ->emptyStateDescription('');
+    }
+
+    /**
+     * @return array<int, Select|TextInput|Textarea>
+     */
+    protected function getQuestionFormComponents(): array
+    {
+        return [
+            Select::make('category_id')
+                ->label('Category')
+                ->relationship('category', 'name', modifyQueryUsing: function (Builder $query) {
+                    $assistant = $this->getOwnerRecord();
+
+                    assert($assistant instanceof AiAssistant);
+
+                    $query->where('employee_advisor_id', $assistant->getKey());
+                })
+                ->required()
+                ->preload()
+                ->searchable()
+                ->columnSpanFull(),
+            TextInput::make('question')
+                ->required()
+                ->string()
+                ->maxLength(255)
+                ->columnSpanFull(),
+            Textarea::make('answer')
+                ->required()
+                ->string()
+                ->maxLength(65535)
+                ->columnSpanFull(),
+        ];
     }
 }
