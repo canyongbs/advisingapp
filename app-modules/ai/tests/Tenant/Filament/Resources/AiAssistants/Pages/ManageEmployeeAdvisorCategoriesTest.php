@@ -310,3 +310,16 @@ test('shows import and export actions for employee advisor categories', function
         ->assertTableActionVisible(ImportAction::class)
         ->assertTableActionVisible(ExportAction::class);
 });
+
+test('hides import action when user lacks create permission', function () {
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+    $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view']);
+
+    $assistant = AiAssistant::factory()->create();
+
+    actingAs($user);
+
+    livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
+        ->assertTableActionHidden(ImportAction::class)
+        ->assertTableActionVisible(ExportAction::class);
+});
