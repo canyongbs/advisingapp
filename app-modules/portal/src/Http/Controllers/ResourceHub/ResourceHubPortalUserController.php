@@ -34,25 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Middleware;
+namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
-use AdvisingApp\Portal\Settings\PortalSettings;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use Closure;
+use App\Http\Controllers\Controller;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\PersonalAccessToken;
-use Symfony\Component\HttpFoundation\Response;
 
-class AuthenticateIfRequiredByPortalDefinition
+class ResourceHubPortalUserController extends Controller
 {
-    public function handle(Request $request, Closure $next): Response
+    public function __invoke(Request $request): Educatable|JsonResponse
     {
-        $settings = resolve(PortalSettings::class);
-
-        if (! $settings->resource_hub_portal_requires_authentication) {
-            return $next($request);
-        }
-
         // Resolve the portal token directly rather than through the Sanctum guard, which would
         // otherwise return an ambient first-party session user (e.g. a logged-in admin) instead.
         $accessToken = PersonalAccessToken::findToken((string) $request->bearerToken());
@@ -60,9 +53,9 @@ class AuthenticateIfRequiredByPortalDefinition
         $educatable = $accessToken?->tokenable;
 
         if (! ($educatable instanceof Educatable) || ! $accessToken->can('resource-hub-portal')) {
-            abort(Response::HTTP_FORBIDDEN);
+            return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 
-        return $next($request);
+        return $educatable;
     }
 }
