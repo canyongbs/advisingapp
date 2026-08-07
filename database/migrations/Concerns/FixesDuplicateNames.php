@@ -93,7 +93,6 @@ trait FixesDuplicateNames
                 }
             });
 
-        // Process any remaining updates
         if (count($updates) > 0) {
             DB::transaction(function () use ($table, $column, $updates) {
                 $this->batchUpdate($table, $column, $updates);
@@ -102,7 +101,6 @@ trait FixesDuplicateNames
     }
 
     /**
-     * Executes a batch update using a CASE statement for efficiency.
      *
      * @param  array<string, string>  $updates  Map of record ID => new value
      */
@@ -132,8 +130,6 @@ trait FixesDuplicateNames
     }
 
     /**
-     * Orders duplicate records for processing.
-     * Ensures live records are processed first, soft-deleted records second.
      *
      * @param  array<int, string>  $groupByColumns
      */
@@ -157,8 +153,6 @@ trait FixesDuplicateNames
     }
 
     /**
-     * Builds a stable key identifying the group a record belongs to.
-     * Records share a single (table-wide) group when no `$groupByColumns` are set.
      *
      * @param  array<int, string>  $groupByColumns
      */
@@ -175,8 +169,6 @@ trait FixesDuplicateNames
     }
 
     /**
-     * Builds a unique deduplicatedValue with a numeric suffix, scoped to the record's group.
-     * Truncates the original value to fit the suffix within the max length.
      *
      * @param  array<int, string>  $groupByColumns
      */
