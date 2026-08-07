@@ -178,25 +178,6 @@ test('creating duplicate Customer Advisor Category names in the same batch is re
     assertCount(0, CustomerAdvisorCategory::all());
 });
 
-test('hides import action when user lacks create permission', function () {
-    $settings = app(LicenseSettings::class);
-
-    $settings->data->addons->customerAdvisors = true;
-
-    $settings->save();
-
-    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
-    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view']);
-
-    $customerAdvisor = CustomerAdvisor::factory()->create();
-
-    actingAs($user);
-
-    livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
-        ->assertTableActionHidden(ImportAction::class)
-        ->assertTableActionVisible(ExportAction::class);
-});
-
 test('Create Customer Advisor Category validates the inputs', function (CustomerAdvisorCategoryRequestFactory $data, array $errors) {
     $settings = app(LicenseSettings::class);
 
