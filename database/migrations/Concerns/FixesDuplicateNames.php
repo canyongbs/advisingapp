@@ -44,48 +44,49 @@ use Illuminate\Support\Str;
 trait FixesDuplicateNames
 {
     /**
-     * Deduplicates a table by renaming case-insensitively duplicate names per owner.
-     *
-     * @param  string  $table  The table name to deduplicate
-     * @param  string  $ownerColumn  The column that identifies the owner/parent (e.g., 'advisor_id')
+     * Deduplicates `$this->table` by renaming case-insensitively duplicate
+     * `$this->column` values. When `$this->groupByColumns` is set, uniqueness is
+     * scoped per group (e.g. an owner/parent column); otherwise it is table-wide.
      */
-    protected function fixCaseInsensitiveDuplicateNames(string $table, string $ownerColumn): void
+    protected function fixCaseInsensitiveDuplicateNames(): void
     {
-        /** @var array<string, array<string, bool>> $seenByOwner */
-        $seenByOwner = [];
+        /** @var string $table */
+        $table = $this->table; // @phpstan-ignore property.notFound
+        /** @var string $column */
+        $column = $this->column; // @phpstan-ignore property.notFound
+        /** @var array<int, string> $groupByColumns */
+        $groupByColumns = $this->groupByColumns ?? []; // @phpstan-ignore property.notFound, nullCoalesce.property
+
+        /** @var array<string, array<string, bool>> $seenByGroup */
+        $seenByGroup = [];
         /** @var array<string, string> $updates */
         $updates = [];
 
-        $this->orderDuplicateRecords($table, $ownerColumn)
-            ->chunk($this->chunkSize, function (Collection $records) use ($table, $ownerColumn, &$seenByOwner, &$updates) {
+        $this->orderDuplicateRecords($table, $column, $groupByColumns)
+            ->chunk($this->chunkSize, function (Collection $records) use ($table, $column, $groupByColumns, &$seenByGroup, &$updates) {
                 foreach ($records as $record) {
-                    $ownerId = (string) $record->{$ownerColumn};
-                    $normalizedName = Str::lower((string) $record->name);
+                    $groupKey = $this->buildGroupKey($record, $groupByColumns);
+                    $normalizedName = Str::lower((string) $record->{$column});
 
-                    if (! array_key_exists($ownerId, $seenByOwner)) {
-                        $seenByOwner[$ownerId] = [];
-                    }
-
-                    if (! isset($seenByOwner[$ownerId][$normalizedName])) {
-                        $seenByOwner[$ownerId][$normalizedName] = true;
+                    if (! isset($seenByGroup[$groupKey][$normalizedName])) {
+                        $seenByGroup[$groupKey][$normalizedName] = true;
 
                         continue;
                     }
 
                     $uniqueName = $this->buildDeduplicatedValue(
                         table: $table,
-                        ownerColumn: $ownerColumn,
-                        ownerId: $ownerId,
-                        originalName: (string) $record->name,
-                        recordId: (string) $record->id,
+                        column: $column,
+                        groupByColumns: $groupByColumns,
+                        record: $record,
                     );
 
                     $updates[$record->id] = $uniqueName;
-                    $seenByOwner[$ownerId][Str::lower($uniqueName)] = true;
+                    $seenByGroup[$groupKey][Str::lower($uniqueName)] = true;
 
                     if (count($updates) >= $this->chunkSize) {
-                        DB::transaction(function () use ($table, $updates) {
-                            $this->batchUpdate($table, $updates);
+                        DB::transaction(function () use ($table, $column, $updates) {
+                            $this->batchUpdate($table, $column, $updates);
                         });
                         $updates = [];
                     }
@@ -94,8 +95,8 @@ trait FixesDuplicateNames
 
         // Process any remaining updates
         if (count($updates) > 0) {
-            DB::transaction(function () use ($table, $updates) {
-                $this->batchUpdate($table, $updates);
+            DB::transaction(function () use ($table, $column, $updates) {
+                $this->batchUpdate($table, $column, $updates);
             });
         }
     }
@@ -103,10 +104,9 @@ trait FixesDuplicateNames
     /**
      * Executes a batch update using a CASE statement for efficiency.
      *
-     * @param  string  $table  The table name
-     * @param  array<string, string>  $updates  Map of record ID => new name
+     * @param  array<string, string>  $updates  Map of record ID => new value
      */
-    protected function batchUpdate(string $table, array $updates): void
+    protected function batchUpdate(string $table, string $column, array $updates): void
     {
         if (empty($updates)) {
             return;
@@ -126,7 +126,7 @@ trait FixesDuplicateNames
         $idPlaceholders = implode(',', array_fill(0, count($ids), '?'));
         $bindings = array_merge($bindings, $ids);
 
-        $sql = "UPDATE {$table} SET name = CASE " . implode(' ', $cases) . " END, updated_at = NOW() WHERE id IN ({$idPlaceholders})";
+        $sql = "UPDATE {$table} SET {$column} = CASE " . implode(' ', $cases) . " END, updated_at = NOW() WHERE id IN ({$idPlaceholders})";
 
         DB::statement($sql, $bindings);
     }
@@ -134,13 +134,19 @@ trait FixesDuplicateNames
     /**
      * Orders duplicate records for processing.
      * Ensures live records are processed first, soft-deleted records second.
+     *
+     * @param  array<int, string>  $groupByColumns
      */
-    protected function orderDuplicateRecords(string $table, string $ownerColumn): Builder
+    protected function orderDuplicateRecords(string $table, string $column, array $groupByColumns): Builder
     {
         $query = DB::table($table)
-            ->select(['id', $ownerColumn, 'name'])
-            ->orderBy($ownerColumn)
-            ->orderByRaw('LOWER(name)');
+            ->select(['id', $column, ...$groupByColumns]);
+
+        foreach ($groupByColumns as $groupByColumn) {
+            $query->orderBy($groupByColumn);
+        }
+
+        $query->orderByRaw("LOWER({$column})");
 
         // Exclude soft-deleted records if usesSoftDeletes is true
         if ($this->usesSoftDeletes) { // @phpstan-ignore property.notFound
@@ -151,25 +157,36 @@ trait FixesDuplicateNames
     }
 
     /**
-     * Checks if a table has a deleted_at column.
+     * Builds a stable key identifying the group a record belongs to.
+     * Records share a single (table-wide) group when no `$groupByColumns` are set.
+     *
+     * @param  array<int, string>  $groupByColumns
      */
-    protected function tableHasDeletedAt(string $table): bool
+    protected function buildGroupKey(object $record, array $groupByColumns): string
     {
-        return DB::getSchemaBuilder()->hasColumn($table, 'deleted_at');
+        if (empty($groupByColumns)) {
+            return '';
+        }
+
+        return implode('|', array_map(
+            fn (string $groupByColumn): string => (string) $record->{$groupByColumn},
+            $groupByColumns,
+        ));
     }
 
     /**
-     * Builds a unique deduplicatedValue with a numeric suffix.
-     * Truncates the original name to fit the suffix within the max length.
+     * Builds a unique deduplicatedValue with a numeric suffix, scoped to the record's group.
+     * Truncates the original value to fit the suffix within the max length.
+     *
+     * @param  array<int, string>  $groupByColumns
      */
     protected function buildDeduplicatedValue(
         string $table,
-        string $ownerColumn,
-        string $ownerId,
-        string $originalName,
-        string $recordId,
+        string $column,
+        array $groupByColumns,
+        object $record,
     ): string {
-        $baseName = trim($originalName);
+        $baseName = trim((string) $record->{$column});
 
         if ($baseName === '') {
             $baseName = 'Category';
@@ -183,13 +200,15 @@ trait FixesDuplicateNames
             $candidateBase = Str::substr($baseName, 0, max(1, $maxLength));
             $candidate = $candidateBase . $suffix;
 
-            $exists = DB::table($table)
-                ->where($ownerColumn, $ownerId)
-                ->where('id', '<>', $recordId)
-                ->whereRaw('LOWER(name) = ?', [Str::lower($candidate)])
-                ->exists();
+            $query = DB::table($table)
+                ->where('id', '<>', $record->id)
+                ->whereRaw("LOWER({$column}) = ?", [Str::lower($candidate)]);
 
-            if (! $exists) {
+            foreach ($groupByColumns as $groupByColumn) {
+                $query->where($groupByColumn, $record->{$groupByColumn});
+            }
+
+            if (! $query->exists()) {
                 return $candidate;
             }
 
