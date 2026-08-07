@@ -36,16 +36,15 @@
 
 namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 
+use AdvisingApp\Campaign\Filament\Actions\ArchiveCampaignBulkAction;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Group\Actions\TranslateGroupFilters;
 use AdvisingApp\Group\Models\Group;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
+use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -110,13 +109,13 @@ class ListCampaigns extends ListRecords
 
                 return $query;
             })
-            ->recordActions([
-                ViewAction::make(),
-                EditAction::make()
-                    ->hidden(fn (Campaign $record) => $record->hasBeenExecuted() === true),
-                DeleteAction::make()
-                    ->hidden(fn (Campaign $record) => $record->hasBeenExecuted() === true),
-            ])->filters([
+            ->recordUrl(fn (Campaign $record): string => CampaignResource::getUrl('view', ['record' => $record]))
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    ArchiveCampaignBulkAction::make(),
+                ]),
+            ])
+            ->filters([
                 Filter::make('My Campaigns')
                     ->query(
                         fn (Builder $query) => $query
