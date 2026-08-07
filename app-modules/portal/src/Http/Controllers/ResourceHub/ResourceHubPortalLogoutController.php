@@ -36,24 +36,34 @@
 
 namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class ResourceHubPortalLogoutController extends Controller
 {
     public function __invoke(Request $request)
     {
-        $user = auth('sanctum')->user();
+        // Resolve the portal token directly rather than through the Sanctum guard, which would
+        // otherwise return an ambient first-party session user (e.g. a logged-in admin) instead.
+        $accessToken = PersonalAccessToken::findToken((string) $request->bearerToken());
 
-        if (! $user) {
+        $user = $accessToken?->tokenable;
+
+        if (! $user instanceof Educatable) {
             return response()->json([
                 'success' => false,
             ]);
         }
 
-        $user->tokens()->where('name', 'resource-hub-portal-access-token')->delete();
+        PersonalAccessToken::query()
+            ->where('tokenable_type', $user->getMorphClass())
+            ->where('tokenable_id', $user->getKey())
+            ->where('name', 'resource-hub-portal-access-token')
+            ->delete();
 
         $guard = $user instanceof Student ? 'student' : 'prospect';
         Auth::guard($guard)->logout();

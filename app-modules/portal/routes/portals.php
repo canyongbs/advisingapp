@@ -45,10 +45,12 @@ use AdvisingApp\Portal\Http\Middleware\AuthenticateIfRequiredByPortalDefinition;
 use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEmbeddableAndAuthorized;
 use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEnabled;
 use AdvisingApp\Portal\Http\Middleware\ResourceHubPortalCors;
+use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use App\Multitenancy\Http\Middleware\NeedsTenant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+use Laravel\Sanctum\PersonalAccessToken;
 
 Route::middleware([
     'api',
@@ -61,15 +63,18 @@ Route::middleware([
     ->name('portals.')
     ->group(function () {
         Route::get('/user', function (Request $request) {
-            $user = $request->user('student') ?? $request->user('prospect');
+            // Resolve the portal token directly rather than through the Sanctum guard, which would
+            // otherwise return an ambient first-party session user (e.g. a logged-in admin) instead.
+            $accessToken = PersonalAccessToken::findToken((string) $request->bearerToken());
 
-            if (! $user || ! $user->tokenCan('resource-hub-portal')) {
+            $educatable = $accessToken?->tokenable;
+
+            if (! $educatable instanceof Educatable || ! $accessToken->can('resource-hub-portal')) {
                 return response()->json(['message' => 'Unauthenticated.'], 401);
             }
 
-            return $user;
+            return $educatable;
         })
-            ->middleware(['auth:sanctum'])
             ->name('user.auth-check');
 
         // Handle preflight CORS requests for all routes in this group

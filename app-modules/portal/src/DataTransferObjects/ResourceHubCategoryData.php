@@ -43,7 +43,7 @@ class ResourceHubCategoryData extends Data
     public function __construct(
         public string $id,
         public string $name,
-        public string $description,
+        public ?string $description,
         public ?string $icon,
     ) {}
 }
