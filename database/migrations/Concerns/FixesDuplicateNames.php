@@ -44,67 +44,170 @@ use Illuminate\Support\Str;
 trait FixesDuplicateNames
 {
     /**
-     * Deduplicates `$this->table` by renaming case-insensitively duplicate
-     * `$this->column` values. When `$this->groupByColumns` is set, uniqueness is
-     * scoped per group (e.g. an owner/parent column); otherwise it is table-wide.
+     * Order duplicate records so the first one is kept and the rest are renamed.
+     * Live (non-deleted) records are preferred over soft-deleted ones, then
+     * the oldest record is kept.
      */
-    protected function fixCaseInsensitiveDuplicateNames(): void
+    protected function orderDuplicateRecords(Builder $query): Builder
     {
-        /** @var string $table */
-        $table = $this->table; // @phpstan-ignore property.notFound
-        /** @var string $column */
-        $column = $this->column; // @phpstan-ignore property.notFound
+        return $query
+            ->orderByRaw('deleted_at IS NULL DESC')
+            ->orderBy('created_at', 'asc')
+            ->orderBy('id', 'asc');
+    }
+
+    protected function ignoresNullValues(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @return array{0: string, 1: string}
+     */
+    protected function existingValueMatchPatterns(string $baseValue): array
+    {
+        $lower = Str::lower($baseValue);
+
+        return [$lower, $lower . '-%'];
+    }
+
+    protected function buildDeduplicatedValue(string $originalValue, int $counter): string
+    {
+        $suffix = "-{$counter}";
+        $maxLength = 255 - strlen($suffix);
+
+        return Str::substr($originalValue, 0, max(1, $maxLength)) . $suffix;
+    }
+
+    protected function deduplicatedValuePattern(): string
+    {
+        return '-[0-9]+$';
+    }
+
+    protected function stripDeduplicatedSuffix(string $value): string
+    {
+        return preg_replace('/-\d+$/', '', $value) ?? $value;
+    }
+
+    private function fixDuplicates(): void
+    {
         /** @var array<int, string> $groupByColumns */
         $groupByColumns = $this->groupByColumns ?? []; // @phpstan-ignore property.notFound, nullCoalesce.property
 
-        /** @var array<string, array<string, bool>> $seenByGroup */
-        $seenByGroup = [];
-        /** @var array<string, string> $updates */
-        $updates = [];
+        $query = DB::table($this->table)
+            ->select([
+                ...$groupByColumns,
+                DB::raw("LOWER({$this->column}) as lower_name"),
+            ]);
 
-        $this->orderDuplicateRecords($table, $column, $groupByColumns)
-            ->chunk($this->chunkSize, function (Collection $records) use ($table, $column, $groupByColumns, &$seenByGroup, &$updates) {
-                foreach ($records as $record) {
-                    $groupKey = $this->buildGroupKey($record, $groupByColumns);
-                    $normalizedName = Str::lower((string) $record->{$column});
+        if ($this->usesSoftDeletes) {
+            $query->whereNull('deleted_at');
+        }
 
-                    if (! isset($seenByGroup[$groupKey][$normalizedName])) {
-                        $seenByGroup[$groupKey][$normalizedName] = true;
+        if ($this->ignoresNullValues()) {
+            $query->whereNotNull($this->column);
+        }
 
-                        continue;
-                    }
+        $duplicates = $query
+            ->groupBy([
+                ...$groupByColumns,
+                DB::raw("LOWER({$this->column})"),
+            ])
+            ->havingRaw('COUNT(*) > 1')
+            ->get();
 
-                    $uniqueName = $this->buildDeduplicatedValue(
-                        table: $table,
-                        column: $column,
-                        groupByColumns: $groupByColumns,
-                        record: $record,
-                    );
+        if ($duplicates->isEmpty()) {
+            return;
+        }
 
-                    $updates[$record->id] = $uniqueName;
-                    $seenByGroup[$groupKey][Str::lower($uniqueName)] = true;
-
-                    if (count($updates) >= $this->chunkSize) {
-                        DB::transaction(function () use ($table, $column, $updates) {
-                            $this->batchUpdate($table, $column, $updates);
-                        });
-                        $updates = [];
-                    }
-                }
-            });
-
-        if (count($updates) > 0) {
-            DB::transaction(function () use ($table, $column, $updates) {
-                $this->batchUpdate($table, $column, $updates);
-            });
+        foreach ($duplicates as $duplicate) {
+            $this->processDuplicateGroup($duplicate->lower_name, (array) $duplicate, $groupByColumns);
         }
     }
 
     /**
-     *
-     * @param  array<string, string>  $updates  Map of record ID => new value
+     * @param  array<string, mixed>  $groupValues
+     * @param  array<int, string>  $groupByColumns
      */
-    protected function batchUpdate(string $table, string $column, array $updates): void
+    private function processDuplicateGroup(string $duplicateName, array $groupValues = [], array $groupByColumns = []): void
+    {
+        $recordsQuery = DB::table($this->table)
+            ->select('id', $this->column, 'created_at')
+            ->whereRaw("LOWER({$this->column}) = ?", [$duplicateName]);
+
+        foreach ($groupByColumns as $col) {
+            $recordsQuery->where($col, $groupValues[$col]);
+        }
+
+        if ($this->usesSoftDeletes) {
+            $recordsQuery->whereNull('deleted_at');
+        }
+
+        $records = $this->orderDuplicateRecords($recordsQuery)->get();
+
+        if ($records->count() <= 1) {
+            return;
+        }
+
+        /** @var string $baseName */
+        $baseName = $records->first()->{$this->column};
+
+        $existingNamesQuery = DB::table($this->table);
+
+        if ($this->usesSoftDeletes) {
+            $existingNamesQuery->whereNull('deleted_at');
+        }
+
+        foreach ($groupByColumns as $col) {
+            $existingNamesQuery->where($col, $groupValues[$col]);
+        }
+
+        [$existingExact, $existingLike] = $this->existingValueMatchPatterns($baseName);
+
+        /** @var array<string, int> $existingNames */
+        $existingNames = $existingNamesQuery
+            ->where(function (Builder $query) use ($existingExact, $existingLike) {
+                $query->whereRaw("LOWER({$this->column}) = ?", [$existingExact])
+                    ->orWhereRaw("LOWER({$this->column}) LIKE ?", [$existingLike]);
+            })
+            ->pluck($this->column)
+            /** @phpstan-ignore argument.type */
+            ->map(fn (mixed $name): string => Str::lower(strval($name)))
+            ->flip()
+            ->all();
+
+        $updates = [];
+        $counter = 2;
+
+        foreach ($records->skip(1) as $record) {
+            /** @var string $originalName */
+            $originalName = $record->{$this->column};
+            $newName = $this->buildDeduplicatedValue($originalName, $counter);
+
+            while (isset($existingNames[Str::lower($newName)])) {
+                $counter++;
+                $newName = $this->buildDeduplicatedValue($originalName, $counter);
+            }
+
+            $updates[$record->id] = $newName;
+            $existingNames[Str::lower($newName)] = true;
+            $counter++;
+
+            if (count($updates) >= $this->chunkSize) {
+                $this->batchUpdate($updates);
+                $updates = [];
+            }
+        }
+
+        if (! empty($updates)) {
+            $this->batchUpdate($updates);
+        }
+    }
+
+    /**
+     * @param  array<string, string>  $updates
+     */
+    private function batchUpdate(array $updates): void
     {
         if (empty($updates)) {
             return;
@@ -124,85 +227,56 @@ trait FixesDuplicateNames
         $idPlaceholders = implode(',', array_fill(0, count($ids), '?'));
         $bindings = array_merge($bindings, $ids);
 
-        $sql = "UPDATE {$table} SET {$column} = CASE " . implode(' ', $cases) . " END, updated_at = NOW() WHERE id IN ({$idPlaceholders})";
+        $sql = "UPDATE {$this->table} SET {$this->column} = CASE " . implode(' ', $cases) . " END WHERE id IN ({$idPlaceholders})";
 
         DB::statement($sql, $bindings);
     }
 
-    /**
-     *
-     * @param  array<int, string>  $groupByColumns
-     */
-    protected function orderDuplicateRecords(string $table, string $column, array $groupByColumns): Builder
+    private function revertDuplicates(): void
     {
-        $query = DB::table($table)
-            ->select(['id', $column, ...$groupByColumns]);
+        /** @var array<int, string> $groupByColumns */
+        $groupByColumns = $this->groupByColumns ?? []; // @phpstan-ignore property.notFound, nullCoalesce.property
 
-        foreach ($groupByColumns as $groupByColumn) {
-            $query->orderBy($groupByColumn);
-        }
+        $query = DB::table($this->table)
+            ->select(['id', $this->column, ...$groupByColumns])
+            ->whereRaw("{$this->column} ~ ?", [$this->deduplicatedValuePattern()]);
 
-        // Exclude soft-deleted records if usesSoftDeletes is true
-        if ($this->usesSoftDeletes) { // @phpstan-ignore property.notFound
+        if ($this->usesSoftDeletes) {
             $query->whereNull('deleted_at');
         }
 
-        return $query->orderBy('id');
-    }
+        $query
+            ->orderBy('id')
+            ->chunk($this->chunkSize, function (Collection $records) use ($groupByColumns): void {
+                $updates = [];
 
-    /**
-     *
-     * @param  array<int, string>  $groupByColumns
-     */
-    protected function buildGroupKey(object $record, array $groupByColumns): string
-    {
-        if (empty($groupByColumns)) {
-            return '';
-        }
+                foreach ($records as $record) {
+                    /** @var string $currentName */
+                    $currentName = $record->{$this->column};
+                    /** @var string $originalName */
+                    $originalName = $this->stripDeduplicatedSuffix($currentName);
 
-        return implode('|', array_map(
-            fn (string $groupByColumn): string => (string) $record->{$groupByColumn},
-            $groupByColumns,
-        ));
-    }
+                    $conflictQuery = DB::table($this->table)
+                        ->whereRaw("LOWER({$this->column}) = ?", [Str::lower(strval($originalName))]);
 
-    /**
-     *
-     * @param  array<int, string>  $groupByColumns
-     */
-    protected function buildDeduplicatedValue(
-        string $table,
-        string $column,
-        array $groupByColumns,
-        object $record,
-    ): string {
-        $baseName = trim((string) $record->{$column});
+                    foreach ($groupByColumns as $col) {
+                        $conflictQuery->where($col, $record->{$col});
+                    }
 
-        if ($baseName === '') {
-            $baseName = 'Category';
-        }
+                    if ($this->usesSoftDeletes) {
+                        $conflictQuery->whereNull('deleted_at');
+                    }
 
-        $suffixCounter = 2;
+                    if (! $conflictQuery->where('id', '!=', $record->id)->exists()) {
+                        $updates[$record->id] = $originalName;
+                    }
+                }
 
-        while (true) {
-            $suffix = ' (' . $suffixCounter . ')';
-            $maxLength = 255 - strlen($suffix);
-            $candidateBase = Str::substr($baseName, 0, max(1, $maxLength));
-            $candidate = $candidateBase . $suffix;
-
-            $query = DB::table($table)
-                ->where('id', '<>', $record->id)
-                ->whereRaw("LOWER({$column}) = ?", [Str::lower($candidate)]);
-
-            foreach ($groupByColumns as $groupByColumn) {
-                $query->where($groupByColumn, $record->{$groupByColumn});
-            }
-
-            if (! $query->exists()) {
-                return $candidate;
-            }
-
-            $suffixCounter++;
-        }
+                if (! empty($updates)) {
+                    DB::transaction(function () use ($updates) {
+                        $this->batchUpdate($updates);
+                    });
+                }
+            });
     }
 }

@@ -36,7 +36,10 @@
 
 use Database\Migrations\Concerns\FixesDuplicateNames;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
     use FixesDuplicateNames;
@@ -55,14 +58,25 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-            $this->fixCaseInsensitiveDuplicateNames();
+            $this->fixDuplicates();
 
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
+
+            Schema::table($this->table, function (Blueprint $table) {
+                $table->uniqueIndex([...$this->groupByColumns, $this->column],'qna_advisor_categories_qna_advisor_id_foreign')
+                    ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
+            });
         });
     }
 
     public function down(): void
     {
-        DB::statement('ALTER TABLE customer_advisor_categories ALTER COLUMN name TYPE VARCHAR(255)');
+      DB::transaction(function () {
+        // Schema::table($this->table, function (Blueprint $table) {
+        //     $table->dropUniqueIndex('qna_advisor_categories_qna_advisor_id_foreign');
+        // });
+
+        DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE varchar(255)");
+      });
     }
 };
