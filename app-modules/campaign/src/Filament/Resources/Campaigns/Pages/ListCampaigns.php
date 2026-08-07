@@ -73,7 +73,6 @@ class ListCampaigns extends ListRecords
                         static $populationCountsByGroupId = [];
 
                         $groupId = (string) $group->getKey();
-                        
                         $populationCount = $populationCountsByGroupId[$groupId] ??= ($group->type === \AdvisingApp\Group\Enums\GroupType::Static)
                              ? $group->model->query()->whereIn(
                                  $group->model->instance()->getQualifiedKeyName(),
