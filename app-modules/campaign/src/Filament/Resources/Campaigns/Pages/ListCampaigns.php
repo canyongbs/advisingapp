@@ -71,10 +71,7 @@ class ListCampaigns extends ListRecords
                             return null;
                         }
 
-                        static $populationCountsByGroupId = [];
-
-                        $groupId = (string) $group->getKey();
-                        $populationCount = $populationCountsByGroupId[$groupId] ??= ($group->type === GroupType::Static)
+                        $populationCount = ($group->type === GroupType::Static)
                              ? $group->model->query()->whereIn(
                                  $group->model->instance()->getQualifiedKeyName(),
                                  $group->subjects()
