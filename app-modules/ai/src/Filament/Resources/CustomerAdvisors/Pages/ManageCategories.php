@@ -40,6 +40,8 @@ use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ManageRelatedRecords;
@@ -86,29 +88,7 @@ class ManageCategories extends ManageRelatedRecords
     public function form(Schema $schema): Schema
     {
         return $schema
-            ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->string()
-                    ->unique(
-                        table: 'customer_advisor_categories',
-                        column: 'name',
-                        ignoreRecord: true,
-                        modifyRuleUsing: function (Unique $rule) {
-                            /** @var CustomerAdvisor $customerAdvisor */
-                            $customerAdvisor = $this->getOwnerRecord();
-
-                            $rule->where('customer_advisor_id', $customerAdvisor->getKey());
-                        }
-                    )
-                    ->maxLength(255)
-                    ->columnSpanFull(),
-                Textarea::make('description')
-                    ->required()
-                    ->string()
-                    ->maxLength(65535)
-                    ->columnSpanFull(),
-            ]);
+            ->components($this->getCategoryFormComponents());
     }
 
     public function table(Table $table): Table
@@ -123,12 +103,65 @@ class ManageCategories extends ManageRelatedRecords
             ])
             ->headerActions([
                 CreateAction::make()
-                    ->modalHeading('Create Customer Advisor Category'),
+                    ->label('New category')
+                    ->modalHeading('Create Customer Advisor Categories')
+                    ->slideOver()
+                    ->createAnother(false)
+                    ->schema([
+                        Repeater::make('categories')
+                            ->hiddenLabel()
+                            ->table([
+                                TableColumn::make('Name'),
+                                TableColumn::make('Description'),
+                            ])
+                            ->schema($this->getCategoryFormComponents())
+                            ->addActionLabel('Add another category')
+                            ->defaultItems(1)
+                            ->columnSpanFull(),
+                    ])
+                    ->action(function (array $data): void {
+                        /** @var CustomerAdvisor $customerAdvisor */
+                        $customerAdvisor = $this->getOwnerRecord();
+
+                        $customerAdvisor->categories()->createMany($data['categories']);
+                    }),
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->slideOver(),
             ])
             ->emptyStateHeading('No Customer Advisor Categories Found')
             ->emptyStateDescription('');
+    }
+
+    /**
+     * @return array<int, TextInput|Textarea>
+     */
+    protected function getCategoryFormComponents(): array
+    {
+        return [
+            TextInput::make('name')
+                ->required()
+                ->string()
+                ->distinct()
+                ->unique(
+                    table: 'customer_advisor_categories',
+                    column: 'name',
+                    ignoreRecord: true,
+                    modifyRuleUsing: function (Unique $rule): void {
+                        /** @var CustomerAdvisor $customerAdvisor */
+                        $customerAdvisor = $this->getOwnerRecord();
+
+                        $rule->where('customer_advisor_id', $customerAdvisor->getKey());
+                    }
+                )
+                ->maxLength(255)
+                ->columnSpanFull(),
+            Textarea::make('description')
+                ->required()
+                ->string()
+                ->maxLength(65535)
+                ->columnSpanFull(),
+        ];
     }
 }

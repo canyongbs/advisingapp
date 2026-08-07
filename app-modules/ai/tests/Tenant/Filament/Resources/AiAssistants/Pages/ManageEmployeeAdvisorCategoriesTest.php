@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Tests\RequestFactories\EmployeeAdvisorCategoryRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Forms\Components\Repeater;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -92,9 +93,13 @@ test('can create an employee advisor category', function () {
 
     $categoryData = collect(EmployeeAdvisorCategoryRequestFactory::new()->create());
 
+    $undoRepeaterFake = Repeater::fake();
+
     livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
-        ->callTableAction('create', data: $categoryData->toArray())
+        ->callTableAction('create', data: ['categories' => [$categoryData->toArray()]])
         ->assertHasNoTableActionErrors();
+
+    $undoRepeaterFake();
 
     assertCount(1, EmployeeAdvisorCategory::all());
 
@@ -102,6 +107,55 @@ test('can create an employee advisor category', function () {
         EmployeeAdvisorCategory::class,
         $categoryData->toArray()
     );
+});
+
+test('can create multiple employee advisor categories at once', function () {
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+
+    $assistant = AiAssistant::factory()->create();
+
+    $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view', 'assistant_custom.create']);
+
+    actingAs($user);
+
+    $firstCategory = collect(EmployeeAdvisorCategoryRequestFactory::new()->create());
+    $secondCategory = collect(EmployeeAdvisorCategoryRequestFactory::new()->create());
+
+    $undoRepeaterFake = Repeater::fake();
+
+    livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
+        ->callTableAction('create', data: ['categories' => [$firstCategory->toArray(), $secondCategory->toArray()]])
+        ->assertHasNoTableActionErrors();
+
+    $undoRepeaterFake();
+
+    assertCount(2, EmployeeAdvisorCategory::all());
+
+    assertDatabaseHas(EmployeeAdvisorCategory::class, $firstCategory->toArray());
+    assertDatabaseHas(EmployeeAdvisorCategory::class, $secondCategory->toArray());
+});
+
+test('creating duplicate employee advisor category names in the same batch is rejected', function () {
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+
+    $assistant = AiAssistant::factory()->create();
+
+    $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view', 'assistant_custom.create']);
+
+    actingAs($user);
+
+    $firstCategory = collect(EmployeeAdvisorCategoryRequestFactory::new()->create());
+    $secondCategory = collect(EmployeeAdvisorCategoryRequestFactory::new()->create(['name' => $firstCategory->get('name')]));
+
+    $undoRepeaterFake = Repeater::fake();
+
+    livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
+        ->callTableAction('create', data: ['categories' => [$firstCategory->toArray(), $secondCategory->toArray()]])
+        ->assertHasTableActionErrors(['categories.1.name' => 'The name field has a duplicate value.']);
+
+    $undoRepeaterFake();
+
+    assertCount(0, EmployeeAdvisorCategory::all());
 });
 
 test('creating an employee advisor category validates the inputs', function (EmployeeAdvisorCategoryRequestFactory $data, array $errors) {
@@ -115,9 +169,13 @@ test('creating an employee advisor category validates the inputs', function (Emp
 
     $categoryData = collect(EmployeeAdvisorCategoryRequestFactory::new($data)->create());
 
+    $undoRepeaterFake = Repeater::fake();
+
     livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
-        ->callTableAction('create', data: $categoryData->toArray())
-        ->assertHasTableActionErrors($errors);
+        ->callTableAction('create', data: ['categories' => [$categoryData->toArray()]])
+        ->assertHasTableActionErrors(collect($errors)->mapWithKeys(fn (string $rule, string $field) => ["categories.0.{$field}" => $rule])->toArray());
+
+    $undoRepeaterFake();
 
     assertDatabaseMissing(
         EmployeeAdvisorCategory::class,

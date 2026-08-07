@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Tests\RequestFactories\CustomerAdvisorCategoryRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Forms\Components\Repeater;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -98,9 +99,13 @@ test('can create Customer Advisor Category', function () {
 
     $customerAdvisorCategory = collect(CustomerAdvisorCategoryRequestFactory::new()->create());
 
+    $undoRepeaterFake = Repeater::fake();
+
     livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
-        ->callTableAction('create', data: $customerAdvisorCategory->toArray())
+        ->callTableAction('create', data: ['categories' => [$customerAdvisorCategory->toArray()]])
         ->assertHasNoTableActionErrors();
+
+    $undoRepeaterFake();
 
     assertCount(1, CustomerAdvisorCategory::all());
 
@@ -108,6 +113,67 @@ test('can create Customer Advisor Category', function () {
         CustomerAdvisorCategory::class,
         $customerAdvisorCategory->toArray()
     );
+});
+
+test('can create multiple Customer Advisor Categories at once', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->customerAdvisors = true;
+
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+
+    $customerAdvisor = CustomerAdvisor::factory()->create();
+
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
+
+    actingAs($user);
+
+    $firstCategory = collect(CustomerAdvisorCategoryRequestFactory::new()->create());
+    $secondCategory = collect(CustomerAdvisorCategoryRequestFactory::new()->create());
+
+    $undoRepeaterFake = Repeater::fake();
+
+    livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
+        ->callTableAction('create', data: ['categories' => [$firstCategory->toArray(), $secondCategory->toArray()]])
+        ->assertHasNoTableActionErrors();
+
+    $undoRepeaterFake();
+
+    assertCount(2, CustomerAdvisorCategory::all());
+
+    assertDatabaseHas(CustomerAdvisorCategory::class, $firstCategory->toArray());
+    assertDatabaseHas(CustomerAdvisorCategory::class, $secondCategory->toArray());
+});
+
+test('creating duplicate Customer Advisor Category names in the same batch is rejected', function () {
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->customerAdvisors = true;
+
+    $settings->save();
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+
+    $customerAdvisor = CustomerAdvisor::factory()->create();
+
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
+
+    actingAs($user);
+
+    $firstCategory = collect(CustomerAdvisorCategoryRequestFactory::new()->create());
+    $secondCategory = collect(CustomerAdvisorCategoryRequestFactory::new()->create(['name' => $firstCategory->get('name')]));
+
+    $undoRepeaterFake = Repeater::fake();
+
+    livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
+        ->callTableAction('create', data: ['categories' => [$firstCategory->toArray(), $secondCategory->toArray()]])
+        ->assertHasTableActionErrors(['categories.1.name' => 'The name field has a duplicate value.']);
+
+    $undoRepeaterFake();
+
+    assertCount(0, CustomerAdvisorCategory::all());
 });
 
 test('Create Customer Advisor Category validates the inputs', function (CustomerAdvisorCategoryRequestFactory $data, array $errors) {
@@ -143,9 +209,13 @@ test('Create Customer Advisor Category validates the inputs', function (Customer
 
     $customerAdvisorCategory = collect(CustomerAdvisorCategoryRequestFactory::new($data)->create());
 
+    $undoRepeaterFake = Repeater::fake();
+
     livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
-        ->callTableAction('create', data: $customerAdvisorCategory->toArray())
-        ->assertHasTableActionErrors($errors);
+        ->callTableAction('create', data: ['categories' => [$customerAdvisorCategory->toArray()]])
+        ->assertHasTableActionErrors(collect($errors)->mapWithKeys(fn (string $rule, string $field) => ["categories.0.{$field}" => $rule])->toArray());
+
+    $undoRepeaterFake();
 
     assertDatabaseMissing(
         CustomerAdvisorCategory::class,
