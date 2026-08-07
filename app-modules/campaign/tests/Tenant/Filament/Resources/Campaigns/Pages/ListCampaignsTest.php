@@ -41,9 +41,9 @@ use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\ListCampaigns;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
@@ -198,22 +198,22 @@ it('excludes archived campaigns from the list', function () {
         ->assertCountTableRecords(1);
 });
 
-it('shows the group name and population as the name column description for a static group', function (GroupModel $model, string $expectedLabel) {
+it('shows the group name and population as the name column description for a static group', function (GroupModel $model, int $memberCount, string $expectedLabel) {
     asSuperAdmin();
 
     $modelClass = $model->class();
 
-    $subjects = $modelClass::factory()->count(3)->create();
+    $members = $modelClass::factory()->count($memberCount)->create();
+    $modelClass::factory()->count(2)->create();
 
-    $group = Group::factory()->create([
+    $group = Group::factory()->static()->create([
         'name' => 'Everyone',
         'model' => $model,
-        'type' => GroupType::Static,
     ]);
 
-    $subjects->each(fn ($subject) => $group->subjects()->create([
-        'subject_id' => $subject->getKey(),
-        'subject_type' => $subject->getMorphClass(),
+    $members->each(fn (Model $member) => $group->subjects()->create([
+        'subject_id' => $member->getKey(),
+        'subject_type' => $member->getMorphClass(),
     ]));
 
     $campaign = Campaign::factory()->create([
@@ -222,24 +222,40 @@ it('shows the group name and population as the name column description for a sta
 
     livewire(ListCampaigns::class)
         ->assertCanSeeTableRecords([$campaign])
-        ->assertSee("Everyone (3 {$expectedLabel})");
+        ->assertSee("Everyone ({$memberCount} {$expectedLabel})");
 })->with([
-    'students' => [GroupModel::Student, 'Students'],
-    'prospects' => [GroupModel::Prospect, 'Prospects'],
+    'students' => [GroupModel::Student, 3, 'Students'],
+    'a single student' => [GroupModel::Student, 1, 'Student'],
+    'prospects' => [GroupModel::Prospect, 3, 'Prospects'],
+    'a single prospect' => [GroupModel::Prospect, 1, 'Prospect'],
 ]);
 
-it('resolves the population through the group filters for a dynamic group', function (GroupModel $model, string $expectedLabel) {
+it('shows the group name and population as the name column description for a dynamic group', function (GroupModel $model, string $expectedLabel, string $attribute) {
     asSuperAdmin();
 
     $modelClass = $model->class();
 
-    $modelClass::factory()->count(4)->create();
+    $modelClass::factory()->count(4)->create([$attribute => 'Included']);
+    $modelClass::factory()->count(2)->create([$attribute => 'Excluded']);
 
-    $group = Group::factory()->create([
+    $group = Group::factory()->dynamic()->create([
         'name' => 'Everyone',
         'model' => $model,
-        'type' => GroupType::Dynamic,
-        'filters' => [],
+        'filters' => [
+            'queryBuilder' => [
+                'rules' => [
+                    'lastName' => [
+                        'type' => $attribute,
+                        'data' => [
+                            'operator' => 'contains',
+                            'settings' => [
+                                'text' => 'Included',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ],
     ]);
 
     $campaign = Campaign::factory()->create([
@@ -250,6 +266,6 @@ it('resolves the population through the group filters for a dynamic group', func
         ->assertCanSeeTableRecords([$campaign])
         ->assertSee("Everyone (4 {$expectedLabel})");
 })->with([
-    'students' => [GroupModel::Student, 'Students'],
-    'prospects' => [GroupModel::Prospect, 'Prospects'],
+    'students' => [GroupModel::Student, 'Students', 'last'],
+    'prospects' => [GroupModel::Prospect, 'Prospects', 'last_name'],
 ]);

@@ -39,7 +39,7 @@ namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Group\Actions\TranslateGroupFilters;
-use AdvisingApp\Group\Enums\GroupType;
+use AdvisingApp\Group\Models\Group;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
 use Filament\Actions\CreateAction;
@@ -52,11 +52,17 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 
 class ListCampaigns extends ListRecords
 {
     protected static string $resource = CampaignResource::class;
+
+    /**
+     * @var array<string, int>
+     */
+    protected array $populationCounts = [];
 
     public function table(Table $table): Table
     {
@@ -71,18 +77,10 @@ class ListCampaigns extends ListRecords
                             return null;
                         }
 
-                        $populationCount = ($group->type === GroupType::Static)
-                             ? $group->model->query()->whereIn(
-                                 $group->model->instance()->getQualifiedKeyName(),
-                                 $group->subjects()
-                                     ->where('subject_type', $group->model->instance()->getMorphClass())
-                                     ->select('subject_id'),
-                             )->count()
-                             : app(TranslateGroupFilters::class)->execute($group)->count();
+                        $populationCount = $this->getPopulationCount($group);
+                        $populationLabel = Str::ucfirst($group->model->getLabelForCount($populationCount));
 
-                        $populationLabel = Str::plural($group->model->getLabel(), $populationCount);
-
-                        return "{$group->name} (" . number_format($populationCount) . " {$populationLabel})";
+                        return "{$group->name} (" . Number::format($populationCount) . " {$populationLabel})";
                     }),
                 TextColumn::make('enabled')
                     ->label('Enabled')
@@ -161,5 +159,10 @@ class ListCampaigns extends ListRecords
         return [
             CreateAction::make(),
         ];
+    }
+
+    protected function getPopulationCount(Group $group): int
+    {
+        return $this->populationCounts[$group->getKey()] ??= app(TranslateGroupFilters::class)->execute($group)->count();
     }
 }
