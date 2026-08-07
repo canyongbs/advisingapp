@@ -46,6 +46,7 @@ use App\Models\Import;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\ExportAction;
+use Filament\Actions\ImportAction;
 use Filament\Actions\Imports\Exceptions\RowImportFailedException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
@@ -264,5 +265,6 @@ it('shows import and export actions on customer questions page', function () {
     actingAs($user);
 
     livewire(ManageCustomerQuestions::class, ['record' => $advisor->getKey()])
-        ->assertTableActionVisible(ExportAction::class);
+        ->assertTableActionVisible(ExportAction::class)
+        ->assertTableActionVisible(ImportAction::class);
 });
