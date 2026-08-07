@@ -80,9 +80,9 @@ class ListCampaigns extends ListRecords
                              )->count()
                              : app(TranslateGroupFilters::class)->execute($group)->count();
 
-                         $populationLabel = Str::plural($group->model->getLabel(), $populationCount);
+                        $populationLabel = Str::plural($group->model->getLabel(), $populationCount);
 
-                         return "{$group->name} (" . number_format($populationCount) . " {$populationLabel})";
+                        return "{$group->name} (" . number_format($populationCount) . " {$populationLabel})";
                     }),
                 TextColumn::make('enabled')
                     ->label('Enabled')
