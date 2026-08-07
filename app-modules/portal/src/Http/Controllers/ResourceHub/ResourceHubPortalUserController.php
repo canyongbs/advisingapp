@@ -52,7 +52,7 @@ class ResourceHubPortalUserController extends Controller
 
         $educatable = $accessToken?->tokenable;
 
-        if (! $educatable instanceof Educatable || ! $accessToken->can('resource-hub-portal')) {
+        if (! ($educatable instanceof Educatable) || ! $accessToken->can('resource-hub-portal')) {
             return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 

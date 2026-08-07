@@ -59,7 +59,7 @@ class AuthenticateIfRequiredByPortalDefinition
 
         $educatable = $accessToken?->tokenable;
 
-        if (! $educatable instanceof Educatable || ! $accessToken->can('resource-hub-portal')) {
+        if (! ($educatable instanceof Educatable) || ! $accessToken->can('resource-hub-portal')) {
             abort(Response::HTTP_FORBIDDEN);
         }
 

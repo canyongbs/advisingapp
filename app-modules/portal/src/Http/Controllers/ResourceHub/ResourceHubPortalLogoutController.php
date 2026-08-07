@@ -53,7 +53,7 @@ class ResourceHubPortalLogoutController extends Controller
 
         $user = $accessToken?->tokenable;
 
-        if (! $user instanceof Educatable) {
+        if (! ($user instanceof Educatable)) {
             return response()->json([
                 'success' => false,
             ]);
