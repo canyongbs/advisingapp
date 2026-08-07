@@ -86,7 +86,7 @@ it('resolves the portal token even when a first-party session user is present', 
         ->assertJsonFragment(['sisid' => $student->sisid]);
 });
 
-it('rejects a token without the `resource-hub-portal` ability', function () {
+it('does not authenticate a token without the `resource-hub-portal` ability', function () {
     $student = Student::factory()->create();
 
     $token = $student->createToken('resource-hub-portal-access-token', ['some-other-ability']);
@@ -97,7 +97,7 @@ it('rejects a token without the `resource-hub-portal` ability', function () {
         ->assertUnauthorized();
 });
 
-it('rejects a request without a token', function () {
+it('does not authenticate a request without a token', function () {
     getJson(route('portals.user.auth-check'))
         ->assertUnauthorized();
 });
