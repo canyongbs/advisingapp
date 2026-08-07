@@ -46,12 +46,12 @@ use App\Models\Import;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\ExportAction;
+use Filament\Actions\Imports\Exceptions\RowImportFailedException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Livewire\livewire;
 
 beforeEach(function () {
@@ -196,7 +196,7 @@ it('fails employee advisor question import cleanly when category does not exist'
         'question' => 'What is the password reset process?',
         'answer' => 'Go to login and click forgot password.',
         'category' => 'NonexistentCategory',
-    ]))->toThrow(\InvalidArgumentException::class);
+    ]))->toThrow(RowImportFailedException::class);
 });
 
 it('validates required fields during employee advisor question import', function () {
@@ -245,7 +245,7 @@ it('validates required fields during employee advisor question import', function
         'question' => 'What is the password reset?',
         'answer' => 'Go to login.',
         'category' => null,
-    ]))->toThrow(\InvalidArgumentException::class);
+    ]))->toThrow(RowImportFailedException::class);
 });
 
 it('shows import and export actions on employee questions page', function () {
