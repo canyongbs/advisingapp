@@ -41,6 +41,13 @@ use Illuminate\Support\Facades\DB;
 return new class () extends Migration {
     use FixesDuplicateNames;
 
+    protected string $table = 'employee_advisor_categories';
+
+    protected string $column = 'name';
+
+    /** @var array<int, string> */
+    protected array $groupByColumns = ['employee_advisor_id'];
+
     protected int $chunkSize = 500;
 
     protected bool $usesSoftDeletes = false;
@@ -48,17 +55,13 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-            $this->fixCaseInsensitiveDuplicateNames(
-                table: 'customer_advisor_categories',
-                ownerColumn: 'customer_advisor_id',
-            );
-
-            $this->fixCaseInsensitiveDuplicateNames(
-                table: 'employee_advisor_categories',
-                ownerColumn: 'employee_advisor_id',
-            );
+            $this->fixCaseInsensitiveDuplicateNames();
+            DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
         });
     }
 
-    public function down(): void {}
+    public function down(): void
+    {
+        DB::statement('ALTER TABLE employee_advisor_categories ALTER COLUMN name TYPE VARCHAR(255)');
+    }
 };
