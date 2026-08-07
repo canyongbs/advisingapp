@@ -38,10 +38,10 @@ namespace AdvisingApp\Ai\Filament\Imports;
 
 use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
+use Filament\Actions\Imports\Exceptions\RowImportFailedException;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
-use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 
 class CustomerAdvisorQuestionImporter extends Importer
@@ -63,14 +63,9 @@ class CustomerAdvisorQuestionImporter extends Importer
                 ->example('You can apply through our website.'),
             ImportColumn::make('category')
                 ->label('Category')
-                ->rules(function (CustomerAdvisorQuestionImporter $importer): array {
-                    return [
-                        'required',
-                        'string',
-                        'max:255',
-                        Rule::exists('customer_advisor_categories', 'name')
-                            ->where('customer_advisor_id', $importer->getCustomerAdvisorId()),
-                    ];
+                ->rules(['required', 'string', 'max:255'])
+                ->fillRecordUsing(function (): void {
+                    // The category name is resolved to a category_id in resolveRecord().
                 })
                 ->requiredMapping()
                 ->example('Admissions'),
@@ -82,8 +77,8 @@ class CustomerAdvisorQuestionImporter extends Importer
         $categoryName = $this->data['category'] ?? null;
         $advisorId = $this->getCustomerAdvisorId();
 
-        if (! $categoryName) {
-            throw new InvalidArgumentException('Category is required.');
+        if (blank($categoryName)) {
+            throw new RowImportFailedException('The category field is required.');
         }
 
         $category = CustomerAdvisorCategory::where('customer_advisor_id', $advisorId)
@@ -91,13 +86,13 @@ class CustomerAdvisorQuestionImporter extends Importer
             ->first();
 
         if (! $category) {
-            throw new InvalidArgumentException("Category '{$categoryName}' not found for this chatbot.");
+            throw new RowImportFailedException("The category '{$categoryName}' is invalid.");
         }
 
-        $this->data['category_id'] = $category->id;
-        unset($this->data['category']);
+        $question = new CustomerAdvisorQuestion();
+        $question->category_id = $category->getKey();
 
-        return new CustomerAdvisorQuestion();
+        return $question;
     }
 
     public static function getCompletedNotificationBody(Import $import): string

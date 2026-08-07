@@ -46,6 +46,7 @@ use App\Models\Import;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\ExportAction;
+use Filament\Actions\Imports\Exceptions\RowImportFailedException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
@@ -129,7 +130,7 @@ it('imports customer advisor questions scoped to the selected advisor with case-
         'name' => 'Admissions',
     ])->create();
 
-    CustomerAdvisorCategory::factory()->state([
+    $otherCategory = CustomerAdvisorCategory::factory()->state([
         'customer_advisor_id' => $otherAdvisor->getKey(),
         'name' => 'Admissions',
     ])->create();
@@ -157,7 +158,7 @@ it('imports customer advisor questions scoped to the selected advisor with case-
     $importer([
         'question' => 'How do I apply?',
         'answer' => 'Apply online.',
-        'category' => 'Admissions',
+        'category' => 'admissions',
     ]);
 
     assertDatabaseHas(CustomerAdvisorQuestion::class, [
@@ -167,10 +168,9 @@ it('imports customer advisor questions scoped to the selected advisor with case-
     ]);
 
     assertDatabaseMissing(CustomerAdvisorQuestion::class, [
-        'category_id' => $category->getKey(),
+        'category_id' => $otherCategory->getKey(),
         'question' => 'How do I apply?',
         'answer' => 'Apply online.',
-        'customer_advisor_id' => $otherAdvisor->getKey(),
     ]);
 });
 
@@ -203,7 +203,7 @@ it('fails customer advisor question import cleanly when category does not exist'
         'question' => 'How do I apply?',
         'answer' => 'Apply online.',
         'category' => 'NonexistentCategory',
-    ]))->toThrow(\InvalidArgumentException::class);
+    ]))->toThrow(RowImportFailedException::class);
 });
 
 it('validates required fields during customer advisor question import', function () {
@@ -252,7 +252,7 @@ it('validates required fields during customer advisor question import', function
         'question' => 'How do I apply?',
         'answer' => 'Apply online.',
         'category' => null,
-    ]))->toThrow(\InvalidArgumentException::class);
+    ]))->toThrow(RowImportFailedException::class);
 });
 
 it('shows import and export actions on customer questions page', function () {

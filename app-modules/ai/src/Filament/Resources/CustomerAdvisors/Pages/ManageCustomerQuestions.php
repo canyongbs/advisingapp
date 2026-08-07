@@ -166,7 +166,12 @@ class ManageCustomerQuestions extends ManageRelatedRecords
                     ->formats([
                         ExportFormat::Csv,
                     ])
-                    ->modifyQueryUsing(fn (Builder $query): Builder => $query->whereIn('category_id', $this->getOwnerRecord()->categories()->pluck('id'))),
+                    ->modifyQueryUsing(function (Builder $query): Builder {
+                        /** @var CustomerAdvisor $customerAdvisor */
+                        $customerAdvisor = $this->getOwnerRecord();
+
+                        return $query->whereIn('category_id', $customerAdvisor->categories()->pluck('id'));
+                    }),
             ])
             ->recordActions([
                 EditAction::make()
