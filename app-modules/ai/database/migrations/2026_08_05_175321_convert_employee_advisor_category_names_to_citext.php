@@ -63,7 +63,7 @@ return new class () extends Migration {
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
 
             Schema::table($this->table, function (Blueprint $table) {
-                $table->uniqueIndex([...$this->groupByColumns, $this->column],'employee_advisor_categories_employee_advisor_id_foreign')
+                $table->uniqueIndex([...$this->groupByColumns, $this->column], 'employee_advisor_categories_employee_advisor_id_foreign')
                     ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
         });
@@ -71,12 +71,12 @@ return new class () extends Migration {
 
     public function down(): void
     {
-      DB::transaction(function () {
-        Schema::table($this->table, function (Blueprint $table) {
-            $table->dropUniqueIndex('employee_advisor_categories_employee_advisor_id_foreign');
-        });
+        DB::transaction(function () {
+            Schema::table($this->table, function (Blueprint $table) {
+                $table->dropUniqueIndex('employee_advisor_categories_employee_advisor_id_foreign');
+            });
 
-        DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE varchar(255)");
-      });
+            DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE varchar(255)");
+        });
     }
 };
