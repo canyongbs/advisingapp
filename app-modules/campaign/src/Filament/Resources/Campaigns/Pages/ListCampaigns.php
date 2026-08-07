@@ -39,6 +39,7 @@ namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Group\Actions\TranslateGroupFilters;
+use AdvisingApp\Group\Enums\GroupType;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
 use Filament\Actions\CreateAction;
@@ -73,16 +74,16 @@ class ListCampaigns extends ListRecords
                         static $populationCountsByGroupId = [];
 
                         $groupId = (string) $group->getKey();
-                        $populationCount = $populationCountsByGroupId[$groupId] ??= ($group->type === \AdvisingApp\Group\Enums\GroupType::Static)
+                        $populationCount = $populationCountsByGroupId[$groupId] ??= ($group->type === GroupType::Static)
                              ? $group->model->query()->whereIn(
                                  $group->model->instance()->getQualifiedKeyName(),
                                  $group->subjects()->select('subject_id'),
                              )->count()
                              : app(TranslateGroupFilters::class)->execute($group)->count();
 
-                         $populationLabel = Str::plural($group->model->getLabel(), $populationCount);
+                        $populationLabel = Str::plural($group->model->getLabel(), $populationCount);
 
-                         return "{$group->name} (" . number_format($populationCount) . " {$populationLabel})";
+                        return "{$group->name} (" . number_format($populationCount) . " {$populationLabel})";
                     }),
                 TextColumn::make('enabled')
                     ->label('Enabled')
