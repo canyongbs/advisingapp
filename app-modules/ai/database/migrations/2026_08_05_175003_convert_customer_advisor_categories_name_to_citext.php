@@ -72,9 +72,9 @@ return new class () extends Migration {
     public function down(): void
     {
         DB::transaction(function () {
-            // Schema::table($this->table, function (Blueprint $table) {
-            //     $table->dropUniqueIndex('qna_advisor_categories_qna_advisor_id_foreign');
-            // });
+            Schema::table($this->table, function (Blueprint $table) {
+                $table->dropUniqueIndex('qna_advisor_categories_qna_advisor_id_foreign');
+            });
 
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE varchar(255)");
         });
