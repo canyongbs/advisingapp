@@ -47,11 +47,13 @@ use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Imports\Exceptions\RowImportFailedException;
+use Filament\Actions\ImportAction;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Livewire\livewire;
 
 beforeEach(function () {
@@ -129,7 +131,7 @@ it('imports employee advisor questions scoped to the selected assistant with cas
         'name' => 'Knowledge Base',
     ])->create();
 
-    EmployeeAdvisorCategory::factory()->state([
+    $otherCategory = EmployeeAdvisorCategory::factory()->state([
         'employee_advisor_id' => $otherAssistant->getKey(),
         'name' => 'Knowledge Base',
     ])->create();
@@ -157,11 +159,17 @@ it('imports employee advisor questions scoped to the selected assistant with cas
     $importer([
         'question' => 'What is the password reset process?',
         'answer' => 'Go to login and click forgot password.',
-        'category' => 'Knowledge Base',
+        'category' => 'knowledge base',
     ]);
 
     assertDatabaseHas(EmployeeAdvisorQuestion::class, [
         'category_id' => $category->getKey(),
+        'question' => 'What is the password reset process?',
+        'answer' => 'Go to login and click forgot password.',
+    ]);
+
+    assertDatabaseMissing(EmployeeAdvisorQuestion::class, [
+        'category_id' => $otherCategory->getKey(),
         'question' => 'What is the password reset process?',
         'answer' => 'Go to login and click forgot password.',
     ]);
@@ -257,5 +265,6 @@ it('shows import and export actions on employee questions page', function () {
     actingAs($user);
 
     livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
-        ->assertTableActionVisible(ExportAction::class);
+        ->assertTableActionVisible(ExportAction::class)
+        ->assertTableActionVisible(ImportAction::class);
 });

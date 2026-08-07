@@ -42,6 +42,7 @@ use Filament\Actions\Imports\Exceptions\RowImportFailedException;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 class EmployeeAdvisorQuestionImporter extends Importer
@@ -82,7 +83,7 @@ class EmployeeAdvisorQuestionImporter extends Importer
         }
 
         $category = EmployeeAdvisorCategory::where('employee_advisor_id', $advisorId)
-            ->whereRaw('LOWER(name) = ?', [strtolower($categoryName)])
+            ->whereRaw('LOWER(name) = ?', [Str::lower($categoryName)])
             ->first();
 
         if (! $category) {

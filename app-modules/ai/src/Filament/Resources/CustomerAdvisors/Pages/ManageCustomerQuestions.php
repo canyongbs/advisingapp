@@ -170,7 +170,7 @@ class ManageCustomerQuestions extends ManageRelatedRecords
                         /** @var CustomerAdvisor $customerAdvisor */
                         $customerAdvisor = $this->getOwnerRecord();
 
-                        return $query->whereIn('category_id', $customerAdvisor->categories()->pluck('id'));
+                        return $query->whereIn('category_id', $customerAdvisor->categories()->select('id'));
                     }),
             ])
             ->recordActions([

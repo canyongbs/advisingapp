@@ -173,7 +173,7 @@ class ManageEmployeeAdvisorQuestions extends ManageRelatedRecords
 
                         assert($assistant instanceof AiAssistant);
 
-                        return $query->whereIn('category_id', $assistant->categories()->pluck('id'));
+                        return $query->whereIn('category_id', $assistant->categories()->select('id'));
                     }),
             ])
             ->recordActions([
