@@ -142,8 +142,6 @@ trait FixesDuplicateNames
             $query->orderBy($groupByColumn);
         }
 
-        $query->orderByRaw("LOWER({$column})");
-
         // Exclude soft-deleted records if usesSoftDeletes is true
         if ($this->usesSoftDeletes) { // @phpstan-ignore property.notFound
             $query->whereNull('deleted_at');
