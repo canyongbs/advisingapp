@@ -58,6 +58,9 @@ class ListCampaigns extends ListRecords
 {
     protected static string $resource = CampaignResource::class;
 
+    /** @var array<string, int> */
+    protected array $populationCountsByGroupId = [];
+
     public function table(Table $table): Table
     {
         return $table
@@ -71,13 +74,13 @@ class ListCampaigns extends ListRecords
                             return null;
                         }
 
-                        static $populationCountsByGroupId = [];
-
                         $groupId = (string) $group->getKey();
-                        $populationCount = $populationCountsByGroupId[$groupId] ??= ($group->type === GroupType::Static)
+                        $populationCount = $this->populationCountsByGroupId[$groupId] ??= ($group->type === GroupType::Static)
                              ? $group->model->query()->whereIn(
                                  $group->model->instance()->getQualifiedKeyName(),
-                                 $group->subjects()->select('subject_id'),
+                                 $group->subjects()
+                                     ->where('subject_type', $group->model->instance()->getMorphClass())
+                                     ->select('subject_id'),
                              )->count()
                              : app(TranslateGroupFilters::class)->execute($group)->count();
 
