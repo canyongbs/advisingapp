@@ -37,6 +37,7 @@
 namespace AdvisingApp\Campaign\Tests\Tenant\Models;
 
 use AdvisingApp\Campaign\Models\Campaign;
+use RuntimeException;
 
 use function Tests\asSuperAdmin;
 
@@ -55,6 +56,26 @@ it('disables an enabled campaign when it is archived', function () {
 
     expect($campaign->enabled)->toBeFalse()
         ->and($campaign->archived_at)->not->toBeNull();
+});
+
+it('rolls back the disable when archiving fails, leaving the campaign enabled and not archived', function () {
+    asSuperAdmin();
+
+    $campaign = Campaign::factory()->enabled()->create();
+
+    // Force a failure after the archiving event has disabled the campaign and the
+    // archived_at write has run, but before archive() returns — both writes share the
+    // transaction, so both must roll back.
+    Campaign::archived(function (): void {
+        throw new RuntimeException('Archiving failed.');
+    });
+
+    expect(fn () => $campaign->archive())->toThrow(RuntimeException::class);
+
+    $persisted = Campaign::withoutGlobalScopes()->findOrFail($campaign->getKey());
+
+    expect($persisted->enabled)->toBeTrue()
+        ->and($persisted->archived_at)->toBeNull();
 });
 
 it('archives an already disabled campaign without re-enabling it', function () {

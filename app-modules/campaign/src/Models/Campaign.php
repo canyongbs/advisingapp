@@ -48,6 +48,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
@@ -58,7 +59,9 @@ class Campaign extends BaseModel implements Auditable
 {
     use AuditableTrait;
     use SoftDeletes;
-    use CanBeArchived;
+    use CanBeArchived {
+        archive as protected archiveWithoutTransaction;
+    }
 
     protected $fillable = [
         'name',
@@ -104,6 +107,14 @@ class Campaign extends BaseModel implements Auditable
     public function createdBy(): MorphTo
     {
         return $this->morphTo();
+    }
+
+    public function archive(): bool
+    {
+        // The archiving event disables the campaign in a separate write from the archive
+        // itself, so wrap both in a transaction to keep them atomic: a failure must not
+        // leave a campaign disabled but not archived.
+        return DB::transaction(fn (): bool => $this->archiveWithoutTransaction());
     }
 
     protected static function booted(): void
