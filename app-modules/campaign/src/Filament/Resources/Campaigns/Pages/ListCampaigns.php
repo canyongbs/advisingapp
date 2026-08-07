@@ -38,6 +38,8 @@ namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Group\Actions\TranslateGroupFilters;
+use AdvisingApp\Group\Models\Group;
 use App\Filament\Tables\Columns\IdColumn;
 use App\Models\User;
 use Filament\Actions\CreateAction;
@@ -50,19 +52,36 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Number;
+use Illuminate\Support\Str;
 
 class ListCampaigns extends ListRecords
 {
     protected static string $resource = CampaignResource::class;
+
+    /**
+     * @var array<string, int>
+     */
+    protected array $populationCounts = [];
 
     public function table(Table $table): Table
     {
         return $table
             ->columns([
                 IdColumn::make(),
-                TextColumn::make('name'),
-                TextColumn::make('group.name')
-                    ->label('Group'),
+                TextColumn::make('name')
+                    ->description(function (Campaign $record): ?string {
+                        $group = $record->group;
+
+                        if ($group === null) {
+                            return null;
+                        }
+
+                        $populationCount = $this->getPopulationCount($group);
+                        $populationLabel = Str::ucfirst($group->model->getLabelForCount($populationCount));
+
+                        return "{$group->name} (" . Number::format($populationCount) . " {$populationLabel})";
+                    }),
                 TextColumn::make('enabled')
                     ->label('Enabled')
                     ->formatStateUsing(fn (bool $state): string => $state ? 'Yes' : 'No')
@@ -86,7 +105,8 @@ class ListCampaigns extends ListRecords
             // @phpstan-ignore argument.templateType
             ->modifyQueryUsing(function (Builder $query) {
                 /** @var Builder<Campaign> $query */
-                $query->withoutArchived();
+                $query->withoutArchived()
+                    ->with('group');
 
                 return $query;
             })
@@ -139,5 +159,10 @@ class ListCampaigns extends ListRecords
         return [
             CreateAction::make(),
         ];
+    }
+
+    protected function getPopulationCount(Group $group): int
+    {
+        return $this->populationCounts[$group->getKey()] ??= app(TranslateGroupFilters::class)->execute($group)->count();
     }
 }

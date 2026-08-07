@@ -55,8 +55,22 @@ class GroupFactory extends Factory
         return [
             'name' => $this->faker->words(asText: true),
             'model' => $this->faker->randomElement(GroupModel::cases()),
-            'type' => GroupType::Dynamic, //TODO: add static later
+            'type' => GroupType::Dynamic,
             'user_id' => User::factory(),
         ];
+    }
+
+    public function dynamic(): self
+    {
+        return $this->state([
+            'type' => GroupType::Dynamic,
+        ]);
+    }
+
+    public function static(): self
+    {
+        return $this->state([
+            'type' => GroupType::Static,
+        ]);
     }
 }

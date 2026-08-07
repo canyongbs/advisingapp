@@ -134,4 +134,19 @@ enum GroupModel: string implements HasLabel
             static::Student => 'students',
         };
     }
+
+    public function getSingularLabel(): string
+    {
+        return match ($this) {
+            static::Prospect => 'prospect',
+            static::Student => 'student',
+        };
+    }
+
+    public function getLabelForCount(int $count): string
+    {
+        return ($count === 1)
+            ? $this->getSingularLabel()
+            : $this->getPluralLabel();
+    }
 }

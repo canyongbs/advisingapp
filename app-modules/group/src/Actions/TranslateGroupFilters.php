@@ -72,7 +72,12 @@ class TranslateGroupFilters
         $group = $this->resolveGroup($group);
 
         if ($group->type === GroupType::Static) {
-            return $query->whereKey($group->subjects()->pluck('subject_id'));
+            return $query->whereIn(
+                $query->getModel()->getQualifiedKeyName(),
+                $group->subjects()
+                    ->where('subject_type', $group->model->instance()->getMorphClass())
+                    ->select('subject_id'),
+            );
         }
 
         return $this->applyRawFiltersToQuery($group->model, $group->filters ?? [], $query);

@@ -37,8 +37,8 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Group\Actions\TranslateGroupFilters;
 use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Group\Enums\GroupType;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\TagType;
 use App\Models\Tag;
@@ -234,15 +234,45 @@ it('resolves OR blocks identically for saved and ad-hoc live filters', function 
         ->and($rawIds)->toEqual($savedIds);
 });
 
+it('ignores subjects of another model when resolving a static group', function () {
+    actingAs(User::factory()->licensed(LicenseType::cases())->create());
+
+    $members = Student::factory()->count(2)->create();
+    $prospect = Prospect::factory()->create();
+
+    $group = Group::factory()->static()->create([
+        'model' => GroupModel::Student,
+    ]);
+
+    $members->each(fn (Student $student) => $group->subjects()->create([
+        'subject_id' => $student->getKey(),
+        'subject_type' => $student->getMorphClass(),
+    ]));
+
+    $group->subjects()->create([
+        'subject_id' => $prospect->getKey(),
+        'subject_type' => $prospect->getMorphClass(),
+    ]);
+
+    $ids = app(TranslateGroupFilters::class)->execute($group)->pluck((new Student())->getKeyName())->all();
+
+    sort($ids);
+
+    $expected = $members->modelKeys();
+    sort($expected);
+
+    expect($ids)->toHaveCount(2)
+        ->and($ids)->toEqual($expected);
+});
+
 it('resolves a static group from its stored subject list', function () {
     actingAs(User::factory()->licensed(LicenseType::cases())->create());
 
     $members = Student::factory()->count(3)->create();
     Student::factory()->count(4)->create();
 
-    $group = Group::factory()->create([
+    $group = Group::factory()->static()->create([
         'model' => GroupModel::Student,
-        'type' => GroupType::Static,
     ]);
 
     $members->each(fn (Student $student) => $group->subjects()->create([
