@@ -54,7 +54,7 @@
         "@vueuse/core": "^10.7.0",
         "alpinejs": "^3.13.2",
         "axios": "^1.18.0",
-        "dompurify": "^3.4.12",
+        "dompurify": "^3.4.13",
         "env-cmd": "^10.1.0",
         "esbuild-plugin-polyfill-node": "^0.3.0",
         "filepond": "^4.32.7",
