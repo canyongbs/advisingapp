@@ -34,17 +34,23 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Filament\Exports\EmployeeAdvisorCategoryExporter;
+use AdvisingApp\Ai\Filament\Imports\EmployeeAdvisorCategoryImporter;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\AiAssistantResource;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ManageEmployeeAdvisorCategories;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\EmployeeAdvisorCategory;
 use AdvisingApp\Ai\Tests\RequestFactories\EmployeeAdvisorCategoryRequestFactory;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\Export;
+use App\Models\Import;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\ExportAction;
 use Filament\Actions\ImportAction;
 use Filament\Forms\Components\Repeater;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -297,29 +303,175 @@ test('editing an employee advisor category validates the inputs', function (Empl
         ]
     );
 
-test('shows import and export actions for employee advisor categories', function () {
-    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+function employeeCategoryImporter(User $user, AiAssistant $assistant): EmployeeAdvisorCategoryImporter
+{
+    $import = new Import();
+    $import->user()->associate($user);
+    $import->file_name = 'employee-categories.csv';
+    $import->file_path = 'imports/employee-categories.csv';
+    $import->importer = EmployeeAdvisorCategoryImporter::class;
+    $import->total_rows = 1;
+    $import->save();
 
-    $assistant = AiAssistant::factory()->create();
+    return app(EmployeeAdvisorCategoryImporter::class, [
+        'import' => $import,
+        'columnMap' => [
+            'name' => 'name',
+            'description' => 'description',
+        ],
+        'options' => [
+            'employee_advisor_id' => $assistant->getKey(),
+        ],
+    ]);
+}
 
-    $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view', 'assistant_custom.create']);
+describe('import and export', function () {
+    it('shows the `ImportAction` and `ExportAction` actions', function () {
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+        $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view', 'assistant_custom.create']);
 
-    actingAs($user);
+        $assistant = AiAssistant::factory()->create();
 
-    livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
-        ->assertTableActionVisible(ImportAction::class)
-        ->assertTableActionVisible(ExportAction::class);
+        actingAs($user);
+
+        livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
+            ->assertTableActionVisible(ImportAction::class)
+            ->assertTableActionVisible(ExportAction::class);
+    });
+
+    it('exports employee advisor categories as scoped csv content', function () {
+        Storage::fake('s3');
+
+        config()->set('filament.default_filesystem_disk', 's3');
+        config()->set('queue.default', 'sync');
+
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+        $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view']);
+
+        $assistant = AiAssistant::factory()->create();
+        $otherAssistant = AiAssistant::factory()->create();
+
+        EmployeeAdvisorCategory::factory()->state([
+            'employee_advisor_id' => $assistant->getKey(),
+            'name' => 'Help Desk',
+            'description' => 'Employee help desk guidance',
+        ])->create();
+
+        EmployeeAdvisorCategory::factory()->state([
+            'employee_advisor_id' => $otherAssistant->getKey(),
+            'name' => 'Payroll',
+            'description' => 'Payroll related prompts',
+        ])->create();
+
+        actingAs($user);
+
+        livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
+            ->callTableAction(ExportAction::class)
+            ->assertNotified();
+
+        $export = Export::query()->latest()->first();
+
+        expect($export)->not->toBeNull()
+            ->and($export->exporter)->toBe(EmployeeAdvisorCategoryExporter::class);
+
+        $disk = Storage::disk($export->file_disk);
+        $files = collect($disk->files($export->getFileDirectory()))->sort()->values();
+        $content = $files->map(fn (string $file): string => (string) $disk->get($file))->implode('');
+
+        expect($content)
+            ->toContain('Help Desk')
+            ->toContain('Employee help desk guidance')
+            ->not->toContain('Payroll')
+            ->not->toContain('Payroll related prompts');
+    });
+
+    it('imports employee advisor categories scoped to the selected assistant', function () {
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+
+        $assistant = AiAssistant::factory()->create();
+        $otherAssistant = AiAssistant::factory()->create();
+
+        assertDatabaseMissing(EmployeeAdvisorCategory::class, ['name' => 'Knowledge Base']);
+
+        employeeCategoryImporter($user, $assistant)([
+            'name' => 'Knowledge Base',
+            'description' => 'Internal article support responses.',
+        ]);
+
+        assertDatabaseHas(EmployeeAdvisorCategory::class, [
+            'employee_advisor_id' => $assistant->getKey(),
+            'name' => 'Knowledge Base',
+            'description' => 'Internal article support responses.',
+        ]);
+
+        assertDatabaseMissing(EmployeeAdvisorCategory::class, [
+            'employee_advisor_id' => $otherAssistant->getKey(),
+            'name' => 'Knowledge Base',
+        ]);
+    });
+
+    it('validates required fields during employee advisor category import', function () {
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+        $assistant = AiAssistant::factory()->create();
+
+        expect(fn () => employeeCategoryImporter($user, $assistant)([
+            'name' => 'Housing',
+            'description' => null,
+        ]))->toThrow(ValidationException::class);
+    });
+
+    it('validates employee advisor category import uniqueness case-insensitively', function () {
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+        $assistant = AiAssistant::factory()->create();
+
+        EmployeeAdvisorCategory::factory()->state([
+            'employee_advisor_id' => $assistant->getKey(),
+            'name' => 'Support',
+        ])->create();
+
+        expect(fn () => employeeCategoryImporter($user, $assistant)([
+            'name' => 'support',
+            'description' => 'Duplicate name for the same assistant.',
+        ]))->toThrow(ValidationException::class);
+    });
+
+    it('imports a name freed by a soft deleted category', function () {
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+
+        $assistant = AiAssistant::factory()->create();
+
+        $category = EmployeeAdvisorCategory::factory()->state([
+            'employee_advisor_id' => $assistant->getKey(),
+            'name' => 'Help Desk',
+        ])->create();
+
+        $category->delete();
+
+        employeeCategoryImporter($user, $assistant)([
+            'name' => 'Help Desk',
+            'description' => 'Recreated after the original was soft deleted.',
+        ]);
+
+        assertDatabaseHas(EmployeeAdvisorCategory::class, [
+            'employee_advisor_id' => $assistant->getKey(),
+            'name' => 'Help Desk',
+            'description' => 'Recreated after the original was soft deleted.',
+            'deleted_at' => null,
+        ]);
+    });
 });
 
-test('hides import action when user lacks create permission', function () {
-    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
-    $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view']);
+describe('authorization', function () {
+    it('hides the `ImportAction` action without the `assistant_custom.create` permission', function () {
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+        $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view']);
 
-    $assistant = AiAssistant::factory()->create();
+        $assistant = AiAssistant::factory()->create();
 
-    actingAs($user);
+        actingAs($user);
 
-    livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
-        ->assertTableActionHidden(ImportAction::class)
-        ->assertTableActionVisible(ExportAction::class);
+        livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
+            ->assertTableActionHidden(ImportAction::class)
+            ->assertTableActionVisible(ExportAction::class);
+    });
 });

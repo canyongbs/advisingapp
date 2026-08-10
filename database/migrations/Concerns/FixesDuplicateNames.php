@@ -45,13 +45,16 @@ trait FixesDuplicateNames
 {
     /**
      * Order duplicate records so the first one is kept and the rest are renamed.
-     * Live (non-deleted) records are preferred over soft-deleted ones, then
-     * the oldest record is kept.
+     * On soft-deleting tables live records are preferred over soft-deleted ones,
+     * then the oldest record is kept.
      */
     protected function orderDuplicateRecords(Builder $query): Builder
     {
+        if ($this->usesSoftDeletes) {
+            $query->orderByRaw('deleted_at IS NULL DESC');
+        }
+
         return $query
-            ->orderByRaw('deleted_at IS NULL DESC')
             ->orderBy('created_at', 'asc')
             ->orderBy('id', 'asc');
     }

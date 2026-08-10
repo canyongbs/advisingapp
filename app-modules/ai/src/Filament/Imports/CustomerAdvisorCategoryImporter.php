@@ -59,7 +59,8 @@ class CustomerAdvisorCategoryImporter extends Importer
                         'string',
                         'max:255',
                         Rule::unique('customer_advisor_categories', 'name')
-                            ->where('customer_advisor_id', $importer->getCustomerAdvisorId()),
+                            ->where('customer_advisor_id', $importer->getCustomerAdvisorId())
+                            ->whereNull('deleted_at'),
                     ];
                 })
                 ->requiredMapping()

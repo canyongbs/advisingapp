@@ -170,7 +170,8 @@ class ManageEmployeeAdvisorCategories extends ManageRelatedRecords
                         /** @var AiAssistant $assistant */
                         $assistant = $this->getOwnerRecord();
 
-                        $rule->where('employee_advisor_id', $assistant->getKey());
+                        $rule->where('employee_advisor_id', $assistant->getKey())
+                            ->withoutTrashed();
                     }
                 )
                 ->maxLength(255)

@@ -59,7 +59,8 @@ class EmployeeAdvisorCategoryImporter extends Importer
                         'string',
                         'max:255',
                         Rule::unique('employee_advisor_categories', 'name')
-                            ->where('employee_advisor_id', $importer->getEmployeeAdvisorId()),
+                            ->where('employee_advisor_id', $importer->getEmployeeAdvisorId())
+                            ->whereNull('deleted_at'),
                     ];
                 })
                 ->requiredMapping()

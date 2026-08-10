@@ -170,7 +170,8 @@ class ManageCategories extends ManageRelatedRecords
                         /** @var CustomerAdvisor $customerAdvisor */
                         $customerAdvisor = $this->getOwnerRecord();
 
-                        $rule->where('customer_advisor_id', $customerAdvisor->getKey());
+                        $rule->where('customer_advisor_id', $customerAdvisor->getKey())
+                            ->withoutTrashed();
                     }
                 )
                 ->maxLength(255)
