@@ -60,13 +60,15 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
+        Schema::table($this->table, function (Blueprint $table) {
+          $table->dropUnique($this->uniqueConstraint);
+        });
+
             $this->fixDuplicates();
 
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
 
             Schema::table($this->table, function (Blueprint $table) {
-                $table->dropUnique($this->uniqueConstraint);
-
                 $table->uniqueIndex([...$this->groupByColumns, $this->column], $this->uniqueConstraint)
                     ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
