@@ -65,6 +65,12 @@ class EmployeeAdvisorQuestionImporter extends Importer
             ImportColumn::make('category')
                 ->label('Category')
                 ->rules(['required', 'string', 'max:255'])
+                ->fillRecordUsing(function (): void {
+                    // The category name is resolved to a category_id in resolveRecord().
+                    // Without this callback, Filament's default fillRecord() behavior would
+                    // set a non-existent 'category' attribute on the model, causing an
+                    // "undefined column" error on save.
+                })
                 ->requiredMapping()
                 ->example('Knowledge Base'),
         ];

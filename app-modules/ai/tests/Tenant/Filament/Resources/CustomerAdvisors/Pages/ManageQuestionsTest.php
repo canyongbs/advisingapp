@@ -60,13 +60,13 @@ use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 
-test('Create Customer Advisor Question is gated with proper access control', function () {
+beforeEach(function () {
     $settings = app(LicenseSettings::class);
-
     $settings->data->addons->customerAdvisors = true;
-
     $settings->save();
+});
 
+test('Create Customer Advisor Question is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $customerAdvisor = CustomerAdvisor::factory()->create();
@@ -93,12 +93,6 @@ test('Create Customer Advisor Question is gated with proper access control', fun
 });
 
 test('can create Customer Advisor Question', function () {
-    $settings = app(LicenseSettings::class);
-
-    $settings->data->addons->customerAdvisors = true;
-
-    $settings->save();
-
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $customerAdvisor = CustomerAdvisor::factory()->create();
@@ -126,12 +120,6 @@ test('can create Customer Advisor Question', function () {
 });
 
 test('can create multiple Customer Advisor Questions at once', function () {
-    $settings = app(LicenseSettings::class);
-
-    $settings->data->addons->customerAdvisors = true;
-
-    $settings->save();
-
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $customerAdvisor = CustomerAdvisor::factory()->create();
@@ -158,12 +146,6 @@ test('can create multiple Customer Advisor Questions at once', function () {
 });
 
 test('Create Customer Advisor Question validates the inputs', function (CustomerAdvisorQuestionRequestFactory $data, array $errors) {
-    $settings = app(LicenseSettings::class);
-
-    $settings->data->addons->customerAdvisors = true;
-
-    $settings->save();
-
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
@@ -216,12 +198,6 @@ test('Create Customer Advisor Question validates the inputs', function (Customer
 );
 
 test('can edit Customer Advisor Question', function () {
-    $settings = app(LicenseSettings::class);
-
-    $settings->data->addons->customerAdvisors = true;
-
-    $settings->save();
-
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update']);
@@ -247,12 +223,6 @@ test('can edit Customer Advisor Question', function () {
 });
 
 test('Edit Customer Advisor Question validates the inputs', function (CustomerAdvisorQuestionRequestFactory $data, array $errors) {
-    $settings = app(LicenseSettings::class);
-
-    $settings->data->addons->customerAdvisors = true;
-
-    $settings->save();
-
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
     $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.*.update']);
