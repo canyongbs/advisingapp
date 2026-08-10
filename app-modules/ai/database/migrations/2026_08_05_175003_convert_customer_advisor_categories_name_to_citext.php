@@ -53,7 +53,9 @@ return new class () extends Migration {
 
     protected int $chunkSize = 500;
 
-    protected bool $usesSoftDeletes = false;
+    protected bool $usesSoftDeletes = true;
+
+    private string $uniqueConstraint = 'qna_advisor_categories_qna_advisor_id_name_unique';
 
     public function up(): void
     {
@@ -63,7 +65,9 @@ return new class () extends Migration {
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
 
             Schema::table($this->table, function (Blueprint $table) {
-                $table->uniqueIndex([...$this->groupByColumns, $this->column], 'qna_advisor_categories_qna_advisor_id_foreign')
+                $table->dropUnique($this->uniqueConstraint);
+
+                $table->uniqueIndex([...$this->groupByColumns, $this->column], $this->uniqueConstraint)
                     ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
         });
@@ -73,7 +77,9 @@ return new class () extends Migration {
     {
         DB::transaction(function () {
             Schema::table($this->table, function (Blueprint $table) {
-                $table->dropUniqueIndex('qna_advisor_categories_qna_advisor_id_foreign');
+                $table->dropUniqueIndex($this->uniqueConstraint);
+
+                $table->unique([...$this->groupByColumns, $this->column], $this->uniqueConstraint);
             });
 
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE varchar(255)");
