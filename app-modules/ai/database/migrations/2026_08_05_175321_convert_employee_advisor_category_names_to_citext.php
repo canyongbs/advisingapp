@@ -60,9 +60,9 @@ return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function () {
-        Schema::table($this->table, function (Blueprint $table) {
-          $table->dropUnique($this->uniqueConstraint);
-        });
+            Schema::table($this->table, function (Blueprint $table) {
+                $table->dropUnique($this->uniqueConstraint);
+            });
 
             $this->fixDuplicates();
 
