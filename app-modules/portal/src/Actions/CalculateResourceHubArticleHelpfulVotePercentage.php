@@ -42,13 +42,13 @@ class CalculateResourceHubArticleHelpfulVotePercentage
 {
     public static function execute(ResourceHubArticle $article): int
     {
-        $totalVotes = $article->votes->count();
+        $totalVotes = $article->votes()->count();
 
         if ($totalVotes === 0) {
             return 0;
         }
 
-        $helpfulVotes = $article->votes->where('is_helpful', true)->count();
+        $helpfulVotes = $article->votes()->where('is_helpful', true)->count();
 
         return (int) round(($helpfulVotes / $totalVotes) * 100);
     }
