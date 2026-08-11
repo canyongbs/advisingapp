@@ -36,37 +36,22 @@
 
 namespace AdvisingApp\Campaign\Filament\Actions;
 
-use AdvisingApp\Campaign\Models\Campaign;
-use CanyonGBS\Common\Filament\Actions\ArchiveAction;
-use Filament\Actions\Action;
-use Filament\Notifications\Notification;
-use Throwable;
+use CanyonGBS\Common\Filament\Actions\ArchiveBulkAction;
+use Filament\Actions\BulkAction;
 
-class ArchiveCampaignAction
+class ArchiveCampaignBulkAction
 {
-    public static function make(): Action
+    public static function make(): BulkAction
     {
-        return ArchiveAction::make()
-            ->label(fn (Campaign $record): string => $record->enabled ? 'Disable and Archive' : 'Archive')
-            ->modalHeading(fn (Campaign $record): string => $record->enabled ? 'Disable and Archive Campaign' : 'Archive Campaign')
-            ->modalSubmitActionLabel(fn (Campaign $record): string => $record->enabled ? 'Disable and Archive' : 'Archive')
-            ->action(function (Campaign $record): void {
-                try {
-                    $record->archive();
+        // Relies on the default per-record fetching: the action must call $record->archive()
+        // per record so Campaign's archiving event fires and disables enabled campaigns. Do not
+        // set fetchSelectedRecords(false) — query-level archive bypasses model events and would
+        // archive campaigns while leaving them enabled.
+        return ArchiveBulkAction::make()
+            ->modalDescription(function (ArchiveBulkAction $action): string {
+                $count = $action->getSelectedRecordsQuery()->count();
 
-                    Notification::make()
-                        ->success()
-                        ->title('Campaign archived successfully')
-                        ->send();
-                } catch (Throwable $exception) {
-                    report($exception);
-
-                    Notification::make()
-                        ->danger()
-                        ->title('Failed to archive campaign')
-                        ->body($exception->getMessage())
-                        ->send();
-                }
+                return "This action will disable and archive {$count} selected campaign(s).";
             });
     }
 }
