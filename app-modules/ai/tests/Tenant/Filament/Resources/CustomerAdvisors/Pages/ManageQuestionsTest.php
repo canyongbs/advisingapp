@@ -400,7 +400,7 @@ it('imports customer advisor questions through the `ImportAction` using the advi
     actingAs($user);
 
     $csv = UploadedFile::fake()->createWithContent(
-        'customer-questions.csv',
+        'q.csv',
         "question,answer,category\nHow do I apply?,Apply online.,Admissions\n",
     );
 

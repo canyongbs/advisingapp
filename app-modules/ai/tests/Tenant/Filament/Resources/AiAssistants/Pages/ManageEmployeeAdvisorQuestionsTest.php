@@ -428,7 +428,7 @@ it('imports employee advisor questions through the `ImportAction` using the assi
     actingAs($user);
 
     $csv = UploadedFile::fake()->createWithContent(
-        'employee-questions.csv',
+        'q.csv',
         "question,answer,category\nWhat is the password reset process?,Go to login and click forgot password.,Knowledge Base\n",
     );
 
