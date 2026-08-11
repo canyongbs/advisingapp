@@ -34,21 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\DataTransferObjects;
+namespace AdvisingApp\Portal\Http\Requests;
 
-use Spatie\LaravelData\Data;
+use Illuminate\Foundation\Http\FormRequest;
 
-class ResourceHubArticleData extends Data
+class StoreResourceHubArticleVoteRequest extends FormRequest
 {
     /**
-     * @param  array{id: string, is_helpful: bool}|null  $vote
+     * @return array<string, array<int, string>>
      */
-    public function __construct(
-        public string $id,
-        public ?string $categoryId,
-        public string $name,
-        public ?string $lastUpdated,
-        public ?string $content,
-        public ?array $vote = null,
-    ) {}
+    public function rules(): array
+    {
+        return [
+            'article_vote' => ['nullable', 'boolean'],
+            'article_id' => ['required'],
+        ];
+    }
 }

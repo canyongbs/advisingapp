@@ -39,6 +39,7 @@ namespace AdvisingApp\ResourceHub\Models;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
+use AdvisingApp\Portal\Models\ResourceHubArticleVote;
 use AdvisingApp\ResourceHub\Observers\ResourceHubArticleObserver;
 use App\Models\BaseModel;
 use App\Models\Media;
@@ -188,6 +189,14 @@ class ResourceHubArticle extends BaseModel implements AiFile, Auditable, HasMedi
     public function upvotes(): HasMany
     {
         return $this->hasMany(ResourceHubArticleUpvote::class, 'resource_hub_item_id');
+    }
+
+    /**
+     * @return HasMany<ResourceHubArticleVote, $this>
+     */
+    public function votes(): HasMany
+    {
+        return $this->hasMany(ResourceHubArticleVote::class, 'article_id');
     }
 
     public function isUpvoted(): bool

@@ -36,11 +36,13 @@
 
 namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
+use AdvisingApp\Portal\Actions\ResolveResourceHubPortalVoter;
 use AdvisingApp\Portal\DataTransferObjects\ResourceHubArticleData;
 use AdvisingApp\Portal\DataTransferObjects\ResourceHubCategoryData;
 use AdvisingApp\ResourceHub\Actions\GenerateTableOfContents;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use App\Features\ResourceHubArticleFeedbackFeature;
 use App\Http\Controllers\Controller;
 use App\Settings\DisplaySettings;
 use Illuminate\Http\JsonResponse;
@@ -50,6 +52,28 @@ class ResourceHubPortalArticleController extends Controller
     public function show(ResourceHubCategory $category, ResourceHubArticle $article): JsonResponse
     {
         $article->increment('portal_view_count');
+
+        $vote = null;
+        $helpfulVotePercentage = 0;
+
+        // Guarded so viewing an article never depends on the votes/guests tables before this tenant's migration runs.
+        if (ResourceHubArticleFeedbackFeature::active()) {
+            $voter = ResolveResourceHubPortalVoter::execute();
+
+            $vote = $article->votes()
+                ->where('voter_id', $voter->getKey())
+                ->where('voter_type', $voter->getMorphClass())
+                ->select(['id', 'is_helpful'])
+                ->first()
+                ?->toArray();
+
+            $totalVotes = $article->votes->count();
+            $helpfulVotes = $article->votes->where('is_helpful', true)->count();
+
+            if ($totalVotes > 0) {
+                $helpfulVotePercentage = (int) round(($helpfulVotes / $totalVotes) * 100);
+            }
+        }
 
         $content = $article->article_details ? $article->renderRichContent('article_details') : '';
 
@@ -73,8 +97,10 @@ class ResourceHubPortalArticleController extends Controller
                 'name' => $article->title,
                 'lastUpdated' => $article->updated_at->setTimezone(app(DisplaySettings::class)->getTimezone())->format('M j, Y g:i a (T)'),
                 'content' => $content,
+                'vote' => $vote,
             ]),
             'portal_view_count' => $article->portal_view_count,
+            'helpful_vote_percentage' => $helpfulVotePercentage,
         ]);
     }
 }
