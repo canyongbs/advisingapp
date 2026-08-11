@@ -34,25 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Requests;
+namespace AdvisingApp\Portal\Actions;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 
-class StoreResourceHubArticleVoteRequest extends FormRequest
+class CalculateResourceHubArticleHelpfulVotePercentage
 {
-    /**
-     * @return array<string, array<int, mixed>>
-     */
-    public function rules(): array
+    public static function execute(ResourceHubArticle $article): int
     {
-        return [
-            'article_vote' => ['nullable', 'boolean'],
-            'article_id' => [
-                'required',
-                'uuid',
-                Rule::exists('resource_hub_articles', 'id')->where('public', true),
-            ],
-        ];
+        $totalVotes = $article->votes->count();
+
+        if ($totalVotes === 0) {
+            return 0;
+        }
+
+        $helpfulVotes = $article->votes->where('is_helpful', true)->count();
+
+        return (int) round(($helpfulVotes / $totalVotes) * 100);
     }
 }

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
+use AdvisingApp\Portal\Actions\CalculateResourceHubArticleHelpfulVotePercentage;
 use AdvisingApp\Portal\Actions\ResolveResourceHubPortalVoter;
 use AdvisingApp\Portal\Http\Requests\StoreResourceHubArticleVoteRequest;
 use AdvisingApp\Portal\Models\ResourceHubArticleVote;
@@ -77,14 +78,7 @@ class StoreResourceHubArticleVoteController extends Controller
 
         $article = ResourceHubArticle::find($request->article_id);
 
-        $totalVotes = $article?->votes->count() ?? 0;
-        $helpfulVotes = $article?->votes->where('is_helpful', true)->count() ?? 0;
-
-        $helpfulVotePercentage = 0;
-
-        if ($totalVotes > 0) {
-            $helpfulVotePercentage = (int) round(($helpfulVotes / $totalVotes) * 100);
-        }
+        $helpfulVotePercentage = $article ? CalculateResourceHubArticleHelpfulVotePercentage::execute($article) : 0;
 
         return response()->json([
             'is_helpful' => $vote?->is_helpful,
