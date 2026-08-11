@@ -51,6 +51,7 @@ use Filament\Actions\ExportAction;
 use Filament\Actions\ImportAction;
 use Filament\Actions\Imports\Exceptions\RowImportFailedException;
 use Filament\Forms\Components\Repeater;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
@@ -411,6 +412,44 @@ it('imports employee advisor questions scoped to the selected assistant with cas
     ]);
 });
 
+it('imports employee advisor questions through the `ImportAction` using the assistant scoped to the page', function () {
+    config()->set('queue.default', 'sync');
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+    $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view', 'assistant_custom.create']);
+
+    $assistant = AiAssistant::factory()->create();
+
+    $category = EmployeeAdvisorCategory::factory()->state([
+        'employee_advisor_id' => $assistant->getKey(),
+        'name' => 'Knowledge Base',
+    ])->create();
+
+    actingAs($user);
+
+    $csv = UploadedFile::fake()->createWithContent(
+        'employee-questions.csv',
+        "question,answer,category\nWhat is the password reset process?,Go to login and click forgot password.,Knowledge Base\n",
+    );
+
+    livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
+        ->callTableAction(ImportAction::class, data: [
+            'file' => $csv,
+            'columnMap' => [
+                'question' => 'question',
+                'answer' => 'answer',
+                'category' => 'category',
+            ],
+        ])
+        ->assertNotified();
+
+    assertDatabaseHas(EmployeeAdvisorQuestion::class, [
+        'category_id' => $category->getKey(),
+        'question' => 'What is the password reset process?',
+        'answer' => 'Go to login and click forgot password.',
+    ]);
+});
+
 it('fails employee advisor question import cleanly when category does not exist', function () {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
@@ -489,7 +528,7 @@ it('validates required fields during employee advisor question import', function
         'question' => 'What is the password reset?',
         'answer' => 'Go to login.',
         'category' => null,
-    ]))->toThrow(RowImportFailedException::class);
+    ]))->toThrow(ValidationException::class);
 });
 
 it('shows import and export actions on employee questions page', function () {

@@ -42,7 +42,6 @@ use Filament\Actions\Imports\Exceptions\RowImportFailedException;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
-use Illuminate\Support\Str;
 use InvalidArgumentException;
 
 class CustomerAdvisorQuestionImporter extends Importer
@@ -65,12 +64,19 @@ class CustomerAdvisorQuestionImporter extends Importer
             ImportColumn::make('category')
                 ->label('Category')
                 ->rules(['required', 'string', 'max:255'])
-                ->fillRecordUsing(function (): void {
-                    // The category name is resolved to a category_id in resolveRecord().
-                    // Without this callback, Filament's default fillRecord() behavior would
-                    // set a non-existent 'category' attribute on the model, causing an
-                    // "undefined column" error on save.
-                })
+                ->relationship(
+                    resolveUsing: function (CustomerAdvisorQuestionImporter $importer, string $state): CustomerAdvisorCategory {
+                        $category = CustomerAdvisorCategory::where('customer_advisor_id', $importer->getCustomerAdvisorId())
+                            ->where('name', $state)
+                            ->first();
+
+                        if (! $category) {
+                            throw new RowImportFailedException("The category '{$state}' is invalid.");
+                        }
+
+                        return $category;
+                    },
+                )
                 ->requiredMapping()
                 ->example('Admissions'),
         ];
@@ -78,25 +84,7 @@ class CustomerAdvisorQuestionImporter extends Importer
 
     public function resolveRecord(): ?CustomerAdvisorQuestion
     {
-        $categoryName = $this->data['category'] ?? null;
-        $advisorId = $this->getCustomerAdvisorId();
-
-        if (blank($categoryName)) {
-            throw new RowImportFailedException('The category field is required.');
-        }
-
-        $category = CustomerAdvisorCategory::where('customer_advisor_id', $advisorId)
-            ->whereRaw('LOWER(name) = ?', [Str::lower($categoryName)])
-            ->first();
-
-        if (! $category) {
-            throw new RowImportFailedException("The category '{$categoryName}' is invalid.");
-        }
-
-        $question = new CustomerAdvisorQuestion();
-        $question->category_id = $category->getKey();
-
-        return $question;
+        return new CustomerAdvisorQuestion();
     }
 
     public static function getCompletedNotificationBody(Import $import): string

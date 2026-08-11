@@ -167,14 +167,7 @@ class ManageEmployeeAdvisorQuestions extends ManageRelatedRecords
                     ->authorize('viewAny', EmployeeAdvisorQuestion::class)
                     ->formats([
                         ExportFormat::Csv,
-                    ])
-                    ->modifyQueryUsing(function (Builder $query): Builder {
-                        $assistant = $this->getOwnerRecord();
-
-                        assert($assistant instanceof AiAssistant);
-
-                        return $query->whereIn('category_id', $assistant->categories()->select('id'));
-                    }),
+                    ]),
             ])
             ->recordActions([
                 EditAction::make()

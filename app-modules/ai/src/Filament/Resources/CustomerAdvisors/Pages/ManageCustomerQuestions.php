@@ -165,13 +165,7 @@ class ManageCustomerQuestions extends ManageRelatedRecords
                     ->authorize('viewAny', CustomerAdvisorQuestion::class)
                     ->formats([
                         ExportFormat::Csv,
-                    ])
-                    ->modifyQueryUsing(function (Builder $query): Builder {
-                        /** @var CustomerAdvisor $customerAdvisor */
-                        $customerAdvisor = $this->getOwnerRecord();
-
-                        return $query->whereIn('category_id', $customerAdvisor->categories()->select('id'));
-                    }),
+                    ]),
             ])
             ->recordActions([
                 EditAction::make()

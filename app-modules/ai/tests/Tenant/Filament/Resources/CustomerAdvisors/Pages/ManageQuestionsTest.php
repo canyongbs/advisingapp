@@ -51,6 +51,7 @@ use Filament\Actions\ExportAction;
 use Filament\Actions\ImportAction;
 use Filament\Actions\Imports\Exceptions\RowImportFailedException;
 use Filament\Forms\Components\Repeater;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 
@@ -383,6 +384,44 @@ it('imports customer advisor questions scoped to the selected advisor with case-
     ]);
 });
 
+it('imports customer advisor questions through the `ImportAction` using the advisor scoped to the page', function () {
+    config()->set('queue.default', 'sync');
+
+    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
+
+    $advisor = CustomerAdvisor::factory()->create();
+
+    $category = CustomerAdvisorCategory::factory()->state([
+        'customer_advisor_id' => $advisor->getKey(),
+        'name' => 'Admissions',
+    ])->create();
+
+    actingAs($user);
+
+    $csv = UploadedFile::fake()->createWithContent(
+        'customer-questions.csv',
+        "question,answer,category\nHow do I apply?,Apply online.,Admissions\n",
+    );
+
+    livewire(ManageCustomerQuestions::class, ['record' => $advisor->getKey()])
+        ->callTableAction(ImportAction::class, data: [
+            'file' => $csv,
+            'columnMap' => [
+                'question' => 'question',
+                'answer' => 'answer',
+                'category' => 'category',
+            ],
+        ])
+        ->assertNotified();
+
+    assertDatabaseHas(CustomerAdvisorQuestion::class, [
+        'category_id' => $category->getKey(),
+        'question' => 'How do I apply?',
+        'answer' => 'Apply online.',
+    ]);
+});
+
 it('fails customer advisor question import cleanly when category does not exist', function () {
     $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
@@ -461,7 +500,7 @@ it('validates required fields during customer advisor question import', function
         'question' => 'How do I apply?',
         'answer' => 'Apply online.',
         'category' => null,
-    ]))->toThrow(RowImportFailedException::class);
+    ]))->toThrow(ValidationException::class);
 });
 
 it('shows import and export actions on customer questions page', function () {
