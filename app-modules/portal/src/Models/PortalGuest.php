@@ -34,31 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Providers;
+namespace AdvisingApp\Portal\Models;
 
-use AdvisingApp\Portal\Models\PortalGuest;
-use AdvisingApp\Portal\Models\ResourceHubArticleVote;
-use AdvisingApp\Portal\PortalPlugin;
-use AdvisingApp\Portal\Settings\SettingsProperties\PortalSettingsProperty;
-use Filament\Panel;
-use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\ServiceProvider;
+use App\Models\Attributes\NoPermissions;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class PortalServiceProvider extends ServiceProvider
+/**
+ * @mixin IdeHelperPortalGuest
+ */
+#[NoPermissions]
+class PortalGuest extends BaseModel
 {
-    public function register()
-    {
-        Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new PortalPlugin()));
-    }
+    use SoftDeletes;
 
-    public function boot()
+    /**
+     * @return MorphMany<ResourceHubArticleVote, $this>
+     */
+    public function resourceHubArticleVotes(): MorphMany
     {
-        Relation::morphMap([
-            'portal_settings_property' => PortalSettingsProperty::class,
-            'portal_guest' => PortalGuest::class,
-            'resource_hub_article_vote' => ResourceHubArticleVote::class,
-        ]);
-
-        $this->loadRoutesFrom(__DIR__ . '/../../routes/portals.php');
+        return $this->morphMany(ResourceHubArticleVote::class, 'voter');
     }
 }
