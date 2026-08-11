@@ -50,8 +50,8 @@ return new class () extends Migration {
                 // Voter can be a Student, whose primary key is a non-UUID `sisid`, so this can't use uuidMorphs.
                 $table->string('voter_type');
                 $table->string('voter_id');
-                $table->index(['voter_type', 'voter_id']);
                 $table->foreignUuid('article_id')->constrained('resource_hub_articles');
+                $table->unique(['article_id', 'voter_type', 'voter_id']);
                 $table->timestamps();
             });
 
