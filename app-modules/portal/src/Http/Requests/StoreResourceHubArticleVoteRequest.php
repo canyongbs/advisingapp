@@ -51,7 +51,7 @@ class StoreResourceHubArticleVoteRequest extends FormRequest
             'article_id' => [
                 'required',
                 'uuid',
-                Rule::exists('resource_hub_articles', 'id')->where('public', true),
+                Rule::exists('resource_hub_articles', 'id')->where('public', true)->whereNull('deleted_at'),
             ],
         ];
     }
