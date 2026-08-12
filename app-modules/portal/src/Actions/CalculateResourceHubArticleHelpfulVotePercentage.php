@@ -43,6 +43,7 @@ class CalculateResourceHubArticleHelpfulVotePercentage
     public static function execute(ResourceHubArticle $article): int
     {
         $counts = $article->votes()
+            ->toBase()
             ->selectRaw('count(*) as total, count(*) filter (where is_helpful) as helpful')
             ->first();
 
