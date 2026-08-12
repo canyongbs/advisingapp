@@ -72,4 +72,3 @@ have no active-flow branch to fall back to:
 - The `otp-code.login` and `otp-code.verify` route registrations in
   `app-modules/authorization/routes/web.php` (and their `OtpLoginCodeController` /
   `VerifyOtpLoginCodeController` imports)
-
