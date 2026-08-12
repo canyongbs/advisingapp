@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Models;
 
 use AdvisingApp\Audit\Models\Concerns\Auditable as AuditableTrait;
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\StudentDataModel\Enums\PhoneHealthStatus;
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 use AdvisingApp\StudentDataModel\Models\Concerns\IsTextable;
@@ -107,6 +108,13 @@ class StudentPhoneNumber extends BaseModel implements Auditable
         if ($this->smsOptOut()->exists()) {
             return PhoneHealthStatus::OptedOut;
         }
+
+        // In SMS demo mode we simulate delivery to any number, so the Telnyx
+        // number-verification lookup is not required to be considered healthy.
+        if (app(TwilioSettings::class)->is_demo_mode_enabled) {
+            return PhoneHealthStatus::Healthy;
+        }
+
         $hasTextableLookup = $this->phoneNumberLookup()
             ->whereIn('status', PhoneNumberLookupStatus::textableStatuses())
             ->exists();

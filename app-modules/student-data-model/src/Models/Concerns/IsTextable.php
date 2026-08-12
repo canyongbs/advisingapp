@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Models\Concerns;
 
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 
 /**
@@ -53,6 +54,12 @@ trait IsTextable
 
         if ($this->bounced()->exists()) {
             return false;
+        }
+
+        // In SMS demo mode we simulate delivery to any number, so the Telnyx
+        // number-verification lookup is not required.
+        if (app(TwilioSettings::class)->is_demo_mode_enabled) {
+            return true;
         }
 
         return $this->phoneNumberLookup()

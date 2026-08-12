@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
@@ -108,6 +109,52 @@ it('returns false when the primary phone is both bounced and opted out', functio
 
     BouncedPhoneNumber::factory()->create(['number' => $number]);
     SmsOptOutPhoneNumber::factory()->create(['number' => $number]);
+
+    assertFalse($student->canReceiveSms());
+});
+
+it('returns true in SMS demo mode even when the primary phone has no textable Telnyx lookup', function () {
+    $student = Student::factory()->create();
+
+    // Simulate a phone without a Telnyx lookup, which normally blocks SMS.
+    $student->primaryPhoneNumber->phoneNumberLookup()->delete();
+    $student->refresh();
+
+    assertFalse($student->canReceiveSms());
+    assertFalse($student->hasValidSms());
+
+    $settings = app(TwilioSettings::class);
+    $settings->is_demo_mode_enabled = true;
+    $settings->save();
+
+    assertTrue($student->canReceiveSms());
+    assertTrue($student->hasValidSms());
+});
+
+it('still returns false in SMS demo mode when the primary phone is opted out', function () {
+    $settings = app(TwilioSettings::class);
+    $settings->is_demo_mode_enabled = true;
+    $settings->save();
+
+    $student = Student::factory()->create();
+
+    SmsOptOutPhoneNumber::factory()->create([
+        'number' => $student->primaryPhoneNumber->number,
+    ]);
+
+    assertFalse($student->canReceiveSms());
+});
+
+it('still returns false in SMS demo mode when the primary phone has previously bounced', function () {
+    $settings = app(TwilioSettings::class);
+    $settings->is_demo_mode_enabled = true;
+    $settings->save();
+
+    $student = Student::factory()->create();
+
+    BouncedPhoneNumber::factory()->create([
+        'number' => $student->primaryPhoneNumber->number,
+    ]);
 
     assertFalse($student->canReceiveSms());
 });

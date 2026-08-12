@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\StudentDataModel\Models\Scopes;
 
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -52,6 +53,12 @@ class Textable
     public function __invoke(Builder $query): Builder
     {
         $query->whereDoesntHave('smsOptOut')->whereDoesntHave('bounced');
+
+        // In SMS demo mode we simulate delivery to any number, so a textable
+        // Telnyx lookup is not required for a number to count as textable.
+        if (app(TwilioSettings::class)->is_demo_mode_enabled) {
+            return $query;
+        }
 
         return $query->whereHas(
             'phoneNumberLookup',
