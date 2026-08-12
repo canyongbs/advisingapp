@@ -51,7 +51,11 @@ class ConfirmOneTimeLoginCode extends SimplePage
                 OneTimeCodeInput::make('code')
                     ->label('Verification code')
                     ->autofocus()
-                    ->required(),
+                    ->required()
+                    ->extraAttributes(['class' => 'mx-auto'])
+                    ->extraFieldWrapperAttributes([
+                        'class' => 'flex flex-col items-center',
+                    ]),
             ])
             ->statePath('data');
     }
