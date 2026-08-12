@@ -36,13 +36,15 @@
 
 namespace AdvisingApp\Portal\Actions;
 
+use AdvisingApp\Portal\Models\ResourceHubArticleVote;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 
 class CalculateResourceHubArticleHelpfulVotePercentage
 {
     public static function execute(ResourceHubArticle $article): int
     {
-        $counts = $article->votes()
+        $counts = ResourceHubArticleVote::query()
+            ->where('article_id', $article->getKey())
             ->toBase()
             ->selectRaw('count(*) as total, count(*) filter (where is_helpful) as helpful')
             ->first();

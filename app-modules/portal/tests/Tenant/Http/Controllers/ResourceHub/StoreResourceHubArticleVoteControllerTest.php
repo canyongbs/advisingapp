@@ -54,7 +54,7 @@ beforeEach(function () {
 });
 
 it('creates a vote for an anonymous guest and starts a guest session', function () {
-    $article = ResourceHubArticle::factory()->create(['public' => true]);
+    $article = ResourceHubArticle::factory()->public()->create();
 
     $response = postJson(route('portals.resource-hub.api.article-vote.store'), [
         'article_vote' => true,
@@ -79,7 +79,7 @@ it('creates a vote for an anonymous guest and starts a guest session', function 
 it('creates a vote for an authenticated student', function () {
     $student = Student::factory()->create();
 
-    $article = ResourceHubArticle::factory()->create(['public' => true]);
+    $article = ResourceHubArticle::factory()->public()->create();
 
     $response = actingAs($student, 'student')
         ->postJson(route('portals.resource-hub.api.article-vote.store'), [
@@ -104,7 +104,7 @@ it('creates a vote for an authenticated student', function () {
 it('creates a vote for an authenticated prospect', function () {
     $prospect = Prospect::factory()->create();
 
-    $article = ResourceHubArticle::factory()->create(['public' => true]);
+    $article = ResourceHubArticle::factory()->public()->create();
 
     $response = actingAs($prospect, 'prospect')
         ->postJson(route('portals.resource-hub.api.article-vote.store'), [
@@ -126,7 +126,7 @@ it('creates a vote for an authenticated prospect', function () {
 it('switches an existing vote instead of creating a duplicate', function () {
     $student = Student::factory()->create();
 
-    $article = ResourceHubArticle::factory()->create(['public' => true]);
+    $article = ResourceHubArticle::factory()->public()->create();
 
     actingAs($student, 'student')->postJson(route('portals.resource-hub.api.article-vote.store'), [
         'article_vote' => true,
@@ -152,7 +152,7 @@ it('switches an existing vote instead of creating a duplicate', function () {
 it('removes the vote when toggled off', function () {
     $student = Student::factory()->create();
 
-    $article = ResourceHubArticle::factory()->create(['public' => true]);
+    $article = ResourceHubArticle::factory()->public()->create();
 
     actingAs($student, 'student')->postJson(route('portals.resource-hub.api.article-vote.store'), [
         'article_vote' => true,
@@ -177,7 +177,7 @@ it('removes the vote when toggled off', function () {
 });
 
 it('calculates the helpful vote percentage across all voters', function () {
-    $article = ResourceHubArticle::factory()->create(['public' => true]);
+    $article = ResourceHubArticle::factory()->public()->create();
 
     ResourceHubArticleVote::factory()->for($article, 'resourceHubArticle')->create(['is_helpful' => true]);
     ResourceHubArticleVote::factory()->for($article, 'resourceHubArticle')->create(['is_helpful' => true]);
@@ -196,7 +196,7 @@ it('calculates the helpful vote percentage across all voters', function () {
 it('does not persist a vote while the feature flag is inactive', function () {
     ResourceHubArticleFeedbackFeature::deactivate();
 
-    $article = ResourceHubArticle::factory()->create(['public' => true]);
+    $article = ResourceHubArticle::factory()->public()->create();
 
     $response = postJson(route('portals.resource-hub.api.article-vote.store'), [
         'article_vote' => true,

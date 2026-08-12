@@ -50,12 +50,12 @@ class ResolveResourceHubPortalVoter
             return $voter;
         }
 
-        $guest = session()->has('guest_id') ? PortalGuest::find(session('guest_id')) : null;
+        $guest = session()->has('resource_hub_guest_id') ? PortalGuest::find(session('resource_hub_guest_id')) : null;
 
         if (! $guest) {
             $guest = PortalGuest::create();
 
-            session()->put('guest_id', $guest->getKey());
+            session()->put('resource_hub_guest_id', $guest->getKey());
         }
 
         return $guest;

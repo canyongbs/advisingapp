@@ -40,6 +40,7 @@ use AdvisingApp\Portal\Actions\CalculateResourceHubArticleHelpfulVotePercentage;
 use AdvisingApp\Portal\Actions\ResolveResourceHubPortalVoter;
 use AdvisingApp\Portal\DataTransferObjects\ResourceHubArticleData;
 use AdvisingApp\Portal\DataTransferObjects\ResourceHubCategoryData;
+use AdvisingApp\Portal\Models\ResourceHubArticleVote;
 use AdvisingApp\ResourceHub\Actions\GenerateTableOfContents;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
@@ -61,7 +62,8 @@ class ResourceHubPortalArticleController extends Controller
         if (ResourceHubArticleFeedbackFeature::active()) {
             $voter = ResolveResourceHubPortalVoter::execute();
 
-            $vote = $article->votes()
+            $vote = ResourceHubArticleVote::query()
+                ->where('article_id', $article->getKey())
                 ->where('voter_id', $voter->getKey())
                 ->where('voter_type', $voter->getMorphClass())
                 ->select(['id', 'is_helpful'])
