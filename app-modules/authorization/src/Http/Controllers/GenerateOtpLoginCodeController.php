@@ -77,7 +77,7 @@ class GenerateOtpLoginCodeController
 
                 $code = ($this->generateOtpLoginCode)($user, $expiresAt);
 
-                $user->notify(new OtpCodeNotification((int) $code));
+                $user->notify(new OtpCodeNotification($code));
 
                 return response()->json([
                     'link' => URL::temporarySignedRoute(
@@ -105,7 +105,7 @@ class GenerateOtpLoginCodeController
                 return ['otpCode' => $otpCode, 'code' => $code];
             });
 
-            $user->notify(new OtpCodeNotification($code));
+            $user->notify(new OtpCodeNotification((string) $code));
 
             return response()->json([
                 'link' => URL::temporarySignedRoute(

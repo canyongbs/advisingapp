@@ -73,8 +73,3 @@ have no active-flow branch to fall back to:
   `app-modules/authorization/routes/web.php` (and their `OtpLoginCodeController` /
   `VerifyOtpLoginCodeController` imports)
 
-Also worth fixing while in this area: `AdvisingApp\Authorization\Notifications\OtpCodeNotification`
-takes `int $code` and renders it unpadded, so a zero-padded code (e.g. `007123`) displays as
-`7123` in the email and no longer matches the hashed stored code. Once the legacy flow's plain
-`int` code generation is gone, change `OtpCodeNotification::$code` to `string` and drop the
-`(int)` casts at both call sites (`GenerateOtpLoginCodeController`, `SetPasswordNotification`).

@@ -34,39 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Notifications;
-
-use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Authorization\Notifications\OtpCodeNotification;
 use App\Models\User;
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
 
-#[SystemNotification]
-class OtpCodeNotification extends Notification
-{
-    use Queueable;
+it('includes the exact code in the mail message', function () {
+    $user = User::factory()->create();
 
-    public function __construct(
-        protected string $code,
-    ) {}
+    $notification = new OtpCodeNotification('123456');
 
-    /**
-     * @return array<int, string>
-     */
-    public function via(User $notifiable): array
-    {
-        return ['mail'];
-    }
+    $mailMessage = $notification->toMail($user);
 
-    public function toMail(User $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->subject('Your Login Verification Code')
-            ->greeting('Hello ' . $notifiable->name . ',')
-            ->line('Your one-time login verification code is:')
-            ->line("**{$this->code}**")
-            ->line('This code will expire in 20 minutes.')
-            ->line('If you did not request this code, please ignore this email.');
-    }
-}
+    expect($mailMessage->introLines)->toContain('**123456**');
+});
+
+it('preserves leading zeros in the mail message', function () {
+    $user = User::factory()->create();
+
+    $notification = new OtpCodeNotification('007123');
+
+    $mailMessage = $notification->toMail($user);
+
+    expect($mailMessage->introLines)
+        ->toContain('**007123**')
+        ->not->toContain('**7123**');
+});
