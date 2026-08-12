@@ -34,35 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Middleware;
-
 use AdvisingApp\Portal\Settings\PortalSettings;
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
-use Closure;
-use Illuminate\Http\Request;
-use Laravel\Sanctum\PersonalAccessToken;
-use Symfony\Component\HttpFoundation\Response;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 
-class AuthenticateIfRequiredByPortalDefinition
-{
-    public function handle(Request $request, Closure $next): Response
-    {
-        $settings = resolve(PortalSettings::class);
+use function Pest\Laravel\get;
 
-        if (! $settings->resource_hub_portal_requires_authentication) {
-            return $next($request);
-        }
+beforeEach(function () {
+    $settings = app(PortalSettings::class);
+    $settings->resource_hub_portal_enabled = true;
+    $settings->resource_hub_portal_requires_authentication = false;
+    $settings->save();
+});
 
-        // Resolve the portal token directly rather than through the Sanctum guard, which would
-        // otherwise return an ambient first-party session user (e.g. a logged-in admin) instead.
-        $accessToken = PersonalAccessToken::findToken((string) $request->bearerToken());
+it('lists categories with a null description', function () {
+    $category = ResourceHubCategory::factory()->create(['description' => null]);
 
-        $educatable = $accessToken?->tokenable;
-
-        if (! ($educatable instanceof Educatable) || ! $accessToken->can('resource-hub-portal')) {
-            abort(Response::HTTP_FORBIDDEN);
-        }
-
-        return $next($request);
-    }
-}
+    get(route('portals.resource-hub.api.category.index'))
+        ->assertSuccessful()
+        ->assertJsonFragment([
+            'id' => $category->getKey(),
+            'name' => $category->name,
+            'description' => null,
+        ]);
+});
