@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages;
 
+use AdvisingApp\Ai\Filament\Exports\EmployeeAdvisorQuestionExporter;
+use AdvisingApp\Ai\Filament\Imports\EmployeeAdvisorQuestionImporter;
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\AiAssistantResource;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\EmployeeAdvisorQuestion;
@@ -44,6 +46,9 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\Exports\Enums\ExportFormat;
+use Filament\Actions\ImportAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn as RepeaterTableColumn;
 use Filament\Forms\Components\Select;
@@ -153,6 +158,16 @@ class ManageEmployeeAdvisorQuestions extends ManageRelatedRecords
                             fn (array $question) => EmployeeAdvisorQuestion::query()->create($question)
                         );
                     }),
+                ImportAction::make()
+                    ->importer(EmployeeAdvisorQuestionImporter::class)
+                    ->authorize('create', EmployeeAdvisorQuestion::class)
+                    ->options(['employee_advisor_id' => $this->getOwnerRecord()->getKey()]),
+                ExportAction::make()
+                    ->exporter(EmployeeAdvisorQuestionExporter::class)
+                    ->authorize('viewAny', EmployeeAdvisorQuestion::class)
+                    ->formats([
+                        ExportFormat::Csv,
+                    ]),
             ])
             ->recordActions([
                 EditAction::make()

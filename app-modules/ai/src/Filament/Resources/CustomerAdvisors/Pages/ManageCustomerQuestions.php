@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages;
 
+use AdvisingApp\Ai\Filament\Exports\CustomerAdvisorQuestionExporter;
+use AdvisingApp\Ai\Filament\Imports\CustomerAdvisorQuestionImporter;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
@@ -44,6 +46,9 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ExportAction;
+use Filament\Actions\Exports\Enums\ExportFormat;
+use Filament\Actions\ImportAction;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Repeater\TableColumn as RepeaterTableColumn;
 use Filament\Forms\Components\Select;
@@ -151,6 +156,16 @@ class ManageCustomerQuestions extends ManageRelatedRecords
                             fn (array $question) => CustomerAdvisorQuestion::query()->create($question)
                         );
                     }),
+                ImportAction::make()
+                    ->importer(CustomerAdvisorQuestionImporter::class)
+                    ->authorize('create', CustomerAdvisorQuestion::class)
+                    ->options(['customer_advisor_id' => $this->getOwnerRecord()->getKey()]),
+                ExportAction::make()
+                    ->exporter(CustomerAdvisorQuestionExporter::class)
+                    ->authorize('viewAny', CustomerAdvisorQuestion::class)
+                    ->formats([
+                        ExportFormat::Csv,
+                    ]),
             ])
             ->recordActions([
                 EditAction::make()
