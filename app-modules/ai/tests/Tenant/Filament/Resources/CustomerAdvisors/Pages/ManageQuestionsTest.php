@@ -50,6 +50,7 @@ use App\Settings\LicenseSettings;
 use Filament\Actions\ExportAction;
 use Filament\Actions\ImportAction;
 use Filament\Actions\Imports\Exceptions\RowImportFailedException;
+use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -271,247 +272,266 @@ test('Edit Customer Advisor Question validates the inputs', function (CustomerAd
         ]
     );
 
-it('exports customer advisor questions as scoped csv content with category name', function () {
-    Storage::fake('s3');
+describe('export', function () {
+    it('exports customer advisor questions as scoped csv content with category name', function () {
+        Storage::fake('s3');
 
-    config()->set('filament.default_filesystem_disk', 's3');
-    config()->set('queue.default', 'sync');
+        config()->set('filament.default_filesystem_disk', 's3');
+        config()->set('queue.default', 'sync');
 
-    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
-    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view']);
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+        $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view']);
 
-    $advisor = CustomerAdvisor::factory()->create();
-    $otherAdvisor = CustomerAdvisor::factory()->create();
+        $advisor = CustomerAdvisor::factory()->create();
+        $otherAdvisor = CustomerAdvisor::factory()->create();
 
-    $category = CustomerAdvisorCategory::factory()->state([
-        'customer_advisor_id' => $advisor->getKey(),
-        'name' => 'Admissions',
-    ])->create();
-
-    $otherCategory = CustomerAdvisorCategory::factory()->state([
-        'customer_advisor_id' => $otherAdvisor->getKey(),
-        'name' => 'Billing',
-    ])->create();
-
-    CustomerAdvisorQuestion::factory()->state([
-        'category_id' => $category->getKey(),
-        'question' => 'How do I apply?',
-        'answer' => 'Apply online at our website.',
-    ])->create();
-
-    CustomerAdvisorQuestion::factory()->state([
-        'category_id' => $otherCategory->getKey(),
-        'question' => 'What is your billing process?',
-        'answer' => 'We bill monthly.',
-    ])->create();
-
-    actingAs($user);
-
-    livewire(ManageCustomerQuestions::class, ['record' => $advisor->getKey()])
-        ->callTableAction(ExportAction::class)
-        ->assertNotified();
-
-    $export = Export::query()->latest()->first();
-
-    expect($export)->not->toBeNull();
-    expect($export->exporter)->toBe(CustomerAdvisorQuestionExporter::class);
-
-    $disk = Storage::disk($export->file_disk);
-    $files = collect($disk->files($export->getFileDirectory()))->sort()->values();
-    $content = $files->map(fn (string $file): string => (string) $disk->get($file))->implode('');
-
-    expect($content)
-        ->toContain('How do I apply?')
-        ->toContain('Apply online at our website.')
-        ->toContain('Admissions')
-        ->not->toContain('What is your billing process?')
-        ->not->toContain('We bill monthly.')
-        ->not->toContain('Billing');
-});
-
-it('imports customer advisor questions scoped to the selected advisor with case-insensitive category matching', function () {
-    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
-
-    $advisor = CustomerAdvisor::factory()->create();
-    $otherAdvisor = CustomerAdvisor::factory()->create();
-
-    $category = CustomerAdvisorCategory::factory()->state([
-        'customer_advisor_id' => $advisor->getKey(),
-        'name' => 'Admissions',
-    ])->create();
-
-    $otherCategory = CustomerAdvisorCategory::factory()->state([
-        'customer_advisor_id' => $otherAdvisor->getKey(),
-        'name' => 'Admissions',
-    ])->create();
-
-    $import = new Import();
-    $import->user()->associate($user);
-    $import->file_name = 'customer-questions.csv';
-    $import->file_path = 'imports/customer-questions.csv';
-    $import->importer = CustomerAdvisorQuestionImporter::class;
-    $import->total_rows = 1;
-    $import->save();
-
-    $importer = app(CustomerAdvisorQuestionImporter::class, [
-        'import' => $import,
-        'columnMap' => [
-            'question' => 'question',
-            'answer' => 'answer',
-            'category' => 'category',
-        ],
-        'options' => [
+        $category = CustomerAdvisorCategory::factory()->state([
             'customer_advisor_id' => $advisor->getKey(),
-        ],
-    ]);
+            'name' => 'Admissions',
+        ])->create();
 
-    $importer([
-        'question' => 'How do I apply?',
-        'answer' => 'Apply online.',
-        'category' => 'admissions',
-    ]);
+        $otherCategory = CustomerAdvisorCategory::factory()->state([
+            'customer_advisor_id' => $otherAdvisor->getKey(),
+            'name' => 'Billing',
+        ])->create();
 
-    assertDatabaseHas(CustomerAdvisorQuestion::class, [
-        'category_id' => $category->getKey(),
-        'question' => 'How do I apply?',
-        'answer' => 'Apply online.',
-    ]);
+        CustomerAdvisorQuestion::factory()->state([
+            'category_id' => $category->getKey(),
+            'question' => 'How do I apply?',
+            'answer' => 'Apply online at our website.',
+        ])->create();
 
-    assertDatabaseMissing(CustomerAdvisorQuestion::class, [
-        'category_id' => $otherCategory->getKey(),
-        'question' => 'How do I apply?',
-        'answer' => 'Apply online.',
-    ]);
+        CustomerAdvisorQuestion::factory()->state([
+            'category_id' => $otherCategory->getKey(),
+            'question' => 'What is your billing process?',
+            'answer' => 'We bill monthly.',
+        ])->create();
+
+        actingAs($user);
+
+        livewire(ManageCustomerQuestions::class, ['record' => $advisor->getKey()])
+            ->callAction(TestAction::make(ExportAction::class)->table())
+            ->assertNotified();
+
+        $export = Export::query()->latest()->first();
+
+        expect($export)->not->toBeNull();
+        expect($export->exporter)->toBe(CustomerAdvisorQuestionExporter::class);
+
+        $disk = Storage::disk($export->file_disk);
+        $files = collect($disk->files($export->getFileDirectory()))->sort()->values();
+        $content = $files->map(fn (string $file): string => (string) $disk->get($file))->implode('');
+
+        expect($content)
+            ->toContain('How do I apply?')
+            ->toContain('Apply online at our website.')
+            ->toContain('Admissions')
+            ->not->toContain('What is your billing process?')
+            ->not->toContain('We bill monthly.')
+            ->not->toContain('Billing');
+    });
 });
 
-it('imports customer advisor questions through the `ImportAction` using the advisor scoped to the page', function () {
-    config()->set('queue.default', 'sync');
+describe('import', function () {
+    it('imports customer advisor questions scoped to the selected advisor with case-insensitive category matching', function () {
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
-    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
+        $advisor = CustomerAdvisor::factory()->create();
+        $otherAdvisor = CustomerAdvisor::factory()->create();
 
-    $advisor = CustomerAdvisor::factory()->create();
+        $category = CustomerAdvisorCategory::factory()->state([
+            'customer_advisor_id' => $advisor->getKey(),
+            'name' => 'Admissions',
+        ])->create();
 
-    $category = CustomerAdvisorCategory::factory()->state([
-        'customer_advisor_id' => $advisor->getKey(),
-        'name' => 'Admissions',
-    ])->create();
+        $otherCategory = CustomerAdvisorCategory::factory()->state([
+            'customer_advisor_id' => $otherAdvisor->getKey(),
+            'name' => 'Admissions',
+        ])->create();
 
-    actingAs($user);
+        $import = new Import();
+        $import->user()->associate($user);
+        $import->file_name = 'customer-questions.csv';
+        $import->file_path = 'imports/customer-questions.csv';
+        $import->importer = CustomerAdvisorQuestionImporter::class;
+        $import->total_rows = 1;
+        $import->save();
 
-    $csv = UploadedFile::fake()->createWithContent(
-        'q.csv',
-        "question,answer,category\nHow do I apply?,Apply online.,Admissions\n",
-    );
-
-    livewire(ManageCustomerQuestions::class, ['record' => $advisor->getKey()])
-        ->callTableAction(ImportAction::class, data: [
-            'file' => $csv,
+        $importer = app(CustomerAdvisorQuestionImporter::class, [
+            'import' => $import,
             'columnMap' => [
                 'question' => 'question',
                 'answer' => 'answer',
                 'category' => 'category',
             ],
-        ])
-        ->assertNotified();
+            'options' => [
+                'customer_advisor_id' => $advisor->getKey(),
+            ],
+        ]);
 
-    assertDatabaseHas(CustomerAdvisorQuestion::class, [
-        'category_id' => $category->getKey(),
-        'question' => 'How do I apply?',
-        'answer' => 'Apply online.',
-    ]);
-});
+        $importer([
+            'question' => 'How do I apply?',
+            'answer' => 'Apply online.',
+            'category' => 'admissions',
+        ]);
 
-it('fails customer advisor question import cleanly when category does not exist', function () {
-    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+        assertDatabaseHas(CustomerAdvisorQuestion::class, [
+            'category_id' => $category->getKey(),
+            'question' => 'How do I apply?',
+            'answer' => 'Apply online.',
+        ]);
 
-    $advisor = CustomerAdvisor::factory()->create();
+        assertDatabaseMissing(CustomerAdvisorQuestion::class, [
+            'category_id' => $otherCategory->getKey(),
+            'question' => 'How do I apply?',
+            'answer' => 'Apply online.',
+        ]);
+    });
 
-    $import = new Import();
-    $import->user()->associate($user);
-    $import->file_name = 'customer-questions.csv';
-    $import->file_path = 'imports/customer-questions.csv';
-    $import->importer = CustomerAdvisorQuestionImporter::class;
-    $import->total_rows = 1;
-    $import->save();
+    it('imports customer advisor questions through the `ImportAction` using the advisor scoped to the page', function () {
+        config()->set('queue.default', 'sync');
 
-    $importer = app(CustomerAdvisorQuestionImporter::class, [
-        'import' => $import,
-        'columnMap' => [
-            'question' => 'question',
-            'answer' => 'answer',
-            'category' => 'category',
-        ],
-        'options' => [
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+        $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
+
+        $advisor = CustomerAdvisor::factory()->create();
+
+        $category = CustomerAdvisorCategory::factory()->state([
             'customer_advisor_id' => $advisor->getKey(),
-        ],
-    ]);
+            'name' => 'Admissions',
+        ])->create();
 
-    expect(fn () => $importer([
-        'question' => 'How do I apply?',
-        'answer' => 'Apply online.',
-        'category' => 'NonexistentCategory',
-    ]))->toThrow(RowImportFailedException::class);
-});
+        actingAs($user);
 
-it('validates required fields during customer advisor question import', function () {
-    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+        $csv = UploadedFile::fake()->createWithContent(
+            'q.csv',
+            "question,answer,category\nHow do I apply?,Apply online.,Admissions\n",
+        );
 
-    $advisor = CustomerAdvisor::factory()->create();
+        livewire(ManageCustomerQuestions::class, ['record' => $advisor->getKey()])
+            ->callAction(TestAction::make(ImportAction::class)->table(), data: [
+                'file' => $csv,
+                'columnMap' => [
+                    'question' => 'question',
+                    'answer' => 'answer',
+                    'category' => 'category',
+                ],
+            ])
+            ->assertNotified();
 
-    CustomerAdvisorCategory::factory()->state([
-        'customer_advisor_id' => $advisor->getKey(),
-        'name' => 'Admissions',
-    ])->create();
+        assertDatabaseHas(CustomerAdvisorQuestion::class, [
+            'category_id' => $category->getKey(),
+            'question' => 'How do I apply?',
+            'answer' => 'Apply online.',
+        ]);
+    });
 
-    $import = new Import();
-    $import->user()->associate($user);
-    $import->file_name = 'customer-questions.csv';
-    $import->file_path = 'imports/customer-questions.csv';
-    $import->importer = CustomerAdvisorQuestionImporter::class;
-    $import->total_rows = 1;
-    $import->save();
+    it('fails customer advisor question import cleanly when category does not exist', function () {
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $importer = app(CustomerAdvisorQuestionImporter::class, [
-        'import' => $import,
-        'columnMap' => [
-            'question' => 'question',
-            'answer' => 'answer',
-            'category' => 'category',
-        ],
-        'options' => [
+        $advisor = CustomerAdvisor::factory()->create();
+
+        $import = new Import();
+        $import->user()->associate($user);
+        $import->file_name = 'customer-questions.csv';
+        $import->file_path = 'imports/customer-questions.csv';
+        $import->importer = CustomerAdvisorQuestionImporter::class;
+        $import->total_rows = 1;
+        $import->save();
+
+        $importer = app(CustomerAdvisorQuestionImporter::class, [
+            'import' => $import,
+            'columnMap' => [
+                'question' => 'question',
+                'answer' => 'answer',
+                'category' => 'category',
+            ],
+            'options' => [
+                'customer_advisor_id' => $advisor->getKey(),
+            ],
+        ]);
+
+        expect(fn () => $importer([
+            'question' => 'How do I apply?',
+            'answer' => 'Apply online.',
+            'category' => 'NonexistentCategory',
+        ]))->toThrow(RowImportFailedException::class);
+    });
+
+    it('validates required fields during customer advisor question import', function () {
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+
+        $advisor = CustomerAdvisor::factory()->create();
+
+        CustomerAdvisorCategory::factory()->state([
             'customer_advisor_id' => $advisor->getKey(),
-        ],
-    ]);
+            'name' => 'Admissions',
+        ])->create();
 
-    expect(fn () => $importer([
-        'question' => null,
-        'answer' => 'Apply online.',
-        'category' => 'Admissions',
-    ]))->toThrow(ValidationException::class);
+        $import = new Import();
+        $import->user()->associate($user);
+        $import->file_name = 'customer-questions.csv';
+        $import->file_path = 'imports/customer-questions.csv';
+        $import->importer = CustomerAdvisorQuestionImporter::class;
+        $import->total_rows = 1;
+        $import->save();
 
-    expect(fn () => $importer([
-        'question' => 'How do I apply?',
-        'answer' => null,
-        'category' => 'Admissions',
-    ]))->toThrow(ValidationException::class);
+        $importer = app(CustomerAdvisorQuestionImporter::class, [
+            'import' => $import,
+            'columnMap' => [
+                'question' => 'question',
+                'answer' => 'answer',
+                'category' => 'category',
+            ],
+            'options' => [
+                'customer_advisor_id' => $advisor->getKey(),
+            ],
+        ]);
 
-    expect(fn () => $importer([
-        'question' => 'How do I apply?',
-        'answer' => 'Apply online.',
-        'category' => null,
-    ]))->toThrow(ValidationException::class);
+        expect(fn () => $importer([
+            'question' => null,
+            'answer' => 'Apply online.',
+            'category' => 'Admissions',
+        ]))->toThrow(ValidationException::class);
+
+        expect(fn () => $importer([
+            'question' => 'How do I apply?',
+            'answer' => null,
+            'category' => 'Admissions',
+        ]))->toThrow(ValidationException::class);
+
+        expect(fn () => $importer([
+            'question' => 'How do I apply?',
+            'answer' => 'Apply online.',
+            'category' => null,
+        ]))->toThrow(ValidationException::class);
+    });
 });
 
-it('shows import and export actions on customer questions page', function () {
-    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
-    $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
+describe('authorization', function () {
+    it('shows the `ImportAction` and `ExportAction` to a user with the `customer_advisor.create` permission', function () {
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+        $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
 
-    $advisor = CustomerAdvisor::factory()->create();
+        $advisor = CustomerAdvisor::factory()->create();
 
-    actingAs($user);
+        actingAs($user);
 
-    livewire(ManageCustomerQuestions::class, ['record' => $advisor->getKey()])
-        ->assertTableActionVisible(ExportAction::class)
-        ->assertTableActionVisible(ImportAction::class);
+        livewire(ManageCustomerQuestions::class, ['record' => $advisor->getKey()])
+            ->assertActionVisible(TestAction::make(ExportAction::class)->table())
+            ->assertActionVisible(TestAction::make(ImportAction::class)->table());
+    });
+
+    it('hides the `ImportAction` from a user without the `customer_advisor.create` permission', function () {
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+        $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view']);
+
+        $advisor = CustomerAdvisor::factory()->create();
+
+        actingAs($user);
+
+        livewire(ManageCustomerQuestions::class, ['record' => $advisor->getKey()])
+            ->assertActionVisible(TestAction::make(ExportAction::class)->table())
+            ->assertActionHidden(TestAction::make(ImportAction::class)->table());
+    });
 });

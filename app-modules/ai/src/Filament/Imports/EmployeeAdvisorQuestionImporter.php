@@ -65,7 +65,7 @@ class EmployeeAdvisorQuestionImporter extends Importer
                 ->label('Category')
                 ->rules(['required', 'string', 'max:255'])
                 ->relationship(
-                    resolveUsing: function (EmployeeAdvisorQuestionImporter $importer, string $state): EmployeeAdvisorCategory {
+                    resolveUsing: function (EmployeeAdvisorQuestionImporter $importer, mixed $state): EmployeeAdvisorCategory {
                         $category = EmployeeAdvisorCategory::where('employee_advisor_id', $importer->getEmployeeAdvisorId())
                             ->where('name', $state)
                             ->first();

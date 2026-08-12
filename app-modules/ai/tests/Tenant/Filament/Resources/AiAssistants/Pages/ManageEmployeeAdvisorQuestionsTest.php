@@ -50,6 +50,7 @@ use App\Settings\LicenseSettings;
 use Filament\Actions\ExportAction;
 use Filament\Actions\ImportAction;
 use Filament\Actions\Imports\Exceptions\RowImportFailedException;
+use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -299,247 +300,266 @@ test('editing an employee advisor question validates the inputs', function (Empl
         ]
     );
 
-it('exports employee advisor questions as scoped csv content with category name', function () {
-    Storage::fake('s3');
+describe('export', function () {
+    it('exports employee advisor questions as scoped csv content with category name', function () {
+        Storage::fake('s3');
 
-    config()->set('filament.default_filesystem_disk', 's3');
-    config()->set('queue.default', 'sync');
+        config()->set('filament.default_filesystem_disk', 's3');
+        config()->set('queue.default', 'sync');
 
-    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
-    $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view']);
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+        $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view']);
 
-    $assistant = AiAssistant::factory()->create();
-    $otherAssistant = AiAssistant::factory()->create();
+        $assistant = AiAssistant::factory()->create();
+        $otherAssistant = AiAssistant::factory()->create();
 
-    $category = EmployeeAdvisorCategory::factory()->state([
-        'employee_advisor_id' => $assistant->getKey(),
-        'name' => 'Knowledge Base',
-    ])->create();
-
-    $otherCategory = EmployeeAdvisorCategory::factory()->state([
-        'employee_advisor_id' => $otherAssistant->getKey(),
-        'name' => 'Policies',
-    ])->create();
-
-    EmployeeAdvisorQuestion::factory()->state([
-        'category_id' => $category->getKey(),
-        'question' => 'What is the password reset process?',
-        'answer' => 'Go to login and click forgot password.',
-    ])->create();
-
-    EmployeeAdvisorQuestion::factory()->state([
-        'category_id' => $otherCategory->getKey(),
-        'question' => 'What is the vacation policy?',
-        'answer' => '20 days per year.',
-    ])->create();
-
-    actingAs($user);
-
-    livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
-        ->callTableAction(ExportAction::class)
-        ->assertNotified();
-
-    $export = Export::query()->latest()->first();
-
-    expect($export)->not->toBeNull();
-    expect($export->exporter)->toBe(EmployeeAdvisorQuestionExporter::class);
-
-    $disk = Storage::disk($export->file_disk);
-    $files = collect($disk->files($export->getFileDirectory()))->sort()->values();
-    $content = $files->map(fn (string $file): string => (string) $disk->get($file))->implode('');
-
-    expect($content)
-        ->toContain('What is the password reset process?')
-        ->toContain('Go to login and click forgot password.')
-        ->toContain('Knowledge Base')
-        ->not->toContain('What is the vacation policy?')
-        ->not->toContain('20 days per year.')
-        ->not->toContain('Policies');
-});
-
-it('imports employee advisor questions scoped to the selected assistant with case-insensitive category matching', function () {
-    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
-
-    $assistant = AiAssistant::factory()->create();
-    $otherAssistant = AiAssistant::factory()->create();
-
-    $category = EmployeeAdvisorCategory::factory()->state([
-        'employee_advisor_id' => $assistant->getKey(),
-        'name' => 'Knowledge Base',
-    ])->create();
-
-    $otherCategory = EmployeeAdvisorCategory::factory()->state([
-        'employee_advisor_id' => $otherAssistant->getKey(),
-        'name' => 'Knowledge Base',
-    ])->create();
-
-    $import = new Import();
-    $import->user()->associate($user);
-    $import->file_name = 'employee-questions.csv';
-    $import->file_path = 'imports/employee-questions.csv';
-    $import->importer = EmployeeAdvisorQuestionImporter::class;
-    $import->total_rows = 1;
-    $import->save();
-
-    $importer = app(EmployeeAdvisorQuestionImporter::class, [
-        'import' => $import,
-        'columnMap' => [
-            'question' => 'question',
-            'answer' => 'answer',
-            'category' => 'category',
-        ],
-        'options' => [
+        $category = EmployeeAdvisorCategory::factory()->state([
             'employee_advisor_id' => $assistant->getKey(),
-        ],
-    ]);
+            'name' => 'Knowledge Base',
+        ])->create();
 
-    $importer([
-        'question' => 'What is the password reset process?',
-        'answer' => 'Go to login and click forgot password.',
-        'category' => 'knowledge base',
-    ]);
+        $otherCategory = EmployeeAdvisorCategory::factory()->state([
+            'employee_advisor_id' => $otherAssistant->getKey(),
+            'name' => 'Policies',
+        ])->create();
 
-    assertDatabaseHas(EmployeeAdvisorQuestion::class, [
-        'category_id' => $category->getKey(),
-        'question' => 'What is the password reset process?',
-        'answer' => 'Go to login and click forgot password.',
-    ]);
+        EmployeeAdvisorQuestion::factory()->state([
+            'category_id' => $category->getKey(),
+            'question' => 'What is the password reset process?',
+            'answer' => 'Go to login and click forgot password.',
+        ])->create();
 
-    assertDatabaseMissing(EmployeeAdvisorQuestion::class, [
-        'category_id' => $otherCategory->getKey(),
-        'question' => 'What is the password reset process?',
-        'answer' => 'Go to login and click forgot password.',
-    ]);
+        EmployeeAdvisorQuestion::factory()->state([
+            'category_id' => $otherCategory->getKey(),
+            'question' => 'What is the vacation policy?',
+            'answer' => '20 days per year.',
+        ])->create();
+
+        actingAs($user);
+
+        livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
+            ->callAction(TestAction::make(ExportAction::class)->table())
+            ->assertNotified();
+
+        $export = Export::query()->latest()->first();
+
+        expect($export)->not->toBeNull();
+        expect($export->exporter)->toBe(EmployeeAdvisorQuestionExporter::class);
+
+        $disk = Storage::disk($export->file_disk);
+        $files = collect($disk->files($export->getFileDirectory()))->sort()->values();
+        $content = $files->map(fn (string $file): string => (string) $disk->get($file))->implode('');
+
+        expect($content)
+            ->toContain('What is the password reset process?')
+            ->toContain('Go to login and click forgot password.')
+            ->toContain('Knowledge Base')
+            ->not->toContain('What is the vacation policy?')
+            ->not->toContain('20 days per year.')
+            ->not->toContain('Policies');
+    });
 });
 
-it('imports employee advisor questions through the `ImportAction` using the assistant scoped to the page', function () {
-    config()->set('queue.default', 'sync');
+describe('import', function () {
+    it('imports employee advisor questions scoped to the selected assistant with case-insensitive category matching', function () {
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
-    $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view', 'assistant_custom.create']);
+        $assistant = AiAssistant::factory()->create();
+        $otherAssistant = AiAssistant::factory()->create();
 
-    $assistant = AiAssistant::factory()->create();
+        $category = EmployeeAdvisorCategory::factory()->state([
+            'employee_advisor_id' => $assistant->getKey(),
+            'name' => 'Knowledge Base',
+        ])->create();
 
-    $category = EmployeeAdvisorCategory::factory()->state([
-        'employee_advisor_id' => $assistant->getKey(),
-        'name' => 'Knowledge Base',
-    ])->create();
+        $otherCategory = EmployeeAdvisorCategory::factory()->state([
+            'employee_advisor_id' => $otherAssistant->getKey(),
+            'name' => 'Knowledge Base',
+        ])->create();
 
-    actingAs($user);
+        $import = new Import();
+        $import->user()->associate($user);
+        $import->file_name = 'employee-questions.csv';
+        $import->file_path = 'imports/employee-questions.csv';
+        $import->importer = EmployeeAdvisorQuestionImporter::class;
+        $import->total_rows = 1;
+        $import->save();
 
-    $csv = UploadedFile::fake()->createWithContent(
-        'q.csv',
-        "question,answer,category\nWhat is the password reset process?,Go to login and click forgot password.,Knowledge Base\n",
-    );
-
-    livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
-        ->callTableAction(ImportAction::class, data: [
-            'file' => $csv,
+        $importer = app(EmployeeAdvisorQuestionImporter::class, [
+            'import' => $import,
             'columnMap' => [
                 'question' => 'question',
                 'answer' => 'answer',
                 'category' => 'category',
             ],
-        ])
-        ->assertNotified();
+            'options' => [
+                'employee_advisor_id' => $assistant->getKey(),
+            ],
+        ]);
 
-    assertDatabaseHas(EmployeeAdvisorQuestion::class, [
-        'category_id' => $category->getKey(),
-        'question' => 'What is the password reset process?',
-        'answer' => 'Go to login and click forgot password.',
-    ]);
-});
+        $importer([
+            'question' => 'What is the password reset process?',
+            'answer' => 'Go to login and click forgot password.',
+            'category' => 'knowledge base',
+        ]);
 
-it('fails employee advisor question import cleanly when category does not exist', function () {
-    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+        assertDatabaseHas(EmployeeAdvisorQuestion::class, [
+            'category_id' => $category->getKey(),
+            'question' => 'What is the password reset process?',
+            'answer' => 'Go to login and click forgot password.',
+        ]);
 
-    $assistant = AiAssistant::factory()->create();
+        assertDatabaseMissing(EmployeeAdvisorQuestion::class, [
+            'category_id' => $otherCategory->getKey(),
+            'question' => 'What is the password reset process?',
+            'answer' => 'Go to login and click forgot password.',
+        ]);
+    });
 
-    $import = new Import();
-    $import->user()->associate($user);
-    $import->file_name = 'employee-questions.csv';
-    $import->file_path = 'imports/employee-questions.csv';
-    $import->importer = EmployeeAdvisorQuestionImporter::class;
-    $import->total_rows = 1;
-    $import->save();
+    it('imports employee advisor questions through the `ImportAction` using the assistant scoped to the page', function () {
+        config()->set('queue.default', 'sync');
 
-    $importer = app(EmployeeAdvisorQuestionImporter::class, [
-        'import' => $import,
-        'columnMap' => [
-            'question' => 'question',
-            'answer' => 'answer',
-            'category' => 'category',
-        ],
-        'options' => [
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+        $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view', 'assistant_custom.create']);
+
+        $assistant = AiAssistant::factory()->create();
+
+        $category = EmployeeAdvisorCategory::factory()->state([
             'employee_advisor_id' => $assistant->getKey(),
-        ],
-    ]);
+            'name' => 'Knowledge Base',
+        ])->create();
 
-    expect(fn () => $importer([
-        'question' => 'What is the password reset process?',
-        'answer' => 'Go to login and click forgot password.',
-        'category' => 'NonexistentCategory',
-    ]))->toThrow(RowImportFailedException::class);
-});
+        actingAs($user);
 
-it('validates required fields during employee advisor question import', function () {
-    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+        $csv = UploadedFile::fake()->createWithContent(
+            'q.csv',
+            "question,answer,category\nWhat is the password reset process?,Go to login and click forgot password.,Knowledge Base\n",
+        );
 
-    $assistant = AiAssistant::factory()->create();
+        livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
+            ->callAction(TestAction::make(ImportAction::class)->table(), data: [
+                'file' => $csv,
+                'columnMap' => [
+                    'question' => 'question',
+                    'answer' => 'answer',
+                    'category' => 'category',
+                ],
+            ])
+            ->assertNotified();
 
-    EmployeeAdvisorCategory::factory()->state([
-        'employee_advisor_id' => $assistant->getKey(),
-        'name' => 'Knowledge Base',
-    ])->create();
+        assertDatabaseHas(EmployeeAdvisorQuestion::class, [
+            'category_id' => $category->getKey(),
+            'question' => 'What is the password reset process?',
+            'answer' => 'Go to login and click forgot password.',
+        ]);
+    });
 
-    $import = new Import();
-    $import->user()->associate($user);
-    $import->file_name = 'employee-questions.csv';
-    $import->file_path = 'imports/employee-questions.csv';
-    $import->importer = EmployeeAdvisorQuestionImporter::class;
-    $import->total_rows = 1;
-    $import->save();
+    it('fails employee advisor question import cleanly when category does not exist', function () {
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
-    $importer = app(EmployeeAdvisorQuestionImporter::class, [
-        'import' => $import,
-        'columnMap' => [
-            'question' => 'question',
-            'answer' => 'answer',
-            'category' => 'category',
-        ],
-        'options' => [
+        $assistant = AiAssistant::factory()->create();
+
+        $import = new Import();
+        $import->user()->associate($user);
+        $import->file_name = 'employee-questions.csv';
+        $import->file_path = 'imports/employee-questions.csv';
+        $import->importer = EmployeeAdvisorQuestionImporter::class;
+        $import->total_rows = 1;
+        $import->save();
+
+        $importer = app(EmployeeAdvisorQuestionImporter::class, [
+            'import' => $import,
+            'columnMap' => [
+                'question' => 'question',
+                'answer' => 'answer',
+                'category' => 'category',
+            ],
+            'options' => [
+                'employee_advisor_id' => $assistant->getKey(),
+            ],
+        ]);
+
+        expect(fn () => $importer([
+            'question' => 'What is the password reset process?',
+            'answer' => 'Go to login and click forgot password.',
+            'category' => 'NonexistentCategory',
+        ]))->toThrow(RowImportFailedException::class);
+    });
+
+    it('validates required fields during employee advisor question import', function () {
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+
+        $assistant = AiAssistant::factory()->create();
+
+        EmployeeAdvisorCategory::factory()->state([
             'employee_advisor_id' => $assistant->getKey(),
-        ],
-    ]);
+            'name' => 'Knowledge Base',
+        ])->create();
 
-    expect(fn () => $importer([
-        'question' => null,
-        'answer' => 'Go to login.',
-        'category' => 'Knowledge Base',
-    ]))->toThrow(ValidationException::class);
+        $import = new Import();
+        $import->user()->associate($user);
+        $import->file_name = 'employee-questions.csv';
+        $import->file_path = 'imports/employee-questions.csv';
+        $import->importer = EmployeeAdvisorQuestionImporter::class;
+        $import->total_rows = 1;
+        $import->save();
 
-    expect(fn () => $importer([
-        'question' => 'What is the password reset?',
-        'answer' => null,
-        'category' => 'Knowledge Base',
-    ]))->toThrow(ValidationException::class);
+        $importer = app(EmployeeAdvisorQuestionImporter::class, [
+            'import' => $import,
+            'columnMap' => [
+                'question' => 'question',
+                'answer' => 'answer',
+                'category' => 'category',
+            ],
+            'options' => [
+                'employee_advisor_id' => $assistant->getKey(),
+            ],
+        ]);
 
-    expect(fn () => $importer([
-        'question' => 'What is the password reset?',
-        'answer' => 'Go to login.',
-        'category' => null,
-    ]))->toThrow(ValidationException::class);
+        expect(fn () => $importer([
+            'question' => null,
+            'answer' => 'Go to login.',
+            'category' => 'Knowledge Base',
+        ]))->toThrow(ValidationException::class);
+
+        expect(fn () => $importer([
+            'question' => 'What is the password reset?',
+            'answer' => null,
+            'category' => 'Knowledge Base',
+        ]))->toThrow(ValidationException::class);
+
+        expect(fn () => $importer([
+            'question' => 'What is the password reset?',
+            'answer' => 'Go to login.',
+            'category' => null,
+        ]))->toThrow(ValidationException::class);
+    });
 });
 
-it('shows import and export actions on employee questions page', function () {
-    $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
-    $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view', 'assistant_custom.create']);
+describe('authorization', function () {
+    it('shows the `ImportAction` and `ExportAction` to a user with the `assistant_custom.create` permission', function () {
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+        $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view', 'assistant_custom.create']);
 
-    $assistant = AiAssistant::factory()->create();
+        $assistant = AiAssistant::factory()->create();
 
-    actingAs($user);
+        actingAs($user);
 
-    livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
-        ->assertTableActionVisible(ExportAction::class)
-        ->assertTableActionVisible(ImportAction::class);
+        livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
+            ->assertActionVisible(TestAction::make(ExportAction::class)->table())
+            ->assertActionVisible(TestAction::make(ImportAction::class)->table());
+    });
+
+    it('hides the `ImportAction` from a user without the `assistant_custom.create` permission', function () {
+        $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+        $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view']);
+
+        $assistant = AiAssistant::factory()->create();
+
+        actingAs($user);
+
+        livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
+            ->assertActionVisible(TestAction::make(ExportAction::class)->table())
+            ->assertActionHidden(TestAction::make(ImportAction::class)->table());
+    });
 });
