@@ -107,6 +107,6 @@ it('still returns bounced status in SMS demo mode when the phone has previously 
     $phoneNumber = Student::factory()->create()->primaryPhoneNumber;
 
     BouncedPhoneNumber::factory()->create(['number' => $phoneNumber->number]);
-    
+
     assertEquals(PhoneHealthStatus::Bounced, $phoneNumber->getHealthStatus());
 });
