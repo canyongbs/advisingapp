@@ -43,6 +43,7 @@ use AdvisingApp\Portal\Models\ResourceHubArticleVote;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use App\Features\ResourceHubArticleFeedbackFeature;
 use App\Http\Controllers\Controller;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\JsonResponse;
 
 class StoreResourceHubArticleVoteController extends Controller
@@ -70,7 +71,18 @@ class StoreResourceHubArticleVoteController extends Controller
             $vote->voter()->associate($voter);
             $vote->article_id = $request->article_id;
             $vote->is_helpful = $request->article_vote;
-            $vote->save();
+
+            try {
+                $vote->save();
+            } catch (UniqueConstraintViolationException) {
+                // A concurrent request already inserted this voter's vote; fall back to updating it.
+                $vote = ResourceHubArticleVote::query()
+                    ->where('article_id', $request->article_id)
+                    ->where('voter_id', $voter->getKey())
+                    ->where('voter_type', $voter->getMorphClass())
+                    ->firstOrFail();
+                $vote->update(['is_helpful' => $request->article_vote]);
+            }
         } elseif ($vote) {
             $vote->delete();
             $vote = null;
