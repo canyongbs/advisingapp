@@ -36,9 +36,11 @@
 
 namespace AdvisingApp\Authorization\Http\Controllers;
 
+use AdvisingApp\Authorization\Actions\GenerateOtpLoginCode;
 use AdvisingApp\Authorization\Http\Requests\GenerateOtpLoginCodeRequest;
 use AdvisingApp\Authorization\Models\OtpLoginCode;
 use AdvisingApp\Authorization\Notifications\OtpCodeNotification;
+use App\Features\OtpLoginFeature;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
@@ -48,39 +50,60 @@ use Throwable;
 
 class GenerateOtpLoginCodeController
 {
+    public function __construct(
+        private readonly GenerateOtpLoginCode $generateOtpLoginCode,
+    ) {}
+
     /**
      * @throws Throwable
      */
     public function __invoke(GenerateOtpLoginCodeRequest $request): JsonResponse
     {
+        $data = $request->validated();
+
+        $user = User::query()
+            ->where('email', $data['email'])
+            ->first();
+
+        if (! $user) {
+            return response()->json([
+                'error' => 'User not found.',
+            ], 422);
+        }
+
         try {
-            DB::beginTransaction();
+            if (OtpLoginFeature::active()) {
+                $expiresAt = now()->addMinutes(20);
 
-            $data = $request->validated();
+                $code = ($this->generateOtpLoginCode)($user, $expiresAt);
 
-            $user = User::query()
-                ->where('email', $data['email'])
-                ->first();
+                $user->notify(new OtpCodeNotification((int) $code));
 
-            if (! $user) {
                 return response()->json([
-                    'error' => 'User not found.',
-                ], 422);
+                    'link' => URL::temporarySignedRoute(
+                        name: 'login.one-time',
+                        expiration: $expiresAt->toImmutable(),
+                        parameters: ['user' => $user->getKey()],
+                        absolute: false,
+                    ),
+                ]);
             }
 
-            // Remove any existing OTPs for this user
-            OtpLoginCode::query()
-                ->where('user_id', $user->getKey())
-                ->delete();
+            ['otpCode' => $otpCode, 'code' => $code] = DB::transaction(function () use ($user): array {
+                // Remove any existing OTPs for this user.
+                OtpLoginCode::query()
+                    ->whereBelongsTo($user)
+                    ->delete();
 
-            $code = random_int(100000, 999999);
+                $code = random_int(100000, 999999);
 
-            $otpCode = new OtpLoginCode();
-            $otpCode->user()->associate($user);
-            $otpCode->code = Hash::make((string) $code);
-            $otpCode->saveOrFail();
+                $otpCode = new OtpLoginCode();
+                $otpCode->user()->associate($user);
+                $otpCode->code = Hash::make((string) $code);
+                $otpCode->saveOrFail();
 
-            DB::commit();
+                return ['otpCode' => $otpCode, 'code' => $code];
+            });
 
             $user->notify(new OtpCodeNotification($code));
 
@@ -94,8 +117,6 @@ class GenerateOtpLoginCodeController
                 ),
             ]);
         } catch (Throwable $exception) {
-            DB::rollBack();
-
             report($exception);
 
             return response()->json([

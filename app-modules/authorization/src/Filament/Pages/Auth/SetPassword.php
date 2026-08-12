@@ -53,6 +53,7 @@ use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 
 /**
@@ -108,8 +109,10 @@ class SetPassword extends SimplePage
 
         $data = $this->form->getState();
 
-        $user->password = $data['password'];
-        $user->save();
+        $user->forceFill([
+            'password' => $data['password'], // already hashed by the field's dehydrateStateUsing
+            $user->getRememberTokenName() => Str::random(60),
+        ])->save();
 
         auth()->logout();
 

@@ -34,55 +34,41 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Filament\Pages\Auth\ConfirmOneTimeLoginCode;
 use App\Models\User;
 use Illuminate\Support\Facades\URL;
 
-use function Pest\Laravel\assertAuthenticatedAs;
 use function Pest\Laravel\assertGuest;
 use function Pest\Laravel\get;
 
-it('signs the user in through a signed URL', function () {
-    $user = User::factory()->create([
-        'password' => null,
-    ]);
+it('stashes the user in session and redirects to the code challenge', function () {
+    $user = User::factory()->create(['password' => null]);
 
-    assertGuest();
-
-    get(URL::signedRoute(
-        name: 'login.one-time',
-        parameters: ['user' => $user],
-        absolute: false,
-    ))
-        ->assertRedirect();
-
-    assertAuthenticatedAs($user);
-});
-
-it('does not sign the user in if the URL is not signed', function () {
-    $user = User::factory()->create([
-        'password' => null,
-    ]);
-
-    get(route('login.one-time', ['user' => $user]))
-        ->assertForbidden();
+    get(URL::signedRoute('login.one-time', ['user' => $user], absolute: false))
+        ->assertRedirect(route('filament.admin.auth.one-time-login'))
+        ->assertSessionHas(ConfirmOneTimeLoginCode::SESSION_KEY . '.user', $user->getKey());
 
     assertGuest();
 });
 
-it('does not sign the user in if they have a password set', function () {
+it('forbids an unsigned link', function () {
+    $user = User::factory()->create(['password' => null]);
+    get(route('login.one-time', ['user' => $user]))->assertForbidden();
+    assertGuest();
+});
+
+it('forbids an internal user that already has a password', function () {
     $user = User::factory()->create();
-
-    get(route('login.one-time', ['user' => $user]))
-        ->assertForbidden();
-
+    get(URL::signedRoute('login.one-time', ['user' => $user], absolute: false))->assertForbidden();
     assertGuest();
 });
 
-it('does not sign the user in if they are external', function () {
+it('allows an external user that already has a password to reuse the link', function () {
     $user = User::factory()->external()->create();
 
-    get(route('login.one-time', ['user' => $user]))
-        ->assertForbidden();
+    get(URL::signedRoute('login.one-time', ['user' => $user], absolute: false))
+        ->assertRedirect(route('filament.admin.auth.one-time-login'))
+        ->assertSessionHas(ConfirmOneTimeLoginCode::SESSION_KEY . '.user', $user->getKey());
 
     assertGuest();
 });

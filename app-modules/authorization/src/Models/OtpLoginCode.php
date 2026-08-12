@@ -37,6 +37,7 @@
 namespace AdvisingApp\Authorization\Models;
 
 use AdvisingApp\Authorization\Database\Factories\OtpLoginCodeFactory;
+use App\Features\OtpLoginFeature;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
@@ -60,6 +61,9 @@ class OtpLoginCode extends Model
 
     protected $fillable = [];
 
+    /** @var list<string> */
+    protected $hidden = ['code'];
+
     /**
      * @return BelongsTo<User, $this>
      */
@@ -69,11 +73,33 @@ class OtpLoginCode extends Model
     }
 
     /**
-     * @return Builder<OtpLoginCode>
+     * @return Builder<static>
      */
     public function prunable(): Builder
     {
-        return static::where('created_at', '<=', now()->subMinutes(20))
-            ->orWhereNotNull('used_at');
+        if (OtpLoginFeature::active()) {
+            return static::query()
+                ->where(fn (Builder $query) => $query
+                    ->whereNotNull('expires_at')
+                    ->where('expires_at', '<=', now()))
+                ->orWhere(fn (Builder $query) => $query
+                    ->whereNull('expires_at')
+                    ->where('created_at', '<=', now()->subMinutes(20)))
+                ->orWhereNotNull('used_at');
+        }
+
+        return static::query()->where('created_at', '<=', now()->subMinutes(20));
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'code' => 'hashed',
+            'expires_at' => 'datetime',
+            'used_at' => 'datetime',
+        ];
     }
 }

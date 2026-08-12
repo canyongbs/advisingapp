@@ -52,3 +52,4 @@ Route::get('/imports/{import}/download', DownloadImportController::class)
 
 Route::redirect('/docs/api', '/docs/api/v1')
     ->name('docs.api');
+

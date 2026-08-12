@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Authorization;
 
+use AdvisingApp\Authorization\Filament\Pages\Auth\ConfirmOneTimeLoginCode;
 use AdvisingApp\Authorization\Filament\Pages\Auth\SetPassword;
 use AdvisingApp\Authorization\Http\Middleware\RedirectIfPasswordNotSet;
 use Filament\Actions\Action;
@@ -72,6 +73,10 @@ class AuthorizationPlugin implements Plugin
             ->authMiddleware([
                 RedirectIfPasswordNotSet::class,
             ])
+            ->routes(function () {
+                Route::get('/confirm-code', ConfirmOneTimeLoginCode::class)
+                    ->name('auth.one-time-login');
+            })
             ->authenticatedRoutes(function () {
                 Route::get('/set-password', SetPassword::class)
                     ->withoutMiddleware(RedirectIfPasswordNotSet::class)
@@ -79,6 +84,7 @@ class AuthorizationPlugin implements Plugin
             });
 
         Livewire::component(app(ComponentRegistry::class)->getName(SetPassword::class), SetPassword::class);
+        Livewire::component(app(ComponentRegistry::class)->getName(ConfirmOneTimeLoginCode::class), ConfirmOneTimeLoginCode::class);
     }
 
     public function boot(Panel $panel): void
