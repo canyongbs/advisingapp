@@ -99,3 +99,14 @@ it('still returns opted out status in SMS demo mode when the phone is opted out'
 
     assertEquals(PhoneHealthStatus::OptedOut, $phoneNumber->getHealthStatus());
 });
+
+it('still returns bounced status in SMS demo mode when the phone has previously bounced', function () {
+    $settings = app(TwilioSettings::class);
+    $settings->is_demo_mode_enabled = true;
+    $settings->save();
+
+    $phoneNumber = Prospect::factory()->create()->primaryPhoneNumber;
+    
+    BouncedPhoneNumber::factory()->create(['number' => $phoneNumber->number]);
+    assertEquals(PhoneHealthStatus::Bounced, $phoneNumber->getHealthStatus());
+});
