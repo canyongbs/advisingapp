@@ -22,7 +22,7 @@ jobs:
               with:
                   persist-credentials: false
 
-            - uses: dorny/paths-filter@7b450fff21473bca461d4b92ce414b9d0420d706 # v4.0.2
+            - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d # v4.0.3
               id: changes
               with:
                   filters: |
@@ -31,7 +31,7 @@ jobs:
                           - '.github/dependabot.yml'
 
             - if: steps.changes.outputs.workflows == 'true'
-              uses: zizmorcore/zizmor-action@6fc4b006235f201fdab3722e17240ab420d580e5 # v0.6.1
+              uses: zizmorcore/zizmor-action@3dc1ecc9bcb9e94e9b2c709687979e1298497054 # v0.6.2
               with:
                   advanced-security: false
                   persona: auditor
