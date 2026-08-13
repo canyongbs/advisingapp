@@ -440,6 +440,16 @@ jobs:
                   GH_REPOSITORY: ${{ github.repository }}
                   PR_NUMBER: ${{ github.event.pull_request.number }}
               run: |
+                  # Request Copilot at most once per PR. It is removed from requested_reviewers once
+                  # it finishes, so a pending-request check alone would re-request on every push.
+                  # Skip if Copilot has already submitted a review (diminishing returns on re-reviews);
+                  # a maintainer can still manually re-request from the PR UI when needed.
+                  reviewed=$(gh api "/repos/${GH_REPOSITORY}/pulls/${PR_NUMBER}/reviews" --paginate \
+                      --jq '.[].user.login')
+                  if echo "$reviewed" | grep -q 'copilot-pull-request-reviewer'; then
+                      echo 'Copilot has already reviewed this PR; not requesting again.'
+                      exit 0
+                  fi
                   existing=$(gh api "/repos/${GH_REPOSITORY}/pulls/${PR_NUMBER}/requested_reviewers" --jq '.users[].login')
                   if echo "$existing" | grep -q 'copilot-pull-request-reviewer'; then
                       echo 'Copilot review already requested.'
