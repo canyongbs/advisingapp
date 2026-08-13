@@ -25,32 +25,31 @@ jobs:
 
         timeout-minutes: 15
 
-        env:
-            php-extensions: gd, gmp, redis, mailparse
-            php-extensions-key: ext-cache-copilot-v1
-            php-version: '8.4'
-
+        # NOTE: Copilot code review lifts these steps into its own runner and does NOT carry a
+        # job-level `env:` block, so the PHP config is inlined below rather than referenced via
+        # `${{ env.* }}`. Using job-level env here causes empty inputs (e.g. "Input required and
+        # not supplied: extensions"), which aborts setup and forces a limited default review.
         steps:
             - name: Setup cache environment
               id: extcache
               uses: shivammathur/cache-extensions@9b476298b44f2e4d4268dd103ff4c3e216314e27 #1.14.6
               with:
-                  php-version: ${{ env.php-version }}
-                  extensions: ${{ env.php-extensions }}
-                  key: ${{ env.php-extensions-key }}
+                  php-version: '8.4'
+                  extensions: gd, gmp, redis, mailparse
+                  key: ext-cache-copilot-v1
 
             - name: Cache extensions
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
                   path: ${{ steps.extcache.outputs.dir }}
-                  key: ${{ runner.os }}-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
-                  restore-keys: ${{ runner.os }}-phpext-${{ env.php-version }}
+                  key: ${{ runner.os }}-phpext-8.4-ext-cache-copilot-v1
+                  restore-keys: ${{ runner.os }}-phpext-8.4
 
             - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
               with:
-                  php-version: ${{ env.php-version }}
+                  php-version: '8.4'
                   coverage: none
-                  extensions: ${{ env.php-extensions }}
+                  extensions: gd, gmp, redis, mailparse
 
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
