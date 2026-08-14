@@ -55,6 +55,7 @@ class ManageNotificationSettings extends SettingsPage
                     ->disk('s3')
                     ->collection('logo')
                     ->visibility('private')
+                    ->model(NotificationSettings::getSettingsPropertyModel('notifications.logo'))
                     ->image(),
             ]);
     }
