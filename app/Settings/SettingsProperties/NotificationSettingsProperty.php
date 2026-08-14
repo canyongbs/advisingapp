@@ -38,6 +38,9 @@ namespace App\Settings\SettingsProperties;
 
 use App\Models\SettingsPropertyWithMedia;
 
+/**
+ * @mixin IdeHelperNotificationSettingsProperty
+ */
 class NotificationSettingsProperty extends SettingsPropertyWithMedia
 {
     public function registerMediaCollections(): void
