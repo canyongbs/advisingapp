@@ -36,12 +36,9 @@
 
 namespace App\Notifications;
 
-use AdvisingApp\Authorization\Actions\GenerateOneTimeLoginCode;
 use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Features\OneTimeLoginFeature;
-use App\Models\NotificationSetting;
-use App\Models\User;
+use App\Settings\NotificationSettings;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
@@ -65,7 +62,7 @@ class SetPasswordNotification extends Notification implements ShouldQueue
         $expiresAt = now()->addDay();
 
         $message = MailMessage::make()
-            ->settings($this->resolveNotificationSetting($notifiable))
+            ->settings(app(NotificationSettings::class))
             ->subject('Set up your password')
             ->line('A new account has been created for you.')
             ->action('Set up your password', url(URL::temporarySignedRoute(
@@ -73,22 +70,8 @@ class SetPasswordNotification extends Notification implements ShouldQueue
                 expiration: $expiresAt,
                 parameters: ['user' => $notifiable],
                 absolute: false,
-            )));
-
-        if (OneTimeLoginFeature::active()) {
-            $code = app(GenerateOneTimeLoginCode::class)($notifiable, $expiresAt);
-
-            $message->line("When prompted, enter this verification code: {$code}")
-                ->line('For security reasons, this link and code will expire in 24 hours.');
-        } else {
-            $message->line('For security reasons, this link will expire in 24 hours.');
-        }
-
-        return $message->line('Please contact support if you need a new link or have any issues setting up your account.');
-    }
-
-    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
-    {
-        return $notifiable->department?->division?->notificationSetting?->setting;
+            )))
+            ->line('For security reasons, this link will expire in 24 hours.')
+            ->line('Please contact support if you need a new link or have any issues setting up your account.');
     }
 }

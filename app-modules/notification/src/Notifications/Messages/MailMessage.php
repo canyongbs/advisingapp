@@ -36,7 +36,7 @@
 
 namespace AdvisingApp\Notification\Notifications\Messages;
 
-use App\Models\NotificationSetting;
+use App\Settings\NotificationSettings;
 use Illuminate\Notifications\Messages\MailMessage as BaseMailMessage;
 
 class MailMessage extends BaseMailMessage
@@ -79,7 +79,7 @@ class MailMessage extends BaseMailMessage
         return parent::from($address ?? config('mail.from.address'), $name);
     }
 
-    public function settings(?NotificationSetting $setting): static
+    public function settings(?NotificationSettings $setting): static
     {
         if (! empty($setting->from_name)) {
             $this->from(name: $setting->from_name);

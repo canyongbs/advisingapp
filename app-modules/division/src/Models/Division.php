@@ -41,7 +41,6 @@ use AdvisingApp\Division\Observers\DivisionObserver;
 use AdvisingApp\Interaction\Models\Concerns\HasManyInteractions;
 use AdvisingApp\Team\Models\Department;
 use App\Models\BaseModel;
-use App\Models\NotificationSettingPivot;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -95,10 +94,5 @@ class Division extends BaseModel implements Auditable
     public function departments(): HasMany
     {
         return $this->hasMany(Department::class);
-    }
-
-    public function notificationSetting(): MorphOne
-    {
-        return $this->morphOne(NotificationSettingPivot::class, 'related_to');
     }
 }

@@ -38,8 +38,8 @@ namespace App\Notifications;
 
 use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Models\NotificationSetting;
 use App\Models\User;
+use App\Settings\NotificationSettings;
 use Filament\Auth\Notifications\ResetPassword;
 
 #[SystemNotification]
@@ -51,16 +51,11 @@ class ResetPasswordNotification extends ResetPassword
     public function toMail($notifiable): MailMessage
     {
         return MailMessage::make()
-            ->settings($this->resolveNotificationSetting($notifiable))
+            ->settings(app(NotificationSettings::class))
             ->subject('Reset your password')
             ->line(__('You are receiving this email because we received a password reset request for your account.'))
             ->action(__('Reset Password'), $this->resetUrl($notifiable))
             ->line(__('This password reset link will expire in :count minutes.', ['count' => config('auth.passwords.' . config('auth.defaults.passwords') . '.expire')]))
             ->line(__('If you did not request a password reset, no further action is required.'));
-    }
-
-    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
-    {
-        return $notifiable->department?->division?->notificationSetting?->setting;
     }
 }

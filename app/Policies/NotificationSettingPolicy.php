@@ -40,6 +40,7 @@ use App\Models\Authenticatable;
 use App\Models\NotificationSetting;
 use Illuminate\Auth\Access\Response;
 
+// TODO: Cleanup Task NotificationSettingsFeature - delete this file
 class NotificationSettingPolicy
 {
     public function viewAny(Authenticatable $authenticatable): Response
