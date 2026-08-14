@@ -10,8 +10,8 @@ return new class extends Migration
     public function up(): void
     {
         DB::transaction(function () {
-            Schema::dropIfExists('notification_settings');
             Schema::dropIfExists('notification_settings_pivot');
+            Schema::dropIfExists('notification_settings');
         });
     }
 
