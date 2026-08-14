@@ -38,6 +38,7 @@ namespace App\Notifications;
 
 use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use App\Models\User;
 use App\Settings\NotificationSettings;
 use Filament\Auth\Notifications\ResetPassword;
 

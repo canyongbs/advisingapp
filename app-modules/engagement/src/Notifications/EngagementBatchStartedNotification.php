@@ -39,6 +39,7 @@ namespace AdvisingApp\Engagement\Notifications;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use App\Models\User;
 use App\Settings\NotificationSettings;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
