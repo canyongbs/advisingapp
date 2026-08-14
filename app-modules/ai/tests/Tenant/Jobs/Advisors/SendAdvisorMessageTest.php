@@ -143,6 +143,11 @@ it('builds smart prompt content from the editable instructions setting', functio
 it('dispatches GenerateAiThreadName exactly once, right after the third user message and response', function () {
     Bus::fake([GenerateAiThreadName::class]);
 
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
+
     AiThreadAutoNamingFeature::activate();
 
     asSuperAdmin();
@@ -177,6 +182,11 @@ it('dispatches GenerateAiThreadName exactly once, right after the third user mes
 
 it('does not dispatch GenerateAiThreadName when the thread has already been renamed by the user', function () {
     Bus::fake([GenerateAiThreadName::class]);
+
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
 
     AiThreadAutoNamingFeature::activate();
 
