@@ -9,7 +9,11 @@ created: 2026-08-14
 
 ## Temporary Migrations
 
+- database/migrations/2026_08_14_214258_tmp_seed_notification_settings.php
+
 ## Additional Cleanup
+
+- Search for "TODO: Cleanup Task NotificationSettingsFeature -" for additional cleanup tasks.
 
 <!--
 Only list cleanup that has no home in code. Do NOT restate obvious feature-flag
