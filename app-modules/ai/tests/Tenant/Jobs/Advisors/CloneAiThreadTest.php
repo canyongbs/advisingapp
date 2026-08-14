@@ -73,12 +73,12 @@ it('can clone a thread and its messages', function () {
         ->for($sender, 'user')
         ->create();
 
-    $originalMessages = $thread->messages;
+    $originalMessages = $thread->messages()->oldest()->get();
     dispatch(new CloneAiThread($thread, $sender, $recipient));
 
     $recipient->refresh();
     $clonedThread = $recipient->aiThreads()->latest()->first();
-    $clonedMessages = $clonedThread->messages;
+    $clonedMessages = $clonedThread->messages()->oldest()->get();
 
     expect($clonedThread)->not->toBeNull();
     expect($clonedThread->getKey())->not->toBe($thread->getKey());
