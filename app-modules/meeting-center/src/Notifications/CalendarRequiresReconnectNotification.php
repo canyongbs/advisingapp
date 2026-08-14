@@ -39,7 +39,6 @@ namespace AdvisingApp\MeetingCenter\Notifications;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\CalendarEventResource;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Models\User;
 use App\Settings\NotificationSettings;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification as FilamentNotification;

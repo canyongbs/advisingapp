@@ -40,7 +40,6 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Models\User;
 use App\Settings\NotificationSettings;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;

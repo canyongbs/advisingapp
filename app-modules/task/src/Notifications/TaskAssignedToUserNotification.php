@@ -44,7 +44,6 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ManageStudent
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
-use App\Models\User;
 use App\Settings\NotificationSettings;
 use Exception;
 use Filament\Notifications\Notification as FilamentNotification;
