@@ -41,6 +41,7 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Settings\AiSettings;
+use App\Features\AiThreadAutoNamingFeature;
 use App\Models\Tenant;
 use App\Models\User;
 
@@ -65,6 +66,52 @@ it('creates a new thread', function () {
         ->assistant->toBe($assistant)
         ->user->toBe(auth()->user())
         ->wasRecentlyCreated->toBeTrue();
+});
+
+it('gives a new thread a default name stamped with the current date and time', function () {
+    AiThreadAutoNamingFeature::activate();
+
+    asSuperAdmin();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $settings = app(AiSettings::class);
+    $settings->default_model = AiModel::Test;
+    $settings->save();
+
+    $now = now();
+
+    $thread = app(CreateThread::class)(AiAssistantApplication::Test, $assistant);
+
+    expect($thread->name)
+        ->toBe('New Chat ' . $now->format('n/j/y @ g:i A'))
+        ->and($thread->named_by_user_at)
+        ->toBeNull();
+});
+
+it('does not give a new thread a default name when the auto naming feature is inactive', function () {
+    AiThreadAutoNamingFeature::deactivate();
+
+    asSuperAdmin();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $settings = app(AiSettings::class);
+    $settings->default_model = AiModel::Test;
+    $settings->save();
+
+    $thread = app(CreateThread::class)(AiAssistantApplication::Test, $assistant);
+
+    expect($thread->name)
+        ->toBeNull();
 });
 
 it('does not create a new thread if an empty existing one exists', function () {
@@ -175,7 +222,67 @@ it('does not match existing threads belonging to other assistants', function () 
         ->not->toBe($thread->getKey());
 });
 
-it('does not match existing saved threads (with a name)', function () {
+it('reuses an existing thread with a default name when the auto naming feature is active', function () {
+    AiThreadAutoNamingFeature::activate();
+
+    asSuperAdmin();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->for(auth()->user())
+        ->create([
+            'name' => 'New Chat 8/13/26 @ 7:10 AM',
+            'named_by_user_at' => null,
+        ]);
+
+    $settings = app(AiSettings::class);
+    $settings->default_model = AiModel::Test;
+    $settings->save();
+
+    $existingThread = app(CreateThread::class)(AiAssistantApplication::Test, $assistant);
+
+    expect($existingThread->getKey())
+        ->toBe($thread->getKey());
+});
+
+it('does not match existing threads that have been renamed by the user', function () {
+    AiThreadAutoNamingFeature::activate();
+
+    asSuperAdmin();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->for(auth()->user())
+        ->create([
+            'name' => 'Test',
+            'named_by_user_at' => now(),
+        ]);
+
+    $settings = app(AiSettings::class);
+    $settings->default_model = AiModel::Test;
+    $settings->save();
+
+    $newThread = app(CreateThread::class)(AiAssistantApplication::Test, $assistant);
+
+    expect($newThread->getKey())
+        ->not->toBe($thread->getKey());
+});
+
+it('does not match existing saved threads (with a name) when the auto naming feature is inactive', function () {
+    AiThreadAutoNamingFeature::deactivate();
+
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([

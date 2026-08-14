@@ -45,6 +45,7 @@ use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use AdvisingApp\Research\Models\ResearchRequest;
+use App\Features\AiThreadAutoNamingFeature;
 use Closure;
 use Exception;
 use Generator;
@@ -94,8 +95,10 @@ class TestAiService implements AiService
         $message->context = fake()->paragraph();
         $message->save();
 
-        $message->thread->name = fake()->words();
-        $message->thread->save();
+        if (! AiThreadAutoNamingFeature::active()) {
+            $message->thread->name = fake()->words();
+            $message->thread->save();
+        }
 
         if ($message->wasRecentlyCreated || $message->wasChanged('content')) {
             dispatch(new RecordTrackedEvent(

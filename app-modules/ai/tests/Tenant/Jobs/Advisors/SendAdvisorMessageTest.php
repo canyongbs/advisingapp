@@ -38,11 +38,14 @@ use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Events\Advisors\AdvisorMessageChunk;
 use AdvisingApp\Ai\Events\Advisors\AdvisorMessageFinished;
+use AdvisingApp\Ai\Jobs\Advisors\GenerateAiThreadName;
 use AdvisingApp\Ai\Jobs\Advisors\SendAdvisorMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
+use App\Features\AiThreadAutoNamingFeature;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 
 use function Tests\asSuperAdmin;
@@ -135,4 +138,66 @@ it('builds smart prompt content from the editable instructions setting', functio
         ->toContain($prompt->type->title)
         ->toContain($prompt->description)
         ->toEndWith($prompt->prompt);
+});
+
+it('dispatches GenerateAiThreadName exactly once, right after the third user message and response', function () {
+    Bus::fake([GenerateAiThreadName::class]);
+
+    AiThreadAutoNamingFeature::activate();
+
+    asSuperAdmin();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->for(auth()->user())
+        ->create();
+
+    dispatch(new SendAdvisorMessage($thread, 'Message 1'));
+
+    Bus::assertNotDispatched(GenerateAiThreadName::class);
+
+    dispatch(new SendAdvisorMessage($thread, 'Message 2'));
+
+    Bus::assertNotDispatched(GenerateAiThreadName::class);
+
+    dispatch(new SendAdvisorMessage($thread, 'Message 3'));
+
+    Bus::assertDispatchedTimes(GenerateAiThreadName::class, 1);
+
+    dispatch(new SendAdvisorMessage($thread, 'Message 4'));
+
+    Bus::assertDispatchedTimes(GenerateAiThreadName::class, 1);
+});
+
+it('does not dispatch GenerateAiThreadName when the thread has already been renamed by the user', function () {
+    Bus::fake([GenerateAiThreadName::class]);
+
+    AiThreadAutoNamingFeature::activate();
+
+    asSuperAdmin();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->for(auth()->user())
+        ->create([
+            'named_by_user_at' => now(),
+        ]);
+
+    dispatch(new SendAdvisorMessage($thread, 'Message 1'));
+    dispatch(new SendAdvisorMessage($thread, 'Message 2'));
+    dispatch(new SendAdvisorMessage($thread, 'Message 3'));
+
+    Bus::assertNotDispatched(GenerateAiThreadName::class);
 });

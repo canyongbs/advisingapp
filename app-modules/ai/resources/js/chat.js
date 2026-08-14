@@ -398,6 +398,11 @@ document.addEventListener('alpine:init', () => {
                 }
 
                 this.$wire.refreshThreads();
+
+                // The thread may be renamed by a background AI job shortly after this
+                // exchange completes (see GenerateAiThreadName). Re-check for an updated
+                // name a few seconds later so the sidebar doesn't wait for the next message.
+                setTimeout(() => this.$wire.refreshThreads(), 5000);
             },
 
             handleResponse: async function ({ response }) {

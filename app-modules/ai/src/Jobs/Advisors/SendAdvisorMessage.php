@@ -49,6 +49,7 @@ use AdvisingApp\Ai\Support\StreamingChunks\Image;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\Ai\Support\StreamingChunks\Thinking;
+use App\Features\AiThreadAutoNamingFeature;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -249,6 +250,14 @@ class SendAdvisorMessage implements ShouldQueue
                 'updated_at' => $message->created_at,
             ]);
         });
+
+        if (
+            AiThreadAutoNamingFeature::active() &&
+            blank($this->thread->named_by_user_at) &&
+            ($this->thread->messages()->whereNotNull('user_id')->count() === 3)
+        ) {
+            GenerateAiThreadName::dispatch($this->thread);
+        }
     }
 
     public function tries(): int
