@@ -37,7 +37,6 @@
 namespace AdvisingApp\MeetingCenter\Notifications;
 
 use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\User;
 use App\Settings\NotificationSettings;
