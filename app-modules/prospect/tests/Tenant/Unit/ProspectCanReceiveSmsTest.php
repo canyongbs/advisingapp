@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Enums\PhoneNumberLookupStatus;
 use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
@@ -108,6 +109,52 @@ it('returns false when the primary phone is both bounced and opted out', functio
 
     BouncedPhoneNumber::factory()->create(['number' => $number]);
     SmsOptOutPhoneNumber::factory()->create(['number' => $number]);
+
+    assertFalse($prospect->canReceiveSms());
+});
+
+it('returns true in SMS demo mode even when the primary phone has no textable Telnyx lookup', function () {
+    $prospect = Prospect::factory()->create();
+
+    // Simulate a phone without a Telnyx lookup, which normally blocks SMS.
+    $prospect->primaryPhoneNumber->phoneNumberLookup()->delete();
+    $prospect->refresh();
+
+    assertFalse($prospect->canReceiveSms());
+    assertFalse($prospect->hasValidSms());
+
+    $settings = app(TwilioSettings::class);
+    $settings->is_demo_mode_enabled = true;
+    $settings->save();
+
+    assertTrue($prospect->canReceiveSms());
+    assertTrue($prospect->hasValidSms());
+});
+
+it('still returns false in SMS demo mode when the primary phone is opted out', function () {
+    $settings = app(TwilioSettings::class);
+    $settings->is_demo_mode_enabled = true;
+    $settings->save();
+
+    $prospect = Prospect::factory()->create();
+
+    SmsOptOutPhoneNumber::factory()->create([
+        'number' => $prospect->primaryPhoneNumber->number,
+    ]);
+
+    assertFalse($prospect->canReceiveSms());
+});
+
+it('still returns false in SMS demo mode when the primary phone has previously bounced', function () {
+    $settings = app(TwilioSettings::class);
+    $settings->is_demo_mode_enabled = true;
+    $settings->save();
+
+    $prospect = Prospect::factory()->create();
+
+    BouncedPhoneNumber::factory()->create([
+        'number' => $prospect->primaryPhoneNumber->number,
+    ]);
 
     assertFalse($prospect->canReceiveSms());
 });
