@@ -47,7 +47,7 @@ use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Pages\SettingsPage;
+use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 use UnitEnum;
 
