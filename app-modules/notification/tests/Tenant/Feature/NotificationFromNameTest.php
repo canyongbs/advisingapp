@@ -47,6 +47,7 @@ it('sets the mail from name based on settings fromName if set', function () {
     $notificationSetting = app(NotificationSettings::class);
 
     $notificationSetting->from_name = fake()->name();
+    $notificationSetting->save();
 
     $notification = new TestEmailSettingFromNameNotification();
 

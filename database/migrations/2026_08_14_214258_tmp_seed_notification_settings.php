@@ -47,22 +47,20 @@ return new class () extends Migration {
         DB::transaction(function () {
             $notificationSetting = NotificationSetting::query()->oldest()->first();
 
-            if (! $notificationSetting) {
-                return;
+            if ($notificationSetting) {
+                $settings = app(NotificationSettings::class);
+
+                $settings->name = $notificationSetting->getAttribute('name');
+                $settings->from_name = $notificationSetting->getAttribute('from_name');
+                $settings->description = $notificationSetting->getAttribute('description');
+                $settings->primary_color = Color::tryFrom((string) $notificationSetting->getAttribute('primary_color'));
+
+                $settings->save();
+
+                $logo = $notificationSetting->getFirstMedia('logo');
+
+                $logo?->copy(NotificationSettings::getSettingsPropertyModel('notifications.logo'), 'logo');
             }
-
-            $settings = app(NotificationSettings::class);
-
-            $settings->name = $notificationSetting->getAttribute('name');
-            $settings->from_name = $notificationSetting->getAttribute('from_name');
-            $settings->description = $notificationSetting->getAttribute('description');
-            $settings->primary_color = Color::tryFrom((string) $notificationSetting->getAttribute('primary_color'));
-
-            $settings->save();
-
-            $logo = $notificationSetting->getFirstMedia('logo');
-
-            $logo?->copy(NotificationSettings::getSettingsPropertyModel('notifications.logo'), 'logo');
 
             NotificationSettingsFeature::activate();
         });
