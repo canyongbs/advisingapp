@@ -57,18 +57,18 @@ it('can render the manage notification settings page', function () {
 });
 
 it('requries proper permissions to access', function () {
-        $user = User::factory()->create();
+    $user = User::factory()->create();
 
-        actingAs($user);
+    actingAs($user);
 
-        get(ManageNotificationSettings::getUrl())
-            ->assertForbidden();
+    get(ManageNotificationSettings::getUrl())
+        ->assertForbidden();
 
-        $user->givePermissionTo('settings.view-any');
+    $user->givePermissionTo('settings.view-any');
 
-        get(ManageNotificationSettings::getUrl())
-            ->assertOk();
-    });
+    get(ManageNotificationSettings::getUrl())
+        ->assertOk();
+});
 
 it('validates the inputs', function (array $state, array $errors) {
     asSuperAdmin();
