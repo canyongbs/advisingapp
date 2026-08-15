@@ -53,10 +53,10 @@ return new class () extends Migration {
 
             $settings = app(NotificationSettings::class);
 
-            $settings->name = $notificationSetting->name;
-            $settings->from_name = $notificationSetting->from_name;
-            $settings->description = $notificationSetting->description;
-            $settings->primary_color = Color::tryFrom((string) $notificationSetting->primary_color);
+            $settings->name = $notificationSetting->getAttribute('name');
+            $settings->from_name = $notificationSetting->getAttribute('from_name');
+            $settings->description = $notificationSetting->getAttribute('description');
+            $settings->primary_color = Color::tryFrom((string) $notificationSetting->getAttribute('primary_color'));
 
             $settings->save();
 
