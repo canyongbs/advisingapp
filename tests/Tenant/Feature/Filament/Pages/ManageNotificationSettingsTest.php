@@ -36,9 +36,11 @@
 
 use App\Features\NotificationSettingsFeature;
 use App\Filament\Pages\ManageNotificationSettings;
+use App\Models\User;
 use App\Settings\NotificationSettings;
 use CanyonGBS\Common\Enums\Color;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
@@ -53,6 +55,20 @@ it('can render the manage notification settings page', function () {
     get(ManageNotificationSettings::getUrl())
         ->assertOk();
 });
+
+it('requries proper permissions to access', function () {
+        $user = User::factory()->create();
+
+        actingAs($user);
+
+        get(ManageNotificationSettings::getUrl())
+            ->assertForbidden();
+
+        $user->givePermissionTo('settings.view-any');
+
+        get(ManageNotificationSettings::getUrl())
+            ->assertOk();
+    });
 
 it('validates the inputs', function (array $state, array $errors) {
     asSuperAdmin();

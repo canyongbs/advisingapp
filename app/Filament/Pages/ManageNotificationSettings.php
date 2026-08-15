@@ -39,6 +39,7 @@ namespace App\Filament\Pages;
 use App\Features\NotificationSettingsFeature;
 use App\Filament\Clusters\Communication;
 use App\Filament\Clusters\CommunicationNavigationGroup;
+use App\Models\User;
 use App\Settings\NotificationSettings;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -61,7 +62,10 @@ class ManageNotificationSettings extends SettingsPage
 
     public static function canAccess(): bool
     {
-        return NotificationSettingsFeature::active() && parent::canAccess();
+        $user = auth()->user();
+        assert($user instanceof User);
+
+        return NotificationSettingsFeature::active() && $user->can('settings.view-any') && parent::canAccess();
     }
 
     public function form(Schema $schema): Schema
