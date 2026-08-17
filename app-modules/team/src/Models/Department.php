@@ -36,10 +36,8 @@
 
 namespace AdvisingApp\Team\Models;
 
-use AdvisingApp\Division\Models\Division;
 use App\Models\BaseModel;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -58,13 +56,5 @@ class Department extends BaseModel
     public function users(): HasMany
     {
         return $this->hasMany(User::class, 'team_id');
-    }
-
-    /**
-    * @return BelongsTo<Division, $this>
-    */
-    public function division(): BelongsTo
-    {
-        return $this->belongsTo(Division::class);
     }
 }

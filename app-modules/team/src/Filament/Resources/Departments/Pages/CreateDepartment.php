@@ -36,15 +36,11 @@
 
 namespace AdvisingApp\Team\Filament\Resources\Departments\Pages;
 
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Team\Filament\Resources\Departments\DepartmentResource;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Validation\ValidationException;
 
 class CreateDepartment extends CreateRecord
 {
@@ -61,21 +57,6 @@ class CreateDepartment extends CreateRecord
                 Textarea::make('description')
                     ->required()
                     ->string(),
-                Select::make('division_id')
-                    ->relationship('division', 'name', modifyQueryUsing: fn (Builder $query) => $query->orderBy('is_default', 'desc'))
-                    ->searchable()
-                    ->preload()
-                    ->default(
-                        fn () => auth()->user()->department?->division?->getKey()
-                        ?? Division::query()
-                            ->where('is_default', true)
-                            ->first()
-                            ?->getKey()
-                        ?? Division::query()->first()?->getKey()
-                        ?? throw ValidationException::withMessages(['No division found'])
-                    )
-                    ->visible(fn (): bool => Division::count() > 1)
-                    ->dehydratedWhenHidden(),
             ]);
     }
 }

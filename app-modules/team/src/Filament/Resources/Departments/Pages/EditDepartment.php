@@ -36,15 +36,12 @@
 
 namespace AdvisingApp\Team\Filament\Resources\Departments\Pages;
 
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Team\Filament\Resources\Departments\DepartmentResource;
 use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
-use Illuminate\Database\Eloquent\Builder;
 
 class EditDepartment extends EditRecord
 {
@@ -61,11 +58,6 @@ class EditDepartment extends EditRecord
                 Textarea::make('description')
                     ->required()
                     ->string(),
-                Select::make('division_id')
-                    ->relationship('division', 'name', modifyQueryUsing: fn (Builder $query) => $query->orderBy('is_default', 'desc'))
-                    ->searchable()
-                    ->preload()
-                    ->visible(fn (): bool => Division::count() > 1),
             ]);
     }
 
