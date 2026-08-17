@@ -34,31 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Observers;
+use Illuminate\Database\Migrations\Migration;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Ai\Models\CustomerAdvisor;
-use AdvisingApp\IntegrationOpenAi\Jobs\UploadCustomerAdvisorFilesToVectorStore;
-use App\Features\CustomerAdvisorResourceHubArticleAccessFeature;
-
-class CustomerAdvisorObserver
-{
-    public function created(CustomerAdvisor $advisor): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if ($advisor->has_resource_hub_knowledge) {
-            UploadCustomerAdvisorFilesToVectorStore::dispatch($advisor);
-        }
+        Schema::table('customer_advisors', function (Blueprint $table) {
+            $table->string('resource_hub_article_access')->nullable()->default('all');
+        });
     }
 
-    public function updated(CustomerAdvisor $advisor): void
+    public function down(): void
     {
-        $watchedAttributes = ['has_resource_hub_knowledge'];
-
-        if (CustomerAdvisorResourceHubArticleAccessFeature::active()) {
-            $watchedAttributes[] = 'resource_hub_article_access';
-        }
-
-        if ($advisor->wasChanged($watchedAttributes)) {
-            UploadCustomerAdvisorFilesToVectorStore::dispatch($advisor);
-        }
+        Schema::table('customer_advisors', function (Blueprint $table) {
+            $table->dropColumn('resource_hub_article_access');
+        });
     }
-}
+};

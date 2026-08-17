@@ -37,13 +37,17 @@
 namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Enums\EmployeeAdvisorResourceHubArticleAccess;
 use AdvisingApp\Ai\Models\Concerns\CanAddAssistantLicenseGlobalScope;
 use AdvisingApp\Ai\Observers\CustomerAdvisorObserver;
 use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use App\Features\CustomerAdvisorResourceHubArticleAccessFeature;
 use App\Models\BaseModel;
 use App\Models\Media;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -88,6 +92,7 @@ class CustomerAdvisor extends BaseModel implements HasMedia, Auditable
         'button_background_hover_color',
         'default_theme',
         'has_resource_hub_knowledge',
+        'resource_hub_article_access',
     ];
 
     protected $casts = [
@@ -100,6 +105,7 @@ class CustomerAdvisor extends BaseModel implements HasMedia, Auditable
         'is_introductory_message_enabled' => 'boolean',
         'is_introductory_message_dynamic' => 'boolean',
         'has_resource_hub_knowledge' => 'boolean',
+        'resource_hub_article_access' => EmployeeAdvisorResourceHubArticleAccess::class,
     ];
 
     /**
@@ -187,11 +193,39 @@ class CustomerAdvisor extends BaseModel implements HasMedia, Auditable
             return [];
         }
 
+        if (! CustomerAdvisorResourceHubArticleAccessFeature::active()) {
+            return ResourceHubArticle::query()
+                ->public()
+                ->whereNotNull('article_details')
+                ->get(['id', 'updated_at'])
+                ->all();
+        }
+
+        $categoryIds = $this->resourceHubCategories()->pluck('resource_hub_categories.id');
+
         return ResourceHubArticle::query()
-            ->public()
+            ->when(
+                $this->resource_hub_article_access === EmployeeAdvisorResourceHubArticleAccess::Public,
+                fn ($query) => $query->where('public', true)
+            )
+            ->when(
+                $this->resource_hub_article_access === EmployeeAdvisorResourceHubArticleAccess::Internal,
+                fn ($query) => $query->where('public', false)
+            )
+            ->when($categoryIds->isNotEmpty(), fn ($query) => $query->whereIn('category_id', $categoryIds))
             ->whereNotNull('article_details')
             ->get(['id', 'updated_at'])
             ->all();
+    }
+
+    /**
+     * @return BelongsToMany<ResourceHubCategory, $this, covariant CustomerAdvisorResourceHubCategory>
+     */
+    public function resourceHubCategories(): BelongsToMany
+    {
+        return $this->belongsToMany(ResourceHubCategory::class, 'customer_advisor_resource_hub_categories', 'customer_advisor_id')
+            ->using(CustomerAdvisorResourceHubCategory::class)
+            ->withTimestamps();
     }
 
     public function getAiServiceModel(): ?AiModel
