@@ -38,6 +38,7 @@ namespace AdvisingApp\Authorization\Notifications;
 
 use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use App\Models\NotificationSetting;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
@@ -62,11 +63,17 @@ class OtpCodeNotification extends Notification
     public function toMail(User $notifiable): MailMessage
     {
         return MailMessage::make()
+            ->settings($this->resolveNotificationSetting($notifiable))
             ->subject('Your Login Verification Code')
             ->greeting('Hello ' . $notifiable->name . ',')
             ->line('Your one-time login verification code is:')
             ->line("**{$this->code}**")
             ->line('This code will expire in 20 minutes.')
             ->line('If you did not request this code, please ignore this email.');
+    }
+
+    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
+    {
+        return $notifiable->department?->division?->notificationSetting?->setting;
     }
 }
