@@ -44,7 +44,7 @@ return new class () extends Migration {
     {
         DB::transaction(function () {
             Schema::table('teams', function (Blueprint $table) {
-                $table->dropForeign(['division_id']);
+                $table->dropConstrainedForeignId('division_id');
             });
 
             Schema::table('users', function (Blueprint $table) {
