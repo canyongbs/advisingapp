@@ -72,7 +72,7 @@
                         </div>
                     @endif
                 </div>
-                
+
                 <template x-if="$wire.folders.length">
                     <div
                         class="border-gray-950/5 flex flex-col gap-y-3 rounded-xl border bg-white p-2 shadow-sm dark:border-white/10 dark:bg-gray-900"
