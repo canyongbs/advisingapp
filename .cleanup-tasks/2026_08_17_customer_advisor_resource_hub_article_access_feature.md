@@ -68,7 +68,6 @@ flag is active, using an array spread over a ternary.
 Drop the `...(... ::active() ? [...] : [])` spread/ternary entirely — the two `Select::make()`
 fields become plain, unconditional entries in the `schema()` array, same as `Toggle::make()` above them:
 
-
 ### 4. `AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages\ManageCustomerAdvisorResourceHub::handleRecordUpdate()`
 
 Same file as above. When an advisor's knowledge toggle is turned off, `resource_hub_article_access` is
@@ -87,7 +86,6 @@ File: `app-modules/ai/database/migrations/2026_08_17_120100_create_customer_advi
 Remove only the `::activate()` / `::deactivate()` lines and the now-unused
 `use App\Features\CustomerAdvisorResourceHubArticleAccessFeature;` import; Remove the `DB::transaction()`
 wrapper as well:
-
 
 Finally, once all 4 code sites above no longer reference the flag, delete the flag class itself
 (`app/Features/CustomerAdvisorResourceHubArticleAccessFeature.php`) and this cleanup task file.
