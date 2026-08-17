@@ -43,7 +43,6 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Services\TestAiService;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use App\Features\AiThreadAutoNamingFeature;
 use Illuminate\Support\Facades\Bus;
 
 use function Tests\asSuperAdmin;
@@ -68,8 +67,6 @@ function createNamingTestThread(): AiThread
 }
 
 it('renames a thread using the AI service and marks it as saved', function () {
-    AiThreadAutoNamingFeature::activate();
-
     asSuperAdmin();
 
     Bus::fake([RecordTrackedEvent::class]);
@@ -93,8 +90,6 @@ it('renames a thread using the AI service and marks it as saved', function () {
 });
 
 it('does not rename a thread that has already been renamed by the user', function () {
-    AiThreadAutoNamingFeature::activate();
-
     asSuperAdmin();
 
     Bus::fake([RecordTrackedEvent::class]);
@@ -111,25 +106,6 @@ it('does not rename a thread that has already been renamed by the user', functio
 
     expect($thread->name)
         ->toBe('My Custom Name');
-
-    Bus::assertNotDispatched(RecordTrackedEvent::class);
-});
-
-it('does nothing when the auto naming feature is inactive', function () {
-    AiThreadAutoNamingFeature::deactivate();
-
-    asSuperAdmin();
-
-    Bus::fake([RecordTrackedEvent::class]);
-
-    $thread = createNamingTestThread();
-
-    app(GenerateAiThreadName::class, ['thread' => $thread])->handle();
-
-    $thread->refresh();
-
-    expect($thread->name)
-        ->toBe('New Chat 8/13/26 @ 7:10 AM');
 
     Bus::assertNotDispatched(RecordTrackedEvent::class);
 });
@@ -152,8 +128,6 @@ function bindFakeAiService(Closure $complete): void
 }
 
 it('reports the exception and leaves the thread unnamed when the AI service fails', function () {
-    AiThreadAutoNamingFeature::activate();
-
     asSuperAdmin();
 
     Bus::fake([RecordTrackedEvent::class]);
@@ -177,8 +151,6 @@ it('reports the exception and leaves the thread unnamed when the AI service fail
 });
 
 it('does not rename a thread that got renamed by the user while the AI service was generating a name', function () {
-    AiThreadAutoNamingFeature::activate();
-
     asSuperAdmin();
 
     Bus::fake([RecordTrackedEvent::class]);

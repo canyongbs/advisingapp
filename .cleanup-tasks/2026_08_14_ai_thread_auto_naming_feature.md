@@ -11,5 +11,5 @@ created: 2026-08-14
 
 ## Additional Cleanup
 
-- In `BaseOpenAiService::sendMessage()`, delete the entire inner try/catch block inside the outer `finally` that names the thread when `AiThreadAutoNamingFeature` is inactive. Thread naming is now handled by `GenerateAiThreadName`, dispatched from `SendAdvisorMessage` after three exchanges.
+- In `BaseOpenAiService::sendNewMessage()`, delete the entire inner try/catch block inside the outer `finally` that names the thread when `AiThreadAutoNamingFeature` is inactive.
 - In `TestAiService::sendMessage()`, delete the `if` block that fakes a thread name when `AiThreadAutoNamingFeature` is inactive, for the same reason.

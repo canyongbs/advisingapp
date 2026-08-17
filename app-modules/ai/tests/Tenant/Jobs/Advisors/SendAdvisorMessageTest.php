@@ -44,7 +44,6 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
-use App\Features\AiThreadAutoNamingFeature;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 
@@ -148,8 +147,6 @@ it('dispatches GenerateAiThreadName exactly once, right after the third user mes
         AdvisorMessageFinished::class,
     ]);
 
-    AiThreadAutoNamingFeature::activate();
-
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
@@ -187,8 +184,6 @@ it('does not dispatch GenerateAiThreadName when the thread has already been rena
         AdvisorMessageChunk::class,
         AdvisorMessageFinished::class,
     ]);
-
-    AiThreadAutoNamingFeature::activate();
 
     asSuperAdmin();
 
