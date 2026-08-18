@@ -49,9 +49,15 @@ class SyncTenantSmartPrompts
         DB::transaction(function () use ($request) {
             $this->syncInstructions($request);
 
+            $smartPrompts = $request->validated('smartPrompts');
+
+            if (is_null($smartPrompts)) {
+                return;
+            }
+
             $promptIds = [];
 
-            foreach ($request->validated('smartPrompts') ?? [] as $smartPromptCategory) {
+            foreach ($smartPrompts as $smartPromptCategory) {
                 $promptType = PromptType::query()
                     ->firstOrCreate(
                         ['title' => $smartPromptCategory['title']],
