@@ -34,14 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use AdvisingApp\Authorization\Actions\GenerateOneTimeLoginCode;
+use AdvisingApp\Authorization\Models\OneTimeLoginCode;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
-use App\Support\AbstractFeatureFlag;
+use function Pest\Laravel\freezeTime;
 
-class OtpLoginFeature extends AbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
-    {
-        return false;
-    }
-}
+it('generates a six digit code stored as a hash', function () {
+    freezeTime();
+
+    $user = User::factory()->create();
+
+    $code = app(GenerateOneTimeLoginCode::class)($user, now()->addDay());
+
+    expect($code)->toMatch('/^\d{6}$/');
+
+    $record = OneTimeLoginCode::query()->firstOrFail();
+
+    expect($record->user_id)->toBe($user->getKey())
+        ->and($record->code)->not->toBe($code)
+        ->and(Hash::check($code, $record->code))->toBeTrue()
+        ->and($record->expires_at->toDateTimeString())->toBe(now()->addDay()->toDateTimeString());
+});

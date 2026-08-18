@@ -42,7 +42,6 @@ use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiMessageFile;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Audit\Models\Audit;
-use AdvisingApp\Authorization\Models\OtpLoginCode;
 use AdvisingApp\Campaign\Jobs\ExecuteCampaignActions;
 use AdvisingApp\Engagement\Jobs\DeliverEngagements as DeliverEngagementsJob;
 use AdvisingApp\Engagement\Jobs\GatherAndDispatchSesS3InboundEmails;
@@ -192,7 +191,6 @@ class Kernel extends ConsoleKernel
                         FailedImportRow::class,
                         FormAuthentication::class,
                         HealthCheckResultHistoryItem::class,
-                        OtpLoginCode::class,
                     ])
                         ->join(',');
 

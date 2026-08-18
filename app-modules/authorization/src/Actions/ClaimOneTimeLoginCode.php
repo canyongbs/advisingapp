@@ -34,32 +34,29 @@
 </COPYRIGHT>
 */
 
-use App\Features\OtpLoginFeature;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+namespace AdvisingApp\Authorization\Actions;
 
-return new class () extends Migration {
-    public function up(): void
+use AdvisingApp\Authorization\Models\OneTimeLoginCode;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
+
+class ClaimOneTimeLoginCode
+{
+    public function __invoke(User $user, string $code): bool
     {
-        DB::transaction(function () {
-            Schema::table('otp_login_codes', function (Blueprint $table) {
-                $table->timestamp('expires_at')->nullable();
-            });
+        $records = OneTimeLoginCode::query()
+            ->whereBelongsTo($user)
+            ->where('expires_at', '>', now())
+            ->get();
 
-            OtpLoginFeature::activate();
-        });
+        foreach ($records as $record) {
+            if (Hash::check($code, $record->code)) {
+                $record->delete();
+
+                return true;
+            }
+        }
+
+        return false;
     }
-
-    public function down(): void
-    {
-        DB::transaction(function () {
-            OtpLoginFeature::deactivate();
-
-            Schema::table('otp_login_codes', function (Blueprint $table) {
-                $table->dropColumn('expires_at');
-            });
-        });
-    }
-};
+}

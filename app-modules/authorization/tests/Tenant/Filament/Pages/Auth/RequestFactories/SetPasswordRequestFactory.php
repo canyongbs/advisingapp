@@ -34,19 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Http\Requests;
+namespace AdvisingApp\Authorization\Tests\Tenant\Filament\Pages\Auth\RequestFactories;
 
-use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
+use Worksome\RequestFactories\RequestFactory;
 
-class GenerateOtpLoginCodeRequest extends FormRequest
+class SetPasswordRequestFactory extends RequestFactory
 {
-    /**
-     * @return array<string, array<int, string>>
-     */
-    public function rules(): array
+    public function definition(): array
     {
+        // Suffix guarantees the upper/lower/digit/special characters the tenant password policy requires.
+        $password = Str::random() . 'aA1!';
+
         return [
-            'email' => ['required', 'email'],
+            'password' => $password,
+            'passwordConfirmation' => $password,
         ];
     }
 }

@@ -37,7 +37,7 @@
 namespace AdvisingApp\Authorization\Http\Controllers\Auth;
 
 use AdvisingApp\Authorization\Filament\Pages\Auth\ConfirmOneTimeLoginCode;
-use App\Features\OtpLoginFeature;
+use App\Features\OneTimeLoginFeature;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Filament\Facades\Filament;
@@ -52,7 +52,7 @@ class OneTimeLoginController extends Controller
             abort(403);
         }
 
-        if (OtpLoginFeature::active()) {
+        if (OneTimeLoginFeature::active()) {
             $request->session()->put(ConfirmOneTimeLoginCode::SESSION_KEY, [
                 'user' => $user->getKey(),
             ]);

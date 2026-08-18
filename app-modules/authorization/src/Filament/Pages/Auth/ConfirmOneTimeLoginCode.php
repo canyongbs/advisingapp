@@ -36,27 +36,25 @@
 
 namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 
-use AdvisingApp\Authorization\Actions\ClaimOtpLoginCode;
+use AdvisingApp\Authorization\Actions\ClaimOneTimeLoginCode;
 use App\Models\User;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\OneTimeCodeInput;
 use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\HasRoutes;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
-use Filament\Panel;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Contracts\Support\Htmlable;
 
 /**
  * @property-read Schema $form
  */
 class ConfirmOneTimeLoginCode extends SimplePage
 {
-    use HasRoutes;
     use InteractsWithFormActions;
     use WithRateLimiting;
 
@@ -64,8 +62,7 @@ class ConfirmOneTimeLoginCode extends SimplePage
 
     protected string $view = 'authorization::confirm-one-time-login-code';
 
-    /** @var array<string, mixed>|null */
-    public ?array $data = [];
+    public ?string $code = '';
 
     public function mount(): void
     {
@@ -76,22 +73,6 @@ class ConfirmOneTimeLoginCode extends SimplePage
         }
 
         $this->form->fill();
-    }
-
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                OneTimeCodeInput::make('code')
-                    ->label('Verification code')
-                    ->autofocus()
-                    ->required()
-                    ->extraAttributes(['class' => 'mx-auto'])
-                    ->extraFieldWrapperAttributes([
-                        'class' => 'flex flex-col items-center',
-                    ]),
-            ])
-            ->statePath('data');
     }
 
     public function authenticate(): void
@@ -118,7 +99,7 @@ class ConfirmOneTimeLoginCode extends SimplePage
 
         $data = $this->form->getState();
 
-        if (! app(ClaimOtpLoginCode::class)($user, $data['code'])) {
+        if (! app(ClaimOneTimeLoginCode::class)($user, $data['code'])) {
             Notification::make()
                 ->title('Invalid code')
                 ->body('The code you entered is invalid or has expired.')
@@ -128,30 +109,45 @@ class ConfirmOneTimeLoginCode extends SimplePage
             return;
         }
 
-        $panel = Filament::getPanel('admin');
-
-        $panel->auth()->login($user);
+        Filament::auth()->login($user);
 
         session()->regenerate();
 
         session()->forget(static::SESSION_KEY);
 
-        redirect()->to($this->getRedirectUrl($user, $panel));
+        redirect()->to($this->getRedirectUrl($user));
     }
 
-    public function getSaveFormAction(): Action
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                OneTimeCodeInput::make('code')
+                    ->label('Verification code')
+                    ->autofocus()
+                    ->required()
+                    ->extraAttributes(['class' => 'mx-auto'])
+                    ->extraFieldWrapperAttributes([
+                        'class' => 'flex flex-col items-center',
+                    ]),
+            ]);
+    }
+
+    public function getHeading(): string | Htmlable | null
+    {
+        return 'Confirm your identity';
+    }
+
+    public function getSubheading(): string | Htmlable | null
+    {
+        return 'Enter the verification code we sent to your email address.';
+    }
+
+    public function getAuthenticateFormAction(): Action
     {
         return Action::make('authenticate')
             ->label('Continue')
             ->submit('authenticate');
-    }
-
-    public static function routes(Panel $panel): void
-    {
-        $slug = static::getSlug();
-
-        Route::get("/{$slug}", static::class)
-            ->name('auth.one-time-login');
     }
 
     protected function getIntendedUser(): ?User
@@ -161,21 +157,23 @@ class ConfirmOneTimeLoginCode extends SimplePage
         return is_string($id) ? User::query()->find($id) : null;
     }
 
-    protected function getRedirectUrl(User $user, Panel $panel): string
+    protected function getRedirectUrl(User $user): string
     {
-        if (! $user->is_external && blank($user->password)) {
+        if (! $user->is_external) {
             return route('filament.admin.auth.set-password');
         }
 
-        return $panel->getHomeUrl() ?? url('/');
+        return Filament::getUrl() ?? url('/');
     }
 
     /**
-     * @return array<Action>
+     * @return array<Action | ActionGroup>
      */
     protected function getFormActions(): array
     {
-        return [$this->getSaveFormAction()];
+        return [
+            $this->getAuthenticateFormAction(),
+        ];
     }
 
     protected function hasFullWidthFormActions(): bool

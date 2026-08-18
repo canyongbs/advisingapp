@@ -34,39 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Notifications;
+use App\Features\OneTimeLoginFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Models\User;
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
-
-#[SystemNotification]
-class OtpCodeNotification extends Notification
-{
-    use Queueable;
-
-    public function __construct(
-        protected string $code,
-    ) {}
-
-    /**
-     * @return array<int, string>
-     */
-    public function via(User $notifiable): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return ['mail'];
+        DB::transaction(function () {
+            Schema::rename('otp_login_codes', 'one_time_login_codes');
+
+            Schema::table('one_time_login_codes', function (Blueprint $table) {
+                $table->timestamp('expires_at')->nullable();
+                $table->softDeletes();
+                $table->dropColumn('used_at');
+            });
+
+            OneTimeLoginFeature::activate();
+        });
     }
 
-    public function toMail(User $notifiable): MailMessage
+    public function down(): void
     {
-        return MailMessage::make()
-            ->subject('Your Login Verification Code')
-            ->greeting('Hello ' . $notifiable->name . ',')
-            ->line('Your one-time login verification code is:')
-            ->line("**{$this->code}**")
-            ->line('This code will expire in 20 minutes.')
-            ->line('If you did not request this code, please ignore this email.');
+        DB::transaction(function () {
+            OneTimeLoginFeature::deactivate();
+
+            Schema::table('one_time_login_codes', function (Blueprint $table) {
+                $table->timestamp('used_at')->nullable();
+                $table->dropSoftDeletes();
+                $table->dropColumn('expires_at');
+            });
+
+            Schema::rename('one_time_login_codes', 'otp_login_codes');
+        });
     }
-}
+};

@@ -34,16 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Tests\Tenant\Http\Controllers\RequestFactories;
+namespace AdvisingApp\Authorization\Database\Factories;
 
-use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\Authorization\Models\OneTimeLoginCode;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class GenerateOtpLoginCodeRequestFactory extends RequestFactory
+/**
+ * @extends Factory<OneTimeLoginCode>
+ */
+class OneTimeLoginCodeFactory extends Factory
 {
+    /**
+     * @return array<string, mixed>
+     */
     public function definition(): array
     {
         return [
-            'email' => $this->faker->safeEmail(),
+            'user_id' => User::factory(),
+            'code' => str_pad((string) $this->faker->numberBetween(0, 999999), 6, '0', STR_PAD_LEFT),
+            'expires_at' => now()->addDay(),
         ];
+    }
+
+    public function expired(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'expires_at' => now()->subMinute(),
+        ]);
     }
 }

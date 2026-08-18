@@ -34,55 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Http\Controllers;
+namespace AdvisingApp\Authorization\Actions;
 
-use AdvisingApp\Authorization\Models\OtpLoginCode;
-use Filament\Facades\Filament;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Throwable;
+use AdvisingApp\Authorization\Models\OneTimeLoginCode;
+use App\Models\User;
+use Carbon\CarbonInterface;
+use Illuminate\Support\Carbon;
 
-class VerifyOtpLoginCodeController
+class GenerateOneTimeLoginCode
 {
-    /**
-     * @throws Throwable
-     */
-    public function __invoke(Request $request, OtpLoginCode $otpCode): RedirectResponse|Response
+    public function __invoke(User $user, CarbonInterface $expiresAt): string
     {
-        if ($request->getMethod() === 'HEAD') {
-            // Protection against link scanning bots, like Microsoft Outlook.
-            return response()->noContent();
-        }
+        $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
-        abort_if(
-            boolean: now()->greaterThanOrEqualTo($otpCode->created_at->addMinutes(20))
-                || $otpCode->used_at !== null,
-            code: 403,
-            message: 'This OTP code has already been used or has expired. Please request a new one.'
-        );
+        $oneTimeLoginCode = new OneTimeLoginCode();
+        $oneTimeLoginCode->code = $code;
+        $oneTimeLoginCode->expires_at = Carbon::instance($expiresAt);
+        $oneTimeLoginCode->user()->associate($user);
+        $oneTimeLoginCode->save();
 
-        $request->validate([
-            'code' => ['required', 'digits:6'],
-        ]);
-
-        if (! Hash::check($request->input('code'), $otpCode->code)) {
-            return back()->withErrors([
-                'code' => 'The OTP code you entered is incorrect. Please try again.',
-            ]);
-        }
-
-        $otpCode->used_at = now();
-        $otpCode->saveOrFail();
-
-        $user = $otpCode->user;
-
-        $panel = Filament::getPanel('admin');
-
-        Auth::guard($panel->getAuthGuard())->login($user);
-
-        return redirect()->to($panel->getHomeUrl());
+        return $code;
     }
 }

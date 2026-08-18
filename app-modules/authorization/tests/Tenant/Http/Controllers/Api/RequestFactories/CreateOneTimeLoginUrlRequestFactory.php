@@ -34,41 +34,16 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Filament\Pages\Auth\ConfirmOneTimeLoginCode;
-use App\Models\User;
-use Illuminate\Support\Facades\URL;
+namespace AdvisingApp\Authorization\Tests\Tenant\Http\Controllers\Api\RequestFactories;
 
-use function Pest\Laravel\assertGuest;
-use function Pest\Laravel\get;
+use Worksome\RequestFactories\RequestFactory;
 
-it('stashes the user in session and redirects to the code challenge', function () {
-    $user = User::factory()->create(['password' => null]);
-
-    get(URL::signedRoute('login.one-time', ['user' => $user], absolute: false))
-        ->assertRedirect(route('filament.admin.auth.one-time-login'))
-        ->assertSessionHas(ConfirmOneTimeLoginCode::SESSION_KEY . '.user', $user->getKey());
-
-    assertGuest();
-});
-
-it('forbids an unsigned link', function () {
-    $user = User::factory()->create(['password' => null]);
-    get(route('login.one-time', ['user' => $user]))->assertForbidden();
-    assertGuest();
-});
-
-it('forbids an internal user that already has a password', function () {
-    $user = User::factory()->create();
-    get(URL::signedRoute('login.one-time', ['user' => $user], absolute: false))->assertForbidden();
-    assertGuest();
-});
-
-it('allows an external user that already has a password to reuse the link', function () {
-    $user = User::factory()->external()->create();
-
-    get(URL::signedRoute('login.one-time', ['user' => $user], absolute: false))
-        ->assertRedirect(route('filament.admin.auth.one-time-login'))
-        ->assertSessionHas(ConfirmOneTimeLoginCode::SESSION_KEY . '.user', $user->getKey());
-
-    assertGuest();
-});
+class CreateOneTimeLoginUrlRequestFactory extends RequestFactory
+{
+    public function definition(): array
+    {
+        return [
+            'email' => $this->faker->unique()->safeEmail(),
+        ];
+    }
+}

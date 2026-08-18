@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Http\Controllers\GenerateOtpLoginCodeController;
+use AdvisingApp\Authorization\Http\Controllers\Api\CreateOneTimeLoginUrlController;
 use App\Http\Controllers\UpdateAzureSsoSettingsController;
 use App\Http\Controllers\UtilizationMetricsApiController;
 use App\Http\Middleware\CheckOlympusKey;
@@ -53,5 +53,9 @@ Route::middleware([
     Route::get('/utilization-metrics', UtilizationMetricsApiController::class)
         ->name('utilization-metrics');
 
-    Route::post('/otp-code', GenerateOtpLoginCodeController::class)->name('otp-code.generate');
+    Route::post('/one-time-login', CreateOneTimeLoginUrlController::class)->name('api.one-time-login.url');
+
+    // TODO: Cleanup Task (one-time-login): remove this legacy `/otp-code` alias once Olympus is deployed
+    // calling `/one-time-login` in every environment.
+    Route::post('/otp-code', CreateOneTimeLoginUrlController::class)->name('otp-code.generate');
 });

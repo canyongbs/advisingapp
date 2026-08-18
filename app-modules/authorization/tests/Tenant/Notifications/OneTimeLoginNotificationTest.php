@@ -34,34 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Http\Controllers;
+use AdvisingApp\Authorization\Actions\ClaimOneTimeLoginCode;
+use AdvisingApp\Authorization\Models\OneTimeLoginCode;
+use AdvisingApp\Authorization\Notifications\OneTimeLoginNotification;
+use App\Models\User;
 
-use AdvisingApp\Authorization\Models\OtpLoginCode;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\URL;
-use Illuminate\View\View;
+use function Pest\Laravel\freezeTime;
 
-class OtpLoginCodeController
-{
-    public function __invoke(Request $request, OtpLoginCode $otpCode): View
-    {
-        abort_if(
-            boolean: now()->greaterThanOrEqualTo($otpCode->created_at->addMinutes(20))
-                || $otpCode->used_at !== null,
-            code: 403,
-            message: 'This OTP link has expired or has already been used. Please request a new one.'
-        );
+it('creates a claimable one-time login code', function () {
+    $user = User::factory()->external()->create();
 
-        $verifyUrl = URL::temporarySignedRoute(
-            name: 'otp-code.verify',
-            expiration: $otpCode->created_at->addMinutes(20)->toImmutable(),
-            parameters: [
-                'otpCode' => $otpCode->getKey(),
-            ],
-        );
+    $mail = (new OneTimeLoginNotification('https://example.com/login', now()->addHour()))->toMail($user);
 
-        return view('authorization::otp-entry', [
-            'verifyUrl' => $verifyUrl,
-        ]);
-    }
-}
+    expect(OneTimeLoginCode::count())->toBe(1);
+
+    $lines = array_merge($mail->introLines, $mail->outroLines);
+    $codeLine = collect($lines)->first(fn (string $line): bool => str_contains($line, 'verification code'));
+
+    expect($codeLine)->not->toBeNull();
+
+    preg_match('/(\d{6})/', (string) $codeLine, $matches);
+
+    expect(app(ClaimOneTimeLoginCode::class)($user, $matches[1] ?? ''))->toBeTrue();
+});
+
+it('uses the provided link as the action url', function () {
+    $user = User::factory()->external()->create();
+
+    $mail = (new OneTimeLoginNotification('https://example.com/login', now()->addHour()))->toMail($user);
+
+    expect($mail->actionUrl)->toBe('https://example.com/login');
+});
+
+it('expires the code using the provided expiry', function () {
+    freezeTime();
+
+    $user = User::factory()->external()->create();
+
+    (new OneTimeLoginNotification('https://example.com/login', now()->addHour()))->toMail($user);
+
+    expect(OneTimeLoginCode::query()->firstOrFail()->expires_at->toDateTimeString())->toBe(now()->addHour()->toDateTimeString());
+});

@@ -36,29 +36,28 @@
 
 namespace AdvisingApp\Authorization\Models;
 
-use AdvisingApp\Authorization\Database\Factories\OtpLoginCodeFactory;
-use App\Features\OtpLoginFeature;
+use AdvisingApp\Authorization\Database\Factories\OneTimeLoginCodeFactory;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\MassPrunable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
- * @mixin IdeHelperOtpLoginCode
+ * @mixin IdeHelperOneTimeLoginCode
  */
-class OtpLoginCode extends Model
+class OneTimeLoginCode extends Model
 {
-    /** @use HasFactory<OtpLoginCodeFactory> */
+    /** @use HasFactory<OneTimeLoginCodeFactory> */
     use HasFactory;
 
     use HasUuids;
+    use SoftDeletes;
     use UsesTenantConnection;
-    use MassPrunable;
 
+    /** @var list<string> */
     protected $fillable = [];
 
     /** @var list<string> */
@@ -73,25 +72,6 @@ class OtpLoginCode extends Model
     }
 
     /**
-     * @return Builder<static>
-     */
-    public function prunable(): Builder
-    {
-        if (OtpLoginFeature::active()) {
-            return static::query()
-                ->where(fn (Builder $query) => $query
-                    ->whereNotNull('expires_at')
-                    ->where('expires_at', '<=', now()))
-                ->orWhere(fn (Builder $query) => $query
-                    ->whereNull('expires_at')
-                    ->where('created_at', '<=', now()->subMinutes(20)))
-                ->orWhereNotNull('used_at');
-        }
-
-        return static::query()->where('created_at', '<=', now()->subMinutes(20));
-    }
-
-    /**
      * @return array<string, string>
      */
     protected function casts(): array
@@ -99,7 +79,6 @@ class OtpLoginCode extends Model
         return [
             'code' => 'hashed',
             'expires_at' => 'datetime',
-            'used_at' => 'datetime',
         ];
     }
 }

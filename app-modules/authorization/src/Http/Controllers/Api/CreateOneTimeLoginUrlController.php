@@ -34,30 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Actions;
+namespace AdvisingApp\Authorization\Http\Controllers\Api;
 
-use AdvisingApp\Authorization\Models\OtpLoginCode;
+use AdvisingApp\Authorization\Notifications\OneTimeLoginNotification;
+use App\Features\OneTimeLoginFeature;
 use App\Models\User;
-use Carbon\CarbonInterface;
-use Illuminate\Support\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Validation\Rule;
 
-class GenerateOtpLoginCode
+class CreateOneTimeLoginUrlController
 {
-    public function __invoke(User $user, CarbonInterface $expiresAt): string
+    public function __invoke(Request $request): JsonResponse
     {
-        // Invalidate any outstanding codes for this user (single active code).
-        OtpLoginCode::query()
-            ->whereBelongsTo($user)
-            ->delete();
+        $validated = $request->validate([
+            'email' => ['required', 'string', 'email', Rule::exists('users', 'email')->whereNull('deleted_at')],
+        ]);
 
-        $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
+        $user = User::query()
+            ->where('email', $validated['email'])
+            ->firstOrFail();
 
-        $otpLoginCode = new OtpLoginCode();
-        $otpLoginCode->code = $code; // hashed via the model cast
-        $otpLoginCode->expires_at = Carbon::instance($expiresAt);
-        $otpLoginCode->user()->associate($user);
-        $otpLoginCode->save();
+        $expiresAt = now()->addMinutes(30);
 
-        return $code;
+        $link = url(URL::temporarySignedRoute(
+            name: 'login.one-time',
+            expiration: $expiresAt,
+            parameters: ['user' => $user->getKey()],
+            absolute: false,
+        ));
+
+        if (OneTimeLoginFeature::active()) {
+            $user->notify(new OneTimeLoginNotification($link, $expiresAt));
+        }
+
+        return response()->json([
+            'link' => $link,
+        ]);
     }
 }

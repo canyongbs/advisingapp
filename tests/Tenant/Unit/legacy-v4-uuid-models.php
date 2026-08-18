@@ -38,7 +38,7 @@ use AdvisingApp\Application\Models\ApplicationSubmissionsChecklistItem;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Audit\Models\Audit;
 use AdvisingApp\Authorization\Models\License;
-use AdvisingApp\Authorization\Models\OtpLoginCode;
+use AdvisingApp\Authorization\Models\OneTimeLoginCode;
 use AdvisingApp\Authorization\Models\Permission;
 use AdvisingApp\Authorization\Models\PermissionGroup;
 use AdvisingApp\Authorization\Models\Role;
@@ -275,7 +275,7 @@ return [
     ApplicationSubmissionsChecklistItem::class,
     Audit::class,
     License::class,
-    OtpLoginCode::class,
+    OneTimeLoginCode::class,
     Permission::class,
     PermissionGroup::class,
     Role::class,

@@ -36,10 +36,10 @@
 
 namespace App\Notifications;
 
-use AdvisingApp\Authorization\Actions\GenerateOtpLoginCode;
+use AdvisingApp\Authorization\Actions\GenerateOneTimeLoginCode;
 use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Features\OtpLoginFeature;
+use App\Features\OneTimeLoginFeature;
 use App\Models\NotificationSetting;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -75,8 +75,8 @@ class SetPasswordNotification extends Notification implements ShouldQueue
                 absolute: false,
             )));
 
-        if (OtpLoginFeature::active()) {
-            $code = app(GenerateOtpLoginCode::class)($notifiable, $expiresAt);
+        if (OneTimeLoginFeature::active()) {
+            $code = app(GenerateOneTimeLoginCode::class)($notifiable, $expiresAt);
 
             $message->line("When prompted, enter this verification code: {$code}")
                 ->line('For security reasons, this link and code will expire in 24 hours.');

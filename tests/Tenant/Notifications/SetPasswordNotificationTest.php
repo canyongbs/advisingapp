@@ -34,27 +34,57 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Notifications\OtpCodeNotification;
+use AdvisingApp\Authorization\Actions\ClaimOneTimeLoginCode;
+use AdvisingApp\Authorization\Models\OneTimeLoginCode;
+use App\Features\OneTimeLoginFeature;
 use App\Models\User;
+use App\Notifications\SetPasswordNotification;
 
-it('includes the exact code in the mail message', function () {
+use function Pest\Laravel\freezeTime;
+
+it('creates a claimable one-time login code', function () {
     $user = User::factory()->create();
 
-    $notification = new OtpCodeNotification('123456');
+    $mail = (new SetPasswordNotification())->toMail($user);
 
-    $mailMessage = $notification->toMail($user);
+    expect(OneTimeLoginCode::count())->toBe(1);
 
-    expect($mailMessage->introLines)->toContain('**123456**');
+    $lines = array_merge($mail->introLines, $mail->outroLines);
+    $codeLine = collect($lines)->first(fn (string $line): bool => str_contains($line, 'verification code'));
+
+    expect($codeLine)->not->toBeNull();
+
+    preg_match('/(\d{6})/', (string) $codeLine, $matches);
+
+    expect(app(ClaimOneTimeLoginCode::class)($user, $matches[1] ?? ''))->toBeTrue();
 });
 
-it('preserves leading zeros in the mail message', function () {
+it('links to the one-time login route', function () {
     $user = User::factory()->create();
 
-    $notification = new OtpCodeNotification('007123');
+    $mail = (new SetPasswordNotification())->toMail($user);
 
-    $mailMessage = $notification->toMail($user);
+    expect($mail->actionUrl)->toContain('auth/login');
+});
 
-    expect($mailMessage->introLines)
-        ->toContain('**007123**')
-        ->not->toContain('**7123**');
+it('expires the code in 24 hours', function () {
+    freezeTime();
+
+    $user = User::factory()->create();
+
+    (new SetPasswordNotification())->toMail($user);
+
+    expect(OneTimeLoginCode::query()->firstOrFail()->expires_at->toDateTimeString())->toBe(now()->addDay()->toDateTimeString());
+});
+
+it('does not include a verification code when the feature is inactive', function () {
+    OneTimeLoginFeature::deactivate();
+
+    $user = User::factory()->create();
+
+    $mail = (new SetPasswordNotification())->toMail($user);
+
+    $lines = array_merge($mail->introLines, $mail->outroLines);
+
+    expect(collect($lines)->contains(fn (string $line): bool => str_contains($line, 'verification code')))->toBeFalse();
 });

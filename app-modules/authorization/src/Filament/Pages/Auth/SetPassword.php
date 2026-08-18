@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 
-use AdvisingApp\Authorization\Http\Middleware\RedirectIfPasswordNotSet;
 use App\Models\User;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
@@ -45,14 +44,11 @@ use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
-use Filament\Pages\Concerns\HasRoutes;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
-use Filament\Panel;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 
@@ -61,33 +57,28 @@ use Illuminate\Validation\Rules\Password;
  */
 class SetPassword extends SimplePage
 {
-    use HasRoutes;
     use InteractsWithFormActions;
     use WithRateLimiting;
 
     protected string $view = 'authorization::set-password';
 
-    public ?array $data = [];
+    public ?string $password = '';
+
+    public ?string $passwordConfirmation = '';
 
     public function mount(): void
     {
         $user = auth()->user();
 
+        assert($user instanceof User);
+
         if (filled($user->password) || $user->is_external) {
             redirect(Filament::getUrl());
+
+            return;
         }
 
         $this->form->fill();
-    }
-
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                $this->getPasswordFormComponent(),
-                $this->getPasswordConfirmationFormComponent(),
-            ])
-            ->statePath('data');
     }
 
     public function save(): void
@@ -104,13 +95,14 @@ class SetPassword extends SimplePage
             return;
         }
 
-        /** @var User $user */
         $user = auth()->user();
+
+        assert($user instanceof User);
 
         $data = $this->form->getState();
 
         $user->forceFill([
-            'password' => $data['password'], // already hashed by the field's dehydrateStateUsing
+            $user->getAuthPasswordName() => Hash::make($data['password']),
             $user->getRememberTokenName() => Str::random(60),
         ])->save();
 
@@ -118,57 +110,39 @@ class SetPassword extends SimplePage
 
         Notification::make()
             ->title('Password set')
-            ->body('Your password has been set.')
+            ->body('Your password has been set. Please log in to continue.')
             ->success()
             ->send();
 
-        redirect(Filament::getUrl());
+        redirect()->route('filament.admin.auth.login');
+    }
+
+    public function form(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                $this->getPasswordFormComponent(),
+                $this->getPasswordConfirmationFormComponent(),
+            ]);
     }
 
     public function getSaveFormAction(): Action
     {
         return Action::make('save')
+            ->label('Set password')
             ->submit('save');
-    }
-
-    public static function routes(Panel $panel): void
-    {
-        $slug = static::getSlug();
-
-        Route::get("/{$slug}", static::class)
-            ->middleware(static::getRouteMiddleware($panel))
-            ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
-            ->name('auth.set-password');
-    }
-
-    /**
-     * @return string | array<string>
-     */
-    public static function getRouteMiddleware(Panel $panel): string | array
-    {
-        return [
-            ...(static::isEmailVerificationRequired($panel) ? [static::getEmailVerifiedMiddleware($panel)] : []),
-            ...static::$routeMiddleware,
-        ];
-    }
-
-    /**
-     * @return string | array<string>
-     */
-    public static function getWithoutRouteMiddleware(Panel $panel): string | array
-    {
-        return [
-            RedirectIfPasswordNotSet::class,
-        ];
     }
 
     protected function getPasswordFormComponent(): Component
     {
         return TextInput::make('password')
+            ->label('Password')
             ->password()
+            ->autocomplete('new-password')
+            ->revealable(filament()->arePasswordsRevealable())
+            ->autofocus()
             ->required()
             ->rule(Password::default())
-            ->dehydrateStateUsing(fn ($state) => Hash::make($state))
             ->same('passwordConfirmation')
             ->validationAttribute('password');
     }
@@ -178,6 +152,8 @@ class SetPassword extends SimplePage
         return TextInput::make('passwordConfirmation')
             ->label('Confirm password')
             ->password()
+            ->autocomplete('new-password')
+            ->revealable(filament()->arePasswordsRevealable())
             ->required()
             ->dehydrated(false);
     }
