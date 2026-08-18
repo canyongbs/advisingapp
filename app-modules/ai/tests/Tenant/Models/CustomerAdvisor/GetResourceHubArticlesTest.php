@@ -79,6 +79,32 @@ it('returns all articles when access is All', function () {
     );
 });
 
+it('returns all articles when access is null, matching the All behavior', function () {
+    Queue::fake();
+
+    $publicArticles = ResourceHubArticle::factory()->count(2)->create([
+        'public' => true,
+    ]);
+
+    $internalArticles = ResourceHubArticle::factory()->count(2)->create([
+        'public' => false,
+    ]);
+
+    $advisor = CustomerAdvisor::factory()->create([
+        'has_resource_hub_knowledge' => true,
+        'resource_hub_article_access' => null,
+    ]);
+
+    expect($advisor->resource_hub_article_access)->toBeNull();
+
+    $articleIds = collect($advisor->getResourceHubArticles())->pluck('id');
+
+    expect($articleIds)->toHaveCount(4);
+    expect($articleIds->toArray())->toEqualCanonicalizing(
+        $publicArticles->merge($internalArticles)->pluck('id')->toArray()
+    );
+});
+
 it('returns only public articles when access is Public', function () {
     Queue::fake();
 
