@@ -34,32 +34,21 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Settings\AiSettings;
-use App\Features\SmartPromptInstructionsFeature;
-use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
 return new class () extends SettingsMigration {
     public function up(): void
     {
-        DB::transaction(function () {
-            try {
-                $this->migrator->add('ai.smart_prompt_instructions', AiSettings::defaultSmartPromptInstructions());
-            } catch (SettingAlreadyExists $exception) {
-                // do nothing
-            }
-
-            SmartPromptInstructionsFeature::activate();
-        });
+        try {
+            $this->migrator->add('ai.smart_prompt_instructions', []);
+        } catch (SettingAlreadyExists $exception) {
+            // do nothing
+        }
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            SmartPromptInstructionsFeature::deactivate();
-
-            $this->migrator->deleteIfExists('ai.smart_prompt_instructions');
-        });
+        $this->migrator->deleteIfExists('ai.smart_prompt_instructions');
     }
 };

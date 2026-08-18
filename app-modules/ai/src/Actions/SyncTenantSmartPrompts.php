@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Actions;
 
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptType;
+use AdvisingApp\Ai\Settings\AiSettings;
 use App\Http\Requests\Tenants\SyncTenantRequest;
 use Illuminate\Support\Facades\DB;
 
@@ -46,6 +47,8 @@ class SyncTenantSmartPrompts
     public function execute(SyncTenantRequest $request): void
     {
         DB::transaction(function () use ($request) {
+            $this->syncInstructions($request);
+
             $promptIds = [];
 
             foreach ($request->validated('smartPrompts') ?? [] as $smartPromptCategory) {
@@ -76,5 +79,18 @@ class SyncTenantSmartPrompts
                 ->whereKeyNot($promptIds)
                 ->delete();
         });
+    }
+
+    private function syncInstructions(SyncTenantRequest $request): void
+    {
+        $instructions = $request->validated('smartPromptInstructions');
+
+        if (blank($instructions)) {
+            return;
+        }
+
+        $settings = app(AiSettings::class);
+        $settings->smart_prompt_instructions = $instructions;
+        $settings->save();
     }
 }

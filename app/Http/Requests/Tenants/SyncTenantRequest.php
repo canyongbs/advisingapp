@@ -81,6 +81,7 @@ class SyncTenantRequest extends FormRequest
             'smartPrompts.*.smart_prompts.*.title' => ['required', 'string'],
             'smartPrompts.*.smart_prompts.*.description' => ['nullable', 'string'],
             'smartPrompts.*.smart_prompts.*.prompt' => ['required', 'string'],
+            'smartPromptInstructions' => ['nullable', 'array'],
             'subscription' => ['required', 'array'],
             'subscription.clientName' => ['required', 'string'],
             'subscription.partnerName' => ['required', 'string'],
