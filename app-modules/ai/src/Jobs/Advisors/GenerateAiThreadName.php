@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Ai\Jobs\Advisors;
 
+use AdvisingApp\Ai\Events\Advisors\AdvisorThreadRenamed;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Report\Enums\TrackedEventType;
@@ -101,6 +102,8 @@ class GenerateAiThreadName implements ShouldQueue
         $this->thread->name = trim($name);
         $this->thread->saved_at = now();
         $this->thread->save();
+
+        event(new AdvisorThreadRenamed($this->thread));
 
         dispatch(new RecordTrackedEvent(
             type: TrackedEventType::AiThreadSaved,

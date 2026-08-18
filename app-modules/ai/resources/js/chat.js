@@ -306,6 +306,13 @@ document.addEventListener('alpine:init', () => {
                             ADD_TAGS: ['a'],
                             ADD_ATTR: ['href', 'title'],
                         });
+                    })
+                    .listen('.advisor-thread.renamed', () => {
+                        // The thread may be renamed by a background AI job shortly after
+                        // an exchange completes (see GenerateAiThreadName). This event is
+                        // broadcast once the new name has been saved, so the sidebar can
+                        // update immediately instead of waiting for the next message.
+                        this.$wire.refreshThreads();
                     });
 
                 this.isLoading = false;
@@ -398,11 +405,6 @@ document.addEventListener('alpine:init', () => {
                 }
 
                 this.$wire.refreshThreads();
-
-                // The thread may be renamed by a background AI job shortly after this
-                // exchange completes (see GenerateAiThreadName). Re-check for an updated
-                // name a few seconds later so the sidebar doesn't wait for the next message.
-                setTimeout(() => this.$wire.refreshThreads(), 5000);
             },
 
             handleResponse: async function ({ response }) {

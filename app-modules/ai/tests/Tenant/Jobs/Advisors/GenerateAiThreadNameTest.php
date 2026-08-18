@@ -36,6 +36,7 @@
 
 use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
+use AdvisingApp\Ai\Events\Advisors\AdvisorThreadRenamed;
 use AdvisingApp\Ai\Jobs\Advisors\GenerateAiThreadName;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
@@ -44,6 +45,7 @@ use AdvisingApp\Ai\Services\TestAiService;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Event;
 
 use function Tests\asSuperAdmin;
 
@@ -70,6 +72,7 @@ it('renames a thread using the AI service and marks it as saved', function () {
     asSuperAdmin();
 
     Bus::fake([RecordTrackedEvent::class]);
+    Event::fake([AdvisorThreadRenamed::class]);
 
     $thread = createNamingTestThread();
 
@@ -87,12 +90,15 @@ it('renames a thread using the AI service and marks it as saved', function () {
         ->toBeNull();
 
     Bus::assertDispatched(RecordTrackedEvent::class, fn (RecordTrackedEvent $job) => $job->type === TrackedEventType::AiThreadSaved);
+
+    Event::assertDispatched(AdvisorThreadRenamed::class, fn (AdvisorThreadRenamed $event) => $event->thread->is($thread) && $event->thread->name === $thread->name);
 });
 
 it('does not rename a thread that has already been renamed by the user', function () {
     asSuperAdmin();
 
     Bus::fake([RecordTrackedEvent::class]);
+    Event::fake([AdvisorThreadRenamed::class]);
 
     $thread = createNamingTestThread();
     $thread->update([
@@ -108,6 +114,8 @@ it('does not rename a thread that has already been renamed by the user', functio
         ->toBe('My Custom Name');
 
     Bus::assertNotDispatched(RecordTrackedEvent::class);
+
+    Event::assertNotDispatched(AdvisorThreadRenamed::class);
 });
 
 /**
@@ -131,6 +139,7 @@ it('reports the exception and leaves the thread unnamed when the AI service fail
     asSuperAdmin();
 
     Bus::fake([RecordTrackedEvent::class]);
+    Event::fake([AdvisorThreadRenamed::class]);
 
     $thread = createNamingTestThread();
 
@@ -148,12 +157,15 @@ it('reports the exception and leaves the thread unnamed when the AI service fail
         ->toBeNull();
 
     Bus::assertNotDispatched(RecordTrackedEvent::class);
+
+    Event::assertNotDispatched(AdvisorThreadRenamed::class);
 });
 
 it('does not rename a thread that got renamed by the user while the AI service was generating a name', function () {
     asSuperAdmin();
 
     Bus::fake([RecordTrackedEvent::class]);
+    Event::fake([AdvisorThreadRenamed::class]);
 
     $thread = createNamingTestThread();
 
@@ -174,4 +186,6 @@ it('does not rename a thread that got renamed by the user while the AI service w
         ->toBe('Renamed By User Mid-Flight');
 
     Bus::assertNotDispatched(RecordTrackedEvent::class);
+
+    Event::assertNotDispatched(AdvisorThreadRenamed::class);
 });
