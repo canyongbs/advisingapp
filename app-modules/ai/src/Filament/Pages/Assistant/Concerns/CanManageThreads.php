@@ -248,6 +248,10 @@ trait CanManageThreads
 
         $thread = AiThread::find($thread['id']);
 
+        if (! $thread) {
+            return;
+        }
+
         $isCurrentThreadUnused = AiThreadAutoNamingFeature::active()
             ? blank($this->thread?->named_by_user_at)
             : blank($this->thread?->name);
