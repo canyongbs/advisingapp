@@ -40,7 +40,6 @@ use AdvisingApp\Authorization\Actions\GenerateOneTimeLoginCode;
 use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Features\OneTimeLoginFeature;
-use App\Models\User;
 use App\Settings\NotificationSettings;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
