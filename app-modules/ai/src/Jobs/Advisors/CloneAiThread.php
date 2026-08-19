@@ -75,7 +75,7 @@ class CloneAiThread implements ShouldQueue
         try {
             DB::beginTransaction();
 
-            $threadReplica = $this->thread->replicate(except: ['id', 'thread_id', 'folder_id', 'saved_at', 'emailed_count', 'cloned_count']);
+            $threadReplica = $this->thread->replicate(except: ['id', 'thread_id', 'folder_id', 'saved_at', 'named_by_user_at', 'emailed_count', 'cloned_count']);
             $threadReplica->saved_at = now();
 
             $threadReplica->user()->associate($this->recipient);

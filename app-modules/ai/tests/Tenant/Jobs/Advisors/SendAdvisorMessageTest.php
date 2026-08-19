@@ -44,9 +44,13 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 
+use function Pest\Laravel\travelBack;
+use function Pest\Laravel\travelTo;
 use function Tests\asSuperAdmin;
 
 it('sends a message', function () {
@@ -205,4 +209,120 @@ it('does not dispatch GenerateAiThreadName when the thread has already been rena
     dispatch(new SendAdvisorMessage($thread, 'Message 3'));
 
     Bus::assertNotDispatched(GenerateAiThreadName::class);
+});
+
+it('sets saved_at and dispatches the AiThreadSaved tracked event when the first message is persisted', function () {
+    Bus::fake([RecordTrackedEvent::class]);
+
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
+
+    asSuperAdmin();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->for(auth()->user())
+        ->create([
+            'saved_at' => null,
+        ]);
+
+    dispatch(new SendAdvisorMessage($thread, 'Message 1'));
+
+    expect($thread->fresh()->saved_at)
+        ->not->toBeNull();
+
+    Bus::assertDispatchedTimes(
+        fn (RecordTrackedEvent $job): bool => $job->type === TrackedEventType::AiThreadSaved,
+        1,
+    );
+});
+
+it('does not update saved_at or dispatch the AiThreadSaved tracked event again on subsequent messages', function () {
+    Bus::fake([RecordTrackedEvent::class]);
+
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
+
+    asSuperAdmin();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->for(auth()->user())
+        ->create([
+            'saved_at' => null,
+        ]);
+
+    dispatch(new SendAdvisorMessage($thread, 'Message 1'));
+
+    $savedAt = $thread->fresh()->saved_at;
+
+    try {
+        travelTo(now()->addMinute());
+
+        dispatch(new SendAdvisorMessage($thread, 'Message 2'));
+    } finally {
+        travelBack();
+    }
+
+    expect($thread->fresh()->saved_at)
+        ->toEqual($savedAt);
+
+    Bus::assertDispatchedTimes(
+        fn (RecordTrackedEvent $job): bool => $job->type === TrackedEventType::AiThreadSaved,
+        1,
+    );
+});
+
+it('does not overwrite an already saved_at thread', function () {
+    Bus::fake([RecordTrackedEvent::class]);
+
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
+
+    asSuperAdmin();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $savedAt = now()->subDays(10);
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->for(auth()->user())
+        ->create([
+            'saved_at' => $savedAt,
+        ]);
+
+    $savedAt = $thread->fresh()->saved_at;
+
+    dispatch(new SendAdvisorMessage($thread, 'Message 1'));
+
+    expect($thread->fresh()->saved_at)
+        ->toEqual($savedAt);
+
+    Bus::assertNotDispatched(
+        RecordTrackedEvent::class,
+        fn (RecordTrackedEvent $job): bool => $job->type === TrackedEventType::AiThreadSaved,
+    );
 });

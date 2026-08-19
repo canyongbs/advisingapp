@@ -42,6 +42,7 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Settings\AiSettings;
 use App\Features\AiThreadAutoNamingFeature;
 use App\Models\Tenant;
+use App\Settings\DisplaySettings;
 
 class CreateThread
 {
@@ -80,7 +81,7 @@ class CreateThread
 
     protected function getDefaultThreadName(): string
     {
-        return 'New Chat ' . now()->format('n/j/y @ g:i A');
+        return 'New Chat ' . now()->setTimezone(app(DisplaySettings::class)->getTimezone())->format('n/j/y @ g:i A');
     }
 
     protected function getDefaultAiAssistant(AiAssistantApplication $application): AiAssistant

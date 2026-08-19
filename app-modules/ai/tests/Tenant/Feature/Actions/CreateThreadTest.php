@@ -69,8 +69,10 @@ it('creates a new thread', function () {
         ->wasRecentlyCreated->toBeTrue();
 });
 
-it('gives a new thread a default name stamped with the current date and time', function () {
-    asSuperAdmin();
+it('gives a new thread a default name stamped with the current date and time in the user\'s timezone', function () {
+    asSuperAdmin(User::factory()->create([
+        'timezone' => 'America/Chicago',
+    ]));
 
     $assistant = AiAssistant::factory()->create([
         'application' => AiAssistantApplication::Test,
@@ -91,7 +93,7 @@ it('gives a new thread a default name stamped with the current date and time', f
         $thread = app(CreateThread::class)(AiAssistantApplication::Test, $assistant);
 
         expect($thread->name)
-            ->toBe('New Chat ' . $now->format('n/j/y @ g:i A'))
+            ->toBe('New Chat ' . $now->clone()->setTimezone('America/Chicago')->format('n/j/y @ g:i A'))
             ->and($thread->named_by_user_at)
             ->toBeNull();
     } finally {

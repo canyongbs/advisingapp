@@ -49,6 +49,8 @@ use AdvisingApp\Ai\Support\StreamingChunks\Image;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\Ai\Support\StreamingChunks\Thinking;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use App\Features\AiThreadAutoNamingFeature;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Illuminate\Bus\Queueable;
@@ -123,6 +125,16 @@ class SendAdvisorMessage implements ShouldQueue
         }
 
         $message->save();
+
+        if (blank($this->thread->saved_at)) {
+            $this->thread->saved_at = now();
+            $this->thread->save();
+
+            dispatch(new RecordTrackedEvent(
+                type: TrackedEventType::AiThreadSaved,
+                occurredAt: now(),
+            ));
+        }
 
         $aiService = $this->thread->assistant->model->getService();
 
@@ -256,7 +268,7 @@ class SendAdvisorMessage implements ShouldQueue
             blank($this->thread->named_by_user_at) &&
             ($this->thread->messages()->whereNotNull('user_id')->count() === 3)
         ) {
-            GenerateAiThreadName::dispatch($this->thread);
+            dispatch(new GenerateAiThreadName($this->thread));
         }
     }
 

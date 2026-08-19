@@ -103,3 +103,32 @@ it('can clone a thread and its messages', function () {
 
     Notification::assertSentTo($recipient, DatabaseNotification::class);
 });
+
+it('does not carry over the named_by_user_at state when cloning a thread', function () {
+    Notification::fake();
+
+    $sender = User::factory()->licensed(LicenseType::cases())->create();
+    $recipient = User::factory()->licensed(LicenseType::cases())->create();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->has(AiMessage::factory()->count(1), 'messages')
+        ->for($sender, 'user')
+        ->create([
+            'named_by_user_at' => now(),
+        ]);
+
+    dispatch(new CloneAiThread($thread, $sender, $recipient));
+
+    $recipient->refresh();
+    $clonedThread = $recipient->aiThreads()->latest()->first();
+
+    expect($thread->refresh()->named_by_user_at)->not->toBeNull();
+    expect($clonedThread->named_by_user_at)->toBeNull();
+});

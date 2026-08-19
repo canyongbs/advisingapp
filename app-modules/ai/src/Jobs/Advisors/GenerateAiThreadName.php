@@ -39,8 +39,6 @@ namespace AdvisingApp\Ai\Jobs\Advisors;
 use AdvisingApp\Ai\Events\Advisors\AdvisorThreadRenamed;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Report\Enums\TrackedEventType;
-use AdvisingApp\Report\Jobs\RecordTrackedEvent;
 use App\Features\AiThreadAutoNamingFeature;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -56,7 +54,7 @@ class GenerateAiThreadName implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public int $tries = 3;
+    public int $tries = 1;
 
     public function __construct(
         protected AiThread $thread,
@@ -68,9 +66,12 @@ class GenerateAiThreadName implements ShouldQueue
             return;
         }
 
-        // The thread may have been renamed by the user between when this job was
-        // dispatched and when it runs, in which case it must not be overwritten.
-        if (filled($this->thread->fresh()?->named_by_user_at)) {
+        // The thread may have been renamed by the user, or deleted entirely, between
+        // when this job was dispatched and when it runs, in which case it must not be
+        // overwritten.
+        $thread = $this->thread->fresh();
+
+        if (! $thread || $thread->trashed() || filled($thread->named_by_user_at)) {
             return;
         }
 
@@ -95,19 +96,25 @@ class GenerateAiThreadName implements ShouldQueue
             return;
         }
 
-        if (filled($this->thread->fresh()?->named_by_user_at)) {
+        $name = trim($name);
+
+        if ($name === '') {
             return;
         }
 
-        $this->thread->name = trim($name);
-        $this->thread->saved_at = now();
+        $thread = $this->thread->fresh();
+
+        if (! $thread || $thread->trashed() || filled($thread->named_by_user_at)) {
+            return;
+        }
+
+        $this->thread->name = $name;
         $this->thread->save();
 
-        event(new AdvisorThreadRenamed($this->thread));
-
-        dispatch(new RecordTrackedEvent(
-            type: TrackedEventType::AiThreadSaved,
-            occurredAt: now(),
-        ));
+        try {
+            event(new AdvisorThreadRenamed($this->thread));
+        } catch (Throwable $exception) {
+            report($exception);
+        }
     }
 }
