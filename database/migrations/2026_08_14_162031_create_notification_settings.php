@@ -43,31 +43,31 @@ return new class () extends SettingsMigration {
     {
         DB::transaction(function () {
             try {
-              $this->migrator->add('notifications.name');
+                $this->migrator->add('notifications.name');
             } catch (SettingAlreadyExists $exception) {
                 // do nothing
             }
 
             try {
-              $this->migrator->add('notifications.from_name');
+                $this->migrator->add('notifications.from_name');
             } catch (SettingAlreadyExists $exception) {
                 // do nothing
             }
 
             try {
-              $this->migrator->add('notifications.description');
+                $this->migrator->add('notifications.description');
             } catch (SettingAlreadyExists $exception) {
                 // do nothing
             }
 
             try {
-              $this->migrator->add('notifications.logo');
+                $this->migrator->add('notifications.logo');
             } catch (SettingAlreadyExists $exception) {
                 // do nothing
             }
 
             try {
-              $this->migrator->add('notifications.primary_color');
+                $this->migrator->add('notifications.primary_color');
             } catch (SettingAlreadyExists $exception) {
                 // do nothing
             }

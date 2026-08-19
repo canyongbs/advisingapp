@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\NotificationSettingsFeature;
 use App\Filament\Pages\ManageNotificationSettings;
 use App\Models\User;
 use App\Settings\NotificationSettings;
