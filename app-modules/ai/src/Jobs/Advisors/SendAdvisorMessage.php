@@ -49,7 +49,6 @@ use AdvisingApp\Ai\Support\StreamingChunks\Image;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\Ai\Support\StreamingChunks\Thinking;
-use App\Features\SmartPromptInstructionsFeature;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -88,35 +87,21 @@ class SendAdvisorMessage implements ShouldQueue
 
         if ($this->content instanceof Prompt) {
             if ($this->content->is_smart) {
-                // TODO: Cleanup Task - Remove the SmartPromptInstructionsFeature check and the legacy else branch below, keeping only the settings-based instructions.
-                if (SmartPromptInstructionsFeature::active()) {
-                    $settings = app(AiSettings::class);
+                $settings = app(AiSettings::class);
 
-                    $instructions = filled($settings->smart_prompt_instructions)
-                        ? $settings->smart_prompt_instructions
-                        : AiSettings::defaultSmartPromptInstructions();
+                $instructions = filled($settings->smart_prompt_instructions)
+                    ? $settings->smart_prompt_instructions
+                    : AiSettings::defaultSmartPromptInstructions();
 
-                    $additionalContent = RichContentRenderer::make($instructions)
-                        ->mergeTags([
-                            'prompt title' => $this->content->title,
-                            'prompt category' => $this->content->type->title,
-                            'prompt description' => $this->content->description ?? '',
-                        ])
-                        ->toText();
+                $additionalContent = RichContentRenderer::make($instructions)
+                    ->mergeTags([
+                        'prompt title' => $this->content->title,
+                        'prompt category' => $this->content->type->title,
+                        'prompt description' => $this->content->description ?? '',
+                    ])
+                    ->toText();
 
-                    $message->content = trim($additionalContent) . "\n\n" . $this->content->prompt;
-                } else {
-                    $descriptionLine = $this->content->description
-                        ? "with the description {$this->content->description}"
-                        : null;
-
-                    $additionalContent = "Below I will provide you the input content for a prompt with the name {$this->content->title}, in the category {$this->content->type->title}" . ($descriptionLine ? ", {$descriptionLine}" : '') . '.
-                    The prompt may have variables {{ VARIABLE }} that are needed in order to effectively serve your function. Begin by analyzing the prompt.
-                    Begin by introducing yourself as an AI Advisor, and based on the prompt name, category, and description, explain what your purpose is. Then if the prompt has any variables in it, ask the user for that information, one variable at a time, explaining why you need that input from the user. Once all the variables are collected, return a response for the prompt supplied below.
-                    Note: If there are no variables, then just return a response for the prompt supplied below.';
-
-                    $message->content = $additionalContent . "\n\n" . $this->content->prompt;
-                }
+                $message->content = trim($additionalContent) . "\n\n" . $this->content->prompt;
             } else {
                 $message->content = $this->content->prompt;
             }

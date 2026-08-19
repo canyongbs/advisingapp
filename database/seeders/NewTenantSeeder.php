@@ -36,6 +36,7 @@
 
 namespace Database\Seeders;
 
+use AdvisingApp\Ai\Database\Seeders\SmartPromptInstructionsSeeder;
 use AdvisingApp\Alert\Database\Seeders\AlertConfigurationSeeder;
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Authorization\Console\Commands\SetupRoles;
@@ -79,6 +80,7 @@ class NewTenantSeeder extends Seeder
             ApplicationSubmissionStateSeeder::class,
             ConcernStatusSeeder::class,
             AlertConfigurationSeeder::class,
+            SmartPromptInstructionsSeeder::class,
         ]);
     }
 }

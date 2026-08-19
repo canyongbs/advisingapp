@@ -34,14 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\Ai\Database\Seeders;
 
-use App\Support\AbstractFeatureFlag;
+use AdvisingApp\Ai\Settings\AiSettings;
+use Illuminate\Database\Seeder;
 
-class SmartPromptInstructionsFeature extends AbstractFeatureFlag
+class SmartPromptInstructionsSeeder extends Seeder
 {
-    public function resolve(mixed $scope): mixed
+    public function run(): void
     {
-        return false;
+        $settings = app(AiSettings::class);
+
+        if (filled($settings->smart_prompt_instructions)) {
+            return;
+        }
+
+        $settings->smart_prompt_instructions = AiSettings::defaultSmartPromptInstructions();
+        $settings->save();
     }
 }

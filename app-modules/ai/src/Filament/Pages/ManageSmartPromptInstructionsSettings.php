@@ -39,7 +39,6 @@ namespace AdvisingApp\Ai\Filament\Pages;
 use AdvisingApp\Ai\Settings\AiSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Enums\NavigationGroup;
-use App\Features\SmartPromptInstructionsFeature;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -64,11 +63,6 @@ class ManageSmartPromptInstructionsSettings extends SettingsPage
 
     public static function canAccess(): bool
     {
-        // TODO: Cleanup Task - Remove the SmartPromptInstructionsFeature check once the flag is cleaned up.
-        if (! SmartPromptInstructionsFeature::active()) {
-            return false;
-        }
-
         $user = auth()->user();
 
         assert($user instanceof User);
