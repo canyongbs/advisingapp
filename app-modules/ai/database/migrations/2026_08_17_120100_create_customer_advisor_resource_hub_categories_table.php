@@ -34,31 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Observers;
-
-use AdvisingApp\Ai\Models\CustomerAdvisor;
-use AdvisingApp\IntegrationOpenAi\Jobs\UploadCustomerAdvisorFilesToVectorStore;
 use App\Features\CustomerAdvisorResourceHubArticleAccessFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-class CustomerAdvisorObserver
-{
-    public function created(CustomerAdvisor $advisor): void
+return new class () extends Migration {
+    public function up(): void
     {
-        if ($advisor->has_resource_hub_knowledge) {
-            UploadCustomerAdvisorFilesToVectorStore::dispatch($advisor);
-        }
+        DB::transaction(function () {
+            Schema::create('customer_advisor_resource_hub_categories', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->foreignUuid('customer_advisor_id')->constrained('customer_advisors')->cascadeOnDelete();
+                $table->foreignUuid('resource_hub_category_id')->constrained('resource_hub_categories')->cascadeOnDelete();
+                $table->timestamps();
+
+                $table->unique(['customer_advisor_id', 'resource_hub_category_id']);
+            });
+
+            CustomerAdvisorResourceHubArticleAccessFeature::activate();
+        });
     }
 
-    public function updated(CustomerAdvisor $advisor): void
+    public function down(): void
     {
-        $watchedAttributes = ['has_resource_hub_knowledge'];
+        DB::transaction(function () {
+            CustomerAdvisorResourceHubArticleAccessFeature::deactivate();
 
-        if (CustomerAdvisorResourceHubArticleAccessFeature::active()) {
-            $watchedAttributes[] = 'resource_hub_article_access';
-        }
-
-        if ($advisor->wasChanged($watchedAttributes)) {
-            UploadCustomerAdvisorFilesToVectorStore::dispatch($advisor);
-        }
+            Schema::dropIfExists('customer_advisor_resource_hub_categories');
+        });
     }
-}
+};

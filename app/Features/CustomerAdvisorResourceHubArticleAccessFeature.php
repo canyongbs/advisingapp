@@ -34,31 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Observers;
+namespace App\Features;
 
-use AdvisingApp\Ai\Models\CustomerAdvisor;
-use AdvisingApp\IntegrationOpenAi\Jobs\UploadCustomerAdvisorFilesToVectorStore;
-use App\Features\CustomerAdvisorResourceHubArticleAccessFeature;
+use App\Support\AbstractFeatureFlag;
 
-class CustomerAdvisorObserver
+class CustomerAdvisorResourceHubArticleAccessFeature extends AbstractFeatureFlag
 {
-    public function created(CustomerAdvisor $advisor): void
+    public function resolve(mixed $scope): mixed
     {
-        if ($advisor->has_resource_hub_knowledge) {
-            UploadCustomerAdvisorFilesToVectorStore::dispatch($advisor);
-        }
-    }
-
-    public function updated(CustomerAdvisor $advisor): void
-    {
-        $watchedAttributes = ['has_resource_hub_knowledge'];
-
-        if (CustomerAdvisorResourceHubArticleAccessFeature::active()) {
-            $watchedAttributes[] = 'resource_hub_article_access';
-        }
-
-        if ($advisor->wasChanged($watchedAttributes)) {
-            UploadCustomerAdvisorFilesToVectorStore::dispatch($advisor);
-        }
+        return false;
     }
 }

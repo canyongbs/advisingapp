@@ -34,31 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Observers;
+namespace AdvisingApp\Ai\Models;
 
-use AdvisingApp\Ai\Models\CustomerAdvisor;
-use AdvisingApp\IntegrationOpenAi\Jobs\UploadCustomerAdvisorFilesToVectorStore;
-use App\Features\CustomerAdvisorResourceHubArticleAccessFeature;
+use AdvisingApp\Ai\Observers\CustomerAdvisorResourceHubCategoryObserver;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-class CustomerAdvisorObserver
+#[ObservedBy([CustomerAdvisorResourceHubCategoryObserver::class])]
+/**
+ * @mixin IdeHelperCustomerAdvisorResourceHubCategory
+ */
+class CustomerAdvisorResourceHubCategory extends Pivot
 {
-    public function created(CustomerAdvisor $advisor): void
+    use HasUuids;
+
+    /**
+     * @return BelongsTo<CustomerAdvisor, $this>
+     */
+    public function customerAdvisor(): BelongsTo
     {
-        if ($advisor->has_resource_hub_knowledge) {
-            UploadCustomerAdvisorFilesToVectorStore::dispatch($advisor);
-        }
+        return $this->belongsTo(CustomerAdvisor::class);
     }
 
-    public function updated(CustomerAdvisor $advisor): void
+    /**
+     * @return BelongsTo<ResourceHubCategory, $this>
+     */
+    public function resourceHubCategory(): BelongsTo
     {
-        $watchedAttributes = ['has_resource_hub_knowledge'];
-
-        if (CustomerAdvisorResourceHubArticleAccessFeature::active()) {
-            $watchedAttributes[] = 'resource_hub_article_access';
-        }
-
-        if ($advisor->wasChanged($watchedAttributes)) {
-            UploadCustomerAdvisorFilesToVectorStore::dispatch($advisor);
-        }
+        return $this->belongsTo(ResourceHubCategory::class);
     }
 }
