@@ -45,13 +45,13 @@ it('renders the notification mail with the configured `primary_color`', function
 
     $expected = FilamentColor::convertToRgb(FilamentColor::all()[Color::Gray->value][600]);
 
-    expect((new TestEmailSettingFromNameNotification())->toMail($user)->render())
+    expect((string) (new TestEmailSettingFromNameNotification())->toMail($user)->render())
         ->not->toContain($expected);
 
     $settings = app(NotificationSettings::class);
     $settings->primary_color = Color::Gray;
     $settings->save();
 
-    expect((new TestEmailSettingFromNameNotification())->toMail($user)->render())
+    expect((string) (new TestEmailSettingFromNameNotification())->toMail($user)->render())
         ->toContain($expected);
 });

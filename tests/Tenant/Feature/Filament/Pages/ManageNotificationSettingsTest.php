@@ -51,6 +51,23 @@ it('can render the manage notification settings page', function () {
         ->assertOk();
 });
 
+it('loads existing data into the form', function () {
+    asSuperAdmin();
+
+    $settings = app(NotificationSettings::class);
+    $settings->name = 'Existing Institution Name';
+    $settings->from_name = 'Existing From Name';
+    $settings->description = 'Existing description.';
+    $settings->save();
+
+    livewire(ManageNotificationSettings::class)
+        ->assertSchemaStateSet([
+            'name' => 'Existing Institution Name',
+            'from_name' => 'Existing From Name',
+            'description' => 'Existing description.',
+        ]);
+});
+
 it('can update the notification settings', function () {
     asSuperAdmin();
 
