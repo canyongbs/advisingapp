@@ -42,6 +42,7 @@ use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalLogoutContr
 use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalRequestAuthenticationController;
 use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalSearchController;
 use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalUserController;
+use AdvisingApp\Portal\Http\Controllers\ResourceHub\StoreResourceHubArticleVoteController;
 use AdvisingApp\Portal\Http\Middleware\AuthenticateIfRequiredByPortalDefinition;
 use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEmbeddableAndAuthorized;
 use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEnabled;
@@ -105,6 +106,9 @@ Route::middleware([
 
                                 Route::get('/categories/{category}/articles/{article}', [ResourceHubPortalArticleController::class, 'show'])
                                     ->name('article.show');
+
+                                Route::post('/resource_hub_article_vote/store', StoreResourceHubArticleVoteController::class)
+                                    ->name('article-vote.store');
                             });
 
                         Route::post('/authenticate/request', ResourceHubPortalRequestAuthenticationController::class)

@@ -39,11 +39,12 @@
     import PageCard from '@common/portal/PageCard.vue';
     import ArticleAttachments from '@common/portal/article/ArticleAttachments.vue';
     import ArticleContent from '@common/portal/article/ArticleContent.vue';
+    import ArticleFeedback from '@common/portal/article/ArticleFeedback.vue';
     import ArticleMeta from '@common/portal/article/ArticleMeta.vue';
-    // import ArticleFeedback from '@common/portal/article/ArticleFeedback.vue';
     import truncate from 'lodash/truncate';
     import { computed, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
+    import { apiPost } from '../Services/api.js';
     import { useArticleData } from './loaders.js';
 
     const route = useRoute();
@@ -104,24 +105,24 @@
 
     const currentCrumb = computed(() => (article.value ? truncate(article.value.name, { length: 16 }) : 'Not Found'));
 
-    // async function toggleFeedback(type) {
-    //     try {
-    //         const data = await apiPost('/resource_hub_article_vote/store', {
-    //             article_vote: feedback.value === type ? null : type,
-    //             article_id: route.params.articleId,
-    //         });
-    //
-    //         if (Object.prototype.hasOwnProperty.call(data, 'is_helpful') && data.is_helpful !== null) {
-    //             feedback.value = data.is_helpful;
-    //         } else {
-    //             feedback.value = null;
-    //         }
-    //
-    //         helpfulVotePercentage.value = data.helpful_vote_percentage;
-    //     } catch (error) {
-    //         console.error('Error submitting feedback:', error);
-    //     }
-    // }
+    async function toggleFeedback(type) {
+        try {
+            const data = await apiPost('/resource_hub_article_vote/store', {
+                article_vote: feedback.value === type ? null : type,
+                article_id: route.params.articleId,
+            });
+
+            if (Object.prototype.hasOwnProperty.call(data, 'is_helpful') && data.is_helpful !== null) {
+                feedback.value = data.is_helpful;
+            } else {
+                feedback.value = null;
+            }
+
+            helpfulVotePercentage.value = data.helpful_vote_percentage;
+        } catch (error) {
+            console.error('Error submitting feedback:', error);
+        }
+    }
 </script>
 
 <template>
@@ -145,11 +146,11 @@
         <PageCard>
             <ArticleContent :content="article.content" />
 
-            <!-- <ArticleFeedback
+            <ArticleFeedback
                 :feedback="feedback"
                 :helpfulVotePercentage="helpfulVotePercentage"
                 @toggle-feedback="toggleFeedback"
-            /> -->
+            />
         </PageCard>
     </Page>
 

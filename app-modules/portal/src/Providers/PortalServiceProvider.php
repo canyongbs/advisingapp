@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Portal\Providers;
 
+use AdvisingApp\Portal\Models\PortalGuest;
+use AdvisingApp\Portal\Models\ResourceHubArticleVote;
 use AdvisingApp\Portal\PortalPlugin;
 use AdvisingApp\Portal\Settings\SettingsProperties\PortalSettingsProperty;
 use Filament\Panel;
@@ -53,6 +55,8 @@ class PortalServiceProvider extends ServiceProvider
     {
         Relation::morphMap([
             'portal_settings_property' => PortalSettingsProperty::class,
+            'portal_guest' => PortalGuest::class,
+            'resource_hub_article_vote' => ResourceHubArticleVote::class,
         ]);
 
         $this->loadRoutesFrom(__DIR__ . '/../../routes/portals.php');

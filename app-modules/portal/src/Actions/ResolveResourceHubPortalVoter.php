@@ -34,21 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\DataTransferObjects;
+namespace AdvisingApp\Portal\Actions;
 
-use Spatie\LaravelData\Data;
+use AdvisingApp\Portal\Models\PortalGuest;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 
-class ResourceHubArticleData extends Data
+class ResolveResourceHubPortalVoter
 {
-    /**
-     * @param  array{id: string, is_helpful: bool}|null  $vote
-     */
-    public function __construct(
-        public string $id,
-        public ?string $categoryId,
-        public string $name,
-        public ?string $lastUpdated,
-        public ?string $content,
-        public ?array $vote = null,
-    ) {}
+    public static function execute(): Student|Prospect|PortalGuest
+    {
+        $voter = auth('student')->user() ?? auth('prospect')->user();
+
+        if ($voter instanceof Student || $voter instanceof Prospect) {
+            return $voter;
+        }
+
+        $guest = session()->has('resource_hub_guest_id') ? PortalGuest::find(session('resource_hub_guest_id')) : null;
+
+        if (! $guest) {
+            $guest = PortalGuest::create();
+
+            session()->put('resource_hub_guest_id', $guest->getKey());
+        }
+
+        return $guest;
+    }
 }

@@ -34,21 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\DataTransferObjects;
+namespace AdvisingApp\Portal\Actions;
 
-use Spatie\LaravelData\Data;
+use AdvisingApp\Portal\Models\ResourceHubArticleVote;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 
-class ResourceHubArticleData extends Data
+class CalculateResourceHubArticleHelpfulVotePercentage
 {
-    /**
-     * @param  array{id: string, is_helpful: bool}|null  $vote
-     */
-    public function __construct(
-        public string $id,
-        public ?string $categoryId,
-        public string $name,
-        public ?string $lastUpdated,
-        public ?string $content,
-        public ?array $vote = null,
-    ) {}
+    public static function execute(ResourceHubArticle $article): int
+    {
+        $counts = ResourceHubArticleVote::query()
+            ->where('article_id', $article->getKey())
+            ->toBase()
+            ->selectRaw('count(*) as total, count(*) filter (where is_helpful) as helpful')
+            ->first();
+
+        $totalVotes = (int) $counts->total;
+
+        if ($totalVotes === 0) {
+            return 0;
+        }
+
+        return (int) round(((int) $counts->helpful / $totalVotes) * 100);
+    }
 }

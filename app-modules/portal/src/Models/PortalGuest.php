@@ -34,21 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\DataTransferObjects;
+namespace AdvisingApp\Portal\Models;
 
-use Spatie\LaravelData\Data;
+use App\Models\Attributes\NoPermissions;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ResourceHubArticleData extends Data
+/**
+ * @mixin IdeHelperPortalGuest
+ */
+#[NoPermissions]
+class PortalGuest extends BaseModel
 {
+    use SoftDeletes;
+
     /**
-     * @param  array{id: string, is_helpful: bool}|null  $vote
+     * @return MorphMany<ResourceHubArticleVote, $this>
      */
-    public function __construct(
-        public string $id,
-        public ?string $categoryId,
-        public string $name,
-        public ?string $lastUpdated,
-        public ?string $content,
-        public ?array $vote = null,
-    ) {}
+    public function resourceHubArticleVotes(): MorphMany
+    {
+        return $this->morphMany(ResourceHubArticleVote::class, 'voter');
+    }
 }

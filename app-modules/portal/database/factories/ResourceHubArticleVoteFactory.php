@@ -34,21 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\DataTransferObjects;
+namespace AdvisingApp\Portal\Database\Factories;
 
-use Spatie\LaravelData\Data;
+use AdvisingApp\Portal\Models\ResourceHubArticleVote;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ResourceHubArticleData extends Data
+/**
+ * @extends Factory<ResourceHubArticleVote>
+ */
+class ResourceHubArticleVoteFactory extends Factory
 {
-    /**
-     * @param  array{id: string, is_helpful: bool}|null  $vote
-     */
-    public function __construct(
-        public string $id,
-        public ?string $categoryId,
-        public string $name,
-        public ?string $lastUpdated,
-        public ?string $content,
-        public ?array $vote = null,
-    ) {}
+    public function definition(): array
+    {
+        return [
+            'is_helpful' => $this->faker->boolean(),
+            'voter_id' => Student::factory(),
+            'voter_type' => (new Student())->getMorphClass(),
+            'article_id' => ResourceHubArticle::factory(),
+        ];
+    }
 }

@@ -34,21 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\DataTransferObjects;
+namespace AdvisingApp\Portal\Database\Factories;
 
-use Spatie\LaravelData\Data;
+use AdvisingApp\Portal\Models\PortalGuest;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-class ResourceHubArticleData extends Data
+/**
+ * @extends Factory<PortalGuest>
+ */
+class PortalGuestFactory extends Factory
 {
-    /**
-     * @param  array{id: string, is_helpful: bool}|null  $vote
-     */
-    public function __construct(
-        public string $id,
-        public ?string $categoryId,
-        public string $name,
-        public ?string $lastUpdated,
-        public ?string $content,
-        public ?array $vote = null,
-    ) {}
+    public function definition(): array
+    {
+        return [
+        ];
+    }
 }

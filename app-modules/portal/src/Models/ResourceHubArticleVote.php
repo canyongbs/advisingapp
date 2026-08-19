@@ -34,21 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\DataTransferObjects;
+namespace AdvisingApp\Portal\Models;
 
-use Spatie\LaravelData\Data;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use App\Models\Attributes\NoPermissions;
+use App\Models\BaseModel;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class ResourceHubArticleData extends Data
+/**
+ * @mixin IdeHelperResourceHubArticleVote
+ */
+#[NoPermissions]
+class ResourceHubArticleVote extends BaseModel
 {
+    protected $casts = [
+        'is_helpful' => 'boolean',
+    ];
+
+    protected $fillable = [
+        'is_helpful',
+    ];
+
     /**
-     * @param  array{id: string, is_helpful: bool}|null  $vote
+     * @return MorphTo<Model, $this>
      */
-    public function __construct(
-        public string $id,
-        public ?string $categoryId,
-        public string $name,
-        public ?string $lastUpdated,
-        public ?string $content,
-        public ?array $vote = null,
-    ) {}
+    public function voter(): MorphTo
+    {
+        return $this->morphTo();
+    }
+
+    /**
+     * @return BelongsTo<ResourceHubArticle, $this>
+     */
+    public function resourceHubArticle(): BelongsTo
+    {
+        return $this->belongsTo(ResourceHubArticle::class, 'article_id');
+    }
 }

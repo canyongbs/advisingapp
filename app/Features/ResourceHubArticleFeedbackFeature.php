@@ -34,21 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\DataTransferObjects;
+namespace App\Features;
 
-use Spatie\LaravelData\Data;
+use App\Support\AbstractFeatureFlag;
 
-class ResourceHubArticleData extends Data
+class ResourceHubArticleFeedbackFeature extends AbstractFeatureFlag
 {
-    /**
-     * @param  array{id: string, is_helpful: bool}|null  $vote
-     */
-    public function __construct(
-        public string $id,
-        public ?string $categoryId,
-        public string $name,
-        public ?string $lastUpdated,
-        public ?string $content,
-        public ?array $vote = null,
-    ) {}
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
+    }
 }

@@ -34,21 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\DataTransferObjects;
+use App\Features\ResourceHubArticleFeedbackFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-use Spatie\LaravelData\Data;
+return new class () extends Migration {
+    public function up(): void
+    {
+        DB::transaction(function () {
+            Schema::create('resource_hub_article_votes', function (Blueprint $table) {
+                $table->uuid('id')->primary();
+                $table->boolean('is_helpful');
+                // Voter can be a Student, whose primary key is a non-UUID `sisid`, so this can't use uuidMorphs.
+                $table->string('voter_type');
+                $table->string('voter_id');
+                $table->foreignUuid('article_id')->constrained('resource_hub_articles');
+                $table->unique(['article_id', 'voter_type', 'voter_id']);
+                $table->timestamps();
+            });
 
-class ResourceHubArticleData extends Data
-{
-    /**
-     * @param  array{id: string, is_helpful: bool}|null  $vote
-     */
-    public function __construct(
-        public string $id,
-        public ?string $categoryId,
-        public string $name,
-        public ?string $lastUpdated,
-        public ?string $content,
-        public ?array $vote = null,
-    ) {}
-}
+            ResourceHubArticleFeedbackFeature::activate();
+        });
+    }
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            ResourceHubArticleFeedbackFeature::deactivate();
+
+            Schema::dropIfExists('resource_hub_article_votes');
+        });
+    }
+};

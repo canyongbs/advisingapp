@@ -59,4 +59,11 @@ class ResourceHubArticleFactory extends Factory
             'category_id' => ResourceHubCategory::factory(),
         ];
     }
+
+    public function public(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'public' => true,
+        ]);
+    }
 }
