@@ -34,49 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources\NotificationSettings\Pages;
+namespace App\Features;
 
-use App\Filament\Resources\NotificationSettings\NotificationSettingResource;
-use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\EditRecord;
-use Filament\Schemas\Schema;
+use App\Support\AbstractFeatureFlag;
 
-class EditNotificationSetting extends EditRecord
+class NotificationSettingsFeature extends AbstractFeatureFlag
 {
-    protected static string $resource = NotificationSettingResource::class;
-
-    public function form(Schema $schema): Schema
+    public function resolve(mixed $scope): mixed
     {
-        return $schema
-            ->columns(1)
-            ->components([
-                TextInput::make('name')
-                    ->string()
-                    ->required()
-                    ->autocomplete(false),
-                TextInput::make('from_name')
-                    ->string()
-                    ->maxLength(150)
-                    ->autocomplete(false),
-                Textarea::make('description')
-                    ->string(),
-                ColorSelect::make('primary_color'),
-                SpatieMediaLibraryFileUpload::make('logo')
-                    ->disk('s3')
-                    ->collection('logo')
-                    ->visibility('private')
-                    ->image(),
-            ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            DeleteAction::make(),
-        ];
+        return false;
     }
 }

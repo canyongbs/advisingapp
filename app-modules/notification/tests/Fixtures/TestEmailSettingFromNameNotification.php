@@ -37,7 +37,7 @@
 namespace AdvisingApp\Notification\Tests\Fixtures;
 
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Models\NotificationSetting;
+use App\Settings\NotificationSettings;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
@@ -45,10 +45,6 @@ use Illuminate\Notifications\Notification;
 class TestEmailSettingFromNameNotification extends Notification implements ShouldQueue
 {
     use Queueable;
-
-    public function __construct(
-        public NotificationSetting $setting,
-    ) {}
 
     /**
      * @return array<int, string>
@@ -61,7 +57,7 @@ class TestEmailSettingFromNameNotification extends Notification implements Shoul
     public function toMail(object $notifiable): MailMessage
     {
         return MailMessage::make()
-            ->settings($this->setting)
+            ->settings(app(NotificationSettings::class))
             ->subject('Test Subject')
             ->greeting('Test Greeting')
             ->content('This is a test email');

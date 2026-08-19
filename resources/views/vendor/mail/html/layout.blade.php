@@ -32,6 +32,9 @@
     </COPYRIGHT>
 --}}
 @props(['settings' => null, 'unsubscribeUrl' => null, 'hideFooter' => false])
+@php
+    use Filament\Support\Colors\Color;
+@endphp
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -65,7 +68,7 @@
         }
 
         @php
-            $color = \Filament\Support\Colors\Color::convertToRgb(\Filament\Support\Colors\Color::all()[$settings?->primary_color ?? 'blue'][600]);
+            $color = Color::convertToRgb(Color::all()[$settings?->primary_color?->value ?? 'blue'][600]);
         @endphp
 
         .button-primary {

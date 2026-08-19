@@ -423,8 +423,8 @@ return [
     LandlordSettingsProperty::class,
     MonitoredScheduledTask::class,
     MonitoredScheduledTaskLogItem::class,
-    NotificationSetting::class,
-    NotificationSettingPivot::class,
+    NotificationSetting::class, // TODO: Cleanup Task NotificationSettingsFeature - delete this line
+    NotificationSettingPivot::class, // TODO: Cleanup Task NotificationSettingsFeature - delete this line
     Pronouns::class,
     SettingsProperty::class,
     SettingsPropertyWithMedia::class,

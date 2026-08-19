@@ -38,7 +38,6 @@ namespace AdvisingApp\Division\Filament\Resources\Divisions\Pages;
 
 use AdvisingApp\Division\Filament\Resources\Divisions\DivisionResource;
 use AdvisingApp\Division\Models\Division;
-use App\Filament\Resources\NotificationSettings\NotificationSettingResource;
 use App\Filament\Resources\Users\UserResource;
 use Filament\Actions\EditAction;
 use Filament\Infolists\Components\IconEntry;
@@ -86,10 +85,6 @@ class ViewDivision extends ViewRecord
                                     ->datetime(),
                             ])
                             ->columns(),
-                        TextEntry::make('notificationSetting.setting.name')
-                            ->label('Notification Setting')
-                            ->color(fn (Division $record) => $record->notificationSetting?->setting ? 'primary' : null)
-                            ->url(fn (Division $record) => $record->notificationSetting?->setting ? NotificationSettingResource::getUrl('edit', ['record' => $record->notificationSetting->setting]) : null),
                     ])
                     ->columns(),
             ]);

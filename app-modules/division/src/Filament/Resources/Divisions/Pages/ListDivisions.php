@@ -74,8 +74,6 @@ class ListDivisions extends ListRecords
                 IconColumn::make('is_default')
                     ->label('Default')
                     ->boolean(),
-                TextColumn::make('notificationSetting.setting.name')
-                    ->label('Notification Setting'),
             ])
             ->recordActions([
                 ViewAction::make(),

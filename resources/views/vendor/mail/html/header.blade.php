@@ -33,18 +33,21 @@
 --}}
 @props(['url', 'settings' => null])
 @php
+    use App\Features\NotificationSettingsFeature;
     use App\Models\SettingsProperty;
+    use App\Settings\NotificationSettings;
     use AdvisingApp\Theme\Settings\ThemeSettings;
 
     $themeSettings = app(ThemeSettings::class);
     $logo = $themeSettings->getSettingsPropertyModel('theme.is_logo_active')->getFirstMedia('logo');
+
+    $notificationLogo = NotificationSettingsFeature::active() ? NotificationSettings::getSettingsPropertyModel('notifications.logo') : null;
 @endphp
 <tr>
     <td class="header">
         <a href="{{ $url }}" style="display: inline-block;">
-            @if ($settings?->hasMedia('logo'))
-                {{-- TODO: Don't use temporary urls? --}}
-                <img src="{{ $settings?->getFirstTemporaryUrl(now()->addDays(6), 'logo') }}"
+            @if ($notificationLogo?->hasMedia('logo'))
+                <img src="{{ $notificationLogo->getFirstMediaUrl('logo') }}"
                      style="height: 75px; max-height: 75px; max-width: 100vw;"
                      alt="Logo">
             @elseif ($themeSettings->is_logo_active && $logo)

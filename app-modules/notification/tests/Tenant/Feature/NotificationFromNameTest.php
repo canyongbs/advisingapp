@@ -35,8 +35,8 @@
 */
 
 use AdvisingApp\Notification\Tests\Fixtures\TestEmailSettingFromNameNotification;
-use App\Models\NotificationSetting;
 use App\Models\User;
+use App\Settings\NotificationSettings;
 use Illuminate\Support\Facades\Notification;
 
 it('sets the mail from name based on settings fromName if set', function () {
@@ -44,11 +44,12 @@ it('sets the mail from name based on settings fromName if set', function () {
 
     $user = User::factory()->create();
 
-    $notificationSetting = new NotificationSetting();
+    $notificationSetting = app(NotificationSettings::class);
 
     $notificationSetting->from_name = fake()->name();
+    $notificationSetting->save();
 
-    $notification = new TestEmailSettingFromNameNotification($notificationSetting);
+    $notification = new TestEmailSettingFromNameNotification();
 
     $user->notify($notification);
 

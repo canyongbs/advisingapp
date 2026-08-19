@@ -38,9 +38,7 @@ namespace AdvisingApp\Division\Filament\Resources\Divisions\Pages;
 
 use AdvisingApp\Division\Filament\Resources\Divisions\DivisionResource;
 use AdvisingApp\Division\Models\Division;
-use App\Models\NotificationSetting;
 use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -68,10 +66,6 @@ class EditDivision extends EditRecord
                 Textarea::make('description')
                     ->string()
                     ->columnSpanFull(),
-                Select::make('notification_setting_id')
-                    ->label('Notification Setting')
-                    ->options(NotificationSetting::pluck('name', 'id'))
-                    ->searchable(),
                 Toggle::make('is_default')
                     ->label('Default')
                     ->hint(function (?Division $record, $state): ?string {
@@ -97,41 +91,6 @@ class EditDivision extends EditRecord
                     ->columnStart(1)
                     ->live(),
             ]);
-    }
-
-    protected function mutateFormDataBeforeFill(array $data): array
-    {
-        $data = parent::mutateFormDataBeforeFill($data);
-
-        /** @var Division $division */
-        $division = $this->getRecord();
-
-        $data['notification_setting_id'] = $division->notificationSetting?->setting->id;
-
-        return $data;
-    }
-
-    protected function mutateFormDataBeforeSave(array $data): array
-    {
-        $data = parent::mutateFormDataBeforeSave($data);
-
-        /** @var Division $division */
-        $division = $this->getRecord();
-
-        if ($data['notification_setting_id']) {
-            $division->notificationSetting()->updateOrCreate([
-                'related_to_id' => $division->id,
-                'related_to_type' => $division->getMorphClass(),
-            ], [
-                'notification_setting_id' => $data['notification_setting_id'],
-            ]);
-        } else {
-            $division->notificationSetting()->delete();
-        }
-
-        unset($data['notification_setting_id']);
-
-        return $data;
     }
 
     protected function getHeaderActions(): array

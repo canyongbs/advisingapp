@@ -46,8 +46,8 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Models\NotificationSetting;
 use App\Models\User;
+use App\Settings\NotificationSettings;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -82,7 +82,7 @@ class FormSubmissionNotification extends Notification implements ShouldQueue
         $data = $this->buildViewData($notifiable);
 
         return (new MailMessage())
-            ->settings($this->resolveNotificationSetting($notifiable))
+            ->settings(app(NotificationSettings::class))
             ->subject("New Form Submission: {$data['formName']}")
             ->markdown('form::mail.form-submission', $data);
     }
@@ -170,10 +170,5 @@ class FormSubmissionNotification extends Notification implements ShouldQueue
             'timestamp' => $timestamp,
             'formData' => $formData,
         ];
-    }
-
-    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
-    {
-        return $notifiable->department?->division?->notificationSetting?->setting;
     }
 }

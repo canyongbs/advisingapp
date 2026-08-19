@@ -34,36 +34,18 @@
 </COPYRIGHT>
 */
 
-use App\Filament\Resources\NotificationSettings\Pages\ListNotificationSettings;
-use App\Models\NotificationSetting;
-use App\Models\User;
-use Filament\Actions\DeleteBulkAction;
+namespace App\Settings\SettingsProperties;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
+use App\Models\SettingsPropertyWithMedia;
 
-it('hides the bulk delete action from a user without the delete permission', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo('settings.view-any');
-    actingAs($user);
-
-    NotificationSetting::create(['name' => 'Setting One']);
-    NotificationSetting::create(['name' => 'Setting Two']);
-
-    livewire(ListNotificationSettings::class)
-        ->assertSuccessful()
-        ->assertTableBulkActionHidden(DeleteBulkAction::class);
-});
-
-it('shows the bulk delete action to a user with the delete permission', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo('settings.view-any', 'settings.*.delete');
-    actingAs($user);
-
-    NotificationSetting::create(['name' => 'Setting One']);
-    NotificationSetting::create(['name' => 'Setting Two']);
-
-    livewire(ListNotificationSettings::class)
-        ->assertSuccessful()
-        ->assertTableBulkActionVisible(DeleteBulkAction::class);
-});
+/**
+ * @mixin IdeHelperNotificationSettingsProperty
+ */
+class NotificationSettingsProperty extends SettingsPropertyWithMedia
+{
+    public function registerMediaCollections(): void
+    {
+        $this->addMediaCollection('logo')
+            ->singleFile();
+    }
+}

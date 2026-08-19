@@ -34,60 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+namespace App\Settings;
 
-use AdvisingApp\Division\Models\Division;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
+use App\Settings\SettingsProperties\NotificationSettingsProperty;
+use CanyonGBS\Common\Enums\Color;
 
-// TODO: Cleanup Task NotificationSettingsFeature - delete this file
-/**
- * @mixin IdeHelperNotificationSetting
- */
-class NotificationSetting extends BaseModel implements HasMedia
+class NotificationSettings extends SettingsWithMedia
 {
-    /** @use InteractsWithMedia<Media> */
-    use InteractsWithMedia;
+    public ?string $name = null;
 
-    use SoftDeletes;
+    public ?string $from_name = null;
 
-    protected $fillable = [
-        'name',
-        'primary_color',
-        'related_to_type',
-        'related_to_id',
-        'from_name',
-    ];
+    public ?string $description = null;
 
-    public function registerMediaCollections(): void
+    public null $logo = null;
+
+    public ?Color $primary_color = null;
+
+    public static function getSettingsPropertyModelClass(): string
     {
-        $this->addMediaCollection('logo')
-            ->singleFile();
+        return NotificationSettingsProperty::class;
     }
 
-    /**
-     * @return HasMany<NotificationSettingPivot, $this>
-     */
-    public function settings(): HasMany
+    public static function group(): string
     {
-        return $this->hasMany(NotificationSettingPivot::class);
-    }
-
-    /**
-     * @return MorphToMany<Division, $this, covariant NotificationSettingPivot>
-     */
-    public function divisions(): MorphToMany
-    {
-        return $this->morphedByMany(
-            related: Division::class,
-            name: 'related_to',
-            table: 'notification_settings_pivot'
-        )
-            ->using(NotificationSettingPivot::class)
-            ->withPivot('id')
-            ->withTimestamps();
+        return 'notifications';
     }
 }

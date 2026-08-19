@@ -44,8 +44,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ManageStudent
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
-use App\Models\NotificationSetting;
-use App\Models\User;
+use App\Settings\NotificationSettings;
 use Exception;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
@@ -73,7 +72,7 @@ class TaskAssignedToUserNotification extends Notification implements ShouldQueue
         $truncatedTaskDescription = str($this->task->description)->limit(50);
 
         return MailMessage::make()
-            ->settings($this->resolveNotificationSetting($notifiable))
+            ->settings(app(NotificationSettings::class))
             ->subject('You have been assigned a new Task')
             ->line('You have been assigned the task: ')
             ->line("\"{$truncatedTaskDescription}\"");
@@ -104,10 +103,5 @@ class TaskAssignedToUserNotification extends Notification implements ShouldQueue
             ->success()
             ->title($message)
             ->getDatabaseMessage();
-    }
-
-    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
-    {
-        return $this->task->createdBy->department?->division?->notificationSetting?->setting;
     }
 }

@@ -34,40 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources\NotificationSettings;
+use AdvisingApp\Notification\Tests\Fixtures\TestEmailSettingFromNameNotification;
+use App\Models\User;
+use App\Settings\NotificationSettings;
+use CanyonGBS\Common\Enums\Color;
+use Filament\Support\Colors\Color as FilamentColor;
 
-use App\Filament\Clusters\Communication;
-use App\Filament\Clusters\CommunicationNavigationGroup;
-use App\Filament\Resources\NotificationSettings\Pages\CreateNotificationSetting;
-use App\Filament\Resources\NotificationSettings\Pages\EditNotificationSetting;
-use App\Filament\Resources\NotificationSettings\Pages\ListNotificationSettings;
-use App\Models\NotificationSetting;
-use Filament\Resources\Resource;
-use UnitEnum;
+it('renders the notification mail with the configured `primary_color`', function () {
+    $user = User::factory()->create();
 
-class NotificationSettingResource extends Resource
-{
-    protected static ?string $model = NotificationSetting::class;
+    $expected = FilamentColor::convertToRgb(FilamentColor::all()[Color::Gray->value][600]);
 
-    protected static ?int $navigationSort = 120;
+    expect((string) (new TestEmailSettingFromNameNotification())->toMail($user)->render())
+        ->not->toContain($expected);
 
-    protected static ?string $cluster = Communication::class;
+    $settings = app(NotificationSettings::class);
+    $settings->primary_color = Color::Gray;
+    $settings->save();
 
-    protected static string | UnitEnum | null $navigationGroup = CommunicationNavigationGroup::Settings;
-
-    protected static string | null $navigationLabel = 'Notifications';
-
-    public static function getRelations(): array
-    {
-        return [];
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListNotificationSettings::route('/'),
-            'create' => CreateNotificationSetting::route('/create'),
-            'edit' => EditNotificationSetting::route('/{record}/edit'),
-        ];
-    }
-}
+    expect((string) (new TestEmailSettingFromNameNotification())->toMail($user)->render())
+        ->toContain($expected);
+});
