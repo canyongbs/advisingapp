@@ -126,7 +126,7 @@ class SendAdvisorMessage implements ShouldQueue
 
         $message->save();
 
-        if (blank($this->thread->saved_at)) {
+        if (AiThreadAutoNamingFeature::active() && blank($this->thread->saved_at)) {
             $this->thread->saved_at = now();
             $this->thread->save();
 
