@@ -98,23 +98,41 @@ it('can update the notification settings', function () {
         ->and($settings->primary_color)->toBe(Color::Blue);
 });
 
-it('disables the form without settings.*.update permission', function () {
+it('requires proper permissions to update settings', function () {
     $user = User::factory()->create();
 
     $user->givePermissionTo('settings.view-any');
     actingAs($user);
 
+    $settings = app(NotificationSettings::class);
+
     livewire(ManageNotificationSettings::class)
-        ->assertFormFieldDisabled('name')
-        ->assertFormFieldDisabled('from_name')
-        ->assertFormFieldDisabled('description')
-        ->assertFormFieldDisabled('primary_color');
+        ->fillForm([
+            'name' => 'New Institution Name',
+            'from_name' => 'New From Name',
+            'description' => 'New description.',
+            'primary_color' => Color::Blue->value,
+        ])
+        ->call('save');
+
+    expect($settings->name)->not()->toBe('New Institution Name')
+        ->and($settings->from_name)->not()->toBe('New From Name')
+        ->and($settings->description)->not()->toBe('New description.')
+        ->and($settings->primary_color)->not()->toBe(Color::Blue);
 
     $user->givePermissionTo('settings.*.update');
 
     livewire(ManageNotificationSettings::class)
-        ->assertFormFieldEnabled('name')
-        ->assertFormFieldEnabled('from_name')
-        ->assertFormFieldEnabled('description')
-        ->assertFormFieldEnabled('primary_color');
+        ->fillForm([
+            'name' => 'New Institution Name',
+            'from_name' => 'New From Name',
+            'description' => 'New description.',
+            'primary_color' => Color::Blue->value,
+        ])
+        ->call('save');
+
+    expect($settings->name)->toBe('New Institution Name')
+        ->and($settings->from_name)->toBe('New From Name')
+        ->and($settings->description)->toBe('New description.')
+        ->and($settings->primary_color)->toBe(Color::Blue);
 });

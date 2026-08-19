@@ -42,6 +42,8 @@ use App\Filament\Clusters\CommunicationNavigationGroup;
 use App\Models\User;
 use App\Settings\NotificationSettings;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -93,5 +95,26 @@ class ManageNotificationSettings extends SettingsPage
                     ->model(NotificationSettings::getSettingsPropertyModel('notifications.logo'))
                     ->image(),
             ]);
+    }
+
+    public function save(): void
+    {
+        if (! auth()->user()->can('settings.*.update')) {
+            return;
+        }
+
+        parent::save();
+    }
+
+    /**
+     * @return array<Action | ActionGroup>
+     */
+    public function getFormActions(): array
+    {
+        if (! auth()->user()->can('settings.*.update')) {
+            return [];
+        }
+
+        return parent::getFormActions();
     }
 }
