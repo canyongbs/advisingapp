@@ -99,6 +99,8 @@ it('saves the name and reports the exception if broadcasting AdvisorThreadRename
 
     Exceptions::fake();
 
+    config(['broadcasting.default' => 'null']);
+
     Event::listen(AdvisorThreadRenamed::class, function (): void {
         throw new Exception('The broadcast connection is down.');
     });
