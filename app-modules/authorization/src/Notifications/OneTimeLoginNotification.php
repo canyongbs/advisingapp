@@ -39,8 +39,8 @@ namespace AdvisingApp\Authorization\Notifications;
 use AdvisingApp\Authorization\Actions\GenerateOneTimeLoginCode;
 use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Models\NotificationSetting;
 use App\Models\User;
+use App\Settings\NotificationSettings;
 use Carbon\CarbonInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -69,16 +69,11 @@ class OneTimeLoginNotification extends Notification implements ShouldQueue
         $code = app(GenerateOneTimeLoginCode::class)($notifiable, $this->expiresAt);
 
         return MailMessage::make()
-            ->settings($this->resolveNotificationSetting($notifiable))
+            ->settings(app(NotificationSettings::class))
             ->subject('Your one-time login link')
             ->line('Use the button below to sign in to your account.')
             ->action('Log in', $this->link)
             ->line("When prompted, enter this verification code: {$code}")
             ->line('For security reasons, this link and code will expire in 30 minutes.');
-    }
-
-    private function resolveNotificationSetting(User $notifiable): ?NotificationSetting
-    {
-        return $notifiable->department?->division?->notificationSetting?->setting;
     }
 }
