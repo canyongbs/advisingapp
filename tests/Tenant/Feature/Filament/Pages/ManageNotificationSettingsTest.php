@@ -51,32 +51,6 @@ it('can render the manage notification settings page', function () {
         ->assertOk();
 });
 
-it('requires proper permissions to access', function () {
-    $user = User::factory()->create();
-
-    actingAs($user);
-
-    get(ManageNotificationSettings::getUrl())
-        ->assertForbidden();
-
-    $user->givePermissionTo('settings.view-any');
-
-    get(ManageNotificationSettings::getUrl())
-        ->assertOk();
-});
-
-it('validates the inputs', function (array $state, array $errors) {
-    asSuperAdmin();
-
-    livewire(ManageNotificationSettings::class)
-        ->fillForm($state)
-        ->call('save')
-        ->assertHasFormErrors($errors);
-})->with([
-    'name required' => [['name' => null], ['name' => 'required']],
-    'from_name max' => [['from_name' => str_repeat('a', 151)], ['from_name' => 'max']],
-]);
-
 it('can update the notification settings', function () {
     asSuperAdmin();
 
@@ -98,41 +72,69 @@ it('can update the notification settings', function () {
         ->and($settings->primary_color)->toBe(Color::Blue);
 });
 
-it('requires proper permissions to update settings', function () {
-    $user = User::factory()->create();
-
-    $user->givePermissionTo('settings.view-any');
-    actingAs($user);
-
-    $settings = app(NotificationSettings::class);
+it('validates the inputs', function (array $state, array $errors) {
+    asSuperAdmin();
 
     livewire(ManageNotificationSettings::class)
-        ->fillForm([
-            'name' => 'New Institution Name',
-            'from_name' => 'New From Name',
-            'description' => 'New description.',
-            'primary_color' => Color::Blue->value,
-        ])
-        ->call('save');
+        ->fillForm($state)
+        ->call('save')
+        ->assertHasFormErrors($errors);
+})->with([
+    'name required' => [['name' => null], ['name' => 'required']],
+    'from_name max' => [['from_name' => str_repeat('a', 151)], ['from_name' => 'max']],
+]);
 
-    expect($settings->name)->not()->toBe('New Institution Name')
-        ->and($settings->from_name)->not()->toBe('New From Name')
-        ->and($settings->description)->not()->toBe('New description.')
-        ->and($settings->primary_color)->not()->toBe(Color::Blue);
+describe('authorization', function () {
+    it('requires proper permissions to access', function () {
+        $user = User::factory()->create();
 
-    $user->givePermissionTo('settings.*.update');
+        actingAs($user);
 
-    livewire(ManageNotificationSettings::class)
-        ->fillForm([
-            'name' => 'New Institution Name',
-            'from_name' => 'New From Name',
-            'description' => 'New description.',
-            'primary_color' => Color::Blue->value,
-        ])
-        ->call('save');
+        get(ManageNotificationSettings::getUrl())
+            ->assertForbidden();
 
-    expect($settings->name)->toBe('New Institution Name')
-        ->and($settings->from_name)->toBe('New From Name')
-        ->and($settings->description)->toBe('New description.')
-        ->and($settings->primary_color)->toBe(Color::Blue);
+        $user->givePermissionTo('settings.view-any');
+
+        get(ManageNotificationSettings::getUrl())
+            ->assertOk();
+    });
+
+    it('requires proper permissions to update settings', function () {
+        $user = User::factory()->create();
+
+        $user->givePermissionTo('settings.view-any');
+        actingAs($user);
+
+        $settings = app(NotificationSettings::class);
+
+        livewire(ManageNotificationSettings::class)
+            ->fillForm([
+                'name' => 'New Institution Name',
+                'from_name' => 'New From Name',
+                'description' => 'New description.',
+                'primary_color' => Color::Blue->value,
+            ])
+            ->call('save');
+
+        expect($settings->name)->not()->toBe('New Institution Name')
+            ->and($settings->from_name)->not()->toBe('New From Name')
+            ->and($settings->description)->not()->toBe('New description.')
+            ->and($settings->primary_color)->not()->toBe(Color::Blue);
+
+        $user->givePermissionTo('settings.*.update');
+
+        livewire(ManageNotificationSettings::class)
+            ->fillForm([
+                'name' => 'New Institution Name',
+                'from_name' => 'New From Name',
+                'description' => 'New description.',
+                'primary_color' => Color::Blue->value,
+            ])
+            ->call('save');
+
+        expect($settings->name)->toBe('New Institution Name')
+            ->and($settings->from_name)->toBe('New From Name')
+            ->and($settings->description)->toBe('New description.')
+            ->and($settings->primary_color)->toBe(Color::Blue);
+    });
 });

@@ -89,11 +89,12 @@ class ManageNotificationSettings extends SettingsPage
                     ->string(),
                 ColorSelect::make('primary_color'),
                 SpatieMediaLibraryFileUpload::make('logo')
-                    ->disk('s3')
+                    ->disk('s3-public')
                     ->collection('logo')
-                    ->visibility('private')
+                    ->visibility('public')
                     ->model(NotificationSettings::getSettingsPropertyModel('notifications.logo'))
-                    ->image(),
+                    ->image()
+                    ->maxSize(10240),
             ]);
     }
 
