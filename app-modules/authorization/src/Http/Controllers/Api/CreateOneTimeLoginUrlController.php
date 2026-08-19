@@ -34,39 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Notifications;
+namespace AdvisingApp\Authorization\Http\Controllers\Api;
 
-use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use AdvisingApp\Authorization\Notifications\OneTimeLoginNotification;
+use App\Features\OneTimeLoginFeature;
 use App\Models\User;
-use Illuminate\Bus\Queueable;
-use Illuminate\Notifications\Notification;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Validation\Rule;
 
-#[SystemNotification]
-class OtpCodeNotification extends Notification
+class CreateOneTimeLoginUrlController
 {
-    use Queueable;
-
-    public function __construct(
-        protected int $code,
-    ) {}
-
-    /**
-     * @return array<int, string>
-     */
-    public function via(User $notifiable): array
+    public function __invoke(Request $request): JsonResponse
     {
-        return ['mail'];
-    }
+        $validated = $request->validate([
+            'email' => ['required', 'string', 'email', Rule::exists('users', 'email')->whereNull('deleted_at')],
+        ]);
 
-    public function toMail(User $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->subject('Your Login Verification Code')
-            ->greeting('Hello ' . $notifiable->name . ',')
-            ->line('Your one-time login verification code is:')
-            ->line("**{$this->code}**")
-            ->line('This code will expire in 20 minutes.')
-            ->line('If you did not request this code, please ignore this email.');
+        $user = User::query()
+            ->where('email', $validated['email'])
+            ->firstOrFail();
+
+        $expiresAt = now()->addMinutes(30);
+
+        $link = url(URL::temporarySignedRoute(
+            name: 'login.one-time',
+            expiration: $expiresAt,
+            parameters: ['user' => $user->getKey()],
+            absolute: false,
+        ));
+
+        if (OneTimeLoginFeature::active()) {
+            $user->notify(new OneTimeLoginNotification($link, $expiresAt));
+        }
+
+        return response()->json([
+            'link' => $link,
+        ]);
     }
 }

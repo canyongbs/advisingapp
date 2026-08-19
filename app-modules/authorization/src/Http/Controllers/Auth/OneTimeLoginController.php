@@ -36,17 +36,28 @@
 
 namespace AdvisingApp\Authorization\Http\Controllers\Auth;
 
+use AdvisingApp\Authorization\Filament\Pages\Auth\ConfirmOneTimeLoginCode;
+use App\Features\OneTimeLoginFeature;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 
 class OneTimeLoginController extends Controller
 {
-    public function __invoke(User $user): RedirectResponse
+    public function __invoke(Request $request, User $user): RedirectResponse
     {
-        if (filled($user->password) || $user->is_external) {
+        if (filled($user->password) && ! $user->is_external) {
             abort(403);
+        }
+
+        if (OneTimeLoginFeature::active()) {
+            $request->session()->put(ConfirmOneTimeLoginCode::SESSION_KEY, [
+                'user' => $user->getKey(),
+            ]);
+
+            return redirect()->route('filament.admin.auth.one-time-login');
         }
 
         auth()->login($user);

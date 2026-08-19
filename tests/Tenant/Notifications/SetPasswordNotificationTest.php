@@ -34,55 +34,57 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Actions\ClaimOneTimeLoginCode;
+use AdvisingApp\Authorization\Models\OneTimeLoginCode;
+use App\Features\OneTimeLoginFeature;
 use App\Models\User;
-use Illuminate\Support\Facades\URL;
+use App\Notifications\SetPasswordNotification;
 
-use function Pest\Laravel\assertAuthenticatedAs;
-use function Pest\Laravel\assertGuest;
-use function Pest\Laravel\get;
+use function Pest\Laravel\freezeTime;
 
-it('signs the user in through a signed URL', function () {
-    $user = User::factory()->create([
-        'password' => null,
-    ]);
-
-    assertGuest();
-
-    get(URL::signedRoute(
-        name: 'login.one-time',
-        parameters: ['user' => $user],
-        absolute: false,
-    ))
-        ->assertRedirect();
-
-    assertAuthenticatedAs($user);
-});
-
-it('does not sign the user in if the URL is not signed', function () {
-    $user = User::factory()->create([
-        'password' => null,
-    ]);
-
-    get(route('login.one-time', ['user' => $user]))
-        ->assertForbidden();
-
-    assertGuest();
-});
-
-it('does not sign the user in if they have a password set', function () {
+it('creates a claimable one-time login code', function () {
     $user = User::factory()->create();
 
-    get(route('login.one-time', ['user' => $user]))
-        ->assertForbidden();
+    $mail = (new SetPasswordNotification())->toMail($user);
 
-    assertGuest();
+    expect(OneTimeLoginCode::count())->toBe(1);
+
+    $lines = array_merge($mail->introLines, $mail->outroLines);
+    $codeLine = collect($lines)->first(fn (string $line): bool => str_contains($line, 'verification code'));
+
+    expect($codeLine)->not->toBeNull();
+
+    preg_match('/(\d{6})/', (string) $codeLine, $matches);
+
+    expect(app(ClaimOneTimeLoginCode::class)($user, $matches[1] ?? ''))->toBeTrue();
 });
 
-it('does not sign the user in if they are external', function () {
-    $user = User::factory()->external()->create();
+it('links to the one-time login route', function () {
+    $user = User::factory()->create();
 
-    get(route('login.one-time', ['user' => $user]))
-        ->assertForbidden();
+    $mail = (new SetPasswordNotification())->toMail($user);
 
-    assertGuest();
+    expect($mail->actionUrl)->toContain('auth/login');
+});
+
+it('expires the code in 24 hours', function () {
+    freezeTime();
+
+    $user = User::factory()->create();
+
+    (new SetPasswordNotification())->toMail($user);
+
+    expect(OneTimeLoginCode::query()->firstOrFail()->expires_at->toDateTimeString())->toBe(now()->addDay()->toDateTimeString());
+});
+
+it('does not include a verification code when the feature is inactive', function () {
+    OneTimeLoginFeature::deactivate();
+
+    $user = User::factory()->create();
+
+    $mail = (new SetPasswordNotification())->toMail($user);
+
+    $lines = array_merge($mail->introLines, $mail->outroLines);
+
+    expect(collect($lines)->contains(fn (string $line): bool => str_contains($line, 'verification code')))->toBeFalse();
 });

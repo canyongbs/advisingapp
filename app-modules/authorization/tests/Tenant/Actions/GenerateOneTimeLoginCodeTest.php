@@ -34,46 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Models;
-
-use AdvisingApp\Authorization\Database\Factories\OtpLoginCodeFactory;
+use AdvisingApp\Authorization\Actions\GenerateOneTimeLoginCode;
+use AdvisingApp\Authorization\Models\OneTimeLoginCode;
 use App\Models\User;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\MassPrunable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
+use Illuminate\Support\Facades\Hash;
 
-/**
- * @mixin IdeHelperOtpLoginCode
- */
-class OtpLoginCode extends Model
-{
-    /** @use HasFactory<OtpLoginCodeFactory> */
-    use HasFactory;
+use function Pest\Laravel\freezeTime;
 
-    use HasUuids;
-    use UsesTenantConnection;
-    use MassPrunable;
+it('generates a six digit code stored as a hash', function () {
+    freezeTime();
 
-    protected $fillable = [];
+    $user = User::factory()->create();
 
-    /**
-     * @return BelongsTo<User, $this>
-     */
-    public function user(): BelongsTo
-    {
-        return $this->belongsTo(User::class);
-    }
+    $code = app(GenerateOneTimeLoginCode::class)($user, now()->addDay());
 
-    /**
-     * @return Builder<OtpLoginCode>
-     */
-    public function prunable(): Builder
-    {
-        return static::where('created_at', '<=', now()->subMinutes(20))
-            ->orWhereNotNull('used_at');
-    }
-}
+    expect($code)->toMatch('/^\d{6}$/');
+
+    $record = OneTimeLoginCode::query()->firstOrFail();
+
+    expect($record->user_id)->toBe($user->getKey())
+        ->and($record->code)->not->toBe($code)
+        ->and(Hash::check($code, $record->code))->toBeTrue()
+        ->and($record->expires_at->toDateTimeString())->toBe(now()->addDay()->toDateTimeString());
+});

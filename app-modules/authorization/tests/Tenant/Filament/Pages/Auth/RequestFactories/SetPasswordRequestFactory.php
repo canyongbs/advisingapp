@@ -34,28 +34,21 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Http\Controllers\Api\CreateOneTimeLoginUrlController;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
-use App\Http\Controllers\UtilizationMetricsApiController;
-use App\Http\Middleware\CheckOlympusKey;
-use Illuminate\Support\Facades\Route;
-use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
+namespace AdvisingApp\Authorization\Tests\Tenant\Filament\Pages\Auth\RequestFactories;
 
-Route::middleware([
-    CheckOlympusKey::class,
-])->group(function () {
-    Route::post('/azure-sso/update', UpdateAzureSsoSettingsController::class)
-        ->name('azure-sso.update');
+use Illuminate\Support\Str;
+use Worksome\RequestFactories\RequestFactory;
 
-    Route::get('/health', HealthCheckJsonResultsController::class)
-        ->name('health');
+class SetPasswordRequestFactory extends RequestFactory
+{
+    public function definition(): array
+    {
+        // Suffix guarantees the upper/lower/digit/special characters the tenant password policy requires.
+        $password = Str::random() . 'aA1!';
 
-    Route::get('/utilization-metrics', UtilizationMetricsApiController::class)
-        ->name('utilization-metrics');
-
-    Route::post('/one-time-login', CreateOneTimeLoginUrlController::class)->name('api.one-time-login.url');
-
-    // TODO: Cleanup Task (one-time-login): remove this legacy `/otp-code` alias once Olympus is deployed
-    // calling `/one-time-login` in every environment.
-    Route::post('/otp-code', CreateOneTimeLoginUrlController::class)->name('otp-code.generate');
-});
+        return [
+            'password' => $password,
+            'passwordConfirmation' => $password,
+        ];
+    }
+}

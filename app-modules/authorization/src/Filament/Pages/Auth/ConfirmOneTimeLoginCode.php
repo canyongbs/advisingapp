@@ -36,44 +36,38 @@
 
 namespace AdvisingApp\Authorization\Filament\Pages\Auth;
 
+use AdvisingApp\Authorization\Actions\ClaimOneTimeLoginCode;
 use App\Models\User;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\OneTimeCodeInput;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
-use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\Password;
+use Illuminate\Contracts\Support\Htmlable;
 
 /**
  * @property-read Schema $form
  */
-class SetPassword extends SimplePage
+class ConfirmOneTimeLoginCode extends SimplePage
 {
     use InteractsWithFormActions;
     use WithRateLimiting;
 
-    protected string $view = 'authorization::set-password';
+    public const SESSION_KEY = 'one-time-login';
 
-    public ?string $password = '';
+    protected string $view = 'authorization::confirm-one-time-login-code';
 
-    public ?string $passwordConfirmation = '';
+    public ?string $code = '';
 
     public function mount(): void
     {
-        $user = auth()->user();
-
-        assert($user instanceof User);
-
-        if (filled($user->password) || $user->is_external) {
-            redirect(Filament::getUrl());
+        if (! $this->getIntendedUser() instanceof User) {
+            redirect()->route('filament.admin.auth.login');
 
             return;
         }
@@ -81,10 +75,10 @@ class SetPassword extends SimplePage
         $this->form->fill();
     }
 
-    public function save(): void
+    public function authenticate(): void
     {
         try {
-            $this->rateLimit(2);
+            $this->rateLimit(5);
         } catch (TooManyRequestsException $exception) {
             Notification::make()
                 ->title('Too many attempts')
@@ -95,67 +89,81 @@ class SetPassword extends SimplePage
             return;
         }
 
-        $user = auth()->user();
+        $user = $this->getIntendedUser();
 
-        assert($user instanceof User);
+        if (! $user instanceof User) {
+            redirect()->route('filament.admin.auth.login');
+
+            return;
+        }
 
         $data = $this->form->getState();
 
-        $user->forceFill([
-            $user->getAuthPasswordName() => Hash::make($data['password']),
-            $user->getRememberTokenName() => Str::random(60),
-        ])->save();
+        if (! app(ClaimOneTimeLoginCode::class)($user, $data['code'])) {
+            Notification::make()
+                ->title('Invalid code')
+                ->body('The code you entered is invalid or has expired.')
+                ->danger()
+                ->send();
 
-        auth()->logout();
+            return;
+        }
 
-        Notification::make()
-            ->title('Password set')
-            ->body('Your password has been set. Please log in to continue.')
-            ->success()
-            ->send();
+        Filament::auth()->login($user);
 
-        redirect()->route('filament.admin.auth.login');
+        session()->regenerate();
+
+        session()->forget(static::SESSION_KEY);
+
+        redirect()->to($this->getRedirectUrl($user));
     }
 
     public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
-                $this->getPasswordFormComponent(),
-                $this->getPasswordConfirmationFormComponent(),
+                OneTimeCodeInput::make('code')
+                    ->label('Verification code')
+                    ->autofocus()
+                    ->required()
+                    ->extraAttributes(['class' => 'mx-auto'])
+                    ->extraFieldWrapperAttributes([
+                        'class' => 'flex flex-col items-center',
+                    ]),
             ]);
     }
 
-    public function getSaveFormAction(): Action
+    public function getHeading(): string | Htmlable | null
     {
-        return Action::make('save')
-            ->label('Set password')
-            ->submit('save');
+        return 'Confirm your identity';
     }
 
-    protected function getPasswordFormComponent(): Component
+    public function getSubheading(): string | Htmlable | null
     {
-        return TextInput::make('password')
-            ->label('Password')
-            ->password()
-            ->autocomplete('new-password')
-            ->revealable(filament()->arePasswordsRevealable())
-            ->autofocus()
-            ->required()
-            ->rule(Password::default())
-            ->same('passwordConfirmation')
-            ->validationAttribute('password');
+        return 'Enter the verification code we sent to your email address.';
     }
 
-    protected function getPasswordConfirmationFormComponent(): Component
+    public function getAuthenticateFormAction(): Action
     {
-        return TextInput::make('passwordConfirmation')
-            ->label('Confirm password')
-            ->password()
-            ->autocomplete('new-password')
-            ->revealable(filament()->arePasswordsRevealable())
-            ->required()
-            ->dehydrated(false);
+        return Action::make('authenticate')
+            ->label('Continue')
+            ->submit('authenticate');
+    }
+
+    protected function getIntendedUser(): ?User
+    {
+        $id = session(static::SESSION_KEY . '.user');
+
+        return is_string($id) ? User::query()->find($id) : null;
+    }
+
+    protected function getRedirectUrl(User $user): string
+    {
+        if (! $user->is_external) {
+            return route('filament.admin.auth.set-password');
+        }
+
+        return Filament::getUrl() ?? url('/');
     }
 
     /**
@@ -164,7 +172,7 @@ class SetPassword extends SimplePage
     protected function getFormActions(): array
     {
         return [
-            $this->getSaveFormAction(),
+            $this->getAuthenticateFormAction(),
         ];
     }
 

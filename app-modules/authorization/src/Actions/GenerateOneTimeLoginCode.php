@@ -34,28 +34,25 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Http\Controllers\Api\CreateOneTimeLoginUrlController;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
-use App\Http\Controllers\UtilizationMetricsApiController;
-use App\Http\Middleware\CheckOlympusKey;
-use Illuminate\Support\Facades\Route;
-use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
+namespace AdvisingApp\Authorization\Actions;
 
-Route::middleware([
-    CheckOlympusKey::class,
-])->group(function () {
-    Route::post('/azure-sso/update', UpdateAzureSsoSettingsController::class)
-        ->name('azure-sso.update');
+use AdvisingApp\Authorization\Models\OneTimeLoginCode;
+use App\Models\User;
+use Carbon\CarbonInterface;
+use Illuminate\Support\Carbon;
 
-    Route::get('/health', HealthCheckJsonResultsController::class)
-        ->name('health');
+class GenerateOneTimeLoginCode
+{
+    public function __invoke(User $user, CarbonInterface $expiresAt): string
+    {
+        $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
 
-    Route::get('/utilization-metrics', UtilizationMetricsApiController::class)
-        ->name('utilization-metrics');
+        $oneTimeLoginCode = new OneTimeLoginCode();
+        $oneTimeLoginCode->code = $code;
+        $oneTimeLoginCode->expires_at = Carbon::instance($expiresAt);
+        $oneTimeLoginCode->user()->associate($user);
+        $oneTimeLoginCode->save();
 
-    Route::post('/one-time-login', CreateOneTimeLoginUrlController::class)->name('api.one-time-login.url');
-
-    // TODO: Cleanup Task (one-time-login): remove this legacy `/otp-code` alias once Olympus is deployed
-    // calling `/one-time-login` in every environment.
-    Route::post('/otp-code', CreateOneTimeLoginUrlController::class)->name('otp-code.generate');
-});
+        return $code;
+    }
+}

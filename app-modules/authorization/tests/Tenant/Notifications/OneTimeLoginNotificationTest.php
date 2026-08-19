@@ -34,28 +34,44 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Http\Controllers\Api\CreateOneTimeLoginUrlController;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
-use App\Http\Controllers\UtilizationMetricsApiController;
-use App\Http\Middleware\CheckOlympusKey;
-use Illuminate\Support\Facades\Route;
-use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
+use AdvisingApp\Authorization\Actions\ClaimOneTimeLoginCode;
+use AdvisingApp\Authorization\Models\OneTimeLoginCode;
+use AdvisingApp\Authorization\Notifications\OneTimeLoginNotification;
+use App\Models\User;
 
-Route::middleware([
-    CheckOlympusKey::class,
-])->group(function () {
-    Route::post('/azure-sso/update', UpdateAzureSsoSettingsController::class)
-        ->name('azure-sso.update');
+use function Pest\Laravel\freezeTime;
 
-    Route::get('/health', HealthCheckJsonResultsController::class)
-        ->name('health');
+it('creates a claimable one-time login code', function () {
+    $user = User::factory()->external()->create();
 
-    Route::get('/utilization-metrics', UtilizationMetricsApiController::class)
-        ->name('utilization-metrics');
+    $mail = (new OneTimeLoginNotification('https://example.com/login', now()->addHour()))->toMail($user);
 
-    Route::post('/one-time-login', CreateOneTimeLoginUrlController::class)->name('api.one-time-login.url');
+    expect(OneTimeLoginCode::count())->toBe(1);
 
-    // TODO: Cleanup Task (one-time-login): remove this legacy `/otp-code` alias once Olympus is deployed
-    // calling `/one-time-login` in every environment.
-    Route::post('/otp-code', CreateOneTimeLoginUrlController::class)->name('otp-code.generate');
+    $lines = array_merge($mail->introLines, $mail->outroLines);
+    $codeLine = collect($lines)->first(fn (string $line): bool => str_contains($line, 'verification code'));
+
+    expect($codeLine)->not->toBeNull();
+
+    preg_match('/(\d{6})/', (string) $codeLine, $matches);
+
+    expect(app(ClaimOneTimeLoginCode::class)($user, $matches[1] ?? ''))->toBeTrue();
+});
+
+it('uses the provided link as the action url', function () {
+    $user = User::factory()->external()->create();
+
+    $mail = (new OneTimeLoginNotification('https://example.com/login', now()->addHour()))->toMail($user);
+
+    expect($mail->actionUrl)->toBe('https://example.com/login');
+});
+
+it('expires the code using the provided expiry', function () {
+    freezeTime();
+
+    $user = User::factory()->external()->create();
+
+    (new OneTimeLoginNotification('https://example.com/login', now()->addHour()))->toMail($user);
+
+    expect(OneTimeLoginCode::query()->firstOrFail()->expires_at->toDateTimeString())->toBe(now()->addHour()->toDateTimeString());
 });

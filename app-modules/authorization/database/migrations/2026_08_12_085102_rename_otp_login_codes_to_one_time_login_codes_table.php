@@ -34,56 +34,40 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Database\Factories;
+use App\Features\OneTimeLoginFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Authorization\Models\OtpLoginCode;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Hash;
-use InvalidArgumentException;
-
-/**
- * @extends Factory<OtpLoginCode>
- */
-class OtpLoginCodeFactory extends Factory
-{
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'code' => Hash::make((string) random_int(100000, 999999)),
-            'user_id' => User::factory(),
-        ];
-    }
+        DB::transaction(function () {
+            Schema::rename('otp_login_codes', 'one_time_login_codes');
 
-    /**
-     * @return Factory<OtpLoginCode>
-     */
-    public function withCode(int $code): Factory
-    {
-        if ($code < 100000 || $code > 999999) {
-            throw new InvalidArgumentException('OTP code must be a 6-digit integer between 100000 and 999999.');
-        }
+            Schema::table('one_time_login_codes', function (Blueprint $table) {
+                $table->timestamp('expires_at')->nullable();
+                $table->softDeletes();
+                $table->dropColumn('used_at');
+            });
 
-        return $this->state(function (array $attributes) use ($code) {
-            return [
-                'code' => Hash::make((string) $code),
-            ];
+            OneTimeLoginFeature::activate();
         });
     }
 
-    /**
-     * @return Factory<OtpLoginCode>
-     */
-    public function used(?Carbon $when = null): Factory
+    public function down(): void
     {
-        return $this->state(function (array $attributes) use ($when) {
-            return [
-                'used_at' => $when ?? now(),
-            ];
+        DB::transaction(function () {
+            OneTimeLoginFeature::deactivate();
+
+            Schema::table('one_time_login_codes', function (Blueprint $table) {
+                $table->timestamp('used_at')->nullable();
+                $table->dropSoftDeletes();
+                $table->dropColumn('expires_at');
+            });
+
+            Schema::rename('one_time_login_codes', 'otp_login_codes');
         });
     }
-}
+};

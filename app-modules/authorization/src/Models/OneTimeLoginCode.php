@@ -34,28 +34,51 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Http\Controllers\Api\CreateOneTimeLoginUrlController;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
-use App\Http\Controllers\UtilizationMetricsApiController;
-use App\Http\Middleware\CheckOlympusKey;
-use Illuminate\Support\Facades\Route;
-use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
+namespace AdvisingApp\Authorization\Models;
 
-Route::middleware([
-    CheckOlympusKey::class,
-])->group(function () {
-    Route::post('/azure-sso/update', UpdateAzureSsoSettingsController::class)
-        ->name('azure-sso.update');
+use AdvisingApp\Authorization\Database\Factories\OneTimeLoginCodeFactory;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
-    Route::get('/health', HealthCheckJsonResultsController::class)
-        ->name('health');
+/**
+ * @mixin IdeHelperOneTimeLoginCode
+ */
+class OneTimeLoginCode extends Model
+{
+    /** @use HasFactory<OneTimeLoginCodeFactory> */
+    use HasFactory;
 
-    Route::get('/utilization-metrics', UtilizationMetricsApiController::class)
-        ->name('utilization-metrics');
+    use HasUuids;
+    use SoftDeletes;
+    use UsesTenantConnection;
 
-    Route::post('/one-time-login', CreateOneTimeLoginUrlController::class)->name('api.one-time-login.url');
+    /** @var list<string> */
+    protected $fillable = [];
 
-    // TODO: Cleanup Task (one-time-login): remove this legacy `/otp-code` alias once Olympus is deployed
-    // calling `/one-time-login` in every environment.
-    Route::post('/otp-code', CreateOneTimeLoginUrlController::class)->name('otp-code.generate');
-});
+    /** @var list<string> */
+    protected $hidden = ['code'];
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    protected function casts(): array
+    {
+        return [
+            'code' => 'hashed',
+            'expires_at' => 'datetime',
+        ];
+    }
+}

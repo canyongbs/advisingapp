@@ -34,55 +34,16 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Http\Controllers;
+namespace AdvisingApp\Authorization\Tests\Tenant\Http\Controllers\Api\RequestFactories;
 
-use AdvisingApp\Authorization\Models\OtpLoginCode;
-use Filament\Facades\Filament;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Throwable;
+use Worksome\RequestFactories\RequestFactory;
 
-class VerifyOtpLoginCodeController
+class CreateOneTimeLoginUrlRequestFactory extends RequestFactory
 {
-    /**
-     * @throws Throwable
-     */
-    public function __invoke(Request $request, OtpLoginCode $otpCode): RedirectResponse|Response
+    public function definition(): array
     {
-        if ($request->getMethod() === 'HEAD') {
-            // Protection against link scanning bots, like Microsoft Outlook.
-            return response()->noContent();
-        }
-
-        abort_if(
-            boolean: now()->greaterThanOrEqualTo($otpCode->created_at->addMinutes(20))
-                || $otpCode->used_at !== null,
-            code: 403,
-            message: 'This OTP code has already been used or has expired. Please request a new one.'
-        );
-
-        $request->validate([
-            'code' => ['required', 'digits:6'],
-        ]);
-
-        if (! Hash::check($request->input('code'), $otpCode->code)) {
-            return back()->withErrors([
-                'code' => 'The OTP code you entered is incorrect. Please try again.',
-            ]);
-        }
-
-        $otpCode->used_at = now();
-        $otpCode->saveOrFail();
-
-        $user = $otpCode->user;
-
-        $panel = Filament::getPanel('admin');
-
-        Auth::guard($panel->getAuthGuard())->login($user);
-
-        return redirect()->to($panel->getHomeUrl());
+        return [
+            'email' => $this->faker->unique()->safeEmail(),
+        ];
     }
 }

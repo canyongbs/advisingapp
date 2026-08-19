@@ -34,28 +34,33 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Http\Controllers\Api\CreateOneTimeLoginUrlController;
-use App\Http\Controllers\UpdateAzureSsoSettingsController;
-use App\Http\Controllers\UtilizationMetricsApiController;
-use App\Http\Middleware\CheckOlympusKey;
-use Illuminate\Support\Facades\Route;
-use Spatie\Health\Http\Controllers\HealthCheckJsonResultsController;
+namespace AdvisingApp\Authorization\Database\Factories;
 
-Route::middleware([
-    CheckOlympusKey::class,
-])->group(function () {
-    Route::post('/azure-sso/update', UpdateAzureSsoSettingsController::class)
-        ->name('azure-sso.update');
+use AdvisingApp\Authorization\Models\OneTimeLoginCode;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-    Route::get('/health', HealthCheckJsonResultsController::class)
-        ->name('health');
+/**
+ * @extends Factory<OneTimeLoginCode>
+ */
+class OneTimeLoginCodeFactory extends Factory
+{
+    /**
+     * @return array<string, mixed>
+     */
+    public function definition(): array
+    {
+        return [
+            'user_id' => User::factory(),
+            'code' => str_pad((string) $this->faker->numberBetween(0, 999999), 6, '0', STR_PAD_LEFT),
+            'expires_at' => now()->addDay(),
+        ];
+    }
 
-    Route::get('/utilization-metrics', UtilizationMetricsApiController::class)
-        ->name('utilization-metrics');
-
-    Route::post('/one-time-login', CreateOneTimeLoginUrlController::class)->name('api.one-time-login.url');
-
-    // TODO: Cleanup Task (one-time-login): remove this legacy `/otp-code` alias once Olympus is deployed
-    // calling `/one-time-login` in every environment.
-    Route::post('/otp-code', CreateOneTimeLoginUrlController::class)->name('otp-code.generate');
-});
+    public function expired(): static
+    {
+        return $this->state(fn (array $attributes): array => [
+            'expires_at' => now()->subMinute(),
+        ]);
+    }
+}

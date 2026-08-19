@@ -34,16 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Authorization\Tests\Tenant\Http\Controllers\RequestFactories;
+namespace AdvisingApp\Authorization\Actions;
 
-use Worksome\RequestFactories\RequestFactory;
+use AdvisingApp\Authorization\Models\OneTimeLoginCode;
+use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
-class GenerateOtpLoginCodeRequestFactory extends RequestFactory
+class ClaimOneTimeLoginCode
 {
-    public function definition(): array
+    public function __invoke(User $user, string $code): bool
     {
-        return [
-            'email' => $this->faker->safeEmail(),
-        ];
+        $records = OneTimeLoginCode::query()
+            ->whereBelongsTo($user)
+            ->where('expires_at', '>', now())
+            ->get();
+
+        foreach ($records as $record) {
+            if (Hash::check($code, $record->code)) {
+                $record->delete();
+
+                return true;
+            }
+        }
+
+        return false;
     }
 }
