@@ -59,7 +59,7 @@ return new class () extends Migration {
 
                 $logo = $notificationSetting->getFirstMedia('logo');
 
-                $logo?->copy(NotificationSettings::getSettingsPropertyModel('notifications.logo'), 'logo');
+                $logo?->copy(NotificationSettings::getSettingsPropertyModel('notifications.logo'), 'logo', 's3');
             }
 
             NotificationSettingsFeature::activate();
