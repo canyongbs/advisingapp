@@ -43,6 +43,7 @@ use App\Models\User;
 use App\Settings\NotificationSettings;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
@@ -72,6 +73,7 @@ class ManageNotificationSettings extends SettingsPage
     {
         return $schema
             ->columns(1)
+            ->disabled(! auth()->user()->can('settings.*.update'))
             ->components([
                 TextInput::make('name')
                     ->string()
@@ -81,7 +83,7 @@ class ManageNotificationSettings extends SettingsPage
                     ->string()
                     ->maxLength(150)
                     ->autocomplete(false),
-                TextInput::make('description')
+                Textarea::make('description')
                     ->string(),
                 ColorSelect::make('primary_color'),
                 SpatieMediaLibraryFileUpload::make('logo')

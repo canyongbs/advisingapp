@@ -45,10 +45,6 @@ use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-beforeEach(function () {
-    NotificationSettingsFeature::activate();
-});
-
 it('can render the manage notification settings page', function () {
     asSuperAdmin();
 
@@ -56,7 +52,7 @@ it('can render the manage notification settings page', function () {
         ->assertOk();
 });
 
-it('requries proper permissions to access', function () {
+it('requires proper permissions to access', function () {
     $user = User::factory()->create();
 
     actingAs($user);
@@ -101,4 +97,25 @@ it('can update the notification settings', function () {
         ->and($settings->from_name)->toBe('New From Name')
         ->and($settings->description)->toBe('New description.')
         ->and($settings->primary_color)->toBe(Color::Blue);
+});
+
+it('disables the form without settings.*.update permission', function () {
+    $user = User::factory()->create();
+
+    $user->givePermissionTo('settings.view-any');
+    actingAs($user);
+
+    livewire(ManageNotificationSettings::class)
+        ->assertFormFieldDisabled('name')
+        ->assertFormFieldDisabled('from_name')
+        ->assertFormFieldDisabled('description')
+        ->assertFormFieldDisabled('primary_color');
+
+    $user->givePermissionTo('settings.*.update');
+
+    livewire(ManageNotificationSettings::class)
+        ->assertFormFieldEnabled('name')
+        ->assertFormFieldEnabled('from_name')
+        ->assertFormFieldEnabled('description')
+        ->assertFormFieldEnabled('primary_color');
 });
