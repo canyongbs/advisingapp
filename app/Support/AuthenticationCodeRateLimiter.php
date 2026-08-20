@@ -34,36 +34,34 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalAuthenticateController;
-use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEmbeddableAndAuthorized;
-use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEnabled;
-use AdvisingApp\Portal\Livewire\RenderResourceHubPortal;
-use Illuminate\Support\Facades\Route;
-use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+namespace App\Support;
 
-Route::prefix('portals')
-    ->name('portal.')
-    ->middleware([
-        'web',
-        EnsureFrontendRequestsAreStateful::class,
-    ])
-    ->group(function () {
-        /**
-         * Resource Hub Portal
-         */
-        Route::middleware([
-            EnsureResourceHubPortalIsEnabled::class,
-            EnsureResourceHubPortalIsEmbeddableAndAuthorized::class,
-        ])->group(function () {
-            Route::post('/resource-hub/authenticate/{authentication}', ResourceHubPortalAuthenticateController::class)
-                ->middleware(['signed:relative', 'throttle:10,1', EnsureFrontendRequestsAreStateful::class])
-                ->name('resource-hub.authenticate');
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\RateLimiter;
 
-            Route::get('/resource-hub', RenderResourceHubPortal::class)
-                ->name('resource-hub.show');
-            Route::get('/resource-hub/categories/{category}', RenderResourceHubPortal::class)
-                ->name('resource-hub.category.show');
-            Route::get('/resource-hub/categories/{category}/articles/{article}', RenderResourceHubPortal::class)
-                ->name('resource-hub.article.show');
-        });
-    });
+class AuthenticationCodeRateLimiter
+{
+    public const MAX_ATTEMPTS = 5;
+
+    public const DECAY_SECONDS = 86400;
+
+    public function isLocked(Model $authentication): bool
+    {
+        return RateLimiter::tooManyAttempts($this->key($authentication), self::MAX_ATTEMPTS);
+    }
+
+    public function recordFailedAttempt(Model $authentication): void
+    {
+        RateLimiter::hit($this->key($authentication), self::DECAY_SECONDS);
+    }
+
+    public function clear(Model $authentication): void
+    {
+        RateLimiter::clear($this->key($authentication));
+    }
+
+    public function key(Model $authentication): string
+    {
+        return 'authentication-code:' . $authentication::class . ':' . $authentication->getKey();
+    }
+}

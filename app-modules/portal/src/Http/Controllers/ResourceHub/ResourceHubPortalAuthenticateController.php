@@ -40,11 +40,10 @@ use AdvisingApp\Portal\Models\PortalAuthentication;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Http\Controllers\Controller;
-use Closure;
+use App\Rules\ValidAuthenticationCode;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class ResourceHubPortalAuthenticateController extends Controller
 {
@@ -57,13 +56,7 @@ class ResourceHubPortalAuthenticateController extends Controller
         }
 
         $request->validate([
-            'code' => ['required', 'integer', 'digits:6', function (string $attribute, int $value, Closure $fail) use ($authentication) {
-                if (Hash::check($value, $authentication->code)) {
-                    return;
-                }
-
-                $fail('The provided code is invalid.');
-            }],
+            'code' => ['required', 'integer', 'digits:6', new ValidAuthenticationCode($authentication)],
         ]);
 
         /** @var Student|Prospect $educatable */

@@ -116,7 +116,7 @@ Route::middleware([
                             ->name('request-authentication');
 
                         Route::post('/authenticate/{authentication}', ResourceHubPortalAuthenticateController::class)
-                            ->middleware(['signed'])
+                            ->middleware(['signed', 'throttle:10,1'])
                             ->name('authenticate.embedded');
 
                         // Handle preflight CORS requests for all routes in this group

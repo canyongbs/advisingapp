@@ -47,7 +47,7 @@ use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use AdvisingApp\MeetingCenter\Notifications\AuthenticateEventRegistrationFormNotification;
 use App\Http\Controllers\Controller;
-use Closure;
+use App\Rules\ValidAuthenticationCode;
 use Exception;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
@@ -188,13 +188,7 @@ class EventRegistrationWidgetController extends Controller
         }
 
         $request->validate([
-            'code' => ['required', 'integer', 'digits:6', function (string $attribute, int $value, Closure $fail) use ($authentication) {
-                if (Hash::check($value, $authentication->code)) {
-                    return;
-                }
-
-                $fail('The provided code is invalid.');
-            }],
+            'code' => ['required', 'integer', 'digits:6', new ValidAuthenticationCode($authentication)],
         ]);
 
         return response()->json([

@@ -34,36 +34,43 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalAuthenticateController;
-use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEmbeddableAndAuthorized;
-use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEnabled;
-use AdvisingApp\Portal\Livewire\RenderResourceHubPortal;
-use Illuminate\Support\Facades\Route;
-use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+namespace App\Rules;
 
-Route::prefix('portals')
-    ->name('portal.')
-    ->middleware([
-        'web',
-        EnsureFrontendRequestsAreStateful::class,
-    ])
-    ->group(function () {
-        /**
-         * Resource Hub Portal
-         */
-        Route::middleware([
-            EnsureResourceHubPortalIsEnabled::class,
-            EnsureResourceHubPortalIsEmbeddableAndAuthorized::class,
-        ])->group(function () {
-            Route::post('/resource-hub/authenticate/{authentication}', ResourceHubPortalAuthenticateController::class)
-                ->middleware(['signed:relative', 'throttle:10,1', EnsureFrontendRequestsAreStateful::class])
-                ->name('resource-hub.authenticate');
+use App\Support\AuthenticationCodeRateLimiter;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
-            Route::get('/resource-hub', RenderResourceHubPortal::class)
-                ->name('resource-hub.show');
-            Route::get('/resource-hub/categories/{category}', RenderResourceHubPortal::class)
-                ->name('resource-hub.category.show');
-            Route::get('/resource-hub/categories/{category}/articles/{article}', RenderResourceHubPortal::class)
-                ->name('resource-hub.article.show');
-        });
-    });
+class ValidAuthenticationCode implements ValidationRule
+{
+    public function __construct(
+        protected Model $authentication,
+        protected AuthenticationCodeRateLimiter $rateLimiter = new AuthenticationCodeRateLimiter(),
+    ) {}
+
+    /**
+     * @param  Closure(string): PotentiallyTranslatedString  $fail
+     */
+    public function validate(string $attribute, mixed $value, Closure $fail): void
+    {
+        if ($this->rateLimiter->isLocked($this->authentication)) {
+            $fail('Too many invalid attempts. Please request a new code.');
+
+            return;
+        }
+
+        $hashedCode = $this->authentication->getAttribute('code');
+
+        if (is_string($hashedCode) && is_scalar($value) && Hash::check((string) $value, $hashedCode)) {
+            $this->rateLimiter->clear($this->authentication);
+
+            return;
+        }
+
+        $this->rateLimiter->recordFailedAttempt($this->authentication);
+
+        $fail('The provided code is invalid.');
+    }
+}
