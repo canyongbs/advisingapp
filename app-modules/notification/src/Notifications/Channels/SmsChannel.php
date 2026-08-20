@@ -199,9 +199,6 @@ class SmsChannel
                     $smsMessage->quota_usage = $this->determineQuotaUsage($result, $smsMessage);
 
                     if ($twilioSettings->is_demo_mode_enabled) {
-                        // In demo mode, the result is always a fake Twilio `MessageInstance`
-                        // (see the `is_demo_mode_enabled` branch above), regardless of which
-                        // provider is configured, so it only ever has a `sid` property.
                         $smsMessage->external_reference_id = $result->message->sid;
                     } else {
                         $smsMessage->external_reference_id = match ($twilioSettings->provider) {
