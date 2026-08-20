@@ -34,41 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Division\Filament\Resources\Divisions\RelationManagers;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\AssociateAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DissociateAction;
-use Filament\Actions\DissociateBulkAction;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
-
-class DepartmentsRelationManager extends RelationManager
-{
-    protected static string $relationship = 'departments';
-
-    public function table(Table $table): Table
+return new class () extends Migration {
+    public function up(): void
     {
-        return $table
-            ->recordTitleAttribute('name')
-            ->inverseRelationship('division')
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name'),
-            ])
-            ->headerActions([
-                AssociateAction::make(),
-            ])
-            ->recordActions([
-                DissociateAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DissociateBulkAction::make(),
-                ]),
-            ])
-            ->emptyStateActions([]);
+        DB::transaction(function () {
+            Schema::table('teams', function (Blueprint $table) {
+                $table->dropConstrainedForeignId('division_id');
+            });
+
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('is_division_visible_on_profile');
+            });
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            Schema::table('teams', function (Blueprint $table) {
+                $table->foreignUuid('division_id')->nullable()->constrained('divisions');
+            });
+
+            Schema::table('users', function (Blueprint $table) {
+                $table->boolean('is_division_visible_on_profile')->default(false);
+            });
+        });
+    }
+};
