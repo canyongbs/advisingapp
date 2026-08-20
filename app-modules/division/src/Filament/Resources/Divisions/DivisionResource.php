@@ -40,7 +40,6 @@ use AdvisingApp\Division\Filament\Resources\Divisions\Pages\CreateDivision;
 use AdvisingApp\Division\Filament\Resources\Divisions\Pages\EditDivision;
 use AdvisingApp\Division\Filament\Resources\Divisions\Pages\ListDivisions;
 use AdvisingApp\Division\Filament\Resources\Divisions\Pages\ViewDivision;
-use AdvisingApp\Division\Filament\Resources\Divisions\RelationManagers\DepartmentsRelationManager;
 use AdvisingApp\Division\Models\Division;
 use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
@@ -53,13 +52,6 @@ class DivisionResource extends Resource
     protected static string | UnitEnum | null $navigationGroup = NavigationGroup::UserManagement;
 
     protected static ?int $navigationSort = 50;
-
-    public static function getRelations(): array
-    {
-        return [
-            DepartmentsRelationManager::make(),
-        ];
-    }
 
     public static function getPages(): array
     {
