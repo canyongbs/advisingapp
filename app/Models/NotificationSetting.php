@@ -36,9 +36,7 @@
 
 namespace App\Models;
 
-use AdvisingApp\Division\Models\Division;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -74,20 +72,5 @@ class NotificationSetting extends BaseModel implements HasMedia
     public function settings(): HasMany
     {
         return $this->hasMany(NotificationSettingPivot::class);
-    }
-
-    /**
-     * @return MorphToMany<Division, $this, covariant NotificationSettingPivot>
-     */
-    public function divisions(): MorphToMany
-    {
-        return $this->morphedByMany(
-            related: Division::class,
-            name: 'related_to',
-            table: 'notification_settings_pivot'
-        )
-            ->using(NotificationSettingPivot::class)
-            ->withPivot('id')
-            ->withTimestamps();
     }
 }
