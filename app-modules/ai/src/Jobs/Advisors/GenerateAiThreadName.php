@@ -36,83 +36,85 @@
 
 namespace AdvisingApp\Ai\Jobs\Advisors;
 
+use AdvisingApp\Ai\Events\Advisors\AdvisorThreadRenamed;
+use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Assistant\Filament\Pages\InstitutionalAdvisor;
-use App\Models\User;
-use Filament\Actions\Action;
-use Filament\Notifications\Notification;
-use Illuminate\Bus\Batchable;
+use App\Features\AiThreadAutoNamingFeature;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\Middleware\SkipIfBatchCancelled;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class CloneAiThread implements ShouldQueue
+class GenerateAiThreadName implements ShouldQueue
 {
-    use Batchable;
     use Dispatchable;
     use InteractsWithQueue;
     use Queueable;
     use SerializesModels;
 
+    public int $tries = 1;
+
     public function __construct(
         protected AiThread $thread,
-        protected User $sender,
-        protected User $recipient,
     ) {}
-
-    public function middleware(): array
-    {
-        return [new SkipIfBatchCancelled()];
-    }
 
     public function handle(): void
     {
+        if (! AiThreadAutoNamingFeature::active()) {
+            return;
+        }
+
+        // The thread may have been renamed by the user, or deleted entirely, between
+        // when this job was dispatched and when it runs, in which case it must not be
+        // overwritten.
+        $thread = $this->thread->fresh();
+
+        if (! $thread || $thread->trashed() || filled($thread->named_by_user_at)) {
+            return;
+        }
+
+        $transcript = $this->thread->messages()
+            ->oldest()
+            ->get()
+            ->map(fn (AiMessage $message): string => ($message->user_id ? 'User' : 'Assistant') . ": {$message->content}")
+            ->implode(PHP_EOL . PHP_EOL);
+
+        $prompt = $this->thread->assistant->instructions . "\nThe following is a chat between you and a user:\n" . $transcript;
+
+        $aiService = $this->thread->assistant->model->getService();
+
         try {
-            DB::beginTransaction();
-
-            $threadReplica = $this->thread->replicate(except: ['id', 'thread_id', 'folder_id', 'saved_at', 'named_by_user_at', 'emailed_count', 'cloned_count']);
-            $threadReplica->saved_at = now();
-
-            $threadReplica->user()->associate($this->recipient);
-            $threadReplica->save();
-
-            foreach ($this->thread->messages()->oldest()->get() as $message) {
-                $messageReplica = $message->replicate(['id', 'message_id']);
-                $messageReplica->thread()->associate($threadReplica);
-                $messageReplica->save();
-            }
-
-            $aiService = $threadReplica->assistant->model->getService();
-
-            $threadReplica->locked_at = now();
-            $threadReplica->save();
-
-            $this->thread->cloned_count = $this->thread->cloned_count + 1;
-            $this->thread->save();
-
-            $threadReplica->locked_at = null;
-            $threadReplica->save();
-
-            Notification::make()
-                ->title('An AI chat has been cloned to you.')
-                ->success()
-                ->actions([
-                    Action::make('view')
-                        ->link()
-                        ->url(InstitutionalAdvisor::getUrl(['thread' => $threadReplica->getKey()])),
-                ])
-                ->sendToDatabase($this->recipient);
-
-            DB::commit();
+            $name = $aiService->complete(
+                $prompt,
+                'Generate a title for this chat, in 5 words or less. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with the title:',
+            );
         } catch (Throwable $exception) {
-            DB::rollBack();
+            report($exception);
 
-            throw $exception;
+            return;
+        }
+
+        $name = trim($name);
+
+        if ($name === '') {
+            return;
+        }
+
+        $thread = $this->thread->fresh();
+
+        if (! $thread || $thread->trashed() || filled($thread->named_by_user_at)) {
+            return;
+        }
+
+        $this->thread->name = $name;
+        $this->thread->save();
+
+        try {
+            event(new AdvisorThreadRenamed($this->thread));
+        } catch (Throwable $exception) {
+            report($exception);
         }
     }
 }

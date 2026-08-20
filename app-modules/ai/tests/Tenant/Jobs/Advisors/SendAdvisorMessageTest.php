@@ -38,13 +38,19 @@ use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Events\Advisors\AdvisorMessageChunk;
 use AdvisingApp\Ai\Events\Advisors\AdvisorMessageFinished;
+use AdvisingApp\Ai\Jobs\Advisors\GenerateAiThreadName;
 use AdvisingApp\Ai\Jobs\Advisors\SendAdvisorMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\Prompt;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 
+use function Pest\Laravel\travelBack;
+use function Pest\Laravel\travelTo;
 use function Tests\asSuperAdmin;
 
 it('sends a message', function () {
@@ -135,4 +141,188 @@ it('builds smart prompt content from the editable instructions setting', functio
         ->toContain($prompt->type->title)
         ->toContain($prompt->description)
         ->toEndWith($prompt->prompt);
+});
+
+it('dispatches GenerateAiThreadName exactly once, right after the third user message and response', function () {
+    Bus::fake([GenerateAiThreadName::class]);
+
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
+
+    asSuperAdmin();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->for(auth()->user())
+        ->create();
+
+    dispatch(new SendAdvisorMessage($thread, 'Message 1'));
+
+    Bus::assertNotDispatched(GenerateAiThreadName::class);
+
+    dispatch(new SendAdvisorMessage($thread, 'Message 2'));
+
+    Bus::assertNotDispatched(GenerateAiThreadName::class);
+
+    dispatch(new SendAdvisorMessage($thread, 'Message 3'));
+
+    Bus::assertDispatchedTimes(GenerateAiThreadName::class, 1);
+
+    dispatch(new SendAdvisorMessage($thread, 'Message 4'));
+
+    Bus::assertDispatchedTimes(GenerateAiThreadName::class, 1);
+});
+
+it('does not dispatch GenerateAiThreadName when the thread has already been renamed by the user', function () {
+    Bus::fake([GenerateAiThreadName::class]);
+
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
+
+    asSuperAdmin();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->for(auth()->user())
+        ->create([
+            'named_by_user_at' => now(),
+        ]);
+
+    dispatch(new SendAdvisorMessage($thread, 'Message 1'));
+    dispatch(new SendAdvisorMessage($thread, 'Message 2'));
+    dispatch(new SendAdvisorMessage($thread, 'Message 3'));
+
+    Bus::assertNotDispatched(GenerateAiThreadName::class);
+});
+
+it('sets saved_at and dispatches the AiThreadSaved tracked event when the first message is persisted', function () {
+    Bus::fake([RecordTrackedEvent::class]);
+
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
+
+    asSuperAdmin();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->for(auth()->user())
+        ->create([
+            'saved_at' => null,
+        ]);
+
+    dispatch(new SendAdvisorMessage($thread, 'Message 1'));
+
+    expect($thread->fresh()->saved_at)
+        ->not->toBeNull();
+
+    Bus::assertDispatchedTimes(
+        fn (RecordTrackedEvent $job): bool => $job->type === TrackedEventType::AiThreadSaved,
+        1,
+    );
+});
+
+it('does not update saved_at or dispatch the AiThreadSaved tracked event again on subsequent messages', function () {
+    Bus::fake([RecordTrackedEvent::class]);
+
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
+
+    asSuperAdmin();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->for(auth()->user())
+        ->create([
+            'saved_at' => null,
+        ]);
+
+    dispatch(new SendAdvisorMessage($thread, 'Message 1'));
+
+    $savedAt = $thread->fresh()->saved_at;
+
+    try {
+        travelTo(now()->addMinute());
+
+        dispatch(new SendAdvisorMessage($thread, 'Message 2'));
+    } finally {
+        travelBack();
+    }
+
+    expect($thread->fresh()->saved_at)
+        ->toEqual($savedAt);
+
+    Bus::assertDispatchedTimes(
+        fn (RecordTrackedEvent $job): bool => $job->type === TrackedEventType::AiThreadSaved,
+        1,
+    );
+});
+
+it('does not overwrite an already saved_at thread', function () {
+    Bus::fake([RecordTrackedEvent::class]);
+
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
+
+    asSuperAdmin();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $savedAt = now()->subDays(10);
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->for(auth()->user())
+        ->create([
+            'saved_at' => $savedAt,
+        ]);
+
+    $savedAt = $thread->fresh()->saved_at;
+
+    dispatch(new SendAdvisorMessage($thread, 'Message 1'));
+
+    expect($thread->fresh()->saved_at)
+        ->toEqual($savedAt);
+
+    Bus::assertNotDispatched(
+        RecordTrackedEvent::class,
+        fn (RecordTrackedEvent $job): bool => $job->type === TrackedEventType::AiThreadSaved,
+    );
 });

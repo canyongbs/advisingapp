@@ -44,6 +44,7 @@ use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Rules\RestrictSuperAdmin;
 use AdvisingApp\Team\Models\Department;
+use App\Features\AiThreadAutoNamingFeature;
 use App\Models\Scopes\WithoutAnyAdmin;
 use App\Models\User;
 use Exception;
@@ -247,9 +248,17 @@ trait CanManageThreads
 
         $thread = AiThread::find($thread['id']);
 
+        if (! $thread) {
+            return;
+        }
+
+        $isCurrentThreadUnused = AiThreadAutoNamingFeature::active()
+            ? blank($this->thread?->named_by_user_at)
+            : blank($this->thread?->name);
+
         if (
             $this->thread &&
-            blank($this->thread->name) &&
+            $isCurrentThreadUnused &&
             (! $this->thread->messages()->exists())
         ) {
             $this->thread->delete();
@@ -323,6 +332,11 @@ trait CanManageThreads
                 }
 
                 $thread->name = $data['name'];
+
+                if (AiThreadAutoNamingFeature::active()) {
+                    $thread->named_by_user_at = now();
+                }
+
                 $thread->save();
 
                 $this->threadsWithoutAFolder = $this->getThreadsWithoutAFolder();

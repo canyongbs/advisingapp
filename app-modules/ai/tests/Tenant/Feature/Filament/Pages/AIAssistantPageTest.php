@@ -818,6 +818,9 @@ it('can rename a thread', function () use ($setUp) {
         'id' => $thread->getKey(),
         'name' => $name,
     ]);
+
+    expect($thread->refresh()->named_by_user_at)
+        ->not->toBeNull();
 });
 
 it('can not rename a thread without a name', function () use ($setUp) {

@@ -38,11 +38,13 @@ use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Events\Advisors\AdvisorMessageChunk;
 use AdvisingApp\Ai\Events\Advisors\AdvisorMessageFinished;
+use AdvisingApp\Ai\Jobs\Advisors\GenerateAiThreadName;
 use AdvisingApp\Ai\Jobs\Advisors\RetryAdvisorMessage;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
 use App\Models\User;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 
 use function Tests\asSuperAdmin;
@@ -257,4 +259,93 @@ it('does not match messages with different content', function () {
 
     Event::assertDispatched(AdvisorMessageChunk::class);
     Event::assertDispatched(AdvisorMessageFinished::class);
+});
+
+it('dispatches GenerateAiThreadName when a retry completes the third user message', function () {
+    Bus::fake([GenerateAiThreadName::class]);
+
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
+
+    asSuperAdmin();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->for(auth()->user())
+        ->has(AiMessage::factory()->count(2)->for(auth()->user()), 'messages')
+        ->create();
+
+    $messageContent = AiMessage::factory()->make()->content;
+
+    dispatch(new RetryAdvisorMessage($thread, $messageContent));
+
+    Bus::assertDispatchedTimes(GenerateAiThreadName::class, 1);
+});
+
+it('does not dispatch GenerateAiThreadName again for a fourth user message after a retry named the thread', function () {
+    Bus::fake([GenerateAiThreadName::class]);
+
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
+
+    asSuperAdmin();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->for(auth()->user())
+        ->has(AiMessage::factory()->count(3)->for(auth()->user()), 'messages')
+        ->create();
+
+    $messageContent = AiMessage::factory()->make()->content;
+
+    dispatch(new RetryAdvisorMessage($thread, $messageContent));
+
+    Bus::assertNotDispatched(GenerateAiThreadName::class);
+});
+
+it('does not dispatch GenerateAiThreadName from a retry when the thread has already been renamed by the user', function () {
+    Bus::fake([GenerateAiThreadName::class]);
+
+    Event::fake([
+        AdvisorMessageChunk::class,
+        AdvisorMessageFinished::class,
+    ]);
+
+    asSuperAdmin();
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $thread = AiThread::factory()
+        ->for($assistant, 'assistant')
+        ->for(auth()->user())
+        ->has(AiMessage::factory()->count(2)->for(auth()->user()), 'messages')
+        ->create([
+            'named_by_user_at' => now(),
+        ]);
+
+    $messageContent = AiMessage::factory()->make()->content;
+
+    dispatch(new RetryAdvisorMessage($thread, $messageContent));
+
+    Bus::assertNotDispatched(GenerateAiThreadName::class);
 });

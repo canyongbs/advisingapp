@@ -47,6 +47,7 @@ use AdvisingApp\Ai\Support\StreamingChunks\Image;
 use AdvisingApp\Ai\Support\StreamingChunks\Meta;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\Ai\Support\StreamingChunks\Thinking;
+use App\Features\AiThreadAutoNamingFeature;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
@@ -211,6 +212,14 @@ class RetryAdvisorMessage implements ShouldQueue
 
         $response->save();
         $this->thread->touch();
+
+        if (
+            AiThreadAutoNamingFeature::active() &&
+            blank($this->thread->named_by_user_at) &&
+            ($this->thread->messages()->whereNotNull('user_id')->count() === 3)
+        ) {
+            dispatch(new GenerateAiThreadName($this->thread));
+        }
     }
 
     public function tries(): int

@@ -80,6 +80,7 @@ class AiThread extends BaseModel implements HasMedia, Wireable
         'locked_at',
         'locked_reason',
         'is_preview',
+        'named_by_user_at',
     ];
 
     protected $casts = [
@@ -87,6 +88,7 @@ class AiThread extends BaseModel implements HasMedia, Wireable
         'locked_reason' => AiThreadLockedReason::class,
         'saved_at' => 'datetime',
         'is_preview' => 'boolean',
+        'named_by_user_at' => 'datetime',
     ];
 
     protected $dispatchesEvents = [
@@ -110,6 +112,8 @@ class AiThread extends BaseModel implements HasMedia, Wireable
     }
 
     /**
+     * @phpstan-impure
+     *
      * @return HasMany<AiMessage, $this>
      */
     public function messages(): HasMany

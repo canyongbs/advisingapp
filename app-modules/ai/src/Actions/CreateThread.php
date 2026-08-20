@@ -40,7 +40,9 @@ use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Settings\AiSettings;
+use App\Features\AiThreadAutoNamingFeature;
 use App\Models\Tenant;
+use App\Settings\DisplaySettings;
 
 class CreateThread
 {
@@ -48,11 +50,17 @@ class CreateThread
     {
         $assistant ??= $this->getDefaultAiAssistant($application);
 
-        $existingThread = auth()->user()->aiThreads()
-            ->whereNull('name')
+        $existingThreadQuery = auth()->user()->aiThreads()
             ->whereBelongsTo($assistant, 'assistant')
-            ->whereDoesntHave('messages')
-            ->first();
+            ->whereDoesntHave('messages');
+
+        if (AiThreadAutoNamingFeature::active()) {
+            $existingThreadQuery->whereNull('named_by_user_at');
+        } else {
+            $existingThreadQuery->whereNull('name');
+        }
+
+        $existingThread = $existingThreadQuery->first();
 
         if ($existingThread) {
             return $existingThread;
@@ -61,9 +69,19 @@ class CreateThread
         $thread = new AiThread();
         $thread->assistant()->associate($assistant);
         $thread->user()->associate(auth()->user());
+
+        if (AiThreadAutoNamingFeature::active()) {
+            $thread->name = $this->getDefaultThreadName();
+        }
+
         $thread->save();
 
         return $thread;
+    }
+
+    protected function getDefaultThreadName(): string
+    {
+        return 'New Chat ' . now()->setTimezone(app(DisplaySettings::class)->getTimezone())->format('n/j/y @ g:i A');
     }
 
     protected function getDefaultAiAssistant(AiAssistantApplication $application): AiAssistant
