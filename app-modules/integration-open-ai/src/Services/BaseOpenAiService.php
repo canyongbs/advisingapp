@@ -57,6 +57,7 @@ use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns\InteractsW
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns\InteractsWithVectorStores;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use App\Features\AiThreadAutoNamingFeature;
 use App\Models\User;
 use Carbon\CarbonInterface;
 use Closure;
@@ -887,25 +888,27 @@ abstract class BaseOpenAiService implements AiService
 
             throw new MessageResponseException('Failed to send a message: [' . $exception->getMessage() . '].');
         } finally {
-            try {
-                if (is_null($message->thread->name)) {
-                    $prompt = $message->context . "\nThe following is the start of a chat between you and a user:\n" . $message->content;
+            if (! AiThreadAutoNamingFeature::active()) {
+                try {
+                    if (is_null($message->thread->name)) {
+                        $prompt = $message->context . "\nThe following is the start of a chat between you and a user:\n" . $message->content;
 
-                    $message->thread->name = $this->complete($prompt, 'Generate a title for this chat, in 5 words or less. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with the title:');
+                        $message->thread->name = $this->complete($prompt, 'Generate a title for this chat, in 5 words or less. Do not respond with any greetings or salutations, and do not include any additional information or context. Just respond with the title:');
 
-                    $message->thread->saved_at = now();
+                        $message->thread->saved_at = now();
 
-                    $message->thread->save();
+                        $message->thread->save();
 
-                    dispatch(new RecordTrackedEvent(
-                        type: TrackedEventType::AiThreadSaved,
-                        occurredAt: now(),
-                    ));
+                        dispatch(new RecordTrackedEvent(
+                            type: TrackedEventType::AiThreadSaved,
+                            occurredAt: now(),
+                        ));
+                    }
+                } catch (Exception $exception) {
+                    report($exception);
+
+                    $message->thread->name = 'Untitled Chat';
                 }
-            } catch (Exception $exception) {
-                report($exception);
-
-                $message->thread->name = 'Untitled Chat';
             }
 
             $message->context = $instructions;

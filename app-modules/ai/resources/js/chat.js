@@ -306,6 +306,13 @@ document.addEventListener('alpine:init', () => {
                             ADD_TAGS: ['a'],
                             ADD_ATTR: ['href', 'title'],
                         });
+                    })
+                    .listen('.advisor-thread.renamed', () => {
+                        // The thread may be renamed by a background AI job shortly after
+                        // an exchange completes (see GenerateAiThreadName). This event is
+                        // broadcast once the new name has been saved, so the sidebar can
+                        // update immediately instead of waiting for the next message.
+                        this.$wire.refreshThreads();
                     });
 
                 this.isLoading = false;

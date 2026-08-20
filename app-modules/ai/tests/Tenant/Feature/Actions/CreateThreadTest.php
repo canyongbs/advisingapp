@@ -44,6 +44,8 @@ use AdvisingApp\Ai\Settings\AiSettings;
 use App\Models\Tenant;
 use App\Models\User;
 
+use function Pest\Laravel\travelBack;
+use function Pest\Laravel\travelTo;
 use function Tests\asSuperAdmin;
 
 it('creates a new thread', function () {
@@ -65,6 +67,38 @@ it('creates a new thread', function () {
         ->assistant->toBe($assistant)
         ->user->toBe(auth()->user())
         ->wasRecentlyCreated->toBeTrue();
+});
+
+it('gives a new thread a default name stamped with the current date and time in the user\'s timezone', function () {
+    asSuperAdmin(User::factory()->create([
+        'timezone' => 'America/Chicago',
+    ]));
+
+    $assistant = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::Test,
+        'is_default' => true,
+        'model' => AiModel::Test,
+    ]);
+
+    $settings = app(AiSettings::class);
+    $settings->default_model = AiModel::Test;
+    $settings->save();
+
+    // Freeze time so the captured `$now` can't drift from the `now()` call
+    // inside CreateThread if the minute flips in between, which would be flaky.
+    $now = now();
+    travelTo($now);
+
+    try {
+        $thread = app(CreateThread::class)(AiAssistantApplication::Test, $assistant);
+
+        expect($thread->name)
+            ->toBe('New Chat ' . $now->clone()->setTimezone('America/Chicago')->format('n/j/y @ g:i A'))
+            ->and($thread->named_by_user_at)
+            ->toBeNull();
+    } finally {
+        travelBack();
+    }
 });
 
 it('does not create a new thread if an empty existing one exists', function () {
@@ -175,7 +209,7 @@ it('does not match existing threads belonging to other assistants', function () 
         ->not->toBe($thread->getKey());
 });
 
-it('does not match existing saved threads (with a name)', function () {
+it('does not match existing threads that have been renamed by the user', function () {
     asSuperAdmin();
 
     $assistant = AiAssistant::factory()->create([
@@ -189,6 +223,7 @@ it('does not match existing saved threads (with a name)', function () {
         ->for(auth()->user())
         ->create([
             'name' => 'Test',
+            'named_by_user_at' => now(),
         ]);
 
     $settings = app(AiSettings::class);
