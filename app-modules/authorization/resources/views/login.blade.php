@@ -64,7 +64,7 @@
             {{ $this->form }}
 
             <x-filament::actions :actions="$this->getFormActions()" :full-width="$this->hasFullWidthFormActions()" />
-            @if (count($this->getSsoFormActions()) > 0)
+            @if (count($this->getSsoFormActions()) > 0 || $this->isGoogleSsoUnavailableInMobileApp())
                 <small class="text-gray-800 dark:text-gray-300">or log in with single sign-on</small>
             @endif
 
@@ -72,6 +72,12 @@
                 :actions="$this->getSsoFormActions()"
                 :full-width="$this->hasFullWidthFormActions()"
             />
+
+            @if ($this->isGoogleSsoUnavailableInMobileApp())
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    Google sign-in isn't available in the mobile app - please use another sign-in method.
+                </p>
+            @endif
         </form>
 
         @if ($this->needsMFA && ! $this->needsMfaSetup)
@@ -87,6 +93,18 @@
                     Use Recovery Code
                 @endif
             </x-filament::link>
+        @endif
+
+        @if ($this->isMobileApp())
+            <div class="mt-6 flex justify-center">
+                <x-filament::link
+                    :href="\AdvisingApp\Authorization\Filament\Pages\Auth\Login::SWITCH_TENANT_URL"
+                    size="sm"
+                    color="gray"
+                >
+                    Switch tenant
+                </x-filament::link>
+            </div>
         @endif
     </div>
 
