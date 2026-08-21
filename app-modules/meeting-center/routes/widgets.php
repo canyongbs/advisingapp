@@ -64,10 +64,10 @@ Route::middleware([
                 Route::get('entry', [EventRegistrationWidgetController::class, 'view'])
                     ->name('entry');
                 Route::post('authenticate/request', [EventRegistrationWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed', 'throttle:widget-authentication-request'])
                     ->name('request-authentication');
                 Route::post('authenticate/{authentication}', [EventRegistrationWidgetController::class, 'authenticate'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed', 'throttle:widget-authenticate'])
                     ->name('authenticate');
                 Route::post('submit', [EventRegistrationWidgetController::class, 'store'])
                     ->middleware(['signed'])

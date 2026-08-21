@@ -34,45 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
-
-use AdvisingApp\Portal\Models\PortalAuthentication;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use App\Http\Controllers\Controller;
-use App\Rules\ValidAuthenticationCode;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Support\AuthenticationCodeRateLimiter;
+use Illuminate\Validation\ValidationException;
 
-class ResourceHubPortalAuthenticateController extends Controller
-{
-    public function __invoke(Request $request, PortalAuthentication $authentication): JsonResponse
-    {
-        if ($authentication->isExpired()) {
-            return response()->json([
-                'is_expired' => true,
-            ]);
-        }
+it('allows the first code request and blocks a rapid second request for the same target', function () {
+    $rateLimiter = new AuthenticationCodeRateLimiter();
 
-        $request->validate([
-            'code' => ['required', 'integer', 'digits:6', new ValidAuthenticationCode($authentication)],
-        ]);
+    $prospect = Prospect::factory()->create();
 
-        /** @var Student|Prospect $educatable */
-        $educatable = $authentication->educatable;
+    $rateLimiter->ensureCanRequestCode($prospect, 'application:1');
+    $rateLimiter->recordCodeRequest($prospect, 'application:1');
 
-        $guard = $educatable instanceof Student ? 'student' : 'prospect';
-        Auth::guard($guard)->login($educatable);
+    expect(fn () => $rateLimiter->ensureCanRequestCode($prospect, 'application:1'))
+        ->toThrow(ValidationException::class);
+});
 
-        $token = $educatable->createToken('resource-hub-portal-access-token', [
-            'resource-hub-portal',
-        ]);
+it('scopes the code-request cooldown per target', function () {
+    $rateLimiter = new AuthenticationCodeRateLimiter();
 
-        return response()->json([
-            'success' => true,
-            'token' => str($token->plainTextToken)->after('|')->toString(),
-            'guard' => $guard,
-        ]);
-    }
-}
+    $prospect = Prospect::factory()->create();
+    $otherProspect = Prospect::factory()->create();
+
+    $rateLimiter->recordCodeRequest($prospect, 'application:1');
+
+    // Same person, different submissible: not throttled.
+    $rateLimiter->ensureCanRequestCode($prospect, 'application:2');
+
+    // Different person, same submissible: not throttled.
+    $rateLimiter->ensureCanRequestCode($otherProspect, 'application:1');
+})->throwsNoExceptions();

@@ -53,7 +53,8 @@ use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Http\Controllers\Controller;
-use Closure;
+use App\Rules\ValidAuthenticationCode;
+use App\Support\AuthenticationCodeRateLimiter;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -163,7 +164,7 @@ class ApplicationWidgetController extends Controller
         );
     }
 
-    public function requestAuthentication(Request $request, ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail, Application $application): JsonResponse
+    public function requestAuthentication(Request $request, ResolveSubmissionAuthorFromEmail $resolveSubmissionAuthorFromEmail, AuthenticationCodeRateLimiter $rateLimiter, Application $application): JsonResponse
     {
         $data = $request->validate([
             'email' => ['required', 'email'],
@@ -187,6 +188,15 @@ class ApplicationWidgetController extends Controller
             ], 404);
         }
 
+        $scope = 'application:' . $application->getKey();
+
+        $rateLimiter->ensureCanRequestCode($author, $scope);
+
+        ApplicationAuthentication::query()
+            ->whereMorphedTo('author', $author)
+            ->where('application_id', $application->getKey())
+            ->delete();
+
         $code = random_int(100000, 999999);
 
         $authentication = new ApplicationAuthentication();
@@ -198,6 +208,8 @@ class ApplicationWidgetController extends Controller
         Notification::route('mail', [
             $data['email'] => $author->getAttributeValue($author::displayNameKey()),
         ])->notify(new AuthenticateFormNotification($authentication, $code));
+
+        $rateLimiter->recordCodeRequest($author, $scope);
 
         return response()->json([
             'message' => "We've sent an authentication code to {$data['email']}.",
@@ -220,13 +232,7 @@ class ApplicationWidgetController extends Controller
         }
 
         $request->validate([
-            'code' => ['required', 'integer', 'digits:6', function (string $attribute, int $value, Closure $fail) use ($authentication) {
-                if (Hash::check((string) $value, $authentication->code)) {
-                    return;
-                }
-
-                $fail('The provided code is invalid.');
-            }],
+            'code' => ['required', 'integer', 'digits:6', new ValidAuthenticationCode($authentication)],
         ]);
 
         $author = $authentication->author;

@@ -56,7 +56,7 @@ Route::prefix('portals')
             EnsureResourceHubPortalIsEmbeddableAndAuthorized::class,
         ])->group(function () {
             Route::post('/resource-hub/authenticate/{authentication}', ResourceHubPortalAuthenticateController::class)
-                ->middleware(['signed:relative', EnsureFrontendRequestsAreStateful::class])
+                ->middleware(['signed:relative', 'throttle:widget-authenticate', EnsureFrontendRequestsAreStateful::class])
                 ->name('resource-hub.authenticate');
 
             Route::get('/resource-hub', RenderResourceHubPortal::class)
