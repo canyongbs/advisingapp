@@ -179,24 +179,35 @@ class SmsChannel
             } else {
                 $result = SmsChannelResultData::from([
                     'success' => true,
-                    'message' => new MessageInstance(
-                        new V2010(new MessagingBase(new Client(username: 'abc123', password: 'abc123'))),
-                        [
-                            'sid' => Str::random(),
+                    'message' => match ($twilioSettings->provider) {
+                        SmsMessagingProvider::Twilio => new MessageInstance(
+                            new V2010(new MessagingBase(new Client(username: 'abc123', password: 'abc123'))),
+                            [
+                                'sid' => Str::random(),
+                                'status' => 'delivered',
+                                'from' => $message->getFrom(),
+                                'to' => $recipientNumber,
+                                'body' => $message->getContent(),
+                                'num_segments' => 1,
+                            ],
+                            'abc123'
+                        ),
+                        SmsMessagingProvider::Telnyx => Message::constructFrom([
+                            'id' => (string) Str::uuid(),
                             'status' => 'delivered',
                             'from' => $message->getFrom(),
                             'to' => $recipientNumber,
-                            'body' => $message->getContent(),
-                            'num_segments' => 1,
-                        ],
-                        'abc123'
-                    ),
+                            'text' => $message->getContent(),
+                            'parts' => 1,
+                        ]),
+                    },
                 ]);
             }
 
             try {
                 if ($result->success) {
                     $smsMessage->quota_usage = $this->determineQuotaUsage($result, $smsMessage);
+
                     $smsMessage->external_reference_id = match ($twilioSettings->provider) {
                         SmsMessagingProvider::Twilio => $result->message->sid,
                         SmsMessagingProvider::Telnyx => $result->message->id, // @phpstan-ignore property.notFound
