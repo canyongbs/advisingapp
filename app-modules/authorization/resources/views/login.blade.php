@@ -64,7 +64,7 @@
             {{ $this->form }}
 
             <x-filament::actions :actions="$this->getFormActions()" :full-width="$this->hasFullWidthFormActions()" />
-            @if (count($this->getSsoFormActions()) > 0 || $this->isGoogleSsoUnavailableInMobileApp())
+            @if (count($this->getSsoFormActions()) > 0)
                 <small class="text-gray-800 dark:text-gray-300">or log in with single sign-on</small>
             @endif
 

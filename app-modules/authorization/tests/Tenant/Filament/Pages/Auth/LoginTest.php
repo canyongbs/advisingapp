@@ -54,7 +54,7 @@ it('does not show the switch tenant control or a google unavailable message for 
     get(route('filament.admin.auth.login'), ['User-Agent' => 'Mozilla/5.0'])
         ->assertOk()
         ->assertDontSee('Switch tenant')
-        ->assertDontSee("Google sign-in isn't available in the mobile app")
+        ->assertDontSee("Google sign-in isn't available in the mobile app", false)
         ->assertSee('Google');
 });
 
@@ -83,5 +83,5 @@ it('replaces the google sign-in button with an unavailable message for the mobil
 it('does not show a google unavailable message for the mobile app when google sso is not enabled', function () {
     get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
         ->assertOk()
-        ->assertDontSee("Google sign-in isn't available in the mobile app");
+        ->assertDontSee("Google sign-in isn't available in the mobile app", false);
 });
