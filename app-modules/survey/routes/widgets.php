@@ -64,10 +64,10 @@ Route::middleware([
                 Route::get('entry', [SurveyWidgetController::class, 'view'])
                     ->name('entry');
                 Route::post('authenticate/request', [SurveyWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed', 'throttle:widget-authentication-request'])
                     ->name('request-authentication');
                 Route::post('authenticate/{authentication}', [SurveyWidgetController::class, 'authenticate'])
-                    ->middleware(['signed', 'throttle:10,1'])
+                    ->middleware(['signed', 'throttle:widget-authenticate'])
                     ->name('authenticate');
                 Route::post('submit', [SurveyWidgetController::class, 'store'])
                     ->middleware(['signed'])

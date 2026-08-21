@@ -43,6 +43,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use App\Settings\LicenseSettings;
 use App\Support\AuthenticationCodeRateLimiter;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 
 use function Pest\Laravel\get;
@@ -352,4 +353,72 @@ test('authenticate resets the attempt counter after a successful authentication'
     postJson($invalidUrl)
         ->assertStatus(422)
         ->assertJsonValidationErrors(['code' => 'The provided code is invalid.']);
+});
+
+test('request-authentication throttles repeated code requests for the same target', function () {
+    withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->onlineAdmissions = true;
+    $settings->save();
+
+    $application = Application::factory()->create();
+    $prospect = Prospect::factory()->create();
+    $email = $prospect->primaryEmailAddress->address;
+
+    postJson(URL::signedRoute(
+        name: 'widgets.applications.api.request-authentication',
+        parameters: ['application' => $application, 'email' => $email],
+    ))->assertSuccessful();
+
+    postJson(URL::signedRoute(
+        name: 'widgets.applications.api.request-authentication',
+        parameters: ['application' => $application, 'email' => $email],
+    ))
+        ->assertStatus(422)
+        ->assertJsonValidationErrors(['email']);
+});
+
+test('request-authentication invalidates prior codes for the same target', function () {
+    withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->onlineAdmissions = true;
+    $settings->save();
+
+    $application = Application::factory()->create();
+    $prospect = Prospect::factory()->create();
+    $email = $prospect->primaryEmailAddress->address;
+
+    postJson(URL::signedRoute(
+        name: 'widgets.applications.api.request-authentication',
+        parameters: ['application' => $application, 'email' => $email],
+    ))->assertSuccessful();
+
+    $firstId = ApplicationAuthentication::query()
+        ->whereMorphedTo('author', $prospect)
+        ->where('application_id', $application->id)
+        ->value('id');
+
+    expect($firstId)->not->toBeNull();
+
+    // Clear the per-target mint cooldown so a second request is allowed.
+    RateLimiter::clear(app(AuthenticationCodeRateLimiter::class)->codeRequestKey($prospect, 'application:' . $application->id));
+
+    postJson(URL::signedRoute(
+        name: 'widgets.applications.api.request-authentication',
+        parameters: ['application' => $application, 'email' => $email],
+    ))->assertSuccessful();
+
+    $records = ApplicationAuthentication::query()
+        ->whereMorphedTo('author', $prospect)
+        ->where('application_id', $application->id)
+        ->get();
+
+    expect($records)->toHaveCount(1);
+    expect($records->first()->id)->not->toBe($firstId);
 });

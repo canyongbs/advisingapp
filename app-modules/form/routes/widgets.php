@@ -66,16 +66,16 @@ Route::middleware([
                 Route::get('entry', [FormWidgetController::class, 'view'])
                     ->name('entry');
                 Route::post('authenticate/request', [FormWidgetController::class, 'requestAuthentication'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed', 'throttle:widget-authentication-request'])
                     ->name('request-authentication');
                 Route::post('authenticate/{authentication}', [FormWidgetController::class, 'authenticate'])
-                    ->middleware(['signed', 'throttle:10,1'])
+                    ->middleware(['signed', 'throttle:widget-authenticate'])
                     ->name('authenticate');
                 Route::post('submit', [FormWidgetController::class, 'store'])
                     ->middleware(['signed'])
                     ->name('submit');
                 Route::post('register', [FormWidgetController::class, 'registerProspect'])
-                    ->middleware(['signed'])
+                    ->middleware(['signed', 'throttle:widget-authentication-request'])
                     ->name('register-prospect');
                 Route::get('submissions/past-submissions', [FormWidgetController::class, 'getPastSubmissions'])
                     ->middleware(['signed:page,per_page'])

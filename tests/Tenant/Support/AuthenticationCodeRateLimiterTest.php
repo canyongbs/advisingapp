@@ -34,36 +34,33 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Portal\Http\Controllers\ResourceHub\ResourceHubPortalAuthenticateController;
-use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEmbeddableAndAuthorized;
-use AdvisingApp\Portal\Http\Middleware\EnsureResourceHubPortalIsEnabled;
-use AdvisingApp\Portal\Livewire\RenderResourceHubPortal;
-use Illuminate\Support\Facades\Route;
-use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+use AdvisingApp\Prospect\Models\Prospect;
+use App\Support\AuthenticationCodeRateLimiter;
+use Illuminate\Validation\ValidationException;
 
-Route::prefix('portals')
-    ->name('portal.')
-    ->middleware([
-        'web',
-        EnsureFrontendRequestsAreStateful::class,
-    ])
-    ->group(function () {
-        /**
-         * Resource Hub Portal
-         */
-        Route::middleware([
-            EnsureResourceHubPortalIsEnabled::class,
-            EnsureResourceHubPortalIsEmbeddableAndAuthorized::class,
-        ])->group(function () {
-            Route::post('/resource-hub/authenticate/{authentication}', ResourceHubPortalAuthenticateController::class)
-                ->middleware(['signed:relative', 'throttle:widget-authenticate', EnsureFrontendRequestsAreStateful::class])
-                ->name('resource-hub.authenticate');
+it('allows the first code request and blocks a rapid second request for the same target', function () {
+    $rateLimiter = new AuthenticationCodeRateLimiter();
 
-            Route::get('/resource-hub', RenderResourceHubPortal::class)
-                ->name('resource-hub.show');
-            Route::get('/resource-hub/categories/{category}', RenderResourceHubPortal::class)
-                ->name('resource-hub.category.show');
-            Route::get('/resource-hub/categories/{category}/articles/{article}', RenderResourceHubPortal::class)
-                ->name('resource-hub.article.show');
-        });
-    });
+    $prospect = Prospect::factory()->create();
+
+    $rateLimiter->ensureCanRequestCode($prospect, 'application:1');
+    $rateLimiter->recordCodeRequest($prospect, 'application:1');
+
+    expect(fn () => $rateLimiter->ensureCanRequestCode($prospect, 'application:1'))
+        ->toThrow(ValidationException::class);
+});
+
+it('scopes the code-request cooldown per target', function () {
+    $rateLimiter = new AuthenticationCodeRateLimiter();
+
+    $prospect = Prospect::factory()->create();
+    $otherProspect = Prospect::factory()->create();
+
+    $rateLimiter->recordCodeRequest($prospect, 'application:1');
+
+    // Same person, different submissible: not throttled.
+    $rateLimiter->ensureCanRequestCode($prospect, 'application:2');
+
+    // Different person, same submissible: not throttled.
+    $rateLimiter->ensureCanRequestCode($otherProspect, 'application:1');
+})->throwsNoExceptions();

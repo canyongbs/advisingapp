@@ -48,6 +48,7 @@ use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use AdvisingApp\MeetingCenter\Notifications\AuthenticateEventRegistrationFormNotification;
 use App\Http\Controllers\Controller;
 use App\Rules\ValidAuthenticationCode;
+use App\Support\AuthenticationCodeRateLimiter;
 use Exception;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
@@ -131,7 +132,7 @@ class EventRegistrationWidgetController extends Controller
         );
     }
 
-    public function requestAuthentication(Request $request, Event $event): JsonResponse
+    public function requestAuthentication(Request $request, AuthenticationCodeRateLimiter $rateLimiter, Event $event): JsonResponse
     {
         $form = $event->eventRegistrationForm;
 
@@ -157,6 +158,15 @@ class EventRegistrationWidgetController extends Controller
         // TODO: When an EventAttendee is created, we should try and match it to an entity, perhaps in an observer.
         $attendee->save();
 
+        $scope = 'event:' . $form->event_id;
+
+        $rateLimiter->ensureCanRequestCode($attendee, $scope);
+
+        EventRegistrationFormAuthentication::query()
+            ->where('event_attendee_id', $attendee->getKey())
+            ->where('form_id', $form->getKey())
+            ->delete();
+
         $code = random_int(100000, 999999);
 
         $authentication = new EventRegistrationFormAuthentication();
@@ -166,6 +176,8 @@ class EventRegistrationWidgetController extends Controller
         $authentication->save();
 
         Notification::route('mail', $attendee->email)->notify(new AuthenticateEventRegistrationFormNotification($authentication, $code));
+
+        $rateLimiter->recordCodeRequest($attendee, $scope);
 
         return response()->json([
             'message' => "We've sent an authentication code to {$attendee->email}.",

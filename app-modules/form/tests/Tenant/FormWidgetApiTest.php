@@ -36,10 +36,16 @@
 
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\Form\Models\FormField;
+use AdvisingApp\Prospect\Models\Prospect;
 use App\Settings\LicenseSettings;
+use App\Support\AuthenticationCodeRateLimiter;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\URL;
 
 use function Pest\Laravel\get;
+use function Pest\Laravel\postJson;
 use function Pest\Laravel\withoutMiddleware;
 use function Tests\asSuperAdmin;
 
@@ -123,4 +129,38 @@ test('preview renders the form fields for an authenticated form', function () {
         ->assertSuccessful()
         ->assertJsonFragment(['label' => 'What is your first name?'])
         ->assertJsonFragment(['label' => 'Tell us about yourself']);
+});
+
+test('authenticate locks out after too many invalid code attempts', function () {
+    withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+    $form = Form::factory()->create();
+
+    $prospect = Prospect::factory()->create();
+
+    $code = '123456';
+
+    $authentication = new FormAuthentication();
+    $authentication->author()->associate($prospect);
+    $authentication->submissible()->associate($form);
+    $authentication->code = Hash::make($code);
+    $authentication->save();
+
+    $invalidUrl = URL::signedRoute(
+        name: 'widgets.forms.api.authenticate',
+        parameters: ['form' => $form, 'authentication' => $authentication, 'code' => '654321'],
+    );
+
+    foreach (range(1, AuthenticationCodeRateLimiter::MAX_ATTEMPTS) as $attempt) {
+        postJson($invalidUrl)
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['code' => 'The provided code is invalid.']);
+    }
+
+    postJson(URL::signedRoute(
+        name: 'widgets.forms.api.authenticate',
+        parameters: ['form' => $form, 'authentication' => $authentication, 'code' => $code],
+    ))
+        ->assertStatus(422)
+        ->assertJsonValidationErrors(['code' => 'Too many invalid attempts. Please request a new code.']);
 });

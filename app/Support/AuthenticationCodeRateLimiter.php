@@ -38,12 +38,17 @@ namespace App\Support;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Validation\ValidationException;
 
 class AuthenticationCodeRateLimiter
 {
     public const MAX_ATTEMPTS = 5;
 
     public const DECAY_SECONDS = 86400;
+
+    public const MAX_CODE_REQUESTS = 1;
+
+    public const CODE_REQUEST_DECAY_SECONDS = 60;
 
     public function isLocked(Model $authentication): bool
     {
@@ -63,5 +68,28 @@ class AuthenticationCodeRateLimiter
     public function key(Model $authentication): string
     {
         return 'authentication-code:' . $authentication::class . ':' . $authentication->getKey();
+    }
+
+    /**
+     * Enforce a per-target cooldown so a fresh code cannot be minted repeatedly to
+     * bypass the per-record guess lockout by rotating authentication records.
+     */
+    public function ensureCanRequestCode(Model $author, string $scope): void
+    {
+        if (RateLimiter::tooManyAttempts($this->codeRequestKey($author, $scope), self::MAX_CODE_REQUESTS)) {
+            throw ValidationException::withMessages([
+                'email' => 'A code was recently sent to this email address. Please wait a moment before requesting another.',
+            ]);
+        }
+    }
+
+    public function recordCodeRequest(Model $author, string $scope): void
+    {
+        RateLimiter::hit($this->codeRequestKey($author, $scope), self::CODE_REQUEST_DECAY_SECONDS);
+    }
+
+    public function codeRequestKey(Model $author, string $scope): string
+    {
+        return 'authentication-code-request:' . $author::class . ':' . $author->getKey() . ':' . $scope;
     }
 }
