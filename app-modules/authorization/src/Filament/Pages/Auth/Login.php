@@ -53,6 +53,10 @@ use Livewire\Attributes\Locked;
 
 class Login extends \Filament\Auth\Pages\Login
 {
+    public const MOBILE_APP_USER_AGENT_TOKEN = 'AdvisingAppMobile';
+
+    public const SWITCH_TENANT_URL = 'advisingappmobile://switch-tenant';
+
     protected string $view = 'authorization::login';
 
     public ?array $data;
@@ -242,6 +246,16 @@ class Login extends \Filament\Auth\Pages\Login
             ->statePath('data');
     }
 
+    public function isMobileApp(): bool
+    {
+        return str((string) request()->userAgent())->contains(self::MOBILE_APP_USER_AGENT_TOKEN);
+    }
+
+    public function isGoogleSsoUnavailableInMobileApp(): bool
+    {
+        return $this->isMobileApp() && $this->isGoogleSsoEnabled();
+    }
+
     protected function isValidCode(User $user, string $code): bool
     {
         if ($this->usingRecoveryCode) {
@@ -269,9 +283,8 @@ class Login extends \Filament\Auth\Pages\Login
                 ->extraAttributes(['class' => 'dark_button_border']);
         }
 
-        $googleSsoSettings = app(GoogleSsoSettings::class);
-
-        if ($googleSsoSettings->is_enabled && ! empty($googleSsoSettings->client_id)) {
+        // Google OAuth can't complete inside the mobile app's embedded WebView.
+        if ($this->isGoogleSsoEnabled() && ! $this->isMobileApp()) {
             $ssoActions[] = Action::make('google_sso')
                 ->label(__('Google'))
                 ->url(route('socialite.redirect', ['provider' => 'google']))
@@ -282,6 +295,13 @@ class Login extends \Filament\Auth\Pages\Login
         }
 
         return $ssoActions;
+    }
+
+    protected function isGoogleSsoEnabled(): bool
+    {
+        $googleSsoSettings = app(GoogleSsoSettings::class);
+
+        return $googleSsoSettings->is_enabled && ! empty($googleSsoSettings->client_id);
     }
 
     protected function getFormActions(): array
