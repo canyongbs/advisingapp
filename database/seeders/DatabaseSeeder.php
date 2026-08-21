@@ -43,7 +43,6 @@ use AdvisingApp\Authorization\Console\Commands\SetupRoles;
 use AdvisingApp\Concern\Database\Seeders\ConcernSeeder;
 use AdvisingApp\Concern\Database\Seeders\ConcernStatusSeeder;
 use AdvisingApp\Consent\Database\Seeders\ConsentAgreementSeeder;
-use AdvisingApp\Division\Database\Seeders\DivisionSeeder;
 use AdvisingApp\Form\Database\Seeders\FormSeeder;
 use AdvisingApp\Interaction\Database\Seeders\InteractionSeeder;
 use AdvisingApp\MeetingCenter\Database\Seeders\EventSeeder;
@@ -81,7 +80,6 @@ class DatabaseSeeder extends Seeder
         $this->call([
             SampleSuperAdminUserSeeder::class,
             LocalDevelopmentSeeder::class,
-            DivisionSeeder::class,
             ProspectStatusSeeder::class,
             ProspectSourceSeeder::class,
             ResourceHubCategorySeeder::class,

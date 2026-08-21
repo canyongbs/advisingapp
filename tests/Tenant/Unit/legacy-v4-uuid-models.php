@@ -54,7 +54,6 @@ use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\Consent\Models\ConsentAgreement;
 use AdvisingApp\Consent\Models\UserConsentAgreement;
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Engagement\Models\EmailTemplate;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementBatch;
@@ -291,7 +290,6 @@ return [
     ConcernStatus::class,
     ConsentAgreement::class,
     UserConsentAgreement::class,
-    Division::class,
     EmailTemplate::class,
     Engagement::class,
     EngagementBatch::class,
