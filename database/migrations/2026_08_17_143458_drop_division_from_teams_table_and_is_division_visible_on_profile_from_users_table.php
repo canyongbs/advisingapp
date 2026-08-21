@@ -34,32 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Division\Filament\Resources\Divisions;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Division\Filament\Resources\Divisions\Pages\CreateDivision;
-use AdvisingApp\Division\Filament\Resources\Divisions\Pages\EditDivision;
-use AdvisingApp\Division\Filament\Resources\Divisions\Pages\ListDivisions;
-use AdvisingApp\Division\Filament\Resources\Divisions\Pages\ViewDivision;
-use AdvisingApp\Division\Models\Division;
-use App\Enums\NavigationGroup;
-use Filament\Resources\Resource;
-use UnitEnum;
-
-class DivisionResource extends Resource
-{
-    protected static ?string $model = Division::class;
-
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::UserManagement;
-
-    protected static ?int $navigationSort = 50;
-
-    public static function getPages(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'index' => ListDivisions::route('/'),
-            'create' => CreateDivision::route('/create'),
-            'view' => ViewDivision::route('/{record}'),
-            'edit' => EditDivision::route('/{record}/edit'),
-        ];
+        DB::transaction(function () {
+            Schema::table('teams', function (Blueprint $table) {
+                $table->dropConstrainedForeignId('division_id');
+            });
+
+            Schema::table('users', function (Blueprint $table) {
+                $table->dropColumn('is_division_visible_on_profile');
+            });
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            Schema::table('teams', function (Blueprint $table) {
+                $table->foreignUuid('division_id')->nullable()->constrained('divisions');
+            });
+
+            Schema::table('users', function (Blueprint $table) {
+                $table->boolean('is_division_visible_on_profile')->default(false);
+            });
+        });
+    }
+};

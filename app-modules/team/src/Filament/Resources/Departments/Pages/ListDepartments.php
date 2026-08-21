@@ -59,8 +59,6 @@ class ListDepartments extends ListRecords
                 IdColumn::make(),
                 TextColumn::make('name')
                     ->sortable(),
-                TextColumn::make('division.name')
-                    ->sortable(),
                 TextColumn::make('description')
                     ->limit(50),
             ])

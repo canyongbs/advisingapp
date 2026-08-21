@@ -34,32 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Division\Filament\Resources\Divisions;
+use AdvisingApp\Prospect\Models\Prospect;
+use App\Support\AuthenticationCodeRateLimiter;
+use Illuminate\Validation\ValidationException;
 
-use AdvisingApp\Division\Filament\Resources\Divisions\Pages\CreateDivision;
-use AdvisingApp\Division\Filament\Resources\Divisions\Pages\EditDivision;
-use AdvisingApp\Division\Filament\Resources\Divisions\Pages\ListDivisions;
-use AdvisingApp\Division\Filament\Resources\Divisions\Pages\ViewDivision;
-use AdvisingApp\Division\Models\Division;
-use App\Enums\NavigationGroup;
-use Filament\Resources\Resource;
-use UnitEnum;
+it('allows the first code request and blocks a rapid second request for the same target', function () {
+    $rateLimiter = new AuthenticationCodeRateLimiter();
 
-class DivisionResource extends Resource
-{
-    protected static ?string $model = Division::class;
+    $prospect = Prospect::factory()->create();
 
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::UserManagement;
+    $rateLimiter->ensureCanRequestCode($prospect, 'application:1');
+    $rateLimiter->recordCodeRequest($prospect, 'application:1');
 
-    protected static ?int $navigationSort = 50;
+    expect(fn () => $rateLimiter->ensureCanRequestCode($prospect, 'application:1'))
+        ->toThrow(ValidationException::class);
+});
 
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListDivisions::route('/'),
-            'create' => CreateDivision::route('/create'),
-            'view' => ViewDivision::route('/{record}'),
-            'edit' => EditDivision::route('/{record}/edit'),
-        ];
-    }
-}
+it('scopes the code-request cooldown per target', function () {
+    $rateLimiter = new AuthenticationCodeRateLimiter();
+
+    $prospect = Prospect::factory()->create();
+    $otherProspect = Prospect::factory()->create();
+
+    $rateLimiter->recordCodeRequest($prospect, 'application:1');
+
+    // Same person, different submissible: not throttled.
+    $rateLimiter->ensureCanRequestCode($prospect, 'application:2');
+
+    // Different person, same submissible: not throttled.
+    $rateLimiter->ensureCanRequestCode($otherProspect, 'application:1');
+})->throwsNoExceptions();

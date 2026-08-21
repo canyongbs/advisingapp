@@ -34,41 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Division\Filament\Resources\Divisions\RelationManagers;
+namespace App\Rules;
 
-use App\Filament\Tables\Columns\IdColumn;
-use Filament\Actions\AssociateAction;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DissociateAction;
-use Filament\Actions\DissociateBulkAction;
-use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Table;
+use App\Support\AuthenticationCodeRateLimiter;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
-class DepartmentsRelationManager extends RelationManager
+class ValidAuthenticationCode implements ValidationRule
 {
-    protected static string $relationship = 'departments';
+    public function __construct(
+        protected Model $authentication,
+        protected AuthenticationCodeRateLimiter $rateLimiter = new AuthenticationCodeRateLimiter(),
+    ) {}
 
-    public function table(Table $table): Table
+    /**
+     * @param  Closure(string): PotentiallyTranslatedString  $fail
+     */
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        return $table
-            ->recordTitleAttribute('name')
-            ->inverseRelationship('division')
-            ->columns([
-                IdColumn::make(),
-                TextColumn::make('name'),
-            ])
-            ->headerActions([
-                AssociateAction::make(),
-            ])
-            ->recordActions([
-                DissociateAction::make(),
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DissociateBulkAction::make(),
-                ]),
-            ])
-            ->emptyStateActions([]);
+        if ($this->rateLimiter->isLocked($this->authentication)) {
+            $fail('Too many invalid attempts. Please request a new code.');
+
+            return;
+        }
+
+        $hashedCode = $this->authentication->getAttribute('code');
+
+        if (is_string($hashedCode) && is_scalar($value) && Hash::check((string) $value, $hashedCode)) {
+            $this->rateLimiter->clear($this->authentication);
+
+            return;
+        }
+
+        $this->rateLimiter->recordFailedAttempt($this->authentication);
+
+        $fail('The provided code is invalid.');
     }
 }

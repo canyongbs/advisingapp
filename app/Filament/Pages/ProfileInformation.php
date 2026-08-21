@@ -153,14 +153,6 @@ class ProfileInformation extends ProfilePage
                             ->label('Show department on profile')
                             ->hidden(! $user->department)
                             ->live(),
-                        TextEntry::make('division')
-                            ->state($user->department?->division?->name)
-                            ->hidden(! $user->department?->division()->exists())
-                            ->hint(fn (Get $get): string => $get('is_division_visible_on_profile') ? 'Visible on profile' : 'Not visible on profile'),
-                        Checkbox::make('is_division_visible_on_profile')
-                            ->label('Show Division on profile')
-                            ->hidden(! $user->department?->division()->exists())
-                            ->live(),
                         $this->getPasswordFormComponent()
                             ->hidden($user->is_external),
                         $this->getPasswordConfirmationFormComponent()

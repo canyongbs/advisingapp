@@ -54,7 +54,6 @@ class ViewDepartment extends ViewRecord
                 Section::make()
                     ->schema([
                         TextEntry::make('name'),
-                        TextEntry::make('division.name')->default('N/A'),
                         TextEntry::make('description')
                             ->columnSpanFull(),
                     ])

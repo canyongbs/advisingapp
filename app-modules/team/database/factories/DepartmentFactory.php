@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Team\Database\Factories;
 
-use AdvisingApp\Division\Models\Division;
 use AdvisingApp\Team\Models\Department;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -51,15 +50,5 @@ class DepartmentFactory extends Factory
             'name' => $this->faker->unique()->sentence(),
             'description' => $this->faker->sentence(),
         ];
-    }
-
-    public function configure(): DepartmentFactory|Factory
-    {
-        return $this->afterCreating(function (Department $department) {
-            if (! $department->division()->exists() && $this->faker->boolean()) {
-                $department->division()->associate(tap(Division::factory()->make())->save());
-                $department->save();
-            }
-        });
     }
 }

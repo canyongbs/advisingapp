@@ -42,6 +42,7 @@ use AdvisingApp\Portal\Models\PortalAuthentication;
 use AdvisingApp\Portal\Notifications\AuthenticatePortalNotification;
 use AdvisingApp\StudentDataModel\Actions\ResolveEducatableFromEmail;
 use App\Http\Controllers\Controller;
+use App\Support\AuthenticationCodeRateLimiter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
@@ -50,7 +51,7 @@ use Illuminate\Validation\ValidationException;
 
 class ResourceHubPortalRequestAuthenticationController extends Controller
 {
-    public function __invoke(ResourceHubPortalAuthenticationRequest $request, ResolveEducatableFromEmail $resolveEducatableFromEmail): JsonResponse
+    public function __invoke(ResourceHubPortalAuthenticationRequest $request, ResolveEducatableFromEmail $resolveEducatableFromEmail, AuthenticationCodeRateLimiter $rateLimiter): JsonResponse
     {
         $email = $request->safe()->email;
 
@@ -61,6 +62,13 @@ class ResourceHubPortalRequestAuthenticationController extends Controller
                 'email' => 'A student with that email address could not be found. Please contact your system administrator.',
             ]);
         }
+
+        $rateLimiter->ensureCanRequestCode($educatable, 'resource-hub');
+
+        PortalAuthentication::query()
+            ->whereMorphedTo('educatable', $educatable)
+            ->where('portal_type', PortalType::ResourceHub)
+            ->delete();
 
         $code = random_int(100000, 999999);
 
@@ -73,6 +81,8 @@ class ResourceHubPortalRequestAuthenticationController extends Controller
         Notification::route('mail', [
             $email => $educatable->getAttributeValue($educatable::displayNameKey()),
         ])->notify(new AuthenticatePortalNotification($authentication, $code));
+
+        $rateLimiter->recordCodeRequest($educatable, 'resource-hub');
 
         $authenticationUrl = match ($request->safe()->isSpa) {
             true => URL::to(

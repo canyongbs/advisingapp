@@ -34,14 +34,17 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Enums\EmailType;
+use AdvisingApp\Notification\Enums\SmsMessagingProvider;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Tenant;
 
 it('getEmailType returns the engagement email_type value', function () {
@@ -132,23 +135,64 @@ it('creates a proper Engagement Response for emails when demo mode is turned on'
     expect(EngagementResponse::first()->content)->toBe('Thank you for your message. Will get back to you shortly.');
 });
 
-it('creates a proper Engagement Response for SMS when demo mode is turned on', function () {
+it('creates a proper Engagement Response for SMS when demo mode is turned on', function (string $recipientClass, string $engagementFactoryState) {
     $settings = app(TwilioSettings::class);
     $settings->is_demo_mode_enabled = true;
     $settings->is_demo_auto_reply_mode_enabled = true;
     $settings->save();
 
-    $prospect = Prospect::factory()->create();
+    $recipient = $recipientClass::factory()->create();
 
     $engagement = Engagement::factory()
-        ->forProspect()
+        ->{$engagementFactoryState}()
         ->sms()
-        ->create();
+        ->create([
+            'recipient_id' => $recipient->getKey(),
+            'recipient_type' => $recipient->getMorphClass(),
+        ]);
 
     $notification = new EngagementNotification($engagement);
 
-    $prospect->notify($notification);
+    $recipient->notify($notification);
 
     expect(EngagementResponse::count())->toBe(1);
     expect(EngagementResponse::first()->content)->toBe('Thank you for your message. Will get back to you shortly.');
-});
+})->with([
+    'prospect' => [Prospect::class, 'forProspect'],
+    'student' => [Student::class, 'forStudent'],
+]);
+
+it('sends a fake auto-reply Engagement Response back from the recipient when SMS demo mode is turned on with the Telnyx provider', function (string $recipientClass, string $engagementFactoryState) {
+    $settings = app(TwilioSettings::class);
+    $settings->provider = SmsMessagingProvider::Telnyx;
+    $settings->telnyx_api_key = 'test_api_key';
+    $settings->is_demo_mode_enabled = true;
+    $settings->is_demo_auto_reply_mode_enabled = true;
+    $settings->save();
+
+    $recipient = $recipientClass::factory()->create();
+
+    $engagement = Engagement::factory()
+        ->{$engagementFactoryState}()
+        ->sms()
+        ->create([
+            'recipient_id' => $recipient->getKey(),
+            'recipient_type' => $recipient->getMorphClass(),
+        ]);
+
+    $notification = new EngagementNotification($engagement);
+
+    $recipient->notify($notification);
+
+    expect(EngagementResponse::count())->toBe(1);
+
+    $response = EngagementResponse::first();
+
+    expect($response->type)->toBe(EngagementResponseType::Sms)
+        ->and($response->sender_id)->toBe($recipient->getKey())
+        ->and($response->sender_type)->toBe($recipient->getMorphClass())
+        ->and($response->content)->toBe('Thank you for your message. Will get back to you shortly.');
+})->with([
+    'prospect' => [Prospect::class, 'forProspect'],
+    'student' => [Student::class, 'forStudent'],
+]);
