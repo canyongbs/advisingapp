@@ -340,4 +340,31 @@ it('short-circuits with SmsOptOutException before the API call when the number i
     expect($event->type)->toBe(SmsMessageEventType::FailedDispatch)
         ->and($event->payload['error'])->toBe('Recipient phone number has opted out of SMS messages.');
 });
+
+it('records a BlockedByDemoMode event and sets an external_reference_id when demo mode is enabled with the Telnyx provider', function () {
+    $notifiable = Prospect::factory()->create();
+
+    $phoneNumber = $notifiable->phoneNumbers()->create([
+        'number' => '+13125000012',
+    ]);
+
+    PhoneNumberLookup::factory()->mobile()->create(['number' => '+13125000012']);
+
+    $notifiable->primaryPhoneNumber()->associate($phoneNumber)->save();
+
+    $settings = app()->make(TwilioSettings::class);
+    $settings->provider = SmsMessagingProvider::Telnyx;
+    $settings->telnyx_api_key = 'test_api_key';
+    $settings->is_demo_mode_enabled = true;
+    $settings->save();
+
+    $notifiable->notify(new TestSmsNotification());
+
+    $smsMessage = SmsMessage::first();
+
+    expect($smsMessage->external_reference_id)->not->toBeNull();
+
+    $event = $smsMessage->events()->first();
+    expect($event->type)->toBe(SmsMessageEventType::BlockedByDemoMode);
+});
 // TODO Add more tests for SMS Demo mode etc.

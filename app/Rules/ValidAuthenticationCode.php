@@ -34,45 +34,43 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
+namespace App\Rules;
 
-use AdvisingApp\Portal\Models\PortalAuthentication;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use App\Http\Controllers\Controller;
-use App\Rules\ValidAuthenticationCode;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Support\AuthenticationCodeRateLimiter;
+use Closure;
+use Illuminate\Contracts\Validation\ValidationRule;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Translation\PotentiallyTranslatedString;
 
-class ResourceHubPortalAuthenticateController extends Controller
+class ValidAuthenticationCode implements ValidationRule
 {
-    public function __invoke(Request $request, PortalAuthentication $authentication): JsonResponse
+    public function __construct(
+        protected Model $authentication,
+        protected AuthenticationCodeRateLimiter $rateLimiter = new AuthenticationCodeRateLimiter(),
+    ) {}
+
+    /**
+     * @param  Closure(string): PotentiallyTranslatedString  $fail
+     */
+    public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        if ($authentication->isExpired()) {
-            return response()->json([
-                'is_expired' => true,
-            ]);
+        if ($this->rateLimiter->isLocked($this->authentication)) {
+            $fail('Too many invalid attempts. Please request a new code.');
+
+            return;
         }
 
-        $request->validate([
-            'code' => ['required', 'integer', 'digits:6', new ValidAuthenticationCode($authentication)],
-        ]);
+        $hashedCode = $this->authentication->getAttribute('code');
 
-        /** @var Student|Prospect $educatable */
-        $educatable = $authentication->educatable;
+        if (is_string($hashedCode) && is_scalar($value) && Hash::check((string) $value, $hashedCode)) {
+            $this->rateLimiter->clear($this->authentication);
 
-        $guard = $educatable instanceof Student ? 'student' : 'prospect';
-        Auth::guard($guard)->login($educatable);
+            return;
+        }
 
-        $token = $educatable->createToken('resource-hub-portal-access-token', [
-            'resource-hub-portal',
-        ]);
+        $this->rateLimiter->recordFailedAttempt($this->authentication);
 
-        return response()->json([
-            'success' => true,
-            'token' => str($token->plainTextToken)->after('|')->toString(),
-            'guard' => $guard,
-        ]);
+        $fail('The provided code is invalid.');
     }
 }
