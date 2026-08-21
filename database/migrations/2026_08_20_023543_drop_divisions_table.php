@@ -72,6 +72,8 @@ return new class () extends Migration {
                 ->each(fn (string $guard) => $this->deletePermissions(array_keys($this->permissions), $guard));
 
             Schema::dropIfExists('divisions');
+
+            DB::table('audits')->where('auditable_type', 'divisions')->delete();
         });
     }
 
