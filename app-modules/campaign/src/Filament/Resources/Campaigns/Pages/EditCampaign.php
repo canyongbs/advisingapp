@@ -62,7 +62,7 @@ class EditCampaign extends EditRecord
                     ->options(function () {
                         $query = Group::query();
 
-                        if (auth()->user()->cannot(['group.view-any', 'group.*.view'])) {
+                        if (! auth()->user()->canAny(['group.view-any', 'group.*.view'])) {
                             $query->whereHas('user', function (Builder $query) {
                                 $query->whereKey(auth()->id())->orWhereRelation('department.users', 'id', auth()->id());
                             });
