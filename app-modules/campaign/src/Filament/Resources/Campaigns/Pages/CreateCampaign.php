@@ -109,7 +109,7 @@ class CreateCampaign extends CreateRecord
                         ->options(function () {
                             $query = Group::query();
 
-                            if (auth()->user()->cannot('group.*.view')) {
+                            if (auth()->user()->cannot(['group.view-any', 'group.*.view'])) {
                                 $query->whereHas('user', function (EloquentBuilder $query) {
                                     $query->whereKey(auth()->id())->orWhereRelation('department.users', 'id', auth()->id());
                                 });
