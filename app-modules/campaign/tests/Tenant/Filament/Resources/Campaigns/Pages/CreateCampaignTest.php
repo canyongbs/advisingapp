@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Campaign\Tests\Tenant\Filament\Resources\Campaigns\Pages;
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\CreateCampaign;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
@@ -46,7 +47,10 @@ use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
+use App\Models\User;
+use Filament\Forms\Components\Select;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
@@ -101,4 +105,37 @@ it('requires population group on campaign creation', function () {
         ->assertHasFormErrors([
             'segment_id' => 'required',
         ]);
+});
+
+it('only offers the user\'s own and department\'s population groups when they lack the group.*.view permission', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('campaign.view-any');
+    $user->givePermissionTo('campaign.create');
+
+    actingAs($user);
+
+    $otherUsersGroup = Group::factory()->create();
+
+    livewire(CreateCampaign::class)
+        ->assertFormFieldExists(
+            'segment_id',
+            fn (Select $field) => ! array_key_exists($otherUsersGroup->getKey(), $field->getOptions()),
+        );
+});
+
+it('offers every population group when the user has the group.*.view permission', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('campaign.view-any');
+    $user->givePermissionTo('campaign.create');
+    $user->givePermissionTo('group.*.view');
+
+    actingAs($user);
+
+    $otherUsersGroup = Group::factory()->create();
+
+    livewire(CreateCampaign::class)
+        ->assertFormFieldExists(
+            'segment_id',
+            fn (Select $field) => array_key_exists($otherUsersGroup->getKey(), $field->getOptions()),
+        );
 });

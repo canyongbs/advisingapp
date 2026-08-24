@@ -107,11 +107,15 @@ class CreateCampaign extends CreateRecord
                     Select::make('segment_id')
                         ->label('Population Group')
                         ->options(function () {
-                            return Group::query()
-                                ->whereHas('user', function (EloquentBuilder $query) {
+                            $query = Group::query();
+
+                            if (auth()->user()->cannot('group.*.view')) {
+                                $query->whereHas('user', function (EloquentBuilder $query) {
                                     $query->whereKey(auth()->id())->orWhereRelation('department.users', 'id', auth()->id());
-                                })
-                                ->pluck('name', 'id');
+                                });
+                            }
+
+                            return $query->pluck('name', 'id');
                         })
                         ->searchable()
                         ->required()

@@ -40,7 +40,9 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\EditCampaign;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\ListCampaigns;
 use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Group\Models\Group;
 use App\Models\User;
+use Filament\Forms\Components\Select;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -129,4 +131,24 @@ test('archive action redirects to index after archiving', function () {
     livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->callAction('archive')
         ->assertRedirect(ListCampaigns::getUrl());
+});
+
+test('population group select offers every group the user has permission to view, not just their own or department\'s', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('campaign.view-any');
+    $user->givePermissionTo('campaign.*.view');
+    $user->givePermissionTo('campaign.*.update');
+    $user->givePermissionTo('group.*.view');
+
+    actingAs($user);
+
+    $campaign = Campaign::factory()->enabled()->create();
+    $otherUsersGroup = Group::factory()->create();
+
+    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+        ->assertFormFieldExists(
+            'segment_id',
+            fn (Select $field) => array_key_exists($otherUsersGroup->getKey(), $field->getOptions())
+                && array_key_exists($campaign->segment_id, $field->getOptions()),
+        );
 });
