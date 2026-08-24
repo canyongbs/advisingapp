@@ -46,6 +46,9 @@ use Filament\Forms\Components\Select;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+
+use Spatie\Permission\PermissionRegistrar;
+
 use function Tests\asSuperAdmin;
 
 test('archive action is visible on edit page', function () {
@@ -140,6 +143,8 @@ test('population group select offers every group the user has permission to view
     $user->givePermissionTo('campaign.*.update');
     $user->givePermissionTo('group.*.view');
 
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+
     actingAs($user);
 
     $campaign = Campaign::factory()->enabled()->create();
@@ -148,7 +153,12 @@ test('population group select offers every group the user has permission to view
     livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertFormFieldExists(
             'segment_id',
-            fn (Select $field) => array_key_exists($otherUsersGroup->getKey(), $field->getOptions())
-                && array_key_exists($campaign->segment_id, $field->getOptions()),
+            function (Select $field) use ($otherUsersGroup, $campaign) {
+                expect($field->getOptions())
+                    ->toHaveKey($otherUsersGroup->getKey())
+                    ->toHaveKey($campaign->segment_id);
+
+                return true;
+            },
         );
 });

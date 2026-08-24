@@ -52,6 +52,9 @@ use Filament\Forms\Components\Select;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+
+use Spatie\Permission\PermissionRegistrar;
+
 use function Tests\asSuperAdmin;
 
 beforeEach(function () {
@@ -112,6 +115,8 @@ it('only offers the user\'s own and department\'s population groups when they la
     $user->givePermissionTo('campaign.view-any');
     $user->givePermissionTo('campaign.create');
 
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+
     actingAs($user);
 
     $otherUsersGroup = Group::factory()->create();
@@ -119,7 +124,11 @@ it('only offers the user\'s own and department\'s population groups when they la
     livewire(CreateCampaign::class)
         ->assertFormFieldExists(
             'segment_id',
-            fn (Select $field) => ! array_key_exists($otherUsersGroup->getKey(), $field->getOptions()),
+            function (Select $field) use ($otherUsersGroup) {
+                expect($field->getOptions())->not->toHaveKey($otherUsersGroup->getKey());
+
+                return true;
+            },
         );
 });
 
@@ -129,6 +138,8 @@ it('offers every population group when the user has the group.*.view permission'
     $user->givePermissionTo('campaign.create');
     $user->givePermissionTo('group.*.view');
 
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+
     actingAs($user);
 
     $otherUsersGroup = Group::factory()->create();
@@ -136,6 +147,10 @@ it('offers every population group when the user has the group.*.view permission'
     livewire(CreateCampaign::class)
         ->assertFormFieldExists(
             'segment_id',
-            fn (Select $field) => array_key_exists($otherUsersGroup->getKey(), $field->getOptions()),
+            function (Select $field) use ($otherUsersGroup) {
+                expect($field->getOptions())->toHaveKey($otherUsersGroup->getKey());
+
+                return true;
+            },
         );
 });
