@@ -73,7 +73,7 @@ return new class () extends Migration {
 
             Schema::dropIfExists('divisions');
 
-            DB::table('audits')->where('auditable_type', 'divisions')->delete();
+            DB::table('audits')->where('auditable_type', 'division')->delete();
         });
     }
 
