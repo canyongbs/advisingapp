@@ -40,7 +40,9 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\EditCampaign;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\ListCampaigns;
 use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 
@@ -136,7 +138,7 @@ test('archive action redirects to index after archiving', function () {
         ->assertRedirect(ListCampaigns::getUrl());
 });
 
-test('population group select offers every group the user has permission to view, not just their own or department\'s', function () {
+test('population group select offers every group of the appropriate type once the All Groups ownership is inferred', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('campaign.view-any');
     $user->givePermissionTo('campaign.*.view');
@@ -148,7 +150,7 @@ test('population group select offers every group the user has permission to view
     actingAs($user);
 
     $campaign = Campaign::factory()->enabled()->create();
-    $otherUsersGroup = Group::factory()->create();
+    $otherUsersGroup = Group::factory()->create(['model' => $campaign->group->model]);
 
     livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertFormFieldExists(
@@ -161,4 +163,68 @@ test('population group select offers every group the user has permission to view
                 return true;
             },
         );
+});
+
+test('group ownership and population type are pre-selected to match a group the user owns', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('campaign.view-any');
+    $user->givePermissionTo('campaign.*.view');
+    $user->givePermissionTo('campaign.*.update');
+    $user->givePermissionTo('group.*.view');
+
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+    actingAs($user);
+
+    $group = Group::factory()->create(['model' => GroupModel::Prospect, 'user_id' => $user->id]);
+    $campaign = Campaign::factory()->enabled()->create(['segment_id' => $group->id]);
+
+    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+        ->assertSchemaStateSet([
+            'population_type' => GroupModel::Prospect->value,
+            'group_ownership' => 'mine',
+        ]);
+});
+
+test('group ownership is pre-selected to My Department\'s Groups when the group belongs to a department colleague', function () {
+    $department = Department::factory()->create();
+
+    $user = User::factory()->licensed(LicenseType::cases())->create(['team_id' => $department->id]);
+    $user->givePermissionTo('campaign.view-any');
+    $user->givePermissionTo('campaign.*.view');
+    $user->givePermissionTo('campaign.*.update');
+    $user->givePermissionTo('group.*.view');
+
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+    $colleague = User::factory()->create(['team_id' => $department->id]);
+    $group = Group::factory()->create(['model' => GroupModel::Student, 'user_id' => $colleague->id]);
+    $campaign = Campaign::factory()->enabled()->create(['segment_id' => $group->id]);
+
+    actingAs($user);
+
+    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+        ->assertSchemaStateSet([
+            'population_type' => GroupModel::Student->value,
+            'group_ownership' => 'department',
+        ]);
+});
+
+test('group ownership is pre-selected to All Groups when the group is neither the user\'s own nor their department\'s', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('campaign.view-any');
+    $user->givePermissionTo('campaign.*.view');
+    $user->givePermissionTo('campaign.*.update');
+    $user->givePermissionTo('group.*.view');
+
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+    actingAs($user);
+
+    $campaign = Campaign::factory()->enabled()->create();
+
+    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+        ->assertSchemaStateSet([
+            'group_ownership' => 'all',
+        ]);
 });

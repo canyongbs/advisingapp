@@ -1,0 +1,149 @@
+<?php
+
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS Inc.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+
+namespace AdvisingApp\Campaign\Filament\Forms\Components;
+
+use AdvisingApp\Campaign\Models\Campaign;
+use AdvisingApp\Group\Enums\GroupModel;
+use AdvisingApp\Group\Models\Group;
+use Closure;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\ToggleButtons;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Database\Eloquent\Builder;
+
+class PopulationGroupSelector
+{
+    public const OWNERSHIP_MINE = 'mine';
+
+    public const OWNERSHIP_DEPARTMENT = 'department';
+
+    public const OWNERSHIP_ALL = 'all';
+
+    /**
+     * @return array<int, Select | ToggleButtons>
+     */
+    public static function make(?Closure $afterSegmentIdUpdated = null): array
+    {
+        $segmentIdField = Select::make('segment_id')
+            ->label('Population Group')
+            ->options(function (Get $get) {
+                $populationType = $get('population_type');
+                $groupOwnership = $get('group_ownership');
+
+                if (blank($populationType) || blank($groupOwnership)) {
+                    return [];
+                }
+
+                $query = Group::query()->where('model', $populationType);
+
+                match ($groupOwnership) {
+                    self::OWNERSHIP_MINE => $query->where('user_id', auth()->id()),
+                    self::OWNERSHIP_DEPARTMENT => $query->whereHas('user', function (Builder $query) {
+                        $query->whereRelation('department.users', 'id', auth()->id());
+                    }),
+                    default => null,
+                };
+
+                return $query->pluck('name', 'id');
+            })
+            ->searchable()
+            ->required()
+            ->live();
+
+        if ($afterSegmentIdUpdated) {
+            $segmentIdField->afterStateUpdated($afterSegmentIdUpdated);
+        }
+
+        return [
+            ToggleButtons::make('population_type')
+                ->label('Population Type')
+                ->options([
+                    GroupModel::Student->value => 'Students',
+                    GroupModel::Prospect->value => 'Prospects',
+                ])
+                ->inline()
+                ->live()
+                ->dehydrated(false)
+                ->required()
+                ->afterStateHydrated(fn (Set $set, ?Campaign $record) => $set('population_type', ($record?->group->model ?? GroupModel::default())->value))
+                ->afterStateUpdated(fn (Set $set) => $set('segment_id', null)),
+            ToggleButtons::make('group_ownership')
+                ->label('Group Ownership')
+                ->options(function () {
+                    $options = [
+                        self::OWNERSHIP_MINE => 'My Groups',
+                        self::OWNERSHIP_DEPARTMENT => "My Department's Groups",
+                    ];
+
+                    if (auth()->user()->canAny(['group.view-any', 'group.*.view'])) {
+                        $options[self::OWNERSHIP_ALL] = 'All Groups';
+                    }
+
+                    return $options;
+                })
+                ->inline()
+                ->live()
+                ->dehydrated(false)
+                ->required()
+                ->afterStateHydrated(fn (Set $set, ?Campaign $record) => $set('group_ownership', self::defaultGroupOwnership($record)))
+                ->afterStateUpdated(fn (Set $set) => $set('segment_id', null)),
+            $segmentIdField,
+        ];
+    }
+
+    private static function defaultGroupOwnership(?Campaign $record): string
+    {
+        $group = $record?->group;
+
+        if (! $group) {
+            return self::OWNERSHIP_MINE;
+        }
+
+        if ($group->user_id === auth()->id()) {
+            return self::OWNERSHIP_MINE;
+        }
+
+        $currentUserDepartmentId = auth()->user()?->team_id;
+
+        if (filled($currentUserDepartmentId) && $group->user?->team_id === $currentUserDepartmentId) {
+            return self::OWNERSHIP_DEPARTMENT;
+        }
+
+        return self::OWNERSHIP_ALL;
+    }
+}

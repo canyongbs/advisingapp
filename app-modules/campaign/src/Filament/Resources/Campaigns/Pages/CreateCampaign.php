@@ -38,13 +38,12 @@ namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 
 use AdvisingApp\Campaign\Enums\CampaignActionType;
 use AdvisingApp\Campaign\Filament\Blocks\CampaignActionBlock;
+use AdvisingApp\Campaign\Filament\Forms\Components\PopulationGroupSelector;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
 use AdvisingApp\Campaign\Models\Campaign;
-use AdvisingApp\Group\Models\Group;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ViewField;
@@ -53,7 +52,6 @@ use Filament\Resources\Pages\CreateRecord\Concerns\HasWizard;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Components\Wizard\Step;
 use Filament\Support\Enums\Width;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 
@@ -104,25 +102,9 @@ class CreateCampaign extends CreateRecord
                     TextInput::make('name')
                         ->autocomplete(false)
                         ->required(),
-                    Select::make('segment_id')
-                        ->label('Population Group')
-                        ->options(function () {
-                            $query = Group::query();
-
-                            if (! auth()->user()->canAny(['group.view-any', 'group.*.view'])) {
-                                $query->whereHas('user', function (EloquentBuilder $query) {
-                                    $query->whereKey(auth()->id())->orWhereRelation('department.users', 'id', auth()->id());
-                                });
-                            }
-
-                            return $query->pluck('name', 'id');
-                        })
-                        ->searchable()
-                        ->required()
-                        ->live()
-                        ->afterStateUpdated(function (Set $set) {
-                            $set('actions', []);
-                        }),
+                    ...PopulationGroupSelector::make(function (Set $set) {
+                        $set('actions', []);
+                    }),
                 ]),
             Step::make('Define Journey')
                 ->schema([

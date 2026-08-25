@@ -47,8 +47,10 @@ use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use AdvisingApp\Interaction\Models\InteractionStatus;
 use AdvisingApp\Interaction\Models\InteractionType;
+use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\ToggleButtons;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -110,7 +112,7 @@ it('requires population group on campaign creation', function () {
         ]);
 });
 
-it('only offers the user\'s own and department\'s population groups when they lack the group.*.view permission', function () {
+it('only offers the user\'s own population groups by default when they lack the group.*.view permission', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('campaign.view-any');
     $user->givePermissionTo('campaign.create');
@@ -119,7 +121,7 @@ it('only offers the user\'s own and department\'s population groups when they la
 
     actingAs($user);
 
-    $otherUsersGroup = Group::factory()->create();
+    $otherUsersGroup = Group::factory()->create(['model' => GroupModel::default()]);
 
     livewire(CreateCampaign::class)
         ->assertFormFieldExists(
@@ -132,7 +134,23 @@ it('only offers the user\'s own and department\'s population groups when they la
         );
 });
 
-it('offers every population group when the user has the group.*.view permission', function () {
+it('hides the All Groups ownership option for users without the group.*.view or group.view-any permission', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('campaign.view-any');
+    $user->givePermissionTo('campaign.create');
+
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+    actingAs($user);
+
+    livewire(CreateCampaign::class)
+        ->assertFormFieldExists(
+            'group_ownership',
+            fn (ToggleButtons $field) => ! array_key_exists('all', $field->getOptions()),
+        );
+});
+
+it('offers every population group of the selected type when the All Groups ownership option is selected', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('campaign.view-any');
     $user->givePermissionTo('campaign.create');
@@ -142,9 +160,13 @@ it('offers every population group when the user has the group.*.view permission'
 
     actingAs($user);
 
-    $otherUsersGroup = Group::factory()->create();
+    $otherUsersGroup = Group::factory()->create(['model' => GroupModel::Student]);
 
     livewire(CreateCampaign::class)
+        ->fillForm([
+            'population_type' => GroupModel::Student->value,
+            'group_ownership' => 'all',
+        ])
         ->assertFormFieldExists(
             'segment_id',
             function (Select $field) use ($otherUsersGroup) {
@@ -153,4 +175,74 @@ it('offers every population group when the user has the group.*.view permission'
                 return true;
             },
         );
+});
+
+it('offers only the groups belonging to the user\'s department when the My Department\'s Groups ownership option is selected', function () {
+    $department = Department::factory()->create();
+
+    $user = User::factory()->licensed(LicenseType::cases())->create(['team_id' => $department->id]);
+    $user->givePermissionTo('campaign.view-any');
+    $user->givePermissionTo('campaign.create');
+
+    app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+    $colleague = User::factory()->create(['team_id' => $department->id]);
+    $colleaguesGroup = Group::factory()->create(['model' => GroupModel::Student, 'user_id' => $colleague->id]);
+    $outsidersGroup = Group::factory()->create(['model' => GroupModel::Student]);
+
+    actingAs($user);
+
+    livewire(CreateCampaign::class)
+        ->fillForm([
+            'population_type' => GroupModel::Student->value,
+            'group_ownership' => 'department',
+        ])
+        ->assertFormFieldExists(
+            'segment_id',
+            function (Select $field) use ($colleaguesGroup, $outsidersGroup) {
+                expect($field->getOptions())
+                    ->toHaveKey($colleaguesGroup->getKey())
+                    ->not->toHaveKey($outsidersGroup->getKey());
+
+                return true;
+            },
+        );
+});
+
+it('filters the population group options by the selected population type', function () {
+    $studentGroup = Group::factory()->create(['model' => GroupModel::Student, 'user_id' => auth()->id()]);
+    $prospectGroup = Group::factory()->create(['model' => GroupModel::Prospect, 'user_id' => auth()->id()]);
+
+    livewire(CreateCampaign::class)
+        ->fillForm(['population_type' => GroupModel::Prospect->value])
+        ->assertFormFieldExists(
+            'segment_id',
+            function (Select $field) use ($studentGroup, $prospectGroup) {
+                expect($field->getOptions())
+                    ->toHaveKey($prospectGroup->getKey())
+                    ->not->toHaveKey($studentGroup->getKey());
+
+                return true;
+            },
+        );
+});
+
+it('clears the selected population group when the population type changes', function () {
+    $studentGroup = Group::factory()->create(['model' => GroupModel::Student, 'user_id' => auth()->id()]);
+
+    livewire(CreateCampaign::class)
+        ->fillForm(['segment_id' => $studentGroup->getKey()])
+        ->assertSchemaStateSet(['segment_id' => $studentGroup->getKey()])
+        ->fillForm(['population_type' => GroupModel::Prospect->value])
+        ->assertSchemaStateSet(['segment_id' => null]);
+});
+
+it('clears the selected population group when the group ownership changes', function () {
+    $studentGroup = Group::factory()->create(['model' => GroupModel::Student, 'user_id' => auth()->id()]);
+
+    livewire(CreateCampaign::class)
+        ->fillForm(['segment_id' => $studentGroup->getKey()])
+        ->assertSchemaStateSet(['segment_id' => $studentGroup->getKey()])
+        ->fillForm(['group_ownership' => 'all'])
+        ->assertSchemaStateSet(['segment_id' => null]);
 });
