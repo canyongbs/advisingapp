@@ -57,7 +57,8 @@ class EditCampaign extends EditRecord
                 TextInput::make('name')
                     ->required(),
                 ...PopulationGroupSelector::make(),
-                Toggle::make('enabled'),
+                Toggle::make('enabled')
+                    ->helperText('Toggle this off to set your campaign to a draft state.'),
             ]);
     }
 
