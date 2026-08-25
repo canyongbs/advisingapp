@@ -176,7 +176,7 @@ test('group ownership and population type are pre-selected to match a group the 
 
     actingAs($user);
 
-    $group = Group::factory()->create(['model' => GroupModel::Prospect, 'user_id' => $user->id]);
+    $group = Group::factory()->prospect()->create(['user_id' => $user->id]);
     $campaign = Campaign::factory()->enabled()->create(['segment_id' => $group->id]);
 
     livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
@@ -198,7 +198,7 @@ test('group ownership is pre-selected to My Department\'s Groups when the group 
     app(PermissionRegistrar::class)->forgetCachedPermissions();
 
     $colleague = User::factory()->create(['team_id' => $department->id]);
-    $group = Group::factory()->create(['model' => GroupModel::Student, 'user_id' => $colleague->id]);
+    $group = Group::factory()->student()->create(['user_id' => $colleague->id]);
     $campaign = Campaign::factory()->enabled()->create(['segment_id' => $group->id]);
 
     actingAs($user);

@@ -64,7 +64,7 @@ beforeEach(function () {
 });
 
 it('clears journey steps when the population group is changed', function (GroupModel $newPopulationModel) {
-    $studentGroup = Group::factory()->create(['model' => GroupModel::Student, 'user_id' => auth()->id()]);
+    $studentGroup = Group::factory()->student()->create(['user_id' => auth()->id()]);
     $newGroup = Group::factory()->create(['model' => $newPopulationModel, 'user_id' => auth()->id()]);
 
     livewire(CreateCampaign::class)
@@ -121,7 +121,7 @@ it('only offers the user\'s own population groups by default when they lack the 
 
     actingAs($user);
 
-    $otherUsersGroup = Group::factory()->create(['model' => GroupModel::default()]);
+    $otherUsersGroup = Group::factory()->student()->create();
 
     livewire(CreateCampaign::class)
         ->assertFormFieldExists(
@@ -160,7 +160,7 @@ it('offers every population group of the selected type when the All Groups owner
 
     actingAs($user);
 
-    $otherUsersGroup = Group::factory()->create(['model' => GroupModel::Student]);
+    $otherUsersGroup = Group::factory()->student()->create();
 
     livewire(CreateCampaign::class)
         ->fillForm([
@@ -187,8 +187,8 @@ it('offers only the groups belonging to the user\'s department when the My Depar
     app(PermissionRegistrar::class)->forgetCachedPermissions();
 
     $colleague = User::factory()->create(['team_id' => $department->id]);
-    $colleaguesGroup = Group::factory()->create(['model' => GroupModel::Student, 'user_id' => $colleague->id]);
-    $outsidersGroup = Group::factory()->create(['model' => GroupModel::Student]);
+    $colleaguesGroup = Group::factory()->student()->create(['user_id' => $colleague->id]);
+    $outsidersGroup = Group::factory()->student()->create();
 
     actingAs($user);
 
@@ -210,8 +210,8 @@ it('offers only the groups belonging to the user\'s department when the My Depar
 });
 
 it('filters the population group options by the selected population type', function () {
-    $studentGroup = Group::factory()->create(['model' => GroupModel::Student, 'user_id' => auth()->id()]);
-    $prospectGroup = Group::factory()->create(['model' => GroupModel::Prospect, 'user_id' => auth()->id()]);
+    $studentGroup = Group::factory()->student()->create(['user_id' => auth()->id()]);
+    $prospectGroup = Group::factory()->prospect()->create(['user_id' => auth()->id()]);
 
     livewire(CreateCampaign::class)
         ->fillForm(['population_type' => GroupModel::Prospect->value])
@@ -228,7 +228,7 @@ it('filters the population group options by the selected population type', funct
 });
 
 it('clears the selected population group when the population type changes', function () {
-    $studentGroup = Group::factory()->create(['model' => GroupModel::Student, 'user_id' => auth()->id()]);
+    $studentGroup = Group::factory()->student()->create(['user_id' => auth()->id()]);
 
     livewire(CreateCampaign::class)
         ->fillForm(['segment_id' => $studentGroup->getKey()])
@@ -238,7 +238,7 @@ it('clears the selected population group when the population type changes', func
 });
 
 it('clears the selected population group when the group ownership changes', function () {
-    $studentGroup = Group::factory()->create(['model' => GroupModel::Student, 'user_id' => auth()->id()]);
+    $studentGroup = Group::factory()->student()->create(['user_id' => auth()->id()]);
 
     livewire(CreateCampaign::class)
         ->fillForm(['segment_id' => $studentGroup->getKey()])
