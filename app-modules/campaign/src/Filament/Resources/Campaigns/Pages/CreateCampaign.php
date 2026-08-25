@@ -98,6 +98,7 @@ class CreateCampaign extends CreateRecord
     {
         return [
             Step::make('Campaign Details')
+                ->columns(1)
                 ->schema([
                     TextInput::make('name')
                         ->autocomplete(false)
