@@ -39,6 +39,7 @@ app-modules/**/resources/js/dist/*
 /.bash_history
 **/psysh_history
 .pdepend/
+storage/framework/lsp-*.php
 
 # BEGIN canyongbs/common (common:publish) — do not edit this block manually.
 /boost.json
