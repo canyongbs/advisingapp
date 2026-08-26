@@ -253,6 +253,11 @@ class Login extends \Filament\Auth\Pages\Login
         return str((string) request()->userAgent())->contains(self::MOBILE_APP_USER_AGENT_TOKEN);
     }
 
+    public function isGoogleSsoUnavailableInMobileApp(): bool
+    {
+        return $this->isMobileApp() && $this->isGoogleSsoEnabled();
+    }
+
     protected function isValidCode(User $user, string $code): bool
     {
         if ($this->usingRecoveryCode) {
@@ -280,16 +285,14 @@ class Login extends \Filament\Auth\Pages\Login
                 ->extraAttributes(['class' => 'dark_button_border']);
         }
 
-        if ($this->isGoogleSsoEnabled()) {
+        // Google OAuth can't complete inside the mobile app's embedded WebView.
+        if ($this->isGoogleSsoEnabled() && ! $this->isMobileApp()) {
             $ssoActions[] = Action::make('google_sso')
                 ->label(__('Google'))
                 ->url(route('socialite.redirect', ['provider' => 'google']))
                 ->icon('icon-google')
                 ->color('gray')
                 ->size('sm')
-                // Google OAuth can't complete inside the mobile app's embedded WebView.
-                ->disabled($this->isMobileApp())
-                ->tooltip($this->isMobileApp() ? self::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE : null)
                 ->extraAttributes(['class' => 'dark_button_border']);
         }
 

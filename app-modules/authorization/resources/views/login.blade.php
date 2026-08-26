@@ -72,6 +72,12 @@
                 :actions="$this->getSsoFormActions()"
                 :full-width="$this->hasFullWidthFormActions()"
             />
+
+            @if ($this->isGoogleSsoUnavailableInMobileApp())
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                    {!! \AdvisingApp\Authorization\Filament\Pages\Auth\Login::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE !!}
+                </p>
+            @endif
         </form>
 
         @if ($this->needsMFA && ! $this->needsMfaSetup)
