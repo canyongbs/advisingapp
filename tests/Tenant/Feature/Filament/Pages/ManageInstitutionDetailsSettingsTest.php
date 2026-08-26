@@ -109,7 +109,7 @@ it('requires proper permissions to update settings', function () {
         ])
         ->call('save');
 
-    expect($settings->name)->toBe('Existing Institution Name');
+    expect(app(InstitutionDetailsSettings::class)->name)->toBe('Existing Institution Name');
 
     $user->givePermissionTo('settings.*.update');
 
@@ -119,5 +119,5 @@ it('requires proper permissions to update settings', function () {
         ])
         ->call('save');
 
-    expect($settings->name)->toBe('New Institution Name');
+    expect(app(InstitutionDetailsSettings::class)->name)->toBe('New Institution Name');
 });

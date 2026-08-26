@@ -103,7 +103,7 @@ it('requires proper permissions to update settings', function () {
         ])
         ->call('save');
 
-    expect($settings->timezone)->toBe('America/Chicago');
+    expect(app(DisplaySettings::class)->timezone)->toBe('America/Chicago');
 
     $user->givePermissionTo('settings.*.update');
 
@@ -113,5 +113,5 @@ it('requires proper permissions to update settings', function () {
         ])
         ->call('save');
 
-    expect($settings->timezone)->toBe('America/New_York');
+    expect(app(DisplaySettings::class)->timezone)->toBe('America/New_York');
 });

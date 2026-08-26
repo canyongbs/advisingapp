@@ -116,6 +116,8 @@ it('requires proper permissions to update settings', function () {
         ])
         ->call('save');
 
+    $settings = app(CollegeBrandingSettings::class);
+
     expect($settings->college_text)->toBe('Existing College Text')
         ->and($settings->color)->toBe(Color::Blue);
 
@@ -129,6 +131,8 @@ it('requires proper permissions to update settings', function () {
             'color' => Color::Red->value,
         ])
         ->call('save');
+
+    $settings = app(CollegeBrandingSettings::class);
 
     expect($settings->college_text)->toBe('New College Text')
         ->and($settings->color)->toBe(Color::Red);

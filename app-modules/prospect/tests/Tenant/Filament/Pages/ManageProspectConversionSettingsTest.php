@@ -112,7 +112,7 @@ it('requires proper permissions to update settings', function () {
         ])
         ->call('save');
 
-    expect($settings->estimated_average_revenue->getAmount())->toBe(Money::parseByDecimal('100', 'USD')->getAmount());
+    expect(app(ProspectConversionSettings::class)->estimated_average_revenue->getAmount())->toBe(Money::parseByDecimal('100', 'USD')->getAmount());
 
     $user->givePermissionTo('settings.*.update');
 
@@ -122,5 +122,5 @@ it('requires proper permissions to update settings', function () {
         ])
         ->call('save');
 
-    expect($settings->estimated_average_revenue->getAmount())->toBe(Money::parseByDecimal('200', 'USD')->getAmount());
+    expect(app(ProspectConversionSettings::class)->estimated_average_revenue->getAmount())->toBe(Money::parseByDecimal('200', 'USD')->getAmount());
 });
