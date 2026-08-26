@@ -110,7 +110,7 @@ test('product_admin. permission strings only appear in database/migrations', fun
         ->ignoreVCS(true)
         ->contains('product_admin.');
 
-      $matches = iterator_to_array($finder);
+    $matches = iterator_to_array($finder);
 
     Assert::assertEmpty(
         $matches,
