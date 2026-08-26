@@ -70,12 +70,12 @@ class ManageDisplaySettings extends SettingsPage
                 TimezoneSelect::make('timezone')
                     ->helperText('Default: ' . config('app.timezone')),
             ])
-            ->disabled(! auth()->user()->can('product_admin.*.update'));
+            ->disabled(! auth()->user()->can('settings.*.update'));
     }
 
     public function save(): void
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->can('settings.*.update')) {
             return;
         }
 
@@ -87,7 +87,7 @@ class ManageDisplaySettings extends SettingsPage
      */
     public function getFormActions(): array
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->can('settings.*.update')) {
             return [];
         }
 

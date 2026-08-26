@@ -41,6 +41,7 @@ use Illuminate\Support\Collection;
 use InterNACHI\Modular\Support\ModuleConfig;
 use InterNACHI\Modular\Support\ModuleRegistry;
 use PHPUnit\Framework\Assert;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
 $legacyV4UuidModels = require __DIR__ . '/legacy-v4-uuid-models.php';
@@ -86,4 +87,32 @@ test('Legacy models must not use HasUuids (UUIDv7)', function () {
             "Class [{$class}] uses HasUuids (UUIDv7) directly. Legacy models must use HasVersion4Uuids instead.",
         );
     }
+});
+
+test('product_admin. permission strings only appear in database/migrations', function () {
+    $basePath = dirname(__DIR__, 3);
+
+    $finder = Finder::create()
+        ->in($basePath)
+        ->exclude([
+            '.cache',
+            'bootstrap/cache',
+            'storage',
+            'vendor',
+            'node_modules',
+            'database/migrations',
+        ])
+        ->notPath([
+            'database/migrations',
+            'tests/Tenant/Unit/ArchTest.php',
+        ])
+        ->ignoreDotFiles(false)
+        ->ignoreVCS(true)
+        ->contains('product_admin.');
+
+    Assert::assertEmpty(
+        iterator_to_array($finder),
+        "The permission string [product_admin.] should only appear in database/migrations, but was found in: \n" .
+            implode("\n", array_map(fn (SplFileInfo $file) => $file->getRelativePathname(), iterator_to_array($finder))),
+    );
 });

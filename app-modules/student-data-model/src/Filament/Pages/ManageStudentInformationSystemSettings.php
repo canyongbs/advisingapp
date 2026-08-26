@@ -102,7 +102,7 @@ class ManageStudentInformationSystemSettings extends SettingsPage
                             ->default(EnrollmentSemesterAutoImportDefaultOrder::First)
                             ->visible(fn (Get $get): bool => $get('is_enrollment_semester_auto_import_enabled')),
                     ])
-                    ->disabled(! auth()->user()->can('product_admin.*.update')),
+                    ->disabled(! auth()->user()->can('settings.*.update')),
                 Section::make('Student Record Management')
                     ->description('If toggled, this enables direct editing of student records without relying on SIS synchronization.')
                     ->schema([
@@ -110,13 +110,13 @@ class ManageStudentInformationSystemSettings extends SettingsPage
                             ->label('Enable')
                             ->default(false),
                     ])
-                    ->disabled(! auth()->user()->can('product_admin.*.update')),
+                    ->disabled(! auth()->user()->can('settings.*.update')),
             ]);
     }
 
     public function save(): void
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->can('settings.*.update')) {
             return;
         }
 
@@ -128,7 +128,7 @@ class ManageStudentInformationSystemSettings extends SettingsPage
      */
     public function getFormActions(): array
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->can('settings.*.update')) {
             return [];
         }
 
