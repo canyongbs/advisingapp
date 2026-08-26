@@ -34,39 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
+namespace AdvisingApp\Campaign\Enums;
 
-use AdvisingApp\Campaign\Filament\Actions\ArchiveCampaignAction;
-use AdvisingApp\Campaign\Filament\Forms\Components\PopulationGroupSelector;
-use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
-use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
-use Filament\Resources\Pages\EditRecord;
-use Filament\Schemas\Schema;
+use Filament\Support\Contracts\HasLabel;
 
-class EditCampaign extends EditRecord
+enum GroupOwnership: string implements HasLabel
 {
-    protected static string $resource = CampaignResource::class;
+    case Mine = 'mine';
 
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->columns(1)
-            ->components([
-                TextInput::make('name')
-                    ->required(),
-                ...PopulationGroupSelector::make(),
-                Toggle::make('enabled')
-                    ->helperText('Toggle this off to pause the campaign; no further journey steps will run.'),
-            ]);
-    }
+    case Department = 'department';
 
-    protected function getHeaderActions(): array
+    case All = 'all';
+
+    public function getLabel(): string
     {
-        return [
-            ArchiveCampaignAction::make(),
-            DeleteAction::make(),
-        ];
+        return match ($this) {
+            self::Mine => 'My Groups',
+            self::Department => "My Department's Groups",
+            self::All => 'All Groups',
+        };
     }
 }

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Campaign\Filament\Forms\Components;
 
+use AdvisingApp\Campaign\Enums\GroupOwnership;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
@@ -48,35 +49,36 @@ use Illuminate\Database\Eloquent\Builder;
 
 class PopulationGroupSelector
 {
-    public const OWNERSHIP_MINE = 'mine';
-
-    public const OWNERSHIP_DEPARTMENT = 'department';
-
-    public const OWNERSHIP_ALL = 'all';
-
     /**
      * @return array<int, Select | ToggleButtons>
      */
     public static function make(?Closure $afterSegmentIdUpdated = null): array
     {
+        $availablePopulationTypes = self::availablePopulationTypes();
+
         $segmentIdField = Select::make('segment_id')
             ->label('Population Group')
             ->options(function (Get $get) {
                 $populationType = $get('population_type');
-                $groupOwnership = $get('group_ownership');
+                $groupOwnership = $get->enum('group_ownership', GroupOwnership::class, isNullable: true);
 
                 if (blank($populationType) || blank($groupOwnership)) {
+                    return [];
+                }
+
+                // Group Ownership is client-side state, so "All" must be re-authorized here rather than trusted from the form.
+                if (($groupOwnership === GroupOwnership::All) && auth()->user()->cannot('group.view-any') && auth()->user()->cannot('group.*.view')) {
                     return [];
                 }
 
                 $query = Group::query()->where('model', $populationType);
 
                 match ($groupOwnership) {
-                    self::OWNERSHIP_MINE => $query->where('user_id', auth()->id()),
-                    self::OWNERSHIP_DEPARTMENT => $query->whereHas('user', function (Builder $query) {
+                    GroupOwnership::Mine => $query->where('user_id', auth()->id()),
+                    GroupOwnership::Department => $query->whereHas('user', function (Builder $query) {
                         $query->whereRelation('department.users', 'id', auth()->id());
                     }),
-                    default => null,
+                    GroupOwnership::All => null,
                 };
 
                 return $query->pluck('name', 'id');
@@ -92,26 +94,29 @@ class PopulationGroupSelector
         return [
             ToggleButtons::make('population_type')
                 ->label('Population Type')
-                ->options([
-                    GroupModel::Student->value => 'Students',
-                    GroupModel::Prospect->value => 'Prospects',
-                ])
+                ->options(collect($availablePopulationTypes)->mapWithKeys(fn (GroupModel $type) => [
+                    $type->value => $type === GroupModel::Student ? 'Students' : 'Prospects',
+                ]))
                 ->inline()
                 ->live()
                 ->dehydrated(false)
                 ->required()
-                ->afterStateHydrated(fn (Set $set, ?Campaign $record) => $set('population_type', ($record?->group->model ?? GroupModel::default())->value))
+                ->hidden(count($availablePopulationTypes) <= 1)
+                ->afterStateHydrated(fn (Set $set, ?Campaign $record) => $set(
+                    'population_type',
+                    self::defaultPopulationType($record, $availablePopulationTypes),
+                ))
                 ->afterStateUpdated(fn (Set $set) => $set('segment_id', null)),
             ToggleButtons::make('group_ownership')
                 ->label('Group Ownership')
                 ->options(function () {
                     $options = [
-                        self::OWNERSHIP_MINE => 'My Groups',
-                        self::OWNERSHIP_DEPARTMENT => "My Department's Groups",
+                        GroupOwnership::Mine->value => GroupOwnership::Mine->getLabel(),
+                        GroupOwnership::Department->value => GroupOwnership::Department->getLabel(),
                     ];
 
                     if (auth()->user()->canAny(['group.view-any', 'group.*.view'])) {
-                        $options[self::OWNERSHIP_ALL] = 'All Groups';
+                        $options[GroupOwnership::All->value] = GroupOwnership::All->getLabel();
                     }
 
                     return $options;
@@ -126,24 +131,55 @@ class PopulationGroupSelector
         ];
     }
 
+    /**
+     * @return array<GroupModel>
+     */
+    private static function availablePopulationTypes(): array
+    {
+        return collect(GroupModel::cases())
+            ->filter(fn (GroupModel $type) => auth()->user()->hasLicense($type->class()::getLicenseType()))
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @param  array<GroupModel>  $availablePopulationTypes
+     */
+    private static function defaultPopulationType(?Campaign $record, array $availablePopulationTypes): ?string
+    {
+        $currentType = $record?->group->model;
+
+        if ($currentType && in_array($currentType, $availablePopulationTypes, true)) {
+            return $currentType->value;
+        }
+
+        $default = GroupModel::default();
+
+        if (in_array($default, $availablePopulationTypes, true)) {
+            return $default->value;
+        }
+
+        return ($availablePopulationTypes[0] ?? null)?->value;
+    }
+
     private static function defaultGroupOwnership(?Campaign $record): string
     {
         $group = $record?->group;
 
         if (! $group) {
-            return self::OWNERSHIP_MINE;
+            return GroupOwnership::Mine->value;
         }
 
         if ($group->user_id === auth()->id()) {
-            return self::OWNERSHIP_MINE;
+            return GroupOwnership::Mine->value;
         }
 
         $currentUserDepartmentId = auth()->user()?->team_id;
 
         if (filled($currentUserDepartmentId) && $group->user?->team_id === $currentUserDepartmentId) {
-            return self::OWNERSHIP_DEPARTMENT;
+            return GroupOwnership::Department->value;
         }
 
-        return self::OWNERSHIP_ALL;
+        return GroupOwnership::All->value;
     }
 }
