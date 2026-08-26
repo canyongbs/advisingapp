@@ -110,9 +110,11 @@ test('product_admin. permission strings only appear in database/migrations', fun
         ->ignoreVCS(true)
         ->contains('product_admin.');
 
+      $matches = iterator_to_array($finder);
+
     Assert::assertEmpty(
-        iterator_to_array($finder),
+        $matches,
         "The permission string [product_admin.] should only appear in database/migrations, but was found in: \n" .
-            implode("\n", array_map(fn (SplFileInfo $file) => $file->getRelativePathname(), iterator_to_array($finder))),
+            implode("\n", array_map(fn (SplFileInfo $file) => $file->getRelativePathname(), $matches)),
     );
 });
