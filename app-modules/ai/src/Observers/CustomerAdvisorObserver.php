@@ -38,7 +38,6 @@ namespace AdvisingApp\Ai\Observers;
 
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\IntegrationOpenAi\Jobs\UploadCustomerAdvisorFilesToVectorStore;
-use App\Features\CustomerAdvisorResourceHubArticleAccessFeature;
 
 class CustomerAdvisorObserver
 {
@@ -51,11 +50,7 @@ class CustomerAdvisorObserver
 
     public function updated(CustomerAdvisor $advisor): void
     {
-        $watchedAttributes = ['has_resource_hub_knowledge'];
-
-        if (CustomerAdvisorResourceHubArticleAccessFeature::active()) {
-            $watchedAttributes[] = 'resource_hub_article_access';
-        }
+        $watchedAttributes = ['has_resource_hub_knowledge', 'resource_hub_article_access'];
 
         if ($advisor->wasChanged($watchedAttributes)) {
             UploadCustomerAdvisorFilesToVectorStore::dispatch($advisor);
