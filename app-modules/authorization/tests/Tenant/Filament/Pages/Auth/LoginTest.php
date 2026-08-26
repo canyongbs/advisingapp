@@ -36,6 +36,7 @@
 
 use AdvisingApp\Authorization\Filament\Pages\Auth\Login;
 use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
+use Illuminate\Support\Js;
 
 use function Pest\Laravel\get;
 
@@ -54,7 +55,7 @@ it('does not show the switch tenant control or a google unavailable message for 
     get(route('filament.admin.auth.login'), ['User-Agent' => 'Mozilla/5.0'])
         ->assertOk()
         ->assertDontSee('Switch tenant')
-        ->assertDontSee("Google sign-in isn't available in the mobile app", false)
+        ->assertDontSee(Js::from(Login::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE), false)
         ->assertSee('Google');
 });
 
@@ -71,17 +72,19 @@ it('does not show the switch tenant control when google sso is not enabled and t
         ->assertDontSee('Switch tenant');
 });
 
-it('replaces the google sign-in button with an unavailable message for the mobile app when google sso is enabled', function () {
+it('disables the google sign-in button and shows an unavailable message for the mobile app when google sso is enabled', function () {
     enableGoogleSso();
 
     get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
         ->assertOk()
-        ->assertSee("Google sign-in isn't available in the mobile app", false)
+        ->assertSee('Google')
+        ->assertSee(Js::from(Login::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE), false)
+        ->assertSee('aria-disabled="true"', false)
         ->assertDontSee(route('socialite.redirect', ['provider' => 'google']));
 });
 
 it('does not show a google unavailable message for the mobile app when google sso is not enabled', function () {
     get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
         ->assertOk()
-        ->assertDontSee("Google sign-in isn't available in the mobile app", false);
+        ->assertDontSee(Js::from(Login::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE), false);
 });
