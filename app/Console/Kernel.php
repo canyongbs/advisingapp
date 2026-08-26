@@ -53,6 +53,7 @@ use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
 use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionStepsJob;
 use App\Models\HealthCheckResultHistoryItem;
 use App\Models\MonitoredScheduledTaskLogItem;
+use App\Models\Scopes\ExcludeExpiredSubscriptions;
 use App\Models\Scopes\SetupIsComplete;
 use App\Models\Tenant;
 use Filament\Actions\Imports\Models\FailedImportRow;
@@ -80,6 +81,7 @@ class Kernel extends ConsoleKernel
 
         Tenant::query()
             ->tap(new SetupIsComplete())
+            ->tap(new ExcludeExpiredSubscriptions())
             ->cursor()
             ->each(function (Tenant $tenant) use ($schedule) {
                 try {
