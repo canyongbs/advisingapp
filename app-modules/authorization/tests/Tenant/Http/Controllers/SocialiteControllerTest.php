@@ -37,6 +37,7 @@
 use AdvisingApp\Authorization\Enums\AzureMatchingProperty;
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use App\Models\User;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Support\Facades\Http;
@@ -143,4 +144,21 @@ it('does not report when Azure returns a non-error response that is not successf
     Http::assertSentCount(1);
 
     Exceptions::assertNothingReported();
+});
+
+it('still logs the user in and reports the error when the Azure photo request fails to connect', function () {
+    Exceptions::fake();
+
+    $user = User::factory()->external()->create();
+
+    fakeAzureSocialiteDriver($user->email);
+
+    Http::fake(fn () => throw new ConnectionException('Connection timed out'));
+
+    get(route('socialite.callback', ['provider' => 'azure']))
+        ->assertRedirect();
+
+    assertAuthenticatedAs($user);
+
+    Exceptions::assertReported(ConnectionException::class);
 });

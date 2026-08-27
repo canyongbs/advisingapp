@@ -101,21 +101,21 @@ class SocialiteController extends Controller
         }
 
         if ($provider === SocialiteProvider::Azure) {
-            // Retry transient Azure failures (connection errors, rate limits, server errors) but not client errors.
-            $response = Http::withToken($socialiteUser->token)
-                ->dontTruncateExceptions()
-                ->retry(3, 500, when: function (?Throwable $exception): bool {
-                    if ($exception instanceof ConnectionException) {
-                        return true;
-                    }
+            try {
+                // Retry transient Azure failures (connection errors, rate limits, server errors) but not client errors.
+                $response = Http::withToken($socialiteUser->token)
+                    ->dontTruncateExceptions()
+                    ->retry(3, 500, when: function (?Throwable $exception): bool {
+                        if ($exception instanceof ConnectionException) {
+                            return true;
+                        }
 
-                    return $exception instanceof RequestException
-                        && ($exception->response->serverError() || $exception->response->status() === 429);
-                }, throw: false)
-                ->get('https://graph.microsoft.com/v1.0/me/photo/$value');
+                        return $exception instanceof RequestException
+                            && ($exception->response->serverError() || $exception->response->status() === 429);
+                    }, throw: false)
+                    ->get('https://graph.microsoft.com/v1.0/me/photo/$value');
 
-            if ($response->successful()) {
-                try {
+                if ($response->successful()) {
                     $mimeType = $response->header('Content-Type');
 
                     if (in_array($mimeType, ['image/png', 'image/jpeg', 'image/webp', 'image/jpg', 'image/svg+xml'])) {
@@ -134,12 +134,13 @@ class SocialiteController extends Controller
                     } else {
                         throw new InvalidUserAvatarMimeType($mimeType, $user);
                     }
-                } catch (Throwable $exception) {
-                    report($exception);
+                } elseif ($response->failed() && $response->status() !== 404) {
+                    // A 404 means the user has no Azure profile photo, which is expected and safe to ignore.
+                    report($response->toException());
                 }
-            } elseif ($response->failed() && $response->status() !== 404) {
-                // A 404 means the user has no Azure profile photo, which is expected and safe to ignore.
-                report($response->toException());
+            } catch (Throwable $exception) {
+                // Fetching the avatar is best-effort; a failure (including an exhausted-retry ConnectionException) must not block login.
+                report($exception);
             }
         }
 
