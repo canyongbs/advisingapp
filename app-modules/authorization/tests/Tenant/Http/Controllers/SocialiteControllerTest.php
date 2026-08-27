@@ -123,3 +123,24 @@ it('retries and reports transient Azure failures', function (int $status) {
     'server error' => [500],
     'rate limit' => [429],
 ]);
+
+it('does not report when Azure returns a non-error response that is not successful', function () {
+    Exceptions::fake();
+
+    $user = User::factory()->external()->create();
+
+    fakeAzureSocialiteDriver($user->email);
+
+    Http::fake([
+        'graph.microsoft.com/*' => Http::response('', 302),
+    ]);
+
+    get(route('socialite.callback', ['provider' => 'azure']))
+        ->assertRedirect();
+
+    assertAuthenticatedAs($user);
+
+    Http::assertSentCount(1);
+
+    Exceptions::assertNothingReported();
+});

@@ -104,7 +104,7 @@ class SocialiteController extends Controller
             // Retry transient Azure failures (connection errors, rate limits, server errors) but not client errors.
             $response = Http::withToken($socialiteUser->token)
                 ->dontTruncateExceptions()
-                ->retry(3, 500, when: function (Throwable $exception): bool {
+                ->retry(3, 500, when: function (?Throwable $exception): bool {
                     if ($exception instanceof ConnectionException) {
                         return true;
                     }
@@ -137,7 +137,7 @@ class SocialiteController extends Controller
                 } catch (Throwable $exception) {
                     report($exception);
                 }
-            } elseif ($response->status() !== 404) {
+            } elseif ($response->failed() && $response->status() !== 404) {
                 // A 404 means the user has no Azure profile photo, which is expected and safe to ignore.
                 report($response->toException());
             }
