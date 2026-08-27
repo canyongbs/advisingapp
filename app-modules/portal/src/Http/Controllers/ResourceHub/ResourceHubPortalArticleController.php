@@ -44,7 +44,6 @@ use AdvisingApp\Portal\Models\ResourceHubArticleVote;
 use AdvisingApp\ResourceHub\Actions\GenerateTableOfContents;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use App\Features\ResourceHubArticleFeedbackFeature;
 use App\Http\Controllers\Controller;
 use App\Settings\DisplaySettings;
 use Illuminate\Http\JsonResponse;
@@ -55,23 +54,17 @@ class ResourceHubPortalArticleController extends Controller
     {
         $article->increment('portal_view_count');
 
-        $vote = null;
-        $helpfulVotePercentage = 0;
+        $voter = ResolveResourceHubPortalVoter::execute();
 
-        // Guarded so viewing an article never depends on the votes/guests tables before this tenant's migration runs.
-        if (ResourceHubArticleFeedbackFeature::active()) {
-            $voter = ResolveResourceHubPortalVoter::execute();
+        $vote = ResourceHubArticleVote::query()
+            ->where('article_id', $article->getKey())
+            ->where('voter_id', $voter->getKey())
+            ->where('voter_type', $voter->getMorphClass())
+            ->select(['id', 'is_helpful'])
+            ->first()
+            ?->toArray();
 
-            $vote = ResourceHubArticleVote::query()
-                ->where('article_id', $article->getKey())
-                ->where('voter_id', $voter->getKey())
-                ->where('voter_type', $voter->getMorphClass())
-                ->select(['id', 'is_helpful'])
-                ->first()
-                ?->toArray();
-
-            $helpfulVotePercentage = CalculateResourceHubArticleHelpfulVotePercentage::execute($article);
-        }
+        $helpfulVotePercentage = CalculateResourceHubArticleHelpfulVotePercentage::execute($article);
 
         $content = $article->article_details ? $article->renderRichContent('article_details') : '';
 
