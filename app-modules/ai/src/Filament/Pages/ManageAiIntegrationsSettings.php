@@ -38,7 +38,6 @@ namespace AdvisingApp\Ai\Filament\Pages;
 
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
-use App\Features\Gpt56LunaFeature;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Forms\Components\Select;
@@ -376,7 +375,6 @@ class ManageAiIntegrationsSettings extends SettingsPage
                             ]),
                         Section::make('GPT 5.6 Luna')
                             ->collapsible()
-                            ->visible(Gpt56LunaFeature::active())
                             ->schema([
                                 TextInput::make('open_ai_gpt_56_luna_model_name')
                                     ->label('Model Name')
