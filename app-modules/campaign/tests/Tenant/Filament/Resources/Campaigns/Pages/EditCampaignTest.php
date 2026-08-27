@@ -228,3 +228,12 @@ test('group ownership is pre-selected to All Groups when the group is neither th
             'group_ownership' => 'all',
         ]);
 });
+
+test('population type cannot be changed when editing an existing campaign', function () {
+    asSuperAdmin();
+
+    $campaign = Campaign::factory()->enabled()->create();
+
+    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+        ->assertFormFieldDisabled('population_type');
+});

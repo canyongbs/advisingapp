@@ -102,6 +102,8 @@ class PopulationGroupSelector
                 ->dehydrated(false)
                 ->required()
                 ->hidden(count($availablePopulationTypes) <= 1)
+                ->disabled(fn (?Campaign $record) => $record !== null)
+                ->helperText(fn (?Campaign $record) => $record !== null ? 'The population type cannot be changed once a campaign has been created.' : null)
                 ->afterStateHydrated(fn (Set $set, ?Campaign $record) => $set(
                     'population_type',
                     self::defaultPopulationType($record, $availablePopulationTypes),

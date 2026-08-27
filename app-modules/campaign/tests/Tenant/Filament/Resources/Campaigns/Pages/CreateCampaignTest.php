@@ -112,6 +112,11 @@ it('requires population group on campaign creation', function () {
         ]);
 });
 
+it('allows the population type to be changed when creating a campaign', function () {
+    livewire(CreateCampaign::class)
+        ->assertFormFieldEnabled('population_type');
+});
+
 it('only offers the user\'s own population groups by default when they lack the group.*.view permission', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('campaign.view-any');
