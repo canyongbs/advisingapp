@@ -41,7 +41,6 @@ use AdvisingApp\Portal\Actions\ResolveResourceHubPortalVoter;
 use AdvisingApp\Portal\Http\Requests\StoreResourceHubArticleVoteRequest;
 use AdvisingApp\Portal\Models\ResourceHubArticleVote;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
-use App\Features\ResourceHubArticleFeedbackFeature;
 use App\Http\Controllers\Controller;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\JsonResponse;
@@ -50,14 +49,6 @@ class StoreResourceHubArticleVoteController extends Controller
 {
     public function __invoke(StoreResourceHubArticleVoteRequest $request): JsonResponse
     {
-        // Before the feature's migration has run for this tenant, vote table doesn't exist yet.
-        if (! ResourceHubArticleFeedbackFeature::active()) {
-            return response()->json([
-                'is_helpful' => null,
-                'helpful_vote_percentage' => 0,
-            ]);
-        }
-
         $voter = ResolveResourceHubPortalVoter::execute();
 
         $vote = ResourceHubArticleVote::query()

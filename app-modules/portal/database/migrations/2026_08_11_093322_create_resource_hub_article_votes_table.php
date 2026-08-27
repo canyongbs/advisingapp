@@ -34,37 +34,27 @@
 </COPYRIGHT>
 */
 
-use App\Features\ResourceHubArticleFeedbackFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::create('resource_hub_article_votes', function (Blueprint $table) {
-                $table->uuid('id')->primary();
-                $table->boolean('is_helpful');
-                // Voter can be a Student, whose primary key is a non-UUID `sisid`, so this can't use uuidMorphs.
-                $table->string('voter_type');
-                $table->string('voter_id');
-                $table->foreignUuid('article_id')->constrained('resource_hub_articles');
-                $table->unique(['article_id', 'voter_type', 'voter_id']);
-                $table->timestamps();
-            });
-
-            ResourceHubArticleFeedbackFeature::activate();
+        Schema::create('resource_hub_article_votes', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->boolean('is_helpful');
+            // Voter can be a Student, whose primary key is a non-UUID `sisid`, so this can't use uuidMorphs.
+            $table->string('voter_type');
+            $table->string('voter_id');
+            $table->foreignUuid('article_id')->constrained('resource_hub_articles');
+            $table->unique(['article_id', 'voter_type', 'voter_id']);
+            $table->timestamps();
         });
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            ResourceHubArticleFeedbackFeature::deactivate();
-
-            Schema::dropIfExists('resource_hub_article_votes');
-        });
+        Schema::dropIfExists('resource_hub_article_votes');
     }
 };
