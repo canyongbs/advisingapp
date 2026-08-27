@@ -33,7 +33,6 @@
 --}}
 @props(['url', 'settings' => null])
 @php
-    use App\Features\NotificationSettingsFeature;
     use App\Models\SettingsProperty;
     use App\Settings\NotificationSettings;
     use AdvisingApp\Theme\Settings\ThemeSettings;
@@ -41,7 +40,7 @@
     $themeSettings = app(ThemeSettings::class);
     $logo = $themeSettings->getSettingsPropertyModel('theme.is_logo_active')->getFirstMedia('logo');
 
-    $notificationLogo = NotificationSettingsFeature::active() ? NotificationSettings::getSettingsPropertyModel('notifications.logo') : null;
+    $notificationLogo = NotificationSettings::getSettingsPropertyModel('notifications.logo');
 @endphp
 <tr>
     <td class="header">
