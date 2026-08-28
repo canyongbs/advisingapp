@@ -458,13 +458,41 @@ it('skips uploading a file that has no parsing results instead of sending an emp
     ]);
 
     expect($service->areFilesReady([$file]))
+        ->toBeTrue();
+
+    Http::assertNotSent(fn (Request $request): bool => str_contains($request->url(), '/files'));
+    Http::assertNotSent(fn (Request $request): bool => str_contains($request->url(), '/vector_stores'));
+
+    expect($file->openAiVectorStores()->count())
+        ->toBe(0);
+});
+
+it('uploads files with parsing results while excluding files that have none', function () {
+    Http::fake([
+        '*/files*' => Http::response([
+            'id' => $fileId = fake()->uuid(),
+        ], 200),
+        '*/vector_stores*' => Http::response([
+            'id' => $vectorStoreId = fake()->uuid(),
+        ], 200),
+    ]);
+
+    $service = app(OpenAiGptTestService::class);
+
+    $fileWithResults = AiMessageFile::factory()->create();
+    $blankFile = AiMessageFile::factory()->create([
+        'parsing_results' => '',
+    ]);
+
+    expect($service->areFilesReady([$fileWithResults, $blankFile]))
         ->toBeFalse();
 
-    Http::assertNotSent(fn (Request $request): bool => str_contains($request->url(), '/openai/files'));
+    expect($fileWithResults->openAiVectorStores->first())
+        ->vector_store_file_id->toBe($fileId)
+        ->vector_store_id->toBe($vectorStoreId);
 
-    expect($file->openAiVectorStores->first())
-        ->not->toBeNull()
-        ->vector_store_file_id->toBeNull();
+    expect($blankFile->openAiVectorStores()->count())
+        ->toBe(0);
 });
 
 it('captures the OpenAI response id from the stream so a conversation can continue', function () {

@@ -298,6 +298,17 @@ trait InteractsWithVectorStores
         }
     }
 
+    protected function fileHasParsingResults(AiFile $file): bool
+    {
+        $parsingResults = $file->getParsingResults();
+
+        if (blank($parsingResults) && ($file instanceof Model)) {
+            $parsingResults = $file->fresh()?->getParsingResults();
+        }
+
+        return filled($parsingResults);
+    }
+
     protected function uploadFileForVectorStore(AiFile $file, ?Model $context = null): ?OpenAiVectorStore
     {
         $vectorStore = new OpenAiVectorStore();
@@ -320,8 +331,6 @@ trait InteractsWithVectorStores
 
         if (blank($parsingResults)) {
             Log::info('Skipping file [' . $file->getKey() . '] for vector store, as it has no parsing results to upload.');
-
-            $vectorStore->save();
 
             return null;
         }

@@ -699,6 +699,8 @@ abstract class BaseOpenAiService implements AiService
      */
     public function areFilesReady(array $files, ?Model $context = null): bool
     {
+        $files = array_values(array_filter($files, fn (AiFile $file): bool => $this->fileHasParsingResults($file)));
+
         if (! $files) {
             return true;
         }
