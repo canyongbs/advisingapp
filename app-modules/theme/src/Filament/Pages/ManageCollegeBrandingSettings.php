@@ -95,12 +95,12 @@ class ManageCollegeBrandingSettings extends SettingsPage
                     ->visible(fn (Get $get) => $get('is_enabled'))
                     ->required(),
             ])
-            ->disabled(! auth()->user()->can('product_admin.*.update'));
+            ->disabled(! auth()->user()->can('settings.*.update'));
     }
 
     public function save(): void
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->can('settings.*.update')) {
             return;
         }
 
@@ -126,7 +126,7 @@ class ManageCollegeBrandingSettings extends SettingsPage
      */
     public function getFormActions(): array
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->can('settings.*.update')) {
             return [];
         }
 

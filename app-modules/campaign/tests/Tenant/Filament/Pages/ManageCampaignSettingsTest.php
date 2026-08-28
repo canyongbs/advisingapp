@@ -34,63 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
-
-use App\Filament\Clusters\InstitutionDetails;
+use AdvisingApp\Campaign\Filament\Pages\ManageCampaignSettings;
 use App\Models\User;
-use App\Settings\DisplaySettings;
-use CanyonGBS\Common\Filament\Forms\Components\TimezoneSelect;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Pages\SettingsPage;
-use Filament\Schemas\Schema;
 
-class ManageDisplaySettings extends SettingsPage
-{
-    protected static ?string $navigationLabel = 'Dates and Times';
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 
-    protected static ?int $navigationSort = 20;
+it('requires all three permissions to access', function (array $permissions, bool $accessible) {
+    $user = User::factory()->create();
 
-    protected static string $settings = DisplaySettings::class;
+    $user->givePermissionTo($permissions);
 
-    protected static ?string $cluster = InstitutionDetails::class;
+    actingAs($user);
 
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
+    $response = get(ManageCampaignSettings::getUrl());
 
-        return $user->can(['settings.view-any']);
-    }
-
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                TimezoneSelect::make('timezone')
-                    ->helperText('Default: ' . config('app.timezone')),
-            ])
-            ->disabled(! auth()->user()->can('settings.*.update'));
-    }
-
-    public function save(): void
-    {
-        if (! auth()->user()->can('settings.*.update')) {
-            return;
-        }
-
-        parent::save();
-    }
-
-    /**
-     * @return array<Action | ActionGroup>
-     */
-    public function getFormActions(): array
-    {
-        if (! auth()->user()->can('settings.*.update')) {
-            return [];
-        }
-
-        return parent::getFormActions();
-    }
-}
+    $accessible ? $response->assertOk() : $response->assertForbidden();
+})->with([
+    'none' => [[], false],
+    'view-any only' => [['settings.view-any'], false],
+    'view only' => [['settings.*.view'], false],
+    'update only' => [['settings.*.update'], false],
+    'view-any + view' => [['settings.view-any', 'settings.*.view'], false],
+    'view-any + update' => [['settings.view-any', 'settings.*.update'], false],
+    'view + update' => [['settings.*.view', 'settings.*.update'], false],
+    'view-any + view + update' => [['settings.view-any', 'settings.*.view', 'settings.*.update'], true],
+]);

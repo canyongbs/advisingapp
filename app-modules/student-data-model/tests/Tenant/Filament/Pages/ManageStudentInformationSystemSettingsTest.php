@@ -34,63 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
-
-use App\Filament\Clusters\InstitutionDetails;
+use AdvisingApp\StudentDataModel\Filament\Pages\ManageStudentInformationSystemSettings;
 use App\Models\User;
-use App\Settings\DisplaySettings;
-use CanyonGBS\Common\Filament\Forms\Components\TimezoneSelect;
-use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
-use Filament\Pages\SettingsPage;
-use Filament\Schemas\Schema;
 
-class ManageDisplaySettings extends SettingsPage
-{
-    protected static ?string $navigationLabel = 'Dates and Times';
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
+use function Tests\asSuperAdmin;
 
-    protected static ?int $navigationSort = 20;
+it('is gated with proper access control', function () {
+    $user = User::factory()->create();
 
-    protected static string $settings = DisplaySettings::class;
+    actingAs($user);
 
-    protected static ?string $cluster = InstitutionDetails::class;
+    get(ManageStudentInformationSystemSettings::getUrl())->assertForbidden();
 
-    public static function canAccess(): bool
-    {
-        /** @var User $user */
-        $user = auth()->user();
+    asSuperAdmin();
 
-        return $user->can(['settings.view-any']);
-    }
-
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                TimezoneSelect::make('timezone')
-                    ->helperText('Default: ' . config('app.timezone')),
-            ])
-            ->disabled(! auth()->user()->can('settings.*.update'));
-    }
-
-    public function save(): void
-    {
-        if (! auth()->user()->can('settings.*.update')) {
-            return;
-        }
-
-        parent::save();
-    }
-
-    /**
-     * @return array<Action | ActionGroup>
-     */
-    public function getFormActions(): array
-    {
-        if (! auth()->user()->can('settings.*.update')) {
-            return [];
-        }
-
-        return parent::getFormActions();
-    }
-}
+    get(ManageStudentInformationSystemSettings::getUrl())->assertOk();
+});
