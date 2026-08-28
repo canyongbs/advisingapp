@@ -54,8 +54,4 @@ Route::middleware([
         ->name('utilization-metrics');
 
     Route::post('/one-time-login', CreateOneTimeLoginUrlController::class)->name('api.one-time-login.url');
-
-    // TODO: Cleanup Task (one-time-login): remove this legacy `/otp-code` alias once Olympus is deployed
-    // calling `/one-time-login` in every environment.
-    Route::post('/otp-code', CreateOneTimeLoginUrlController::class)->name('otp-code.generate');
 });

@@ -37,7 +37,6 @@
 namespace AdvisingApp\Authorization\Http\Controllers\Api;
 
 use AdvisingApp\Authorization\Notifications\OneTimeLoginNotification;
-use App\Features\OneTimeLoginFeature;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -65,9 +64,7 @@ class CreateOneTimeLoginUrlController
             absolute: false,
         ));
 
-        if (OneTimeLoginFeature::active()) {
-            $user->notify(new OneTimeLoginNotification($link, $expiresAt));
-        }
+        $user->notify(new OneTimeLoginNotification($link, $expiresAt));
 
         return response()->json([
             'link' => $link,
