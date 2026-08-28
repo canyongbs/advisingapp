@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\Gpt56LunaFeature;
 use Illuminate\Support\Facades\DB;
 use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
 use Spatie\LaravelSettings\Migrations\SettingsMigration;
@@ -78,16 +77,12 @@ return new class () extends SettingsMigration {
             } catch (SettingAlreadyExists $exception) {
                 // do nothing
             }
-
-            Gpt56LunaFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            Gpt56LunaFeature::deactivate();
-
             $this->migrator->deleteIfExists('ai.open_ai_gpt_56_luna_base_uri');
             $this->migrator->deleteIfExists('ai.open_ai_gpt_56_luna_api_key');
             $this->migrator->deleteIfExists('ai.open_ai_gpt_56_luna_model');
