@@ -47,6 +47,7 @@ use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
@@ -438,6 +439,32 @@ it('can upload a file and create a new vector store', function () {
     expect($file->openAiVectorStores->first())
         ->vector_store_file_id->toBe($fileId)
         ->vector_store_id->toBe($vectorStoreId);
+});
+
+it('skips uploading a file that has no parsing results instead of sending an empty file to OpenAI', function () {
+    Http::fake([
+        '*/files*' => Http::response([
+            'id' => fake()->uuid(),
+        ], 200),
+        '*/vector_stores*' => Http::response([
+            'id' => fake()->uuid(),
+        ], 200),
+    ]);
+
+    $service = app(OpenAiGptTestService::class);
+
+    $file = AiMessageFile::factory()->create([
+        'parsing_results' => '',
+    ]);
+
+    expect($service->areFilesReady([$file]))
+        ->toBeFalse();
+
+    Http::assertNotSent(fn (Request $request): bool => str_contains($request->url(), '/openai/files'));
+
+    expect($file->openAiVectorStores->first())
+        ->not->toBeNull()
+        ->vector_store_file_id->toBeNull();
 });
 
 it('captures the OpenAI response id from the stream so a conversation can continue', function () {

@@ -46,6 +46,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 trait InteractsWithVectorStores
 {
@@ -315,6 +316,14 @@ trait InteractsWithVectorStores
 
             $parsingResults = $lazyLoadedFile->getParsingResults();
             $name = $lazyLoadedFile->getName();
+        }
+
+        if (blank($parsingResults)) {
+            Log::info('Skipping file [' . $file->getKey() . '] for vector store, as it has no parsing results to upload.');
+
+            $vectorStore->save();
+
+            return null;
         }
 
         $createFileResponse = $this->filesHttpClient()
