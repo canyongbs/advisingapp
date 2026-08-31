@@ -40,12 +40,14 @@ use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Width;
+use Illuminate\Database\Eloquent\Builder;
 
 class ConvertToStudent extends Action
 {
@@ -60,7 +62,7 @@ class ConvertToStudent extends Action
             ->modalSubmitActionLabel('Convert')
             ->schema([
                 Select::make('student_id')
-                    ->relationship('student', 'full_name')
+                    ->relationship('student', 'full_name', fn (Builder $query) => $query->tap(new WithoutArchivedStudents()))
                     ->required()
                     ->label('Select Student')
                     ->searchable(),

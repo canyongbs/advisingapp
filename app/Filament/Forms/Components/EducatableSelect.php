@@ -37,6 +37,7 @@
 namespace App\Filament\Forms\Components;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Authenticatable;
 use App\Models\Scopes\ExcludeConvertedProspects;
@@ -104,7 +105,8 @@ class EducatableSelect extends Component
     public static function getStudentType(): Type
     {
         return Type::make(Student::class)
-            ->titleAttribute(Student::displayNameKey());
+            ->titleAttribute(Student::displayNameKey())
+            ->modifyOptionsQueryUsing(fn (Builder $query) => $query->tap(new WithoutArchivedStudents()));
     }
 
     public static function getProspectType(string $keyColumnName, bool $isExcludingConvertedProspects = true, ?Model $record = null): Type

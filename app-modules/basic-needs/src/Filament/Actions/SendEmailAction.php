@@ -42,6 +42,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use Filament\Actions\Action;
@@ -278,6 +279,7 @@ class SendEmailAction
 
         if ($recipientType === 'student') {
             return Student::query()
+                ->tap(new WithoutArchivedStudents())
                 ->with('primaryEmailAddress')
                 ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
                 ->limit(50)
@@ -308,6 +310,7 @@ class SendEmailAction
 
         if ($recipientType === 'student') {
             return Student::query()
+                ->tap(new WithoutArchivedStudents())
                 ->with('primaryEmailAddress')
                 ->when($search, function (Builder $query) use ($search) {
                     $query->where(new Expression('lower(full_name)'), 'like', "%{$search}%")
