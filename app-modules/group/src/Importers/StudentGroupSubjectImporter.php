@@ -37,6 +37,7 @@
 namespace AdvisingApp\Group\Importers;
 
 use AdvisingApp\Group\Models\GroupSubject;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
@@ -57,6 +58,7 @@ class StudentGroupSubjectImporter extends Importer
                 ->examples(['12345678', '87654321', '11223344'])
                 ->relationship(
                     resolveUsing: fn (mixed $state) => Student::query()
+                        ->tap(new WithoutArchivedStudents())
                         ->where('sisid', $state)
                         ->orWhere('otherid', $state)
                         ->first(),

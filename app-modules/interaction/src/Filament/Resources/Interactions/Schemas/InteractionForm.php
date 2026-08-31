@@ -47,6 +47,7 @@ use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Filament\Forms\Components\EducatableSelect;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Forms\Components\Checkbox;
@@ -91,8 +92,7 @@ class InteractionForm
                         ->searchable()
                         ->required()
                         ->types([
-                            ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [Type::make(Student::class)
-                                ->titleAttribute(Student::displayNameKey())] : []),
+                            ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [EducatableSelect::getStudentType()] : []),
                             ...(auth()->user()->hasLicense(Prospect::getLicenseType()) ? [Type::make(Prospect::class)
                                 ->titleAttribute(Prospect::displayNameKey())
                                 ->modifyOptionsQueryUsing(fn (Builder $query) => $query->tap(new ExcludeConvertedProspects())),
