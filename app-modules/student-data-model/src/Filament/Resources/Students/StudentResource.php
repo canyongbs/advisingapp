@@ -46,6 +46,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ManageStudent
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudentActivityFeed;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudentAlerts;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\NavigationGroup;
 use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
@@ -70,7 +71,11 @@ class StudentResource extends Resource
 
     public static function getGlobalSearchEloquentQuery(): Builder
     {
-        return parent::getGlobalSearchEloquentQuery()->with(['emailAddresses:id,address', 'phoneNumbers:id,number', 'primaryEmailAddress:id,address', 'primaryPhoneNumber:id,number']);
+        return parent::getGlobalSearchEloquentQuery()
+            // The parent is typed `Builder<Model>` rather than `Builder<Student>`, and
+            // `Builder` is not covariant, so this resource's model cannot be proven here.
+            ->tap(new WithoutArchivedStudents()) // @phpstan-ignore argument.type
+            ->with(['emailAddresses:id,address', 'phoneNumbers:id,number', 'primaryEmailAddress:id,address', 'primaryPhoneNumber:id,number']);
     }
 
     public static function modifyGlobalSearchQuery(Builder $query, string $search): void

@@ -45,7 +45,9 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use App\Features\StudentArchivingFeature;
 use App\Settings\DisplaySettings;
+use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\DeleteAction;
 use Illuminate\Contracts\View\View;
 
@@ -104,11 +106,20 @@ trait HasStudentHeader
             SyncStudentSisAction::make(),
             SubscribeHeaderAction::make()
                 ->view('student-data-model::filament.resources.educatables.subscribe-header-action', ['record' => $this->getRecord()]),
-            DeleteAction::make()
-                ->modalDescription('Are you sure you wish to delete the student? By deleting a student record, you will remove any related enrollment and program data, along with any related interactions, notes, etc. This action cannot be reversed.')
-                ->using(function (Student $record) {
-                    app(DeleteStudent::class)->execute($record);
-                }),
+            ...(StudentArchivingFeature::active() ? [
+                // This trait is also used by pages that are neither EditRecord nor ViewRecord,
+                // which the action's default authorization and redirect do not support.
+                ArchiveAction::make()
+                    ->modalDescription('Are you sure you wish to archive the student? They will no longer appear in student lists, searches, population groups or reports, and will not be able to sign in. Their enrollment, program, interaction and note history is retained.')
+                    ->authorize(fn (Student $record): bool => auth()->user()->can('delete', $record))
+                    ->successRedirectUrl(fn (): string => StudentResource::getUrl('index')),
+            ] : [
+                DeleteAction::make()
+                    ->modalDescription('Are you sure you wish to delete the student? By deleting a student record, you will remove any related enrollment and program data, along with any related interactions, notes, etc. This action cannot be reversed.')
+                    ->using(function (Student $record) {
+                        app(DeleteStudent::class)->execute($record);
+                    }),
+            ]),
         ];
     }
 }

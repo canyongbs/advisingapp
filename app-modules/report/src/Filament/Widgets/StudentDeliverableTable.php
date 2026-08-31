@@ -44,6 +44,7 @@ use AdvisingApp\StudentDataModel\Models\Scopes\HealthyEducatablePrimaryEmailAddr
 use AdvisingApp\StudentDataModel\Models\Scopes\HealthyEducatablePrimaryPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryPhoneNumber;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\ExportAction;
 use Filament\Tables\Columns\IconColumn;
@@ -84,6 +85,7 @@ class StudentDeliverableTable extends BaseWidget
         return $table
             ->query(
                 Student::select('sisid', 'full_name', 'primary_email_id', 'primary_phone_id')
+                    ->tap(new WithoutArchivedStudents())
                     ->with(['primaryEmailAddress', 'primaryPhoneNumber'])
                     ->when(
                         $startDate && $endDate,

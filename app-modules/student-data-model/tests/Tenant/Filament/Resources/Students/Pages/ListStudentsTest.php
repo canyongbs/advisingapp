@@ -41,8 +41,8 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Models\User;
+use CanyonGBS\Common\Filament\Actions\ArchiveBulkAction;
 use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
 
 use function Pest\Laravel\actingAs;
@@ -104,7 +104,7 @@ it('renders the CreateAction based on proper access', function () {
         ->assertActionVisible(CreateAction::class);
 });
 
-it('the delete bulk action is gated by the delete permission', function () {
+it('the archive bulk action is gated by the `student.*.delete` permission', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     $user->givePermissionTo('student.view-any');
@@ -117,13 +117,13 @@ it('the delete bulk action is gated by the delete permission', function () {
 
     livewire(ListStudents::class)
         ->assertOk()
-        ->assertTableBulkActionHidden(DeleteBulkAction::class);
+        ->assertTableBulkActionHidden(ArchiveBulkAction::class);
 
     $user->givePermissionTo('student.*.delete');
 
     livewire(ListStudents::class)
         ->assertOk()
-        ->assertTableBulkActionVisible(DeleteBulkAction::class);
+        ->assertTableBulkActionVisible(ArchiveBulkAction::class);
 });
 
 it('shows the view action only with the `settings.*.view` permission', function () {

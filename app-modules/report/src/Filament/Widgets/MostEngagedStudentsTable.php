@@ -39,6 +39,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 use AdvisingApp\Report\Filament\Exports\MostActivelyEngagedStudentsExporter;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
@@ -77,6 +78,7 @@ class MostEngagedStudentsTable extends BaseWidget
         return $table
             ->query(function () use ($startDate, $endDate, $groupId) {
                 return Student::with('primaryEmailAddress:id,address')
+                    ->tap(new WithoutArchivedStudents())
                     ->select('sisid', 'full_name', 'primary_email_id')
                     ->withCount([
                         'engagements as engagements_count' => function (Builder $query) use ($startDate, $endDate): Builder {

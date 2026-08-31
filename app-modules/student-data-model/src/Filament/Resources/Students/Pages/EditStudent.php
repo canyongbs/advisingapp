@@ -41,7 +41,9 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\DataTransferObjects\AutocompletedAddress;
+use App\Features\StudentArchivingFeature;
 use App\Filament\Forms\Components\AddressInput;
+use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use DefStudio\SearchableInput\DTO\SearchResult;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -370,7 +372,11 @@ class EditStudent extends EditRecord
     {
         return [
             ViewAction::make(),
-            DeleteAction::make(),
+            ...(StudentArchivingFeature::active() ? [
+                ArchiveAction::make(),
+            ] : [
+                DeleteAction::make(),
+            ]),
         ];
     }
 

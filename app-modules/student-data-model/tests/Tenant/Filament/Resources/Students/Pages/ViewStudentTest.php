@@ -57,7 +57,7 @@ use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use App\Models\User;
 use App\Settings\LicenseSettings;
-use Filament\Actions\DeleteAction;
+use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -522,7 +522,7 @@ it('renders the SyncStudentSisAction based on proper access', function () {
         ->assertActionVisible('refreshSis');
 });
 
-it('renders the DeleteAction based on proper access', function () {
+it('renders the `ArchiveAction` based on proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $student = Student::factory()->create();
 
@@ -536,7 +536,7 @@ it('renders the DeleteAction based on proper access', function () {
         'record' => $student->getKey(),
     ])
         ->assertOk()
-        ->assertActionHidden(DeleteAction::class);
+        ->assertActionHidden(ArchiveAction::class);
 
     $studentSettings = app(ManageStudentConfigurationSettings::class);
     $studentSettings->is_enabled = true;
@@ -548,7 +548,7 @@ it('renders the DeleteAction based on proper access', function () {
         'record' => $student->getKey(),
     ])
         ->assertOk()
-        ->assertActionHidden(DeleteAction::class);
+        ->assertActionHidden(ArchiveAction::class);
 
     $user->givePermissionTo('student.*.delete');
 
@@ -556,5 +556,5 @@ it('renders the DeleteAction based on proper access', function () {
         'record' => $student->getKey(),
     ])
         ->assertOk()
-        ->assertActionVisible(DeleteAction::class);
+        ->assertActionVisible(ArchiveAction::class);
 });
