@@ -185,8 +185,6 @@ use App\Models\Import;
 use App\Models\LandlordSettingsProperty;
 use App\Models\MonitoredScheduledTask;
 use App\Models\MonitoredScheduledTaskLogItem;
-use App\Models\NotificationSetting;
-use App\Models\NotificationSettingPivot;
 use App\Models\Pronouns;
 use App\Models\SettingsProperty;
 use App\Models\SettingsPropertyWithMedia;
@@ -421,8 +419,6 @@ return [
     LandlordSettingsProperty::class,
     MonitoredScheduledTask::class,
     MonitoredScheduledTaskLogItem::class,
-    NotificationSetting::class, // TODO: Cleanup Task NotificationSettingsFeature - delete this line
-    NotificationSettingPivot::class, // TODO: Cleanup Task NotificationSettingsFeature - delete this line
     Pronouns::class,
     SettingsProperty::class,
     SettingsPropertyWithMedia::class,
