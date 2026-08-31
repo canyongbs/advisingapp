@@ -36,7 +36,6 @@
 
 use AdvisingApp\Authorization\Actions\ClaimOneTimeLoginCode;
 use AdvisingApp\Authorization\Models\OneTimeLoginCode;
-use App\Features\OneTimeLoginFeature;
 use App\Models\User;
 use App\Notifications\SetPasswordNotification;
 
@@ -75,16 +74,4 @@ it('expires the code in 24 hours', function () {
     (new SetPasswordNotification())->toMail($user);
 
     expect(OneTimeLoginCode::query()->firstOrFail()->expires_at->toDateTimeString())->toBe(now()->addDay()->toDateTimeString());
-});
-
-it('does not include a verification code when the feature is inactive', function () {
-    OneTimeLoginFeature::deactivate();
-
-    $user = User::factory()->create();
-
-    $mail = (new SetPasswordNotification())->toMail($user);
-
-    $lines = array_merge($mail->introLines, $mail->outroLines);
-
-    expect(collect($lines)->contains(fn (string $line): bool => str_contains($line, 'verification code')))->toBeFalse();
 });

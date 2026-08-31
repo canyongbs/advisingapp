@@ -36,10 +36,8 @@
 
 use AdvisingApp\Authorization\Models\OneTimeLoginCode;
 use AdvisingApp\Authorization\Tests\Tenant\Http\Controllers\Api\RequestFactories\CreateOneTimeLoginUrlRequestFactory;
-use App\Features\OneTimeLoginFeature;
 use App\Http\Middleware\CheckOlympusKey;
 use App\Models\User;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 
 use function Pest\Laravel\freezeTime;
@@ -62,28 +60,6 @@ it('creates and emails a signed one-time login link', function () {
     expect($link)->toContain('auth/login')
         ->and(URL::hasValidSignature(request()->create($link), absolute: false))->toBeTrue()
         ->and(OneTimeLoginCode::query()->where('user_id', $user->getKey())->count())->toBe(1);
-});
-
-it('returns a direct login link without a code when the feature is inactive', function () {
-    Notification::fake();
-
-    OneTimeLoginFeature::deactivate();
-
-    withoutMiddleware(CheckOlympusKey::class);
-
-    $user = User::factory()->create();
-
-    $link = postJson(
-        route('api.one-time-login.url'),
-        ['email' => $user->email],
-    )
-        ->assertOk()
-        ->assertJsonStructure(['link'])
-        ->json('link');
-
-    expect($link)->toContain('auth/login');
-
-    Notification::assertNothingSent();
 });
 
 it('returns a link that expires after 30 minutes', function () {

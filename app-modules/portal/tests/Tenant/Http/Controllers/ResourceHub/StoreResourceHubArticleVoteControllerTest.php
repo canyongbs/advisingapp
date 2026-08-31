@@ -40,7 +40,6 @@ use AdvisingApp\Portal\Settings\PortalSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\ResourceHubArticleFeedbackFeature;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -191,24 +190,4 @@ it('calculates the helpful vote percentage across all voters', function () {
     ]);
 
     $response->assertOk()->assertJson(['helpful_vote_percentage' => 50]);
-});
-
-it('does not persist a vote while the feature flag is inactive', function () {
-    ResourceHubArticleFeedbackFeature::deactivate();
-
-    $article = ResourceHubArticle::factory()->public()->create();
-
-    $response = postJson(route('portals.resource-hub.api.article-vote.store'), [
-        'article_vote' => true,
-        'article_id' => $article->getKey(),
-    ]);
-
-    $response->assertOk()
-        ->assertJson([
-            'is_helpful' => null,
-            'helpful_vote_percentage' => 0,
-        ]);
-
-    expect(PortalGuest::count())->toBe(0)
-        ->and(ResourceHubArticleVote::count())->toBe(0);
 });

@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\OneTimeLoginFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
@@ -51,16 +50,12 @@ return new class () extends Migration {
                 $table->softDeletes();
                 $table->dropColumn('used_at');
             });
-
-            OneTimeLoginFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            OneTimeLoginFeature::deactivate();
-
             Schema::table('one_time_login_codes', function (Blueprint $table) {
                 $table->timestamp('used_at')->nullable();
                 $table->dropSoftDeletes();

@@ -34,30 +34,29 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
+use AdvisingApp\Campaign\Filament\Pages\ManageCampaignSettings;
+use App\Models\User;
 
-return new class () extends Migration {
-    /**
-     * @var array<string>
-     */
-    private array $caseTimelineableTypes = [
-        'case_assignment',
-        'case_history',
-        'case_update',
-    ];
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 
-    public function up(): void
-    {
-        DB::transaction(function () {
-            DB::table('timelines')
-                ->whereIn('timelineable_type', $this->caseTimelineableTypes)
-                ->delete();
-        });
-    }
+it('requires all three permissions to access', function (array $permissions, bool $accessible) {
+    $user = User::factory()->create();
 
-    public function down(): void
-    {
-        // Deleted timeline records for removed case models cannot be restored.
-    }
-};
+    $user->givePermissionTo($permissions);
+
+    actingAs($user);
+
+    $response = get(ManageCampaignSettings::getUrl());
+
+    $accessible ? $response->assertOk() : $response->assertForbidden();
+})->with([
+    'none' => [[], false],
+    'view-any only' => [['settings.view-any'], false],
+    'view only' => [['settings.*.view'], false],
+    'update only' => [['settings.*.update'], false],
+    'view-any + view' => [['settings.view-any', 'settings.*.view'], false],
+    'view-any + update' => [['settings.view-any', 'settings.*.update'], false],
+    'view + update' => [['settings.*.view', 'settings.*.update'], false],
+    'view-any + view + update' => [['settings.view-any', 'settings.*.view', 'settings.*.update'], true],
+]);

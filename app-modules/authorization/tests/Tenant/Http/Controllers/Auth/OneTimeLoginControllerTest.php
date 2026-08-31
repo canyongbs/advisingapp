@@ -35,12 +35,9 @@
 */
 
 use AdvisingApp\Authorization\Filament\Pages\Auth\ConfirmOneTimeLoginCode;
-use App\Features\OneTimeLoginFeature;
 use App\Models\User;
-use Filament\Facades\Filament;
 use Illuminate\Support\Facades\URL;
 
-use function Pest\Laravel\assertAuthenticatedAs;
 use function Pest\Laravel\assertGuest;
 use function Pest\Laravel\get;
 
@@ -62,19 +59,6 @@ it('does not authenticate the user directly', function () {
     get(URL::signedRoute('login.one-time', ['user' => $user], absolute: false));
 
     assertGuest();
-});
-
-it('logs the user straight in when the feature is inactive', function () {
-    OneTimeLoginFeature::deactivate();
-
-    $user = User::factory()->create(['password' => null]);
-
-    assertGuest();
-
-    get(URL::signedRoute('login.one-time', ['user' => $user], absolute: false))
-        ->assertRedirect(Filament::getUrl());
-
-    assertAuthenticatedAs($user);
 });
 
 describe('authorization', function () {
