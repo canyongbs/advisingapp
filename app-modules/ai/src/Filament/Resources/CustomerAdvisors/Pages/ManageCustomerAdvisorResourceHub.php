@@ -39,7 +39,6 @@ namespace AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\Pages;
 use AdvisingApp\Ai\Enums\EmployeeAdvisorResourceHubArticleAccess;
 use AdvisingApp\Ai\Filament\Resources\CustomerAdvisors\CustomerAdvisorResource;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
-use App\Features\CustomerAdvisorResourceHubArticleAccessFeature;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
@@ -94,18 +93,16 @@ class ManageCustomerAdvisorResourceHub extends EditRecord
                             ->label('Articles')
                             ->live()
                             ->columnSpanFull(),
-                        ...(CustomerAdvisorResourceHubArticleAccessFeature::active() ? [
-                            Select::make('resource_hub_article_access')
-                                ->label('Resource Hub Article Access')
-                                ->options(EmployeeAdvisorResourceHubArticleAccess::class)
-                                ->visible(fn (Get $get): bool => $get('has_resource_hub_knowledge')),
-                            Select::make('resource_hub_categories')
-                                ->label('Resource Hub Categories')
-                                ->relationship('resourceHubCategories', 'name')
-                                ->multiple()
-                                ->preload()
-                                ->visible(fn (Get $get): bool => $get('has_resource_hub_knowledge')),
-                        ] : []),
+                        Select::make('resource_hub_article_access')
+                            ->label('Resource Hub Article Access')
+                            ->options(EmployeeAdvisorResourceHubArticleAccess::class)
+                            ->visible(fn (Get $get): bool => $get('has_resource_hub_knowledge')),
+                        Select::make('resource_hub_categories')
+                            ->label('Resource Hub Categories')
+                            ->relationship('resourceHubCategories', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->visible(fn (Get $get): bool => $get('has_resource_hub_knowledge')),
                     ]),
             ]);
     }
@@ -117,7 +114,7 @@ class ManageCustomerAdvisorResourceHub extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        if (CustomerAdvisorResourceHubArticleAccessFeature::active() && ! ($data['has_resource_hub_knowledge'] ?? false)) {
+        if (! ($data['has_resource_hub_knowledge'] ?? false)) {
             $data['resource_hub_article_access'] = null;
         }
 

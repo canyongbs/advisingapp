@@ -34,35 +34,25 @@
 </COPYRIGHT>
 */
 
-use App\Features\CustomerAdvisorResourceHubArticleAccessFeature;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::create('customer_advisor_resource_hub_categories', function (Blueprint $table) {
-                $table->uuid('id')->primary();
-                $table->foreignUuid('customer_advisor_id')->constrained('customer_advisors')->cascadeOnDelete();
-                $table->foreignUuid('resource_hub_category_id')->constrained('resource_hub_categories')->cascadeOnDelete();
-                $table->timestamps();
+        Schema::create('customer_advisor_resource_hub_categories', function (Blueprint $table) {
+            $table->uuid('id')->primary();
+            $table->foreignUuid('customer_advisor_id')->constrained('customer_advisors')->cascadeOnDelete();
+            $table->foreignUuid('resource_hub_category_id')->constrained('resource_hub_categories')->cascadeOnDelete();
+            $table->timestamps();
 
-                $table->unique(['customer_advisor_id', 'resource_hub_category_id']);
-            });
-
-            CustomerAdvisorResourceHubArticleAccessFeature::activate();
+            $table->unique(['customer_advisor_id', 'resource_hub_category_id']);
         });
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            CustomerAdvisorResourceHubArticleAccessFeature::deactivate();
-
-            Schema::dropIfExists('customer_advisor_resource_hub_categories');
-        });
+        Schema::dropIfExists('customer_advisor_resource_hub_categories');
     }
 };
