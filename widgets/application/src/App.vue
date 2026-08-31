@@ -459,7 +459,7 @@
                 v-if="applicationName"
                 :style="{
                     fontWeight: applicationTitleFontWeight,
-                    color: `rgb(${applicationTitleColor[900]})`,
+                    color: `rgb(${applicationTitleColor})`,
                 }"
             >
                 {{ applicationName }}
