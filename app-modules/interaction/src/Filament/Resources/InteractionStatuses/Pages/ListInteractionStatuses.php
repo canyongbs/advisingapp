@@ -53,7 +53,6 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
-use Filament\Support\Colors\Color;
 use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -161,7 +160,7 @@ class ListInteractionStatuses extends ListRecords
             TextColumn::make('name')
                 ->searchable(),
             ColorColumn::make('color')
-                ->state(fn (InteractionStatus $interactionStatus): string => Color::convertToRgb(Color::all()[$interactionStatus->color->value][600])),
+                ->state(fn (InteractionStatus $interactionStatus): string => $interactionStatus->color->getRgb()),
             IconColumn::make('is_default')
                 ->label('Default')
                 ->boolean(),
