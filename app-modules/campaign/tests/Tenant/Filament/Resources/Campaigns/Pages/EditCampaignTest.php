@@ -37,6 +37,7 @@
 namespace AdvisingApp\Campaign\Tests\Tenant\Filament\Resources\Campaigns\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Campaign\Enums\GroupOwnership;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\EditCampaign;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\ListCampaigns;
 use AdvisingApp\Campaign\Models\Campaign;
@@ -182,7 +183,7 @@ test('group ownership and population type are pre-selected to match a group the 
     livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertSchemaStateSet([
             'population_type' => GroupModel::Prospect->value,
-            'group_ownership' => 'mine',
+            'group_ownership' => GroupOwnership::Mine->value,
         ]);
 });
 
@@ -206,7 +207,7 @@ test('group ownership is pre-selected to My Department\'s Groups when the group 
     livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertSchemaStateSet([
             'population_type' => GroupModel::Student->value,
-            'group_ownership' => 'department',
+            'group_ownership' => GroupOwnership::Department->value,
         ]);
 });
 
@@ -225,7 +226,7 @@ test('group ownership is pre-selected to All Groups when the group is neither th
 
     livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertSchemaStateSet([
-            'group_ownership' => 'all',
+            'group_ownership' => GroupOwnership::All->value,
         ]);
 });
 
@@ -236,4 +237,23 @@ test('population type cannot be changed when editing an existing campaign', func
 
     livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertFormFieldDisabled('population_type');
+});
+
+test('rejects a segment_id that does not match the campaign\'s original population type, even when population_type is tampered with via form state', function () {
+    asSuperAdmin();
+
+    $studentGroup = Group::factory()->student()->create();
+    $campaign = Campaign::factory()->enabled()->create(['segment_id' => $studentGroup->id]);
+
+    $prospectGroup = Group::factory()->prospect()->create();
+
+    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+        ->fillForm([
+            'population_type' => GroupModel::Prospect->value,
+            'segment_id' => $prospectGroup->getKey(),
+        ])
+        ->call('save')
+        ->assertHasFormErrors(['segment_id']);
+
+    expect($campaign->fresh()->segment_id)->toBe($studentGroup->getKey());
 });

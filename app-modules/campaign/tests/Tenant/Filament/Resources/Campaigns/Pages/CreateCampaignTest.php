@@ -37,6 +37,7 @@
 namespace AdvisingApp\Campaign\Tests\Tenant\Filament\Resources\Campaigns\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Campaign\Enums\GroupOwnership;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\CreateCampaign;
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
@@ -154,7 +155,7 @@ it('hides the All Groups ownership option for users without the group.*.view or 
     livewire(CreateCampaign::class)
         ->assertFormFieldExists(
             'group_ownership',
-            fn (ToggleButtons $field) => ! array_key_exists('all', $field->getOptions()),
+            fn (ToggleButtons $field) => ! array_key_exists(GroupOwnership::All->value, $field->getOptions()),
         );
 });
 
@@ -170,7 +171,7 @@ it('rejects a manually supplied All Groups ownership value for users without the
     $otherUsersGroup = Group::factory()->student()->create();
 
     livewire(CreateCampaign::class)
-        ->fillForm(['group_ownership' => 'all'])
+        ->fillForm(['group_ownership' => GroupOwnership::All->value])
         ->assertFormFieldExists(
             'segment_id',
             function (Select $field) use ($otherUsersGroup) {
@@ -196,7 +197,7 @@ it('offers every population group of the selected type when the All Groups owner
     livewire(CreateCampaign::class)
         ->fillForm([
             'population_type' => GroupModel::Student->value,
-            'group_ownership' => 'all',
+            'group_ownership' => GroupOwnership::All->value,
         ])
         ->assertFormFieldExists(
             'segment_id',
@@ -226,7 +227,7 @@ it('offers only the groups belonging to the user\'s department when the My Depar
     livewire(CreateCampaign::class)
         ->fillForm([
             'population_type' => GroupModel::Student->value,
-            'group_ownership' => 'department',
+            'group_ownership' => GroupOwnership::Department->value,
         ])
         ->assertFormFieldExists(
             'segment_id',
@@ -297,6 +298,6 @@ it('clears the selected population group when the group ownership changes', func
     livewire(CreateCampaign::class)
         ->fillForm(['segment_id' => $studentGroup->getKey()])
         ->assertSchemaStateSet(['segment_id' => $studentGroup->getKey()])
-        ->fillForm(['group_ownership' => 'all'])
+        ->fillForm(['group_ownership' => GroupOwnership::All->value])
         ->assertSchemaStateSet(['segment_id' => null]);
 });

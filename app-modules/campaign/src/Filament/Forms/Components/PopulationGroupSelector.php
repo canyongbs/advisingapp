@@ -46,6 +46,7 @@ use Filament\Forms\Components\ToggleButtons;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Str;
 
 class PopulationGroupSelector
 {
@@ -58,8 +59,8 @@ class PopulationGroupSelector
 
         $segmentIdField = Select::make('segment_id')
             ->label('Population Group')
-            ->options(function (Get $get) {
-                $populationType = $get('population_type');
+            ->options(function (Get $get, ?Campaign $record) {
+                $populationType = self::authoritativePopulationType($record, $get);
                 $groupOwnership = $get->enum('group_ownership', GroupOwnership::class, isNullable: true);
 
                 if (blank($populationType) || blank($groupOwnership)) {
@@ -71,17 +72,37 @@ class PopulationGroupSelector
                     return [];
                 }
 
+                $currentUserDepartmentId = auth()->user()?->team_id;
+
                 $query = Group::query()->where('model', $populationType);
 
                 match ($groupOwnership) {
                     GroupOwnership::Mine => $query->where('user_id', auth()->id()),
-                    GroupOwnership::Department => $query->whereHas('user', function (Builder $query) {
-                        $query->whereRelation('department.users', 'id', auth()->id());
+                    GroupOwnership::Department => $query->whereHas('user', function (Builder $query) use ($currentUserDepartmentId) {
+                        $query->when(
+                            filled($currentUserDepartmentId),
+                            fn (Builder $query) => $query->where('team_id', $currentUserDepartmentId),
+                            fn (Builder $query) => $query->whereRaw('1 = 0'),
+                        );
                     }),
                     GroupOwnership::All => null,
                 };
 
-                return $query->pluck('name', 'id');
+                return $query->orderBy('name')->pluck('name', 'id');
+            })
+            ->rule(function (Get $get, ?Campaign $record): Closure {
+                return function (string $attribute, mixed $value, Closure $fail) use ($get, $record) {
+                    $populationType = self::authoritativePopulationType($record, $get);
+
+                    if (blank($populationType) || blank($value)) {
+                        return;
+                    }
+
+                    // Population Type and the selected group are re-validated here in case either was tampered with via Livewire state.
+                    if (! Group::query()->where('model', $populationType)->whereKey($value)->exists()) {
+                        $fail('The selected population group does not match the campaign\'s population type.');
+                    }
+                };
             })
             ->searchable()
             ->required()
@@ -95,7 +116,7 @@ class PopulationGroupSelector
             ToggleButtons::make('population_type')
                 ->label('Population Type')
                 ->options(collect($availablePopulationTypes)->mapWithKeys(fn (GroupModel $type) => [
-                    $type->value => $type === GroupModel::Student ? 'Students' : 'Prospects',
+                    $type->value => Str::ucfirst($type->getPluralLabel()),
                 ]))
                 ->inline()
                 ->live()
@@ -162,6 +183,11 @@ class PopulationGroupSelector
         }
 
         return ($availablePopulationTypes[0] ?? null)?->value;
+    }
+
+    private static function authoritativePopulationType(?Campaign $record, Get $get): ?string
+    {
+        return $record?->group->model->value ?? $get('population_type');
     }
 
     private static function defaultGroupOwnership(?Campaign $record): string
