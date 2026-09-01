@@ -41,12 +41,14 @@ use AdvisingApp\MeetingCenter\Enums\EventTransparency;
 use AdvisingApp\MeetingCenter\Http\Requests\BookPersonalCalendarSlotRequest;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Settings\CollegeBrandingSettings;
 use Carbon\Carbon;
 use Filament\Support\Colors\Color;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -183,6 +185,7 @@ class PersonalBookingPageWidgetController extends Controller
         if ($user->appointments_are_restricted_to_existing_students) {
             $emailExists = StudentEmailAddress::query()
                 ->where('address', $request->validated('email'))
+                ->whereHas('student', fn (Builder $query) => $query->tap(new WithoutArchivedStudents()))
                 ->exists();
 
             if (! $emailExists) {

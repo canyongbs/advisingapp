@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Actions;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 
 class ResolveEducatableFromEmail
@@ -49,6 +50,7 @@ class ResolveEducatableFromEmail
 
         /** @var Student $student */
         $student = Student::query()
+            ->tap(new WithoutArchivedStudents())
             ->whereRelation('emailAddresses', 'address', $email)
             ->first();
 

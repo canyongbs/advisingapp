@@ -83,6 +83,9 @@ class ListStudents extends ListRecords
     public function table(Table $table): Table
     {
         return $table
+            // This page builds its own table rather than using `StudentsTable`, so it
+            // inherits the resource query, which must stay unscoped for record binding.
+            ->modifyQueryUsing(fn (Builder $query) => $query->tap(new WithoutArchivedStudents()))
             ->columns([
                 TextColumn::make(Student::displayNameKey())
                     ->label('Name')

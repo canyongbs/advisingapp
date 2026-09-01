@@ -38,6 +38,7 @@ namespace AdvisingApp\Engagement\Actions;
 
 use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Facades\Log;
 
@@ -47,7 +48,7 @@ class FindEngagementResponseSender implements EngagementResponseSenderFinder
     {
         // Student currently takes priority, but determine if we potentially want to store this response
         // For *all* potential matches instead of just a singular result.
-        if (! is_null($student = Student::whereRelation('phoneNumbers', 'number', $phoneNumber)->first())) {
+        if (! is_null($student = Student::query()->tap(new WithoutArchivedStudents())->whereRelation('phoneNumbers', 'number', $phoneNumber)->first())) {
             return $student;
         }
 

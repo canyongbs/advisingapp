@@ -313,9 +313,12 @@ class SendEmailAction
                 ->tap(new WithoutArchivedStudents())
                 ->with('primaryEmailAddress')
                 ->when($search, function (Builder $query) use ($search) {
-                    $query->where(new Expression('lower(full_name)'), 'like', "%{$search}%")
+                    // Grouped so the archived and bounced filters apply to every search
+                    // branch, rather than binding only to the first one.
+                    $query->where(fn (Builder $query) => $query
+                        ->where(new Expression('lower(full_name)'), 'like', "%{$search}%")
                         ->orWhere(new Expression('lower(sisid)'), 'like', "%{$search}%")
-                        ->orWhereHas('primaryEmailAddress', fn (Builder $query) => $query->where(new Expression('lower(address)'), 'like', "%{$search}%"));
+                        ->orWhereHas('primaryEmailAddress', fn (Builder $query) => $query->where(new Expression('lower(address)'), 'like', "%{$search}%")));
                 })
                 ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
                 ->limit(50)

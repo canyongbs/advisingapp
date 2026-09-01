@@ -34,20 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Widgets;
-
-use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
+use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Widgets\StatsOverviewWidget;
-use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Support\Number;
 
-class TotalStudents extends StatsOverviewWidget
-{
-    protected function getStats(): array
-    {
-        return [
-            Stat::make('Total Students', Number::abbreviate(Student::query()->tap(new WithoutArchivedStudents())->count())),
-        ];
-    }
-}
+use function Tests\asSuperAdmin;
+
+it('excludes archived students from the student population query', function () {
+    asSuperAdmin();
+
+    $active = Student::factory()->create();
+    $archived = Student::factory()->create();
+    $archived->archive();
+
+    $sisids = GroupModel::Student->query()->pluck('sisid');
+
+    expect($sisids)->toContain($active->getKey())
+        ->and($sisids)->not->toContain($archived->getKey());
+});

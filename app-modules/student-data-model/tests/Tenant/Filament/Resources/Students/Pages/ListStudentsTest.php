@@ -38,14 +38,17 @@ use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Concern\Models\ConcernStatus;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ListStudents;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Actions\ArchiveBulkAction;
 use Filament\Actions\CreateAction;
+use Filament\Actions\Testing\TestAction;
 use Filament\Actions\ViewAction;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
@@ -282,4 +285,47 @@ it('shows bulk subscription action for authorized user', function () {
         ->assertCanSeeTableRecords($students)
         ->assertTableBulkActionVisible('bulkSubscription')
         ->assertSuccessful();
+});
+
+describe('archiving', function () {
+    it('does not list archived students', function () {
+        Student::truncate();
+
+        asSuperAdmin();
+
+        $active = Student::factory()->count(3)->create();
+        $archived = Student::factory()->count(2)->create();
+        $archived->each(fn (Student $student) => $student->archive());
+
+        livewire(ListStudents::class)
+            ->assertOk()
+            ->assertCanSeeTableRecords($active)
+            ->assertCanNotSeeTableRecords($archived);
+    });
+
+    it('archives the selected students instead of deleting them', function () {
+        Student::truncate();
+
+        asSuperAdmin();
+
+        $studentSettings = app(ManageStudentConfigurationSettings::class);
+        $studentSettings->is_enabled = true;
+        $studentSettings->save();
+
+        $student = Student::factory()->create();
+        Enrollment::factory()->for($student, 'student')->create();
+
+        expect($student->archived_at)->toBeNull();
+
+        livewire(ListStudents::class)
+            ->selectTableRecords([$student])
+            ->callAction(TestAction::make(ArchiveBulkAction::class)->table()->bulk());
+
+        $student->refresh();
+
+        expect($student->archived_at)->not->toBeNull()
+            ->and($student->trashed())->toBeFalse();
+
+        assertDatabaseHas('enrollments', ['sisid' => $student->getKey(), 'deleted_at' => null]);
+    });
 });
