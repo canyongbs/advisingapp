@@ -71,7 +71,8 @@ class EditApplicationSubmissionState extends EditRecord
                 ColorSelect::make('color')
                     ->label('Color')
                     ->required()
-                    ->searchable(),
+                    ->searchable()
+                    ->shadeOptions(),
                 Textarea::make('description')
                     ->label('Description')
                     ->required()

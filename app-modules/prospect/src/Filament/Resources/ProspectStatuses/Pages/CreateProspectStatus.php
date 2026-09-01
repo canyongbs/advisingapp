@@ -65,7 +65,8 @@ class CreateProspectStatus extends CreateRecord
                 ColorSelect::make('color')
                     ->label('Color')
                     ->searchable()
-                    ->required(),
+                    ->required()
+                    ->shadeOptions(),
             ]);
     }
 }

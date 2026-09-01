@@ -67,7 +67,8 @@ class EditProspectStatus extends EditRecord
                 ColorSelect::make('color')
                     ->label('Color')
                     ->searchable()
-                    ->required(),
+                    ->required()
+                    ->shadeOptions(),
                 TextInput::make('sort')
                     ->required()
                     ->integer()
