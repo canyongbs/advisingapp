@@ -34,11 +34,15 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Tests\Fixtures\TestEmailSettingFromNameNotification;
+use AdvisingApp\Theme\Settings\ThemeSettings;
+use App\Features\ThemeLogoPublicDiskFeature;
 use App\Models\User;
 use App\Settings\NotificationSettings;
 use CanyonGBS\Common\Enums\Color;
 use Filament\Support\Colors\Color as FilamentColor;
+use Illuminate\Support\Facades\Storage;
 
 it('renders the notification mail with the configured `primary_color`', function () {
     $user = User::factory()->create();
@@ -54,4 +58,36 @@ it('renders the notification mail with the configured `primary_color`', function
 
     expect((string) (new TestEmailSettingFromNameNotification())->toMail($user)->render())
         ->toContain($expected);
+});
+
+it('applies notification settings when instantiated directly', function () {
+    $settings = app(NotificationSettings::class);
+    $settings->from_name = 'Advising Team';
+    $settings->save();
+
+    $mailMessage = new MailMessage();
+
+    expect($mailMessage->viewData['settings'])->toBe($settings)
+        ->and($mailMessage->from[1])->toBe('Advising Team');
+});
+
+it('renders the active theme logo fallback with a public media URL', function () {
+    Storage::fake('s3-public');
+
+    $themeSettings = app(ThemeSettings::class);
+    $themeSettings->is_logo_active = true;
+    $themeSettings->save();
+
+    $themeLogo = ThemeSettings::getSettingsPropertyModel('theme.is_logo_active');
+    $themeLogo
+        ->addMediaFromString('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"></svg>')
+        ->usingFileName('logo.svg')
+        ->toMediaCollection('logo', 's3-public');
+
+    $logoUrl = $themeLogo->getFirstMediaUrl('logo');
+
+    expect(ThemeLogoPublicDiskFeature::active())->toBeTrue()
+        ->and((string) view('vendor.mail.html.header', ['url' => url('/')])->render())
+        ->toContain($logoUrl)
+        ->not->toContain('X-Amz-Expires');
 });

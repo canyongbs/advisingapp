@@ -39,7 +39,6 @@ namespace App\Notifications;
 use AdvisingApp\Authorization\Actions\GenerateOneTimeLoginCode;
 use AdvisingApp\Notification\Notifications\Attributes\SystemNotification;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Settings\NotificationSettings;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
@@ -63,7 +62,6 @@ class SetPasswordNotification extends Notification implements ShouldQueue
         $expiresAt = now()->addDay();
 
         $message = MailMessage::make()
-            ->settings(app(NotificationSettings::class))
             ->subject('Set up your password')
             ->line('A new account has been created for you.')
             ->action('Set up your password', url(URL::temporarySignedRoute(

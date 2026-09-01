@@ -108,9 +108,9 @@ class ManageBrandConfigurationSettings extends SettingsPage
                     ->aside()
                     ->schema([
                         SpatieMediaLibraryFileUpload::make('logo')
-                            ->disk('s3')
+                            ->disk('s3-public')
                             ->collection('logo')
-                            ->visibility('private')
+                            ->visibility('public')
                             ->image()
                             ->model(
                                 ThemeSettings::getSettingsPropertyModel('theme.is_logo_active'),

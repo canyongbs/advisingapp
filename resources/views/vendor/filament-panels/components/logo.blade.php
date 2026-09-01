@@ -44,9 +44,9 @@
 
 @if ($themeSettings->is_logo_active && $logo)
     @php
-        $logoUrl = $logo->getTemporaryUrl(
-            expiration: now()->addMinutes(5),
-            conversionName: $logo->hasGeneratedConversion('logo-height-250px') ? 'logo-height-250px' : '',
+        $logoUrl = $settingsProperty->getFirstMediaUrl(
+            'logo',
+            $logo->hasGeneratedConversion('logo-height-250px') ? 'logo-height-250px' : '',
         );
     @endphp
     <img
