@@ -62,6 +62,13 @@ class ResourceHubPortalAuthenticateController extends Controller
         /** @var Student|Prospect $educatable */
         $educatable = $authentication->educatable;
 
+        // A code issued before the student was archived must not still grant access.
+        if ($educatable instanceof Student && $educatable->isArchived()) {
+            return response()->json([
+                'is_expired' => true,
+            ]);
+        }
+
         $guard = $educatable instanceof Student ? 'student' : 'prospect';
         Auth::guard($guard)->login($educatable);
 

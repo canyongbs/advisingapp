@@ -34,20 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Widgets;
-
-use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ManageStudentCareTeam;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Widgets\StatsOverviewWidget;
-use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Support\Number;
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 
-class TotalStudents extends StatsOverviewWidget
-{
-    protected function getStats(): array
-    {
-        return [
-            Stat::make('Total Students', Number::abbreviate(Student::query()->tap(new WithoutArchivedStudents())->count())),
-        ];
-    }
-}
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
+
+// `HasStudentHeader` renders the ArchiveAction on pages that are neither EditRecord nor
+// ViewRecord, which the action's default authorization and redirect do not support. This
+// page is a ManageRelatedRecords page, so it covers that shape.
+it('renders the `ArchiveAction` in the student header', function () {
+    asSuperAdmin();
+
+    $studentSettings = app(ManageStudentConfigurationSettings::class);
+    $studentSettings->is_enabled = true;
+    $studentSettings->save();
+
+    $student = Student::factory()->create();
+
+    livewire(ManageStudentCareTeam::class, ['record' => $student->getKey()])
+        ->assertOk()
+        ->assertActionVisible(ArchiveAction::class);
+});
+
+it('archives the student from the student header', function () {
+    asSuperAdmin();
+
+    $studentSettings = app(ManageStudentConfigurationSettings::class);
+    $studentSettings->is_enabled = true;
+    $studentSettings->save();
+
+    $student = Student::factory()->create();
+
+    expect($student->archived_at)->toBeNull();
+
+    livewire(ManageStudentCareTeam::class, ['record' => $student->getKey()])
+        ->callAction(ArchiveAction::class);
+
+    expect($student->refresh()->archived_at)->not->toBeNull();
+});

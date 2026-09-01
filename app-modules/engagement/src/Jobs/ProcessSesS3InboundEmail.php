@@ -43,6 +43,7 @@ use AdvisingApp\Engagement\Exceptions\UnableToDetectTenantFromSesS3EmailPayload;
 use AdvisingApp\Engagement\Exceptions\UnableToRetrieveContentFromSesS3EmailPayload;
 use AdvisingApp\Engagement\Models\UnmatchedInboundCommunication;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Tenant;
 use Aws\Crypto\KmsMaterialsProviderV3;
@@ -120,6 +121,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
             $matchedTenants->each(function (Tenant $tenant) use ($parser, $content, $sender) {
                 $tenant->execute(function () use ($parser, $content, $sender) {
                     $students = Student::query()
+                        ->tap(new WithoutArchivedStudents())
                         ->whereRelation('emailAddresses', 'address', $sender)
                         ->get();
 

@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Report\Filament\Widgets;
 
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
@@ -133,7 +134,7 @@ class StudentOverviewEthnicityRadarChart extends ChartReportWidget
      */
     protected function getEthnicityData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $groupId = null): Collection
     {
-        return Student::query()
+        return Student::query()->tap(new WithoutArchivedStudents())
             ->select(
                 DB::raw("LOWER(COALESCE(NULLIF(ethnicity, ''), 'Unknown')) as ethnicity_lower"),
                 DB::raw("COALESCE(NULLIF(MIN(ethnicity), ''), 'Unknown') as ethnicity"),
