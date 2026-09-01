@@ -37,16 +37,13 @@
 use AdvisingApp\Theme\Settings\SettingsProperties\ThemeSettingsProperty;
 use App\Features\ThemeLogoPublicDiskFeature;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 return new class () extends Migration {
     public function up(): void
     {
         DB::transaction(function (): void {
-            $this->moveThemeLogos(fromDisk: 's3', toDisk: 's3-public');
+            $this->moveThemeLogo('s3', 's3-public');
 
             ThemeLogoPublicDiskFeature::activate();
         });
@@ -57,24 +54,24 @@ return new class () extends Migration {
         DB::transaction(function (): void {
             ThemeLogoPublicDiskFeature::deactivate();
 
-            $this->moveThemeLogos(fromDisk: 's3-public', toDisk: 's3');
+            $this->moveThemeLogo('s3-public', 's3');
         });
     }
 
-    private function moveThemeLogos(string $fromDisk, string $toDisk): void
+    private function moveThemeLogo(string $fromDisk, string $toDisk): void
     {
-        Media::query()
-            ->where('model_type', ThemeSettingsProperty::class)
-            ->where('collection_name', 'logo')
-            ->where('disk', $fromDisk)
-            ->chunkById(100, function (Collection $mediaItems) use ($toDisk): void {
-                $mediaItems->each(function (Media $media) use ($toDisk): void {
-                    if (! $media->model instanceof HasMedia) {
-                        return;
-                    }
+        $settingsProperty = ThemeSettingsProperty::getInstance('theme.is_logo_active');
 
-                    $media->move($media->model, 'logo', $toDisk, $media->file_name);
-                });
-            });
+        if (is_null($settingsProperty)) {
+            return;
+        }
+
+        $logo = $settingsProperty->getFirstMedia('logo');
+
+        if (is_null($logo) || $logo->disk !== $fromDisk) {
+            return;
+        }
+
+        $logo->move($settingsProperty, 'logo', $toDisk, $logo->file_name);
     }
 };
