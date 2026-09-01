@@ -55,17 +55,11 @@ it('loads existing data into the form', function () {
     asSuperAdmin();
 
     $settings = app(NotificationSettings::class);
-    $settings->name = 'Existing Institution Name';
     $settings->from_name = 'Existing From Name';
-    $settings->description = 'Existing description.';
     $settings->save();
 
     livewire(ManageNotificationSettings::class)
-        ->assertSchemaStateSet([
-            'name' => 'Existing Institution Name',
-            'from_name' => 'Existing From Name',
-            'description' => 'Existing description.',
-        ]);
+        ->assertSchemaStateSet(['from_name' => 'Existing From Name']);
 });
 
 it('can update the notification settings', function () {
@@ -73,9 +67,7 @@ it('can update the notification settings', function () {
 
     livewire(ManageNotificationSettings::class)
         ->fillForm([
-            'name' => 'New Institution Name',
             'from_name' => 'New From Name',
-            'description' => 'New description.',
             'primary_color' => Color::Blue->value,
         ])
         ->call('save')
@@ -83,9 +75,7 @@ it('can update the notification settings', function () {
 
     $settings = app(NotificationSettings::class);
 
-    expect($settings->name)->toBe('New Institution Name')
-        ->and($settings->from_name)->toBe('New From Name')
-        ->and($settings->description)->toBe('New description.')
+    expect($settings->from_name)->toBe('New From Name')
         ->and($settings->primary_color)->toBe(Color::Blue);
 });
 
@@ -97,7 +87,6 @@ it('validates the inputs', function (array $state, array $errors) {
         ->call('save')
         ->assertHasFormErrors($errors);
 })->with([
-    'name required' => [['name' => null], ['name' => 'required']],
     'from_name max' => [['from_name' => str_repeat('a', 151)], ['from_name' => 'max']],
 ]);
 
@@ -126,32 +115,24 @@ describe('authorization', function () {
 
         livewire(ManageNotificationSettings::class)
             ->fillForm([
-                'name' => 'New Institution Name',
                 'from_name' => 'New From Name',
-                'description' => 'New description.',
                 'primary_color' => Color::Blue->value,
             ])
             ->call('save');
 
-        expect($settings->name)->not()->toBe('New Institution Name')
-            ->and($settings->from_name)->not()->toBe('New From Name')
-            ->and($settings->description)->not()->toBe('New description.')
+        expect($settings->from_name)->not()->toBe('New From Name')
             ->and($settings->primary_color)->not()->toBe(Color::Blue);
 
         $user->givePermissionTo('settings.*.update');
 
         livewire(ManageNotificationSettings::class)
             ->fillForm([
-                'name' => 'New Institution Name',
                 'from_name' => 'New From Name',
-                'description' => 'New description.',
                 'primary_color' => Color::Blue->value,
             ])
             ->call('save');
 
-        expect($settings->name)->toBe('New Institution Name')
-            ->and($settings->from_name)->toBe('New From Name')
-            ->and($settings->description)->toBe('New description.')
+        expect($settings->from_name)->toBe('New From Name')
             ->and($settings->primary_color)->toBe(Color::Blue);
     });
 });
