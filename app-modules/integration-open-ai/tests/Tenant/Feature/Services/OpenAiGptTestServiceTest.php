@@ -47,9 +47,14 @@ use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use AdvisingApp\IntegrationOpenAi\Services\OpenAiGptTestService;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use Illuminate\Http\Client\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
+
+use function Pest\Laravel\assertSoftDeleted;
+
 use Prism\Prism\Enums\FinishReason;
 use Prism\Prism\Facades\Prism;
 use Prism\Prism\Testing\TextResponseFake;
@@ -438,6 +443,103 @@ it('can upload a file and create a new vector store', function () {
     expect($file->openAiVectorStores->first())
         ->vector_store_file_id->toBe($fileId)
         ->vector_store_id->toBe($vectorStoreId);
+});
+
+it('skips uploading a file that has no parsing results instead of sending an empty file to OpenAI', function () {
+    Http::fake([
+        '*/files*' => Http::response([
+            'id' => fake()->uuid(),
+        ], 200),
+        '*/vector_stores*' => Http::response([
+            'id' => fake()->uuid(),
+        ], 200),
+    ]);
+
+    $service = app(OpenAiGptTestService::class);
+
+    $file = AiMessageFile::factory()->create([
+        'parsing_results' => '',
+    ]);
+
+    expect($service->areFilesReady([$file]))
+        ->toBeTrue();
+
+    Http::assertNotSent(fn (Request $request): bool => str_contains($request->url(), '/files'));
+    Http::assertNotSent(fn (Request $request): bool => str_contains($request->url(), '/vector_stores'));
+
+    expect($file->openAiVectorStores()->count())
+        ->toBe(0);
+});
+
+it('uploads files with parsing results while excluding files that have none', function () {
+    Http::fake([
+        '*/files*' => Http::response([
+            'id' => $fileId = fake()->uuid(),
+        ], 200),
+        '*/vector_stores*' => Http::response([
+            'id' => $vectorStoreId = fake()->uuid(),
+        ], 200),
+    ]);
+
+    $service = app(OpenAiGptTestService::class);
+
+    $fileWithResults = AiMessageFile::factory()->create();
+    $blankFile = AiMessageFile::factory()->create([
+        'parsing_results' => '',
+    ]);
+
+    expect($service->areFilesReady([$fileWithResults, $blankFile]))
+        ->toBeFalse();
+
+    expect($fileWithResults->openAiVectorStores->first())
+        ->vector_store_file_id->toBe($fileId)
+        ->vector_store_id->toBe($vectorStoreId);
+
+    expect($blankFile->openAiVectorStores()->count())
+        ->toBe(0);
+});
+
+it('removes an indexed resource hub article when it no longer has parsing results', function () {
+    Http::fake([
+        '*/vector_stores/*/files*' => Http::response([
+            'data' => [['id' => $fileId = (string) Str::uuid()]],
+        ]),
+        '*/files/*' => Http::response(),
+        '*/vector_stores/*' => Http::response(),
+    ]);
+
+    $service = app(OpenAiGptTestService::class);
+
+    $article = ResourceHubArticle::factory()
+        ->has(OpenAiVectorStore::factory()->state([
+            'deployment_hash' => $service->getDeploymentHash(),
+            'vector_store_file_id' => $fileId,
+        ]), 'openAiVectorStores')
+        ->create();
+
+    $vectorStore = $article->openAiVectorStores->first();
+
+    expect($service->getReadyVectorStoreId([$article]))
+        ->toBe($vectorStore->vector_store_id);
+
+    $article->update([
+        'article_details' => [
+            'type' => 'doc',
+            'content' => [['type' => 'paragraph']],
+        ],
+    ]);
+
+    expect($article->getParsingResults())
+        ->toBeEmpty()
+        ->and($service->areFilesReady([$article]))
+        ->toBeTrue()
+        ->and($service->getReadyVectorStoreId([$article]))
+        ->toBeNull();
+
+    assertSoftDeleted($vectorStore);
+
+    Http::assertSent(fn (Request $request): bool => $request->method() === 'DELETE'
+        && str_contains($request->url(), "/files/{$fileId}"));
 });
 
 it('captures the OpenAI response id from the stream so a conversation can continue', function () {
