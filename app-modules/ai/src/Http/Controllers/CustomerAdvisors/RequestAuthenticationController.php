@@ -78,7 +78,6 @@ class RequestAuthenticationController
 
         $rateLimiter->ensureCanRequestCode($educatable, $scope);
 
-        // Delete any prior live customer advisor authentication for this educatable
         PortalAuthentication::query()
             ->whereMorphedTo('educatable', $educatable)
             ->where('portal_type', PortalType::CustomerAdvisorWidget)
