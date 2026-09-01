@@ -37,15 +37,13 @@
 namespace AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages;
 
 use AdvisingApp\Campaign\Filament\Actions\ArchiveCampaignAction;
+use AdvisingApp\Campaign\Filament\Forms\Components\PopulationGroupSelector;
 use AdvisingApp\Campaign\Filament\Resources\Campaigns\CampaignResource;
-use AdvisingApp\Group\Models\Group;
 use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
-use Illuminate\Database\Eloquent\Builder;
 
 class EditCampaign extends EditRecord
 {
@@ -54,21 +52,13 @@ class EditCampaign extends EditRecord
     public function form(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
                 TextInput::make('name')
                     ->required(),
-                Select::make('segment_id')
-                    ->label('Population Group')
-                    ->options(function () {
-                        return Group::query()
-                            ->whereHas('user', function (Builder $query) {
-                                $query->whereKey(auth()->id())->orWhereRelation('department.users', 'id', auth()->id());
-                            })
-                            ->pluck('name', 'id');
-                    })
-                    ->searchable()
-                    ->required(),
-                Toggle::make('enabled'),
+                ...PopulationGroupSelector::make(),
+                Toggle::make('enabled')
+                    ->helperText('Toggle this off to pause the campaign; no further journey steps will run.'),
             ]);
     }
 

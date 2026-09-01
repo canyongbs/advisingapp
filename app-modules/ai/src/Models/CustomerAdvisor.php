@@ -43,7 +43,6 @@ use AdvisingApp\Ai\Observers\CustomerAdvisorObserver;
 use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
-use App\Features\CustomerAdvisorResourceHubArticleAccessFeature;
 use App\Models\BaseModel;
 use App\Models\Media;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
@@ -191,14 +190,6 @@ class CustomerAdvisor extends BaseModel implements HasMedia, Auditable
     {
         if (! $this->has_resource_hub_knowledge) {
             return [];
-        }
-
-        if (! CustomerAdvisorResourceHubArticleAccessFeature::active()) {
-            return ResourceHubArticle::query()
-                ->public()
-                ->whereNotNull('article_details')
-                ->get(['id', 'updated_at'])
-                ->all();
         }
 
         $categoryIds = $this->resourceHubCategories()->pluck('resource_hub_categories.id');

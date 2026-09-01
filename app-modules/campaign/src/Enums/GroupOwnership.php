@@ -34,14 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\Campaign\Enums;
 
-use App\Support\AbstractFeatureFlag;
+use Filament\Support\Contracts\HasLabel;
 
-class CustomerAdvisorResourceHubArticleAccessFeature extends AbstractFeatureFlag
+enum GroupOwnership: string implements HasLabel
 {
-    public function resolve(mixed $scope): mixed
+    case Mine = 'mine';
+
+    case Department = 'department';
+
+    case All = 'all';
+
+    public function getLabel(): string
     {
-        return false;
+        return match ($this) {
+            self::Mine => 'My Groups',
+            self::Department => "My Department's Groups",
+            self::All => 'All Groups',
+        };
     }
 }

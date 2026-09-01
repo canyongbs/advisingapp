@@ -99,15 +99,11 @@ class ManageProspectConversionSettings extends SettingsPage
                             ->required(),
                     ]),
             ])
-            ->disabled(! auth()->user()->can('product_admin.*.update'));
+            ->disabled(! auth()->user()->can('settings.*.update'));
     }
 
     public function save(): void
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
-            return;
-        }
-
         if (! auth()->user()->can('settings.*.update')) {
             return;
         }
@@ -120,10 +116,6 @@ class ManageProspectConversionSettings extends SettingsPage
      */
     public function getFormActions(): array
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
-            return [];
-        }
-
         if (! auth()->user()->can('settings.*.update')) {
             return [];
         }

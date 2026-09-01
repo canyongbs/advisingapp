@@ -73,4 +73,18 @@ class GroupFactory extends Factory
             'type' => GroupType::Static,
         ]);
     }
+
+    public function student(): self
+    {
+        return $this->state([
+            'model' => GroupModel::Student,
+        ]);
+    }
+
+    public function prospect(): self
+    {
+        return $this->state([
+            'model' => GroupModel::Prospect,
+        ]);
+    }
 }
