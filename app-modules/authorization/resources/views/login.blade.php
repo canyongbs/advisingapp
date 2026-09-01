@@ -75,7 +75,7 @@
 
             @if ($this->isGoogleSsoUnavailableInMobileApp())
                 <p class="text-sm text-gray-500 dark:text-gray-400">
-                    {!! \AdvisingApp\Authorization\Filament\Pages\Auth\Login::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE !!}
+                    {{ \AdvisingApp\Authorization\Filament\Pages\Auth\Login::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE }}
                 </p>
             @endif
         </form>
@@ -96,15 +96,15 @@
         @endif
 
         @if ($this->isMobileApp())
-            <div class="mt-6 flex justify-center">
-                <x-filament::link
+            <x-filament::actions class="mt-6" :full-width="true">
+                <x-filament::button
+                    tag="a"
                     :href="\AdvisingApp\Authorization\Filament\Pages\Auth\Login::SWITCH_TENANT_URL"
-                    size="sm"
                     color="gray"
                 >
                     Switch tenant
-                </x-filament::link>
-            </div>
+                </x-filament::button>
+            </x-filament::actions>
         @endif
     </div>
 

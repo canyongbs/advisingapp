@@ -54,7 +54,7 @@ it('does not show the switch tenant control or a google unavailable message for 
     get(route('filament.admin.auth.login'), ['User-Agent' => 'Mozilla/5.0'])
         ->assertOk()
         ->assertDontSee('Switch tenant')
-        ->assertDontSee(Login::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE, false)
+        ->assertDontSee(Login::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE)
         ->assertSee('Google');
 });
 
@@ -76,7 +76,7 @@ it('replaces the google sign-in button with an unavailable message for the mobil
 
     get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
         ->assertOk()
-        ->assertSee(Login::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE, false)
+        ->assertSee(Login::GOOGLE_SSO_UNAVAILABLE_IN_MOBILE_APP_MESSAGE)
         ->assertDontSee(route('socialite.redirect', ['provider' => 'google']));
 });
 
