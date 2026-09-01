@@ -57,7 +57,6 @@ export default {
         './app-modules/**/resources/views/**/*.php',
         './resources/views/**/*.blade.php',
         './resources/views/filament/**/*.blade.php',
-        './vendor/filament/**/*.blade.php',
         './vendor/canyongbs/common/src/Filament/**/*.php',
         './vendor/canyongbs/common/resources/**/*.blade.php',
         './node_modules/flowbite/**/*.js',
