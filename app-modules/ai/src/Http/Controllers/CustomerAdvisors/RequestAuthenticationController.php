@@ -39,7 +39,10 @@ namespace AdvisingApp\Ai\Http\Controllers\CustomerAdvisors;
 use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\Concerns\CanGenerateAndDispatchCustomerAdvisorWidgetAuthentications;
 use AdvisingApp\Ai\Http\Requests\CustomerAdvisors\RequestAuthenticationRequest;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
+use AdvisingApp\Portal\Enums\PortalType;
+use AdvisingApp\Portal\Models\PortalAuthentication;
 use AdvisingApp\StudentDataModel\Actions\ResolveEducatableFromEmail;
+use App\Support\AuthenticationCodeRateLimiter;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Validation\ValidationException;
@@ -48,7 +51,7 @@ class RequestAuthenticationController
 {
     use CanGenerateAndDispatchCustomerAdvisorWidgetAuthentications;
 
-    public function __invoke(RequestAuthenticationRequest $request, CustomerAdvisor $advisor, ResolveEducatableFromEmail $resolveEducatableFromEmail): JsonResponse
+    public function __invoke(RequestAuthenticationRequest $request, CustomerAdvisor $advisor, ResolveEducatableFromEmail $resolveEducatableFromEmail, AuthenticationCodeRateLimiter $rateLimiter): JsonResponse
     {
         $email = $request->safe()['email'];
 
@@ -71,7 +74,19 @@ class RequestAuthenticationController
             ], 404);
         }
 
+        $scope = 'customer-advisor';
+
+        $rateLimiter->ensureCanRequestCode($educatable, $scope);
+
+        // Delete any prior live customer advisor authentication for this educatable
+        PortalAuthentication::query()
+            ->whereMorphedTo('educatable', $educatable)
+            ->where('portal_type', PortalType::CustomerAdvisorWidget)
+            ->delete();
+
         $authenticationUrl = $this->createPortalAuthentication($educatable, $advisor);
+
+        $rateLimiter->recordCodeRequest($educatable, $scope);
 
         return response()->json([
             'message' => "We've sent an authentication code to {$email}.",

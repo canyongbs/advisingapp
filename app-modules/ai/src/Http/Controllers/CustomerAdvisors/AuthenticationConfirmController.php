@@ -42,9 +42,9 @@ use AdvisingApp\Authorization\Enums\TokenAbility;
 use AdvisingApp\Portal\Models\PortalAuthentication;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Rules\ValidAuthenticationCode;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Cookie;
-use Illuminate\Support\Facades\Hash;
 
 class AuthenticationConfirmController
 {
@@ -54,9 +54,9 @@ class AuthenticationConfirmController
             abort(403, 'Authentication code is expired.');
         }
 
-        if (! Hash::check($request->safe()['code'], $authentication->code)) {
-            abort(403, 'Authentication code is invalid.');
-        }
+        $request->validate([
+            'code' => ['required', 'integer', 'digits:6', new ValidAuthenticationCode($authentication)],
+        ]);
 
         $educatable = $authentication->educatable;
 

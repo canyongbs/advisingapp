@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Ai\Http\Requests\CustomerAdvisors;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class AuthenticationConfirmRequest extends FormRequest
@@ -44,7 +43,7 @@ class AuthenticationConfirmRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, ValidationRule|array<mixed>|string>
+     * @return array<string, array<int, string>>
      */
     public function rules(): array
     {

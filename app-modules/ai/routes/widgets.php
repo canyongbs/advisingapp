@@ -78,15 +78,15 @@ $registerAdvisorRoutes = function () {
                 ->name('broadcasting.auth');
 
             Route::post('/authenticate/request', RequestAuthenticationController::class)
-                ->middleware(['signed'])
+                ->middleware(['signed', 'throttle:authentication-code-request'])
                 ->name('authentication.request');
 
             Route::post('/authenticate/register', RegisterProspectController::class)
-                ->middleware(['signed'])
+                ->middleware(['signed', 'throttle:authentication-code-request'])
                 ->name('register-prospect');
 
             Route::post('/authenticate/confirm/{authentication}', AuthenticationConfirmController::class)
-                ->middleware(['signed'])
+                ->middleware(['signed', 'throttle:authentication-code-verify'])
                 ->name('authentication.confirm');
 
             Route::post('/authenticate/refresh', AuthenticationRefreshController::class)
