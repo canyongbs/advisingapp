@@ -34,57 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Group\Database\Factories;
+namespace AdvisingApp\Campaign\Enums;
 
-use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Group\Enums\GroupType;
-use AdvisingApp\Group\Models\Group;
-use App\Models\User;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Filament\Support\Contracts\HasLabel;
 
-/**
- * @extends Factory<Group>
- */
-class GroupFactory extends Factory
+enum GroupOwnership: string implements HasLabel
 {
-    /**
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
-        return [
-            'name' => $this->faker->words(asText: true),
-            'model' => $this->faker->randomElement(GroupModel::cases()),
-            'type' => GroupType::Dynamic,
-            'user_id' => User::factory(),
-        ];
-    }
+    case Mine = 'mine';
 
-    public function dynamic(): self
-    {
-        return $this->state([
-            'type' => GroupType::Dynamic,
-        ]);
-    }
+    case Department = 'department';
 
-    public function static(): self
-    {
-        return $this->state([
-            'type' => GroupType::Static,
-        ]);
-    }
+    case All = 'all';
 
-    public function student(): self
+    public function getLabel(): string
     {
-        return $this->state([
-            'model' => GroupModel::Student,
-        ]);
-    }
-
-    public function prospect(): self
-    {
-        return $this->state([
-            'model' => GroupModel::Prospect,
-        ]);
+        return match ($this) {
+            self::Mine => 'My Groups',
+            self::Department => "My Department's Groups",
+            self::All => 'All Groups',
+        };
     }
 }
