@@ -34,45 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+use AdvisingApp\Campaign\Filament\Pages\ManageCampaignSettings;
+use App\Models\User;
 
-use Illuminate\Database\Eloquent\Concerns\HasVersion4Uuids as HasUuids;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphPivot;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 
-// TODO: Cleanup Task NotificationSettingsFeature - delete this file
-/**
- * @mixin IdeHelperNotificationSettingPivot
- */
-class NotificationSettingPivot extends MorphPivot
-{
-    use HasUuids;
+it('requires all three permissions to access', function (array $permissions, bool $accessible) {
+    $user = User::factory()->create();
 
-    public $timestamps = true;
+    $user->givePermissionTo($permissions);
 
-    protected $table = 'notification_settings_pivot';
+    actingAs($user);
 
-    protected $fillable = [
-        'notification_setting_id',
-        'related_to_id',
-        'related_to_type',
-    ];
+    $response = get(ManageCampaignSettings::getUrl());
 
-    /**
-     * @return BelongsTo<NotificationSetting, $this>
-     */
-    public function setting(): BelongsTo
-    {
-        return $this->belongsTo(NotificationSetting::class, 'notification_setting_id');
-    }
-
-    /**
-     * @return MorphTo<Model, $this>
-     */
-    public function relatedTo(): MorphTo
-    {
-        return $this->morphTo();
-    }
-}
+    $accessible ? $response->assertOk() : $response->assertForbidden();
+})->with([
+    'none' => [[], false],
+    'view-any only' => [['settings.view-any'], false],
+    'view only' => [['settings.*.view'], false],
+    'update only' => [['settings.*.update'], false],
+    'view-any + view' => [['settings.view-any', 'settings.*.view'], false],
+    'view-any + update' => [['settings.view-any', 'settings.*.update'], false],
+    'view + update' => [['settings.*.view', 'settings.*.update'], false],
+    'view-any + view + update' => [['settings.view-any', 'settings.*.view', 'settings.*.update'], true],
+]);

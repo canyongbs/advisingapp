@@ -34,14 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace App\Models\Scopes;
 
-use App\Support\AbstractFeatureFlag;
+use App\Enums\SubscriptionStatus;
+use App\Models\Tenant;
+use Illuminate\Database\Eloquent\Builder;
 
-class CustomerAdvisorResourceHubArticleAccessFeature extends AbstractFeatureFlag
+class ExcludeExpiredSubscriptions
 {
-    public function resolve(mixed $scope): mixed
+    /**
+     * @param Builder<Tenant> $query
+     */
+    public function __invoke(Builder $query): void
     {
-        return false;
+        $query->where('subscription_status', '!=', SubscriptionStatus::Expired->value);
     }
 }

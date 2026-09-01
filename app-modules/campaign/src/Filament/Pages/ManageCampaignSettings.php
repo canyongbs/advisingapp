@@ -65,7 +65,7 @@ class ManageCampaignSettings extends SettingsPage
         /** @var User $user */
         $user = auth()->user();
 
-        return $user->can(['product_admin.view-any', 'product_admin.*.view', 'product_admin.*.update']);
+        return $user->can(['settings.view-any', 'settings.*.view', 'settings.*.update']);
     }
 
     public function form(Schema $schema): Schema

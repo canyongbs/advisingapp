@@ -34,14 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use App\Enums\SubscriptionStatus;
+use App\Models\Tenant;
+use Illuminate\Contracts\Console\Kernel;
 
-use App\Support\AbstractFeatureFlag;
+describe('schedule', function () {
+    it('does not schedule tenant tasks for tenants with an expired subscription', function () {
+        $activeTenant = Tenant::factory()->create([
+            'domain' => 'active-subscription.advisingapp.local',
+            'setup_complete' => true,
+            'subscription_status' => SubscriptionStatus::Active,
+        ]);
 
-class OneTimeLoginFeature extends AbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
-    {
-        return false;
-    }
-}
+        $expiredTenant = Tenant::factory()->create([
+            'domain' => 'expired-subscription.advisingapp.local',
+            'setup_complete' => true,
+            'subscription_status' => SubscriptionStatus::Expired,
+        ]);
+
+        $summaries = collect(app(Kernel::class)->resolveConsoleSchedule()->events())
+            ->map(fn ($event) => $event->getSummaryForDisplay());
+
+        expect($summaries->contains(fn (string $summary) => str_contains($summary, $activeTenant->domain)))->toBeTrue()
+            ->and($summaries->contains(fn (string $summary) => str_contains($summary, $expiredTenant->domain)))->toBeFalse();
+
+        // Prevents the shared test tenant teardown from resolving one of these non-migratable tenants via Tenant::firstOrFail().
+        $activeTenant->delete();
+        $expiredTenant->delete();
+    });
+});

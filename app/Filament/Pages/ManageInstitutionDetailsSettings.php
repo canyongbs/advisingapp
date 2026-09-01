@@ -97,12 +97,12 @@ class ManageInstitutionDetailsSettings extends SettingsPage
                     )
                     ->columnSpanFull(),
             ])
-            ->disabled(! auth()->user()->can('product_admin.*.update'));
+            ->disabled(! auth()->user()->can('settings.*.update'));
     }
 
     public function save(): void
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->can('settings.*.update')) {
             return;
         }
 
@@ -111,7 +111,7 @@ class ManageInstitutionDetailsSettings extends SettingsPage
 
     public function getFormActions(): array
     {
-        if (! auth()->user()->can('product_admin.*.update')) {
+        if (! auth()->user()->can('settings.*.update')) {
             return [];
         }
 

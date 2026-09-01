@@ -37,10 +37,8 @@
 namespace AdvisingApp\Authorization\Http\Controllers\Auth;
 
 use AdvisingApp\Authorization\Filament\Pages\Auth\ConfirmOneTimeLoginCode;
-use App\Features\OneTimeLoginFeature;
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use Filament\Facades\Filament;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
@@ -52,16 +50,10 @@ class OneTimeLoginController extends Controller
             abort(403);
         }
 
-        if (OneTimeLoginFeature::active()) {
-            $request->session()->put(ConfirmOneTimeLoginCode::SESSION_KEY, [
-                'user' => $user->getKey(),
-            ]);
+        $request->session()->put(ConfirmOneTimeLoginCode::SESSION_KEY, [
+            'user' => $user->getKey(),
+        ]);
 
-            return redirect()->route('filament.admin.auth.one-time-login');
-        }
-
-        auth()->login($user);
-
-        return redirect(Filament::getUrl());
+        return redirect()->route('filament.admin.auth.one-time-login');
     }
 }

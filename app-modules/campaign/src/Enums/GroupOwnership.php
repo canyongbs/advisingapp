@@ -34,43 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace App\Models;
+namespace AdvisingApp\Campaign\Enums;
 
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\MediaLibrary\HasMedia;
-use Spatie\MediaLibrary\InteractsWithMedia;
+use Filament\Support\Contracts\HasLabel;
 
-// TODO: Cleanup Task NotificationSettingsFeature - delete this file
-/**
- * @mixin IdeHelperNotificationSetting
- */
-class NotificationSetting extends BaseModel implements HasMedia
+enum GroupOwnership: string implements HasLabel
 {
-    /** @use InteractsWithMedia<Media> */
-    use InteractsWithMedia;
+    case Mine = 'mine';
 
-    use SoftDeletes;
+    case Department = 'department';
 
-    protected $fillable = [
-        'name',
-        'primary_color',
-        'related_to_type',
-        'related_to_id',
-        'from_name',
-    ];
+    case All = 'all';
 
-    public function registerMediaCollections(): void
+    public function getLabel(): string
     {
-        $this->addMediaCollection('logo')
-            ->singleFile();
-    }
-
-    /**
-     * @return HasMany<NotificationSettingPivot, $this>
-     */
-    public function settings(): HasMany
-    {
-        return $this->hasMany(NotificationSettingPivot::class);
+        return match ($this) {
+            self::Mine => 'My Groups',
+            self::Department => "My Department's Groups",
+            self::All => 'All Groups',
+        };
     }
 }

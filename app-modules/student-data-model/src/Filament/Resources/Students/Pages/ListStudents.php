@@ -191,7 +191,7 @@ class ListStudents extends ListRecords
                         /** @var User $user */
                         $user = auth()->user();
 
-                        return $user->can('product_admin.*.view');
+                        return $user->can('settings.*.view');
                     }),
                 SubscribeTableAction::make(),
             ])
