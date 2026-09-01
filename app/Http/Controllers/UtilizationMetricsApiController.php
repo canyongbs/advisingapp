@@ -60,14 +60,17 @@ use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Models\TrackedEventCount;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Survey\Models\Survey;
 use AdvisingApp\Survey\Models\SurveySubmission;
 use AdvisingApp\Task\Models\Task;
+use App\Features\StudentArchivingFeature;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Carbon\CarbonImmutable;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -93,6 +96,13 @@ class UtilizationMetricsApiController extends Controller
                 AlertConfiguration::query()
                     ->selectRaw('alert_configurations.preset, COUNT(student_alerts.sisid) AS alert_count')
                     ->leftJoin('student_alerts', 'student_alerts.alert_configuration_id', '=', 'alert_configurations.id')
+                    // Raw SQL cannot use the `WithoutArchivedStudents` scope, so the flag is
+                    // checked here directly — `archived_at` does not exist until the migration runs.
+                    ->when(StudentArchivingFeature::active(), fn (Builder $query): Builder => $query
+                        ->leftJoin('students', 'students.sisid', '=', 'student_alerts.sisid')
+                        ->where(fn (Builder $query) => $query
+                            ->whereNull('student_alerts.sisid')
+                            ->orWhereNull('students.archived_at')))
                     ->groupBy('alert_configurations.preset')
                     ->pluck('alert_count', 'alert_configurations.preset')
                     ->map(fn (int|string $count): int => (int) $count)
@@ -154,7 +164,7 @@ class UtilizationMetricsApiController extends Controller
                     'prompts_inserted' => PromptUse::count(),
                     'retention_crm_users' => User::whereRelation('licenses', 'type', LicenseType::RetentionCrm)->count(),
                     'recruitment_crm_users' => User::whereRelation('licenses', 'type', LicenseType::RecruitmentCrm)->count(),
-                    'student_records' => Student::count(),
+                    'student_records' => Student::query()->tap(new WithoutArchivedStudents())->count(),
                     'prospect_records' => Prospect::count(),
                     'campaigns' => Campaign::count(),
                     'journey_steps_executed' => CampaignAction::whereNotNull('execution_finished_at')->count(),

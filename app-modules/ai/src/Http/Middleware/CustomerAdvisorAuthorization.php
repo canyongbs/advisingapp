@@ -88,6 +88,11 @@ class CustomerAdvisorAuthorization
 
         $educatable = $accessToken->tokenable;
 
+        // A token issued before the student was archived must not still grant access.
+        if ($educatable instanceof Student && $educatable->isArchived()) {
+            return response()->json(['error' => 'Invalid bearer token'], 401);
+        }
+
         match ($educatable::class) {
             Student::class => Auth::guard('student')->onceUsingId($educatable->getKey()),
             Prospect::class => Auth::guard('prospect')->onceUsingId($educatable->getKey()),

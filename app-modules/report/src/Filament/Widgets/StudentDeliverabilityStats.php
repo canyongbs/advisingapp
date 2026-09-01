@@ -38,6 +38,7 @@ namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryPhoneNumber;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -57,7 +58,7 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
         $shouldBypassCache = filled($startDate) || filled($endDate) || filled($groupId);
 
         $totalStudents = $shouldBypassCache
-            ? Student::query()
+            ? Student::query()->tap(new WithoutArchivedStudents())
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
@@ -70,11 +71,11 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'total-students-count',
                 now()->addHours(24),
-                fn () => Student::query()->count()
+                fn () => Student::query()->tap(new WithoutArchivedStudents())->count()
             );
 
         $studentsPrimaryEmailMissing = $shouldBypassCache
-            ? Student::query()
+            ? Student::query()->tap(new WithoutArchivedStudents())
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
@@ -88,11 +89,11 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'missing-email-students-count',
                 now()->addHours(24),
-                fn () => Student::query()->whereDoesntHave('primaryEmailAddress')->count()
+                fn () => Student::query()->tap(new WithoutArchivedStudents())->whereDoesntHave('primaryEmailAddress')->count()
             );
 
         $studentsPrimaryEmailUnhealthy = $shouldBypassCache
-            ? Student::query()
+            ? Student::query()->tap(new WithoutArchivedStudents())
                 ->tap(new UnhealthyEducatablePrimaryEmailAddress())
                 ->when(
                     $startDate && $endDate,
@@ -106,13 +107,13 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'unhealthy-email-students-count',
                 now()->addHours(24),
-                fn () => Student::query()
+                fn () => Student::query()->tap(new WithoutArchivedStudents())
                     ->tap(new UnhealthyEducatablePrimaryEmailAddress())
                     ->count()
             );
 
         $studentsPrimaryPhoneMissing = $shouldBypassCache
-            ? Student::query()
+            ? Student::query()->tap(new WithoutArchivedStudents())
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
@@ -126,11 +127,11 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'missing-phone-students-count',
                 now()->addHours(24),
-                fn () => Student::query()->whereDoesntHave('primaryPhoneNumber')->count()
+                fn () => Student::query()->tap(new WithoutArchivedStudents())->whereDoesntHave('primaryPhoneNumber')->count()
             );
 
         $studentsPrimaryPhoneUnhealthy = $shouldBypassCache
-            ? Student::query()
+            ? Student::query()->tap(new WithoutArchivedStudents())
                 ->tap(new UnhealthyEducatablePrimaryPhoneNumber())
                 ->when(
                     $startDate && $endDate,
@@ -144,7 +145,7 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'unhealthy-phone-students-count',
                 now()->addHours(24),
-                fn () => Student::query()
+                fn () => Student::query()->tap(new WithoutArchivedStudents())
                     ->tap(new UnhealthyEducatablePrimaryPhoneNumber())
                     ->count()
             );

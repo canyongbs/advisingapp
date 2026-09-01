@@ -36,9 +36,13 @@
 
 namespace AdvisingApp\StudentDataModel\Tests\Tenant\Models;
 
+use AdvisingApp\StudentDataModel\Actions\ResolveEducatableFromEmail;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\StudentArchivingFeature;
+use App\Filament\Forms\Components\EducatableSelect;
+use Filament\Forms\Components\Select;
 use Illuminate\Support\Carbon;
 
 use function Tests\asSuperAdmin;
@@ -131,5 +135,52 @@ describe('WithoutArchivedStudents scope', function () {
 
         expect(Student::query()->tap(new WithoutArchivedStudents())->pluck('sisid'))
             ->toContain($archived->getKey());
+    });
+});
+
+describe('discovery surfaces', function () {
+    it('excludes archived students from global search', function () {
+        asSuperAdmin();
+
+        $active = Student::factory()->create(['full_name' => 'Searchable Alpha']);
+        $archived = Student::factory()->create(['full_name' => 'Searchable Beta']);
+        $archived->archive();
+
+        $sisids = StudentResource::getGlobalSearchEloquentQuery()->pluck('sisid');
+
+        expect($sisids)->toContain($active->getKey())
+            ->and($sisids)->not->toContain($archived->getKey());
+    });
+
+    it('excludes archived students from the educatable select options', function () {
+        asSuperAdmin();
+
+        $active = Student::factory()->create();
+        $archived = Student::factory()->create();
+        $archived->archive();
+
+        $type = EducatableSelect::getStudentType();
+        $options = ($type->getOptionsUsing)(Select::make('educatable_id')->preload());
+
+        // Numeric-string SIS IDs come back as integer array keys.
+        $sisids = array_map(strval(...), array_keys($options));
+
+        expect($sisids)->toContain($active->getKey())
+            ->and($sisids)->not->toContain($archived->getKey());
+    });
+});
+
+describe('sign in', function () {
+    it('does not resolve an archived student from their email address', function () {
+        asSuperAdmin();
+
+        $student = Student::factory()->create();
+        $email = $student->primaryEmailAddress->address;
+
+        expect(app(ResolveEducatableFromEmail::class)($email))->not->toBeNull();
+
+        $student->archive();
+
+        expect(app(ResolveEducatableFromEmail::class)($email))->toBeNull();
     });
 });
