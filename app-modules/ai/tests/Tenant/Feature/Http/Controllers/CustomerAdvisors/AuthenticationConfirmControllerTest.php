@@ -99,26 +99,23 @@ it('resets the attempt counter after a successful authentication', function () {
         parameters: ['advisor' => $this->advisor, 'authentication' => $authentication],
     );
 
-    foreach (range(1, AuthenticationCodeRateLimiter::MAX_ATTEMPTS - 1) as $attempt) {
-        postJson($invalidUrl, ['code' => '654321'])->assertStatus(422);
-    }
+    // Record one failed attempt so the counter is non-zero before the successful attempt.
+    postJson($invalidUrl, ['code' => '654321'])->assertStatus(422);
 
     postJson($invalidUrl, ['code' => $code])->assertSuccessful();
 
-    $authentication2 = PortalAuthentication::factory()->create([
-        'educatable_type' => $student->getMorphClass(),
-        'educatable_id' => $student->getKey(),
-        'code' => Hash::make('654321'),
-        'portal_type' => PortalType::CustomerAdvisorWidget,
-    ]);
+    // If the attempt counter were not reset on success, it would still be sitting at 1
+    // from the failed attempt above, and locking out would happen sooner than a full
+    // MAX_ATTEMPTS invalid attempts. Reusing the same authentication, drive it through
+    // the exact same lockout sequence as the "locks out" test above: this only succeeds
+    // if the counter was actually reset to zero.
+    for ($attempt = 0; $attempt < AuthenticationCodeRateLimiter::MAX_ATTEMPTS; $attempt++) {
+        postJson($invalidUrl, ['code' => '111111'])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors(['code' => 'The provided code is invalid.']);
+    }
 
-    $invalidUrl2 = URL::signedRoute(
-        name: 'widgets.ai.customer-advisors.api.authentication.confirm',
-        /** @phpstan-ignore-next-line */
-        parameters: ['advisor' => $this->advisor, 'authentication' => $authentication2],
-    );
-
-    postJson($invalidUrl2, ['code' => '111111'])
+    postJson($invalidUrl, ['code' => '111111'])
         ->assertStatus(422)
-        ->assertJsonValidationErrors(['code' => 'The provided code is invalid.']);
+        ->assertJsonValidationErrors(['code' => 'Too many invalid attempts. Please request a new code.']);
 });

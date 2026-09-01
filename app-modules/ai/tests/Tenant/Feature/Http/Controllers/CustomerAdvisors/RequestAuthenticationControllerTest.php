@@ -42,7 +42,7 @@ use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use App\Support\AuthenticationCodeRateLimiter;
-use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\URL;
 
 use function Pest\Laravel\postJson;
@@ -98,7 +98,7 @@ it('invalidates prior codes for the same target', function () {
         ->sole()
         ->getKey();
 
-    RateLimiter::clear(app(AuthenticationCodeRateLimiter::class)->codeRequestKey($student, 'customer-advisor'));
+    Cache::forget(app(AuthenticationCodeRateLimiter::class)->codeRequestKey($student, 'customer-advisor'));
 
     postJson(URL::signedRoute(
         name: 'widgets.ai.customer-advisors.api.authentication.request',
@@ -135,7 +135,7 @@ it('invalidates prior codes for the same prospect', function () {
         ->sole()
         ->getKey();
 
-    RateLimiter::clear(app(AuthenticationCodeRateLimiter::class)->codeRequestKey($prospect, 'customer-advisor'));
+    Cache::forget(app(AuthenticationCodeRateLimiter::class)->codeRequestKey($prospect, 'customer-advisor'));
 
     postJson(URL::signedRoute(
         name: 'widgets.ai.customer-advisors.api.authentication.request',

@@ -37,6 +37,7 @@
 namespace App\Support;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 
@@ -86,6 +87,15 @@ class AuthenticationCodeRateLimiter
     public function recordCodeRequest(Model $author, string $scope): void
     {
         RateLimiter::hit($this->codeRequestKey($author, $scope), self::CODE_REQUEST_DECAY_SECONDS);
+    }
+
+    public function attemptCodeRequest(Model $author, string $scope): void
+    {
+        if (! Cache::add($this->codeRequestKey($author, $scope), true, self::CODE_REQUEST_DECAY_SECONDS)) {
+            throw ValidationException::withMessages([
+                'email' => 'A code was recently sent to this email address. Please wait a moment before requesting another.',
+            ]);
+        }
     }
 
     public function codeRequestKey(Model $author, string $scope): string
