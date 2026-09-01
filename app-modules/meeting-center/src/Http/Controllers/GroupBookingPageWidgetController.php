@@ -75,6 +75,12 @@ class GroupBookingPageWidgetController extends Controller
         $brandingSettings = app(CollegeBrandingSettings::class);
 
         $colorName = $brandingSettings->color->value ?? 'blue';
+
+        // Shade-only branding colors (e.g. black, navy) have no Tailwind palette; fall back so the booking page palette still renders.
+        if (! array_key_exists($colorName, Color::all())) {
+            $colorName = 'blue';
+        }
+
         $primaryColor = collect(Color::all()[$colorName])
             ->map(Color::convertToRgb(...))
             ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
