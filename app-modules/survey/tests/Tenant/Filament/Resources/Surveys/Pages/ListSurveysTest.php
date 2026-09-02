@@ -130,3 +130,17 @@ it('will not duplicate survey submissions if they exist', function () {
 
     expect($duplicatedSurvey->submissions()->count())->toBe(0);
 });
+
+it('prevents duplicating a survey to a case-insensitive duplicate name', function () {
+    asSuperAdmin();
+
+    $survey = Survey::factory()->create();
+    Survey::factory()->create(['name' => 'Taken Name']);
+
+    livewire(ListSurveys::class)
+        ->assertStatus(200)
+        ->callTableAction('Duplicate', $survey, data: ['name' => 'taken name'])
+        ->assertHasTableActionErrors(['name' => 'unique']);
+
+    expect(Survey::count())->toBe(2);
+});
