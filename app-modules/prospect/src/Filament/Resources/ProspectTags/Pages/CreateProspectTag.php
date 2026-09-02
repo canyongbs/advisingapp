@@ -58,7 +58,7 @@ class CreateProspectTag extends CreateRecord
                     ->unique(
                         table: 'tags',
                         column: 'name',
-                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->where('type', TagType::Prospect)->withoutTrashed(),
                     ),
             ]);
     }

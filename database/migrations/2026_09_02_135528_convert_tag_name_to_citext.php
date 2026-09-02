@@ -50,14 +50,14 @@ return new class () extends Migration {
     protected string $column = 'name';
 
     /** @var array<int, string> */
-    protected array $groupByColumns = [];
+    protected array $groupByColumns = ['type'];
 
     // TODO: Cleanup Task TagCitextCleanup - remove $chunkSize and $usesSoftDeletes
     protected int $chunkSize = 500;
 
     protected bool $usesSoftDeletes = true;
 
-    private string $uniqueConstraint = 'tags_name_unique';
+    private string $uniqueConstraint = 'tags_name_type_unique';
 
     public function up(): void
     {

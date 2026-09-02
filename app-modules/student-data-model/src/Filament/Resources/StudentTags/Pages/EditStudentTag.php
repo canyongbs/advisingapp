@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\StudentTags\Pages;
 
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentTags\StudentTagResource;
+use App\Enums\TagType;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
@@ -59,7 +60,7 @@ class EditStudentTag extends EditRecord
                         table: 'tags',
                         column: 'name',
                         ignoreRecord: true,
-                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->where('type', TagType::Student)->withoutTrashed(),
                     ),
             ]);
     }
