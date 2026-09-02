@@ -48,9 +48,7 @@ use Illuminate\Support\Facades\URL;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\withHeader;
 
-/** @phpstan-ignore-next-line */
 beforeEach(function () {
-    /** @phpstan-ignore-next-line */
     withHeader('Origin', config('app.url'));
 });
 
@@ -66,7 +64,6 @@ it('throttles repeated code requests for the same target', function (CustomerAdv
 
     postJson(URL::signedRoute(
         name: 'widgets.ai.customer-advisors.api.authentication.request',
-        /** @phpstan-ignore-next-line */
         parameters: ['advisor' => $advisor],
     ), ['email' => $email])
         ->assertSuccessful();
@@ -74,7 +71,6 @@ it('throttles repeated code requests for the same target', function (CustomerAdv
     // Attempting a second request immediately should be throttled.
     postJson(URL::signedRoute(
         name: 'widgets.ai.customer-advisors.api.authentication.request',
-        /** @phpstan-ignore-next-line */
         parameters: ['advisor' => $advisor],
     ), ['email' => $email])
         ->assertStatus(422)
@@ -89,7 +85,6 @@ it('invalidates prior codes for the same target', function (CustomerAdvisor $adv
 
     postJson(URL::signedRoute(
         name: 'widgets.ai.customer-advisors.api.authentication.request',
-        /** @phpstan-ignore-next-line */
         parameters: ['advisor' => $advisor],
     ), ['email' => $email])
         ->assertSuccessful();
@@ -104,7 +99,6 @@ it('invalidates prior codes for the same target', function (CustomerAdvisor $adv
 
     postJson(URL::signedRoute(
         name: 'widgets.ai.customer-advisors.api.authentication.request',
-        /** @phpstan-ignore-next-line */
         parameters: ['advisor' => $advisor],
     ), ['email' => $email])
         ->assertSuccessful();
@@ -126,7 +120,6 @@ it('invalidates prior codes for the same prospect', function (CustomerAdvisor $a
 
     postJson(URL::signedRoute(
         name: 'widgets.ai.customer-advisors.api.authentication.request',
-        /** @phpstan-ignore-next-line */
         parameters: ['advisor' => $advisor],
     ), ['email' => $email])
         ->assertSuccessful();
@@ -141,7 +134,6 @@ it('invalidates prior codes for the same prospect', function (CustomerAdvisor $a
 
     postJson(URL::signedRoute(
         name: 'widgets.ai.customer-advisors.api.authentication.request',
-        /** @phpstan-ignore-next-line */
         parameters: ['advisor' => $advisor],
     ), ['email' => $email])
         ->assertSuccessful();

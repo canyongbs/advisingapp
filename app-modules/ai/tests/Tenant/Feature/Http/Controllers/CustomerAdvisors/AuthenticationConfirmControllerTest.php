@@ -45,9 +45,7 @@ use Illuminate\Support\Facades\URL;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\withHeader;
 
-/** @phpstan-ignore-next-line */
 beforeEach(function () {
-    /** @phpstan-ignore-next-line */
     withHeader('Origin', config('app.url'));
 });
 
@@ -68,7 +66,6 @@ it('locks out after too many invalid code attempts', function (CustomerAdvisor $
 
     $invalidUrl = URL::signedRoute(
         name: 'widgets.ai.customer-advisors.api.authentication.confirm',
-        /** @phpstan-ignore-next-line */
         parameters: ['advisor' => $advisor, 'authentication' => $authentication],
     );
 
@@ -97,7 +94,6 @@ it('resets the attempt counter after a successful authentication', function (Cus
 
     $invalidUrl = URL::signedRoute(
         name: 'widgets.ai.customer-advisors.api.authentication.confirm',
-        /** @phpstan-ignore-next-line */
         parameters: ['advisor' => $advisor, 'authentication' => $authentication],
     );
 
