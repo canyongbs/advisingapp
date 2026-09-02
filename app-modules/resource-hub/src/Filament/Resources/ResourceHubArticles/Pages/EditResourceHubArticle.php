@@ -57,6 +57,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rules\Unique;
 
 class EditResourceHubArticle extends EditRecord
 {
@@ -101,12 +102,28 @@ class EditResourceHubArticle extends EditRecord
                                 TextInput::make('title')
                                     ->label('Article Title')
                                     ->required()
-                                    ->string()
+                                    ->maxLength(255)
+                                    ->unique(
+                                        table: 'resource_hub_articles',
+                                        column: 'title',
+                                        ignoreRecord: true,
+                                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                                    )
                                     ->suffixAction(
                                         BaseAction::make('saveArticleTitle')
                                             ->icon('heroicon-o-check')
                                             ->action(function (Model $record, $state) {
                                                 if ($record->title === $state) {
+                                                    return;
+                                                }
+
+                                                if ($record->newQuery()->where('title', $state)->whereKeyNot($record->getKey())->exists()) {
+                                                    Notification::make()
+                                                        ->title('That title is already in use')
+                                                        ->danger()
+                                                        ->duration(3000)
+                                                        ->send();
+
                                                     return;
                                                 }
 

@@ -46,6 +46,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
+use function Tests\asSuperAdmin;
 
 // TODO: Write CreateResourceHubCategory tests
 //test('A successful action on the CreateResourceHubCategory page', function () {});
@@ -124,4 +125,24 @@ test('CreateResourceHubCategory is gated with proper feature access control', fu
     assertCount(1, ResourceHubCategory::all());
 
     assertDatabaseHas(ResourceHubCategory::class, $request->toArray());
+});
+
+test('CreateResourceHubCategory does not allow for duplicate names of non-deleted categories case insensitively', function () {
+    asSuperAdmin();
+
+    $category = ResourceHubCategory::factory(['name' => 'Category Name'])->create();
+    $request1 = collect(CreateResourceHubCategoryRequestFactory::new(['name' => 'category NAME'])->create());
+    $request2 = collect(CreateResourceHubCategoryRequestFactory::new(['name' => 'category name'])->create());
+
+    $category->delete();
+
+    livewire(CreateResourceHubCategory::class)
+        ->fillForm($request1->toArray())
+        ->call('create')
+        ->assertHasNoActionErrors();
+
+    livewire(CreateResourceHubCategory::class)
+        ->fillForm($request2->toArray())
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
 });

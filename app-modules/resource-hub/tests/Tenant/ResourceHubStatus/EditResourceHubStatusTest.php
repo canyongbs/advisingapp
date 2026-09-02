@@ -45,6 +45,7 @@ use App\Settings\LicenseSettings;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertEquals;
+use function Tests\asSuperAdmin;
 
 // TODO: Write EditResourceHubStatus tests
 //test('A successful action on the EditResourceHubStatus page', function () {});
@@ -139,4 +140,26 @@ test('EditResourceHubStatus is gated with proper feature access control', functi
         ->assertHasNoFormErrors();
 
     assertEquals($request['name'], $resourceHubStatus->fresh()->name);
+});
+
+test('EditResourceHubStatus does not allow for duplicate names of non-deleted statuses case insensitively', function () {
+    asSuperAdmin();
+
+    $deletedStatus = ResourceHubStatus::factory(['name' => 'Status Name'])->create();
+    $status = ResourceHubStatus::factory(['name' => 'Test Name'])->create();
+    ResourceHubStatus::factory(['name' => 'Other Name'])->create();
+    $request1 = collect(EditResourceHubStatusRequestFactory::new(['name' => 'status name'])->create());
+    $request2 = collect(EditResourceHubStatusRequestFactory::new(['name' => 'OTHER name'])->create());
+
+    $deletedStatus->delete();
+
+    livewire(EditResourceHubStatus::class, ['record' => $status->getRouteKey()])
+        ->fillForm($request1->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    livewire(EditResourceHubStatus::class, ['record' => $status->getRouteKey()])
+        ->fillForm($request2->toArray())
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
 });

@@ -38,12 +38,14 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\EditResourceHubArticle;
 use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\ResourceHubArticleResource;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use AdvisingApp\ResourceHub\Tests\Tenant\ResourceHubArticle\RequestFactories\EditResourceHubArticleRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 // TODO: Write EditResourceHubArticle tests
 //test('A successful action on the EditResourceHubArticle page', function () {});
@@ -120,4 +122,26 @@ test('EditResourceHubArticle is gated with proper feature access control', funct
     )->assertSuccessful();
 
     // TODO Restore testing the edit form
+});
+
+test('EditResourceHubArticle does not allow for duplicate article titles of non-deleted articles case insensitively', function () {
+    asSuperAdmin();
+
+    $deletedArticle = ResourceHubArticle::factory(['title' => 'Article Title'])->create();
+    $article = ResourceHubArticle::factory(['title' => 'Test Title'])->create();
+    ResourceHubArticle::factory(['title' => 'Other Title'])->create();
+    $request1 = collect(EditResourceHubArticleRequestFactory::new(['title' => 'article title'])->create());
+    $request2 = collect(EditResourceHubArticleRequestFactory::new(['title' => 'OTHER title'])->create());
+
+    $deletedArticle->delete();
+
+    livewire(EditResourceHubArticle::class, ['record' => $article->getRouteKey()])
+        ->fillForm($request1->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    livewire(EditResourceHubArticle::class, ['record' => $article->getRouteKey()])
+        ->fillForm($request2->toArray())
+        ->call('save')
+        ->assertHasFormErrors(['title' => 'unique']);
 });

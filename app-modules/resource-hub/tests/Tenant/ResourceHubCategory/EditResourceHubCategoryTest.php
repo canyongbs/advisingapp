@@ -45,6 +45,7 @@ use App\Settings\LicenseSettings;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertEquals;
+use function Tests\asSuperAdmin;
 
 // TODO: Write EditResourceHubCategory tests
 //test('A successful action on the EditResourceHubCategory page', function () {});
@@ -139,4 +140,26 @@ test('EditResourceHubCategory is gated with proper feature access control', func
         ->assertHasNoFormErrors();
 
     assertEquals($request['name'], $resourceHubCategory->fresh()->name);
+});
+
+test('EditResourceHubCategory does not allow for duplicate names of non-deleted categories case insensitively', function () {
+    asSuperAdmin();
+
+    $deletedCategory = ResourceHubCategory::factory(['name' => 'Category Name'])->create();
+    $category = ResourceHubCategory::factory(['name' => 'Test Name'])->create();
+    ResourceHubCategory::factory(['name' => 'Other Name'])->create();
+    $request1 = collect(EditResourceHubCategoryRequestFactory::new(['name' => 'category name'])->create());
+    $request2 = collect(EditResourceHubCategoryRequestFactory::new(['name' => 'OTHER name'])->create());
+
+    $deletedCategory->delete();
+
+    livewire(EditResourceHubCategory::class, ['record' => $category->getRouteKey()])
+        ->fillForm($request1->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    livewire(EditResourceHubCategory::class, ['record' => $category->getRouteKey()])
+        ->fillForm($request2->toArray())
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
 });

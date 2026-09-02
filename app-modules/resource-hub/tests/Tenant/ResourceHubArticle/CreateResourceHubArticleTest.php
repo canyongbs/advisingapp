@@ -45,6 +45,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
+use function Tests\asSuperAdmin;
 
 // TODO: Write CreateResourceHubArticle tests
 //test('A successful action on the CreateResourceHubArticle page', function () {});
@@ -117,4 +118,22 @@ test('CreateResourceHubArticle is gated with proper feature access control', fun
     $data = $request->toArray();
 
     assertDatabaseHas(ResourceHubArticle::class, $data);
+});
+
+test('CreateResourceHubArticle does not allow for duplicate article titles of non-deleted articles case insensitively', function () {
+    asSuperAdmin();
+
+    $article = ResourceHubArticle::factory(['title' => 'Article Title'])->create();
+    $request1 = collect(CreateResourceHubArticleRequestFactory::new(['title' => 'article TITLE'])->create());
+    $request2 = collect(CreateResourceHubArticleRequestFactory::new(['title' => 'article title'])->create());
+
+    $article->delete();
+
+    livewire(ListResourceHubArticles::class)
+        ->callAction('create', $request1->toArray())
+        ->assertHasNoFormErrors();
+
+    livewire(ListResourceHubArticles::class)
+        ->callAction('create', $request2->toArray())
+        ->assertHasFormErrors(['title' => 'unique']);
 });
