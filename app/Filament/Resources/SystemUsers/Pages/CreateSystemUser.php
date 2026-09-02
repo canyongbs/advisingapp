@@ -40,6 +40,7 @@ use App\Filament\Resources\SystemUsers\SystemUserResource;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class CreateSystemUser extends CreateRecord
 {
@@ -52,6 +53,11 @@ class CreateSystemUser extends CreateRecord
         return $schema->components([
             TextInput::make('name')
                 ->required()
+                ->unique(
+                    table: 'system_users',
+                    column: 'name',
+                    modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                )
                 ->string(),
         ]);
     }
