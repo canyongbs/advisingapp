@@ -42,12 +42,14 @@ use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
+    // TODO: Cleanup Task SurveyCitextCleanup - remove FixesDuplicateNames trait & usages (if no other migration uses it, restore its `// @phpstan-ignore trait.unused` annotation)
     use FixesDuplicateNames;
 
     protected string $table = 'surveys';
 
     protected string $column = 'name';
 
+    // TODO: Cleanup Task SurveyCitextCleanup - remove $chunkSize and $usesSoftDeletes
     protected int $chunkSize = 500;
 
     protected bool $usesSoftDeletes = true;
@@ -61,6 +63,7 @@ return new class () extends Migration {
                 $table->dropUnique($this->uniqueConstraint);
             });
 
+            // TODO: Cleanup Task SurveyCitextCleanup - remove the $this->fixDuplicates() call (the surrounding schema changes are permanent)
             $this->fixDuplicates();
 
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
