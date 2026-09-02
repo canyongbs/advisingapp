@@ -46,6 +46,7 @@ use CanyonGBS\Common\Filament\Actions\ArchiveBulkAction;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Filters\SelectFilter;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -289,8 +290,6 @@ it('shows bulk subscription action for authorized user', function () {
 
 describe('archiving', function () {
     it('does not list archived students', function () {
-        Student::truncate();
-
         asSuperAdmin();
 
         $active = Student::factory()->count(3)->create();
@@ -304,8 +303,6 @@ describe('archiving', function () {
     });
 
     it('archives the selected students instead of deleting them', function () {
-        Student::truncate();
-
         asSuperAdmin();
 
         $studentSettings = app(ManageStudentConfigurationSettings::class);
@@ -327,5 +324,27 @@ describe('archiving', function () {
             ->and($student->trashed())->toBeFalse();
 
         assertDatabaseHas('enrollments', ['sisid' => $student->getKey(), 'deleted_at' => null]);
+    });
+});
+
+describe('filter options', function () {
+    it('does not offer SIS categories that only archived students have', function () {
+        asSuperAdmin();
+
+        Student::factory()->create(['sis_category' => 'Active Category']);
+
+        $archived = Student::factory()->create(['sis_category' => 'Archived Only Category']);
+        $archived->archive();
+
+        livewire(ListStudents::class)
+            ->assertOk()
+            ->assertTableFilterExists('sis_category', function (SelectFilter $filter): bool {
+                $options = $filter->getOptions();
+
+                expect($options)->toHaveKey('Active Category')
+                    ->and($options)->not->toHaveKey('Archived Only Category');
+
+                return true;
+            });
     });
 });
