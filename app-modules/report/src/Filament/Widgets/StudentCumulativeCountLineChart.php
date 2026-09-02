@@ -42,6 +42,12 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
 
+/**
+ * Archived students are deliberately included here. This chart reports historical growth of
+ * the student body over time, so removing a student from every past month at the moment they
+ * are archived would retroactively rewrite the history it exists to show. Only the widgets
+ * that list or count *current* students apply `WithoutArchivedStudents`.
+ */
 class StudentCumulativeCountLineChart extends LineChartReportWidget
 {
     protected ?string $heading = 'Students (Cumulative)';

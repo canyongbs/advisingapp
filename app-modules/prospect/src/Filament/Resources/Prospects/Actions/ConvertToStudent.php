@@ -40,15 +40,14 @@ use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
-use CanyonGBS\Common\Filament\Support\HideDeletedAndArchivedExceptSelectedFromSelectOptions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 
 class ConvertToStudent extends Action
 {
@@ -66,7 +65,9 @@ class ConvertToStudent extends Action
                     ->relationship(
                         'student',
                         'full_name',
-                        fn (Builder $query, ?Model $record, Select $component): Builder => app(HideDeletedAndArchivedExceptSelectedFromSelectOptions::class)($query, $record, $component),
+                        // The action is only ever visible on a prospect that has no student yet,
+                        // so there is no already-selected student whose label must keep resolving.
+                        fn (Builder $query): Builder => $query->tap(new WithoutArchivedStudents()),
                     )
                     ->required()
                     ->label('Select Student')

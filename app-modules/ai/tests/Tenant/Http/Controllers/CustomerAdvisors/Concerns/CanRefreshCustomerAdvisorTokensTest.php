@@ -34,39 +34,52 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models\Scopes;
-
+use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\Concerns\CanRefreshCustomerAdvisorTokens;
+use AdvisingApp\Authorization\Enums\TokenAbility;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\StudentArchivingFeature;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+use Laravel\Sanctum\NewAccessToken;
 
 /**
- * Excludes archived students from a query.
- *
- * Archived students are included by default, so this must be applied explicitly
- * anywhere students are discovered or selected — lists, search, selects, group
- * populations and reports. It is deliberately not applied to `BelongsTo`
- * relationships, so an archived student still resolves on the records they are
- * already attached to.
+ * @return array{access_token: NewAccessToken, refresh_token: NewAccessToken}|null
  */
-class WithoutArchivedStudents
+function refreshCustomerAdvisorTokensFor(Student $student): ?array
 {
-    /**
-     * @param Builder<Student> $query
-     *
-     * @return Builder<Student>
-     */
-    public function __invoke(Builder $query): Builder
-    {
-        /*
-         * TODO: Cleanup Task (student-archiving): remove this guard so the scope always applies
-         * `withoutArchived()`. Keep this class and every `->tap(new WithoutArchivedStudents())`
-         * call site — do not inline it, it is the chokepoint that made the flag a single edit.
-         */
-        if (! StudentArchivingFeature::active()) {
-            return $query;
-        }
+    $refreshToken = $student->createToken(
+        'customer_advisor_refresh_token',
+        [TokenAbility::IssueCustomerAdvisorAccessToken],
+        now()->addDays(3),
+    )->plainTextToken;
 
-        return $query->withoutArchived();
-    }
+    $request = Request::create('/', 'POST');
+    $request->cookies->set('advising_app_customer_advisor_refresh_token', $refreshToken);
+
+    $refresher = new class () {
+        use CanRefreshCustomerAdvisorTokens;
+
+        /**
+         * @return array{access_token: NewAccessToken, refresh_token: NewAccessToken}|null
+         */
+        public function refresh(Request $request): ?array
+        {
+            return $this->refreshFromRequest($request);
+        }
+    };
+
+    return $refresher->refresh($request);
 }
+
+it('issues new tokens for an active student', function () {
+    $student = Student::factory()->create();
+
+    expect(refreshCustomerAdvisorTokensFor($student))->toBeArray();
+});
+
+// The refresh endpoint is not behind the authorization middleware, so without this check an
+// archived student could keep minting access tokens for as long as the cookie lives.
+it('does not refresh tokens for an archived student', function () {
+    $student = Student::factory()->create();
+    $student->archive();
+
+    expect(refreshCustomerAdvisorTokensFor($student))->toBeNull();
+});
