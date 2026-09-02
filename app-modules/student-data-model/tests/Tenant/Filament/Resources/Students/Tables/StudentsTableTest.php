@@ -34,51 +34,50 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
-use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\Tables\StudentsTable;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Filament\QueryBuilder\Constraints\Constraint;
 
-it('can match to a Student', function () {
-    /** @var Student $student */
-    $student = Student::factory()->create();
-    $phoneNumber = $student->phoneNumbers->first()->number;
+use function Tests\asSuperAdmin;
 
-    $sender = app(EngagementResponseSenderFinder::class)->find($phoneNumber);
+/**
+ * @return array<string, string>
+ */
+function enrolledTermConstraintOptions(string $name): array
+{
+    $constraint = collect(StudentsTable::getQueryBuilderConstraints())
+        ->firstOrFail(fn (Constraint $constraint): bool => $constraint->getName() === $name);
 
-    expect($student->is($sender))->toBeTrue();
-});
+    assert($constraint instanceof Filament\QueryBuilder\Constraints\SelectConstraint);
 
-it('can match to a Prospect', function () {
-    /** @var Prospect $prospect */
-    $prospect = Prospect::factory()->create();
-    $phoneNumber = $prospect->phoneNumbers->first()->number;
+    return $constraint->getOptions();
+}
 
-    $sender = app(EngagementResponseSenderFinder::class)->find($phoneNumber);
+it('does not offer enrolled terms that only archived students have', function () {
+    Student::truncate();
 
-    expect($prospect->is($sender))->toBeTrue();
-});
+    asSuperAdmin();
 
-it('returns null when no match is found', function () {
-    /** @var Student $student */
-    $student = Student::factory()->create();
+    $active = Student::factory()->create();
+    Enrollment::factory()->for($active, 'student')->create([
+        'semester_name' => 'Active Term',
+        'start_date' => now()->subYear(),
+    ]);
 
-    /** @var Prospect $prospect */
-    $prospect = Prospect::factory()->create();
+    $archived = Student::factory()->create();
+    Enrollment::factory()->for($archived, 'student')->create([
+        'semester_name' => 'Archived Only Term',
+        'start_date' => now()->subYear(),
+    ]);
 
-    $phoneNumber = '1234567890';
+    expect(enrolledTermConstraintOptions('firstEnrollmentTerm.semester_name'))
+        ->toContain('Active Term')
+        ->toContain('Archived Only Term');
 
-    $sender = app(EngagementResponseSenderFinder::class)->find($phoneNumber);
+    $archived->archive();
 
-    expect($sender)->toBeNull();
-});
-
-it('does not match to an archived Student', function () {
-    $student = Student::factory()->create();
-    $phoneNumber = $student->phoneNumbers->first()->number;
-
-    expect(app(EngagementResponseSenderFinder::class)->find($phoneNumber))->not->toBeNull();
-
-    $student->archive();
-
-    expect(app(EngagementResponseSenderFinder::class)->find($phoneNumber))->toBeNull();
+    expect(enrolledTermConstraintOptions('firstEnrollmentTerm.semester_name'))
+        ->toContain('Active Term')
+        ->not->toContain('Archived Only Term');
 });

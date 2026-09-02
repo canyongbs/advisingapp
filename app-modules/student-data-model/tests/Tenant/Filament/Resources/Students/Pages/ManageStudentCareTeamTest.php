@@ -37,10 +37,21 @@
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ManageStudentCareTeam;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+use App\Models\User;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
+
+it('can render the manage student care team page', function () {
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+
+    livewire(ManageStudentCareTeam::class, ['record' => $student->getKey()])
+        ->assertOk();
+});
 
 // `HasStudentHeader` renders the ArchiveAction on pages that are neither EditRecord nor
 // ViewRecord, which the action's default authorization and redirect do not support. This
@@ -74,4 +85,26 @@ it('archives the student from the student header', function () {
         ->callAction(ArchiveAction::class);
 
     expect($student->refresh()->archived_at)->not->toBeNull();
+});
+
+describe('authorization', function () {
+    it('denies access to the page without the `student.*.view` permission', function () {
+        $user = User::factory()->licensed(Student::getLicenseType())->create();
+        $student = Student::factory()->create();
+
+        actingAs($user);
+
+        livewire(ManageStudentCareTeam::class, ['record' => $student->getKey()])
+            ->assertForbidden();
+
+        $user->givePermissionTo('student.view-any');
+        $user->givePermissionTo('student.*.view');
+
+        // The page manages the `careTeam` relationship, so the CareTeam policy applies too.
+        $user->givePermissionTo('care_team.view-any');
+        $user->givePermissionTo('care_team.*.view');
+
+        livewire(ManageStudentCareTeam::class, ['record' => $student->getKey()])
+            ->assertOk();
+    });
 });

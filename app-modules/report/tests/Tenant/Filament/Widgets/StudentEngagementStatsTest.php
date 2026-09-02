@@ -179,3 +179,23 @@ it('returns correct counts of students, emails, texts, and staff engagements bas
         ->and($stats[2]->getValue())->toEqual($textCountForJohnName + $textCountForDoeName)
         ->and($stats[3]->getValue())->toEqual(4);
 });
+
+it('does not count archived students in the total students stat', function () {
+    $startDate = now()->subDays(10);
+
+    Student::factory()->count(3)->state(['created_at_source' => $startDate])->create();
+    $archived = Student::factory()->count(2)->state(['created_at_source' => $startDate])->create();
+
+    $widget = new StudentEngagementStats();
+    $widget->cacheTag = 'report-student-engagement';
+    $widget->pageFilters = [
+        'startDate' => $startDate->toDateString(),
+        'endDate' => now()->toDateString(),
+    ];
+
+    expect($widget->getStats()[0]->getValue())->toEqual(5);
+
+    $archived->each(fn (Student $student) => $student->archive());
+
+    expect($widget->getStats()[0]->getValue())->toEqual(3);
+});

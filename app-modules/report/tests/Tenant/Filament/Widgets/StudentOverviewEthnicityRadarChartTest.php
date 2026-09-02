@@ -210,3 +210,23 @@ it('excludes students with null or empty ethnicity', function () {
     expect($stats->sum())->toEqual($asianCount + $nullEthnicityCount)
         ->and($labels->count())->toEqual(2);
 });
+
+it('does not count archived students', function () {
+    $createdAt = now()->subDays(5);
+
+    Student::factory()->count(3)->create(['ethnicity' => 'Asian', 'created_at_source' => $createdAt]);
+    $archived = Student::factory()->count(2)->create(['ethnicity' => 'Asian', 'created_at_source' => $createdAt]);
+
+    $widgetInstance = new StudentOverviewEthnicityRadarChart();
+    $widgetInstance->cacheTag = 'report-students';
+    $widgetInstance->pageFilters = [
+        'startDate' => now()->subDays(10)->toDateString(),
+        'endDate' => now()->toDateString(),
+    ];
+
+    expect($widgetInstance->getData()['datasets'][0]['data']->sum())->toEqual(5);
+
+    $archived->each(fn (Student $student) => $student->archive());
+
+    expect($widgetInstance->getData()['datasets'][0]['data']->sum())->toEqual(3);
+});

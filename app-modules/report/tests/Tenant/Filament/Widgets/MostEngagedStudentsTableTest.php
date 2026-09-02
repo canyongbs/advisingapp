@@ -196,3 +196,16 @@ it('can start an export, sending a notification', function () {
         ->assertNotified()
         ->assertHasNoTableActionErrors();
 });
+
+it('does not list archived students', function () {
+    $active = Student::factory()->count(2)->create();
+    $archived = Student::factory()->create();
+    $archived->archive();
+
+    livewire(MostEngagedStudentsTable::class, [
+        'cacheTag' => 'report-students',
+        'pageFilters' => [],
+    ])
+        ->assertCanSeeTableRecords($active)
+        ->assertCanNotSeeTableRecords(collect([$archived]));
+});
