@@ -76,7 +76,7 @@
         "vue-router": "^5.2.0"
     },
     "allowScripts": {
-        "esbuild@0.28.1": true,
-        "vue-demi@0.14.10": true
+        "vue-demi@0.14.10": true,
+        "esbuild@0.28.2": true
     }
 }
