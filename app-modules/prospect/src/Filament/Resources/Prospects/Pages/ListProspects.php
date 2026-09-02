@@ -103,7 +103,7 @@ class ListProspects extends ListRecords
                     ->sortable(),
                 TextColumn::make('status.name')
                     ->badge()
-                    ->color(fn (Prospect $record) => $record->status->color->value)
+                    ->color(fn (Prospect $record) => $record->status->getBadgeColor())
                     ->toggleable()
                     ->sortable(['sort']),
                 TextColumn::make('source.name')

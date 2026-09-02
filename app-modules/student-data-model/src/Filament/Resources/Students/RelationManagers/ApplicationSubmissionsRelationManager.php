@@ -79,7 +79,7 @@ class ApplicationSubmissionsRelationManager extends RelationManager
                         return $record->state->name;
                     })
                     ->color(function (ApplicationSubmission $record) {
-                        return $record->state->color->value;
+                        return $record->state->getBadgeColor();
                     })
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query
@@ -101,7 +101,7 @@ class ApplicationSubmissionsRelationManager extends RelationManager
                                 return $record->state->name;
                             })
                             ->color(function (ApplicationSubmission $record) {
-                                return $record->state->color->value;
+                                return $record->state->getBadgeColor();
                             }),
                         Section::make('Authenticated author')
                             ->schema([

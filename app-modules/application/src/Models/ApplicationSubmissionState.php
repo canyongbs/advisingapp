@@ -90,6 +90,16 @@ class ApplicationSubmissionState extends BaseModel implements Auditable
     }
 
     /**
+     * @return string|array<int, string>
+     */
+    public function getBadgeColor(): string | array
+    {
+        return $this->color->isShade()
+            ? array_fill_keys([50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950], $this->color->getRgb())
+            : $this->color->value;
+    }
+
+    /**
      * @return MorphMany<WorkflowTrigger, $this>
      */
     public function workflowTriggers(): MorphMany

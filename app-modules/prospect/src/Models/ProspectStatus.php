@@ -78,6 +78,16 @@ class ProspectStatus extends BaseModel implements Auditable
         return $this->hasMany(Prospect::class, 'status_id');
     }
 
+    /**
+     * @return string|array<int, string>
+     */
+    public function getBadgeColor(): string | array
+    {
+        return $this->color->isShade()
+            ? array_fill_keys([50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950], $this->color->getRgb())
+            : $this->color->value;
+    }
+
     protected function serializeDate(DateTimeInterface $date): string
     {
         return $date->format(config('project.datetime_format') ?? 'Y-m-d H:i:s');
