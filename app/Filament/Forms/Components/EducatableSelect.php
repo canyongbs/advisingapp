@@ -39,6 +39,7 @@ namespace App\Filament\Forms\Components;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\StudentArchivingFeature;
 use App\Models\Authenticatable;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Closure;
@@ -107,6 +108,23 @@ class EducatableSelect extends Component
         return Type::make(Student::class)
             ->titleAttribute(Student::displayNameKey())
             ->modifyOptionsQueryUsing(function (Builder $query) use ($keyColumnName, $record) {
+                /*
+                 * TODO: Cleanup Task (student-archiving): delete this comment block and the
+                 * guard below it, and leave everything from `$query->where(...)` onward
+                 * exactly as it is.
+                 *
+                 * The `orWhere` further down is an escape hatch from the archived exclusion,
+                 * so it is only valid while that exclusion exists. With the feature inactive
+                 * `WithoutArchivedStudents` adds nothing, and a leading `orWhere` compiles as
+                 * a plain `where` — collapsing the group to just the selected student and
+                 * hiding everyone else from the options. Once the scope applies
+                 * `withoutArchived()` unconditionally the group is never empty, so the guard
+                 * stops being needed and the chain below becomes correct on its own.
+                 */
+                if (! StudentArchivingFeature::active()) {
+                    return;
+                }
+
                 // Filament runs this closure when resolving the label of the selected value as
                 // well as when building the options, so an already-selected archived student
                 // must stay resolvable or their name disappears from the record they are on.
