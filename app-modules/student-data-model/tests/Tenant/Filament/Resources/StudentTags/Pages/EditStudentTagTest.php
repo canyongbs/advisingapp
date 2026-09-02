@@ -45,18 +45,43 @@ test('EditStudentTag does not allow for duplicate names of non-deleted student t
     asSuperAdmin();
 
     $deletedTag = Tag::factory(['name' => 'Student Tag', 'type' => TagType::Student])->create();
-    $systemUser = Tag::factory(['name' => 'Test Student Tag',  'type' => TagType::Student])->create();
+    $tag = Tag::factory(['name' => 'Test Student Tag',  'type' => TagType::Student])->create();
     Tag::factory(['name' => 'Other Student Tag',  'type' => TagType::Student])->create();
 
     $deletedTag->delete();
 
-    livewire(EditStudentTag::class, ['record' => $systemUser->getRouteKey()])
+    livewire(EditStudentTag::class, ['record' => $tag->getRouteKey()])
         ->fillForm(['name' => 'student tag'])
         ->call('save')
         ->assertHasNoFormErrors();
 
-    livewire(EditStudentTag::class, ['record' => $systemUser->getRouteKey()])
+    livewire(EditStudentTag::class, ['record' => $tag->getRouteKey()])
         ->fillForm(['name' => 'OTHER Student tag'])
         ->call('save')
         ->assertHasFormErrors(['name' => 'unique']);
+});
+
+test('EditStudentTag does allow for non-duplicate names of non-deleted student tags', function () {
+    asSuperAdmin();
+
+    $tag = Tag::factory(['name' => 'Student Tag 1', 'type' => TagType::Student])->create();
+    $deletedTag = Tag::factory(['name' => 'Student Tag 2', 'type' => TagType::Student])->create();
+    $deletedTag->delete();
+
+    livewire(EditStudentTag::class, ['record' => $tag->getRouteKey()])
+        ->fillForm(['name' => 'Student Tag 2'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+});
+
+test('EditStudentTag does allow for duplicate names of prospect tags', function () {
+    asSuperAdmin();
+
+    Tag::factory(['name' => 'Tag', 'type' => TagType::Prospect])->create();
+    $tag = Tag::factory(['name' => 'Student Tag', 'type' => TagType::Student])->create();
+
+    livewire(EditStudentTag::class, ['record' => $tag->getRouteKey()])
+        ->fillForm(['name' => 'Tag'])
+        ->call('save')
+        ->assertHasNoFormErrors();
 });

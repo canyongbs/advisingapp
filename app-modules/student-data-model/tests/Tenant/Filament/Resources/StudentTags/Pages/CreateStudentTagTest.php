@@ -57,3 +57,27 @@ test('CreateStudentTag does not allow for duplicate names of non-deleted student
         ->call('create')
         ->assertHasFormErrors(['name' => 'unique']);
 });
+
+test('CreateStudentTag does allow for non-duplicate names of non-deleted student tags', function () {
+    asSuperAdmin();
+
+    Tag::factory(['name' => 'Student Tag 1', 'type' => TagType::Student])->create();
+    $tag = Tag::factory(['name' => 'Student Tag 2', 'type' => TagType::Student])->create();
+    $tag->delete();
+
+    livewire(CreateStudentTag::class)
+        ->fillForm(['name' => 'Student Tag 2'])
+        ->call('create')
+        ->assertHasNoFormErrors();
+});
+
+test('CreateStudentTag does allow for duplicate names of prospect tags', function () {
+    asSuperAdmin();
+
+    Tag::factory(['name' => 'Tag', 'type' => TagType::Prospect])->create();
+
+    livewire(CreateStudentTag::class)
+        ->fillForm(['name' => 'Tag'])
+        ->call('create')
+        ->assertHasNoFormErrors();
+});
