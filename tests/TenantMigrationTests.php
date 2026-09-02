@@ -174,8 +174,10 @@ describe('event title citext change', function () {
                 $event2 = Event::factory()->create(['title' => 'event Title', 'created_at' => now()->subMinutes(2)]);
                 $event3 = Event::factory()->create(['title' => 'event title', 'created_at' => now()->subMinutes(1)]);
 
-                // A soft-deleted event sharing a title must be ignored by de-duplication
-                $deletedEvent = Event::factory()->create(['title' => 'Deleted event']);
+                // A soft-deleted event sharing a title with the live duplicate group must be
+                // ignored by de-duplication: it should neither affect the live renumbering
+                // nor get renamed itself.
+                $deletedEvent = Event::factory()->create(['title' => 'event title', 'created_at' => now()->subMinutes(4)]);
                 $deletedEvent->delete();
 
                 // Run the migration
@@ -188,7 +190,8 @@ describe('event title citext change', function () {
                 expect($event1->refresh()->title)->toBe('Event title');
                 expect($event2->refresh()->title)->toBe('event Title-2');
                 expect($event3->refresh()->title)->toBe('event title-3');
-                expect($deletedEvent->refresh()->title)->toBe('Deleted event');
+                // Untouched: excluded from the live dedup group entirely, despite the title collision
+                expect($deletedEvent->refresh()->title)->toBe('event title');
             }
         );
     });
