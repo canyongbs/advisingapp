@@ -134,7 +134,7 @@ test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements
 describe('role citext change', function () {
     it('properly deduplicates role names case insensitively per guard', function () {
         isolatedMigration(
-            '2026_09_02_000000_convert_role_name_to_citext',
+            '2026_09_02_125430_convert_role_name_to_citext',
             function () {
                 // Setup data before migration
                 $role1 = Role::factory()->create(['name' => 'Role', 'guard_name' => 'web']);
@@ -144,7 +144,7 @@ describe('role citext change', function () {
                 $role4 = Role::factory()->create(['name' => 'role', 'guard_name' => 'api']);
 
                 // Run the migration
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/authorization/database/migrations/2026_09_02_000000_convert_role_name_to_citext.php']);
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/authorization/database/migrations/2026_09_02_125430_convert_role_name_to_citext.php']);
 
                 // Confirm migration ran successfully
                 expect($migrate)->toBe(Command::SUCCESS);
