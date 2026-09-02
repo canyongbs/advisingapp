@@ -117,6 +117,16 @@ class EditResourceHubArticle extends EditRecord
                                                     return;
                                                 }
 
+                                                if ($record->newQuery()->where('title', $state)->whereKeyNot($record->getKey())->exists()) {
+                                                    Notification::make()
+                                                        ->title('That title is already in use')
+                                                        ->danger()
+                                                        ->duration(3000)
+                                                        ->send();
+
+                                                    return;
+                                                }
+
                                                 $record->update([
                                                     'title' => $state,
                                                 ]);
