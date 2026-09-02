@@ -72,3 +72,29 @@ it('archive action archives the event and redirects to the index when the event 
 
     expect($event->fresh()->isArchived())->toBeTrue();
 });
+
+it('does not allow updating an event to a title matching another non-deleted event case-insensitively', function () {
+    asSuperAdmin();
+
+    Event::factory()->create(['title' => 'Other Event']);
+    $event = Event::factory()->create(['title' => 'Editable Event']);
+
+    livewire(EditEventDetails::class, ['record' => $event->getRouteKey()])
+        ->fillForm(['title' => 'other event'])
+        ->call('save')
+        ->assertHasFormErrors(['title' => 'unique']);
+});
+
+it('allows updating an event to a title freed up by a soft-deleted event case-insensitively', function () {
+    asSuperAdmin();
+
+    $deletedEvent = Event::factory()->create(['title' => 'Reusable Title']);
+    $deletedEvent->delete();
+
+    $event = Event::factory()->create(['title' => 'Editable Event']);
+
+    livewire(EditEventDetails::class, ['record' => $event->getRouteKey()])
+        ->fillForm(['title' => 'reusable title'])
+        ->call('save')
+        ->assertHasNoFormErrors(['title']);
+});

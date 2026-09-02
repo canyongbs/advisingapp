@@ -53,6 +53,7 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rules\Unique;
 use Livewire\Attributes\Url;
 
 class ListEvents extends ListRecords
@@ -115,7 +116,13 @@ class ListEvents extends ListRecords
                         return $schema->components([
                             TextInput::make('title')
                                 ->label('Title')
-                                ->required(),
+                                ->required()
+                                ->maxLength(255)
+                                ->unique(
+                                    table: 'events',
+                                    column: 'title',
+                                    modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                                ),
                         ]);
                     })
                     ->beforeReplicaSaved(function (Model $replica, array $data): void {
