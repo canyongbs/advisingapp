@@ -170,9 +170,11 @@ describe('event title citext change', function () {
             '2026_09_02_120000_convert_events_title_to_citext',
             function () {
                 // Setup data before migration
-                $event1 = Event::factory()->create(['title' => 'Event title']);
-                $event2 = Event::factory()->create(['title' => 'event Title']);
-                $event3 = Event::factory()->create(['title' => 'event title']);
+
+                $event1 = Event::factory()->create(['title' => 'Event title', 'created_at' => now()->subMinutes(3)]);
+                $event2 = Event::factory()->create(['title' => 'event Title', 'created_at' => now()->subMinutes(2)]);
+                $event3 = Event::factory()->create(['title' => 'event title', 'created_at' => now()->subMinutes(1)]);
+
 
                 // A soft-deleted event sharing a title must be ignored by de-duplication
                 $deletedEvent = Event::factory()->create(['title' => 'Deleted event']);
