@@ -34,51 +34,46 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
-use AdvisingApp\Group\Filament\Resources\Groups\Pages\EditGroup;
-use AdvisingApp\Group\Models\Group;
+use AdvisingApp\Ai\Http\Middleware\CustomerAdvisorAuthorization;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Models\User;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Route;
+use Symfony\Component\HttpFoundation\Response;
 
-use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
-use function Tests\asSuperAdmin;
+function handleCustomerAdvisorRequest(Student $student): Response
+{
+    $advisor = CustomerAdvisor::factory()->create(['is_requires_authentication_enabled' => true]);
 
-test('EditGroup is gated with proper access control', function () {
-    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $token = $student->createToken('customer-advisor-access-token')->plainTextToken;
 
-    $group = Group::factory()->create();
+    $request = Request::create('/', 'GET');
+    $request->headers->set('Authorization', "Bearer {$token}");
 
-    actingAs($user)
-        ->get(
-            GroupResource::getUrl('edit', ['record' => $group])
-        )->assertForbidden();
+    $route = new Route(['GET'], '/{advisor}', fn () => null);
+    $route->bind($request);
+    $route->setParameter('advisor', $advisor);
+    $request->setRouteResolver(fn (): Route => $route);
 
-    $user->givePermissionTo('group.view-any');
-    $user->givePermissionTo('group.*.update');
+    return app(CustomerAdvisorAuthorization::class)->handle(
+        $request,
+        fn (): Response => response()->json(['ok' => true]),
+    );
+}
 
-    actingAs($user)
-        ->get(
-            GroupResource::getUrl('edit', ['record' => $group])
-        )->assertSuccessful();
+it('allows a student with a valid token through', function () {
+    $student = Student::factory()->create();
+
+    expect(handleCustomerAdvisorRequest($student)->getStatusCode())->toBe(200);
 });
 
-// The group builder renders the shared `StudentsTable`, which scopes its own query
-// independently of `GroupModel::query()`.
-test('the group builder does not list archived students', function () {
-    Student::truncate();
+it('rejects a token belonging to an archived student', function () {
+    $student = Student::factory()->create();
+    $student->archive();
 
-    asSuperAdmin();
+    $response = handleCustomerAdvisorRequest($student);
 
-    $group = Group::factory()->student()->dynamic()->create();
-
-    $active = Student::factory()->count(2)->create();
-    $archived = Student::factory()->create();
-    $archived->archive();
-
-    livewire(EditGroup::class, ['record' => $group->getRouteKey()])
-        ->assertOk()
-        ->assertCanSeeTableRecords($active)
-        ->assertCanNotSeeTableRecords([$archived]);
+    expect($response->getStatusCode())->toBe(401)
+        ->and(json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR))
+        ->toBe(['error' => 'Invalid bearer token']);
 });

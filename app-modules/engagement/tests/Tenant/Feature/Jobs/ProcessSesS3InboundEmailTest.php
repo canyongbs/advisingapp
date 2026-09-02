@@ -391,3 +391,39 @@ it('handles exceptions correctly in the failed method', function (?Exception $ex
     'unable to retrieve content exception' => [new UnableToRetrieveContentFromSesS3EmailPayload('s3_email'), '/failed'],
     'unable to detect tenant exception' => [new UnableToDetectTenantFromSesS3EmailPayload('s3_email'), '/failed'],
 ]);
+
+it('does not match an inbound email to an archived student', function () {
+    Storage::fake('s3');
+    $filesystem = Storage::fake('s3-inbound-email');
+
+    $student = Student::factory()->create();
+
+    StudentEmailAddress::factory()
+        ->for($student, 'student')
+        ->create(['address' => 'kevin.ullyott@canyongbs.com']);
+
+    $student->archive();
+
+    $modulePath = resolve(ModulePath::class);
+
+    $content = file_get_contents($modulePath('engagement', 'tests/Fixtures/s3_email'));
+
+    $file = UploadedFile::fake()->createWithContent('s3_email', $content);
+
+    $filesystem->putFileAs('', $file, 's3_email');
+
+    /** @var ProcessSesS3InboundEmail&MockInterface $mock */
+    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
+        $mock->shouldAllowMockingProtectedMethods();
+        // @phpstan-ignore-next-line
+        $mock->shouldReceive('getContent')->once()->andReturn($content);
+    });
+
+    // @phpstan-ignore-next-line
+    invade($mock)->emailFilePath = 's3_email';
+
+    $mock->handle();
+
+    assertDatabaseCount(EngagementResponse::class, 0);
+    assertDatabaseCount(UnmatchedInboundCommunication::class, 1);
+});
