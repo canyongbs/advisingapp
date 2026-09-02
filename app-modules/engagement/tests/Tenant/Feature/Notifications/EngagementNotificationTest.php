@@ -38,6 +38,7 @@ use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Notifications\EngagementNotification;
+use AdvisingApp\Engagement\Settings\EngagementSettings;
 use AdvisingApp\IntegrationAwsSesEventHandling\Settings\SesSettings;
 use AdvisingApp\IntegrationTwilio\Settings\TwilioSettings;
 use AdvisingApp\Notification\Enums\EmailType;
@@ -46,6 +47,8 @@ use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\Tenant;
+use App\Models\User;
+use App\Settings\NotificationSettings;
 
 it('getEmailType returns the engagement email_type value', function () {
     $engagement = Engagement::factory()
@@ -107,6 +110,48 @@ it('creates an EmailMessage with email_type transactional when engagement is tra
 
     expect($emailMessage)->not->toBeNull()
         ->and($emailMessage->email_type)->toBe(EmailType::Transactional);
+});
+
+it('uses the notification settings from name when dynamic engagements are disabled', function () {
+    $settings = app(NotificationSettings::class);
+    $settings->from_name = 'Advising Team';
+    $settings->save();
+
+    $engagementSettings = app(EngagementSettings::class);
+    $engagementSettings->are_dynamic_engagements_enabled = false;
+    $engagementSettings->save();
+
+    $engagement = Engagement::factory()
+        ->forProspect()
+        ->email()
+        ->create();
+
+    $mailMessage = (new EngagementNotification($engagement))->toMail($engagement->recipient);
+
+    expect($mailMessage->from[1])->toBe('Advising Team');
+});
+
+it('uses the engagement user as the from name when dynamic engagements are enabled', function () {
+    $settings = app(NotificationSettings::class);
+    $settings->from_name = 'Advising Team';
+    $settings->save();
+
+    $engagementSettings = app(EngagementSettings::class);
+    $engagementSettings->are_dynamic_engagements_enabled = true;
+    $engagementSettings->save();
+
+    $user = User::factory()->create(['name' => 'Case Manager']);
+
+    $engagement = Engagement::factory()
+        ->forProspect()
+        ->email()
+        ->for($user)
+        ->create();
+
+    $mailMessage = (new EngagementNotification($engagement))->toMail($engagement->recipient);
+
+    expect($mailMessage->from[1])->toBe('Case Manager')
+        ->and($mailMessage->viewData['settings'])->toBe($settings);
 });
 
 it('creates a proper Engagement Response for emails when demo mode is turned on', function () {

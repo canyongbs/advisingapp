@@ -39,7 +39,6 @@ namespace AdvisingApp\Engagement\Notifications;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Settings\NotificationSettings;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -64,7 +63,6 @@ class EngagementBatchStartedNotification extends Notification implements ShouldQ
     public function toMail(object $notifiable): MailMessage
     {
         return MailMessage::make()
-            ->settings(app(NotificationSettings::class))
             ->subject(match ($this->engagementBatch->channel) {
                 NotificationChannel::Email => 'Bulk email started processing',
                 NotificationChannel::Sms => 'Bulk SMS started processing',

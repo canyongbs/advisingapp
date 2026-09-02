@@ -34,37 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Notifications;
+use AdvisingApp\Theme\Filament\Pages\ManageBrandConfigurationSettings;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
-use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Notification;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
-class FormSubmissionRequestNotification extends Notification implements ShouldQueue
-{
-    use Queueable;
+it('stores the email-facing logo publicly and keeps browser-only assets private', function () {
+    asSuperAdmin();
 
-    public function __construct(
-        public FormSubmission $submission,
-    ) {}
-
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
-    {
-        return ['mail'];
-    }
-
-    public function toMail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->subject("Request to Complete: {$this->submission->submissible->name}")
-            ->greeting('Hello ' . $this->submission->author->display_name . '!')
-            ->line("Please complete the attached form: {$this->submission->submissible->name}")
-            ->lineIf(filled($this->submission->request_note), $this->submission->request_note)
-            ->action('Complete Form', route('forms.show', ['form' => $this->submission->submissible]));
-    }
-}
+    livewire(ManageBrandConfigurationSettings::class)
+        ->assertFormFieldExists(
+            'logo',
+            checkFieldUsing: fn (SpatieMediaLibraryFileUpload $field): bool => $field->getDiskName() === 's3-public' && $field->getVisibility() === 'public'
+        )
+        ->assertFormFieldExists(
+            'dark_logo',
+            checkFieldUsing: fn (SpatieMediaLibraryFileUpload $field): bool => $field->getDiskName() === 's3' && $field->getVisibility() === 'private'
+        )
+        ->assertFormFieldExists(
+            'favicon',
+            checkFieldUsing: fn (SpatieMediaLibraryFileUpload $field): bool => $field->getDiskName() === 's3' && $field->getVisibility() === 'private'
+        );
+});

@@ -38,6 +38,7 @@ namespace AdvisingApp\Theme\Filament\Pages;
 
 use AdvisingApp\Theme\Settings\ThemeSettings;
 use App\Enums\NavigationGroup;
+use App\Features\ThemeLogoPublicDiskFeature;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
@@ -108,9 +109,9 @@ class ManageBrandConfigurationSettings extends SettingsPage
                     ->aside()
                     ->schema([
                         SpatieMediaLibraryFileUpload::make('logo')
-                            ->disk('s3')
+                            ->disk(ThemeLogoPublicDiskFeature::active() ? 's3-public' : 's3')
                             ->collection('logo')
-                            ->visibility('private')
+                            ->visibility(ThemeLogoPublicDiskFeature::active() ? 'public' : 'private')
                             ->image()
                             ->model(
                                 ThemeSettings::getSettingsPropertyModel('theme.is_logo_active'),

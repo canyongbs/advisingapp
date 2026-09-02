@@ -34,37 +34,44 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Notifications;
+use AdvisingApp\Theme\Settings\SettingsProperties\ThemeSettingsProperty;
+use App\Features\ThemeLogoPublicDiskFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
-use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Notification;
-
-class FormSubmissionRequestNotification extends Notification implements ShouldQueue
-{
-    use Queueable;
-
-    public function __construct(
-        public FormSubmission $submission,
-    ) {}
-
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return ['mail'];
+        DB::transaction(function (): void {
+            $this->moveThemeLogo('s3', 's3-public');
+
+            ThemeLogoPublicDiskFeature::activate();
+        });
     }
 
-    public function toMail(object $notifiable): MailMessage
+    public function down(): void
     {
-        return MailMessage::make()
-            ->subject("Request to Complete: {$this->submission->submissible->name}")
-            ->greeting('Hello ' . $this->submission->author->display_name . '!')
-            ->line("Please complete the attached form: {$this->submission->submissible->name}")
-            ->lineIf(filled($this->submission->request_note), $this->submission->request_note)
-            ->action('Complete Form', route('forms.show', ['form' => $this->submission->submissible]));
+        DB::transaction(function (): void {
+            ThemeLogoPublicDiskFeature::deactivate();
+
+            $this->moveThemeLogo('s3-public', 's3');
+        });
     }
-}
+
+    private function moveThemeLogo(string $fromDisk, string $toDisk): void
+    {
+        $settingsProperty = ThemeSettingsProperty::getInstance('theme.is_logo_active');
+
+        if (is_null($settingsProperty)) {
+            return;
+        }
+
+        $logo = $settingsProperty->getFirstMedia('logo');
+
+        if (is_null($logo) || $logo->disk !== $fromDisk) {
+            return;
+        }
+
+        $logo->move($settingsProperty, 'logo', $toDisk, $logo->file_name);
+    }
+};

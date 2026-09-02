@@ -34,37 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Notifications;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\EditRole;
+use AdvisingApp\Authorization\Models\Role;
 
-use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Notification;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
-class FormSubmissionRequestNotification extends Notification implements ShouldQueue
-{
-    use Queueable;
+test('EditRole does not allow duplicate role names case insensitively within a guard', function () {
+    asSuperAdmin();
 
-    public function __construct(
-        public FormSubmission $submission,
-    ) {}
+    $role = Role::factory()->create(['name' => 'First Role', 'guard_name' => 'web']);
+    Role::factory()->create(['name' => 'Second Role', 'guard_name' => 'web']);
 
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
-    {
-        return ['mail'];
-    }
+    // Editing a role to its own name in a different case is allowed (record is ignored).
+    livewire(EditRole::class, ['record' => $role->getRouteKey()])
+        ->fillForm(['name' => 'first role'])
+        ->call('save')
+        ->assertHasNoFormErrors();
 
-    public function toMail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->subject("Request to Complete: {$this->submission->submissible->name}")
-            ->greeting('Hello ' . $this->submission->author->display_name . '!')
-            ->line("Please complete the attached form: {$this->submission->submissible->name}")
-            ->lineIf(filled($this->submission->request_note), $this->submission->request_note)
-            ->action('Complete Form', route('forms.show', ['form' => $this->submission->submissible]));
-    }
-}
+    // Colliding with another role's name case-insensitively is rejected.
+    livewire(EditRole::class, ['record' => $role->getRouteKey()])
+        ->fillForm(['name' => 'SECOND role'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+});

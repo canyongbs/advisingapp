@@ -43,6 +43,11 @@ class MailMessage extends BaseMailMessage
 {
     protected ?string $recipientEmailAddress = null;
 
+    public function __construct(?NotificationSettings $settings = null)
+    {
+        $this->settings($settings ?? app(NotificationSettings::class));
+    }
+
     public static function make(): static
     {
         return app(static::class);

@@ -34,22 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Requests\CustomerAdvisors;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\ListRoles;
+use AdvisingApp\Authorization\Models\Role;
+use Filament\Actions\Testing\TestAction;
 
-use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
-class AuthenticationConfirmRequest extends FormRequest
-{
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
-    public function rules(): array
-    {
-        return [
-            'code' => ['required', 'integer', 'digits:6'],
-        ];
-    }
-}
+test('duplicateRole action does not allow duplicate role names case insensitively within a guard', function () {
+    asSuperAdmin();
+
+    $role = Role::factory()->create(['name' => 'Original Role', 'guard_name' => 'web']);
+    Role::factory()->create(['name' => 'Taken Role', 'guard_name' => 'web']);
+
+    livewire(ListRoles::class)
+        ->callAction(TestAction::make('duplicateRole')->table($role), data: ['name' => 'taken ROLE'])
+        ->assertHasActionErrors(['name' => 'unique']);
+
+    livewire(ListRoles::class)
+        ->callAction(TestAction::make('duplicateRole')->table($role), data: ['name' => 'Fresh Role'])
+        ->assertHasNoActionErrors();
+
+    expect(Role::query()->where('guard_name', 'web')->where('name', 'Fresh Role')->exists())->toBeTrue();
+});

@@ -39,7 +39,6 @@ namespace AdvisingApp\MeetingCenter\Notifications;
 use AdvisingApp\MeetingCenter\Filament\Resources\CalendarEvents\CalendarEventResource;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Settings\NotificationSettings;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
@@ -63,7 +62,6 @@ class CalendarRequiresReconnectNotification extends Notification implements Shou
     public function toMail(object $notifiable): MailMessage
     {
         return MailMessage::make()
-            ->settings(app(NotificationSettings::class))
             ->line('The calendar connection for your account needs to be reconnected.')
             ->line('Please reconnect your calendar connection to continue using the calendar for schedules and appointments.')
             ->action('View Schedule and Appointments', CalendarEventResource::getUrl());

@@ -34,37 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Notifications;
+use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\CreateRole;
+use AdvisingApp\Authorization\Models\Role;
 
-use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Notification;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
-class FormSubmissionRequestNotification extends Notification implements ShouldQueue
-{
-    use Queueable;
+test('CreateRole does not allow duplicate role names case insensitively within a guard', function () {
+    asSuperAdmin();
 
-    public function __construct(
-        public FormSubmission $submission,
-    ) {}
+    Role::factory()->create(['name' => 'Support Team', 'guard_name' => 'web']);
 
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
-    {
-        return ['mail'];
-    }
+    // The same name under a different guard is allowed.
+    livewire(CreateRole::class)
+        ->fillForm(['name' => 'support team', 'guard_name' => 'api'])
+        ->call('create')
+        ->assertHasNoFormErrors();
 
-    public function toMail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->subject("Request to Complete: {$this->submission->submissible->name}")
-            ->greeting('Hello ' . $this->submission->author->display_name . '!')
-            ->line("Please complete the attached form: {$this->submission->submissible->name}")
-            ->lineIf(filled($this->submission->request_note), $this->submission->request_note)
-            ->action('Complete Form', route('forms.show', ['form' => $this->submission->submissible]));
-    }
-}
+    // A case-insensitive duplicate under the same guard is rejected.
+    livewire(CreateRole::class)
+        ->fillForm(['name' => 'SUPPORT team', 'guard_name' => 'web'])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
+});

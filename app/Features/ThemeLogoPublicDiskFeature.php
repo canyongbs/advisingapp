@@ -34,37 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Notifications;
+namespace App\Features;
 
-use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Notification;
+use App\Support\AbstractFeatureFlag;
 
-class FormSubmissionRequestNotification extends Notification implements ShouldQueue
+class ThemeLogoPublicDiskFeature extends AbstractFeatureFlag
 {
-    use Queueable;
-
-    public function __construct(
-        public FormSubmission $submission,
-    ) {}
-
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
+    public function resolve(mixed $scope): mixed
     {
-        return ['mail'];
-    }
-
-    public function toMail(object $notifiable): MailMessage
-    {
-        return MailMessage::make()
-            ->subject("Request to Complete: {$this->submission->submissible->name}")
-            ->greeting('Hello ' . $this->submission->author->display_name . '!')
-            ->line("Please complete the attached form: {$this->submission->submissible->name}")
-            ->lineIf(filled($this->submission->request_note), $this->submission->request_note)
-            ->action('Complete Form', route('forms.show', ['form' => $this->submission->submissible]));
+        return false;
     }
 }
