@@ -114,7 +114,6 @@ class ListRoles extends ListRecords
                         TextInput::make('name')
                             ->label('New Role Name')
                             ->required()
-                            ->maxLength(125)
                             ->unique(
                                 table: 'roles',
                                 column: 'name',
