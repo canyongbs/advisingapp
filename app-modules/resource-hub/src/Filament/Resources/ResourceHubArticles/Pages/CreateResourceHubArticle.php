@@ -68,8 +68,7 @@ class CreateResourceHubArticle extends CreateRecord
                                 table: 'resource_hub_articles',
                                 column: 'title',
                                 modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
-                            )
-                            ->string(),
+                            ),
                         Toggle::make('public')
                             ->label('Public')
                             ->default(false)

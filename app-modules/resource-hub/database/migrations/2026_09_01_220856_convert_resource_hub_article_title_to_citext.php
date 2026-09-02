@@ -50,7 +50,7 @@ return new class () extends Migration {
     protected string $column = 'title';
 
     /** @var array<int, string> */
-    protected array $groupByColumns = ['title'];
+    protected array $groupByColumns = [];
 
     // TODO: Cleanup Task ResourceHubCitextCleanup - remove $chunkSize and $usesSoftDeletes
     protected int $chunkSize = 500;
