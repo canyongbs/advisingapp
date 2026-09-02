@@ -5,6 +5,9 @@ updates:
       directory: '/'
       schedule:
           interval: 'weekly'
+          day: 'thursday'
+          time: '03:00'
+          timezone: 'America/New_York'
       groups:
           github-actions-group:
               patterns:
@@ -23,6 +26,9 @@ updates:
           - '/widgets'
       schedule:
           interval: 'weekly'
+          day: 'thursday'
+          time: '03:00'
+          timezone: 'America/New_York'
       groups:
           npm-group:
               patterns:
