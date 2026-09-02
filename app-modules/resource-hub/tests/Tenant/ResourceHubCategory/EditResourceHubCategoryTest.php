@@ -157,7 +157,7 @@ test('EditResourceHubCategory does not allow for duplicate names of non-deleted 
         ->fillForm($request1->toArray())
         ->call('save')
         ->assertHasNoFormErrors();
-    
+
     livewire(EditResourceHubCategory::class, ['record' => $category->getRouteKey()])
         ->fillForm($request2->toArray())
         ->call('save')

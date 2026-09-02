@@ -157,7 +157,7 @@ test('EditResourceHubStatus does not allow for duplicate names of non-deleted st
         ->fillForm($request1->toArray())
         ->call('save')
         ->assertHasNoFormErrors();
-    
+
     livewire(EditResourceHubStatus::class, ['record' => $status->getRouteKey()])
         ->fillForm($request2->toArray())
         ->call('save')

@@ -139,7 +139,7 @@ test('EditResourceHubArticle does not allow for duplicate article titles of non-
         ->fillForm($request1->toArray())
         ->call('save')
         ->assertHasNoFormErrors();
-    
+
     livewire(EditResourceHubArticle::class, ['record' => $article->getRouteKey()])
         ->fillForm($request2->toArray())
         ->call('save')

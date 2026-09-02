@@ -54,10 +54,10 @@ class CreateResourceHubQuality extends CreateRecord
                     ->label('Name')
                     ->required()
                     ->unique(
-                                table: 'resource_hub_qualities',
-                                column: 'name',
-                                modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
-                            )
+                        table: 'resource_hub_qualities',
+                        column: 'name',
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                    )
                     ->string(),
             ]);
     }

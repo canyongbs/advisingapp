@@ -157,7 +157,7 @@ test('EditResourceHubQuality does not allow for duplicate names of non-deleted q
         ->fillForm($request1->toArray())
         ->call('save')
         ->assertHasNoFormErrors();
-    
+
     livewire(EditResourceHubQuality::class, ['record' => $quality->getRouteKey()])
         ->fillForm($request2->toArray())
         ->call('save')
