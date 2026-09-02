@@ -32,11 +32,117 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-declare(strict_types = 1);
+*/ declare(strict_types = 1);
 
 $ignoreErrors = [];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Ai\\\\Actions\\\\CompletePrompt" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Actions/CompletePrompt.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Ai\\\\Actions\\\\CompletePrompt" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Actions/CompletePrompt.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid direct request IP accessors \\(ip\\(\\), ips\\(\\), getClientIp\\(\\), getClientIps\\(\\)\\)\\. Use CanyonGBS\\\\Common\\\\Support\\\\ClientIp\\:\\:resolve\\(\\) instead so client IP resolution remains Cloudflare and ALB aware\\.$#',
+    'identifier' => 'Common.useClientIpResolver',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Actions/CompletePrompt.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Ai\\\\Actions\\\\FetchFileParsingResults" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Actions/FetchFileParsingResults.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Ai\\\\Actions\\\\FetchFileParsingResults" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Actions/FetchFileParsingResults.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Ai\\\\Actions\\\\GenerateCustomerAdvisorIntroductoryMessage" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Actions/GenerateCustomerAdvisorIntroductoryMessage.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Ai\\\\Actions\\\\GenerateCustomerAdvisorIntroductoryMessage" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Actions/GenerateCustomerAdvisorIntroductoryMessage.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Ai\\\\Actions\\\\GenerateCustomerAdvisorWidgetEmbedCode" defines disallowed public method "handle"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Actions/GenerateCustomerAdvisorWidgetEmbedCode.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Ai\\\\Actions\\\\GenerateCustomerAdvisorWidgetEmbedCode" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Actions/GenerateCustomerAdvisorWidgetEmbedCode.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Ai\\\\Actions\\\\GetCustomerAdvisorInstructions" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Actions/GetCustomerAdvisorInstructions.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Ai\\\\Actions\\\\GetCustomerAdvisorInstructions" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Actions/GetCustomerAdvisorInstructions.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Ai\\\\Actions\\\\GetEmployeeAdvisorQnaInstructions" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Actions/GetEmployeeAdvisorQnaInstructions.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Ai\\\\Actions\\\\GetEmployeeAdvisorQnaInstructions" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Actions/GetEmployeeAdvisorQnaInstructions.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Ai\\\\Actions\\\\SyncTenantSmartPrompts" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Actions/SyncTenantSmartPrompts.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Ai\\\\Actions\\\\SyncTenantSmartPrompts" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Actions/SyncTenantSmartPrompts.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Ai\\\\Actions\\\\UploadFileForParsing" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Actions/UploadFileForParsing.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Ai\\\\Actions\\\\UploadFileForParsing" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Actions/UploadFileForParsing.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/src/Actions/UploadFileForParsing.php',
+];
 $ignoreErrors[] = [
     'message' => '#^Trait AdvisingApp\\\\Ai\\\\Filament\\\\Pages\\\\Assistant\\\\Concerns\\\\CanManageThreads has PHPDoc tag @property\\-read for property \\$customAssistants with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
@@ -92,34 +198,28 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Filament/Resources/Prompts/Pages/ViewPrompt.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Portal\\\\Models\\\\PortalAuthentication\\:\\:\\$code\\.$#',
-    'identifier' => 'property.notFound',
+    'message' => '#^Avoid direct request IP accessors \\(ip\\(\\), ips\\(\\), getClientIp\\(\\), getClientIps\\(\\)\\)\\. Use CanyonGBS\\\\Common\\\\Support\\\\ClientIp\\:\\:resolve\\(\\) instead so client IP resolution remains Cloudflare and ALB aware\\.$#',
+    'identifier' => 'Common.useClientIpResolver',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Http/Controllers/CustomerAdvisors/AuthenticationConfirmController.php',
+    'path' => __DIR__ . '/app-modules/ai/src/Http/Controllers/Advisors/RetryMessageController.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Portal\\\\Models\\\\PortalAuthentication\\:\\:\\$code\\.$#',
-    'identifier' => 'property.notFound',
+    'message' => '#^Avoid direct request IP accessors \\(ip\\(\\), ips\\(\\), getClientIp\\(\\), getClientIps\\(\\)\\)\\. Use CanyonGBS\\\\Common\\\\Support\\\\ClientIp\\:\\:resolve\\(\\) instead so client IP resolution remains Cloudflare and ALB aware\\.$#',
+    'identifier' => 'Common.useClientIpResolver',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Http/Controllers/CustomerAdvisors/RegisterProspectController.php',
+    'path' => __DIR__ . '/app-modules/ai/src/Http/Controllers/Advisors/SendMessageController.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Portal\\\\Models\\\\PortalAuthentication\\:\\:\\$portal_type\\.$#',
-    'identifier' => 'property.notFound',
+    'message' => '#^Avoid direct request IP accessors \\(ip\\(\\), ips\\(\\), getClientIp\\(\\), getClientIps\\(\\)\\)\\. Use CanyonGBS\\\\Common\\\\Support\\\\ClientIp\\:\\:resolve\\(\\) instead so client IP resolution remains Cloudflare and ALB aware\\.$#',
+    'identifier' => 'Common.useClientIpResolver',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Http/Controllers/CustomerAdvisors/RegisterProspectController.php',
+    'path' => __DIR__ . '/app-modules/ai/src/Http/Controllers/CustomerAdvisors/RetryAdvisorMessageController.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Portal\\\\Models\\\\PortalAuthentication\\:\\:\\$code\\.$#',
-    'identifier' => 'property.notFound',
+    'message' => '#^Avoid direct request IP accessors \\(ip\\(\\), ips\\(\\), getClientIp\\(\\), getClientIps\\(\\)\\)\\. Use CanyonGBS\\\\Common\\\\Support\\\\ClientIp\\:\\:resolve\\(\\) instead so client IP resolution remains Cloudflare and ALB aware\\.$#',
+    'identifier' => 'Common.useClientIpResolver',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Http/Controllers/CustomerAdvisors/RequestAuthenticationController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Portal\\\\Models\\\\PortalAuthentication\\:\\:\\$portal_type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Http/Controllers/CustomerAdvisors/RequestAuthenticationController.php',
+    'path' => __DIR__ . '/app-modules/ai/src/Http/Controllers/CustomerAdvisors/SendAdvisorMessageController.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\Advisors\\\\CloneAiThread\\:\\:middleware\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -147,12 +247,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\Advisors\\\\PrepareAiThreadCloning\\:\\:generateSingleUserShareJobs\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/Advisors/PrepareAiThreadCloning.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\Advisors\\\\PrepareAiThreadCloning\\:\\:generateTeamShareJobs\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/src/Jobs/Advisors/PrepareAiThreadCloning.php',
@@ -266,16 +360,16 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Settings/AiIntegrationsSettings.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Mockery\\\\ExpectationInterface\\|Mockery\\\\HigherOrderMessage\\:\\:once\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/CompletePromptTest.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Cannot call method getKey\\(\\) on array\\<int, string\\>\\|Pest\\\\Expectation\\<array\\<int, string\\>\\|string\\>\\|Pest\\\\Expectations\\\\EachExpectation\\<array\\<int, string\\>\\|string\\>\\|Pest\\\\Expectations\\\\HigherOrderExpectation\\<Pest\\\\Expectation\\<array\\<int, string\\>\\|string\\>, array\\<int, string\\>\\|string\\|null\\>\\|Pest\\\\Expectations\\\\OppositeExpectation\\<array\\<int, string\\>\\|string\\>\\|string\\.$#',
     'identifier' => 'method.nonObject',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Feature/Actions/CreateThreadTest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid assertSee\\(\\) and its alternatives\\: they only prove the text appears somewhere in the rendered output, not that it appears where the test actually expects it, so they can pass even when the feature under test is broken\\. Prefer a more precise assertion \\(e\\.g\\. asserting component/view state, a scoped selector, or the specific structure produced\\)\\. If you are certain you specifically need this assertion, add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noAssertSee\\)\\.$#',
+    'identifier' => 'Common.noAssertSee',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Filament/Resources/CustomerAdvisors/Pages/ViewCustomerAdvisorTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Cannot call method getKey\\(\\) on array\\<int, string\\>\\|Pest\\\\Expectation\\<array\\<int, string\\>\\|string\\>\\|Pest\\\\Expectations\\\\EachExpectation\\<array\\<int, string\\>\\|string\\>\\|Pest\\\\Expectations\\\\HigherOrderExpectation\\<Pest\\\\Expectation\\<array\\<int, string\\>\\|string\\>, array\\<int, string\\>\\|string\\|null\\>\\|Pest\\\\Expectations\\\\OppositeExpectation\\<array\\<int, string\\>\\|string\\>\\|string\\.$#',
@@ -302,6 +396,42 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/tests/Tenant/Unit/AiThreadCascadeDeleteAiMessagesTest.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Alert\\\\Actions\\\\FindGroupsUsingAlerts" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/alert/src/Actions/FindGroupsUsingAlerts.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Alert\\\\Actions\\\\FindGroupsUsingAlerts" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/alert/src/Actions/FindGroupsUsingAlerts.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Alert\\\\Actions\\\\GenerateStudentAlertsView" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/alert/src/Actions/GenerateStudentAlertsView.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Alert\\\\Actions\\\\GenerateStudentAlertsView" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/alert/src/Actions/GenerateStudentAlertsView.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Alert\\\\Actions\\\\RemoveAlertFiltersFromGroups" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/alert/src/Actions/RemoveAlertFiltersFromGroups.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Alert\\\\Actions\\\\RemoveAlertFiltersFromGroups" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/alert/src/Actions/RemoveAlertFiltersFromGroups.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$query of class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany constructor expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TRelatedModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
@@ -320,16 +450,22 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/alert/src/Configurations/NewStudentAlertConfiguration.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/alert/src/Filament/Widgets/AlertStats.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$query of class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany constructor expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TRelatedModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/alert/src/Models/AlertConfiguration.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Application\\\\Actions\\\\CreateApplicationVersion" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/application/src/Actions/CreateApplicationVersion.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Application\\\\Actions\\\\CreateApplicationVersion" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/application/src/Actions/CreateApplicationVersion.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\Application\\\\Models\\\\ApplicationStep\\:\\:\\$application_id\\.$#',
@@ -404,12 +540,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/application/src/Exports/ApplicationSubmissionExport.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Application\\\\Models\\\\ApplicationSubmission\\:\\:\\$state_id\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Actions/ApplicationAdmissionActions.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\Applications\\\\Actions\\\\ApplicationAdmissionActions\\:\\:get\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -434,46 +564,28 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/ListApplications.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Application\\\\Models\\\\ApplicationSubmission\\:\\:\\$created_at\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/ManageApplicationSubmissions.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$name\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/ManageApplicationSubmissions.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Application\\\\Models\\\\ApplicationAuthentication\\:\\:\\$code\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/application/src/Http/Controllers/ApplicationWidgetController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Application\\\\Models\\\\ApplicationSubmission\\:\\:\\$author_id\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Http/Controllers/ApplicationWidgetController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Application\\\\Models\\\\ApplicationSubmission\\:\\:\\$author_type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Http/Controllers/ApplicationWidgetController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Application\\\\Models\\\\ApplicationSubmission\\:\\:\\$created_at\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Http/Controllers/ApplicationWidgetController.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Application\\\\Livewire\\\\RenderApplication\\:\\:\\$data type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/application/src/Livewire/RenderApplication.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent models must define a "\\$fillable" property\\. Add a "\\$fillable" property to this model or a parent model\\.$#',
+    'identifier' => 'Common.modelMissingFillable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/application/src/Models/ApplicationAuthentication.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent models must define a "\\$fillable" property\\. Add a "\\$fillable" property to this model or a parent model\\.$#',
+    'identifier' => 'Common.modelMissingFillable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/application/src/Models/ApplicationSubmission.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Application\\\\Models\\\\ApplicationSubmission\\:\\:accessNestedRelations\\(\\) has no return type specified\\.$#',
@@ -596,16 +708,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/application/tests/Tenant/ApplicationWidgetApiTest.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Application\\\\Models\\\\ApplicationSubmission\\:\\:\\$state_id\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/application/tests/Tenant/Filament/Resources/Applications/Actions/ApplicationAdmissionActionsTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TValue in call to function expect$#',
-    'identifier' => 'argument.templateType',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/application/tests/Tenant/Filament/Resources/Applications/Actions/ApplicationAdmissionActionsTest.php',
+    'message' => '#^Avoid assertSee\\(\\) and its alternatives\\: they only prove the text appears somewhere in the rendered output, not that it appears where the test actually expects it, so they can pass even when the feature under test is broken\\. Prefer a more precise assertion \\(e\\.g\\. asserting component/view state, a scoped selector, or the specific structure produced\\)\\. If you are certain you specifically need this assertion, add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noAssertSee\\)\\.$#',
+    'identifier' => 'Common.noAssertSee',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/application/tests/Tenant/Filament/Resources/Applications/Pages/ManageApplicationWorkflowsTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\InstitutionalAdvisor\\:\\:customAssistants\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -644,12 +750,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$relations of method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<AdvisingApp\\\\Ai\\\\Models\\\\AiThreadFolder\\>\\:\\:with\\(\\) expects array\\<array\\|\\(Closure\\(Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\Relation\\<\\*, \\*, \\*\\>\\)\\: mixed\\)\\|string\\>\\|string, array\\{threads\\: Closure\\(Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany\\)\\: Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany\\} given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\InstitutionalAdvisor\\:\\:\\$folders type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -666,6 +766,18 @@ $ignoreErrors[] = [
     'identifier' => 'MeliorStan.propertyNameNotCamelCase',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/assistant/src/Filament/Pages/InstitutionalAdvisor.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Audit\\\\Actions\\\\Finders\\\\AuditableModels" defines disallowed public method "all"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/audit/src/Actions/Finders/AuditableModels.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Audit\\\\Actions\\\\Finders\\\\AuditableModels" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/audit/src/Actions/Finders/AuditableModels.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Audit\\\\Actions\\\\Finders\\\\AuditableModels\\:\\:all\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
@@ -824,6 +936,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/audit/tests/Tenant/AuditTraitUsageTest.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Migrations that make multiple changes must wrap them in a single "DB\\:\\:transaction\\(\\.\\.\\.\\)" call so that a failure rolls back every change and the migration stays idempotent\\. Move the statements in this "up\\(\\)" method into a "DB\\:\\:transaction\\(\\.\\.\\.\\)" closure\\.$#',
+    'identifier' => 'Common.multipleMigrationChangesNotWrappedInTransaction',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/authorization/database/migrations/2024_12_30_142107_data_seed_role_permissions.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Authorization\\\\Enums\\\\AzureMatchingProperty\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
     'identifier' => 'return.unusedType',
     'count' => 1,
@@ -846,6 +964,12 @@ $ignoreErrors[] = [
     'identifier' => 'match.alwaysTrue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/authorization/src/Enums/SocialiteProvider.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Actions/ManageReportAssignmentsBulkAction.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Filament\\\\Schemas\\\\Components\\\\Component\\:\\:label\\(\\)\\.$#',
@@ -896,12 +1020,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/authorization/src/Filament/Pages/Auth/Login.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Property AdvisingApp\\\\Authorization\\\\Filament\\\\Pages\\\\Auth\\\\SetPassword\\:\\:\\$data type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Pages/Auth/SetPassword.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to method isSuperAdmin\\(\\) on an unknown class AdvisingApp\\\\Authorization\\\\Filament\\\\Pages\\\\User\\.$#',
     'identifier' => 'class.notFound',
     'count' => 1,
@@ -914,6 +1032,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/authorization/src/Filament/Pages/ManageLocalPasswordSettings.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Pages/Reporting.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Contracts\\\\Database\\\\Eloquent\\\\Builder\\:\\:api\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
@@ -924,6 +1048,12 @@ $ignoreErrors[] = [
     'identifier' => 'method.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/authorization/src/Filament/Resources/Roles/Pages/ListRoles.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/authorization/src/Http/Controllers/SocialiteController.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Laravel\\\\Socialite\\\\Contracts\\\\Provider\\|Mockery\\\\MockInterface\\:\\:setConfig\\(\\)\\.$#',
@@ -962,10 +1092,40 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/authorization/src/Models/License.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeApi" method on "AdvisingApp\\\\Authorization\\\\Models\\\\Permission" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/authorization/src/Models/Permission.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeWeb" method on "AdvisingApp\\\\Authorization\\\\Models\\\\Permission" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/authorization/src/Models/Permission.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$query of class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany constructor expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TRelatedModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/authorization/src/Models/Permission.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeApi" method on "AdvisingApp\\\\Authorization\\\\Models\\\\Role" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/authorization/src/Models/Role.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeSuperAdmin" method on "AdvisingApp\\\\Authorization\\\\Models\\\\Role" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/authorization/src/Models/Role.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeWeb" method on "AdvisingApp\\\\Authorization\\\\Models\\\\Role" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/authorization/src/Models/Role.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Authorization\\\\Models\\\\Role\\:\\:scopeApi\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
@@ -1026,6 +1186,12 @@ $ignoreErrors[] = [
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/authorization/src/View/Components/Login.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid assertSee\\(\\) and its alternatives\\: they only prove the text appears somewhere in the rendered output, not that it appears where the test actually expects it, so they can pass even when the feature under test is broken\\. Prefer a more precise assertion \\(e\\.g\\. asserting component/view state, a scoped selector, or the specific structure produced\\)\\. If you are certain you specifically need this assertion, add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noAssertSee\\)\\.$#',
+    'identifier' => 'Common.noAssertSee',
+    'count' => 9,
+    'path' => __DIR__ . '/app-modules/authorization/tests/Tenant/Filament/Pages/Auth/LoginTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Pest\\\\PendingCalls\\\\TestCall\\:\\:fail\\(\\)\\.$#',
@@ -1106,6 +1272,18 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/database/factories/CampaignFactory.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Campaign\\\\Actions\\\\CreateActionsForCampaign" defines disallowed public method "from"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/campaign/src/Actions/CreateActionsForCampaign.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Campaign\\\\Actions\\\\CreateActionsForCampaign" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/campaign/src/Actions/CreateActionsForCampaign.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Campaign\\\\DataTransferObjects\\\\CampaignActionCreationData\\:\\:__construct\\(\\) has parameter \\$data with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -1160,6 +1338,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/TagsBlock.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/campaign/src/Filament/Blocks/TaskBlock.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Campaign\\\\Filament\\\\Blocks\\\\TaskBlock\\:\\:generateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -1170,6 +1354,12 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/campaign/src/Filament/Resources/Campaigns/Pages/CreateCampaign.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeHasNotBeenExecuted" method on "AdvisingApp\\\\Campaign\\\\Models\\\\Campaign" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/campaign/src/Models/Campaign.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Campaign\\\\Models\\\\Campaign\\:\\:scopeHasNotBeenExecuted\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
@@ -1184,20 +1374,26 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/campaign/src/Models/Campaign.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeCampaignEnabled" method on "AdvisingApp\\\\Campaign\\\\Models\\\\CampaignAction" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/campaign/src/Models/CampaignAction.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$query of class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany constructor expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TRelatedModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/campaign/src/Models/CampaignAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to function is_null\\(\\) with string will always evaluate to false\\.$#',
-    'identifier' => 'function.impossibleType',
+    'message' => '#^Eloquent models must define a "\\$fillable" property\\. Add a "\\$fillable" property to this model or a parent model\\.$#',
+    'identifier' => 'Common.modelMissingFillable',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/campaign/src/Observers/CampaignObserver.php',
+    'path' => __DIR__ . '/app-modules/campaign/src/Models/CampaignActionEducatableRelated.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Result of && is always false\\.$#',
-    'identifier' => 'booleanAnd.alwaysFalse',
+    'message' => '#^Call to function is_null\\(\\) with string will always evaluate to false\\.$#',
+    'identifier' => 'function.impossibleType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/campaign/src/Observers/CampaignObserver.php',
 ];
@@ -1213,7 +1409,6 @@ $ignoreErrors[] = [
     'count' => 1,
     'path' => __DIR__ . '/app-modules/care-team/src/Filament/Resources/ProspectCareTeamRoles/Pages/EditProspectCareTeamRole.php',
 ];
-
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$query of class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany constructor expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TRelatedModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
     'identifier' => 'argument.type',
@@ -1249,6 +1444,18 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.property',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/care-team/src/Rules/UniqueCareTeamRule.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid assertSee\\(\\) and its alternatives\\: they only prove the text appears somewhere in the rendered output, not that it appears where the test actually expects it, so they can pass even when the feature under test is broken\\. Prefer a more precise assertion \\(e\\.g\\. asserting component/view state, a scoped selector, or the specific structure produced\\)\\. If you are certain you specifically need this assertion, add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noAssertSee\\)\\.$#',
+    'identifier' => 'Common.noAssertSee',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/care-team/tests/Tenant/ProspectCareTeamRole/ViewProspectCareTeamRoleTest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid assertSee\\(\\) and its alternatives\\: they only prove the text appears somewhere in the rendered output, not that it appears where the test actually expects it, so they can pass even when the feature under test is broken\\. Prefer a more precise assertion \\(e\\.g\\. asserting component/view state, a scoped selector, or the specific structure produced\\)\\. If you are certain you specifically need this assertion, add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noAssertSee\\)\\.$#',
+    'identifier' => 'Common.noAssertSee',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/care-team/tests/Tenant/StudentCareTeamRole/ViewStudentCareTeamRoleTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$query of class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany constructor expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TRelatedModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
@@ -1335,16 +1542,52 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/database/migrations/2024_12_24_030206_seed_permissions_remove_engagement_deliverable_permissions.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Engagement\\\\Actions\\\\CreateEngagement" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Actions/CreateEngagement.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Engagement\\\\Actions\\\\CreateEngagement" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Actions/CreateEngagement.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Engagement\\\\Models\\\\IdeHelperEngagement\\:\\:\\$scheduled_at \\(Illuminate\\\\Support\\\\Carbon\\|null\\) does not accept Carbon\\\\CarbonInterface\\|null\\.$#',
     'identifier' => 'assign.propertyType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Actions/CreateEngagement.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Engagement\\\\Actions\\\\CreateEngagementBatch" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Actions/CreateEngagementBatch.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Engagement\\\\Actions\\\\CreateEngagementBatch" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Actions/CreateEngagementBatch.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Engagement\\\\Models\\\\IdeHelperEngagementBatch\\:\\:\\$scheduled_at \\(Illuminate\\\\Support\\\\Carbon\\|null\\) does not accept Carbon\\\\CarbonInterface\\|null\\.$#',
     'identifier' => 'assign.propertyType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Actions/CreateEngagementBatch.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Engagement\\\\Actions\\\\FindEngagementResponseSender" defines disallowed public method "find"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Actions/FindEngagementResponseSender.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Engagement\\\\Actions\\\\FindEngagementResponseSender" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Actions/FindEngagementResponseSender.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\Filament\\\\Actions\\\\BulkDraftWithAiAction\\:\\:getMergeTags\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -1473,6 +1716,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Jobs/GatherAndDispatchSesS3InboundEmails.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Jobs/ProcessSesS3InboundEmail.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Engagement\\\\Jobs\\\\ProcessSesS3InboundEmail\\:\\:\\$uniqueFor has no type specified\\.$#',
     'identifier' => 'missingType.property',
     'count' => 1,
@@ -1481,6 +1730,24 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:orderedEngagements\\(\\)\\.$#',
     'identifier' => 'method.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Models/Engagement.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeIsNotPartOfABatch" method on "AdvisingApp\\\\Engagement\\\\Models\\\\Engagement" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Models/Engagement.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeSentToProspect" method on "AdvisingApp\\\\Engagement\\\\Models\\\\Engagement" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Models/Engagement.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeSentToStudent" method on "AdvisingApp\\\\Engagement\\\\Models\\\\Engagement" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Models/Engagement.php',
 ];
@@ -1587,6 +1854,18 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementResponse.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeSentByProspect" method on "AdvisingApp\\\\Engagement\\\\Models\\\\EngagementResponse" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementResponse.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeSentByStudent" method on "AdvisingApp\\\\Engagement\\\\Models\\\\EngagementResponse" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementResponse.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\Models\\\\EngagementResponse\\:\\:getTimelineData\\(\\) return type with generic class Illuminate\\\\Support\\\\Collection does not specify its types\\: TKey, TValue$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -1603,6 +1882,12 @@ $ignoreErrors[] = [
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/engagement/src/Models/EngagementResponse.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent models must define a "\\$fillable" property\\. Add a "\\$fillable" property to this model or a parent model\\.$#',
+    'identifier' => 'Common.modelMissingFillable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/engagement/src/Models/HolisticEngagement.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Engagement\\\\Notifications\\\\EngagementBatchFinishedNotification\\:\\:toDatabase\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -1647,12 +1932,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/src/Observers/EngagementBatchObserver.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Result of && is always false\\.$#',
-    'identifier' => 'booleanAnd.alwaysFalse',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/engagement/src/Observers/EngagementBatchObserver.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Cannot call method is\\(\\) on array\\<int, string\\>\\|Pest\\\\Expectation\\<array\\<int, string\\>\\|string\\>\\|Pest\\\\Expectations\\\\EachExpectation\\<array\\<int, string\\>\\|string\\>\\|Pest\\\\Expectations\\\\HigherOrderExpectation\\<Pest\\\\Expectation\\<array\\<int, string\\>\\|string\\>, array\\<int, string\\>\\|string\\|null\\>\\|Pest\\\\Expectations\\\\OppositeExpectation\\<array\\<int, string\\>\\|string\\>\\|string\\.$#',
     'identifier' => 'method.nonObject',
     'count' => 1,
@@ -1671,10 +1950,568 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/engagement/tests/Tenant/Feature/Actions/CreateEngagementTest.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Avoid assertSee\\(\\) and its alternatives\\: they only prove the text appears somewhere in the rendered output, not that it appears where the test actually expects it, so they can pass even when the feature under test is broken\\. Prefer a more precise assertion \\(e\\.g\\. asserting component/view state, a scoped selector, or the specific structure produced\\)\\. If you are certain you specifically need this assertion, add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noAssertSee\\)\\.$#',
+    'identifier' => 'Common.noAssertSee',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/engagement/tests/Tenant/Feature/Http/Controllers/UnsubscribeControllerTest.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Cannot call method is\\(\\) on array\\<int, string\\>\\|Pest\\\\Expectation\\<array\\<int, string\\>\\|string\\>\\|Pest\\\\Expectations\\\\EachExpectation\\<array\\<int, string\\>\\|string\\>\\|Pest\\\\Expectations\\\\HigherOrderExpectation\\<Pest\\\\Expectation\\<array\\<int, string\\>\\|string\\>, array\\<int, string\\>\\|string\\|null\\>\\|Pest\\\\Expectations\\\\OppositeExpectation\\<array\\<int, string\\>\\|string\\>\\|string\\.$#',
     'identifier' => 'method.nonObject',
     'count' => 2,
     'path' => __DIR__ . '/app-modules/engagement/tests/Tenant/Feature/Jobs/CreateBatchedEngagementTest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\CreateFormVersion" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/CreateFormVersion.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\CreateFormVersion" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/CreateFormVersion.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "__serialize"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "__unserialize"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "afterCommit"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "allOnConnection"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "allOnQueue"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "appendToChain"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "assertDeleted"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "assertDoesntHaveChain"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "assertFailed"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "assertFailedWith"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "assertHasChain"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "assertNotDeleted"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "assertNotFailed"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "assertNotReleased"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "assertReleased"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "attempts"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "beforeCommit"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "chain"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "delay"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "delete"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "dispatch"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "dispatchAfterResponse"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "dispatchIf"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "dispatchNextJobInChain"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "dispatchSync"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "dispatchUnless"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "fail"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "handle"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "invokeChainCatchCallbacks"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "onConnection"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "onGroup"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "onQueue"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "prependToChain"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "release"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "restoreModel"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "setJob"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "through"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "withChain"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "withDeduplicator"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "withFakeQueueInteractions"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" defines disallowed public method "withoutDelay"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestByEmail" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestByEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "__serialize"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "__unserialize"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "afterCommit"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "allOnConnection"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "allOnQueue"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "appendToChain"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "assertDeleted"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "assertDoesntHaveChain"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "assertFailed"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "assertFailedWith"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "assertHasChain"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "assertNotDeleted"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "assertNotFailed"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "assertNotReleased"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "assertReleased"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "attempts"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "beforeCommit"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "chain"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "delay"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "delete"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "dispatch"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "dispatchAfterResponse"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "dispatchIf"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "dispatchNextJobInChain"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "dispatchSync"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "dispatchUnless"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "fail"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "handle"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "invokeChainCatchCallbacks"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "onConnection"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "onGroup"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "onQueue"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "prependToChain"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "release"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "restoreModel"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "setJob"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "through"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "withChain"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "withDeduplicator"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "withFakeQueueInteractions"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" defines disallowed public method "withoutDelay"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\DeliverFormSubmissionRequestBySms" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/DeliverFormSubmissionRequestBySms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\GenerateFormKitSchema" defines disallowed public method "content"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/GenerateFormKitSchema.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\GenerateFormKitSchema" defines disallowed public method "getAuthor"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/GenerateFormKitSchema.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\GenerateFormKitSchema" defines disallowed public method "grid"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/GenerateFormKitSchema.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\GenerateFormKitSchema" defines disallowed public method "text"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/GenerateFormKitSchema.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\GenerateFormKitSchema" defines disallowed public method "withAuthor"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/GenerateFormKitSchema.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\GenerateFormKitSchema" defines disallowed public method "wizardContent"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/GenerateFormKitSchema.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Form\\\\Actions\\\\GenerateFormKitSchema\\:\\:__invoke\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -1761,8 +2598,32 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/form/src/Actions/GenerateFormKitSchema.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\GenerateSubmissibleEmbedCode" defines disallowed public method "handle"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/GenerateSubmissibleEmbedCode.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\GenerateSubmissibleEmbedCode" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/GenerateSubmissibleEmbedCode.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\Form\\\\Models\\\\Submissible\\:\\:\\$recaptcha_enabled\\.$#',
     'identifier' => 'property.notFound',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/GenerateSubmissibleValidation.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\GenerateSubmissibleValidation" defines disallowed public method "fields"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/GenerateSubmissibleValidation.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\GenerateSubmissibleValidation" defines disallowed public method "wizardRules"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/form/src/Actions/GenerateSubmissibleValidation.php',
 ];
@@ -1851,6 +2712,30 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/form/src/Actions/ResolveSubmissionAuthorFromEmail.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\SaveSubmissibleFieldsFromContent" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/SaveSubmissibleFieldsFromContent.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\SaveSubmissibleFieldsFromContent" defines disallowed public method "replaceFieldsForRecord"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/SaveSubmissibleFieldsFromContent.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\SaveSubmissibleFieldsFromContent" defines disallowed public method "saveFieldsFromComponents"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/SaveSubmissibleFieldsFromContent.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Form\\\\Actions\\\\SaveSubmissibleFieldsFromContent" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Actions/SaveSubmissibleFieldsFromContent.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Form\\\\Enums\\\\FormSubmissionRequestDeliveryMethod\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
     'identifier' => 'return.unusedType',
     'count' => 1,
@@ -1911,39 +2796,9 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/form/src/Filament/Actions/RequestFormSubmission.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\AgreementFormFieldBlock\\:\\:getFormKitSchema\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/AgreementFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\AgreementFormFieldBlock\\:\\:getValidationRules\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/AgreementFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\CheckboxesFormFieldBlock\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/CheckboxesFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\CheckboxesFormFieldBlock\\:\\:getFormKitSchema\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/CheckboxesFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\CheckboxesFormFieldBlock\\:\\:getSubmissionState\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/CheckboxesFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\CheckboxesFormFieldBlock\\:\\:getValidationRules\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
+    'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 2,
     'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/CheckboxesFormFieldBlock.php',
 ];
 $ignoreErrors[] = [
@@ -1959,108 +2814,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/CheckboxesFormFieldBlock.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\DateFormFieldBlock\\:\\:getFormKitSchema\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/DateFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\DateFormFieldBlock\\:\\:getValidationRules\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/DateFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\EducatableEmailFormFieldBlock\\:\\:getFormKitSchema\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/EducatableEmailFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\EducatableEmailFormFieldBlock\\:\\:getSubmissionState\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/EducatableEmailFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\EducatableEmailFormFieldBlock\\:\\:getValidationRules\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/EducatableEmailFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\EmailFormFieldBlock\\:\\:getFormKitSchema\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/EmailFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\EmailFormFieldBlock\\:\\:getValidationRules\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/EmailFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\NumberFormFieldBlock\\:\\:getFormKitSchema\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/NumberFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\NumberFormFieldBlock\\:\\:getValidationRules\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/NumberFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\PhoneFormFieldBlock\\:\\:getFormKitSchema\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/PhoneFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\PhoneFormFieldBlock\\:\\:getValidationRules\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/PhoneFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\RadioFormFieldBlock\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/RadioFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\RadioFormFieldBlock\\:\\:getFormKitSchema\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/RadioFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\RadioFormFieldBlock\\:\\:getValidationRules\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/RadioFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\SelectFormFieldBlock\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/SelectFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\SelectFormFieldBlock\\:\\:getFormKitSchema\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/SelectFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\SelectFormFieldBlock\\:\\:getValidationRules\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/SelectFormFieldBlock.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Unable to resolve the template type TKey in call to function collect$#',
     'identifier' => 'argument.templateType',
     'count' => 1,
@@ -2071,54 +2824,6 @@ $ignoreErrors[] = [
     'identifier' => 'argument.templateType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/SelectFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\SignatureFormFieldBlock\\:\\:getFormKitSchema\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/SignatureFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\TextAreaFormFieldBlock\\:\\:getFormKitSchema\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/TextAreaFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\TextAreaFormFieldBlock\\:\\:getValidationRules\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/TextAreaFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\TextInputFormFieldBlock\\:\\:getFormKitSchema\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/TextInputFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\TextInputFormFieldBlock\\:\\:getValidationRules\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/TextInputFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\TimeFormFieldBlock\\:\\:getFormKitSchema\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/TimeFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\UrlFormFieldBlock\\:\\:getFormKitSchema\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/UrlFormFieldBlock.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Blocks\\\\UrlFormFieldBlock\\:\\:getValidationRules\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/UrlFormFieldBlock.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\Forms\\\\Pages\\\\CreateForm\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -2131,12 +2836,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/EditForm.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/ListForms.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\Form\\\\Models\\\\Submissible\\:\\:\\$is_authenticated\\.$#',
@@ -2169,18 +2868,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/form/src/Filament/Tables/Filters/FormSubmissionStatusFilter.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Form\\\\Models\\\\FormAuthentication\\:\\:\\$code\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/form/src/Http/Controllers/FormWidgetController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$value of static method Illuminate\\\\Support\\\\Facades\\\\Hash\\:\\:check\\(\\) expects string, int given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Http/Controllers/FormWidgetController.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$value of static method Illuminate\\\\Support\\\\Facades\\\\Hash\\:\\:make\\(\\) expects string, int\\<100000, 999999\\> given\\.$#',
     'identifier' => 'argument.type',
     'count' => 2,
@@ -2193,9 +2880,45 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/form/src/Http/Controllers/FormWidgetController.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Eloquent models must define a "\\$fillable" property\\. Add a "\\$fillable" property to this model or a parent model\\.$#',
+    'identifier' => 'Common.modelMissingFillable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Models/FormAuthentication.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:notSubmitted\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 2,
+    'path' => __DIR__ . '/app-modules/form/src/Models/FormSubmission.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeCanceled" method on "AdvisingApp\\\\Form\\\\Models\\\\FormSubmission" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Models/FormSubmission.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeNotCanceled" method on "AdvisingApp\\\\Form\\\\Models\\\\FormSubmission" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Models/FormSubmission.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeNotSubmitted" method on "AdvisingApp\\\\Form\\\\Models\\\\FormSubmission" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Models/FormSubmission.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeRequested" method on "AdvisingApp\\\\Form\\\\Models\\\\FormSubmission" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/src/Models/FormSubmission.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeSubmitted" method on "AdvisingApp\\\\Form\\\\Models\\\\FormSubmission" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
     'path' => __DIR__ . '/app-modules/form/src/Models/FormSubmission.php',
 ];
 $ignoreErrors[] = [
@@ -2463,10 +3186,52 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/form/src/Providers/FormServiceProvider.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Form\\\\Models\\\\FormAuthentication\\:\\:\\$code\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 11,
-    'path' => __DIR__ . '/app-modules/form/tests/Tenant/FormPastSubmissionsApiTest.php',
+    'message' => '#^Avoid assertSee\\(\\) and its alternatives\\: they only prove the text appears somewhere in the rendered output, not that it appears where the test actually expects it, so they can pass even when the feature under test is broken\\. Prefer a more precise assertion \\(e\\.g\\. asserting component/view state, a scoped selector, or the specific structure produced\\)\\. If you are certain you specifically need this assertion, add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noAssertSee\\)\\.$#',
+    'identifier' => 'Common.noAssertSee',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/form/tests/Tenant/Filament/Resources/Forms/Pages/ManageFormWorkflowsTest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Group\\\\Actions\\\\BulkGroupAction" defines disallowed public method "make"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Actions/BulkGroupAction.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Group\\\\Actions\\\\BulkGroupAction" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Actions/BulkGroupAction.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters" defines disallowed public method "applyFilterToQuery"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Actions/TranslateGroupFilters.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters" defines disallowed public method "applyRawFiltersToQuery"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Actions/TranslateGroupFilters.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Actions/TranslateGroupFilters.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters" defines disallowed public method "executeRawFilters"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Actions/TranslateGroupFilters.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Actions/TranslateGroupFilters.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Group\\\\Enums\\\\GroupModel\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
@@ -2527,6 +3292,12 @@ $ignoreErrors[] = [
     'identifier' => 'assign.propertyType',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/group/src/Filament/Resources/Groups/Pages/CreateGroup.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeModel" method on "AdvisingApp\\\\Group\\\\Models\\\\Group" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/group/src/Models/Group.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Group\\\\Models\\\\Group\\:\\:scopeModel\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
@@ -2649,10 +3420,70 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/integration-aws-ses-event-handling/tests/Tenant/Unit/SesConfigurationSetTest.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Avoid direct request IP accessors \\(ip\\(\\), ips\\(\\), getClientIp\\(\\), getClientIps\\(\\)\\)\\. Use CanyonGBS\\\\Common\\\\Support\\\\ClientIp\\:\\:resolve\\(\\) instead so client IP resolution remains Cloudflare and ALB aware\\.$#',
+    'identifier' => 'Common.useClientIpResolver',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-google-recaptcha/src/Rules/RecaptchaTokenValid.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\IntegrationGoogleRecaptcha\\\\Settings\\\\GoogleRecaptchaSettings\\:\\:encrypted\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/integration-google-recaptcha/src/Settings/GoogleRecaptchaSettings.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\IntegrationOpenAi\\\\Actions\\\\DeleteResearchRequestExternalResources" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Actions/DeleteResearchRequestExternalResources.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\IntegrationOpenAi\\\\Actions\\\\DeleteResearchRequestExternalResources" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Actions/DeleteResearchRequestExternalResources.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Prism/AzureOpenAi/Handlers/Stream.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeVectorStoreQueryByContext" method on "AdvisingApp\\\\IntegrationOpenAi\\\\Services\\\\BaseOpenAiService\\\\Concerns\\\\InteractsWithVectorStores" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Services/BaseOpenAiService/Concerns/InteractsWithVectorStores.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\IntegrationTwilio\\\\Actions\\\\Playground\\\\FindEngagementResponseSender" defines disallowed public method "find"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-twilio/src/Actions/Playground/FindEngagementResponseSender.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\IntegrationTwilio\\\\Actions\\\\Playground\\\\FindEngagementResponseSender" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-twilio/src/Actions/Playground/FindEngagementResponseSender.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\IntegrationTwilio\\\\Actions\\\\TwilioWebhookProcessor" defines disallowed public method "dispatchToHandler"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-twilio/src/Actions/TwilioWebhookProcessor.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\IntegrationTwilio\\\\Actions\\\\TwilioWebhookProcessor" defines disallowed public method "generateResponse"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-twilio/src/Actions/TwilioWebhookProcessor.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\IntegrationTwilio\\\\Actions\\\\TwilioWebhookProcessor" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/integration-twilio/src/Actions/TwilioWebhookProcessor.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Match expression does not handle remaining value\\: string$#',
@@ -2787,6 +3618,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/interaction/src/Filament/Resources/Interactions/Components/InteractionViewAction.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 6,
+    'path' => __DIR__ . '/app-modules/interaction/src/Imports/InteractionsImporter.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Match expression does not handle remaining value\\: string$#',
     'identifier' => 'match.unhandled',
     'count' => 1,
@@ -2815,18 +3652,6 @@ $ignoreErrors[] = [
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/interaction/src/Models/Interaction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Interaction\\\\Models\\\\InteractionConfidentialTeam\\:\\:interaction\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/interaction/src/Models/InteractionConfidentialTeam.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Interaction\\\\Models\\\\InteractionConfidentialTeam\\:\\:team\\(\\) has no return type specified\\.$#',
-    'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/interaction/src/Models/InteractionConfidentialTeam.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Interaction\\\\Models\\\\InteractionConfidentialUser\\:\\:interaction\\(\\) has no return type specified\\.$#',
@@ -2925,6 +3750,18 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/meeting-center/database/factories/EventRegistrationFormSubmissionFactory.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\MeetingCenter\\\\Actions\\\\CreateEventRegistrationFormVersion" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/meeting-center/src/Actions/CreateEventRegistrationFormVersion.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\MeetingCenter\\\\Actions\\\\CreateEventRegistrationFormVersion" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/meeting-center/src/Actions/CreateEventRegistrationFormVersion.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\EventRegistrationFormStep\\:\\:\\$form_id\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
@@ -2973,10 +3810,58 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/meeting-center/src/Actions/DuplicateEvent.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\MeetingCenter\\\\Actions\\\\GenerateEventRegistrationFormKitSchema" defines disallowed public method "content"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/meeting-center/src/Actions/GenerateEventRegistrationFormKitSchema.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\MeetingCenter\\\\Actions\\\\GenerateEventRegistrationFormKitSchema" defines disallowed public method "getAuthor"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/meeting-center/src/Actions/GenerateEventRegistrationFormKitSchema.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\MeetingCenter\\\\Actions\\\\GenerateEventRegistrationFormKitSchema" defines disallowed public method "grid"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/meeting-center/src/Actions/GenerateEventRegistrationFormKitSchema.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\MeetingCenter\\\\Actions\\\\GenerateEventRegistrationFormKitSchema" defines disallowed public method "text"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/meeting-center/src/Actions/GenerateEventRegistrationFormKitSchema.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\MeetingCenter\\\\Actions\\\\GenerateEventRegistrationFormKitSchema" defines disallowed public method "withAuthor"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/meeting-center/src/Actions/GenerateEventRegistrationFormKitSchema.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\MeetingCenter\\\\Actions\\\\GenerateEventRegistrationFormKitSchema" defines disallowed public method "wizardContent"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/meeting-center/src/Actions/GenerateEventRegistrationFormKitSchema.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\MeetingCenter\\\\Actions\\\\GenerateEventRegistrationFormKitSchema\\:\\:__invoke\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/meeting-center/src/Actions/GenerateEventRegistrationFormKitSchema.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/meeting-center/src/Actions/GetAvailableAppointmentSlots.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/meeting-center/src/Actions/GetAvailableGroupAppointmentSlots.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\MeetingCenter\\\\Enums\\\\CalendarProvider\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
@@ -3001,30 +3886,6 @@ $ignoreErrors[] = [
     'identifier' => 'method.notFound',
     'count' => 2,
     'path' => __DIR__ . '/app-modules/meeting-center/src/Filament/Actions/InviteEventAttendeeAction.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$provider_email\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Filament/Resources/CalendarEvents/Pages/CreateCalendarEvent.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Filament/Resources/CalendarEvents/Pages/ListCalendarEvents.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$provider_id\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Filament/Resources/CalendarEvents/Pages/ListCalendarEvents.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$provider_type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Filament/Resources/CalendarEvents/Pages/ListCalendarEvents.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\MeetingCenter\\\\Filament\\\\Resources\\\\Events\\\\Pages\\\\CreateEvent\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -3077,12 +3938,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\EventRegistrationFormAuthentication\\:\\:\\$code\\.$#',
     'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Http/Controllers/EventRegistrationWidgetController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$value of static method Illuminate\\\\Support\\\\Facades\\\\Hash\\:\\:check\\(\\) expects string, int given\\.$#',
-    'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/meeting-center/src/Http/Controllers/EventRegistrationWidgetController.php',
 ];
@@ -3099,72 +3954,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/meeting-center/src/Http/Controllers/EventRegistrationWidgetController.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$oauth_refresh_token\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Http/Controllers/GoogleCalendarController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$oauth_token\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Http/Controllers/GoogleCalendarController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$oauth_token_expires_at\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Http/Controllers/GoogleCalendarController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$provider_email\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Http/Controllers/GoogleCalendarController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$provider_type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Http/Controllers/GoogleCalendarController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$oauth_refresh_token\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Http/Controllers/OutlookCalendarController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$oauth_token\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Http/Controllers/OutlookCalendarController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$oauth_token_expires_at\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Http/Controllers/OutlookCalendarController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$provider_email\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Http/Controllers/OutlookCalendarController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$provider_type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Http/Controllers/OutlookCalendarController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$oauth_token\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Http/Controllers/PersonalBookingPageWidgetController.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\MeetingCenter\\\\Jobs\\\\CreateEventAttendee\\:\\:middleware\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -3175,30 +3964,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/meeting-center/src/Jobs/CreateEventAttendees.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$provider_id\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Jobs/Middleware/CalendarRequestsConcurrencyLimit.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$provider_type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Jobs/Middleware/CalendarRequestsConcurrencyLimit.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$provider_type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Jobs/RefreshCalendarRefreshToken.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$provider_type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Jobs/SyncCalendarPeriod.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\MeetingCenter\\\\Jobs\\\\SyncCalendars\\:\\:middleware\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -3217,36 +3982,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/meeting-center/src/Managers/Contracts/CalendarInterface.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$oauth_refresh_token\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Managers/GoogleCalendarManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$oauth_token\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 4,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Managers/GoogleCalendarManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$oauth_token_expires_at\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Managers/GoogleCalendarManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$provider_email\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Managers/GoogleCalendarManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$provider_id\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 5,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Managers/GoogleCalendarManager.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Google\\\\Service\\\\Calendar\\\\Event\\:\\:\\$end\\.$#',
@@ -3279,36 +4014,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/meeting-center/src/Managers/GoogleCalendarManager.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$oauth_refresh_token\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 4,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Managers/OutlookCalendarManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$oauth_token\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 8,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Managers/OutlookCalendarManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$oauth_token_expires_at\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Managers/OutlookCalendarManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$provider_email\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Managers/OutlookCalendarManager.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$provider_id\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Managers/OutlookCalendarManager.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\MeetingCenter\\\\Managers\\\\OutlookCalendarManager\\:\\:getEvents\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -3333,6 +4038,18 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/meeting-center/src/Models/BookingGroup.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Eloquent models must define a "\\$fillable" property\\. Add a "\\$fillable" property to this model or a parent model\\.$#',
+    'identifier' => 'Common.modelMissingFillable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/meeting-center/src/Models/Calendar.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent models must define a "\\$fillable" property\\. Add a "\\$fillable" property to this model or a parent model\\.$#',
+    'identifier' => 'Common.modelMissingFillable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/meeting-center/src/Models/EventRegistrationFormAuthentication.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\Form\\\\Models\\\\Submissible\\:\\:\\$event\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
@@ -3351,12 +4068,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/meeting-center/src/Notifications/CalendarRequiresReconnectNotification.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$provider_type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Observers/CalendarEventObserver.php',
-];
-$ignoreErrors[] = [
     'message' => '#^If condition is always true\\.$#',
     'identifier' => 'if.alwaysTrue',
     'count' => 3,
@@ -3369,12 +4080,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/meeting-center/src/Services/AzureGraph.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$oauth_token\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Services/BookingGroup/Bookers/AllBooker.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\MeetingCenter\\\\Settings\\\\AzureCalendarSettings\\:\\:encrypted\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -3385,66 +4090,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/meeting-center/src/Settings/GoogleCalendarSettings.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Mockery\\\\ExpectationInterface\\|Mockery\\\\HigherOrderMessage\\:\\:andThrow\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/meeting-center/tests/Tenant/Jobs/SyncCalendarPeriodTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Mockery\\\\ExpectationInterface\\|Mockery\\\\HigherOrderMessage\\:\\:once\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/meeting-center/tests/Tenant/Jobs/SyncCalendarPeriodTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Mockery\\\\ExpectationInterface\\|Mockery\\\\HigherOrderMessage\\:\\:with\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 4,
-    'path' => __DIR__ . '/app-modules/meeting-center/tests/Tenant/Jobs/SyncCalendarPeriodTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$oauth_refresh_token\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 5,
-    'path' => __DIR__ . '/app-modules/meeting-center/tests/Tenant/Managers/OutlookCalendarManagerTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$oauth_token\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 8,
-    'path' => __DIR__ . '/app-modules/meeting-center/tests/Tenant/Managers/OutlookCalendarManagerTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$oauth_token_expires_at\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/meeting-center/tests/Tenant/Managers/OutlookCalendarManagerTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Mockery\\\\ExpectationInterface\\|Mockery\\\\HigherOrderMessage\\:\\:andReturnUsing\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/tests/Tenant/Managers/OutlookCalendarManagerTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Mockery\\\\ExpectationInterface\\|Mockery\\\\HigherOrderMessage\\:\\:with\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 3,
-    'path' => __DIR__ . '/app-modules/meeting-center/tests/Tenant/Managers/OutlookCalendarManagerTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TAndValue in call to method Pest\\\\Expectation\\<mixed\\>\\:\\:and\\(\\)$#',
-    'identifier' => 'argument.templateType',
-    'count' => 8,
-    'path' => __DIR__ . '/app-modules/meeting-center/tests/Tenant/Managers/OutlookCalendarManagerTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TValue in call to function expect$#',
-    'identifier' => 'argument.templateType',
-    'count' => 8,
-    'path' => __DIR__ . '/app-modules/meeting-center/tests/Tenant/Managers/OutlookCalendarManagerTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/multifactor\\-authentication/database/migrations/2024_06_18_210439_seed_permissions_add_multifactor_settings_permission\\.php\\:40\\:\\:\\$guards type has no value type specified in iterable type array\\.$#',
@@ -3501,6 +4146,18 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/multifactor-authentication/src/Providers/MultifactorAuthenticationServiceProvider.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Strict comparison using \\!\\=\\= between \\*NEVER\\* and string will always evaluate to true\\.$#',
+    'identifier' => 'notIdentical.alwaysTrue',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/multifactor-authentication/src/Traits/MultifactorAuthenticatable.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Ternary operator condition is always false\\.$#',
+    'identifier' => 'ternary.alwaysFalse',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/multifactor-authentication/src/Traits/MultifactorAuthenticatable.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Property Illuminate\\\\Database\\\\Migrations\\\\Migration@anonymous/app\\-modules/notification/database/migrations/2025_02_10_233057_seed_permissions_remove_outbound_deliverable_permissions\\.php\\:42\\:\\:\\$guards type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -3511,6 +4168,30 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/notification/database/migrations/2025_02_10_233057_seed_permissions_remove_outbound_deliverable_permissions.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Notification\\\\Actions\\\\SubscriptionCreate" defines disallowed public method "handle"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/notification/src/Actions/SubscriptionCreate.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Notification\\\\Actions\\\\SubscriptionCreate" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/notification/src/Actions/SubscriptionCreate.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Notification\\\\Actions\\\\SubscriptionToggle" defines disallowed public method "handle"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/notification/src/Actions/SubscriptionToggle.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Notification\\\\Actions\\\\SubscriptionToggle" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/notification/src/Actions/SubscriptionToggle.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Notification\\\\Actions\\\\SubscriptionToggle\\:\\:handle\\(\\) has no return type specified\\.$#',
@@ -3753,6 +4434,42 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/notification/tests/Fixtures/TestDatabaseNotification.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Portal\\\\Actions\\\\CalculateResourceHubArticleHelpfulVotePercentage" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/portal/src/Actions/CalculateResourceHubArticleHelpfulVotePercentage.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Portal\\\\Actions\\\\CalculateResourceHubArticleHelpfulVotePercentage" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/portal/src/Actions/CalculateResourceHubArticleHelpfulVotePercentage.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Portal\\\\Actions\\\\GeneratePortalEmbedCode" defines disallowed public method "handle"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/portal/src/Actions/GeneratePortalEmbedCode.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Portal\\\\Actions\\\\GeneratePortalEmbedCode" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/portal/src/Actions/GeneratePortalEmbedCode.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Portal\\\\Actions\\\\ResolveResourceHubPortalVoter" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/portal/src/Actions/ResolveResourceHubPortalVoter.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Portal\\\\Actions\\\\ResolveResourceHubPortalVoter" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/portal/src/Actions/ResolveResourceHubPortalVoter.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Portal\\\\DataTransferObjects\\\\ResourceHubSearchData\\:\\:\\$articles with generic class Spatie\\\\LaravelData\\\\DataCollection does not specify its types\\: TKey, TValue$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -3771,18 +4488,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/portal/src/Enums/PortalType.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Portal\\\\Models\\\\PortalAuthentication\\:\\:\\$code\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/portal/src/Http/Controllers/ResourceHub/ResourceHubPortalAuthenticateController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$value of static method Illuminate\\\\Support\\\\Facades\\\\Hash\\:\\:check\\(\\) expects string, int given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/portal/src/Http/Controllers/ResourceHub/ResourceHubPortalAuthenticateController.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\ResourceHub\\\\Models\\\\ResourceHubArticle\\:\\:\\$categoryId\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
@@ -3799,18 +4504,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/portal/src/Http/Controllers/ResourceHub/ResourceHubPortalLogoutController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Portal\\\\Models\\\\PortalAuthentication\\:\\:\\$code\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/portal/src/Http/Controllers/ResourceHub/ResourceHubPortalRequestAuthenticationController.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Portal\\\\Models\\\\PortalAuthentication\\:\\:\\$portal_type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/portal/src/Http/Controllers/ResourceHub/ResourceHubPortalRequestAuthenticationController.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Support\\\\ValidatedInput\\:\\:\\$email\\.$#',
@@ -3837,8 +4530,8 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/portal/src/Http/Requests/ResourceHubPortalAuthenticationRequest.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Portal\\\\Models\\\\PortalAuthentication\\:\\:\\$created_at\\.$#',
-    'identifier' => 'property.notFound',
+    'message' => '#^Eloquent models must define a "\\$fillable" property\\. Add a "\\$fillable" property to this model or a parent model\\.$#',
+    'identifier' => 'Common.modelMissingFillable',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/portal/src/Models/PortalAuthentication.php',
 ];
@@ -3847,6 +4540,12 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.generics',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/portal/src/Models/PortalAuthentication.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent models must define a "\\$fillable" property\\. Add a "\\$fillable" property to this model or a parent model\\.$#',
+    'identifier' => 'Common.modelMissingFillable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/portal/src/Models/PortalGuest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Portal\\\\Notifications\\\\AuthenticatePortalNotification\\:\\:identifyRecipient\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -3925,6 +4624,78 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/prospect/database/migrations/2024_10_08_174318_seed_permissions_for_prospect_conversion.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Prospect\\\\Actions\\\\CreateProspect" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Actions/CreateProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Prospect\\\\Actions\\\\CreateProspect" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Actions/CreateProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Prospect\\\\Actions\\\\CreateProspectEmailAddress" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Actions/CreateProspectEmailAddress.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Prospect\\\\Actions\\\\CreateProspectEmailAddress" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Actions/CreateProspectEmailAddress.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Prospect\\\\Actions\\\\DeleteProspect" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Actions/DeleteProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Prospect\\\\Actions\\\\DeleteProspect" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Actions/DeleteProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Prospect\\\\Actions\\\\DeleteProspectEmailAddress" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Actions/DeleteProspectEmailAddress.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Prospect\\\\Actions\\\\DeleteProspectEmailAddress" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Actions/DeleteProspectEmailAddress.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Prospect\\\\Actions\\\\UpdateProspect" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Actions/UpdateProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Prospect\\\\Actions\\\\UpdateProspect" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Actions/UpdateProspect.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Prospect\\\\Actions\\\\UpdateProspectEmailAddress" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Actions/UpdateProspectEmailAddress.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Prospect\\\\Actions\\\\UpdateProspectEmailAddress" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/src/Actions/UpdateProspectEmailAddress.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Enums\\\\SystemProspectClassification\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
@@ -4119,18 +4890,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/src/Filament/Resources/Prospects/ProspectResource.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Widgets/ProspectStats.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/prospect/src/Filament/Widgets/ProspectsActionCenterWidget.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Prospect\\\\Models\\\\Prospect\\:\\:additionalAddresses\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\HasMany does not specify its types\\: TRelatedModel, TDeclaringModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -4275,6 +5034,18 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/prospect/tests/Tenant/Prospect/RequestFactories/CreateProspectRequestFactory.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Avoid assertSee\\(\\) and its alternatives\\: they only prove the text appears somewhere in the rendered output, not that it appears where the test actually expects it, so they can pass even when the feature under test is broken\\. Prefer a more precise assertion \\(e\\.g\\. asserting component/view state, a scoped selector, or the specific structure produced\\)\\. If you are certain you specifically need this assertion, add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noAssertSee\\)\\.$#',
+    'identifier' => 'Common.noAssertSee',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/tests/Tenant/ProspectSource/ViewProspectSourceTest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid assertSee\\(\\) and its alternatives\\: they only prove the text appears somewhere in the rendered output, not that it appears where the test actually expects it, so they can pass even when the feature under test is broken\\. Prefer a more precise assertion \\(e\\.g\\. asserting component/view state, a scoped selector, or the specific structure produced\\)\\. If you are certain you specifically need this assertion, add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noAssertSee\\)\\.$#',
+    'identifier' => 'Common.noAssertSee',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/prospect/tests/Tenant/ProspectStatus/ViewProspectStatusTest.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$money of static method Cknow\\\\Money\\\\Money\\:\\:parseByDecimal\\(\\) expects string, float given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
@@ -4291,102 +5062,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/report/database/migrations/2024_06_05_110340_seed_permissions_add_report_library.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to method can\\(\\) on an unknown class AdvisingApp\\\\Report\\\\Abstract\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/AiReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to method hasLicense\\(\\) on an unknown class AdvisingApp\\\\Report\\\\Abstract\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/AiReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @var for variable \\$user contains unknown class AdvisingApp\\\\Report\\\\Abstract\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/AiReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to method can\\(\\) on an unknown class AdvisingApp\\\\Report\\\\Abstract\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/EngagementReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to method hasLicense\\(\\) on an unknown class AdvisingApp\\\\Report\\\\Abstract\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/EngagementReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @var for variable \\$user contains unknown class AdvisingApp\\\\Report\\\\Abstract\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/EngagementReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to method can\\(\\) on an unknown class AdvisingApp\\\\Report\\\\Abstract\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/ProspectReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to method hasLicense\\(\\) on an unknown class AdvisingApp\\\\Report\\\\Abstract\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/ProspectReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @var for variable \\$user contains unknown class AdvisingApp\\\\Report\\\\Abstract\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/ProspectReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to method can\\(\\) on an unknown class AdvisingApp\\\\Report\\\\Abstract\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/StudentReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to method hasLicense\\(\\) on an unknown class AdvisingApp\\\\Report\\\\Abstract\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/StudentReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @var for variable \\$user contains unknown class AdvisingApp\\\\Report\\\\Abstract\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/StudentReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Call to method can\\(\\) on an unknown class AdvisingApp\\\\Report\\\\Abstract\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/UserReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^PHPDoc tag @var for variable \\$user contains unknown class AdvisingApp\\\\Report\\\\Abstract\\\\User\\.$#',
-    'identifier' => 'class.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Abstract/UserReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Report\\\\Enums\\\\ReportModel\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
-    'identifier' => 'return.unusedType',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Enums/ReportModel.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Report\\\\Enums\\\\ReportModel\\:\\:query\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Enums/ReportModel.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Report\\\\Enums\\\\TrackedEventType\\:\\:getLabel\\(\\) never returns null so it can be removed from the return type\\.$#',
@@ -4425,48 +5100,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/report/src/Filament/Pages/UserLoginActivity.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Resources\\\\Reports\\\\Pages\\\\CreateReport\\:\\:getReportModels\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/Reports/Pages/CreateReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Resources\\\\Reports\\\\Pages\\\\CreateReport\\:\\:getSteps\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/Reports/Pages/CreateReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TKey in call to function collect$#',
-    'identifier' => 'argument.templateType',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/Reports/Pages/CreateReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Unable to resolve the template type TValue in call to function collect$#',
-    'identifier' => 'argument.templateType',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/Reports/Pages/CreateReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$filters\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/Reports/Pages/EditReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$model\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 5,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/Reports/Pages/EditReport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$user\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Resources/Reports/Pages/EditReport.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Anonymous function never returns int so it can be removed from the return type\\.$#',
     'identifier' => 'return.unusedType',
     'count' => 3,
@@ -4485,24 +5118,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/ChartReportWidget.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/ChartReportWidget.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/CustomerAdvisorReportTable.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/EmployeeAdvisorTable.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Widgets\\\\LineChartReportWidget\\:\\:mount\\(\\) has parameter \\$cacheTag with no type specified\\.$#',
     'identifier' => 'missingType.parameter',
     'count' => 1,
@@ -4511,12 +5126,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Widgets\\\\LineChartReportWidget\\:\\:refreshWidget\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/LineChartReportWidget.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/LineChartReportWidget.php',
 ];
@@ -4533,12 +5142,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/MostEngagedProspectsTable.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/MostEngagedProspectsTable.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Widgets\\\\MostEngagedStudentsTable\\:\\:mount\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
@@ -4547,12 +5150,6 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Widgets\\\\MostEngagedStudentsTable\\:\\:refreshWidget\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/MostEngagedStudentsTable.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/MostEngagedStudentsTable.php',
 ];
@@ -4569,18 +5166,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/MostRecentStudentsTable.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/MostRecentStudentsTable.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/MostRecentTasksTable.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Widgets\\\\PieChartReportWidget\\:\\:mount\\(\\) has parameter \\$cacheTag with no type specified\\.$#',
     'identifier' => 'missingType.parameter',
     'count' => 1,
@@ -4591,24 +5176,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/PieChartReportWidget.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/PieChartReportWidget.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/ProspectCaseTable.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/ProspectMessagesDetailTable.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Widgets\\\\ProspectReportTableChart\\:\\:mount\\(\\) has no return type specified\\.$#',
@@ -4623,22 +5190,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/ProspectReportTableChart.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/ProspectReportTableChart.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Widgets\\\\RefreshWidget\\:\\:removeWidgetCache\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/RefreshWidget.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/ResearchAdvisorReportTable.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Widgets\\\\SpecialActionsDoughnutChart\\:\\:getRgbString\\(\\) has parameter \\$color with no type specified\\.$#',
@@ -4659,12 +5214,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StatsOverviewReportWidget.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StatsOverviewReportWidget.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Report\\\\Filament\\\\Widgets\\\\StudentDeliverableTable\\:\\:mount\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
@@ -4675,18 +5224,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StudentDeliverableTable.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StudentDeliverableTable.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/report/src/Filament/Widgets/StudentMessagesDetailTable.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Match expression does not handle remaining value\\: string$#',
@@ -4755,6 +5292,30 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/report/tests/Tenant/Unit/UniqueLogin/UsersLoginCountTableTest.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Research\\\\Actions\\\\GenerateResearchQuestion" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/research/src/Actions/GenerateResearchQuestion.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Research\\\\Actions\\\\GenerateResearchQuestion" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/research/src/Actions/GenerateResearchQuestion.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Research\\\\Actions\\\\StartResearch" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/research/src/Actions/StartResearch.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Research\\\\Actions\\\\StartResearch" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/research/src/Actions/StartResearch.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method name "getRequestsWithoutAFolder" is not in camelCase\\.$#',
     'identifier' => 'MeliorStan.methodNameNotCamelCase',
     'count' => 1,
@@ -4765,6 +5326,18 @@ $ignoreErrors[] = [
     'identifier' => 'MeliorStan.propertyNameNotCamelCase',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/research/src/Filament/Pages/ManageResearchRequests.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\ResourceHub\\\\Actions\\\\GenerateTableOfContents" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Actions/GenerateTableOfContents.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\ResourceHub\\\\Actions\\\\GenerateTableOfContents" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Actions/GenerateTableOfContents.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$title\\.$#',
@@ -4869,6 +5442,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/resource-hub/src/Jobs/ResourceHubArticleDownloadExternalMedia.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopePublic" method on "AdvisingApp\\\\ResourceHub\\\\Models\\\\ResourceHubArticle" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/resource-hub/src/Models/ResourceHubArticle.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$query of class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany constructor expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TRelatedModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
@@ -4911,10 +5490,130 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/database/migrations/2024_11_25_150149_update_programs_table_columns.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\CompleteStudentDataImport" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/CompleteStudentDataImport.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\CompleteStudentDataImport" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/CompleteStudentDataImport.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Instanceof between Illuminate\\\\Contracts\\\\Auth\\\\Authenticatable and Illuminate\\\\Contracts\\\\Auth\\\\Authenticatable will always evaluate to true\\.$#',
     'identifier' => 'instanceof.alwaysTrue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/CompleteStudentDataImport.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\CreateStudent" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/CreateStudent.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\CreateStudent" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/CreateStudent.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\CreateStudentEmailAddress" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/CreateStudentEmailAddress.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\CreateStudentEmailAddress" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/CreateStudentEmailAddress.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\CreateStudentPhoneNumber" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/CreateStudentPhoneNumber.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\CreateStudentPhoneNumber" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/CreateStudentPhoneNumber.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\CreateTemporaryStudentDataImportTables" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/CreateTemporaryStudentDataImportTables.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\CreateTemporaryStudentDataImportTables" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/CreateTemporaryStudentDataImportTables.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\DeleteStudent" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/DeleteStudent.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\DeleteStudent" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/DeleteStudent.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\DeleteStudentEmailAddress" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/DeleteStudentEmailAddress.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\DeleteStudentEmailAddress" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/DeleteStudentEmailAddress.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\DeleteStudentPhoneNumber" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/DeleteStudentPhoneNumber.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\DeleteStudentPhoneNumber" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/DeleteStudentPhoneNumber.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\PutStudentEnrollments" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/PutStudentEnrollments.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\PutStudentEnrollments" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/PutStudentEnrollments.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\PutStudentPrograms" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/PutStudentPrograms.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\PutStudentPrograms" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/PutStudentPrograms.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^If condition is always true\\.$#',
@@ -4927,6 +5626,48 @@ $ignoreErrors[] = [
     'identifier' => 'deadCode.unreachable',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/ResolveEducatableFromEmail.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\UpdateStudent" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/UpdateStudent.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\UpdateStudent" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/UpdateStudent.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\UpdateStudentEmailAddress" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/UpdateStudentEmailAddress.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\UpdateStudentEmailAddress" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/UpdateStudentEmailAddress.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\UpdateStudentPhoneNumber" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/UpdateStudentPhoneNumber.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\StudentDataModel\\\\Actions\\\\UpdateStudentPhoneNumber" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Actions/UpdateStudentPhoneNumber.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Enums/PhoneNumberLookupStatus.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Foundation\\\\Bus\\\\PendingChain\\:\\:finally\\(\\)\\.$#',
@@ -5031,10 +5772,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentActivityFeed.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Application\\\\Models\\\\ApplicationSubmission\\:\\:\\$created_at\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/RelationManagers/ApplicationSubmissionsRelationManager.php',
+    'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 2,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Pages/ViewStudentAlerts.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Match expression does not handle remaining value\\: string$#',
@@ -5047,6 +5788,12 @@ $ignoreErrors[] = [
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/RelationManagers/EngagementsRelationManager.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/RelationManagers/EnrollmentsRelationManager.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Comparison operation "\\>" between int\\<1, max\\> and 0 is always true\\.$#',
@@ -5067,10 +5814,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/StudentResource.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter \\#2 \\$query of method AdvisingApp\\\\Group\\\\Actions\\\\TranslateGroupFilters\\:\\:applyFilterToQuery\\(\\) expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
-    'identifier' => 'argument.type',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Widgets/StudentsActionCenterWidget.php',
+    'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 5,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Filament/Resources/Students/Tables/StudentsTable.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Access to protected property Spatie\\\\Invade\\\\Invader\\<Illuminate\\\\Filesystem\\\\AwsS3V3Adapter\\>\\:\\:\\$client\\.$#',
@@ -5097,6 +5844,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Models/BouncedPhoneNumber.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeLicensedToEducatable" method on "AdvisingApp\\\\StudentDataModel\\\\Models\\\\Concerns\\\\BelongsToEducatable" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Concerns/BelongsToEducatable.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Contracts\\\\Educatable\\:\\:careTeam\\(\\) return type with generic class Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\MorphToMany does not specify its types\\: TRelatedModel, TDeclaringModel, TPivotModel, TAccessor \\(2\\-4 required\\)$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
@@ -5115,22 +5868,16 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Models/EnrollmentSemester.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Scopes\\\\EducatableSearch\\:\\:__invoke\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
-    'identifier' => 'missingType.generics',
+    'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
+    'identifier' => 'Common.noStrtolower',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Scopes/EducatableSearch.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Scopes\\\\EducatableSort\\:\\:__invoke\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
+    'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Scopes\\\\EducatableSearch\\:\\:__invoke\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
     'identifier' => 'missingType.generics',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Scopes/EducatableSort.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter \\#1 \\$join of anonymous function has no typehint\\.$#',
-    'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Scopes/EducatableSort.php',
+    'path' => __DIR__ . '/app-modules/student-data-model/src/Models/Scopes/EducatableSearch.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\StudentDataModel\\\\Models\\\\Scopes\\\\LicensedToEducatable\\:\\:__invoke\\(\\) has parameter \\$query with generic class Illuminate\\\\Database\\\\Eloquent\\\\Builder but does not specify its types\\: TModel$#',
@@ -5199,16 +5946,16 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/student-data-model/src/Observers/StudentPhoneNumberObserver.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Mockery\\\\ExpectationInterface\\|Mockery\\\\HigherOrderMessage\\:\\:andThrow\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/student-data-model/tests/Tenant/Jobs/LookupPhoneNumberTest.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Pest\\\\PendingCalls\\\\TestCall\\:\\:fail\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/student-data-model/tests/Tenant/Jobs/Middleware/SkipWhilePhoneNumberLookupIsRateLimitedTest.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid assertSee\\(\\) and its alternatives\\: they only prove the text appears somewhere in the rendered output, not that it appears where the test actually expects it, so they can pass even when the feature under test is broken\\. Prefer a more precise assertion \\(e\\.g\\. asserting component/view state, a scoped selector, or the specific structure produced\\)\\. If you are certain you specifically need this assertion, add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noAssertSee\\)\\.$#',
+    'identifier' => 'Common.noAssertSee',
+    'count' => 10,
+    'path' => __DIR__ . '/app-modules/student-data-model/tests/Tenant/Livewire/SisDataPipelineTableTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Survey\\\\Actions\\\\DuplicateSurvey\\:\\:replaceIdsInContent\\(\\) has no return type specified\\.$#',
@@ -5253,22 +6000,64 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/survey/src/Filament/Resources/Surveys/Pages/EditSurvey.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\Survey\\\\Models\\\\SurveyAuthentication\\:\\:\\$code\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app-modules/survey/src/Http/Controllers/SurveyWidgetController.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Survey\\\\Livewire\\\\RenderSurvey\\:\\:\\$data type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/survey/src/Livewire/RenderSurvey.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Eloquent models must define a "\\$fillable" property\\. Add a "\\$fillable" property to this model or a parent model\\.$#',
+    'identifier' => 'Common.modelMissingFillable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveyAuthentication.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeCanceled" method on "AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeNotCanceled" method on "AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeNotSubmitted" method on "AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeRequested" method on "AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeSubmitted" method on "AdvisingApp\\\\Survey\\\\Models\\\\SurveySubmission" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/survey/src/Models/SurveySubmission.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$callback of method Illuminate\\\\Support\\\\Collection\\<\\(int\\|string\\),Illuminate\\\\Database\\\\Eloquent\\\\Model\\>\\:\\:each\\(\\) expects callable\\(Illuminate\\\\Database\\\\Eloquent\\\\Model, int\\|string\\)\\: mixed, Closure\\(AdvisingApp\\\\Task\\\\Models\\\\Task\\)\\: bool given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/task/src/Filament/RelationManagers/BaseTaskRelationManager.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeByNextDue" method on "AdvisingApp\\\\Task\\\\Models\\\\Task" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeOpen" method on "AdvisingApp\\\\Task\\\\Models\\\\Task" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/task/src/Models/Task.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$query of class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany constructor expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TRelatedModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
@@ -5301,6 +6090,18 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/theme/src/Settings/SettingsProperties/ThemeSettingsProperty.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Timeline\\\\Actions\\\\AggregatesTimelineRecordsForModel" defines disallowed public method "handle"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/timeline/src/Actions/AggregatesTimelineRecordsForModel.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Timeline\\\\Actions\\\\AggregatesTimelineRecordsForModel" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/timeline/src/Actions/AggregatesTimelineRecordsForModel.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Timeline\\\\Actions\\\\AggregatesTimelineRecordsForModel\\:\\:handle\\(\\) has parameter \\$modelsToTimeline with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -5317,6 +6118,18 @@ $ignoreErrors[] = [
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/timeline/src/Actions/AggregatesTimelineRecordsForModel.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Timeline\\\\Actions\\\\SyncTimelineData" defines disallowed public method "now"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/timeline/src/Actions/SyncTimelineData.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Timeline\\\\Actions\\\\SyncTimelineData" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/timeline/src/Actions/SyncTimelineData.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Timeline\\\\Actions\\\\SyncTimelineData\\:\\:now\\(\\) has parameter \\$modelsToTimeline with no type specified\\.$#',
@@ -5391,6 +6204,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/timeline/src/Models/History.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeForEntity" method on "AdvisingApp\\\\Timeline\\\\Models\\\\Timeline" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
+    'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/timeline/src/Models/Timeline.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Call to an undefined method AdvisingApp\\\\Timeline\\\\Models\\\\Contracts\\\\HasHistory\\:\\:getAttributes\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
@@ -5425,6 +6244,18 @@ $ignoreErrors[] = [
     'identifier' => 'argument.templateType',
     'count' => 3,
     'path' => __DIR__ . '/app-modules/timeline/src/Observers/HistorySubjectObserver.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Webhook\\\\Actions\\\\StoreInboundWebhook" defines disallowed public method "handle"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/webhook/src/Actions/StoreInboundWebhook.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "AdvisingApp\\\\Webhook\\\\Actions\\\\StoreInboundWebhook" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/webhook/src/Actions/StoreInboundWebhook.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter name "signingCertURL" is not in camelCase\\.$#',
@@ -5523,10 +6354,46 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/workflow/src/Models/WorkflowTrigger.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Action class "App\\\\Actions\\\\Finders\\\\ApplicationModels" defines disallowed public method "all"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Actions/Finders/ApplicationModels.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "App\\\\Actions\\\\Finders\\\\ApplicationModels" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Actions/Finders/ApplicationModels.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Container\\\\Container\\:\\:getNamespace\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app/Actions/Finders/ApplicationModels.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "App\\\\Actions\\\\Finders\\\\ApplicationModules" defines disallowed public method "moduleConfig"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Actions/Finders/ApplicationModules.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "App\\\\Actions\\\\Finders\\\\ApplicationModules" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Actions/Finders/ApplicationModules.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "App\\\\Actions\\\\GetRecordFromMorphAndKey" defines disallowed public method "via"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
+    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Actions/GetRecordFromMorphAndKey.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Action class "App\\\\Actions\\\\GetRecordFromMorphAndKey" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
+    'identifier' => 'Common.actionClassMustBeInvokable',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Actions/GetRecordFromMorphAndKey.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method App\\\\DataTransferObjects\\\\Casts\\\\DataCast\\:\\:set\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -5553,24 +6420,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/DataTransferObjects/Casts/MoneySettingCast.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Pages/ConnectedAccounts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$oauth_token\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 2,
-    'path' => __DIR__ . '/app/Filament/Pages/ConnectedAccounts.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property AdvisingApp\\\\MeetingCenter\\\\Models\\\\Calendar\\:\\:\\$provider_type\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 3,
-    'path' => __DIR__ . '/app/Filament/Pages/ConnectedAccounts.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Negated boolean expression is always true\\.$#',
     'identifier' => 'booleanNot.alwaysTrue',
     'count' => 1,
@@ -5593,6 +6442,18 @@ $ignoreErrors[] = [
     'identifier' => 'MeliorStan.methodNameNotCamelCase',
     'count' => 1,
     'path' => __DIR__ . '/app/Filament/Resources/Users/Pages/EditUser.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 4,
+    'path' => __DIR__ . '/app/Filament/Resources/Users/Pages/ListUsers.php',
+];
+$ignoreErrors[] = [
+    'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
+    'identifier' => 'Common.noStrtolower',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Filament/Resources/Users/RelationManagers/RolesRelationManager.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\|Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\Relation\\:\\:unread\\(\\)\\.$#',
@@ -5703,6 +6564,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Models/Tag.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Avoid direct request IP accessors \\(ip\\(\\), ips\\(\\), getClientIp\\(\\), getClientIps\\(\\)\\)\\. Use CanyonGBS\\\\Common\\\\Support\\\\ClientIp\\:\\:resolve\\(\\) instead so client IP resolution remains Cloudflare and ALB aware\\.$#',
+    'identifier' => 'Common.useClientIpResolver',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Models/User.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method App\\\\Models\\\\User\\:\\:confirmMultifactorAuthentication\\(\\) has no return type specified\\.$#',
     'identifier' => 'missingType.return',
     'count' => 1,
@@ -5757,18 +6624,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Models/User.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Strict comparison using \\!\\=\\= between \\*NEVER\\* and string will always evaluate to true\\.$#',
-    'identifier' => 'notIdentical.alwaysTrue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Ternary operator condition is always false\\.$#',
-    'identifier' => 'ternary.alwaysFalse',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Unable to resolve the template type TNewPivotModel in call to method Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\BelongsToMany\\<AdvisingApp\\\\Consent\\\\Models\\\\ConsentAgreement,\\$this\\(App\\\\Models\\\\User\\),Illuminate\\\\Database\\\\Eloquent\\\\Relations\\\\Pivot,string\\>\\:\\:using\\(\\)$#',
     'identifier' => 'argument.templateType',
     'count' => 1,
@@ -5795,7 +6650,7 @@ $ignoreErrors[] = [
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$app of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
-    'count' => 4,
+    'count' => 3,
     'path' => __DIR__ . '/app/Providers/AppServiceProvider.php',
 ];
 $ignoreErrors[] = [
@@ -5895,32 +6750,16 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Support/FilterQueryBuilder.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Call to an undefined method Mockery\\\\ExpectationInterface\\|Mockery\\\\HigherOrderMessage\\:\\:once\\(\\)\\.$#',
-    'identifier' => 'method.notFound',
-    'count' => 8,
-    'path' => __DIR__ . '/tests/Tenant/Unit/AwsGeoPlacesServiceTest.php',
-];
-
-$ignoreErrors[] = [
-    'message' => '#^Migrations that make multiple changes must wrap them in a single "DB\:\:transaction\(\.\.\.\)" call so that a failure rolls back every change and the migration stays idempotent\. Move the statements in this "up\(\)" method into a "DB\:\:transaction\(\.\.\.\)" closure\.$#',
-    'identifier' => 'Common.multipleMigrationChangesNotWrappedInTransaction',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/authorization/database/migrations/2024_12_30_142107_data_seed_role_permissions.php',
-];
-
-$ignoreErrors[] = [
-    'message' => '#^Avoid strtolower\(\) as it is not multibyte\-safe\. Use Laravel\'s Str\:\:lower\(\) instead, or mb_strtolower\(\) if a framework\-free alternative is required\. If you are certain you specifically need strtolower\(\), add an inline ignore for this rule \(\/\/ @phpstan\-ignore Common\.noStrtolower\)\.$#',
-    'identifier' => 'Common.noStrtolower',
-];
-
-$ignoreErrors[] = [
-    'message' => '#^Eloquent local scopes are not allowed\. The ".+" method on ".+" defines a local scope, which relies on magic methods that static analysis cannot reason about\. Use a tappable scope instead\. See https://seankegel\.com/elevate\-your\-laravel\-eloquent\-queries\-with\-tappable\-scopes\.$#',
+    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeAdvancedFilter" method on "App\\\\Support\\\\HasAdvancedFilter" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
     'identifier' => 'Common.noLocalModelScope',
+    'count' => 1,
+    'path' => __DIR__ . '/app/Support/HasAdvancedFilter.php',
 ];
-
 $ignoreErrors[] = [
-    'message' => '#^Eloquent models must define a "\\$fillable" property\\. Add a "\\$fillable" property to this model or a parent model\\.$#',
-    'identifier' => 'Common.modelMissingFillable',
+    'message' => '#^Avoid assertSee\\(\\) and its alternatives\\: they only prove the text appears somewhere in the rendered output, not that it appears where the test actually expects it, so they can pass even when the feature under test is broken\\. Prefer a more precise assertion \\(e\\.g\\. asserting component/view state, a scoped selector, or the specific structure produced\\)\\. If you are certain you specifically need this assertion, add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noAssertSee\\)\\.$#',
+    'identifier' => 'Common.noAssertSee',
+    'count' => 4,
+    'path' => __DIR__ . '/tests/Tenant/Feature/Filament/Pages/ImportExportPageTest.php',
 ];
 
 return ['parameters' => ['ignoreErrors' => $ignoreErrors]];

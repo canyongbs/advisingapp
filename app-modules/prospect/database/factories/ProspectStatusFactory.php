@@ -51,7 +51,7 @@ class ProspectStatusFactory extends Factory
         return [
             'classification' => $this->faker->randomElement(SystemProspectClassification::cases()),
             'name' => $this->faker->word,
-            'color' => $this->faker->randomElement(Color::cases())->value,
+            'color' => $this->faker->randomElement(array_filter(Color::cases(), fn (Color $color): bool => ! $color->isShade()))->value,
             'is_system_protected' => false,
         ];
     }
