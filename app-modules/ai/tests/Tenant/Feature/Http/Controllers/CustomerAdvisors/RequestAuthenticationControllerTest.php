@@ -46,17 +46,19 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\URL;
 
 use function Pest\Laravel\postJson;
+use function Pest\Laravel\withHeader;
 
 /** @phpstan-ignore-next-line */
 beforeEach(function () {
     /** @phpstan-ignore-next-line */
-    $this->advisor = CustomerAdvisor::factory()->create(['is_embed_enabled' => true]);
-
-    /** @phpstan-ignore-next-line */
-    $this->withHeader('Origin', config('app.url'));
+    withHeader('Origin', config('app.url'));
 });
 
-it('throttles repeated code requests for the same target', function () {
+$advisorDataset = [
+    fn () => CustomerAdvisor::factory()->create(['is_embed_enabled' => true]),
+];
+
+it('throttles repeated code requests for the same target', function (CustomerAdvisor $advisor) {
     $student = Student::factory()->create();
     $email = 'throttle-target@example.com';
 
@@ -65,7 +67,7 @@ it('throttles repeated code requests for the same target', function () {
     postJson(URL::signedRoute(
         name: 'widgets.ai.customer-advisors.api.authentication.request',
         /** @phpstan-ignore-next-line */
-        parameters: ['advisor' => $this->advisor],
+        parameters: ['advisor' => $advisor],
     ), ['email' => $email])
         ->assertSuccessful();
 
@@ -73,13 +75,13 @@ it('throttles repeated code requests for the same target', function () {
     postJson(URL::signedRoute(
         name: 'widgets.ai.customer-advisors.api.authentication.request',
         /** @phpstan-ignore-next-line */
-        parameters: ['advisor' => $this->advisor],
+        parameters: ['advisor' => $advisor],
     ), ['email' => $email])
         ->assertStatus(422)
         ->assertJsonValidationErrors(['email' => 'A code was recently sent to this email address. Please wait a moment before requesting another.']);
-});
+})->with($advisorDataset);
 
-it('invalidates prior codes for the same target', function () {
+it('invalidates prior codes for the same target', function (CustomerAdvisor $advisor) {
     $student = Student::factory()->create();
     $email = 'invalidate-target@example.com';
 
@@ -88,7 +90,7 @@ it('invalidates prior codes for the same target', function () {
     postJson(URL::signedRoute(
         name: 'widgets.ai.customer-advisors.api.authentication.request',
         /** @phpstan-ignore-next-line */
-        parameters: ['advisor' => $this->advisor],
+        parameters: ['advisor' => $advisor],
     ), ['email' => $email])
         ->assertSuccessful();
 
@@ -103,7 +105,7 @@ it('invalidates prior codes for the same target', function () {
     postJson(URL::signedRoute(
         name: 'widgets.ai.customer-advisors.api.authentication.request',
         /** @phpstan-ignore-next-line */
-        parameters: ['advisor' => $this->advisor],
+        parameters: ['advisor' => $advisor],
     ), ['email' => $email])
         ->assertSuccessful();
 
@@ -114,9 +116,9 @@ it('invalidates prior codes for the same target', function () {
 
     expect($liveAuthentications)->toHaveCount(1);
     expect($liveAuthentications->first()->getKey())->not->toBe($firstId);
-});
+})->with($advisorDataset);
 
-it('invalidates prior codes for the same prospect', function () {
+it('invalidates prior codes for the same prospect', function (CustomerAdvisor $advisor) {
     $prospect = Prospect::factory()->create();
     $email = 'invalidate-prospect@example.com';
 
@@ -125,7 +127,7 @@ it('invalidates prior codes for the same prospect', function () {
     postJson(URL::signedRoute(
         name: 'widgets.ai.customer-advisors.api.authentication.request',
         /** @phpstan-ignore-next-line */
-        parameters: ['advisor' => $this->advisor],
+        parameters: ['advisor' => $advisor],
     ), ['email' => $email])
         ->assertSuccessful();
 
@@ -140,7 +142,7 @@ it('invalidates prior codes for the same prospect', function () {
     postJson(URL::signedRoute(
         name: 'widgets.ai.customer-advisors.api.authentication.request',
         /** @phpstan-ignore-next-line */
-        parameters: ['advisor' => $this->advisor],
+        parameters: ['advisor' => $advisor],
     ), ['email' => $email])
         ->assertSuccessful();
 
@@ -151,4 +153,4 @@ it('invalidates prior codes for the same prospect', function () {
 
     expect($liveAuthentications)->toHaveCount(1);
     expect($liveAuthentications->first()->getKey())->not->toBe($firstId);
-});
+})->with($advisorDataset);

@@ -43,17 +43,19 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
 
 use function Pest\Laravel\postJson;
+use function Pest\Laravel\withHeader;
 
 /** @phpstan-ignore-next-line */
 beforeEach(function () {
     /** @phpstan-ignore-next-line */
-    $this->advisor = CustomerAdvisor::factory()->create(['is_embed_enabled' => true]);
-
-    /** @phpstan-ignore-next-line */
-    $this->withHeader('Origin', config('app.url'));
+    withHeader('Origin', config('app.url'));
 });
 
-it('locks out after too many invalid code attempts', function () {
+$advisorDataset = [
+    fn () => CustomerAdvisor::factory()->create(['is_embed_enabled' => true]),
+];
+
+it('locks out after too many invalid code attempts', function (CustomerAdvisor $advisor) {
     $student = Student::factory()->create();
     $code = '123456';
 
@@ -67,7 +69,7 @@ it('locks out after too many invalid code attempts', function () {
     $invalidUrl = URL::signedRoute(
         name: 'widgets.ai.customer-advisors.api.authentication.confirm',
         /** @phpstan-ignore-next-line */
-        parameters: ['advisor' => $this->advisor, 'authentication' => $authentication],
+        parameters: ['advisor' => $advisor, 'authentication' => $authentication],
     );
 
     for ($attempt = 0; $attempt < AuthenticationCodeRateLimiter::MAX_ATTEMPTS; $attempt++) {
@@ -80,9 +82,9 @@ it('locks out after too many invalid code attempts', function () {
     postJson($invalidUrl, ['code' => $code])
         ->assertStatus(422)
         ->assertJsonValidationErrors(['code' => 'Too many invalid attempts. Please request a new code.']);
-});
+})->with($advisorDataset);
 
-it('resets the attempt counter after a successful authentication', function () {
+it('resets the attempt counter after a successful authentication', function (CustomerAdvisor $advisor) {
     $student = Student::factory()->create();
     $code = '123456';
 
@@ -96,7 +98,7 @@ it('resets the attempt counter after a successful authentication', function () {
     $invalidUrl = URL::signedRoute(
         name: 'widgets.ai.customer-advisors.api.authentication.confirm',
         /** @phpstan-ignore-next-line */
-        parameters: ['advisor' => $this->advisor, 'authentication' => $authentication],
+        parameters: ['advisor' => $advisor, 'authentication' => $authentication],
     );
 
     // Record one failed attempt so the counter is non-zero before the successful attempt.
@@ -118,4 +120,4 @@ it('resets the attempt counter after a successful authentication', function () {
     postJson($invalidUrl, ['code' => '111111'])
         ->assertStatus(422)
         ->assertJsonValidationErrors(['code' => 'Too many invalid attempts. Please request a new code.']);
-});
+})->with($advisorDataset);

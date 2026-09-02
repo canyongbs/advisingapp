@@ -89,6 +89,16 @@ class AuthenticationCodeRateLimiter
         RateLimiter::hit($this->codeRequestKey($author, $scope), self::CODE_REQUEST_DECAY_SECONDS);
     }
 
+    /**
+     * Atomically enforce and record the per-target code-request cooldown in a single
+     * operation, closing the check-then-hit race between ensureCanRequestCode() and
+     * recordCodeRequest() that a concurrent request could otherwise slip through.
+     *
+     * Callers that need this guarantee (currently only the AI customer advisor widget,
+     * which can receive rapid concurrent requests from the same visitor) should call
+     * this *after* the code has been successfully minted and sent, so a failed send
+     * does not consume the cooldown window.
+     */
     public function attemptCodeRequest(Model $author, string $scope): void
     {
         if (! Cache::add($this->codeRequestKey($author, $scope), true, self::CODE_REQUEST_DECAY_SECONDS)) {

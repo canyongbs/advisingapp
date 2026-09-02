@@ -76,11 +76,11 @@ class RequestAuthenticationController
 
         $scope = 'customer-advisor';
 
-        $rateLimiter->attemptCodeRequest($educatable, $scope);
-
         PortalAuthentication::invalidateExistingCodesFor($educatable, PortalType::CustomerAdvisorWidget);
 
         $authenticationUrl = $this->createPortalAuthentication($educatable, $advisor);
+
+        $rateLimiter->attemptCodeRequest($educatable, $scope);
 
         return response()->json([
             'message' => "We've sent an authentication code to {$email}.",
