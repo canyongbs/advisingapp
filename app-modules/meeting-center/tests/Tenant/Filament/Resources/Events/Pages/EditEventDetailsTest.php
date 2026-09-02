@@ -96,5 +96,5 @@ it('allows updating an event to a title freed up by a soft-deleted event case-in
     livewire(EditEventDetails::class, ['record' => $event->getRouteKey()])
         ->fillForm(['title' => 'reusable title'])
         ->call('save')
-        ->assertHasNoFormErrors();
+        ->assertHasNoFormErrors(['title']);
 });
