@@ -12,17 +12,17 @@
     "devDependencies": {
         "@headlessui/vue": "^1.7.16",
         "@tailwindcss/vite": "^4.2.2",
-        "@tiptap/core": "^2.2.1",
-        "@tiptap/extension-color": "^2.2.1",
-        "@tiptap/extension-link": "^2.2.1",
-        "@tiptap/extension-mention": "^2.2.1",
-        "@tiptap/extension-placeholder": "^2.2.1",
-        "@tiptap/extension-text-style": "^2.2.1",
-        "@tiptap/extension-underline": "^2.2.1",
-        "@tiptap/html": "^2.2.1",
-        "@tiptap/pm": "^2.2.1",
-        "@tiptap/starter-kit": "^2.2.1",
-        "@tiptap/suggestion": "^2.2.1",
+        "@tiptap/core": "^3.31.0",
+        "@tiptap/extension-color": "^3.31.0",
+        "@tiptap/extension-link": "^3.31.0",
+        "@tiptap/extension-mention": "^3.31.0",
+        "@tiptap/extension-placeholder": "^3.31.0",
+        "@tiptap/extension-text-style": "^3.31.0",
+        "@tiptap/extension-underline": "^3.31.0",
+        "@tiptap/html": "^3.31.0",
+        "@tiptap/pm": "^3.31.0",
+        "@tiptap/starter-kit": "^3.31.0",
+        "@tiptap/suggestion": "^3.31.0",
         "@vitejs/plugin-vue": "^6.0.3",
         "chokidar": "^3.6.0",
         "cross-env": "^7.0.3",
@@ -74,5 +74,9 @@
         "vue": "^3.3.4",
         "vue-filepond": "^7.0.4",
         "vue-router": "^5.2.0"
+    },
+    "allowScripts": {
+        "esbuild@0.28.1": true,
+        "vue-demi@0.14.10": true
     }
 }
