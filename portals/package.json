@@ -74,5 +74,9 @@
         "vue": "^3.3.4",
         "vue-filepond": "^7.0.4",
         "vue-router": "^5.2.0"
+    },
+    "allowScripts": {
+        "esbuild@0.28.1": true,
+        "vue-demi@0.14.10": true
     }
 }

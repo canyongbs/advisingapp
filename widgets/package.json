@@ -76,5 +76,8 @@
         "vue-router": "^4.2.5",
         "vue-signature-pad": "^3.0.2",
         "vue-tsc": "^3.2.5"
+    },
+    "allowScripts": {
+        "esbuild@0.28.1": true
     }
 }
