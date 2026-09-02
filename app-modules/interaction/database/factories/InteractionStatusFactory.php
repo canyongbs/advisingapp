@@ -50,7 +50,7 @@ class InteractionStatusFactory extends Factory
     {
         return [
             'name' => $this->faker->unique()->sentence(),
-            'color' => $this->faker->randomElement(Color::cases())->value,
+            'color' => $this->faker->randomElement(array_filter(Color::cases(), fn (Color $color): bool => ! $color->isShade()))->value,
             'is_default' => false,
             'interactable_type' => $this->faker->randomElement(InteractableType::cases()),
         ];
