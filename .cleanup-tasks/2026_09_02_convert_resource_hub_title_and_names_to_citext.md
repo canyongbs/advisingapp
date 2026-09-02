@@ -9,4 +9,4 @@ created: 2026-09-02
 
 ## Additional Cleanup
 
-earch for `TODO: Cleanup Task ResourceHubCitextCleanup`
+Search for `TODO: Cleanup Task ResourceHubCitextCleanup`
