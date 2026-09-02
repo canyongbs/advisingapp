@@ -162,7 +162,6 @@ describe('survey name citext change', function () {
     });
 });
 
-
 // TODO: Cleanup Task RoleCitextCleanup - Delete this describe and everything contained within
 describe('role citext change', function () {
     it('properly deduplicates role names case insensitively per guard', function () {
