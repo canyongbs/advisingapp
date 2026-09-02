@@ -162,7 +162,6 @@ describe('survey name citext change', function () {
     });
 });
 
-
 // TODO: Cleanup Task EventCitextCleanup - Delete this describe and everything contained within
 describe('event title citext change', function () {
     it('renames case-insensitive duplicate event titles', function () {
