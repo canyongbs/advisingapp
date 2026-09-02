@@ -51,6 +51,7 @@ use Filament\Resources\Pages\ListRecords;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Validation\Rules\Unique;
 
 class ListSurveys extends ListRecords
 {
@@ -83,7 +84,13 @@ class ListSurveys extends ListRecords
                         return $schema->components([
                             TextInput::make('name')
                                 ->label('Name')
-                                ->required(),
+                                ->required()
+                                ->string()
+                                ->maxLength(255)
+                                ->unique(
+                                    table: Survey::class,
+                                    modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                                ),
                         ]);
                     })
                     ->beforeReplicaSaved(function (Survey $replica, array $data): void {
