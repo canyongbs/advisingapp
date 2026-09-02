@@ -56,6 +56,7 @@ class EditSystemUser extends EditRecord
         return $schema->components([
             TextInput::make('name')
                 ->required()
+                ->maxLength(255)
                 ->unique(
                     table: 'system_users',
                     column: 'name',
