@@ -34,51 +34,27 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
-use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Filament\Widgets\TotalStudents;
 
-it('can match to a Student', function () {
-    /** @var Student $student */
-    $student = Student::factory()->create();
-    $phoneNumber = $student->phoneNumbers->first()->number;
+use function Tests\asSuperAdmin;
 
-    $sender = app(EngagementResponseSenderFinder::class)->find($phoneNumber);
+function totalStudentsStat(): string
+{
+    return (string) (new TotalStudents())->getStats()[0]->getValue();
+}
 
-    expect($student->is($sender))->toBeTrue();
-});
+it('does not count archived students', function () {
+    asSuperAdmin();
 
-it('can match to a Prospect', function () {
-    /** @var Prospect $prospect */
-    $prospect = Prospect::factory()->create();
-    $phoneNumber = $prospect->phoneNumbers->first()->number;
+    Student::factory()->count(3)->create();
 
-    $sender = app(EngagementResponseSenderFinder::class)->find($phoneNumber);
+    expect(totalStudentsStat())->toBe('3');
 
-    expect($prospect->is($sender))->toBeTrue();
-});
+    $archived = Student::factory()->count(2)->create();
+    $archived->each(fn (Student $student) => $student->archive());
 
-it('returns null when no match is found', function () {
-    /** @var Student $student */
-    $student = Student::factory()->create();
-
-    /** @var Prospect $prospect */
-    $prospect = Prospect::factory()->create();
-
-    $phoneNumber = '1234567890';
-
-    $sender = app(EngagementResponseSenderFinder::class)->find($phoneNumber);
-
-    expect($sender)->toBeNull();
-});
-
-it('does not match to an archived Student', function () {
-    $student = Student::factory()->create();
-    $phoneNumber = $student->phoneNumbers->first()->number;
-
-    expect(app(EngagementResponseSenderFinder::class)->find($phoneNumber))->not->toBeNull();
-
-    $student->archive();
-
-    expect(app(EngagementResponseSenderFinder::class)->find($phoneNumber))->toBeNull();
+    // The archived students still exist, they are just not counted.
+    expect(Student::query()->count())->toBe(5)
+        ->and(totalStudentsStat())->toBe('3');
 });

@@ -44,7 +44,7 @@ use Illuminate\Support\Number;
 
 class TotalStudents extends StatsOverviewWidget
 {
-    protected function getStats(): array
+    public function getStats(): array
     {
         return [
             Stat::make('Total Students', Number::abbreviate(Student::query()->tap(new WithoutArchivedStudents())->count())),

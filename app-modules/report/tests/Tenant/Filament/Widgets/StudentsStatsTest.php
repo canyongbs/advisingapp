@@ -162,3 +162,25 @@ it('returns correct total student stats of students, concerns, and tasks based o
         ->and($stats[1]->getValue())->toEqual($count)
         ->and($stats[2]->getValue())->toEqual($count);
 });
+
+it('does not count archived students in the total', function () {
+    $startDate = now()->subDays(10);
+    $endDate = now();
+
+    Student::factory()->count(3)->state(['created_at_source' => $startDate])->create();
+
+    $archived = Student::factory()->count(2)->state(['created_at_source' => $startDate])->create();
+
+    $widget = new StudentsStats();
+    $widget->cacheTag = 'report-student';
+    $widget->pageFilters = [
+        'startDate' => $startDate->toDateString(),
+        'endDate' => $endDate->toDateString(),
+    ];
+
+    expect($widget->getStats()[0]->getValue())->toEqual(5);
+
+    $archived->each(fn (Student $student) => $student->archive());
+
+    expect($widget->getStats()[0]->getValue())->toEqual(3);
+});

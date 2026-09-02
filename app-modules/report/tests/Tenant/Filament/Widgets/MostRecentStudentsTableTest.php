@@ -97,3 +97,21 @@ it('can start an export, sending a notification', function () {
         ->callTableAction(ExportAction::class)
         ->assertNotified();
 });
+
+it('does not list archived students', function () {
+    $createdAt = now()->subDays(5);
+
+    $active = Student::factory()->count(2)->create(['created_at_source' => $createdAt]);
+    $archived = Student::factory()->create(['created_at_source' => $createdAt]);
+    $archived->archive();
+
+    livewire(MostRecentStudentsTable::class, [
+        'cacheTag' => 'report-students',
+        'pageFilters' => [
+            'startDate' => now()->subDays(10)->toDateString(),
+            'endDate' => now()->toDateString(),
+        ],
+    ])
+        ->assertCanSeeTableRecords($active)
+        ->assertCanNotSeeTableRecords(collect([$archived]));
+});

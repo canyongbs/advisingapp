@@ -34,51 +34,54 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Engagement\Actions\Contracts\EngagementResponseSenderFinder;
+use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 
-it('can match to a Student', function () {
-    /** @var Student $student */
-    $student = Student::factory()->create();
-    $phoneNumber = $student->phoneNumbers->first()->number;
-
-    $sender = app(EngagementResponseSenderFinder::class)->find($phoneNumber);
-
-    expect($student->is($sender))->toBeTrue();
-});
-
-it('can match to a Prospect', function () {
-    /** @var Prospect $prospect */
-    $prospect = Prospect::factory()->create();
-    $phoneNumber = $prospect->phoneNumbers->first()->number;
-
-    $sender = app(EngagementResponseSenderFinder::class)->find($phoneNumber);
-
-    expect($prospect->is($sender))->toBeTrue();
-});
-
-it('returns null when no match is found', function () {
-    /** @var Student $student */
+it('resolves a student from their email address', function () {
     $student = Student::factory()->create();
 
-    /** @var Prospect $prospect */
+    $address = StudentEmailAddress::factory()
+        ->for($student, 'student')
+        ->create()
+        ->address;
+
+    expect(app(ResolveSubmissionAuthorFromEmail::class)($address)?->is($student))->toBeTrue();
+});
+
+it('resolves a prospect from their email address', function () {
     $prospect = Prospect::factory()->create();
 
-    $phoneNumber = '1234567890';
+    $address = ProspectEmailAddress::factory()
+        ->for($prospect, 'prospect')
+        ->create()
+        ->address;
 
-    $sender = app(EngagementResponseSenderFinder::class)->find($phoneNumber);
-
-    expect($sender)->toBeNull();
+    expect(app(ResolveSubmissionAuthorFromEmail::class)($address)?->is($prospect))->toBeTrue();
 });
 
-it('does not match to an archived Student', function () {
-    $student = Student::factory()->create();
-    $phoneNumber = $student->phoneNumbers->first()->number;
+it('returns null when the address matches nobody', function () {
+    expect(app(ResolveSubmissionAuthorFromEmail::class)('nobody@example.com'))->toBeNull();
+});
 
-    expect(app(EngagementResponseSenderFinder::class)->find($phoneNumber))->not->toBeNull();
+it('returns null when the address is blank', function () {
+    expect(app(ResolveSubmissionAuthorFromEmail::class)(null))->toBeNull();
+});
+
+// A public form submission must not be silently attributed to an archived student.
+it('does not resolve an archived student', function () {
+    $student = Student::factory()->create();
+
+    $address = StudentEmailAddress::factory()
+        ->for($student, 'student')
+        ->create()
+        ->address;
+
+    expect(app(ResolveSubmissionAuthorFromEmail::class)($address))->not->toBeNull();
 
     $student->archive();
 
-    expect(app(EngagementResponseSenderFinder::class)->find($phoneNumber))->toBeNull();
+    expect(app(ResolveSubmissionAuthorFromEmail::class)($address))->toBeNull();
 });

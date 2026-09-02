@@ -200,3 +200,16 @@ it('can filter table based on phone sms opt-out status', function () {
         ->assertCanSeeTableRecords($healthyStudents)
         ->assertCanNotSeeTableRecords($unHealthyPhoneStudents);
 });
+
+it('does not list archived students', function () {
+    $active = Student::factory()->count(2)->create();
+    $archived = Student::factory()->create();
+    $archived->archive();
+
+    livewire(StudentDeliverableTable::class, [
+        'cacheTag' => 'report-student-deliverability',
+        'pageFilters' => [],
+    ])
+        ->assertCanSeeTableRecords($active)
+        ->assertCanNotSeeTableRecords(collect([$archived]));
+});

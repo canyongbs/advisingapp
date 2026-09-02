@@ -326,3 +326,33 @@ it('correctly excludes healthy students with opted-in emails and valid phones fr
         ->and($stats[2]->getValue())->toBe(Number::format(($phoneMissingCount / $totalStudents) * 100, 2) . '%')
         ->and($stats[3]->getValue())->toBe(Number::format(($phoneUnhealthyCount / $totalStudents) * 100, 2) . '%');
 });
+
+it('does not count archived students in the deliverability percentages', function () {
+    $startDate = now()->subDays(10);
+    $createdAt = now()->subDays(5);
+
+    // Two students missing an institutional email, two with one. The factory always creates
+    // an address, so it has to be removed explicitly.
+    $missingEmail = Student::factory()->count(2)->create(['created_at_source' => $createdAt]);
+    $missingEmail->each(function (Student $student): void {
+        $student->primaryEmailAddress()->delete();
+        $student->update(['primary_email_id' => null]);
+    });
+
+    Student::factory()->count(2)->create(['created_at_source' => $createdAt]);
+
+    $widget = new StudentDeliverabilityStats();
+    $widget->cacheTag = 'report-student-deliverability';
+    $widget->pageFilters = [
+        'startDate' => $startDate->toDateString(),
+        'endDate' => now()->toDateString(),
+    ];
+
+    // 2 of 4 are missing an email.
+    expect($widget->getStats()[0]->getValue())->toBe(Number::format(50.0, 2) . '%');
+
+    $missingEmail->each(fn (Student $student) => $student->archive());
+
+    // Archiving both of those leaves 0 of 2 missing, so the percentage must move.
+    expect($widget->getStats()[0]->getValue())->toBe(Number::format(0.0, 2) . '%');
+});
