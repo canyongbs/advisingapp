@@ -39,7 +39,6 @@ namespace AdvisingApp\MeetingCenter\Notifications;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\User;
-use App\Settings\NotificationSettings;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
@@ -64,7 +63,6 @@ class RegistrationLinkToEventAttendeeNotification extends Notification implement
     public function toMail(object $notifiable): MailMessage
     {
         return MailMessage::make()
-            ->settings(app(NotificationSettings::class))
             ->subject('You have been invited to an event!')
             ->line("You have been invited to {$this->event->title}.")
             ->action('Register', route('event-registration.show', ['event' => $this->event]));

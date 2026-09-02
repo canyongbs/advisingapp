@@ -34,37 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Notifications;
+use Illuminate\Support\Facades\DB;
+use Spatie\LaravelSettings\Exceptions\SettingAlreadyExists;
+use Spatie\LaravelSettings\Migrations\SettingsMigration;
 
-use AdvisingApp\Form\Models\FormSubmission;
-use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Notification;
-
-class FormSubmissionRequestNotification extends Notification implements ShouldQueue
-{
-    use Queueable;
-
-    public function __construct(
-        public FormSubmission $submission,
-    ) {}
-
-    /**
-     * @return array<int, string>
-     */
-    public function via(object $notifiable): array
+return new class () extends SettingsMigration {
+    public function up(): void
     {
-        return ['mail'];
+        DB::transaction(function () {
+            $this->migrator->deleteIfExists('notifications.name');
+            $this->migrator->deleteIfExists('notifications.description');
+        });
     }
 
-    public function toMail(object $notifiable): MailMessage
+    public function down(): void
     {
-        return MailMessage::make()
-            ->subject("Request to Complete: {$this->submission->submissible->name}")
-            ->greeting('Hello ' . $this->submission->author->display_name . '!')
-            ->line("Please complete the attached form: {$this->submission->submissible->name}")
-            ->lineIf(filled($this->submission->request_note), $this->submission->request_note)
-            ->action('Complete Form', route('forms.show', ['form' => $this->submission->submissible]));
+        DB::transaction(function () {
+            try {
+                $this->migrator->add('notifications.name');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+
+            try {
+                $this->migrator->add('notifications.description');
+            } catch (SettingAlreadyExists $exception) {
+                // do nothing
+            }
+        });
     }
-}
+};

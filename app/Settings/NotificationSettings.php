@@ -41,11 +41,7 @@ use CanyonGBS\Common\Enums\Color;
 
 class NotificationSettings extends SettingsWithMedia
 {
-    public ?string $name = null;
-
     public ?string $from_name = null;
-
-    public ?string $description = null;
 
     public null $logo = null;
 
