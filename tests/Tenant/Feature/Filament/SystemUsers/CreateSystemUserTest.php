@@ -49,7 +49,7 @@ test('CreateSystemUser does not allow for duplicate names of non-deleted system 
     livewire(CreateSystemUser::class)
         ->fillForm(['name' => 'system USER'])
         ->call('create')
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     livewire(CreateSystemUser::class)
         ->fillForm(['name' => 'system user'])
