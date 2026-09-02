@@ -34,39 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models\Scopes;
-
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\StudentArchivingFeature;
-use Illuminate\Database\Eloquent\Builder;
 
-/**
- * Excludes archived students from a query.
- *
- * Archived students are included by default, so this must be applied explicitly
- * anywhere students are discovered or selected — lists, search, selects, group
- * populations and reports. It is deliberately not applied to `BelongsTo`
- * relationships, so an archived student still resolves on the records they are
- * already attached to.
- */
-class WithoutArchivedStudents
-{
-    /**
-     * @param Builder<Student> $query
-     *
-     * @return Builder<Student>
-     */
-    public function __invoke(Builder $query): Builder
-    {
-        /*
-         * TODO: Cleanup Task (student-archiving): remove this guard so the scope always applies
-         * `withoutArchived()`. Keep this class and every `->tap(new WithoutArchivedStudents())`
-         * call site — do not inline it, it is the chokepoint that made the flag a single edit.
-         */
-        if (! StudentArchivingFeature::active()) {
-            return $query;
-        }
+use function Tests\asSuperAdmin;
 
-        return $query->withoutArchived();
-    }
-}
+it('excludes archived students', function () {
+    asSuperAdmin();
+
+    $active = Student::factory()->create();
+    $archived = Student::factory()->create();
+    $archived->archive();
+
+    $sisids = Student::query()->tap(new WithoutArchivedStudents())->pluck('sisid');
+
+    expect($sisids)->toContain($active->getKey())
+        ->and($sisids)->not->toContain($archived->getKey());
+});
+
+it('leaves the query untouched while the feature is inactive', function () {
+    asSuperAdmin();
+
+    StudentArchivingFeature::deactivate();
+
+    $archived = Student::factory()->create();
+    $archived->archive();
+
+    expect(Student::query()->tap(new WithoutArchivedStudents())->pluck('sisid'))
+        ->toContain($archived->getKey());
+});

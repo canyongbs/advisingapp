@@ -72,6 +72,11 @@ trait CanRefreshCustomerAdvisorTokens
             return null;
         }
 
+        // A token issued before the student was archived must not still be refreshable.
+        if ($educatable instanceof Student && $educatable->isArchived()) {
+            return null;
+        }
+
         // Invalidate current refresh token
         $refreshToken->delete();
 

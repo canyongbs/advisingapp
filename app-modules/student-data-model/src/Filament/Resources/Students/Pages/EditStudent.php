@@ -43,7 +43,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\DataTransferObjects\AutocompletedAddress;
 use App\Features\StudentArchivingFeature;
 use App\Filament\Forms\Components\AddressInput;
-use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use DefStudio\SearchableInput\DTO\SearchResult;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
@@ -373,7 +372,7 @@ class EditStudent extends EditRecord
         return [
             ViewAction::make(),
             ...(StudentArchivingFeature::active() ? [
-                ArchiveAction::make(),
+                $this->studentArchiveAction(),
             ] : [
                 DeleteAction::make(),
             ]),

@@ -40,6 +40,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
+use Filament\Actions\Action;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -86,6 +87,22 @@ describe('archiving', function () {
 
         livewire(EditStudent::class, ['record' => $student->getKey()])
             ->assertActionHidden(ArchiveAction::class);
+    });
+
+    it('explains what archiving does in the confirmation modal', function () {
+        asSuperAdmin();
+
+        $studentSettings = app(ManageStudentConfigurationSettings::class);
+        $studentSettings->is_enabled = true;
+        $studentSettings->save();
+
+        $student = Student::factory()->create();
+
+        livewire(EditStudent::class, ['record' => $student->getKey()])
+            ->assertActionExists(ArchiveAction::class, checkActionUsing: fn (Action $action): bool => str_contains(
+                (string) $action->getModalDescription(),
+                'They will no longer appear in student lists, searches, population groups or reports',
+            ));
     });
 });
 

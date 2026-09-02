@@ -64,6 +64,11 @@ class AuthenticationConfirmController
             abort(403, 'Something is wrong with the authentication.');
         }
 
+        // A code issued before the student was archived must not still grant access.
+        if ($educatable instanceof Student && $educatable->isArchived()) {
+            abort(403, 'Authentication code is expired.');
+        }
+
         // If we reached this point, the authentication was successful
 
         $accessToken = $educatable->createToken('customer_advisor_access_token', [TokenAbility::AccessCustomerAdvisorApi], now()->addMinutes(15));

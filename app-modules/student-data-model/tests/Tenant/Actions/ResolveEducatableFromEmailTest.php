@@ -34,39 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models\Scopes;
-
+use AdvisingApp\StudentDataModel\Actions\ResolveEducatableFromEmail;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\StudentArchivingFeature;
-use Illuminate\Database\Eloquent\Builder;
 
-/**
- * Excludes archived students from a query.
- *
- * Archived students are included by default, so this must be applied explicitly
- * anywhere students are discovered or selected — lists, search, selects, group
- * populations and reports. It is deliberately not applied to `BelongsTo`
- * relationships, so an archived student still resolves on the records they are
- * already attached to.
- */
-class WithoutArchivedStudents
-{
-    /**
-     * @param Builder<Student> $query
-     *
-     * @return Builder<Student>
-     */
-    public function __invoke(Builder $query): Builder
-    {
-        /*
-         * TODO: Cleanup Task (student-archiving): remove this guard so the scope always applies
-         * `withoutArchived()`. Keep this class and every `->tap(new WithoutArchivedStudents())`
-         * call site — do not inline it, it is the chokepoint that made the flag a single edit.
-         */
-        if (! StudentArchivingFeature::active()) {
-            return $query;
-        }
+use function Tests\asSuperAdmin;
 
-        return $query->withoutArchived();
-    }
-}
+// This action is the shared chokepoint for the Resource Hub portal and the customer advisor
+// sign-in, so an archived student must not resolve from it and can no longer request a code.
+it('does not resolve an archived student from their email address', function () {
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+    $email = $student->primaryEmailAddress->address;
+
+    expect(app(ResolveEducatableFromEmail::class)($email))->not->toBeNull();
+
+    $student->archive();
+
+    expect(app(ResolveEducatableFromEmail::class)($email))->toBeNull();
+});
