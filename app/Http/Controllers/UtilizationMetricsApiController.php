@@ -98,6 +98,8 @@ class UtilizationMetricsApiController extends Controller
                     ->leftJoin('student_alerts', 'student_alerts.alert_configuration_id', '=', 'alert_configurations.id')
                     // Raw SQL cannot use the `WithoutArchivedStudents` scope, so the flag is
                     // checked here directly — `archived_at` does not exist until the migration runs.
+                    // TODO: Cleanup Task (student-archiving): drop the when() wrapper and chain the
+                    // leftJoin() and where() directly onto the query.
                     ->when(StudentArchivingFeature::active(), fn (Builder $query): Builder => $query
                         ->leftJoin('students', 'students.sisid', '=', 'student_alerts.sisid')
                         ->where(fn (Builder $query) => $query

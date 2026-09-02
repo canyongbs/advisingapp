@@ -40,14 +40,15 @@ use AdvisingApp\Prospect\Enums\SystemProspectClassification;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
-use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
+use CanyonGBS\Common\Filament\Support\HideDeletedAndArchivedExceptSelectedFromSelectOptions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\Width;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class ConvertToStudent extends Action
 {
@@ -62,7 +63,11 @@ class ConvertToStudent extends Action
             ->modalSubmitActionLabel('Convert')
             ->schema([
                 Select::make('student_id')
-                    ->relationship('student', 'full_name', fn (Builder $query) => $query->tap(new WithoutArchivedStudents()))
+                    ->relationship(
+                        'student',
+                        'full_name',
+                        fn (Builder $query, ?Model $record, Select $component): Builder => app(HideDeletedAndArchivedExceptSelectedFromSelectOptions::class)($query, $record, $component),
+                    )
                     ->required()
                     ->label('Select Student')
                     ->searchable(),

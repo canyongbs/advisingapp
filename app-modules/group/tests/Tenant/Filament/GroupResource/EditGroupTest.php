@@ -38,6 +38,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
 use AdvisingApp\Group\Filament\Resources\Groups\Pages\EditGroup;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
@@ -81,4 +82,23 @@ test('EditGroup does not allow duplicate group names case insensitively, ignorin
         ->fillForm(['name' => 'OTHER group'])
         ->call('save')
         ->assertHasFormErrors(['name' => 'unique']);
+});
+
+// The group builder renders the shared `StudentsTable`, which scopes its own query
+// independently of `GroupModel::query()`.
+test('the group builder does not list archived students', function () {
+    Student::truncate();
+
+    asSuperAdmin();
+
+    $group = Group::factory()->student()->dynamic()->create();
+
+    $active = Student::factory()->count(2)->create();
+    $archived = Student::factory()->create();
+    $archived->archive();
+
+    livewire(EditGroup::class, ['record' => $group->getRouteKey()])
+        ->assertOk()
+        ->assertCanSeeTableRecords($active)
+        ->assertCanNotSeeTableRecords([$archived]);
 });
