@@ -38,6 +38,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Tables\StudentsTabl
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\QueryBuilder\Constraints\Constraint;
+use Filament\QueryBuilder\Constraints\SelectConstraint;
 
 use function Tests\asSuperAdmin;
 
@@ -49,7 +50,7 @@ function enrolledTermConstraintOptions(string $name): array
     $constraint = collect(StudentsTable::getQueryBuilderConstraints())
         ->firstOrFail(fn (Constraint $constraint): bool => $constraint->getName() === $name);
 
-    assert($constraint instanceof Filament\QueryBuilder\Constraints\SelectConstraint);
+    assert($constraint instanceof SelectConstraint);
 
     return $constraint->getOptions();
 }

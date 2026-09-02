@@ -107,12 +107,7 @@ trait HasStudentHeader
             SubscribeHeaderAction::make()
                 ->view('student-data-model::filament.resources.educatables.subscribe-header-action', ['record' => $this->getRecord()]),
             ...(StudentArchivingFeature::active() ? [
-                // This trait is also used by pages that are neither EditRecord nor ViewRecord,
-                // which the action's default authorization and redirect do not support.
-                ArchiveAction::make()
-                    ->modalDescription('Are you sure you wish to archive the student? They will no longer appear in student lists, searches, population groups or reports, and will not be able to sign in. Their enrollment, program, interaction and note history is retained.')
-                    ->authorize(fn (Student $record): bool => auth()->user()->can('delete', $record))
-                    ->successRedirectUrl(fn (): string => StudentResource::getUrl('index')),
+                $this->studentArchiveAction(),
             ] : [
                 DeleteAction::make()
                     ->modalDescription('Are you sure you wish to delete the student? By deleting a student record, you will remove any related enrollment and program data, along with any related interactions, notes, etc. This action cannot be reversed.')
@@ -121,5 +116,13 @@ trait HasStudentHeader
                     }),
             ]),
         ];
+    }
+
+    protected function studentArchiveAction(): ArchiveAction
+    {
+        return ArchiveAction::make()
+            ->modalDescription('Are you sure you wish to archive the student? They will no longer appear in student lists, searches, population groups or reports, and will not be able to sign in. Their enrollment, program, interaction and note history is retained.')
+            ->authorize(fn (Student $record): bool => auth()->user()->can('delete', $record))
+            ->successRedirectUrl(fn (): string => StudentResource::getUrl('index'));
     }
 }

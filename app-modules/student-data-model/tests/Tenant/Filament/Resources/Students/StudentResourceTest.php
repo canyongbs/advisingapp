@@ -34,39 +34,21 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Models\Scopes;
-
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\StudentArchivingFeature;
-use Illuminate\Database\Eloquent\Builder;
 
-/**
- * Excludes archived students from a query.
- *
- * Archived students are included by default, so this must be applied explicitly
- * anywhere students are discovered or selected — lists, search, selects, group
- * populations and reports. It is deliberately not applied to `BelongsTo`
- * relationships, so an archived student still resolves on the records they are
- * already attached to.
- */
-class WithoutArchivedStudents
-{
-    /**
-     * @param Builder<Student> $query
-     *
-     * @return Builder<Student>
-     */
-    public function __invoke(Builder $query): Builder
-    {
-        /*
-         * TODO: Cleanup Task (student-archiving): remove this guard so the scope always applies
-         * `withoutArchived()`. Keep this class and every `->tap(new WithoutArchivedStudents())`
-         * call site — do not inline it, it is the chokepoint that made the flag a single edit.
-         */
-        if (! StudentArchivingFeature::active()) {
-            return $query;
-        }
+use function Tests\asSuperAdmin;
 
-        return $query->withoutArchived();
-    }
-}
+it('excludes archived students from global search', function () {
+    asSuperAdmin();
+
+    Student::factory()->state(['full_name' => 'Searchable Alpha'])->create();
+
+    $archived = Student::factory()->state(['full_name' => 'Searchable Beta'])->create();
+    $archived->archive();
+
+    $titles = StudentResource::getGlobalSearchResults('Searchable')->pluck('title');
+
+    expect($titles)->toContain('Searchable Alpha')
+        ->and($titles)->not->toContain('Searchable Beta');
+});

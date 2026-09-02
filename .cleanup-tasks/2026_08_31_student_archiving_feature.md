@@ -15,6 +15,8 @@ created: 2026-08-31
 
 - Keep the `WithoutArchivedStudents` scope and every `->tap(new WithoutArchivedStudents())` call site. Only the `StudentArchivingFeature::active()` guard inside the scope is removed, so it always applies `withoutArchived()`. Do not inline the scope into its call sites.
 
+- In `WithoutArchivedStudentsTest`, delete the `it('leaves the query untouched while the feature is inactive')` test — it only covers the flag-inactive branch of the scope, which no longer exists once the guard is removed. Keep `it('excludes archived students')`, and remove the `use App\Features\StudentArchivingFeature;` import that becomes unused. This is the only test in the suite that calls `StudentArchivingFeature::deactivate()`.
+
 - In `HasStudentHeader::getHeaderActions()`, `EditStudent::getHeaderActions()` and `ListStudents::table()`, keep only the archive branch of each ternary and delete the `DeleteAction` / `DeleteBulkAction` fallbacks, along with the imports that become unused. `DeleteStudent` itself stays — the V1 API delete controller still uses it.
 
 - In the `add_archived_at_to_students_table` migration, remove the `StudentArchivingFeature::activate()` call from `up()` and the `deactivate()` call from `down()`, remove the `use App\Features\StudentArchivingFeature;` import, and drop the `DB::transaction()` wrappers.
