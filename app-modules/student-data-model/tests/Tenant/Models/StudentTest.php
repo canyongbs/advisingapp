@@ -34,8 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Tests\Tenant\Models;
-
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\StudentDataModel\Actions\ResolveEducatableFromEmail;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
@@ -167,6 +166,24 @@ describe('discovery surfaces', function () {
 
         expect($sisids)->toContain($active->getKey())
             ->and($sisids)->not->toContain($archived->getKey());
+    });
+
+    // Filament resolves the label of the selected value through the same options query, so a
+    // record already pointing at an archived student must keep showing that student's name.
+    it('still resolves an archived student that is already selected', function () {
+        asSuperAdmin();
+
+        $archived = Student::factory()->create(['full_name' => 'Already Selected']);
+        $archived->archive();
+
+        $interaction = Interaction::factory()->for($archived, 'interactable')->create();
+
+        $type = EducatableSelect::getStudentType('interactable_id', $interaction);
+
+        expect(($type->getOptionLabelUsing)(Select::make('interactable_id'), $archived->getKey()))
+            ->toBe('Already Selected')
+            ->and((EducatableSelect::getStudentType()->getOptionLabelUsing)(Select::make('interactable_id'), $archived->getKey()))
+            ->toBeNull();
     });
 });
 

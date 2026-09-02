@@ -40,6 +40,8 @@ use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Mockery\MockInterface;
@@ -799,4 +801,74 @@ it('allows booking within midnight-crossing office hours', function () use ($bst
 
     $response->assertStatus(201);
     $response->assertJsonFragment(['success' => true]);
+});
+
+// Existing Student Restriction Tests
+
+it('allows booking for an existing student when bookings are restricted to existing students', function () use ($officeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $student = Student::factory()->create();
+
+    StudentEmailAddress::factory()
+        ->for($student, 'student')
+        ->create(['address' => 'existing.student@example.com']);
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
+            'appointments_are_restricted_to_existing_students' => true,
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create(['slug' => 'test-existing-student']);
+
+    postJson(
+        route('widgets.booking-page.personal.api.book', ['slug' => 'test-existing-student']),
+        [
+            'name' => 'Test User',
+            'email' => 'existing.student@example.com',
+            'starts_at' => Carbon::parse('2026-04-07 10:00:00', 'UTC')->toIso8601String(),
+            'ends_at' => Carbon::parse('2026-04-07 11:00:00', 'UTC')->toIso8601String(),
+        ]
+    )->assertStatus(201);
+});
+
+it('rejects booking for an archived student when bookings are restricted to existing students', function () use ($officeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $student = Student::factory()->create();
+
+    StudentEmailAddress::factory()
+        ->for($student, 'student')
+        ->create(['address' => 'archived.student@example.com']);
+
+    $student->archive();
+
+    $user = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'test-provider']))
+        ->create([
+            'office_hours_are_enabled' => true,
+            'office_hours' => $officeHours,
+            'appointments_are_restricted_to_existing_students' => true,
+        ]);
+
+    PersonalBookingPage::factory()
+        ->for($user)
+        ->enabled()
+        ->create(['slug' => 'test-archived-student']);
+
+    postJson(
+        route('widgets.booking-page.personal.api.book', ['slug' => 'test-archived-student']),
+        [
+            'name' => 'Test User',
+            'email' => 'archived.student@example.com',
+            'starts_at' => Carbon::parse('2026-04-07 10:00:00', 'UTC')->toIso8601String(),
+            'ends_at' => Carbon::parse('2026-04-07 11:00:00', 'UTC')->toIso8601String(),
+        ]
+    )->assertForbidden();
 });

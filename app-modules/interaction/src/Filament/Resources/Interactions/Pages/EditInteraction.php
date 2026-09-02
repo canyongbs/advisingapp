@@ -75,7 +75,7 @@ class EditInteraction extends EditRecord
                     ->searchable()
                     ->required()
                     ->types([
-                        ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [EducatableSelect::getStudentType()] : []),
+                        ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [EducatableSelect::getStudentType('interactable_id', $this->getRecord())] : []),
                         ...(auth()->user()->hasLicense(Prospect::getLicenseType()) ? [
                             Type::make(Prospect::class)
                                 ->titleAttribute(Prospect::displayNameKey())
