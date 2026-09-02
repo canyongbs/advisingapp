@@ -162,7 +162,6 @@ describe('survey name citext change', function () {
     });
 });
 
-
 // TODO: Cleanup Task GroupCitextCleanup - Delete this describe and everything contained within
 describe('segment name citext change', function () {
     it('renames case-insensitive duplicate group names', function () {
