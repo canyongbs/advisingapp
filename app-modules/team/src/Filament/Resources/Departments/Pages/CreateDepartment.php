@@ -41,6 +41,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class CreateDepartment extends CreateRecord
 {
@@ -52,7 +53,11 @@ class CreateDepartment extends CreateRecord
             ->components([
                 TextInput::make('name')
                     ->required()
-                    ->string()
+                    ->unique(
+                        table: 'teams',
+                        column: 'name',
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                    )
                     ->maxLength(255),
                 Textarea::make('description')
                     ->required()

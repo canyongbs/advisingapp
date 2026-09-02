@@ -46,6 +46,7 @@ use Filament\Forms\Components\Select;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 // Permission Tests
 
@@ -210,4 +211,24 @@ test('the associate action in the department users relation manager is gated by 
         'ownerRecord' => $department,
         'pageClass' => ViewDepartment::class,
     ])->assertTableActionVisible(AssociateAction::class);
+});
+
+test('EditDepartment does not allow for duplicate names of non-deleted departments case insensitively', function () {
+    asSuperAdmin();
+
+    $deletedDepartment = Department::factory(['name' => 'Department'])->create();
+    $department = Department::factory(['name' => 'Test Department'])->create();
+    Department::factory(['name' => 'Other Department'])->create();
+
+    $deletedDepartment->delete();
+
+    livewire(EditDepartment::class, ['record' => $department->getRouteKey()])
+        ->fillForm(['name' => 'Department'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    livewire(EditDepartment::class, ['record' => $department->getRouteKey()])
+        ->fillForm(['name' => 'OTHER Department'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
 });
