@@ -96,15 +96,27 @@ class UtilizationMetricsApiController extends Controller
                 AlertConfiguration::query()
                     ->selectRaw('alert_configurations.preset, COUNT(student_alerts.sisid) AS alert_count')
                     ->leftJoin('student_alerts', 'student_alerts.alert_configuration_id', '=', 'alert_configurations.id')
-                    // Raw SQL cannot use the `WithoutArchivedStudents` scope, so the flag is
-                    // checked here directly — `archived_at` does not exist until the migration runs.
-                    // TODO: Cleanup Task (student-archiving): drop the when() wrapper and chain the
-                    // leftJoin() and where() directly onto the query.
+                    /*
+                     * Raw SQL cannot use the `WithoutArchivedStudents` scope, so the flag is
+                     * checked here directly — `archived_at` does not exist until the migration
+                     * runs.
+                     *
+                     * TODO: Cleanup Task (student-archiving): delete this comment block and the
+                     * `when()` wrapper below it, chaining its `leftJoin()` and `where()` directly
+                     * onto the query. Keep the `deleted_at` comment and filter inside — they are
+                     * not part of this feature and must stay once the wrapper is gone.
+                     */
                     ->when(StudentArchivingFeature::active(), fn (Builder $query): Builder => $query
                         ->leftJoin('students', 'students.sisid', '=', 'student_alerts.sisid')
+                        // `deleted_at` is filtered here too because the enrollment-based alert
+                        // presets only exclude deleted enrollments, so a soft-deleted student
+                        // with live enrollments still reaches the view. Every other student
+                        // metric reads through Eloquent and excludes them.
                         ->where(fn (Builder $query) => $query
                             ->whereNull('student_alerts.sisid')
-                            ->orWhereNull('students.archived_at')))
+                            ->orWhere(fn (Builder $query) => $query
+                                ->whereNull('students.archived_at')
+                                ->whereNull('students.deleted_at'))))
                     ->groupBy('alert_configurations.preset')
                     ->pluck('alert_count', 'alert_configurations.preset')
                     ->map(fn (int|string $count): int => (int) $count)
