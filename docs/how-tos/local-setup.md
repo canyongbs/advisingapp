@@ -56,7 +56,7 @@ Going forward this document will make reference to the `pls` command.
 
 The `pls` command is a custom-made script that acts as a tool to run our sometimes complex `docker compose` and other
 related commands. For installation and usage details, see the
-[pls installation guide](common/pls.md).
+[pls installation guide](https://github.com/canyongbs/common/blob/main/docs/how-tos/pls.md).
 This documentation will assume you have installed `pls` and it is available in your shell.
 
 #### 1. Initial setup
