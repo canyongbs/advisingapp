@@ -38,6 +38,7 @@ use AdvisingApp\Alert\Actions\GenerateStudentAlertsView;
 use AdvisingApp\Alert\Configurations\AdultLearnerAlertConfiguration;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Alert\Presets\AlertPreset;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Http\Controllers\UtilizationMetricsApiController;
 use Illuminate\Http\Request;
@@ -105,6 +106,36 @@ it('does not count alerts belonging to archived students', function () {
     $archived->each(fn (Student $student) => $student->archive());
 
     expect(utilizationMetrics()['alerts_by_alert_type'][AlertPreset::AdultLearner->value])->toBe(3);
+});
+
+// The enrollment-based alert presets only exclude deleted enrollments, so a soft-deleted
+// student with a live enrollment still reaches the `student_alerts` view. Every other student
+// metric reads through Eloquent and excludes them, so the alert counts must too.
+it('does not count alerts belonging to soft deleted students', function () {
+    Student::truncate();
+
+    AlertConfiguration::factory()
+        ->state(['preset' => AlertPreset::CourseWithdrawal])
+        ->enabled()
+        ->create();
+
+    $students = Student::factory()->count(3)->create();
+
+    $students->each(fn (Student $student) => Enrollment::factory()
+        ->for($student, 'student')
+        ->state(['crse_grade_off' => 'W'])
+        ->create());
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    expect(utilizationMetrics()['alerts_by_alert_type'][AlertPreset::CourseWithdrawal->value])->toBe(3);
+
+    $deleted = $students->first();
+    $deleted->delete();
+
+    // The enrollment survives, so the student is still listed in the view.
+    expect(Enrollment::query()->where('sisid', $deleted->getKey())->exists())->toBeTrue()
+        ->and(utilizationMetrics()['alerts_by_alert_type'][AlertPreset::CourseWithdrawal->value])->toBe(2);
 });
 
 it('still reports alert types that have no alerts', function () {
