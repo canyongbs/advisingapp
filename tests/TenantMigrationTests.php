@@ -142,7 +142,7 @@ describe('form name citext change', function () {
                 $form3 = Form::factory()->create(['name' => 'form name']);
 
                 // An archived form sharing a name must be ignored by de-duplication
-                $archivedForm = Form::factory()->create(['name' => 'Archived form']);
+                $archivedForm = Form::factory()->create(['name' => 'FORM NAME']);
                 $archivedForm->archive();
 
                 // Run the migration
@@ -155,7 +155,7 @@ describe('form name citext change', function () {
                 expect($form1->refresh()->name)->toBe('Form name');
                 expect($form2->refresh()->name)->toBe('form Name-2');
                 expect($form3->refresh()->name)->toBe('form name-3');
-                expect($archivedForm->refresh()->name)->toBe('Archived form');
+                expect($archivedForm->refresh()->name)->toBe('FORM NAME');
             }
         );
     });
