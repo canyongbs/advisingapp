@@ -43,6 +43,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditSystemUser extends EditRecord
 {
@@ -55,6 +56,12 @@ class EditSystemUser extends EditRecord
         return $schema->components([
             TextInput::make('name')
                 ->required()
+                ->unique(
+                    table: 'system_users',
+                    column: 'name',
+                    ignoreRecord: true,
+                    modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                )
                 ->string(),
             TextInput::make('token')
                 ->hint('Please copy the token, it will only be shown once.')
