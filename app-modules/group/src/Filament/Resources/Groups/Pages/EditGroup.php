@@ -78,7 +78,6 @@ class EditGroup extends EditRecord implements HasTable
                     ->autocomplete(false)
                     ->string()
                     ->required()
-                    ->maxLength(255)
                     ->unique(
                         table: 'segments',
                         column: 'name',
