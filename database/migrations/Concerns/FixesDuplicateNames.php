@@ -52,7 +52,7 @@ trait FixesDuplicateNames
     protected function orderDuplicateRecords(Builder $query): Builder
     {
         if ($this->usesSoftDeletes) {
-            $query->orderByRaw('deleted_at IS NULL DESC');
+            $query->orderByRaw("{$this->softDeleteColumn()} IS NULL DESC");
         }
 
         return $query
@@ -63,6 +63,17 @@ trait FixesDuplicateNames
     protected function ignoresNullValues(): bool
     {
         return false;
+    }
+
+    /**
+     * The column used to exclude "removed" records from de-duplication.
+     *
+     * Defaults to `deleted_at` (Laravel soft deletes). Override to `archived_at`
+     * for models that use archiving instead of soft deletes.
+     */
+    protected function softDeleteColumn(): string
+    {
+        return 'deleted_at';
     }
 
     /**
@@ -105,7 +116,7 @@ trait FixesDuplicateNames
             ]);
 
         if ($this->usesSoftDeletes) {
-            $query->whereNull('deleted_at');
+            $query->whereNull($this->softDeleteColumn());
         }
 
         if ($this->ignoresNullValues()) {
@@ -144,7 +155,7 @@ trait FixesDuplicateNames
         }
 
         if ($this->usesSoftDeletes) {
-            $recordsQuery->whereNull('deleted_at');
+            $recordsQuery->whereNull($this->softDeleteColumn());
         }
 
         $records = $this->orderDuplicateRecords($recordsQuery)->get();
@@ -159,7 +170,7 @@ trait FixesDuplicateNames
         $existingNamesQuery = DB::table($this->table);
 
         if ($this->usesSoftDeletes) {
-            $existingNamesQuery->whereNull('deleted_at');
+            $existingNamesQuery->whereNull($this->softDeleteColumn());
         }
 
         foreach ($groupByColumns as $col) {
@@ -246,7 +257,7 @@ trait FixesDuplicateNames
             ->whereRaw("{$this->column} ~ ?", [$this->deduplicatedValuePattern()]);
 
         if ($this->usesSoftDeletes) {
-            $query->whereNull('deleted_at');
+            $query->whereNull($this->softDeleteColumn());
         }
 
         $query
@@ -268,7 +279,7 @@ trait FixesDuplicateNames
                     }
 
                     if ($this->usesSoftDeletes) {
-                        $conflictQuery->whereNull('deleted_at');
+                        $conflictQuery->whereNull($this->softDeleteColumn());
                     }
 
                     if (! $conflictQuery->where('id', '!=', $record->id)->exists()) {

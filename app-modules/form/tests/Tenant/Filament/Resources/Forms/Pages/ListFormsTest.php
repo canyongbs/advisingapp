@@ -110,6 +110,32 @@ it('can duplicate a form its steps and its fields', function () {
     expect($duplicatedForm->steps->count())->toBe($form->steps->count());
 });
 
+it('does not allow duplicating a form to a name matching another non-archived form case-insensitively', function () {
+    asSuperAdmin();
+
+    Form::factory()->create(['name' => 'Existing Form']);
+    $form = Form::factory()->create(['name' => 'Some Form']);
+
+    livewire(ListForms::class)
+        ->callTableAction('Duplicate', $form, data: ['name' => 'existing form'])
+        ->assertHasTableActionErrors(['name' => 'unique']);
+});
+
+it('allows duplicating a form to a name freed up by an archived form', function () {
+    asSuperAdmin();
+
+    $archivedForm = Form::factory()->create(['name' => 'Reusable Name']);
+    $archivedForm->archive();
+
+    $form = Form::factory()->create(['name' => 'Some Form']);
+
+    livewire(ListForms::class)
+        ->callTableAction('Duplicate', $form, data: ['name' => 'reusable name'])
+        ->assertHasNoTableActionErrors();
+
+    expect(Form::query()->whereNull('archived_at')->where('name', 'reusable name')->exists())->toBeTrue();
+});
+
 it('will not duplicate form submissions if they exist', function () {
     asSuperAdmin();
 

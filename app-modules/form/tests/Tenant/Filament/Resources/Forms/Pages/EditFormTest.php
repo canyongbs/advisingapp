@@ -79,3 +79,29 @@ it('archive action archives the form and redirects to the index when the form ha
 
     expect($form->fresh()->isArchived())->toBeTrue();
 });
+
+it('does not allow updating a form to a name matching another non-archived form case-insensitively', function () {
+    asSuperAdmin();
+
+    Form::factory()->create(['name' => 'Other Form']);
+    $form = Form::factory()->create(['name' => 'Editable Form']);
+
+    livewire(EditForm::class, ['record' => $form->getRouteKey()])
+        ->fillForm(['name' => 'other form'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+it('allows updating a form to a name freed up by an archived form case-insensitively', function () {
+    asSuperAdmin();
+
+    $archivedForm = Form::factory()->create(['name' => 'Reusable Name']);
+    $archivedForm->archive();
+
+    $form = Form::factory()->create(['name' => 'Editable Form']);
+
+    livewire(EditForm::class, ['record' => $form->getRouteKey()])
+        ->fillForm(['name' => 'reusable name'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+});
