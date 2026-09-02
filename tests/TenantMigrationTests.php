@@ -36,6 +36,7 @@
 
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Group\Models\Group;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -156,6 +157,32 @@ describe('survey name citext change', function () {
                 expect(DB::table('surveys')->where('id', $survey1)->value('name'))->toBe('Survey');
                 expect(DB::table('surveys')->where('id', $survey2)->value('name'))->toBe('survey-2');
                 expect(DB::table('surveys')->where('id', $survey3)->value('name'))->toBe('SURVEY-3');
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task GroupCitextCleanup - Delete this describe and everything contained within
+describe('segment name citext change', function () {
+    it('renames case-insensitive duplicate group names', function () {
+        isolatedMigration(
+            '2026_09_02_142139_convert_segments_name_to_citext',
+            function () {
+                // Setup data before migration
+                $group1 = Group::factory()->create(['name' => 'Group name']);
+                $group2 = Group::factory()->create(['name' => 'group Name']);
+                $group3 = Group::factory()->create(['name' => 'group name']);
+
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/group/database/migrations/2026_09_02_142139_convert_segments_name_to_citext.php']);
+
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Add any assertions to verify the migration's effects
+                expect($group1->refresh()->name)->toBe('Group name');
+                expect($group2->refresh()->name)->toBe('group Name-2');
+                expect($group3->refresh()->name)->toBe('group name-3');
             }
         );
     });
