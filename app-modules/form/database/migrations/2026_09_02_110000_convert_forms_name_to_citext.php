@@ -57,7 +57,7 @@ return new class () extends Migration {
 
     protected bool $usesSoftDeletes = true;
 
-    private string $uniqueConstraint = 'forms_name_unique_index';
+    private string $uniqueConstraint = 'forms_name_unique';
 
     public function up(): void
     {
