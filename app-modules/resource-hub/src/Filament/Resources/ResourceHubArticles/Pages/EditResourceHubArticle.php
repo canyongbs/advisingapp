@@ -102,7 +102,7 @@ class EditResourceHubArticle extends EditRecord
                                 TextInput::make('title')
                                     ->label('Article Title')
                                     ->required()
-                                    ->string()
+                                    ->maxLength(255)
                                     ->unique(
                                         table: 'resource_hub_articles',
                                         column: 'title',

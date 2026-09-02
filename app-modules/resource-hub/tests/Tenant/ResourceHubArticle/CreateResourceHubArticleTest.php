@@ -131,7 +131,7 @@ test('CreateResourceHubArticle does not allow for duplicate article titles of no
 
     livewire(ListResourceHubArticles::class)
         ->callAction('create', $request1->toArray())
-        ->assertHasNoActionErrors();
+        ->assertHasNoFormErrors();
 
     livewire(ListResourceHubArticles::class)
         ->callAction('create', $request2->toArray())

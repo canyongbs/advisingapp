@@ -55,6 +55,7 @@ class CreateResourceHubCategory extends CreateRecord
                 TextInput::make('name')
                     ->label('Name')
                     ->required()
+                    ->maxLength(255)
                     ->unique(
                         table: 'resource_hub_categories',
                         column: 'name',

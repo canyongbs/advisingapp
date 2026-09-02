@@ -55,6 +55,7 @@ class EditResourceHubQuality extends EditRecord
                 TextInput::make('name')
                     ->label('Name')
                     ->required()
+                    ->maxLength(255)
                     ->unique(
                         table: 'resource_hub_qualities',
                         column: 'name',

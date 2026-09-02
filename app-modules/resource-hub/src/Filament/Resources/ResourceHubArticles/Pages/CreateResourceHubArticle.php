@@ -63,6 +63,7 @@ class CreateResourceHubArticle extends CreateRecord
                         TextInput::make('title')
                             ->label('Article Title')
                             ->required()
+                            ->maxLength(255)
                             ->unique(
                                 table: 'resource_hub_articles',
                                 column: 'title',

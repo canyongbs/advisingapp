@@ -49,9 +49,9 @@ class CreateResourceHubArticleRequestFactory extends RequestFactory
             'title' => fake()->words(5, true),
             'public' => fake()->boolean(),
             'notes' => fake()->paragraph(),
-            'quality_id' => ResourceHubQuality::factory()->create()->id,
-            'status_id' => ResourceHubStatus::factory()->create()->id,
-            'category_id' => ResourceHubCategory::factory()->create()->id,
+            'quality_id' => ResourceHubQuality::query()->firstOr(fn () => ResourceHubQuality::factory()->create())->getKey(),
+            'status_id' => ResourceHubStatus::query()->firstOr(fn () => ResourceHubStatus::factory()->create())->getKey(),
+            'category_id' => ResourceHubCategory::query()->firstOr(fn () => ResourceHubCategory::factory()->create())->getKey(),
         ];
     }
 }
