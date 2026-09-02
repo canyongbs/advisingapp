@@ -54,6 +54,7 @@ class EditDepartment extends EditRecord
             ->components([
                 TextInput::make('name')
                     ->required()
+                    ->string()
                     ->unique(
                         table: 'teams',
                         column: 'name',
