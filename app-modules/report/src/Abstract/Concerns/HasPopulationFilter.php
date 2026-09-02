@@ -52,6 +52,7 @@ use Filament\Schemas\Components\Text;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Validation\Rules\Unique;
 use Livewire\Attributes\Url;
 
 /**
@@ -223,7 +224,12 @@ trait HasPopulationFilter
                 TextInput::make('name')
                     ->label('Group name')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->unique(
+                        table: 'segments',
+                        column: 'name',
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                    ),
             ])
             ->action(function (array $data): void {
                 $group = new Group();

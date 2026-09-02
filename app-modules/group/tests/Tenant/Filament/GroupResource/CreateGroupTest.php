@@ -36,11 +36,15 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
+use AdvisingApp\Group\Filament\Resources\Groups\Pages\CreateGroup;
 use AdvisingApp\Group\Importers\ProspectGroupSubjectImporter;
 use AdvisingApp\Group\Importers\StudentGroupSubjectImporter;
+use AdvisingApp\Group\Models\Group;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 test('CreateGroup is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -65,4 +69,23 @@ test('group importers expose user-friendly CSV header labels', function () {
 
     expect($studentSubjectColumn->getLabel())->toBe('Student ID / Other ID');
     expect($prospectSubjectColumn->getLabel())->toBe('Email address');
+});
+
+test('CreateGroup does not allow duplicate group names case insensitively, ignoring soft-deleted records', function () {
+    asSuperAdmin();
+
+    $group = Group::factory()->create(['name' => 'Group Name']);
+    $group->delete();
+
+    livewire(CreateGroup::class)
+        ->fillForm(['name' => 'group name'])
+        ->call('create')
+        ->assertHasNoFormErrors(['name' => 'unique']);
+
+    Group::factory()->create(['name' => 'Existing Group']);
+
+    livewire(CreateGroup::class)
+        ->fillForm(['name' => 'existing group'])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
 });

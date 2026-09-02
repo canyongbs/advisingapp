@@ -57,6 +57,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\Rules\Unique;
 
 /**
  * @extends EditRecord<Group>
@@ -77,6 +78,13 @@ class EditGroup extends EditRecord implements HasTable
                     ->autocomplete(false)
                     ->string()
                     ->required()
+                    ->maxLength(255)
+                    ->unique(
+                        table: 'segments',
+                        column: 'name',
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                    )
                     ->columnSpanFull(),
                 Textarea::make('description')
                     ->columnSpanFull(),
