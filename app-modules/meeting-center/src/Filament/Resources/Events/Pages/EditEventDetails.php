@@ -51,6 +51,7 @@ use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditEventDetails extends EditRecord
 {
@@ -67,7 +68,13 @@ class EditEventDetails extends EditRecord
                         ->label('Title')
                         ->string()
                         ->required()
-                        ->maxLength(255),
+                        ->maxLength(255)
+                        ->unique(
+                            table: 'events',
+                            column: 'title',
+                            ignoreRecord: true,
+                            modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                        ),
                     TextInput::make('location')
                         ->label('Location')
                         ->string()

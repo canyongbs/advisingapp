@@ -36,6 +36,7 @@
 
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\MeetingCenter\Models\Event;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -127,4 +128,35 @@ test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements
             expect($withoutSource->source_type)->toBeNull(); /** @phpstan-ignore-line */
         }
     );
+});
+
+// TODO: Cleanup Task EventCitextCleanup - Delete this describe and everything contained within
+describe('event title citext change', function () {
+    it('renames case-insensitive duplicate event titles', function () {
+        isolatedMigration(
+            '2026_09_02_120000_convert_events_title_to_citext',
+            function () {
+                // Setup data before migration
+                $event1 = Event::factory()->create(['title' => 'Event title']);
+                $event2 = Event::factory()->create(['title' => 'event Title']);
+                $event3 = Event::factory()->create(['title' => 'event title']);
+
+                // A soft-deleted event sharing a title must be ignored by de-duplication
+                $deletedEvent = Event::factory()->create(['title' => 'Deleted event']);
+                $deletedEvent->delete();
+
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/meeting-center/database/migrations/2026_09_02_120000_convert_events_title_to_citext.php']);
+
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Add any assertions to verify the migration's effects
+                expect($event1->refresh()->title)->toBe('Event title');
+                expect($event2->refresh()->title)->toBe('event Title-2');
+                expect($event3->refresh()->title)->toBe('event title-3');
+                expect($deletedEvent->refresh()->title)->toBe('Deleted event');
+            }
+        );
+    });
 });
