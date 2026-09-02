@@ -128,3 +128,35 @@ test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements
         }
     );
 });
+
+describe('survey name citext change', function () {
+    it('deduplicates case-insensitive survey names before converting the column', function () {
+        isolatedMigration(
+            '2026_09_01_122143_convert_surveys_name_to_citext',
+            function () {
+                // Setup data before migration. A plain, case-sensitive unique index
+                // allows these three names to coexist prior to the citext conversion.
+                $survey1 = (string) Str::uuid();
+                $survey2 = (string) Str::uuid();
+                $survey3 = (string) Str::uuid();
+
+                DB::table('surveys')->insert([
+                    ['id' => $survey1, 'name' => 'Survey', 'created_at' => now()->subMinutes(3), 'updated_at' => now()],
+                    ['id' => $survey2, 'name' => 'survey', 'created_at' => now()->subMinutes(2), 'updated_at' => now()],
+                    ['id' => $survey3, 'name' => 'SURVEY', 'created_at' => now()->subMinutes(1), 'updated_at' => now()],
+                ]);
+
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/survey/database/migrations/2026_09_01_122143_convert_surveys_name_to_citext.php']);
+
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The oldest record keeps its name, later duplicates are suffixed.
+                expect(DB::table('surveys')->where('id', $survey1)->value('name'))->toBe('Survey');
+                expect(DB::table('surveys')->where('id', $survey2)->value('name'))->toBe('survey-2');
+                expect(DB::table('surveys')->where('id', $survey3)->value('name'))->toBe('SURVEY-3');
+            }
+        );
+    });
+});
