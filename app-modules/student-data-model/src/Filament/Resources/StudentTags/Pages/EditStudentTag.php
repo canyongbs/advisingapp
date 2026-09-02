@@ -41,6 +41,7 @@ use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditStudentTag extends EditRecord
 {
@@ -54,7 +55,12 @@ class EditStudentTag extends EditRecord
                     ->label('Name')
                     ->required()
                     ->maxLength(255)
-                    ->string(),
+                    ->unique(
+                        table: 'tags',
+                        column: 'name',
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                    ),
             ]);
     }
 
