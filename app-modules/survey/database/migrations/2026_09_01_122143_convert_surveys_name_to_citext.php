@@ -42,7 +42,7 @@ use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
-    // TODO: Cleanup Task SurveyCitextCleanup - remove FixesDuplicateNames trait & usages (if no other migration uses it, restore its `// @phpstan-ignore trait.unused` annotation)
+    // TODO: Cleanup Task SurveyCitextCleanup - remove FixesDuplicateNames trait & usages (if no other migration uses it, restore its trait.unused ignore annotation)
     use FixesDuplicateNames;
 
     protected string $table = 'surveys';
