@@ -51,6 +51,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules\Unique;
 use Throwable;
 
 class ListRoles extends ListRecords
@@ -112,7 +113,15 @@ class ListRoles extends ListRecords
                     ->schema([
                         TextInput::make('name')
                             ->label('New Role Name')
-                            ->required(),
+                            ->required()
+                            ->maxLength(125)
+                            ->unique(
+                                table: 'roles',
+                                column: 'name',
+                                modifyRuleUsing: function (Unique $rule, Role $record) {
+                                    $rule->where('guard_name', $record->guard_name);
+                                }
+                            ),
                     ])
                     ->action(function (Role $record, array $data) {
                         try {

@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\Engagement;
 use Illuminate\Console\Command;
@@ -127,4 +128,33 @@ test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements
             expect($withoutSource->source_type)->toBeNull(); /** @phpstan-ignore-line */
         }
     );
+});
+
+// TODO: Cleanup Task RoleCitextCleanup - Delete this describe and everything contained within
+describe('role citext change', function () {
+    it('properly deduplicates role names case insensitively per guard', function () {
+        isolatedMigration(
+            '2026_09_02_000000_convert_role_name_to_citext',
+            function () {
+                // Setup data before migration
+                $role1 = Role::factory()->create(['name' => 'Role', 'guard_name' => 'web']);
+                $role2 = Role::factory()->create(['name' => 'role', 'guard_name' => 'web']);
+                $role3 = Role::factory()->create(['name' => 'ROLE', 'guard_name' => 'web']);
+                // A matching name under a different guard must be left untouched
+                $role4 = Role::factory()->create(['name' => 'role', 'guard_name' => 'api']);
+
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/authorization/database/migrations/2026_09_02_000000_convert_role_name_to_citext.php']);
+
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // The first record keeps its name, the rest are suffixed within the guard
+                expect($role1->refresh()->name)->toBe('Role');
+                expect($role2->refresh()->name)->toBe('role-2');
+                expect($role3->refresh()->name)->toBe('ROLE-3');
+                expect($role4->refresh()->name)->toBe('role');
+            }
+        );
+    });
 });
