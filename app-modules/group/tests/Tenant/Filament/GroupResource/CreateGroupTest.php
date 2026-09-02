@@ -80,7 +80,7 @@ test('CreateGroup does not allow duplicate group names case insensitively, ignor
     livewire(CreateGroup::class)
         ->fillForm(['name' => 'group name'])
         ->call('create')
-        ->assertHasNoFormErrors(['name' => 'unique']);
+        ->assertHasNoFormErrors(['name']);
 
     Group::factory()->create(['name' => 'Existing Group']);
 

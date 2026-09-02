@@ -75,7 +75,7 @@ test('EditGroup does not allow duplicate group names case insensitively, ignorin
     livewire(EditGroup::class, ['record' => $group->getRouteKey()])
         ->fillForm(['name' => 'group name'])
         ->call('save')
-        ->assertHasNoFormErrors(['name' => 'unique']);
+        ->assertHasNoFormErrors(['name']);
 
     livewire(EditGroup::class, ['record' => $group->getRouteKey()])
         ->fillForm(['name' => 'OTHER group'])
