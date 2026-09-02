@@ -57,6 +57,7 @@ use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\Rules\Unique;
 
 class EditResourceHubArticle extends EditRecord
 {
@@ -102,6 +103,12 @@ class EditResourceHubArticle extends EditRecord
                                     ->label('Article Title')
                                     ->required()
                                     ->string()
+                                    ->unique(
+                                        table: 'resource_hub_articles',
+                                        column: 'title',
+                                        ignoreRecord: true,
+                                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                                    )
                                     ->suffixAction(
                                         BaseAction::make('saveArticleTitle')
                                             ->icon('heroicon-o-check')

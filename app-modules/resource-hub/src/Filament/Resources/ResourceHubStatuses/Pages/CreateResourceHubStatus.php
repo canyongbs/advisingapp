@@ -40,6 +40,7 @@ use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubStatuses\ResourceHubSt
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class CreateResourceHubStatus extends CreateRecord
 {
@@ -52,6 +53,11 @@ class CreateResourceHubStatus extends CreateRecord
                 TextInput::make('name')
                     ->label('Name')
                     ->required()
+                    ->unique(
+                                table: 'resource_hub_statuses',
+                                column: 'name',
+                                modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                            )
                     ->string(),
             ]);
     }

@@ -42,6 +42,7 @@ use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditResourceHubQuality extends EditRecord
 {
@@ -54,6 +55,12 @@ class EditResourceHubQuality extends EditRecord
                 TextInput::make('name')
                     ->label('Name')
                     ->required()
+                    ->unique(
+                        table: 'resource_hub_qualities',
+                        column: 'name',
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                    )
                     ->string(),
             ]);
     }

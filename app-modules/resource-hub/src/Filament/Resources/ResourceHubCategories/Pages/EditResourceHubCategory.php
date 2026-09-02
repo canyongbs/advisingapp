@@ -44,6 +44,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditResourceHubCategory extends EditRecord
 {
@@ -56,6 +57,12 @@ class EditResourceHubCategory extends EditRecord
                 TextInput::make('name')
                     ->label('Name')
                     ->required()
+                    ->unique(
+                        table: 'resource_hub_categories',
+                        column: 'name',
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                    )
                     ->string(),
                 IconSelect::make('icon'),
                 Textarea::make('description')

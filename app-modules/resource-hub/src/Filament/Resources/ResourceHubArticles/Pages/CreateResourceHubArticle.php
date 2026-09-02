@@ -48,6 +48,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class CreateResourceHubArticle extends CreateRecord
 {
@@ -62,6 +63,11 @@ class CreateResourceHubArticle extends CreateRecord
                         TextInput::make('title')
                             ->label('Article Title')
                             ->required()
+                            ->unique(
+                                table: 'resource_hub_articles',
+                                column: 'title',
+                                modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                            )
                             ->string(),
                         Toggle::make('public')
                             ->label('Public')

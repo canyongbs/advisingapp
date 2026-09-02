@@ -38,6 +38,10 @@ use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
+use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
+use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
+use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -225,4 +229,87 @@ describe('role citext change', function () {
             }
         );
     });
+});
+
+// TODO: Cleanup Task ResourceHubCitextCleanup - Delete this describe and everything contained within
+describe('resource hub citext change', function () {
+   it('properly changes article titles', function () {
+       isolatedMigration(
+           '2026_09_01_220856_convert_resource_hub_article_title_to_citext',
+           function () {
+               // Setup data before migration
+               $article1 = ResourceHubArticle::factory(['title' => 'Test Article'])->create();
+               $article2 = ResourceHubArticle::factory(['title' => 'Test Article'])->create();
+               $article3 = ResourceHubArticle::factory(['title' => 'Test Article'])->create();
+               // Run the migration
+               $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_09_01_220856_convert_resource_hub_article_title_to_citext.php']);
+               // Confirm migration ran successfully
+               expect($migrate)->toBe(Command::SUCCESS);
+               // Add any assertions to verify the migration's effects
+               expect($article1->refresh()->title)->toBe('Test Article');
+               expect($article2->refresh()->title)->toBe('Test Article-2');
+               expect($article3->refresh()->title)->toBe('Test Article-3');
+           }
+       );
+   });
+   
+   it('properly changes category names', function () {
+       isolatedMigration(
+           '2026_09_02_034833_convert_resource_hub_categories_name_to_citext',
+           function () {
+               // Setup data before migration
+               $category1 = ResourceHubCategory::factory(['name' => 'Test Category'])->create();
+               $category2 = ResourceHubCategory::factory(['name' => 'Test Category'])->create();
+               $category3 = ResourceHubCategory::factory(['name' => 'Test Category'])->create();
+               // Run the migration
+               $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_09_02_034833_convert_resource_hub_categories_name_to_citext.php']);
+               // Confirm migration ran successfully
+               expect($migrate)->toBe(Command::SUCCESS);
+               // Add any assertions to verify the migration's effects
+               expect($category1->refresh()->name)->toBe('Test Category');
+               expect($category2->refresh()->name)->toBe('Test Category-2');
+               expect($category3->refresh()->name)->toBe('Test Category-3');
+           }
+       );
+   });
+   
+   it('properly changes quality names', function () {
+       isolatedMigration(
+           '2026_09_02_034854_convert_resource_hub_qualities_name_to_citext',
+           function () {
+               // Setup data before migration
+               $quality1 = ResourceHubQuality::factory(['name' => 'Test Quality'])->create();
+               $quality2 = ResourceHubQuality::factory(['name' => 'Test Quality'])->create();
+               $quality3 = ResourceHubQuality::factory(['name' => 'Test Quality'])->create();
+               // Run the migration
+               $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_09_02_034854_convert_resource_hub_qualities_name_to_citext.php']);
+               // Confirm migration ran successfully
+               expect($migrate)->toBe(Command::SUCCESS);
+               // Add any assertions to verify the migration's effects
+               expect($quality1->refresh()->name)->toBe('Test Quality');
+               expect($quality2->refresh()->name)->toBe('Test Quality-2');
+               expect($quality3->refresh()->name)->toBe('Test Quality-3');
+           }
+       );
+   });
+   
+   it('properly changes status names', function () {
+       isolatedMigration(
+           '2026_09_02_034904_convert_resource_hub_statuses_name_to_citext',
+           function () {
+               // Setup data before migration
+               $status1 = ResourceHubStatus::factory(['name' => 'Test Status'])->create();
+               $status2 = ResourceHubStatus::factory(['name' => 'Test Status'])->create();
+               $status3 = ResourceHubStatus::factory(['name' => 'Test Status'])->create();
+               // Run the migration
+               $migrate = Artisan::call('migrate', ['--path' => 'app-modules/resource-hub/database/migrations/2026_09_02_034904_convert_resource_hub_statuses_name_to_citext.php']);
+               // Confirm migration ran successfully
+               expect($migrate)->toBe(Command::SUCCESS);
+               // Add any assertions to verify the migration's effects
+               expect($status1->refresh()->name)->toBe('Test Status');
+               expect($status2->refresh()->name)->toBe('Test Status-2');
+               expect($status3->refresh()->name)->toBe('Test Status-3');
+           }
+       );
+   });
 });
