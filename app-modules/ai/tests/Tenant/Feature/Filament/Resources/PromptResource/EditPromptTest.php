@@ -184,7 +184,7 @@ it('confidential_prompt_users UserSelect loads pre-existing super admin as selec
         ]);
 });
 
-it('prevents creating a prompt with a case-insensitively duplicate title', function () use ($licenses, $permissions) {
+it('prevents editing a prompt with a case-insensitively duplicate title', function () use ($licenses, $permissions) {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
