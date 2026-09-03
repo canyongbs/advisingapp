@@ -37,11 +37,13 @@
 namespace AdvisingApp\Ai\Filament\Resources\PromptTypes\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\PromptTypes\PromptTypeResource;
+use AdvisingApp\Ai\Models\PromptType;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class CreatePromptType extends CreateRecord
 {
@@ -55,10 +57,13 @@ class CreatePromptType extends CreateRecord
                     ->columns()
                     ->schema([
                         TextInput::make('title')
-                            ->unique()
                             ->required()
                             ->string()
                             ->maxLength(255)
+                            ->unique(
+                                table: PromptType::class,
+                                modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                            )
                             ->columnSpanFull(),
                         Textarea::make('description')
                             ->string()
