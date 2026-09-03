@@ -52,6 +52,7 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditPrompt extends EditRecord
 {
@@ -65,7 +66,13 @@ class EditPrompt extends EditRecord
                     ->columns()
                     ->schema([
                         TextInput::make('title')
-                            ->unique(ignoreRecord: true)
+                            ->unique(
+                                table: Prompt::class,
+                                modifyRuleUsing: fn (Unique $rule, Get $get): Unique => $rule
+                                    ->where('type_id', $get('type_id'))
+                                    ->withoutTrashed(),
+                                ignoreRecord: true,
+                            )
                             ->required()
                             ->string()
                             ->maxLength(255),

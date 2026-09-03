@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Filament\Resources\Prompts\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
+use AdvisingApp\Ai\Models\Prompt;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use Filament\Forms\Components\Checkbox;
@@ -49,6 +50,7 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class CreatePrompt extends CreateRecord
 {
@@ -62,7 +64,12 @@ class CreatePrompt extends CreateRecord
                     ->columns()
                     ->schema([
                         TextInput::make('title')
-                            ->unique()
+                            ->unique(
+                                table: Prompt::class,
+                                modifyRuleUsing: fn (Unique $rule, Get $get): Unique => $rule
+                                    ->where('type_id', $get('type_id'))
+                                    ->withoutTrashed(),
+                            )
                             ->required()
                             ->string()
                             ->maxLength(255),

@@ -183,3 +183,49 @@ it('confidential_prompt_users UserSelect loads pre-existing super admin as selec
             'confidential_prompt_users' => [$superAdmin->getKey()],
         ]);
 });
+
+it('prevents creating a prompt with a case-insensitively duplicate title', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    $recordToEdit = Prompt::factory()->create(['title' => 'First Title']);
+    Prompt::factory()->create([
+        'title' => 'Second Title',
+        'type_id' => $recordToEdit->type_id,
+    ]);
+
+    livewire(EditPrompt::class, [
+        'record' => $recordToEdit->getRouteKey(),
+    ])
+        ->fillForm(['title' => 'second title'])
+        ->call('save')
+        ->assertHasFormErrors(['title' => 'unique']);
+});
+
+it('allows reusing the title of a soft-deleted prompt', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    $recordToEdit = Prompt::factory()->create(['title' => 'Active Title']);
+    $archivedPrompt = Prompt::factory()->create([
+        'title' => 'Archived Title',
+        'type_id' => $recordToEdit->type_id,
+    ]);
+    $archivedPrompt->delete();
+
+    livewire(EditPrompt::class, [
+        'record' => $recordToEdit->getRouteKey(),
+    ])
+        ->fillForm(['title' => 'archived title'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    assertDatabaseHas(Prompt::class, [
+        'id' => $recordToEdit->id,
+        'title' => 'archived title',
+    ]);
+});
