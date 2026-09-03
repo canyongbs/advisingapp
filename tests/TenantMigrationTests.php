@@ -320,8 +320,6 @@ describe('prompt type title citext change', function () {
         isolatedMigration(
             '2026_09_02_181730_convert_prompt_types_title_to_citext',
             function () {
-                // Setup data before migration. A plain, case-sensitive unique index
-                // allows these three titles to coexist prior to the citext conversion.
                 $promptType1 = (string) Str::uuid();
                 $promptType2 = (string) Str::uuid();
                 $promptType3 = (string) Str::uuid();
@@ -332,13 +330,10 @@ describe('prompt type title citext change', function () {
                     ['id' => $promptType3, 'title' => 'PROMPT TYPE', 'created_at' => now()->subMinutes(1), 'updated_at' => now()],
                 ]);
 
-                // Run the migration
                 $migrate = Artisan::call('migrate', ['--path' => 'app-modules/ai/database/migrations/2026_09_02_181730_convert_prompt_types_title_to_citext.php']);
 
-                // Confirm migration ran successfully
                 expect($migrate)->toBe(Command::SUCCESS);
 
-                // The oldest record keeps its title, later duplicates are suffixed.
                 expect(DB::table('prompt_types')->where('id', $promptType1)->value('title'))->toBe('Prompt Type');
                 expect(DB::table('prompt_types')->where('id', $promptType2)->value('title'))->toBe('prompt type-2');
                 expect(DB::table('prompt_types')->where('id', $promptType3)->value('title'))->toBe('PROMPT TYPE-3');
@@ -352,8 +347,7 @@ describe('prompt title citext change', function () {
         isolatedMigration(
             '2026_09_02_181821_convert_prompts_title_to_citext',
             function () {
-                // Setup data before migration. A plain, case-sensitive unique index
-                // allows these titles to coexist prior to the citext conversion.
+                
                 $typeId = (string) Str::uuid();
                 $otherTypeId = (string) Str::uuid();
 
@@ -371,23 +365,18 @@ describe('prompt title citext change', function () {
                     ['id' => $prompt1, 'title' => 'Prompt', 'prompt' => 'Prompt body', 'type_id' => $typeId, 'created_at' => now()->subMinutes(3), 'updated_at' => now()],
                     ['id' => $prompt2, 'title' => 'prompt', 'prompt' => 'Prompt body', 'type_id' => $typeId, 'created_at' => now()->subMinutes(2), 'updated_at' => now()],
                     ['id' => $prompt3, 'title' => 'PROMPT', 'prompt' => 'Prompt body', 'type_id' => $typeId, 'created_at' => now()->subMinutes(1), 'updated_at' => now()],
-                    // Same title but a different type_id, this should not be treated as a duplicate.
-                    ['id' => $promptOtherType, 'title' => 'Prompt', 'prompt' => 'Prompt body', 'type_id' => $otherTypeId, 'created_at' => now(), 'updated_at' => now()],
+                    ['id' => $promptOtherType, 'title' => 'PrOmPt', 'prompt' => 'Prompt body', 'type_id' => $otherTypeId, 'created_at' => now(), 'updated_at' => now()],
                 ]);
 
-                // Run the migration
                 $migrate = Artisan::call('migrate', ['--path' => 'app-modules/ai/database/migrations/2026_09_02_181821_convert_prompts_title_to_citext.php']);
 
-                // Confirm migration ran successfully
                 expect($migrate)->toBe(Command::SUCCESS);
 
-                // The oldest record within the type keeps its title, later duplicates are suffixed.
                 expect(DB::table('prompts')->where('id', $prompt1)->value('title'))->toBe('Prompt');
                 expect(DB::table('prompts')->where('id', $prompt2)->value('title'))->toBe('prompt-2');
                 expect(DB::table('prompts')->where('id', $prompt3)->value('title'))->toBe('PROMPT-3');
 
-                // The prompt in the other type is untouched since duplicates are scoped per type_id.
-                expect(DB::table('prompts')->where('id', $promptOtherType)->value('title'))->toBe('Prompt');
+                expect(DB::table('prompts')->where('id', $promptOtherType)->value('title'))->toBe('PrOmPt');
             }
         );
     });
