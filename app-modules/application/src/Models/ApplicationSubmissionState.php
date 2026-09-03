@@ -44,6 +44,7 @@ use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\BaseModel;
 use CanyonGBS\Common\Enums\Color;
 use CanyonGBS\Common\Models\Concerns\CanBeArchived;
+use Filament\Support\Colors\Color as ColorHelper;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -95,7 +96,7 @@ class ApplicationSubmissionState extends BaseModel implements Auditable
     public function getBadgeColor(): string | array
     {
         return $this->color->isShade()
-            ? array_fill_keys([50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950], $this->color->getRgb())
+            ? ColorHelper::generatePalette($this->color->getRgb())
             : $this->color->value;
     }
 

@@ -42,6 +42,7 @@ use AdvisingApp\Prospect\Observers\ProspectStatusObserver;
 use App\Models\BaseModel;
 use CanyonGBS\Common\Enums\Color;
 use DateTimeInterface;
+use Filament\Support\Colors\Color as ColorHelper;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -84,7 +85,7 @@ class ProspectStatus extends BaseModel implements Auditable
     public function getBadgeColor(): string | array
     {
         return $this->color->isShade()
-            ? array_fill_keys([50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950], $this->color->getRgb())
+            ? ColorHelper::generatePalette($this->color->getRgb())
             : $this->color->value;
     }
 
