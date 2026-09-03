@@ -81,8 +81,7 @@ test('CreateDepartment is gated with proper access control', function () {
 test('CreateDepartment does not allow for duplicate names of non-deleted departments case insensitively', function () {
     asSuperAdmin();
 
-    $department = Department::factory(['name' => 'department'])->create();
-    $department->delete();
+    Department::factory(['name' => 'department', 'deleted_at' => now()])->create();
 
     livewire(CreateDepartment::class)
         ->fillForm(['name' => 'Department', 'description' => 'test'])

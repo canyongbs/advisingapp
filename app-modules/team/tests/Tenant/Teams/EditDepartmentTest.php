@@ -216,11 +216,9 @@ test('the associate action in the department users relation manager is gated by 
 test('EditDepartment does not allow for duplicate names of non-deleted departments case insensitively', function () {
     asSuperAdmin();
 
-    $deletedDepartment = Department::factory(['name' => 'Department'])->create();
+    Department::factory(['name' => 'Department', 'deleted_at' => now()])->create();
     $department = Department::factory(['name' => 'Test Department'])->create();
     Department::factory(['name' => 'Other Department'])->create();
-
-    $deletedDepartment->delete();
 
     livewire(EditDepartment::class, ['record' => $department->getRouteKey()])
         ->fillForm(['name' => 'Department'])
