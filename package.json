@@ -65,7 +65,7 @@
         "prettier-plugin-organize-imports": "^4.1.0",
         "pusher-js": "^7.4.0",
         "sortablejs": "^1.15.7",
-        "vue": "^3.5.41",
+        "vue": "^3.5.42",
         "vue-router": "^4.2.5",
         "vue-signature-pad": "^3.0.2",
         "vue-tsc": "^3.3.11"
