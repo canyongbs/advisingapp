@@ -13304,21 +13304,21 @@
         },
         {
             "name": "spatie/laravel-health",
-            "version": "1.40.1",
+            "version": "1.40.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-health.git",
-                "reference": "e66c00d430a0f7a5b179b48b8d09149e18fa2232"
+                "reference": "45651079657bf723223a9ffc546449503816aef5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-health/zipball/e66c00d430a0f7a5b179b48b8d09149e18fa2232",
-                "reference": "e66c00d430a0f7a5b179b48b8d09149e18fa2232",
+                "url": "https://api.github.com/repos/spatie/laravel-health/zipball/45651079657bf723223a9ffc546449503816aef5",
+                "reference": "45651079657bf723223a9ffc546449503816aef5",
                 "shasum": ""
             },
             "require": {
                 "dragonmantank/cron-expression": "^3.3.1",
-                "guzzlehttp/guzzle": "^6.5|^7.4.5|^7.2",
+                "guzzlehttp/guzzle": "^6.5|^7.4.5|^7.2|^8.0",
                 "illuminate/console": "^11.0|^12.0|^13.0",
                 "illuminate/contracts": "^11.0|^12.0|^13.0",
                 "illuminate/database": "^11.0|^12.0|^13.0",
@@ -13333,6 +13333,7 @@
                 "symfony/process": "^5.4|^6.0|^7.0|^8.0"
             },
             "require-dev": {
+                "larastan/larastan": "^3.0",
                 "laravel/horizon": "^5.9.10",
                 "nunomaduro/collision": "^5.10|^6.2.1|^6.1|^8.0",
                 "orchestra/testbench": "^9.0|^10.0|^11.0",
@@ -13385,7 +13386,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-health/issues",
-                "source": "https://github.com/spatie/laravel-health/tree/1.40.1"
+                "source": "https://github.com/spatie/laravel-health/tree/1.40.2"
             },
             "funding": [
                 {
@@ -13393,7 +13394,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-07-22T07:01:14+00:00"
+            "time": "2026-08-07T09:54:52+00:00"
         },
         {
             "name": "spatie/laravel-json-api-paginate",
@@ -18771,16 +18772,16 @@
         },
         {
             "name": "ysfkaya/filament-phone-input",
-            "version": "v4.2.2",
+            "version": "v4.2.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ysfkaya/filament-phone-input.git",
-                "reference": "ea69cf5a6a8259b48b9bc192bd204cecbcaec008"
+                "reference": "2c197c715e118715402702f798ef8a5d677ed126"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ysfkaya/filament-phone-input/zipball/ea69cf5a6a8259b48b9bc192bd204cecbcaec008",
-                "reference": "ea69cf5a6a8259b48b9bc192bd204cecbcaec008",
+                "url": "https://api.github.com/repos/ysfkaya/filament-phone-input/zipball/2c197c715e118715402702f798ef8a5d677ed126",
+                "reference": "2c197c715e118715402702f798ef8a5d677ed126",
                 "shasum": ""
             },
             "require": {
@@ -18829,9 +18830,9 @@
             ],
             "support": {
                 "issues": "https://github.com/ysfkaya/filament-phone-input/issues",
-                "source": "https://github.com/ysfkaya/filament-phone-input/tree/v4.2.2"
+                "source": "https://github.com/ysfkaya/filament-phone-input/tree/v4.2.5"
             },
-            "time": "2026-08-08T10:59:04+00:00"
+            "time": "2026-09-01T18:46:12+00:00"
         }
     ],
     "packages-dev": [
