@@ -33,8 +33,11 @@
 --}}
 
 <div
-    class="sticky top-16 z-10 flex h-10 items-center px-6 py-2 text-sm font-medium text-white"
-    style="background-color: {{ $color->getRgb() }}"
+    class="sticky top-16 z-10 flex h-10 items-center px-6 py-2 text-sm font-medium"
+    style="
+        background-color: {{ $color->getRgb() }};
+        color: {{ \Filament\Support\Colors\Color::isLight($color->getRgb()) ? 'rgb(0, 0, 0)' : 'rgb(255, 255, 255)' }};
+    "
     wire:loading.remove
 >
     The single sign-on key will expire within 45 days and must be updated to prevent service interruption.

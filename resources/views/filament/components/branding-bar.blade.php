@@ -33,8 +33,12 @@
 --}}
 
 <div
-    class="sticky top-16 z-10 flex h-10 items-center px-6 py-2 text-sm font-medium text-white"
-    style="display: none; background-color: {{ $color->getRgb() }}"
+    class="sticky top-16 z-10 flex h-10 items-center px-6 py-2 text-sm font-medium"
+    style="
+        display: none;
+        background-color: {{ $color->getRgb() }};
+        color: {{ \Filament\Support\Colors\Color::isLight($color->getRgb()) ? 'rgb(0, 0, 0)' : 'rgb(255, 255, 255)' }};
+    "
     x-data="{ isVisible: @entangle('isVisible') }"
     x-show="isVisible"
     x-bind:class="{ 'branding-bar': isVisible }"
