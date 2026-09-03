@@ -347,7 +347,6 @@ describe('prompt title citext change', function () {
         isolatedMigration(
             '2026_09_02_181821_convert_prompts_title_to_citext',
             function () {
-                
                 $typeId = (string) Str::uuid();
                 $otherTypeId = (string) Str::uuid();
 
