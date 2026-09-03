@@ -84,7 +84,8 @@ return new class () extends Migration {
             Schema::table($this->table, function (Blueprint $table) {
                 $table->dropUniqueIndex($this->uniqueConstraint);
 
-                $table->unique([...$this->groupByColumns, $this->column], $this->uniqueConstraint);
+                $table->uniqueIndex([...$this->groupByColumns, $this->column], $this->uniqueConstraint)
+                    ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
 
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE varchar(255)");

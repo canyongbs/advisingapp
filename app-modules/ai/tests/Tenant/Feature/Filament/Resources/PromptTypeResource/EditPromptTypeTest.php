@@ -147,7 +147,7 @@ it('can delete a record', function () use ($licenses, $permissions) {
     assertNotNull($record->refresh()->deleted_at);
 });
 
-it('prevents creating a prompt type with a case-insensitively duplicate title', function () use ($licenses, $permissions) {
+it('prevents editing a prompt type with a case-insensitively duplicate title', function () use ($licenses, $permissions) {
     actingAs(user(
         licenses: $licenses,
         permissions: $permissions
