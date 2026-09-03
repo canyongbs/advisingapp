@@ -144,3 +144,48 @@ it('confidential_prompt_users UserSelect shows all users when filter_admins_from
             return ! empty($field->getSearchResults($adminUser->name));
         });
 });
+
+it('prevents creating a prompt with a case-insensitively duplicate title', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    $existingPrompt = Prompt::factory()->create(['title' => 'Existing Title']);
+
+    $record = Prompt::factory()->make([
+        'title' => 'existing title',
+        'type_id' => $existingPrompt->type_id,
+    ]);
+
+    livewire(CreatePrompt::class)
+        ->fillForm($record->toArray())
+        ->call('create')
+        ->assertHasFormErrors(['title' => 'unique']);
+});
+
+it('allows reusing the title of a soft-deleted prompt', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    $deletedPrompt = Prompt::factory()->create(['title' => 'Reusable Title']);
+    $typeId = $deletedPrompt->type_id;
+    $deletedPrompt->delete();
+
+    $record = Prompt::factory()->make([
+        'title' => 'reusable title',
+        'type_id' => $typeId,
+    ]);
+
+    livewire(CreatePrompt::class)
+        ->fillForm($record->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    assertDatabaseHas(Prompt::class, [
+        'title' => 'reusable title',
+        'type_id' => $typeId,
+    ]);
+});

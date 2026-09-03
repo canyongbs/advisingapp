@@ -313,3 +313,70 @@ describe('resource hub citext change', function () {
         );
     });
 });
+
+// TODO: Cleanup Task PromptCiTextCleanup - Delete this describe and everything contained within
+describe('prompt type title citext change', function () {
+    it('deduplicates case-insensitive prompt type titles before converting the column', function () {
+        isolatedMigration(
+            '2026_09_02_181730_convert_prompt_types_title_to_citext',
+            function () {
+                $promptType1 = (string) Str::uuid();
+                $promptType2 = (string) Str::uuid();
+                $promptType3 = (string) Str::uuid();
+
+                DB::table('prompt_types')->insert([
+                    ['id' => $promptType1, 'title' => 'Prompt Type', 'created_at' => now()->subMinutes(3), 'updated_at' => now()],
+                    ['id' => $promptType2, 'title' => 'prompt type', 'created_at' => now()->subMinutes(2), 'updated_at' => now()],
+                    ['id' => $promptType3, 'title' => 'PROMPT TYPE', 'created_at' => now()->subMinutes(1), 'updated_at' => now()],
+                ]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/ai/database/migrations/2026_09_02_181730_convert_prompt_types_title_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                expect(DB::table('prompt_types')->where('id', $promptType1)->value('title'))->toBe('Prompt Type');
+                expect(DB::table('prompt_types')->where('id', $promptType2)->value('title'))->toBe('prompt type-2');
+                expect(DB::table('prompt_types')->where('id', $promptType3)->value('title'))->toBe('PROMPT TYPE-3');
+            }
+        );
+    });
+});
+// TODO: Cleanup Task PromptCiTextCleanup - Delete this describe and everything contained within
+describe('prompt title citext change', function () {
+    it('deduplicates case-insensitive prompt titles scoped per type before converting the column', function () {
+        isolatedMigration(
+            '2026_09_02_181821_convert_prompts_title_to_citext',
+            function () {
+                $typeId = (string) Str::uuid();
+                $otherTypeId = (string) Str::uuid();
+
+                DB::table('prompt_types')->insert([
+                    ['id' => $typeId, 'title' => 'Type A', 'created_at' => now(), 'updated_at' => now()],
+                    ['id' => $otherTypeId, 'title' => 'Type B', 'created_at' => now(), 'updated_at' => now()],
+                ]);
+
+                $prompt1 = (string) Str::uuid();
+                $prompt2 = (string) Str::uuid();
+                $prompt3 = (string) Str::uuid();
+                $promptOtherType = (string) Str::uuid();
+
+                DB::table('prompts')->insert([
+                    ['id' => $prompt1, 'title' => 'Prompt', 'prompt' => 'Prompt body', 'type_id' => $typeId, 'created_at' => now()->subMinutes(3), 'updated_at' => now()],
+                    ['id' => $prompt2, 'title' => 'prompt', 'prompt' => 'Prompt body', 'type_id' => $typeId, 'created_at' => now()->subMinutes(2), 'updated_at' => now()],
+                    ['id' => $prompt3, 'title' => 'PROMPT', 'prompt' => 'Prompt body', 'type_id' => $typeId, 'created_at' => now()->subMinutes(1), 'updated_at' => now()],
+                    ['id' => $promptOtherType, 'title' => 'PrOmPt', 'prompt' => 'Prompt body', 'type_id' => $otherTypeId, 'created_at' => now(), 'updated_at' => now()],
+                ]);
+
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/ai/database/migrations/2026_09_02_181821_convert_prompts_title_to_citext.php']);
+
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                expect(DB::table('prompts')->where('id', $prompt1)->value('title'))->toBe('Prompt');
+                expect(DB::table('prompts')->where('id', $prompt2)->value('title'))->toBe('prompt-2');
+                expect(DB::table('prompts')->where('id', $prompt3)->value('title'))->toBe('PROMPT-3');
+
+                expect(DB::table('prompts')->where('id', $promptOtherType)->value('title'))->toBe('PrOmPt');
+            }
+        );
+    });
+});
