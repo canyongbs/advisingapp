@@ -37,6 +37,7 @@
 namespace AdvisingApp\Ai\Filament\Resources\PromptTypes\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\PromptTypes\PromptTypeResource;
+use AdvisingApp\Ai\Models\PromptType;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Textarea;
@@ -44,6 +45,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditPromptType extends EditRecord
 {
@@ -57,10 +59,14 @@ class EditPromptType extends EditRecord
                     ->columns()
                     ->schema([
                         TextInput::make('title')
-                            ->unique(ignoreRecord: true)
                             ->required()
                             ->string()
                             ->maxLength(255)
+                            ->unique(
+                                table: PromptType::class,
+                                modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                                ignoreRecord: true,
+                            )
                             ->columnSpanFull(),
                         Textarea::make('description')
                             ->string()

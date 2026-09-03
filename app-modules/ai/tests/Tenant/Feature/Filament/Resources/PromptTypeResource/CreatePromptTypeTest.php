@@ -104,3 +104,33 @@ it('can create a record', function () use ($permissions, $licenses) {
 
     assertDatabaseHas(PromptType::class, $record->toArray());
 });
+
+it('prevents creating a prompt type with a case-insensitively duplicate title', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    PromptType::factory()->create(['title' => 'Existing Title']);
+
+    livewire(CreatePromptType::class)
+        ->fillForm(['title' => 'existing title'])
+        ->call('create')
+        ->assertHasFormErrors(['title' => 'unique']);
+});
+
+it('allows reusing the title of a soft-deleted prompt type', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    PromptType::factory()->create(['title' => 'Reusable Title'])->delete();
+
+    livewire(CreatePromptType::class)
+        ->fillForm(['title' => 'reusable title'])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    assertDatabaseHas(PromptType::class, ['title' => 'reusable title']);
+});
