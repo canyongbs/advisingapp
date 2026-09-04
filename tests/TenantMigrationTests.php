@@ -42,6 +42,7 @@ use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
+use AdvisingApp\Team\Models\Department;
 use App\Enums\TagType;
 use App\Models\Tag;
 use Illuminate\Console\Command;
@@ -340,6 +341,29 @@ describe('tag citext change', function () {
                 expect($prospectTag2->refresh()->name)->toBe('Prospect Tag-2');
                 expect($studentTag3->refresh()->name)->toBe('Student Tag-3');
                 expect($prospectTag3->refresh()->name)->toBe('Prospect Tag-3');
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task DepartmentCitextCleanup - Delete this describe and everything contained within
+describe('department citext change', function () {
+    it('properly changes department names', function () {
+        isolatedMigration(
+            '2026_09_02_151101_convert_teams_name_to_citext',
+            function () {
+                // Setup data before migration
+                $department1 = Department::factory(['name' => 'Department'])->create();
+                $department2 = Department::factory(['name' => 'department'])->create();
+                $department3 = Department::factory(['name' => 'DEPARTMENT'])->create();
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/team/database/migrations/2026_09_02_151101_convert_teams_name_to_citext.php']);
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+                // Add any assertions to verify the migration's effects
+                expect($department1->refresh()->name)->toBe('Department');
+                expect($department2->refresh()->name)->toBe('department-2');
+                expect($department3->refresh()->name)->toBe('DEPARTMENT-3');
             }
         );
     });

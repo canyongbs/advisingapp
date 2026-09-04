@@ -42,6 +42,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditDepartment extends EditRecord
 {
@@ -54,6 +55,12 @@ class EditDepartment extends EditRecord
                 TextInput::make('name')
                     ->required()
                     ->string()
+                    ->unique(
+                        table: 'teams',
+                        column: 'name',
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                    )
                     ->maxLength(255),
                 Textarea::make('description')
                     ->required()
