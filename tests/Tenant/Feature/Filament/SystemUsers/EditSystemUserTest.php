@@ -34,32 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources\SystemUsers\Pages;
+use App\Filament\Resources\SystemUsers\Pages\EditSystemUser;
+use App\Models\SystemUser;
 
-use App\Filament\Resources\SystemUsers\SystemUserResource;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Schemas\Schema;
-use Illuminate\Validation\Rules\Unique;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
-class CreateSystemUser extends CreateRecord
-{
-    protected static string $resource = SystemUserResource::class;
+test('EditSystemUser does not allow for duplicate names of non-deleted system users case insensitively', function () {
+    asSuperAdmin();
 
-    protected ?string $heading = 'Create Programmatic (API) User';
+    $deletedSystemUser = SystemUser::factory(['name' => 'System User'])->create();
+    $systemUser = SystemUser::factory(['name' => 'Test System User'])->create();
+    SystemUser::factory(['name' => 'Other System User'])->create();
 
-    public function form(Schema $schema): Schema
-    {
-        return $schema->components([
-            TextInput::make('name')
-                ->required()
-                ->maxLength(255)
-                ->unique(
-                    table: 'system_users',
-                    column: 'name',
-                    modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
-                )
-                ->string(),
-        ]);
-    }
-}
+    $deletedSystemUser->delete();
+
+    livewire(EditSystemUser::class, ['record' => $systemUser->getRouteKey()])
+        ->fillForm(['name' => 'system user'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    livewire(EditSystemUser::class, ['record' => $systemUser->getRouteKey()])
+        ->fillForm(['name' => 'OTHER System user'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
+});

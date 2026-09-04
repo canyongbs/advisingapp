@@ -34,32 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Resources\SystemUsers\Pages;
+use App\Filament\Resources\SystemUsers\Pages\CreateSystemUser;
+use App\Models\SystemUser;
 
-use App\Filament\Resources\SystemUsers\SystemUserResource;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Schemas\Schema;
-use Illuminate\Validation\Rules\Unique;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
-class CreateSystemUser extends CreateRecord
-{
-    protected static string $resource = SystemUserResource::class;
+test('CreateSystemUser does not allow for duplicate names of non-deleted system users case insensitively', function () {
+    asSuperAdmin();
 
-    protected ?string $heading = 'Create Programmatic (API) User';
+    $systemUser = SystemUser::factory(['name' => 'System User'])->create();
+    $systemUser->delete();
 
-    public function form(Schema $schema): Schema
-    {
-        return $schema->components([
-            TextInput::make('name')
-                ->required()
-                ->maxLength(255)
-                ->unique(
-                    table: 'system_users',
-                    column: 'name',
-                    modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
-                )
-                ->string(),
-        ]);
-    }
-}
+    livewire(CreateSystemUser::class)
+        ->fillForm(['name' => 'system USER'])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    livewire(CreateSystemUser::class)
+        ->fillForm(['name' => 'system user'])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
