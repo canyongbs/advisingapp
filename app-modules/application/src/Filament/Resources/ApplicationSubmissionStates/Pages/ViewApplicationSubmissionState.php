@@ -45,7 +45,6 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Colors\Color;
 
 class ViewApplicationSubmissionState extends ViewRecord
 {
@@ -63,7 +62,7 @@ class ViewApplicationSubmissionState extends ViewRecord
                             ->label('Classification'),
                         ColorEntry::make('color')
                             ->label('Color')
-                            ->state(fn (ApplicationSubmissionState $applicationState): string => Color::convertToRgb(Color::all()[$applicationState->color->value][600])),
+                            ->state(fn (ApplicationSubmissionState $applicationState): string => $applicationState->color->getRgb()),
                         TextEntry::make('description')
                             ->label('Description'),
                         IconEntry::make('is_default')

@@ -146,7 +146,8 @@ trait HasSharedFormConfiguration
                 ->schema([
                     Select::make('title_font_weight')
                         ->options(FontWeight::class),
-                    ColorSelect::make('title_color'),
+                    ColorSelect::make('title_color')
+                        ->shadeOptions(),
                     ColorSelect::make('primary_color'),
                     Select::make('rounding')
                         ->options(Rounding::class),

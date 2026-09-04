@@ -114,7 +114,7 @@ class MostEngagedProspectsTable extends BaseWidget
                     ->label('Email'),
                 TextColumn::make('status.name')
                     ->badge()
-                    ->color(fn (Prospect $record) => $record->status->color->value),
+                    ->color(fn (Prospect $record) => $record->status->getBadgeColor()),
                 TextColumn::make('engagements_count')
                     ->label('Engagements'),
                 TextColumn::make('createdBy.name')

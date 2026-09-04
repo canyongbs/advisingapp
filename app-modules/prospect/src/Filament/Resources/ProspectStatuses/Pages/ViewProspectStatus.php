@@ -44,7 +44,6 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
-use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentView;
 use Filament\View\PanelsRenderHook;
 use Illuminate\Contracts\View\View;
@@ -84,7 +83,7 @@ class ViewProspectStatus extends ViewRecord
                             ->label('Classification'),
                         ColorEntry::make('color')
                             ->label('Color')
-                            ->state(fn (ProspectStatus $record): string => Color::convertToRgb(Color::all()[$record->color->value][600])),
+                            ->state(fn (ProspectStatus $record): string => $record->color->getRgb()),
                         TextEntry::make('sort')
                             ->numeric(),
                     ])

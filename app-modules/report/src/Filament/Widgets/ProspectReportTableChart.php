@@ -117,7 +117,7 @@ class ProspectReportTableChart extends TableWidget
                     ->label('Email'),
                 TextColumn::make('status.name')
                     ->badge()
-                    ->color(fn (Prospect $record) => $record->status->color->value),
+                    ->color(fn (Prospect $record) => $record->status->getBadgeColor()),
                 TextColumn::make('createdBy.name')
                     ->label('Created By'),
                 TextColumn::make('created_at')

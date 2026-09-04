@@ -93,7 +93,8 @@ class ManageCollegeBrandingSettings extends SettingsPage
                 ColorSelect::make('color')
                     ->label('Branding Bar Color')
                     ->visible(fn (Get $get) => $get('is_enabled'))
-                    ->required(),
+                    ->required()
+                    ->shadeOptions(),
             ])
             ->disabled(! auth()->user()->can('settings.*.update'));
     }
