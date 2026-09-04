@@ -61,8 +61,8 @@
         alt="{{ config('app.name') }}"
         @class([
             'h-full max-h-9',
-            'w-full' => $logo->mime_type == 'image/svg+xml',
-            'max-w-full' => $logo->mime_type != 'image/svg+xml',
+            'w-[50%]' => $logo->mime_type == 'image/svg+xml',
+            'max-w-[50%]' => $logo->mime_type != 'image/svg+xml',
             'dark:hidden' => $darkLogo,
         ])
     />
@@ -80,8 +80,8 @@
             alt="{{ config('app.name') }}"
             @class([
             'h-full max-h-9',
-            'w-full' => $darkLogo->mime_type == 'image/svg+xml',
-            'max-w-full' => $darkLogo->mime_type != 'image/svg+xml',
+            'w-[50%]' => $darkLogo->mime_type == 'image/svg+xml',
+            'max-w-[50%]' => $darkLogo->mime_type != 'image/svg+xml',
             'hidden dark:block',
         ])
         />
