@@ -82,11 +82,13 @@ return new class () extends Migration {
         DB::transaction(function () {
             Schema::table($this->table, function (Blueprint $table) {
                 $table->dropUniqueIndex($this->uniqueConstraint);
-
-                $table->unique([...$this->groupByColumns, $this->column], $this->uniqueConstraint);
             });
 
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE varchar(255)");
+
+            Schema::table($this->table, function (Blueprint $table) {
+                $table->unique([...$this->groupByColumns, $this->column], $this->uniqueConstraint);
+            });
         });
     }
 };
