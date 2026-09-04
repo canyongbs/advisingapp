@@ -44,6 +44,7 @@ use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Tests\Tenant\Prospect\RequestFactories\EditProspectRequestFactory;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use Filament\Forms\Components\Select;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\seed;
@@ -182,4 +183,34 @@ test('convert prospect to student', function () {
         ->sisid->toBe($student->sisid)
         ->full_name->toBe($student->full_name)
         ->email->toBe($student->email);
+});
+
+test('the convert action does not offer archived students', function () {
+    $user = User::factory()->licensed([Prospect::getLicenseType(), Student::getLicenseType()])->create();
+
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('prospect.*.update');
+
+    actingAs($user);
+
+    seed([
+        ProspectStatusSeeder::class,
+    ]);
+
+    $prospect = Prospect::factory()->create();
+
+    $active = Student::factory()->create();
+    $archived = Student::factory()->create();
+    $archived->archive();
+
+    livewire(EditProspect::class, ['record' => $prospect->getRouteKey()])
+        ->mountAction(ConvertToStudent::class)
+        ->assertSchemaComponentExists('student_id', checkComponentUsing: function (Select $field) use ($active, $archived): bool {
+            $sisids = array_map(strval(...), array_keys($field->getSearchResults('')));
+
+            expect($sisids)->toContain($active->getKey())
+                ->and($sisids)->not->toContain($archived->getKey());
+
+            return true;
+        });
 });

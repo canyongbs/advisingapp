@@ -37,6 +37,7 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
@@ -75,7 +76,7 @@ class StudentInteractionStats extends StatsOverviewReportWidget
             );
 
         $studentsWithInteractionsCount = $shouldBypassCache
-            ? Student::query()
+            ? Student::query()->tap(new WithoutArchivedStudents())
                 ->whereHas('interactions', function (Builder $query) use ($startDate, $endDate) {
                     $query->when(
                         $startDate && $endDate,
@@ -92,7 +93,7 @@ class StudentInteractionStats extends StatsOverviewReportWidget
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'students-with-interactions',
                 now()->addHours(24),
-                fn (): int => Student::query()
+                fn (): int => Student::query()->tap(new WithoutArchivedStudents())
                     ->whereHas('interactions')
                     ->count()
             );

@@ -74,6 +74,7 @@ use App\Models\Scopes\HasLicense;
 use App\Models\Tag;
 use App\Models\Taggable;
 use App\Models\User;
+use CanyonGBS\Common\Models\Concerns\CanBeArchived;
 use Illuminate\Database\Eloquent\Attributes\ScopedBy;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -106,6 +107,7 @@ use Staudenmeir\EloquentHasManyDeep\HasRelationships;
 class Student extends BaseAuthenticatable implements Auditable, Subscribable, Educatable, HasFilamentResource, CanBeNotified
 {
     use SoftDeletes;
+    use CanBeArchived;
     use HasApiTokens;
     use AuditableTrait;
 

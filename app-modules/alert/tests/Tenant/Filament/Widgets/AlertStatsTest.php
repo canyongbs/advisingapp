@@ -469,3 +469,34 @@ it('calculates stats with population group filter applied', function () {
         ->and($clearedStats[0]->getLabel())->toBe($alertConfig->preset->getInsightsPaneTitle())
         ->and($clearedStats[0]->getValue())->toBe((string) $totalCount);
 });
+
+it('does not count alerts belonging to archived students', function () {
+    $minimumAge = 25;
+
+    $config = AdultLearnerAlertConfiguration::factory()
+        ->state(['minimum_age' => $minimumAge])
+        ->create();
+
+    AlertConfiguration::factory()
+        ->state([
+            'preset' => AlertPreset::AdultLearner,
+            'configuration_id' => $config->id,
+            'configuration_type' => $config->getMorphClass(),
+        ])
+        ->enabled()
+        ->create();
+
+    $birthdate = (now()->year - $minimumAge - 1) . '-01-01';
+
+    Student::factory()->count(3)->state(['birthdate' => $birthdate])->create();
+
+    $archived = Student::factory()->count(2)->state(['birthdate' => $birthdate])->create();
+
+    app(GenerateStudentAlertsView::class)->execute();
+
+    expect((new AlertStats())->getStats()[0]->getValue())->toBe('5');
+
+    $archived->each(fn (Student $student) => $student->archive());
+
+    expect((new AlertStats())->getStats()[0]->getValue())->toBe('3');
+});

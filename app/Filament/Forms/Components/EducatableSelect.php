@@ -37,7 +37,9 @@
 namespace App\Filament\Forms\Components;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\StudentArchivingFeature;
 use App\Models\Authenticatable;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Closure;
@@ -81,7 +83,7 @@ class EducatableSelect extends Component
             $morphToSelect = MorphToSelect::make($name)
                 ->searchable()
                 ->types(fn (?Model $record, MorphToSelect $component) => [
-                    static::getStudentType(),
+                    static::getStudentType($component->getRelationship()->getForeignKeyName(), $record),
                     static::getProspectType($component->getRelationship()->getForeignKeyName(), $isExcludingConvertedProspects, $record),
                 ]);
 
@@ -101,10 +103,38 @@ class EducatableSelect extends Component
         return $static;
     }
 
-    public static function getStudentType(): Type
+    public static function getStudentType(?string $keyColumnName = null, ?Model $record = null): Type
     {
         return Type::make(Student::class)
-            ->titleAttribute(Student::displayNameKey());
+            ->titleAttribute(Student::displayNameKey())
+            ->modifyOptionsQueryUsing(function (Builder $query) use ($keyColumnName, $record) {
+                /*
+                 * TODO: Cleanup Task (student-archiving): delete this comment block and the
+                 * guard below it, and leave everything from `$query->where(...)` onward
+                 * exactly as it is.
+                 *
+                 * The `orWhere` further down is an escape hatch from the archived exclusion,
+                 * so it is only valid while that exclusion exists. With the feature inactive
+                 * `WithoutArchivedStudents` adds nothing, and a leading `orWhere` compiles as
+                 * a plain `where` — collapsing the group to just the selected student and
+                 * hiding everyone else from the options. Once the scope applies
+                 * `withoutArchived()` unconditionally the group is never empty, so the guard
+                 * stops being needed and the chain below becomes correct on its own.
+                 */
+                if (! StudentArchivingFeature::active()) {
+                    return;
+                }
+
+                // Filament runs this closure when resolving the label of the selected value as
+                // well as when building the options, so an already-selected archived student
+                // must stay resolvable or their name disappears from the record they are on.
+                $query->where(fn (Builder $query) => $query
+                    ->tap(new WithoutArchivedStudents())
+                    ->when(
+                        filled($keyColumnName) && $record,
+                        fn (Builder $query) => $query->orWhere($query->getModel()->getQualifiedKeyName(), $record->{$keyColumnName}),
+                    ));
+            });
     }
 
     public static function getProspectType(string $keyColumnName, bool $isExcludingConvertedProspects = true, ?Model $record = null): Type
@@ -133,7 +163,10 @@ class EducatableSelect extends Component
         $relationship = $this->getRelationship();
 
         $type = match (true) {
-            $user->hasLicense(Student::getLicenseType()) => static::getStudentType(),
+            $user->hasLicense(Student::getLicenseType()) => static::getStudentType(
+                $relationship->getForeignKeyName(),
+                $this->getRecord()
+            ),
             $user->hasLicense(Prospect::getLicenseType()) => static::getProspectType(
                 $relationship->getForeignKeyName(),
                 $this->isExcludingConvertedProspects,

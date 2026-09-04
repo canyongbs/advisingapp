@@ -36,10 +36,14 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
+use AdvisingApp\Group\Filament\Resources\Groups\Pages\EditGroup;
 use AdvisingApp\Group\Models\Group;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 test('EditGroup is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -58,4 +62,23 @@ test('EditGroup is gated with proper access control', function () {
         ->get(
             GroupResource::getUrl('edit', ['record' => $group])
         )->assertSuccessful();
+});
+
+// The group builder renders the shared `StudentsTable`, which scopes its own query
+// independently of `GroupModel::query()`.
+test('the group builder does not list archived students', function () {
+    Student::truncate();
+
+    asSuperAdmin();
+
+    $group = Group::factory()->student()->dynamic()->create();
+
+    $active = Student::factory()->count(2)->create();
+    $archived = Student::factory()->create();
+    $archived->archive();
+
+    livewire(EditGroup::class, ['record' => $group->getRouteKey()])
+        ->assertOk()
+        ->assertCanSeeTableRecords($active)
+        ->assertCanNotSeeTableRecords([$archived]);
 });

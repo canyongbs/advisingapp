@@ -37,6 +37,7 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\Concern\Models\Concern;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -61,7 +62,7 @@ class StudentsStats extends StatsOverviewReportWidget
         $shouldBypassCache = filled($startDate) || filled($endDate) || filled($groupId);
 
         $studentsCount = $shouldBypassCache
-            ? Student::query()
+            ? Student::query()->tap(new WithoutArchivedStudents())
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
@@ -74,7 +75,7 @@ class StudentsStats extends StatsOverviewReportWidget
             : Cache::tags(["{{$this->cacheTag}}"])->remember(
                 'total-students-count',
                 now()->addHours(24),
-                fn () => Student::query()->count()
+                fn () => Student::query()->tap(new WithoutArchivedStudents())->count()
             );
 
         $concernsCount = $shouldBypassCache

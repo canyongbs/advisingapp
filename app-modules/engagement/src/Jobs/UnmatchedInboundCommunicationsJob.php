@@ -42,6 +42,7 @@ use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\UnmatchedInboundCommunication;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
@@ -70,6 +71,7 @@ class UnmatchedInboundCommunicationsJob implements ShouldQueue
     protected function processEmail(UnmatchedInboundCommunication $communication): void
     {
         $students = Student::query()
+            ->tap(new WithoutArchivedStudents())
             ->whereRelation('emailAddresses', 'address', $communication->sender)
             ->get();
 

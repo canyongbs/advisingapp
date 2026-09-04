@@ -42,6 +42,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectEmailAddress;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use Filament\Actions\Action;
@@ -278,6 +279,7 @@ class SendEmailAction
 
         if ($recipientType === 'student') {
             return Student::query()
+                ->tap(new WithoutArchivedStudents())
                 ->with('primaryEmailAddress')
                 ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
                 ->limit(50)
@@ -308,11 +310,15 @@ class SendEmailAction
 
         if ($recipientType === 'student') {
             return Student::query()
+                ->tap(new WithoutArchivedStudents())
                 ->with('primaryEmailAddress')
                 ->when($search, function (Builder $query) use ($search) {
-                    $query->where(new Expression('lower(full_name)'), 'like', "%{$search}%")
+                    // Grouped so the archived and bounced filters apply to every search
+                    // branch, rather than binding only to the first one.
+                    $query->where(fn (Builder $query) => $query
+                        ->where(new Expression('lower(full_name)'), 'like', "%{$search}%")
                         ->orWhere(new Expression('lower(sisid)'), 'like', "%{$search}%")
-                        ->orWhereHas('primaryEmailAddress', fn (Builder $query) => $query->where(new Expression('lower(address)'), 'like', "%{$search}%"));
+                        ->orWhereHas('primaryEmailAddress', fn (Builder $query) => $query->where(new Expression('lower(address)'), 'like', "%{$search}%")));
                 })
                 ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
                 ->limit(50)
@@ -325,8 +331,11 @@ class SendEmailAction
             return Prospect::query()
                 ->with('primaryEmailAddress')
                 ->when($search, function (Builder $query) use ($search) {
-                    $query->where(new Expression('lower(full_name)'), 'like', "%{$search}%")
-                        ->orWhereHas('primaryEmailAddress', fn (Builder $query) => $query->where(new Expression('lower(address)'), 'like', "%{$search}%"));
+                    // Grouped so the bounced filter applies to every search branch, rather
+                    // than binding only to the first one, matching the student branch above.
+                    $query->where(fn (Builder $query) => $query
+                        ->where(new Expression('lower(full_name)'), 'like', "%{$search}%")
+                        ->orWhereHas('primaryEmailAddress', fn (Builder $query) => $query->where(new Expression('lower(address)'), 'like', "%{$search}%")));
                 })
                 ->whereHas('primaryEmailAddress', fn ($query) => $query->whereDoesntHave('bounced'))
                 ->limit(50)
