@@ -34,39 +34,50 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Prospect\Filament\Resources\ProspectTags\Pages;
-
-use AdvisingApp\Prospect\Filament\Resources\ProspectTags\ProspectTagResource;
+use AdvisingApp\Prospect\Filament\Resources\ProspectTags\Pages\CreateProspectTag;
 use App\Enums\TagType;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Schemas\Schema;
-use Illuminate\Validation\Rules\Unique;
+use App\Models\Tag;
 
-class CreateProspectTag extends CreateRecord
-{
-    protected static string $resource = ProspectTagResource::class;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                TextInput::make('name')
-                    ->label('Name')
-                    ->required()
-                    ->maxLength(255)
-                    ->unique(
-                        table: 'tags',
-                        column: 'name',
-                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->where('type', TagType::Prospect)->withoutTrashed(),
-                    ),
-            ]);
-    }
+test('CreateProspectTag does not allow for duplicate names of non-deleted prospect tags case insensitively', function () {
+    asSuperAdmin();
 
-    protected function mutateFormDataBeforeCreate(array $data): array
-    {
-        $data['type'] = TagType::Prospect;
+    $tag = Tag::factory(['name' => 'Prospect Tag', 'type' => TagType::Prospect])->create();
+    $tag->delete();
 
-        return $data;
-    }
-}
+    livewire(CreateProspectTag::class)
+        ->fillForm(['name' => 'prospect TAG'])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    livewire(CreateProspectTag::class)
+        ->fillForm(['name' => 'prospect tag'])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+test('CreateProspectTag does allow for non-duplicate names of non-deleted prospect tags', function () {
+    asSuperAdmin();
+
+    Tag::factory(['name' => 'Prospect Tag 1', 'type' => TagType::Prospect])->create();
+    $tag = Tag::factory(['name' => 'Prospect Tag 2', 'type' => TagType::Prospect])->create();
+    $tag->delete();
+
+    livewire(CreateProspectTag::class)
+        ->fillForm(['name' => 'Prospect Tag 2'])
+        ->call('create')
+        ->assertHasNoFormErrors();
+});
+
+test('CreateProspectTag does allow for duplicate names of student tags', function () {
+    asSuperAdmin();
+
+    Tag::factory(['name' => 'Tag', 'type' => TagType::Student])->create();
+
+    livewire(CreateProspectTag::class)
+        ->fillForm(['name' => 'Tag'])
+        ->call('create')
+        ->assertHasNoFormErrors();
+});

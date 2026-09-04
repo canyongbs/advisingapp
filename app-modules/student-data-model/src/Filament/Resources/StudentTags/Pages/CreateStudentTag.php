@@ -41,6 +41,7 @@ use App\Enums\TagType;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class CreateStudentTag extends CreateRecord
 {
@@ -54,7 +55,11 @@ class CreateStudentTag extends CreateRecord
                     ->label('Name')
                     ->required()
                     ->maxLength(255)
-                    ->string(),
+                    ->unique(
+                        table: 'tags',
+                        column: 'name',
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->where('type', TagType::Student)->withoutTrashed(),
+                    ),
             ]);
     }
 
