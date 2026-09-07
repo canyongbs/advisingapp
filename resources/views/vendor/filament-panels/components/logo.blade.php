@@ -60,9 +60,8 @@
         src="{{ $logoUrl }}"
         alt="{{ config('app.name') }}"
         @class([
-            'h-full max-h-9',
-            'w-[50%]' => $logo->mime_type == 'image/svg+xml',
-            'max-w-[50%]' => $logo->mime_type != 'image/svg+xml',
+            'h-full max-h-9 max-w-[180px]',
+            'w-full' => $logo->mime_type == 'image/svg+xml',
             'dark:hidden' => $darkLogo,
         ])
     />
@@ -79,9 +78,8 @@
             src="{{ $darkLogoUrl }}"
             alt="{{ config('app.name') }}"
             @class([
-            'h-full max-h-9',
-            'w-[50%]' => $darkLogo->mime_type == 'image/svg+xml',
-            'max-w-[50%]' => $darkLogo->mime_type != 'image/svg+xml',
+            'h-full max-h-9 max-w-[180px]',
+            'w-full' => $darkLogo->mime_type == 'image/svg+xml',
             'hidden dark:block',
         ])
         />
