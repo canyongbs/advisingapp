@@ -40,6 +40,13 @@ use AdvisingApp\Prospect\Concerns\ProspectHolisticViewPage;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\Concerns\HasProspectHeader;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Schemas\ProspectProfileInfolist;
+use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Schemas\EducatableRelationManagerTabs;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\ApplicationSubmissionsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EngagementFilesRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EngagementsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EventsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\FormSubmissionsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\InteractionsRelationManager;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Schema;
 
@@ -58,5 +65,27 @@ class ViewProspect extends ViewRecord
     public function profile(Schema $schema): Schema
     {
         return ProspectProfileInfolist::configure($schema->record($this->getRecord()));
+    }
+
+    public function relationManagerTabs(Schema $schema): Schema
+    {
+        return $schema->components(array_filter([
+            EducatableRelationManagerTabs::make([
+                'messages' => EngagementsRelationManager::class,
+                'interactions' => InteractionsRelationManager::class,
+                'files' => EngagementFilesRelationManager::class,
+            ], $this->getRecord(), static::class),
+        ]));
+    }
+
+    public function additionalRelationManagerTabs(Schema $schema): Schema
+    {
+        return $schema->components(array_filter([
+            EducatableRelationManagerTabs::make([
+                'forms' => FormSubmissionsRelationManager::class,
+                'events' => EventsRelationManager::class,
+                'applications' => ApplicationSubmissionsRelationManager::class,
+            ], $this->getRecord(), static::class),
+        ]));
     }
 }

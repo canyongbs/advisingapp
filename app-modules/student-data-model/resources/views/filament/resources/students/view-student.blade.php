@@ -40,14 +40,6 @@
     use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableSubscriptionsWidget;
     use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableTasksWidget;
     use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
-    use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\ApplicationSubmissionsRelationManager;
-    use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EngagementFilesRelationManager;
-    use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EngagementsRelationManager;
-    use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EnrollmentsRelationManager;
-    use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EventsRelationManager;
-    use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\FormSubmissionsRelationManager;
-    use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\InteractionsRelationManager;
-    use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\ProgramsRelationManager;
     use AdvisingApp\StudentDataModel\Filament\Widgets\StudentAcademicStats;
     use App\Enums\Feature;
     use Illuminate\Support\Facades\Gate;
@@ -85,15 +77,7 @@
                 )
             @endif
 
-            <x-student-data-model::filament.resources.educatables.view-educatable.relation-managers
-                :managers="[
-                    'programs' => ProgramsRelationManager::class,
-                    'enrollments' => EnrollmentsRelationManager::class,
-                    'messages' => EngagementsRelationManager::class,
-                    'interactions' => InteractionsRelationManager::class,
-                    'files' => EngagementFilesRelationManager::class,
-                ]"
-            />
+            {{ $this->relationManagerTabs }}
 
             <div class="grid grid-cols-1 gap-8 xl:grid-cols-2">
                 @if (EducatableConcernsWidget::canView())
@@ -141,13 +125,7 @@
                 @endif
             </div>
 
-            <x-student-data-model::filament.resources.educatables.view-educatable.relation-managers
-                :managers="[
-                    'forms' => FormSubmissionsRelationManager::class,
-                    'events' => EventsRelationManager::class,
-                    'applications' => ApplicationSubmissionsRelationManager::class,
-                ]"
-            />
+            {{ $this->additionalRelationManagerTabs }}
         </div>
     </div>
 

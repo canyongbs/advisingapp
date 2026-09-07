@@ -36,7 +36,16 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages;
 
+use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Schemas\EducatableRelationManagerTabs;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\Concerns\HasStudentHeader;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\ApplicationSubmissionsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EngagementFilesRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EngagementsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EnrollmentsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EventsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\FormSubmissionsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\InteractionsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\ProgramsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Schemas\StudentProfileInfolist;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use Filament\Resources\Pages\ViewRecord;
@@ -55,5 +64,29 @@ class ViewStudent extends ViewRecord
     public function profile(Schema $schema): Schema
     {
         return StudentProfileInfolist::configure($schema->record($this->getRecord()));
+    }
+
+    public function relationManagerTabs(Schema $schema): Schema
+    {
+        return $schema->components(array_filter([
+            EducatableRelationManagerTabs::make([
+                'programs' => ProgramsRelationManager::class,
+                'enrollments' => EnrollmentsRelationManager::class,
+                'messages' => EngagementsRelationManager::class,
+                'interactions' => InteractionsRelationManager::class,
+                'files' => EngagementFilesRelationManager::class,
+            ], $this->getRecord(), static::class),
+        ]));
+    }
+
+    public function additionalRelationManagerTabs(Schema $schema): Schema
+    {
+        return $schema->components(array_filter([
+            EducatableRelationManagerTabs::make([
+                'forms' => FormSubmissionsRelationManager::class,
+                'events' => EventsRelationManager::class,
+                'applications' => ApplicationSubmissionsRelationManager::class,
+            ], $this->getRecord(), static::class),
+        ]));
     }
 }

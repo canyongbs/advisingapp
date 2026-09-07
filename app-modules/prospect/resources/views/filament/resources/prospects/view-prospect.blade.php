@@ -38,12 +38,6 @@
     use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableSubscriptionsWidget;
     use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Widgets\EducatableTasksWidget;
     use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
-    use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\ApplicationSubmissionsRelationManager;
-    use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EngagementFilesRelationManager;
-    use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EngagementsRelationManager;
-    use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EventsRelationManager;
-    use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\FormSubmissionsRelationManager;
-    use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\InteractionsRelationManager;
 @endphp
 
 <x-filament-panels::page>
@@ -66,13 +60,7 @@
         </div>
 
         <div class="flex flex-col gap-8 lg:col-span-1 xl:col-span-2">
-            <x-student-data-model::filament.resources.educatables.view-educatable.relation-managers
-                :managers="[
-                    'messages' => EngagementsRelationManager::class,
-                    'interactions' => InteractionsRelationManager::class,
-                    'files' => EngagementFilesRelationManager::class,
-                ]"
-            />
+            {{ $this->relationManagerTabs }}
 
             <div class="grid grid-cols-1 gap-8 xl:grid-cols-2">
                 @if (EducatableConcernsWidget::canView())
@@ -120,13 +108,7 @@
                 @endif
             </div>
 
-            <x-student-data-model::filament.resources.educatables.view-educatable.relation-managers
-                :managers="[
-                    'forms' => FormSubmissionsRelationManager::class,
-                    'events' => EventsRelationManager::class,
-                    'applications' => ApplicationSubmissionsRelationManager::class,
-                ]"
-            />
+            {{ $this->additionalRelationManagerTabs }}
         </div>
     </div>
 
