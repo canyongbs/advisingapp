@@ -51,8 +51,7 @@ class EducatableRelationManagerTabs
     public static function make(array $managers, Model $record, string $pageClass): ?Tabs
     {
         $managers = Collection::make($managers)
-            ->filter(fn (string $manager): bool => $manager::canViewForRecord($record, $pageClass));
-
+            ->filter(fn ($manager): bool => $manager::canViewForRecord($record, $pageClass));
         if ($managers->isEmpty()) {
             return null;
         }
