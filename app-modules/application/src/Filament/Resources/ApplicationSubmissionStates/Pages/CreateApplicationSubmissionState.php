@@ -68,8 +68,7 @@ class CreateApplicationSubmissionState extends CreateRecord
                 ColorSelect::make('color')
                     ->label('Color')
                     ->required()
-                    ->searchable()
-                    ->shadeOptions(),
+                    ->searchable(),
                 Textarea::make('description')
                     ->label('Description')
                     ->required()

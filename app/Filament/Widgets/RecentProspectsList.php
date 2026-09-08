@@ -85,7 +85,7 @@ class RecentProspectsList extends BaseWidget
                     ->state(function (Prospect $record) {
                         return $record->status->name;
                     })
-                    ->color(fn (Prospect $record) => $record->status->getBadgeColor())
+                    ->color(fn (Prospect $record) => $record->status->color->value)
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('source.name')
                     ->label('Source')

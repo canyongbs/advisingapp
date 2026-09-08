@@ -44,6 +44,7 @@ use Filament\Actions\CreateAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Colors\Color;
 use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -69,7 +70,7 @@ class ListApplicationSubmissionStates extends ListRecords
                     ->searchable()
                     ->sortable(),
                 ColorColumn::make('color')
-                    ->state(fn (ApplicationSubmissionState $applicationState): string => $applicationState->color->getRgb()),
+                    ->state(fn (ApplicationSubmissionState $applicationState): string => Color::convertToRgb(Color::all()[$applicationState->color->value][600])),
                 TextColumn::make('submissions_count')
                     ->label('# of Applications Submissions')
                     ->counts('submissions')

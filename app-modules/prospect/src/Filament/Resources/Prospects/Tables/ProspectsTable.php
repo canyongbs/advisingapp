@@ -75,7 +75,7 @@ class ProspectsTable
                         return $record->status->name;
                     })
                     ->color(function (Prospect $record) {
-                        return $record->status->getBadgeColor();
+                        return $record->status->color->value;
                     })
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query

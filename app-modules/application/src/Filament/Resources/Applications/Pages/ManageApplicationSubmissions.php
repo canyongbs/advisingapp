@@ -149,7 +149,7 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                         return $record->state->name;
                     })
                     ->color(function (ApplicationSubmission $record) {
-                        return $record->state->getBadgeColor();
+                        return $record->state->color->value;
                     })
                     ->sortable(query: function (Builder $query, string $direction): Builder {
                         return $query
@@ -198,7 +198,7 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                                 return $record->state->name;
                             })
                             ->color(function (ApplicationSubmission $record) {
-                                return $record->state->getBadgeColor();
+                                return $record->state->color->value;
                             }),
                         Section::make('Authenticated Submitter')
                             ->schema([
