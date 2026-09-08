@@ -39,6 +39,7 @@ namespace App\Http\Requests\Tenants;
 use App\Enums\SubscriptionStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class SyncTenantRequest extends FormRequest
 {
@@ -75,9 +76,9 @@ class SyncTenantRequest extends FormRequest
             'addons.earlyAlert' => ['required', 'boolean'],
             'addons.publicProfiles' => ['required', 'boolean'],
             'smartPrompts' => ['nullable', 'array'],
-            'smartPrompts.*.title' => ['required', 'string'],
+            'smartPrompts.*.title' => ['required', 'string', 'distinct:ignore_case'],
             'smartPrompts.*.description' => ['nullable', 'string'],
-            'smartPrompts.*.smart_prompts.*.id' => ['required', 'string'],
+            'smartPrompts.*.smart_prompts.*.id' => ['required', 'string', 'distinct'],
             'smartPrompts.*.smart_prompts.*.title' => ['required', 'string'],
             'smartPrompts.*.smart_prompts.*.description' => ['nullable', 'string'],
             'smartPrompts.*.smart_prompts.*.prompt' => ['required', 'string'],
@@ -90,5 +91,29 @@ class SyncTenantRequest extends FormRequest
             'subscriptionStatus' => ['required', Rule::enum(SubscriptionStatus::class)],
             'expirationBannerText' => ['nullable', 'string'],
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator) {
+            foreach ($this->input('smartPrompts', []) as $categoryIndex => $category) {
+                $titles = [];
+
+                foreach ($category['smart_prompts'] ?? [] as $promptIndex => $smartPrompt) {
+                    $title = mb_strtolower($smartPrompt['title'] ?? '');
+
+                    if (in_array($title, $titles, true)) {
+                        $validator->errors()->add(
+                            "smartPrompts.{$categoryIndex}.smart_prompts.{$promptIndex}.title",
+                            'The smart prompt title must be unique within its category.',
+                        );
+
+                        continue;
+                    }
+
+                    $titles[] = $title;
+                }
+            }
+        });
     }
 }
