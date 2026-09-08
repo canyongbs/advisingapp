@@ -45,12 +45,20 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\Pages\ViewProspect;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\ApplicationSubmissionsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EngagementFilesRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EngagementsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EventsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\FormSubmissionsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\InteractionsRelationManager;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\seed;
 use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 // TODO: Write ViewProspectSource page test
 //test('The correct details are displayed on the ViewProspect page', function () {});
@@ -252,3 +260,174 @@ test('can see prospect converted to student badge on', function (string $pages) 
         ManageProspectTasks::class,
         ManageProspectCareTeam::class,
     ]);
+
+test('renders the EngagementsRelationManager based on proper access', function () {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+
+    $prospect = Prospect::factory()->create();
+
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('prospect.*.view');
+
+    actingAs($user);
+
+    $relationManager = EngagementsRelationManager::class;
+
+    livewire(ViewProspect::class, [
+        'record' => $prospect->getKey(),
+    ])
+        ->assertOk()
+        ->assertDontSeeLivewire($relationManager);
+
+    $user->givePermissionTo('engagement.view-any');
+
+    livewire(ViewProspect::class, [
+        'record' => $prospect->getKey(),
+    ])
+        ->assertOk()
+        ->assertSeeLivewire($relationManager);
+});
+
+test('renders the InteractionsRelationManager based on proper access', function () {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+
+    $prospect = Prospect::factory()->create();
+
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('prospect.*.view');
+
+    actingAs($user);
+
+    $relationManager = InteractionsRelationManager::class;
+
+    livewire(ViewProspect::class, [
+        'record' => $prospect->getKey(),
+    ])
+        ->assertOk()
+        ->assertDontSeeLivewire($relationManager);
+
+    $user->givePermissionTo('interaction.view-any');
+
+    livewire(ViewProspect::class, [
+        'record' => $prospect->getKey(),
+    ])
+        ->assertOk()
+        ->assertSeeLivewire($relationManager);
+});
+
+test('renders the EngagementFilesRelationManager based on proper access', function () {
+    $user = User::factory()->licensed(Prospect::getLicenseType())->create();
+
+    $prospect = Prospect::factory()->create();
+
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('prospect.*.view');
+
+    actingAs($user);
+
+    $relationManager = EngagementFilesRelationManager::class;
+
+    livewire(ViewProspect::class, [
+        'record' => $prospect->getKey(),
+    ])
+        ->assertOk()
+        ->assertDontSeeLivewire($relationManager);
+
+    $user->givePermissionTo('engagement_file.view-any');
+
+    livewire(ViewProspect::class, [
+        'record' => $prospect->getKey(),
+    ])
+        ->assertOk()
+        ->assertSeeLivewire($relationManager);
+});
+
+test('renders the FormSubmissionsRelationManager based on Feature access', function () {
+    $prospect = Prospect::factory()->create();
+
+    $licenseSettings = app(LicenseSettings::class);
+
+    $licenseSettings->data->addons->onlineForms = false;
+
+    $licenseSettings->save();
+
+    asSuperAdmin();
+
+    $relationManager = FormSubmissionsRelationManager::class;
+
+    livewire(ViewProspect::class, [
+        'record' => $prospect->getKey(),
+    ])
+        ->assertOk()
+        ->assertDontSeeLivewire($relationManager);
+
+    $licenseSettings->data->addons->onlineForms = true;
+
+    $licenseSettings->save();
+
+    livewire(ViewProspect::class, [
+        'record' => $prospect->getKey(),
+    ])
+        ->assertOk()
+        ->assertSeeLivewire($relationManager);
+});
+
+test('renders the EventsRelationManager based on Feature access', function () {
+    $prospect = Prospect::factory()->create();
+
+    $licenseSettings = app(LicenseSettings::class);
+
+    $licenseSettings->data->addons->eventManagement = false;
+
+    $licenseSettings->save();
+
+    asSuperAdmin();
+
+    $relationManager = EventsRelationManager::class;
+
+    livewire(ViewProspect::class, [
+        'record' => $prospect->getKey(),
+    ])
+        ->assertOk()
+        ->assertDontSeeLivewire($relationManager);
+
+    $licenseSettings->data->addons->eventManagement = true;
+
+    $licenseSettings->save();
+
+    livewire(ViewProspect::class, [
+        'record' => $prospect->getKey(),
+    ])
+        ->assertOk()
+        ->assertSeeLivewire($relationManager);
+});
+
+test('renders the ApplicationSubmissionsRelationManager based on Feature access', function () {
+    $prospect = Prospect::factory()->create();
+
+    $licenseSettings = app(LicenseSettings::class);
+
+    $licenseSettings->data->addons->onlineAdmissions = false;
+
+    $licenseSettings->save();
+
+    asSuperAdmin();
+
+    $relationManager = ApplicationSubmissionsRelationManager::class;
+
+    livewire(ViewProspect::class, [
+        'record' => $prospect->getKey(),
+    ])
+        ->assertOk()
+        ->assertDontSeeLivewire($relationManager);
+
+    $licenseSettings->data->addons->onlineAdmissions = true;
+
+    $licenseSettings->save();
+
+    livewire(ViewProspect::class, [
+        'record' => $prospect->getKey(),
+    ])
+        ->assertOk()
+        ->assertSeeLivewire($relationManager);
+});

@@ -69,23 +69,23 @@ class ViewProspect extends ViewRecord
 
     public function relationManagerTabs(Schema $schema): Schema
     {
-        return $schema->components(array_filter([
-            EducatableRelationManagerTabs::make([
+        return $schema->components([
+            EducatableRelationManagerTabs::make('relation-manager-tabs', [
                 'messages' => EngagementsRelationManager::class,
                 'interactions' => InteractionsRelationManager::class,
                 'files' => EngagementFilesRelationManager::class,
             ], $this->getRecord(), static::class),
-        ]));
+        ]);
     }
 
     public function additionalRelationManagerTabs(Schema $schema): Schema
     {
-        return $schema->components(array_filter([
-            EducatableRelationManagerTabs::make([
+        return $schema->components([
+            EducatableRelationManagerTabs::make('additional-relation-manager-tabs', [
                 'forms' => FormSubmissionsRelationManager::class,
                 'events' => EventsRelationManager::class,
                 'applications' => ApplicationSubmissionsRelationManager::class,
             ], $this->getRecord(), static::class),
-        ]));
+        ]);
     }
 }

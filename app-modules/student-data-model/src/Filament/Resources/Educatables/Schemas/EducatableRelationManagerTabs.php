@@ -48,19 +48,16 @@ class EducatableRelationManagerTabs
     /**
      * @param  array<string, class-string<RelationManager>>  $managers
      */
-    public static function make(array $managers, Model $record, string $pageClass): ?Tabs
+    public static function make(string $label, array $managers, Model $record, string $pageClass): Tabs
     {
         $managers = Collection::make($managers)
             ->filter(fn ($manager): bool => $manager::canViewForRecord($record, $pageClass));
 
-        if ($managers->isEmpty()) {
-            return null;
-        }
-
         $firstKey = $managers->keys()->first();
 
-        return Tabs::make()
+        return Tabs::make($label)
             ->columnSpanFull()
+            ->hidden($managers->isEmpty())
             ->tabs(
                 $managers
                     ->map(fn (string $manager, string $key): Tab => Tab::make($manager::getTitle($record, $pageClass))
@@ -68,8 +65,9 @@ class EducatableRelationManagerTabs
                             Livewire::make($manager, [
                                 'ownerRecord' => $record,
                                 'pageClass' => $pageClass,
+                                // Preload non-active tabs in the background instead of on visibility, matching the previous Blade behaviour.
+                                'lazy' => $key === $firstKey ? false : 'on-load',
                             ])
-                                ->lazy($key !== $firstKey)
                                 ->key("relation-manager-{$key}"),
                         ]))
                     ->values()
