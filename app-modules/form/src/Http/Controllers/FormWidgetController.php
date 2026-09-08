@@ -57,6 +57,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Http\Controllers\Controller;
 use App\Rules\ValidAuthenticationCode;
 use App\Support\AuthenticationCodeRateLimiter;
+use CanyonGBS\Common\Enums\Color as ColorEnum;
 use Filament\Support\Colors\Color;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -150,10 +151,9 @@ class FormWidgetController extends Controller
             'rounding' => $form->rounding,
             'on_screen_response' => $form->on_screen_response,
             'title_font_weight' => $form->title_font_weight,
-            'title_color' => collect(Color::all()[$form->title_color ?? 'neutral'])
-                ->map(Color::convertToRgb(...))
-                ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
-                ->all(),
+            'title_color' => (string) str(
+                ColorEnum::tryFrom($form->title_color ?? '')?->getRgb() ?? ColorEnum::Black->getRgb()
+            )->after('rgb(')->before(')'),
         ]);
     }
 
@@ -173,10 +173,9 @@ class FormWidgetController extends Controller
                 'rounding' => $form->rounding,
                 'on_screen_response' => $form->on_screen_response,
                 'title_font_weight' => $form->title_font_weight,
-                'title_color' => collect(Color::all()[$form->title_color ?? 'neutral'])
-                    ->map(Color::convertToRgb(...))
-                    ->map(fn (string $value): string => (string) str($value)->after('rgb(')->before(')'))
-                    ->all(),
+                'title_color' => (string) str(
+                    ColorEnum::tryFrom($form->title_color ?? '')?->getRgb() ?? ColorEnum::Black->getRgb()
+                )->after('rgb(')->before(')'),
             ]
         );
     }

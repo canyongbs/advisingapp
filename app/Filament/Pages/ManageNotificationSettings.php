@@ -79,7 +79,8 @@ class ManageNotificationSettings extends SettingsPage
                     ->string()
                     ->maxLength(150)
                     ->autocomplete(false),
-                ColorSelect::make('primary_color'),
+                ColorSelect::make('primary_color')
+                    ->shadeOptions(),
                 SpatieMediaLibraryFileUpload::make('logo')
                     ->disk('s3-public')
                     ->collection('logo')

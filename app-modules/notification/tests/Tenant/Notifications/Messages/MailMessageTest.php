@@ -41,13 +41,12 @@ use App\Features\ThemeLogoPublicDiskFeature;
 use App\Models\User;
 use App\Settings\NotificationSettings;
 use CanyonGBS\Common\Enums\Color;
-use Filament\Support\Colors\Color as FilamentColor;
 use Illuminate\Support\Facades\Storage;
 
 it('renders the notification mail with the configured `primary_color`', function () {
     $user = User::factory()->create();
 
-    $expected = FilamentColor::convertToRgb(FilamentColor::all()[Color::Gray->value][600]);
+    $expected = Color::Gray->getRgb();
 
     expect((string) (new TestEmailSettingFromNameNotification())->toMail($user)->render())
         ->not->toContain($expected);
