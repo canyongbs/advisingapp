@@ -47,7 +47,7 @@ class EditProspectStatusRequestFactory extends RequestFactory
         return [
             'classification' => fake()->randomElement(SystemProspectClassification::cases()),
             'name' => fake()->name(),
-            'color' => fake()->randomElement(Color::cases())->value,
+            'color' => fake()->randomElement(array_filter(Color::cases(), fn (Color $color): bool => ! $color->isShade()))->value,
         ];
     }
 }

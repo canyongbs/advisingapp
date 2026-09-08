@@ -57,6 +57,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Validation\Rules\Unique;
 
 trait HasSharedFormConfiguration
 {
@@ -70,7 +71,10 @@ trait HasSharedFormConfiguration
                 ->required()
                 ->string()
                 ->maxLength(255)
-                ->unique(ignoreRecord: true)
+                ->unique(
+                    ignoreRecord: true,
+                    modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                )
                 ->autocomplete(false)
                 ->columnSpanFull(),
             Textarea::make('description')

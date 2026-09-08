@@ -43,6 +43,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
+use function Tests\asSuperAdmin;
 
 // Permission Tests
 
@@ -75,4 +76,20 @@ test('CreateDepartment is gated with proper access control', function () {
     assertCount(1, Department::all());
 
     assertDatabaseHas(Department::class, $request->only(['name', 'description']));
+});
+
+test('CreateDepartment does not allow for duplicate names of non-deleted departments case insensitively', function () {
+    asSuperAdmin();
+
+    Department::factory(['name' => 'department', 'deleted_at' => now()])->create();
+
+    livewire(CreateDepartment::class)
+        ->fillForm(['name' => 'Department', 'description' => 'test'])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    livewire(CreateDepartment::class)
+        ->fillForm(['name' => 'DEPARTMENT', 'description' => 'test'])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
 });

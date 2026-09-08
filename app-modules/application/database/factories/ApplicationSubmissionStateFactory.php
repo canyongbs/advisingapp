@@ -54,7 +54,7 @@ class ApplicationSubmissionStateFactory extends Factory
         return [
             'classification' => $this->faker->randomElement(ApplicationSubmissionStateClassification::cases()),
             'name' => $this->faker->word,
-            'color' => $this->faker->randomElement(Color::cases())->value,
+            'color' => $this->faker->randomElement(array_filter(Color::cases(), fn (Color $color): bool => ! $color->isShade()))->value,
             'description' => $this->faker->sentence,
             'is_default' => false,
         ];

@@ -138,8 +138,8 @@ test('can create multiple Customer Advisor Categories at once', function () {
 
     actingAs($user);
 
-    $firstCategory = collect(CustomerAdvisorCategoryRequestFactory::new()->create());
-    $secondCategory = collect(CustomerAdvisorCategoryRequestFactory::new()->create());
+    $firstCategory = collect(CustomerAdvisorCategoryRequestFactory::new()->create(['name' => 'First Category']));
+    $secondCategory = collect(CustomerAdvisorCategoryRequestFactory::new()->create(['name' => 'Second Category']));
 
     $undoRepeaterFake = Repeater::fake();
 

@@ -142,7 +142,7 @@
     const onScreenResponse = ref(null);
     const schema = ref([]);
     const formTitleFontWeight = ref('');
-    const formTitleColor = ref({});
+    const formTitleColor = ref('');
 
     const allowViewPastSubmissions = ref(false);
     const pastSubmissionsCount = ref(0);
@@ -503,7 +503,7 @@
                 v-if="formName"
                 :style="{
                     fontWeight: formTitleFontWeight,
-                    color: `rgb(${formTitleColor[900]})`,
+                    color: `rgb(${formTitleColor})`,
                 }"
             >
                 {{ formName }}

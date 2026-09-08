@@ -46,6 +46,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
+use function Tests\asSuperAdmin;
 
 // TODO: Write CreateResourceHubQuality tests
 //test('A successful action on the CreateResourceHubQuality page', function () {});
@@ -124,4 +125,24 @@ test('CreateResourceHubQuality is gated with proper feature ccess control', func
     assertCount(1, ResourceHubQuality::all());
 
     assertDatabaseHas(ResourceHubQuality::class, $request->toArray());
+});
+
+test('CreateResourceHubQuality does not allow for duplicate names of non-deleted qualities case insensitively', function () {
+    asSuperAdmin();
+
+    $quality = ResourceHubQuality::factory(['name' => 'Quality Name'])->create();
+    $request1 = collect(CreateResourceHubQualityRequestFactory::new(['name' => 'quality NAME'])->create());
+    $request2 = collect(CreateResourceHubQualityRequestFactory::new(['name' => 'quality name'])->create());
+
+    $quality->delete();
+
+    livewire(CreateResourceHubQuality::class)
+        ->fillForm($request1->toArray())
+        ->call('create')
+        ->assertHasNoActionErrors();
+
+    livewire(CreateResourceHubQuality::class)
+        ->fillForm($request2->toArray())
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
 });

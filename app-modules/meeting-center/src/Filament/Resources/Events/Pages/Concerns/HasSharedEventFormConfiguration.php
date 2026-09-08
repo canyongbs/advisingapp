@@ -59,6 +59,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Validation\Rules\Unique;
 
 trait HasSharedEventFormConfiguration
 {
@@ -67,7 +68,14 @@ trait HasSharedEventFormConfiguration
         return [
             TextInput::make('title')
                 ->string()
-                ->required(),
+                ->required()
+                ->maxLength(255)
+                ->unique(
+                    table: 'events',
+                    column: 'title',
+                    ignoreRecord: true,
+                    modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                ),
             TextInput::make('location')
                 ->string()
                 ->nullable(),

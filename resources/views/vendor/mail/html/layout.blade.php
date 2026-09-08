@@ -33,7 +33,7 @@
 --}}
 @props(['settings' => null, 'unsubscribeUrl' => null, 'hideFooter' => false])
 @php
-    use Filament\Support\Colors\Color;
+    use CanyonGBS\Common\Enums\Color;
 @endphp
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -68,7 +68,7 @@
         }
 
         @php
-            $color = Color::convertToRgb(Color::all()[$settings?->primary_color?->value ?? 'blue'][600]);
+            $color = $settings?->primary_color?->getRgb() ?? Color::Blue->getRgb();
         @endphp
 
         .button-primary {
