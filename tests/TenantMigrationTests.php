@@ -37,6 +37,7 @@
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
@@ -200,6 +201,32 @@ describe('event title citext change', function () {
                 expect($event3->refresh()->title)->toBe('event title-3');
                 // Untouched: excluded from the live dedup group entirely, despite the title collision
                 expect($deletedEvent->refresh()->title)->toBe('event title');
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task GroupCitextCleanup - Delete this describe and everything contained within
+describe('segment name citext change', function () {
+    it('renames case-insensitive duplicate group names', function () {
+        isolatedMigration(
+            '2026_09_02_142139_convert_segments_name_to_citext',
+            function () {
+                // Setup data before migration
+                $group1 = Group::factory()->create(['name' => 'Group name']);
+                $group2 = Group::factory()->create(['name' => 'group Name']);
+                $group3 = Group::factory()->create(['name' => 'group name']);
+
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/group/database/migrations/2026_09_02_142139_convert_segments_name_to_citext.php']);
+
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Add any assertions to verify the migration's effects
+                expect($group1->refresh()->name)->toBe('Group name');
+                expect($group2->refresh()->name)->toBe('group Name-2');
+                expect($group3->refresh()->name)->toBe('group name-3');
             }
         );
     });
