@@ -39,7 +39,6 @@ namespace AdvisingApp\Engagement\Notifications;
 use AdvisingApp\Engagement\Models\EngagementBatch;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Settings\NotificationSettings;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -63,8 +62,7 @@ class EngagementBatchFinishedNotification extends Notification implements Should
 
     public function toMail(object $notifiable): MailMessage
     {
-        $message = MailMessage::make()
-            ->settings(app(NotificationSettings::class));
+        $message = MailMessage::make();
 
         if ($this->engagementBatch->successful_engagements < $this->engagementBatch->total_engagements) {
             return $message

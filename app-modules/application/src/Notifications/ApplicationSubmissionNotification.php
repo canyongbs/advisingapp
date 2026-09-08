@@ -47,7 +47,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
-use App\Settings\NotificationSettings;
 use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -82,7 +81,6 @@ class ApplicationSubmissionNotification extends Notification implements ShouldQu
         $data = $this->buildViewData($notifiable);
 
         return (new MailMessage())
-            ->settings(app(NotificationSettings::class))
             ->subject("New Application Submission: {$data['applicationName']}")
             ->markdown('application::mail.application-submission', $data);
     }

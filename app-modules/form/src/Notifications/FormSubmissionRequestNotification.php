@@ -38,7 +38,6 @@ namespace AdvisingApp\Form\Notifications;
 
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
-use App\Settings\NotificationSettings;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
@@ -62,7 +61,6 @@ class FormSubmissionRequestNotification extends Notification implements ShouldQu
     public function toMail(object $notifiable): MailMessage
     {
         return MailMessage::make()
-            ->settings(app(NotificationSettings::class))
             ->subject("Request to Complete: {$this->submission->submissible->name}")
             ->greeting('Hello ' . $this->submission->author->display_name . '!')
             ->line("Please complete the attached form: {$this->submission->submissible->name}")

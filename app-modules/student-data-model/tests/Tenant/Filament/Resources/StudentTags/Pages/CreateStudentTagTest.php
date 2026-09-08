@@ -34,22 +34,50 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Http\Requests\CustomerAdvisors;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentTags\Pages\CreateStudentTag;
+use App\Enums\TagType;
+use App\Models\Tag;
 
-use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
-class AuthenticationConfirmRequest extends FormRequest
-{
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
-    public function rules(): array
-    {
-        return [
-            'code' => ['required', 'integer', 'digits:6'],
-        ];
-    }
-}
+test('CreateStudentTag does not allow for duplicate names of non-deleted student tags case insensitively', function () {
+    asSuperAdmin();
+
+    $tag = Tag::factory(['name' => 'Student Tag', 'type' => TagType::Student])->create();
+    $tag->delete();
+
+    livewire(CreateStudentTag::class)
+        ->fillForm(['name' => 'student TAG'])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    livewire(CreateStudentTag::class)
+        ->fillForm(['name' => 'student tag'])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+test('CreateStudentTag does allow for non-duplicate names of non-deleted student tags', function () {
+    asSuperAdmin();
+
+    Tag::factory(['name' => 'Student Tag 1', 'type' => TagType::Student])->create();
+    $tag = Tag::factory(['name' => 'Student Tag 2', 'type' => TagType::Student])->create();
+    $tag->delete();
+
+    livewire(CreateStudentTag::class)
+        ->fillForm(['name' => 'Student Tag 2'])
+        ->call('create')
+        ->assertHasNoFormErrors();
+});
+
+test('CreateStudentTag does allow for duplicate names of prospect tags', function () {
+    asSuperAdmin();
+
+    Tag::factory(['name' => 'Tag', 'type' => TagType::Prospect])->create();
+
+    livewire(CreateStudentTag::class)
+        ->fillForm(['name' => 'Tag'])
+        ->call('create')
+        ->assertHasNoFormErrors();
+});

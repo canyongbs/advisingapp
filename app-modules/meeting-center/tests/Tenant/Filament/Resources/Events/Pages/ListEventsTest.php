@@ -102,6 +102,36 @@ it('can duplicate a event its registration form its steps and its fields', funct
     expect($duplicatedEvent->eventRegistrationForm->steps->count())->toBe($event->eventRegistrationForm->steps->count());
 });
 
+it('does not allow duplicating an event to a title matching another non-deleted event case-insensitively', function () {
+    asSuperAdmin();
+
+    Event::factory()->create(['title' => 'Existing Event']);
+    $event = Event::factory()->create(['title' => 'Some Event']);
+
+    livewire(ListEvents::class)
+        ->assertStatus(200)
+        ->removeTableFilter('pastEvents')
+        ->callTableAction('Duplicate', $event, data: ['title' => 'existing event'])
+        ->assertHasTableActionErrors(['title' => 'unique']);
+});
+
+it('allows duplicating an event to a title freed up by a soft-deleted event', function () {
+    asSuperAdmin();
+
+    $deletedEvent = Event::factory()->create(['title' => 'Reusable Title']);
+    $deletedEvent->delete();
+
+    $event = Event::factory()->create(['title' => 'Some Event']);
+
+    livewire(ListEvents::class)
+        ->assertStatus(200)
+        ->removeTableFilter('pastEvents')
+        ->callTableAction('Duplicate', $event, data: ['title' => 'reusable title'])
+        ->assertHasNoTableActionErrors();
+
+    expect(Event::query()->where('title', 'reusable title')->exists())->toBeTrue();
+});
+
 it('will not duplicate event registration form submissions if they exist', function () {
     asSuperAdmin();
 

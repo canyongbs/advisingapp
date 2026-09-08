@@ -40,6 +40,7 @@ use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubQualities\ResourceHubQ
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class CreateResourceHubQuality extends CreateRecord
 {
@@ -52,6 +53,12 @@ class CreateResourceHubQuality extends CreateRecord
                 TextInput::make('name')
                     ->label('Name')
                     ->required()
+                    ->maxLength(255)
+                    ->unique(
+                        table: 'resource_hub_qualities',
+                        column: 'name',
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                    )
                     ->string(),
             ]);
     }

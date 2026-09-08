@@ -37,10 +37,12 @@
 namespace AdvisingApp\Prospect\Filament\Resources\ProspectTags\Pages;
 
 use AdvisingApp\Prospect\Filament\Resources\ProspectTags\ProspectTagResource;
+use App\Enums\TagType;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditProspectTag extends EditRecord
 {
@@ -54,7 +56,12 @@ class EditProspectTag extends EditRecord
                     ->label('Name')
                     ->required()
                     ->maxLength(255)
-                    ->string(),
+                    ->unique(
+                        table: 'tags',
+                        column: 'name',
+                        ignoreRecord: true,
+                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->where('type', TagType::Prospect)->withoutTrashed(),
+                    ),
             ]);
     }
 

@@ -126,8 +126,8 @@ test('can create multiple employee advisor categories at once', function () {
 
     actingAs($user);
 
-    $firstCategory = collect(EmployeeAdvisorCategoryRequestFactory::new()->create());
-    $secondCategory = collect(EmployeeAdvisorCategoryRequestFactory::new()->create());
+    $firstCategory = collect(EmployeeAdvisorCategoryRequestFactory::new()->create(['name' => 'First Category']));
+    $secondCategory = collect(EmployeeAdvisorCategoryRequestFactory::new()->create(['name' => 'Second Category']));
 
     $undoRepeaterFake = Repeater::fake();
 

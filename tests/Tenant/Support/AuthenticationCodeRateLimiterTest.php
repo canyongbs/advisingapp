@@ -64,3 +64,29 @@ it('scopes the code-request cooldown per target', function () {
     // Different person, same submissible: not throttled.
     $rateLimiter->ensureCanRequestCode($otherProspect, 'application:1');
 })->throwsNoExceptions();
+
+it('atomically allows the first code request and blocks a rapid second request for the same target', function () {
+    $rateLimiter = new AuthenticationCodeRateLimiter();
+
+    $prospect = Prospect::factory()->create();
+
+    $rateLimiter->attemptCodeRequest($prospect, 'customer-advisor');
+
+    expect(fn () => $rateLimiter->attemptCodeRequest($prospect, 'customer-advisor'))
+        ->toThrow(ValidationException::class);
+});
+
+it('scopes the atomic code-request cooldown per target and scope', function () {
+    $rateLimiter = new AuthenticationCodeRateLimiter();
+
+    $prospect = Prospect::factory()->create();
+    $otherProspect = Prospect::factory()->create();
+
+    $rateLimiter->attemptCodeRequest($prospect, 'customer-advisor:1');
+
+    // Same person, different scope: not throttled.
+    $rateLimiter->attemptCodeRequest($prospect, 'customer-advisor:2');
+
+    // Different person, same scope: not throttled.
+    $rateLimiter->attemptCodeRequest($otherProspect, 'customer-advisor:1');
+})->throwsNoExceptions();

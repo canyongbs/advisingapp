@@ -32,37 +32,65 @@
 </COPYRIGHT>
 */
 import { createMessage, getNode } from '@formkit/core';
-import { reactive, ref, toRef, watch } from 'vue';
+import { computed, reactive, ref, toRef, watch } from 'vue';
 
 export default function wizard() {
     const activeStep = ref('');
     const steps = reactive({});
     const visitedSteps = ref([]);
+    const stepNames = computed(() => Object.keys(steps));
+    const currentStep = computed(() => stepNames.value.indexOf(activeStep.value) + 1);
+    const totalSteps = computed(() => stepNames.value.length);
+
+    const markStepSubmitted = (stepName) => {
+        const node = getNode(stepName);
+
+        if (!node) {
+            return;
+        }
+
+        node.walk((n) => {
+            n.store.set(
+                createMessage({
+                    key: 'submitted',
+                    value: true,
+                    visible: false,
+                }),
+            );
+        });
+    };
 
     watch(activeStep, (newStep, oldStep) => {
         if (oldStep && !visitedSteps.value.includes(oldStep)) {
             visitedSteps.value.push(oldStep);
         }
 
-        visitedSteps.value.forEach((step) => {
-            const node = getNode(step);
-            node.walk((n) => {
-                n.store.set(
-                    createMessage({
-                        key: 'submitted',
-                        value: true,
-                        visible: false,
-                    }),
-                );
-            });
-        });
+        visitedSteps.value.forEach(markStepSubmitted);
     });
 
-    const setStep = (delta) => {
-        const stepNames = Object.keys(steps);
-        const currentIndex = stepNames.indexOf(activeStep.value);
+    const isStepValid = (stepName) => {
+        const step = steps[stepName];
 
-        activeStep.value = stepNames[currentIndex + delta];
+        return Boolean(step) && step.valid === true;
+    };
+
+    const setStep = (delta) => {
+        if (delta > 0 && !isStepValid(activeStep.value)) {
+            if (!visitedSteps.value.includes(activeStep.value)) {
+                visitedSteps.value.push(activeStep.value);
+            }
+
+            markStepSubmitted(activeStep.value);
+
+            return;
+        }
+
+        const currentIndex = stepNames.value.indexOf(activeStep.value);
+        const targetStep = stepNames.value[currentIndex + delta];
+
+        if (targetStep) {
+            activeStep.value = targetStep;
+        }
     };
 
     const stepPlugin = (node) => {
@@ -71,14 +99,6 @@ export default function wizard() {
 
             node.on('created', () => {
                 steps[node.name].valid = toRef(node.context.state, 'valid');
-            });
-
-            node.on('count:errors', ({ payload: count }) => {
-                steps[node.name].errorCount = count;
-            });
-
-            node.on('count:blocking', ({ payload: count }) => {
-                steps[node.name].blockingCount = count;
             });
 
             if (activeStep.value === '') {
@@ -90,5 +110,5 @@ export default function wizard() {
         }
     };
 
-    return { activeStep, visitedSteps, steps, wizardPlugin: stepPlugin, setStep };
+    return { activeStep, currentStep, totalSteps, visitedSteps, wizardPlugin: stepPlugin, setStep };
 }

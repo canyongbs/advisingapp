@@ -54,9 +54,9 @@ class ResourceHubArticleFactory extends Factory
             'title' => $this->faker->sentence(),
             'article_details' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $this->faker->paragraph()]]]]],
             'notes' => $this->faker->paragraph(),
-            'quality_id' => ResourceHubQuality::factory(),
-            'status_id' => ResourceHubStatus::factory(),
-            'category_id' => ResourceHubCategory::factory(),
+            'quality_id' => fn (): mixed => ResourceHubQuality::query()->firstOr(fn () => ResourceHubQuality::factory()->create())->getKey(),
+            'status_id' => fn (): mixed => ResourceHubStatus::query()->firstOr(fn () => ResourceHubStatus::factory()->create())->getKey(),
+            'category_id' => fn (): mixed => ResourceHubCategory::query()->firstOr(fn () => ResourceHubCategory::factory()->create())->getKey(),
         ];
     }
 

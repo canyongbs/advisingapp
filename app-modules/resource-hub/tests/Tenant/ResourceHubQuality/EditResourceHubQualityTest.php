@@ -45,6 +45,7 @@ use App\Settings\LicenseSettings;
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertEquals;
+use function Tests\asSuperAdmin;
 
 // TODO: Write EditResourceHubQuality tests
 //test('A successful action on the EditResourceHubQuality page', function () {});
@@ -139,4 +140,26 @@ test('EditResourceHubQuality is gated with proper feature access control', funct
         ->assertHasNoFormErrors();
 
     assertEquals($request['name'], $resourceHubQuality->fresh()->name);
+});
+
+test('EditResourceHubQuality does not allow for duplicate names of non-deleted qualities case insensitively', function () {
+    asSuperAdmin();
+
+    $deletedQuality = ResourceHubQuality::factory(['name' => 'Quality Name'])->create();
+    $quality = ResourceHubQuality::factory(['name' => 'Test Name'])->create();
+    ResourceHubQuality::factory(['name' => 'Other Name'])->create();
+    $request1 = collect(EditResourceHubQualityRequestFactory::new(['name' => 'quality name'])->create());
+    $request2 = collect(EditResourceHubQualityRequestFactory::new(['name' => 'OTHER name'])->create());
+
+    $deletedQuality->delete();
+
+    livewire(EditResourceHubQuality::class, ['record' => $quality->getRouteKey()])
+        ->fillForm($request1->toArray())
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    livewire(EditResourceHubQuality::class, ['record' => $quality->getRouteKey()])
+        ->fillForm($request2->toArray())
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
 });

@@ -44,7 +44,6 @@ use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Research\Filament\Pages\ManageResearchRequests;
 use AdvisingApp\Research\Models\ResearchRequest;
 use App\Models\User;
-use App\Settings\NotificationSettings;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\AnonymousNotifiable;
@@ -72,7 +71,6 @@ class ResearchTranscriptNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         $message = MailMessage::make()
-            ->settings(app(NotificationSettings::class))
             ->greeting("Hello {$notifiable->name},");
 
         $senderIsNotifiable = $this->sender->is($notifiable);

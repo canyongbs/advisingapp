@@ -44,7 +44,6 @@ use AdvisingApp\Notification\Models\Contracts\Message;
 use AdvisingApp\Notification\Notifications\Contracts\HasAfterSendHook;
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use App\Models\User;
-use App\Settings\NotificationSettings;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\AnonymousNotifiable;
@@ -70,7 +69,6 @@ class AssistantTranscriptNotification extends Notification implements ShouldQueu
     public function toMail(object $notifiable): MailMessage
     {
         $message = MailMessage::make()
-            ->settings(app(NotificationSettings::class))
             ->greeting("Hello {$notifiable->name},");
 
         $senderIsNotifiable = $this->sender->is($notifiable);

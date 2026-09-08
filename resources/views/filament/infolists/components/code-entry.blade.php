@@ -43,6 +43,6 @@
     <pre
         class="ring-gray-950/10 whitespace-pre-wrap rounded bg-gray-50 p-4 shadow-sm dark:bg-gray-950 dark:ring-white/20"
     >
-{{ $state }}</pre
-    >
+        {{ $state }}
+    </pre>
 </x-dynamic-component>
