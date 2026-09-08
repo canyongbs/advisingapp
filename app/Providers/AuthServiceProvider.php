@@ -38,10 +38,10 @@ namespace App\Providers;
 
 use App\Enums\Feature;
 use App\Models\Authenticatable;
-use App\Support\FeatureAccessResponse;
-use Illuminate\Auth\Access\Response;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
+use Spatie\Permission\Guard;
+use Spatie\Permission\PermissionRegistrar;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -59,14 +59,16 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
 
-        Gate::after(
-            function (Authenticatable $authenticatable, string $ability, bool|null|Response $result, mixed $arguments) {
-                return (
-                    (! $result instanceof FeatureAccessResponse)
-                    && ($authenticatable->isSuperAdmin() || $authenticatable->isPartnerAdmin())
-                )
-                    ? true
-                    : $result;
+        Gate::before(
+            function (Authenticatable $authenticatable, string $ability): ?bool {
+                if (! ($authenticatable->isSuperAdmin() || $authenticatable->isPartnerAdmin())) {
+                    return null;
+                }
+
+                return app(PermissionRegistrar::class)->getPermissions([
+                    'name' => $ability,
+                    'guard_name' => Guard::getDefaultName($authenticatable),
+                ], onlyOne: true)->isNotEmpty() ?: null;
             }
         );
 

@@ -71,7 +71,7 @@
         "tailwindcss-primeui": "^0.6.1",
         "tippy.js": "^6.3.7",
         "vite": "^8.2.2",
-        "vue": "^3.5.41",
+        "vue": "^3.5.42",
         "vue-filepond": "^7.0.4",
         "vue-router": "^5.2.0"
     },

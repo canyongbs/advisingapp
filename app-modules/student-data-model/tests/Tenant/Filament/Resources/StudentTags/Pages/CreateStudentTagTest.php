@@ -34,35 +34,50 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Team\Filament\Resources\Departments\Pages;
+use AdvisingApp\StudentDataModel\Filament\Resources\StudentTags\Pages\CreateStudentTag;
+use App\Enums\TagType;
+use App\Models\Tag;
 
-use AdvisingApp\Team\Filament\Resources\Departments\DepartmentResource;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Schemas\Schema;
-use Illuminate\Validation\Rules\Unique;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
-class CreateDepartment extends CreateRecord
-{
-    protected static string $resource = DepartmentResource::class;
+test('CreateStudentTag does not allow for duplicate names of non-deleted student tags case insensitively', function () {
+    asSuperAdmin();
 
-    public function form(Schema $schema): Schema
-    {
-        return $schema
-            ->components([
-                TextInput::make('name')
-                    ->required()
-                    ->string()
-                    ->unique(
-                        table: 'teams',
-                        column: 'name',
-                        modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
-                    )
-                    ->maxLength(255),
-                Textarea::make('description')
-                    ->required()
-                    ->string(),
-            ]);
-    }
-}
+    $tag = Tag::factory(['name' => 'Student Tag', 'type' => TagType::Student])->create();
+    $tag->delete();
+
+    livewire(CreateStudentTag::class)
+        ->fillForm(['name' => 'student TAG'])
+        ->call('create')
+        ->assertHasNoFormErrors();
+
+    livewire(CreateStudentTag::class)
+        ->fillForm(['name' => 'student tag'])
+        ->call('create')
+        ->assertHasFormErrors(['name' => 'unique']);
+});
+
+test('CreateStudentTag does allow for non-duplicate names of non-deleted student tags', function () {
+    asSuperAdmin();
+
+    Tag::factory(['name' => 'Student Tag 1', 'type' => TagType::Student])->create();
+    $tag = Tag::factory(['name' => 'Student Tag 2', 'type' => TagType::Student])->create();
+    $tag->delete();
+
+    livewire(CreateStudentTag::class)
+        ->fillForm(['name' => 'Student Tag 2'])
+        ->call('create')
+        ->assertHasNoFormErrors();
+});
+
+test('CreateStudentTag does allow for duplicate names of prospect tags', function () {
+    asSuperAdmin();
+
+    Tag::factory(['name' => 'Tag', 'type' => TagType::Prospect])->create();
+
+    livewire(CreateStudentTag::class)
+        ->fillForm(['name' => 'Tag'])
+        ->call('create')
+        ->assertHasNoFormErrors();
+});
