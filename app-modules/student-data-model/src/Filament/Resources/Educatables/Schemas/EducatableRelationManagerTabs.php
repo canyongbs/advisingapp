@@ -55,12 +55,14 @@ class EducatableRelationManagerTabs
 
         $firstKey = $managers->keys()->first();
 
-        return Tabs::make($label)
+        return Tabs::make()
+            ->key($label)
             ->columnSpanFull()
             ->hidden($managers->isEmpty())
             ->tabs(
                 $managers
                     ->map(fn (string $manager, string $key): Tab => Tab::make($manager::getTitle($record, $pageClass))
+                        ->key($key)
                         ->schema([
                             Livewire::make($manager, [
                                 'ownerRecord' => $record,

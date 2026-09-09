@@ -286,6 +286,30 @@ test('renders the EngagementsRelationManager based on proper access', function (
     ])
         ->assertOk()
         ->assertSeeLivewire($relationManager);
+
+    $user->revokePermissionTo('engagement.view-any');
+
+    livewire(ViewProspect::class, [
+        'record' => $prospect->getKey(),
+    ])
+        ->assertOk()
+        ->assertDontSeeLivewire($relationManager);
+
+    $user->givePermissionTo('engagement_response.view-any');
+
+    livewire(ViewProspect::class, [
+        'record' => $prospect->getKey(),
+    ])
+        ->assertOk()
+        ->assertSeeLivewire($relationManager);
+
+    $user->givePermissionTo('engagement.view-any');
+
+    livewire(ViewProspect::class, [
+        'record' => $prospect->getKey(),
+    ])
+        ->assertOk()
+        ->assertSeeLivewire($relationManager);
 });
 
 test('renders the InteractionsRelationManager based on proper access', function () {
