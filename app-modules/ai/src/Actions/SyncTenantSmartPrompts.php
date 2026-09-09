@@ -55,7 +55,24 @@ class SyncTenantSmartPrompts
                 return;
             }
 
+            assert(is_array($smartPrompts));
+
             $promptIds = [];
+
+            foreach ($smartPrompts as $smartPromptCategory) {
+                assert(is_array($smartPromptCategory));
+
+                foreach ($smartPromptCategory['smart_prompts'] ?? [] as $smartPrompt) {
+                    assert(is_array($smartPrompt));
+
+                    $promptIds[] = $smartPrompt['id'];
+                }
+            }
+
+            Prompt::query()
+                ->where('is_smart', true)
+                ->whereKeyNot($promptIds)
+                ->delete();
 
             foreach ($smartPrompts as $smartPromptCategory) {
                 $promptType = PromptType::query()
@@ -75,15 +92,8 @@ class SyncTenantSmartPrompts
                     $prompt->type_id = $promptType->getKey();
                     $prompt->is_smart = true;
                     $prompt->save();
-
-                    $promptIds[] = $smartPrompt['id'];
                 }
             }
-
-            Prompt::query()
-                ->where('is_smart', true)
-                ->whereKeyNot($promptIds)
-                ->delete();
         });
     }
 

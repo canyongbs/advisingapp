@@ -36,6 +36,9 @@
 
 namespace App\Http\Requests\Tenants;
 
+use AdvisingApp\Ai\Models\Prompt;
+use AdvisingApp\Ai\Models\PromptType;
+use AdvisingApp\Ai\Models\Scopes\ConfidentialPromptScope;
 use App\Enums\SubscriptionStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -97,10 +100,27 @@ class SyncTenantRequest extends FormRequest
     {
         $validator->after(function (Validator $validator) {
             foreach ($this->input('smartPrompts', []) as $categoryIndex => $category) {
+                if (! is_array($category)) {
+                    continue;
+                }
+
+                $smartPrompts = $category['smart_prompts'] ?? [];
+
+                if (! is_array($smartPrompts)) {
+                    continue;
+                }
+
+                $promptType = PromptType::query()->where('title', (string) ($category['title'] ?? ''))->first();
+
                 $titles = [];
 
-                foreach ($category['smart_prompts'] ?? [] as $promptIndex => $smartPrompt) {
-                    $title = mb_strtolower($smartPrompt['title'] ?? '');
+                foreach ($smartPrompts as $promptIndex => $smartPrompt) {
+                    if (! is_array($smartPrompt)) {
+                        continue;
+                    }
+
+                    $rawTitle = (string) ($smartPrompt['title'] ?? '');
+                    $title = mb_strtolower($rawTitle);
 
                     if (in_array($title, $titles, true)) {
                         $validator->errors()->add(
@@ -112,6 +132,23 @@ class SyncTenantRequest extends FormRequest
                     }
 
                     $titles[] = $title;
+
+                    if (! $promptType) {
+                        continue;
+                    }
+
+                    $conflictsWithExistingCustomPrompt = Prompt::withoutGlobalScope(ConfidentialPromptScope::class)
+                        ->where('type_id', $promptType->getKey())
+                        ->where('is_smart', false)
+                        ->where('title', $rawTitle)
+                        ->exists();
+
+                    if ($conflictsWithExistingCustomPrompt) {
+                        $validator->errors()->add(
+                            "smartPrompts.{$categoryIndex}.smart_prompts.{$promptIndex}.title",
+                            'The smart prompt title conflicts with an existing custom prompt in this category.',
+                        );
+                    }
                 }
             }
         });

@@ -83,12 +83,21 @@ return new class () extends Migration {
         DB::transaction(function () {
             Schema::table($this->table, function (Blueprint $table) {
                 $table->dropUniqueIndex($this->uniqueConstraint);
-
-                $table->uniqueIndex([...$this->groupByColumns, $this->column], $this->uniqueConstraint)
-                    ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
 
+            // TODO: Cleanup Task PromptCiTextCleanup - remove this dedup call (the surrounding schema changes are permanent)
+            // The original index was unique on title alone (no type_id grouping), so any
+            // cross-type duplicates created while the type-scoped citext index was active must
+            // be fixed before that global constraint can be restored.
+            $this->groupByColumns = [];
+            $this->fixDuplicates();
+
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE varchar(255)");
+
+            Schema::table($this->table, function (Blueprint $table) {
+                $table->uniqueIndex([$this->column], $this->uniqueConstraint)
+                    ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
+            });
         });
     }
 };
