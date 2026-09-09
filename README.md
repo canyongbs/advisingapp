@@ -94,13 +94,9 @@ Microsoft Azure
 
 ### Documentation
 
-- [Inbound-Webhooks](./docs/inbound-webhooks.md)
-- [Local Setup](./docs/local-setup.md)
-- [Roles and Permissions](./docs/roles-and-permissions.md)
-- [Inbound Webhooks](./docs/inbound-webhooks.md)
-- [Integrations: Twilio](./docs/integrations/twilio.md)
-- [Integrations: Azure OpenAI](./docs/integrations/azure_open_ai.md)
-- [Custom Metadata](./docs/custom-metadata.md)
+- [Local Setup](./docs/how-tos/local-setup.md)
+- [Integrations: Azure OpenAI](./docs/how-tos/integrations/azure_open_ai.md)
+- [Custom Metadata](./docs/explanations/custom-metadata.md)
 
 _Note: More documentation coming soon._
 

@@ -56,7 +56,7 @@ Going forward this document will make reference to the `pls` command.
 
 The `pls` command is a custom-made script that acts as a tool to run our sometimes complex `docker compose` and other
 related commands. For installation and usage details, see the
-[pls installation guide](common/pls.md).
+[pls installation guide](https://github.com/canyongbs/common/blob/main/docs/how-tos/pls.md).
 This documentation will assume you have installed `pls` and it is available in your shell.
 
 #### 1. Initial setup
@@ -176,7 +176,7 @@ of the box as long as `pls` is installed correctly. The configured command runs 
 
 - `${userHome}` is resolved by VS Code, so the absolute path to `pls` works on both macOS and Linux.
 - `pls` must be installed at the default location (`~/.pls/bin/pls`) — see the
-  [pls installation guide](common/pls.md).
+  [pls installation guide](https://github.com/canyongbs/common/blob/main/docs/how-tos/pls.md).
 - The `app` container must be running (`pls up -d`), since Boost executes inside it.
 
 #### Verifying it is running in VS Code
