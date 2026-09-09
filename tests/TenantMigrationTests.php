@@ -45,6 +45,7 @@ use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use AdvisingApp\Team\Models\Department;
 use App\Enums\TagType;
+use App\Models\SystemUser;
 use App\Models\Tag;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
@@ -391,6 +392,29 @@ describe('department citext change', function () {
                 expect($department1->refresh()->name)->toBe('Department');
                 expect($department2->refresh()->name)->toBe('department-2');
                 expect($department3->refresh()->name)->toBe('DEPARTMENT-3');
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task SystemUserCitextCleanup - Delete this describe and everything contained within
+describe('system user citext change', function () {
+    it('properly changes system user names', function () {
+        isolatedMigration(
+            '2026_09_02_062437_convert_system_user_name_to_citext',
+            function () {
+                // Setup data before migration
+                $systemUser1 = SystemUser::factory(['name' => 'System user'])->create();
+                $systemUser2 = SystemUser::factory(['name' => 'system User'])->create();
+                $systemUser3 = SystemUser::factory(['name' => 'system user'])->create();
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'database/migrations/2026_09_02_062437_convert_system_user_name_to_citext.php']);
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+                // Add any assertions to verify the migration's effects
+                expect($systemUser1->refresh()->name)->toBe('System user');
+                expect($systemUser2->refresh()->name)->toBe('system User-2');
+                expect($systemUser3->refresh()->name)->toBe('system user-3');
             }
         );
     });
