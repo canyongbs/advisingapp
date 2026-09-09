@@ -34,45 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Actions;
-
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
+use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
+use AdvisingApp\Form\Models\FormField;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Builder;
+use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 
-class ResolveSubmissionAuthorFromEmail
-{
-    /**
-     * Archived students are excluded by default, so a new submission is never attached to one.
-     * Pass `includingArchived` when identifying who authored an existing submission — they are
-     * still its author, so the record must keep resolving to them.
-     */
-    public function __invoke(?string $email, bool $includingArchived = false): Student | Prospect | null
-    {
-        if (blank($email)) {
-            return null;
-        }
+use function Tests\asSuperAdmin;
 
-        /** @var Student $student */
-        $student = Student::query()
-            ->when(! $includingArchived, fn (Builder $query): Builder => $query->tap(new WithoutArchivedStudents()))
-            ->whereRelation('emailAddresses', 'address', $email)
-            ->first();
+it('identifies and links a student author from their email address', function () {
+    asSuperAdmin();
 
-        if ($student) {
-            return $student;
-        }
+    $student = Student::factory()->create();
+    $address = StudentEmailAddress::factory()->for($student, 'student')->create()->address;
 
-        /** @var Prospect $prospect */
-        $prospect = Prospect::query()
-            ->whereRelation('emailAddresses', 'address', $email)
-            ->first();
+    $state = EducatableEmailFormFieldBlock::getSubmissionState(new FormField(), $address);
 
-        if ($prospect) {
-            return $prospect;
-        }
+    expect($state['authorType'])->toBe(Student::class)
+        ->and($state['authorKey'])->toBe($student->getKey())
+        ->and($state['authorUrl'])->toBe(StudentResource::getUrl('view', ['record' => $student]));
+});
 
-        return null;
-    }
-}
+describe('archiving', function () {
+    // The submission still belongs to the student, so they must be identified as its author,
+    // but their page no longer resolves, so there is nothing to link to.
+    it('still identifies an archived student author but does not link to them', function () {
+        asSuperAdmin();
+
+        $student = Student::factory()->create();
+        $address = StudentEmailAddress::factory()->for($student, 'student')->create()->address;
+
+        $student->archive();
+
+        $state = EducatableEmailFormFieldBlock::getSubmissionState(new FormField(), $address);
+
+        expect($state['authorType'])->toBe(Student::class)
+            ->and($state['authorKey'])->toBe($student->getKey())
+            ->and($state['authorUrl'])->toBeNull();
+    });
+});

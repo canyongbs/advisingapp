@@ -85,3 +85,21 @@ it('does not resolve an archived student', function () {
 
     expect(app(ResolveSubmissionAuthorFromEmail::class)($address))->toBeNull();
 });
+
+// A new submission must never be attached to an archived student, but an existing one still
+// belongs to them, so identifying its author has to be able to reach them.
+it('resolves an archived student when asked to include them', function () {
+    $student = Student::factory()->create();
+
+    $address = StudentEmailAddress::factory()
+        ->for($student, 'student')
+        ->create()
+        ->address;
+
+    $student->archive();
+
+    $author = app(ResolveSubmissionAuthorFromEmail::class)($address, includingArchived: true);
+
+    expect($author)->toBeInstanceOf(Student::class)
+        ->and($author?->getKey())->toBe($student->getKey());
+});
