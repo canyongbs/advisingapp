@@ -39,8 +39,11 @@ use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Report\Filament\Widgets\MostEngagedStudentsTable;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
 use Filament\Actions\ExportAction;
+use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Facades\Storage;
 
 use function Pest\Livewire\livewire;
@@ -208,4 +211,49 @@ it('does not list archived students', function () {
     ])
         ->assertCanSeeTableRecords($active)
         ->assertCanNotSeeTableRecords(collect([$archived]));
+});
+
+// Archiving is not retroactive: a student engaged in March and archived in September was
+// genuinely part of the student body in March, so a report looking at March still lists them.
+it('lists a student archived after the reported period without linking to them', function () {
+    $active = Student::factory()->create();
+
+    $archived = Student::factory()->create();
+    $archived->forceFill(['archived_at' => Carbon::parse('2026-09-15')])->save();
+
+    Engagement::factory()->state([
+        'recipient_id' => $active->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+        'created_at' => Carbon::parse('2026-03-10'),
+    ])->create();
+
+    Engagement::factory()->state([
+        'recipient_id' => $archived->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+        'channel' => NotificationChannel::Email,
+        'created_at' => Carbon::parse('2026-03-10'),
+    ])->create();
+
+    livewire(MostEngagedStudentsTable::class, [
+        'cacheTag' => 'report-students',
+        'pageFilters' => [
+            'startDate' => '2026-03-01',
+            'endDate' => '2026-03-31',
+        ],
+    ])
+        ->assertCanSeeTableRecords(collect([$active, $archived]))
+        ->assertTableColumnExists(
+            'full_name',
+            fn (TextColumn $column): bool => $column->getUrl() === StudentResource::getUrl('view', ['record' => $active]),
+            $active,
+        )
+        // Listed for the period, but their page no longer resolves, so the name is not a link.
+        // The record is read back through this table's own query, so this also proves the
+        // explicit `select()` loads `archived_at` — without it the link would come back.
+        ->assertTableColumnExists(
+            'full_name',
+            fn (TextColumn $column): bool => $column->getUrl() === null,
+            $archived,
+        );
 });

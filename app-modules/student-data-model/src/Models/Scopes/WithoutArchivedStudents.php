@@ -38,19 +38,23 @@ namespace AdvisingApp\StudentDataModel\Models\Scopes;
 
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\StudentArchivingFeature;
+use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * Excludes archived students from a query.
+ * Excludes students archived on or before a point in time — now by default, or the end
+ * of the period being reported on when `asOf` is given, so a student archived after that
+ * period still counts within it.
  *
- * Archived students are included by default, so this must be applied explicitly
- * anywhere students are discovered or selected — lists, search, selects, group
- * populations and reports. It is deliberately not applied to `BelongsTo`
- * relationships, so an archived student still resolves on the records they are
- * already attached to.
+ * Archived students are included by default, so apply this explicitly wherever students
+ * are listed, searched or selected. It is deliberately not applied to `BelongsTo`
+ * relationships, or to reports counting records that belong to students (engagements,
+ * interactions), so existing history keeps resolving to who it belongs to.
  */
 class WithoutArchivedStudents
 {
+    public function __construct(private ?CarbonInterface $asOf = null) {}
+
     /**
      * @param Builder<Student> $query
      *
@@ -58,15 +62,18 @@ class WithoutArchivedStudents
      */
     public function __invoke(Builder $query): Builder
     {
-        /*
-         * TODO: Cleanup Task (student-archiving): remove this guard so the scope always applies
-         * `withoutArchived()`. Keep this class and every `->tap(new WithoutArchivedStudents())`
-         * call site — do not inline it, it is the chokepoint that made the flag a single edit.
-         */
         if (! StudentArchivingFeature::active()) {
             return $query;
         }
 
-        return $query->withoutArchived();
+        if (is_null($this->asOf)) {
+            return $query->withoutArchived();
+        }
+
+        $archivedAt = $query->getModel()->getQualifiedArchivedAtColumn();
+
+        return $query->where(fn (Builder $query): Builder => $query
+            ->whereNull($archivedAt)
+            ->orWhere($archivedAt, '>', $this->asOf));
     }
 }

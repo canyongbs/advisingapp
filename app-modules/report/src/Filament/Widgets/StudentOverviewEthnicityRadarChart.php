@@ -134,7 +134,7 @@ class StudentOverviewEthnicityRadarChart extends ChartReportWidget
      */
     protected function getEthnicityData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $groupId = null): Collection
     {
-        return Student::query()->tap(new WithoutArchivedStudents())
+        return Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
             ->select(
                 DB::raw("LOWER(COALESCE(NULLIF(ethnicity, ''), 'Unknown')) as ethnicity_lower"),
                 DB::raw("COALESCE(NULLIF(MIN(ethnicity), ''), 'Unknown') as ethnicity"),

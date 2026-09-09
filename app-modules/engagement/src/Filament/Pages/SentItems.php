@@ -128,7 +128,7 @@ class SentItems extends Page implements HasTable
                 TextColumn::make('recipient.full_name')
                     ->label('To')
                     ->url(fn (Engagement $record): ?string => match (true) {
-                        $record->recipient instanceof Student => StudentResource::getUrl('view', ['record' => $record->recipient]),
+                        $record->recipient instanceof Student => StudentResource::getViewUrl($record->recipient),
                         $record->recipient instanceof Prospect => ProspectResource::getUrl('view', ['record' => $record->recipient]),
                         default => null,
                     })

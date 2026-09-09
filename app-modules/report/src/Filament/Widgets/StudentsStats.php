@@ -62,7 +62,7 @@ class StudentsStats extends StatsOverviewReportWidget
         $shouldBypassCache = filled($startDate) || filled($endDate) || filled($groupId);
 
         $studentsCount = $shouldBypassCache
-            ? Student::query()->tap(new WithoutArchivedStudents())
+            ? Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])

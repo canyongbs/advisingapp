@@ -34,41 +34,50 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Form\Notifications\FormSubmissionNotification;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
 
 use function Tests\asSuperAdmin;
 
-it('excludes archived students from global search', function () {
+it('links the author name to their student record', function () {
     asSuperAdmin();
 
-    Student::factory()->state(['full_name' => 'Searchable Alpha'])->create();
+    $student = Student::factory()->create();
+    $form = Form::factory()->create();
+    $submission = FormSubmission::factory()->create([
+        'form_id' => $form->id,
+        'author_type' => $student->getMorphClass(),
+        'author_id' => $student->getKey(),
+    ]);
 
-    $archived = Student::factory()->state(['full_name' => 'Searchable Beta'])->create();
-    $archived->archive();
+    $body = (new FormSubmissionNotification($form, $submission))->toDatabase(User::factory()->create())['body'];
 
-    $titles = StudentResource::getGlobalSearchResults('Searchable')->pluck('title');
-
-    expect($titles)->toContain('Searchable Alpha')
-        ->and($titles)->not->toContain('Searchable Beta');
+    expect($body)->toContain(StudentResource::getUrl('view', ['record' => $student]));
 });
 
-describe('view url', function () {
-    it('links to an active student', function () {
+describe('archiving', function () {
+    // The student's page no longer resolves, so the notification names them without a link
+    // rather than sending the reader to a page that does not exist.
+    it('names an archived author without linking to them', function () {
         asSuperAdmin();
 
         $student = Student::factory()->create();
+        $form = Form::factory()->create();
+        $submission = FormSubmission::factory()->create([
+            'form_id' => $form->id,
+            'author_type' => $student->getMorphClass(),
+            'author_id' => $student->getKey(),
+        ]);
 
-        expect(StudentResource::getViewUrl($student))
-            ->toBe(StudentResource::getUrl('view', ['record' => $student]));
-    });
-
-    it('does not link to an archived student', function () {
-        asSuperAdmin();
-
-        $student = Student::factory()->create();
         $student->archive();
 
-        expect(StudentResource::getViewUrl($student))->toBeNull();
+        $body = (new FormSubmissionNotification($form, $submission))->toDatabase(User::factory()->create())['body'];
+
+        expect($body)->toContain($student->first)
+            ->and($body)->not->toContain(StudentResource::getUrl('view', ['record' => $student]));
     });
 });

@@ -65,6 +65,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use AdvisingApp\StudentDataModel\Models\Scopes\RetentionCrmRestrictionScope;
 use AdvisingApp\StudentDataModel\Models\Scopes\Textable;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Timeline\Models\Contracts\HasFilamentResource;
 use AdvisingApp\Timeline\Models\Timeline;
@@ -172,6 +173,22 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
         'firstgen' => 'boolean',
         'hsgrad' => 'date',
     ];
+
+    /**
+     * Archived students are unreachable by URL. The Filament resource scopes its own query,
+     * and the only other routes that bind a student are the V1 API, so this keeps the two
+     * consistent: an archived student's URL is not found whichever door is used.
+     *
+     * @param mixed $value
+     * @param null|mixed $field
+     */
+    public function resolveRouteBinding($value, $field = null): ?Model
+    {
+        return $this->newQuery()
+            ->where($field ?? $this->getRouteKeyName(), $value)
+            ->tap(new WithoutArchivedStudents())
+            ->first();
+    }
 
     public function identifier(): string
     {

@@ -89,7 +89,9 @@ class CreateInteraction extends CreateRecord
                         ->searchable()
                         ->required()
                         ->types([
-                            ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [EducatableSelect::getStudentType()] : []),
+                            // No record exists yet on a create page, so there is no already-selected
+                            // archived student whose label has to keep resolving.
+                            ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [EducatableSelect::getStudentType(null, null)] : []),
                             ...(auth()->user()->hasLicense(Prospect::getLicenseType()) ? [Type::make(Prospect::class)
                                 ->titleAttribute(Prospect::displayNameKey())
                                 ->modifyOptionsQueryUsing(fn (Builder $query) => $query->tap(new ExcludeConvertedProspects())),

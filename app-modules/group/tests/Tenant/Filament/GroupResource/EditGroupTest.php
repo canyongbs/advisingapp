@@ -87,8 +87,6 @@ test('EditGroup does not allow duplicate group names case insensitively, ignorin
 // The group builder renders the shared `StudentsTable`, which scopes its own query
 // independently of `GroupModel::query()`.
 test('the group builder does not list archived students', function () {
-    Student::truncate();
-
     asSuperAdmin();
 
     $group = Group::factory()->student()->dynamic()->create();

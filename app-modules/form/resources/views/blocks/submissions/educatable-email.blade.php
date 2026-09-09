@@ -43,9 +43,20 @@
         <div class="not-prose flex flex-wrap items-center gap-3">
             <span>{{ $response ?? null }}</span>
             @if ($authorType === Student::class)
-                <a href="{{ StudentResource::getUrl('view', ['record' => $authorKey]) }}" target="_blank">
+                @php
+                    // The author is stored by key when the form is submitted, so the student
+                    // has to be re-read here to know whether they have been archived since.
+                    $student = Student::query()->find($authorKey);
+                    $studentUrl = $student ? StudentResource::getViewUrl($student) : null;
+                @endphp
+
+                @if ($studentUrl)
+                    <a href="{{ $studentUrl }}" target="_blank">
+                        <x-filament::badge color="success">Student</x-filament::badge>
+                    </a>
+                @else
                     <x-filament::badge color="success">Student</x-filament::badge>
-                </a>
+                @endif
             @elseif ($authorType === Prospect::class)
                 <a href="{{ ProspectResource::getUrl('view', ['record' => $authorKey]) }}" target="_blank">
                     <x-filament::badge color="success">Prospect</x-filament::badge>

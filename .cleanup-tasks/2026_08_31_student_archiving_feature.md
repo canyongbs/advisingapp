@@ -11,7 +11,7 @@ created: 2026-08-31
 
 ## Additional Cleanup
 
-- In `UtilizationMetricsApiController::__invoke()`, the alert counts are built with a `->when(StudentArchivingFeature::active(), ...)` wrapper because raw SQL cannot use the `WithoutArchivedStudents` scope. Delete the `TODO: Cleanup Task` comment block and the `when()` wrapper beneath it, chaining its `leftJoin('students', ...)` and `where(...)` directly onto the `AlertConfiguration` query, then remove the `use App\Features\StudentArchivingFeature;` import. Keep the `where(...)` exactly as it is, including its `whereNull('students.deleted_at')` and the comment explaining it — that filter fixes a separate pre-existing leak (the enrollment-based alert presets do not exclude soft-deleted students) and is not part of this feature. The query becomes:
+- In `UtilizationMetricsApiController::__invoke()`, the alert counts are built with a `->when(StudentArchivingFeature::active(), ...)` wrapper because raw SQL cannot use the `WithoutArchivedStudents` scope. Delete the `when()` wrapper, chaining its `leftJoin('students', ...)` and `where(...)` directly onto the `AlertConfiguration` query, then remove the `use App\Features\StudentArchivingFeature;` import. Keep the `where(...)` exactly as it is, including its `whereNull('students.deleted_at')` and the comment explaining it — that filter fixes a separate pre-existing leak (the enrollment-based alert presets do not exclude soft-deleted students) and is not part of this feature. The query becomes:
 
     ```php
     AlertConfiguration::query()
@@ -33,7 +33,7 @@ created: 2026-08-31
         ->all()
     ```
 
-- In `EducatableSelect::getStudentType()`, delete the `TODO: Cleanup Task` comment block and the `if (! StudentArchivingFeature::active()) { return; }` guard beneath it from the `modifyOptionsQueryUsing()` closure, then remove the `use App\Features\StudentArchivingFeature;` import. Leave everything from `$query->where(...)` onward untouched, including its comment — the `where()` / `tap()` / `when()` / `orWhere()` chain does not change. The guard only exists because the scope is a no-op while the feature is inactive, which would leave the `orWhere` as the group's only condition; once the scope always applies `withoutArchived()` the chain is correct on its own. The closure becomes:
+- In `EducatableSelect::getStudentType()`, delete the comment about the escape hatch and the `if (! StudentArchivingFeature::active()) { return; }` guard beneath it from the `modifyOptionsQueryUsing()` closure, then remove the `use App\Features\StudentArchivingFeature;` import. Leave everything from `$query->where(...)` onward untouched, including its comment — the `where()` / `tap()` / `when()` / `orWhere()` chain does not change. The guard only exists because the scope is a no-op while the feature is inactive, which would leave the `orWhere` as the group's only condition; once the scope always applies `withoutArchived()` the chain is correct on its own. The closure becomes:
 
     ```php
     ->modifyOptionsQueryUsing(function (Builder $query) use ($keyColumnName, $record) {
@@ -51,9 +51,23 @@ created: 2026-08-31
 
 - In `EditInteractionTest`, delete the `it('still offers other students while the feature is inactive')` test — it only covers the guard above. Keep the other two tests in the `archived students` block.
 
-- Keep the `WithoutArchivedStudents` scope and every `->tap(new WithoutArchivedStudents())` call site. Only the `StudentArchivingFeature::active()` guard inside the scope is removed, so it always applies `withoutArchived()`. Do not inline the scope into its call sites.
+- Keep the `WithoutArchivedStudents` scope and every `->tap(new WithoutArchivedStudents(...))` call site, including those passing `asOf:`. Only the `StudentArchivingFeature::active()` guard inside the scope is removed, so it always applies its filter. Do not inline the scope into its call sites.
 
-- In `WithoutArchivedStudentsTest`, delete the `it('leaves the query untouched while the feature is inactive')` test — it only covers the flag-inactive branch of the scope, which no longer exists once the guard is removed. Keep `it('excludes archived students')`, and remove the `use App\Features\StudentArchivingFeature;` import that becomes unused. This is the only test in the suite that calls `StudentArchivingFeature::deactivate()`.
+- In `StudentCumulativeCountLineChart::getStudentRunningTotalData()`, unwrap the `StudentArchivingFeature::active() ? ... : collect()` ternary on `$archivedPerMonth`, keeping only its `$this->countPerMonth(...)` branch, then remove the `use App\Features\StudentArchivingFeature;` import. The guard only exists because `archived_at` does not exist until the migration runs, and aggregating on it directly cannot go through the `WithoutArchivedStudents` scope. The assignment becomes:
+
+    ```php
+    $archivedPerMonth = $this->countPerMonth($population()->onlyArchived(), 'archived_at');
+    ```
+
+- In `MostEngagedStudentsTable::table()` and `StudentDeliverableTable::table()`, delete the `->when(StudentArchivingFeature::active(), fn (Builder $query): Builder => $query->addSelect('archived_at'))` call and add `'archived_at'` to the `select()` list directly above it, then remove the `use App\Features\StudentArchivingFeature;` import. The column has to be loaded for `StudentResource::getViewUrl()` to know a row is archived — these two tables select explicit columns, so it is not there by default — but it cannot be selected until the migration runs. The `select()` becomes, for example:
+
+    ```php
+    ->select('sisid', 'full_name', 'primary_email_id', 'archived_at')
+    ```
+
+- In `StudentCumulativeCountLineChartTest`, delete the `it('does not subtract archived students while the feature is inactive')` test from the `archiving` block — it only covers the guard above — and remove the `use App\Features\StudentArchivingFeature;` import that becomes unused. Keep the other tests in the block.
+
+- In `WithoutArchivedStudentsTest`, delete the `it('leaves the query untouched while the feature is inactive')` test — it only covers the flag-inactive branch of the scope, which no longer exists once the guard is removed. Keep `it('excludes archived students')` and the `as of a point in time` block, and remove the `use App\Features\StudentArchivingFeature;` import that becomes unused.
 
 - In `HasStudentHeader::getHeaderActions()`, `EditStudent::getHeaderActions()` and `ListStudents::table()`, keep only the archive branch of each ternary and delete the `DeleteAction` / `DeleteBulkAction` fallbacks, along with the imports that become unused. `DeleteStudent` itself stays — the V1 API delete controller still uses it.
 

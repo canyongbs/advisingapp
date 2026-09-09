@@ -36,6 +36,7 @@
 use AdvisingApp\Report\Filament\Widgets\MostRecentStudentsTable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use Carbon\Carbon;
 use Filament\Actions\ExportAction;
 use Illuminate\Support\Facades\Storage;
 
@@ -114,4 +115,20 @@ it('does not list archived students', function () {
     ])
         ->assertCanSeeTableRecords($active)
         ->assertCanNotSeeTableRecords(collect([$archived]));
+});
+
+// Archiving is not retroactive: a student archived in September was genuinely part of the
+// student body in March, so a report looking at March still has to list them.
+it('lists a student archived after the reported period', function () {
+    $student = Student::factory()->create(['created_at_source' => '2026-03-10']);
+    $student->forceFill(['archived_at' => Carbon::parse('2026-09-15')])->save();
+
+    livewire(MostRecentStudentsTable::class, [
+        'cacheTag' => 'report-students',
+        'pageFilters' => [
+            'startDate' => '2026-03-01',
+            'endDate' => '2026-03-31',
+        ],
+    ])
+        ->assertCanSeeTableRecords(collect([$student]));
 });

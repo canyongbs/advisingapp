@@ -33,7 +33,12 @@
 --}}
 @use('AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource')
 
-@if ($this->getRecord()->student()->exists())
+@php
+    $student = $this->getRecord()->student;
+    $studentUrl = $student ? StudentResource::getViewUrl($student) : null;
+@endphp
+
+@if ($student)
     <x-filament::badge
         class="-mb-4 mt-3 px-3 py-3"
         data-identifier="prospect_converted_to_student"
@@ -42,13 +47,13 @@
     >
         <span>
             This record has been merged with a student record.
-            <a
-                class="underline"
-                href="{{ StudentResource::getUrl('view', ['record' => $this->getRecord()?->student]) }}"
-            >
-                Click here
-            </a>
-            to visit the student record.
+
+            @if ($studentUrl)
+                <a class="underline" href="{{ $studentUrl }}">Click here</a>
+                to visit the student record.
+            @else
+                That student has since been archived.
+            @endif
         </span>
     </x-filament::badge>
 @endif

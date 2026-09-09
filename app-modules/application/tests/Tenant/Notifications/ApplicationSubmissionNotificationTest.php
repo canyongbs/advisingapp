@@ -34,41 +34,56 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Notifications\ApplicationSubmissionNotification;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
 
+use function Pest\Laravel\seed;
 use function Tests\asSuperAdmin;
 
-it('excludes archived students from global search', function () {
-    asSuperAdmin();
-
-    Student::factory()->state(['full_name' => 'Searchable Alpha'])->create();
-
-    $archived = Student::factory()->state(['full_name' => 'Searchable Beta'])->create();
-    $archived->archive();
-
-    $titles = StudentResource::getGlobalSearchResults('Searchable')->pluck('title');
-
-    expect($titles)->toContain('Searchable Alpha')
-        ->and($titles)->not->toContain('Searchable Beta');
+beforeEach(function () {
+    seed(ApplicationSubmissionStateSeeder::class);
 });
 
-describe('view url', function () {
-    it('links to an active student', function () {
+it('links the author name to their student record', function () {
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+    $application = Application::factory()->create();
+    $submission = ApplicationSubmission::factory()->create([
+        'application_id' => $application->id,
+        'author_type' => $student->getMorphClass(),
+        'author_id' => $student->getKey(),
+    ]);
+
+    $body = (new ApplicationSubmissionNotification($application, $submission))->toDatabase(User::factory()->create())['body'];
+
+    expect($body)->toContain(StudentResource::getUrl('view', ['record' => $student]));
+});
+
+describe('archiving', function () {
+    // The student's page no longer resolves, so the notification names them without a link
+    // rather than sending the reader to a page that does not exist.
+    it('names an archived author without linking to them', function () {
         asSuperAdmin();
 
         $student = Student::factory()->create();
+        $application = Application::factory()->create();
+        $submission = ApplicationSubmission::factory()->create([
+            'application_id' => $application->id,
+            'author_type' => $student->getMorphClass(),
+            'author_id' => $student->getKey(),
+        ]);
 
-        expect(StudentResource::getViewUrl($student))
-            ->toBe(StudentResource::getUrl('view', ['record' => $student]));
-    });
-
-    it('does not link to an archived student', function () {
-        asSuperAdmin();
-
-        $student = Student::factory()->create();
         $student->archive();
 
-        expect(StudentResource::getViewUrl($student))->toBeNull();
+        $body = (new ApplicationSubmissionNotification($application, $submission))->toDatabase(User::factory()->create())['body'];
+
+        expect($body)->toContain($student->first)
+            ->and($body)->not->toContain(StudentResource::getUrl('view', ['record' => $student]));
     });
 });

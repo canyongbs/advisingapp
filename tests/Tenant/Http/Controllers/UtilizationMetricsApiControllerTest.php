@@ -62,8 +62,6 @@ function utilizationMetrics(): array
 }
 
 it('does not count archived students in the reported student records', function () {
-    Student::truncate();
-
     Student::factory()->count(3)->create();
 
     expect(utilizationMetrics()['student_records'])->toBe(3);
@@ -76,8 +74,6 @@ it('does not count archived students in the reported student records', function 
 });
 
 it('does not count alerts belonging to archived students', function () {
-    Student::truncate();
-
     $minimumAge = 25;
 
     $configuration = AdultLearnerAlertConfiguration::factory()
@@ -112,8 +108,6 @@ it('does not count alerts belonging to archived students', function () {
 // student with a live enrollment still reaches the `student_alerts` view. Every other student
 // metric reads through Eloquent and excludes them, so the alert counts must too.
 it('does not count alerts belonging to soft deleted students', function () {
-    Student::truncate();
-
     AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::CourseWithdrawal])
         ->enabled()
@@ -139,8 +133,6 @@ it('does not count alerts belonging to soft deleted students', function () {
 });
 
 it('still reports alert types that have no alerts', function () {
-    Student::truncate();
-
     expect(utilizationMetrics()['alerts_by_alert_type'])
         ->toHaveKey(AlertPreset::AdultLearner->value)
         ->and(utilizationMetrics()['alerts_by_alert_type'][AlertPreset::AdultLearner->value])->toBe(0);

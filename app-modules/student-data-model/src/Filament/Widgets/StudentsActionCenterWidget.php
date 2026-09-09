@@ -90,7 +90,7 @@ class StudentsActionCenterWidget extends TableWidget
                 TextColumn::make('full_name')
                     ->label('Student Name')
                     ->searchable()
-                    ->url(fn (Student $record): string => StudentResource::getUrl('view', ['record' => $record]))
+                    ->url(fn (Student $record): ?string => StudentResource::getViewUrl($record))
                     ->openUrlInNewTab(),
                 TextColumn::make('alerts_count')
                     ->label('Alerts')
