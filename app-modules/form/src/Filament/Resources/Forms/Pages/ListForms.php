@@ -55,6 +55,7 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\Rules\Unique;
 
 class ListForms extends ListRecords
 {
@@ -99,7 +100,13 @@ class ListForms extends ListRecords
                         return $schema->components([
                             TextInput::make('name')
                                 ->label('Name')
-                                ->required(),
+                                ->required()
+                                ->maxLength(255)
+                                ->unique(
+                                    table: 'forms',
+                                    column: 'name',
+                                    modifyRuleUsing: fn (Unique $rule): Unique => $rule->whereNull('archived_at'),
+                                ),
                         ]);
                     })
                     ->beforeReplicaSaved(function (Form $replica, array $data): void {

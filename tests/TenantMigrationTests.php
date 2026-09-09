@@ -37,6 +37,7 @@
 use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
@@ -167,6 +168,37 @@ describe('survey name citext change', function () {
                 expect(DB::table('surveys')->where('id', $survey1)->value('name'))->toBe('Survey');
                 expect(DB::table('surveys')->where('id', $survey2)->value('name'))->toBe('survey-2');
                 expect(DB::table('surveys')->where('id', $survey3)->value('name'))->toBe('SURVEY-3');
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task FormCitextCleanup - Delete this describe and everything contained within
+describe('form name citext change', function () {
+    it('renames case-insensitive duplicate non-archived form names', function () {
+        isolatedMigration(
+            '2026_09_02_110000_convert_forms_name_to_citext',
+            function () {
+                // Setup data before migration
+                $form1 = Form::factory()->create(['name' => 'Form name']);
+                $form2 = Form::factory()->create(['name' => 'form Name']);
+                $form3 = Form::factory()->create(['name' => 'form name']);
+
+                // An archived form sharing a name must be ignored by de-duplication
+                $archivedForm = Form::factory()->create(['name' => 'FORM NAME']);
+                $archivedForm->archive();
+
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/form/database/migrations/2026_09_02_110000_convert_forms_name_to_citext.php']);
+
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Add any assertions to verify the migration's effects
+                expect($form1->refresh()->name)->toBe('Form name');
+                expect($form2->refresh()->name)->toBe('form Name-2');
+                expect($form3->refresh()->name)->toBe('form name-3');
+                expect($archivedForm->refresh()->name)->toBe('FORM NAME');
             }
         );
     });
