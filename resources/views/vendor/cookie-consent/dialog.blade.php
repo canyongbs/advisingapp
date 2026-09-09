@@ -53,7 +53,7 @@
                 <div class="mt-2 flex-shrink-0 w-full sm:mt-0 sm:w-auto">
                     <button
                         type="button"
-                        class="js-cookie-consent-agree cookie-consent__agree inline-flex items-center justify-center rounded-lg border border-primary-600 bg-white px-4 py-2 text-sm font-semibold text-primary-600 shadow-sm transition hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                        class="js-cookie-consent-agree cookie-consent__agree inline-flex items-center justify-center rounded-lg border border-black/5 bg-white px-4 py-2 text-sm font-semibold text-primary-600 shadow-sm transition hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                     >
                         @if(! empty(app(PortalSettings::class)->gdpr_banner_button_label))
                             {{ str(app(PortalSettings::class)->gdpr_banner_button_label->getLabel()) }}
