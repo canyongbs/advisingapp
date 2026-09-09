@@ -38,10 +38,10 @@
 
 <div class="js-cookie-consent cookie-consent z-50 fixed bottom-0 inset-x-0 pb-2">
     <div class="max-w-7xl mx-auto px-6">
-        <div class="p-2 rounded-lg bg-primary-100 ring-1 ring-black/5 shadow-sm">
+        <div class="p-6 rounded-lg bg-primary-100 ring-1 ring-black/5 shadow-sm">
             <div class="flex items-center justify-between flex-wrap">
                 <div class="w-0 flex-1 items-center hidden md:inline [&_a]:text-primary-500 hover:[&_a]:underline">
-                    <p class="ml-3 text-primary-950 text-sm font-medium cookie-consent__message">
+                    <p class="ml-3 text-primary-950 text-[0.7rem] font-medium cookie-consent__message">
                         @if(! empty(app(PortalSettings::class)->gdpr_banner_text))
                             {!! RichContentRenderer::make(app(PortalSettings::class)->gdpr_banner_text)->toHtml() !!}
                         @else
@@ -51,13 +51,16 @@
                 </div>
 
                 <div class="mt-2 flex-shrink-0 w-full sm:mt-0 sm:w-auto">
-                    <x-filament::button class="js-cookie-consent-agree cookie-consent__agree">
+                    <button
+                        type="button"
+                        class="js-cookie-consent-agree cookie-consent__agree inline-flex items-center justify-center rounded-lg border border-black/5 bg-white px-4 py-2 text-sm font-semibold text-primary-600 shadow-sm transition hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                    >
                         @if(! empty(app(PortalSettings::class)->gdpr_banner_button_label))
                             {{ str(app(PortalSettings::class)->gdpr_banner_button_label->getLabel()) }}
                         @else
                             Allow Cookies
                         @endif
-                    </x-filament::button>
+                    </button>
                 </div>
             </div>
         </div>
