@@ -48,7 +48,7 @@ class EducatableRelationManagerTabs
     /**
      * @param  array<string, class-string<RelationManager>>  $managers
      */
-    public static function make(string $label, array $managers, Model $record, string $pageClass): Tabs
+    public static function make(string $tabsKey, array $managers, Model $record, string $pageClass): Tabs
     {
         $managers = Collection::make($managers)
             ->filter(fn ($manager): bool => $manager::canViewForRecord($record, $pageClass));
@@ -56,12 +56,12 @@ class EducatableRelationManagerTabs
         $firstKey = $managers->keys()->first();
 
         return Tabs::make()
-            ->key($label)
+            ->key($tabsKey)
             ->columnSpanFull()
             ->hidden($managers->isEmpty())
             ->tabs(
                 $managers
-                    ->map(fn (string $manager, string $key): Tab => Tab::make($manager::getTitle($record, $pageClass))
+                    ->map(fn ($manager, string $key): Tab => Tab::make($manager::getTitle($record, $pageClass))
                         ->key($key)
                         ->schema([
                             Livewire::make($manager, [
