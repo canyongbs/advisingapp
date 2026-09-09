@@ -82,7 +82,8 @@ class InteractionStatusResource extends Resource
                 ColorSelect::make('color')
                     ->label('Color')
                     ->required()
-                    ->searchable(),
+                    ->searchable()
+                    ->shadeOptions(),
                 Toggle::make('is_default')
                     ->label('Default')
                     ->live()

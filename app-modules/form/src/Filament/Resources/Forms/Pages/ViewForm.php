@@ -40,6 +40,7 @@ use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Models\Form;
+use CanyonGBS\Common\Enums\Color as ColorEnum;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
@@ -141,7 +142,7 @@ class ViewForm extends ViewRecord
                     ->schema([
                         TextEntry::make('title_font_weight'),
                         ColorEntry::make('title_color')
-                            ->state(fn (Form $record): ?string => $record->title_color ? Color::convertToRgb(Color::all()[$record->title_color][600]) : null),
+                            ->state(fn (Form $record): ?string => $record->title_color ? ColorEnum::tryFrom($record->title_color)?->getRgb() : null),
                         ColorEntry::make('primary_color')
                             ->state(fn (Form $record): ?string => $record->primary_color ? Color::convertToRgb(Color::all()[$record->primary_color][600]) : null),
                         TextEntry::make('rounding'),

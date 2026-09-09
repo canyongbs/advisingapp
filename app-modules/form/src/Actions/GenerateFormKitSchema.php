@@ -175,47 +175,18 @@ class GenerateFormKitSchema
     {
         return [
             [
-                '$el' => 'ul',
-                'attrs' => [
-                    'class' => 'wizard',
-                ],
-                'children' => [
-                    [
-                        '$el' => 'li',
-                        'for' => [
-                            'step',
-                            'stepName',
-                            '$steps',
-                        ],
-                        'attrs' => [
-                            'class' => [
-                                'step' => true,
-                                'has-errors' => '$showStepErrors($stepName)',
-                            ],
-                            'onClick' => '$setActiveStep($stepName)',
-                            'data-step-active' => '$activeStep === $stepName',
-                            'data-step-valid' => '$stepIsValid($stepName)',
-                        ],
-                        'children' => [
-                            [
-                                '$el' => 'span',
-                                'if' => '$showStepErrors($stepName)',
-                                'attrs' => [
-                                    'class' => 'step--errors',
-                                ],
-                                'children' => '$step.errorCount + $step.blockingCount',
-                            ],
-                            '$stepName',
-                        ],
-                    ],
-                ],
-            ],
-            [
                 '$el' => 'div',
                 'attrs' => [
                     'class' => 'form-body',
                 ],
                 'children' => [
+                    [
+                        '$el' => 'h2',
+                        'attrs' => [
+                            'class' => 'wizard-title',
+                        ],
+                        'children' => '$activeStep',
+                    ],
                     ...$submissible->steps->map(fn (SubmissibleStep $step): array => [
                         '$el' => 'section',
                         'attrs' => [
@@ -234,45 +205,70 @@ class GenerateFormKitSchema
                         ],
                     ]),
                     [
-                        '$el' => 'div',
+                        '$el' => 'nav',
                         'attrs' => [
                             'class' => 'step-nav',
+                            'aria-label' => 'Form steps',
                         ],
                         'children' => [
                             [
-                                '$formkit' => 'button',
-                                'disabled' => '$activeStep === "' . ($submissible->steps->first()->label ?? '') . '"',
-                                'onClick' => '$setStep(-1)',
-                                'children' => 'Previous Step',
-                            ],
-                            [
                                 '$el' => 'div',
                                 'attrs' => [
-                                    'style' => [
-                                        'if' => '$activeStep === "' . ($submissible->steps->last()->label ?? '') . '"',
-                                        'then' => 'display: none;',
-                                    ],
+                                    'class' => 'step-nav__back',
                                 ],
                                 'children' => [
                                     [
                                         '$formkit' => 'button',
-                                        'onClick' => '$setStep(1)',
-                                        'children' => 'Next Step',
+                                        'disabled' => '$currentStep === 1',
+                                        'onClick' => '$setStep(-1)',
+                                        'children' => 'Back',
                                     ],
                                 ],
                             ],
                             [
+                                '$el' => 'span',
+                                'attrs' => [
+                                    'class' => 'step-progress',
+                                    'aria-live' => 'polite',
+                                ],
+                                'children' => '$currentStep + " of " + $totalSteps',
+                            ],
+                            [
                                 '$el' => 'div',
                                 'attrs' => [
-                                    'style' => [
-                                        'if' => '$activeStep !== "' . ($submissible->steps->last()->label ?? '') . '"',
-                                        'then' => 'display: none;',
-                                    ],
+                                    'class' => 'step-nav__next',
                                 ],
                                 'children' => [
                                     [
-                                        '$formkit' => 'submit',
-                                        'label' => 'Submit',
+                                        '$el' => 'div',
+                                        'attrs' => [
+                                            'style' => [
+                                                'if' => '$currentStep === $totalSteps',
+                                                'then' => 'display: none;',
+                                            ],
+                                        ],
+                                        'children' => [
+                                            [
+                                                '$formkit' => 'button',
+                                                'onClick' => '$setStep(1)',
+                                                'children' => 'Next',
+                                            ],
+                                        ],
+                                    ],
+                                    [
+                                        '$el' => 'div',
+                                        'attrs' => [
+                                            'style' => [
+                                                'if' => '$currentStep !== $totalSteps',
+                                                'then' => 'display: none;',
+                                            ],
+                                        ],
+                                        'children' => [
+                                            [
+                                                '$formkit' => 'submit',
+                                                'label' => 'Submit',
+                                            ],
+                                        ],
                                     ],
                                 ],
                             ],

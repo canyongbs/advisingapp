@@ -46,30 +46,17 @@
         });
     });
 
-    let { steps, visitedSteps, activeStep, setStep, wizardPlugin } = wizard();
+    let { activeStep, currentStep, totalSteps, setStep, wizardPlugin } = wizard();
 
     const props = defineProps({ entryUrl: String });
 
     const data = reactive({
-        steps,
-        visitedSteps,
         activeStep,
+        currentStep,
+        totalSteps,
         plugins: [wizardPlugin, asteriskPlugin],
         setStep: (target) => () => {
             setStep(target);
-        },
-        setActiveStep: (stepName) => () => {
-            data.activeStep = stepName;
-        },
-        showStepErrors: (stepName) => {
-            return (
-                (steps[stepName].errorCount > 0 || steps[stepName].blockingCount > 0) &&
-                visitedSteps.value &&
-                visitedSteps.value.includes(stepName)
-            );
-        },
-        stepIsValid: (stepName) => {
-            return steps[stepName].valid && steps[stepName].errorCount === 0;
         },
         stringify: (value) => JSON.stringify(value, null, 2),
         submitForm: async (data, node) => {

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1eb44b36328b6bf75948552247501218",
+    "content-hash": "a873bb1e37e9b361140611f3d9c34714",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -180,16 +180,16 @@
         },
         {
             "name": "aws/aws-php-sns-message-validator",
-            "version": "1.10.0",
+            "version": "1.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-php-sns-message-validator.git",
-                "reference": "d92d199179cbbf4d99601d4f23f61b9b8cc5da28"
+                "reference": "c3be6a323f1500317eecd1f5043611a4471b4571"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-php-sns-message-validator/zipball/d92d199179cbbf4d99601d4f23f61b9b8cc5da28",
-                "reference": "d92d199179cbbf4d99601d4f23f61b9b8cc5da28",
+                "url": "https://api.github.com/repos/aws/aws-php-sns-message-validator/zipball/c3be6a323f1500317eecd1f5043611a4471b4571",
+                "reference": "c3be6a323f1500317eecd1f5043611a4471b4571",
                 "shasum": ""
             },
             "require": {
@@ -233,9 +233,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sns-message-validator/issues",
-                "source": "https://github.com/aws/aws-php-sns-message-validator/tree/1.10.0"
+                "source": "https://github.com/aws/aws-php-sns-message-validator/tree/1.10.1"
             },
-            "time": "2025-03-05T22:22:58+00:00"
+            "time": "2026-09-02T22:43:36+00:00"
         },
         {
             "name": "aws/aws-sdk-php",
