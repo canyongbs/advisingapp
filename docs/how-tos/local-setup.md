@@ -176,7 +176,7 @@ of the box as long as `pls` is installed correctly. The configured command runs 
 
 - `${userHome}` is resolved by VS Code, so the absolute path to `pls` works on both macOS and Linux.
 - `pls` must be installed at the default location (`~/.pls/bin/pls`) — see the
-  [pls installation guide](common/pls.md).
+  [pls installation guide](https://github.com/canyongbs/common/blob/main/docs/how-tos/pls.md).
 - The `app` container must be running (`pls up -d`), since Boost executes inside it.
 
 #### Verifying it is running in VS Code
