@@ -38,6 +38,7 @@ use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Group\Models\Group;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
@@ -45,6 +46,7 @@ use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use AdvisingApp\Team\Models\Department;
 use App\Enums\TagType;
+use App\Models\SystemUser;
 use App\Models\Tag;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
@@ -237,6 +239,32 @@ describe('event title citext change', function () {
     });
 });
 
+// TODO: Cleanup Task GroupCitextCleanup - Delete this describe and everything contained within
+describe('segment name citext change', function () {
+    it('renames case-insensitive duplicate group names', function () {
+        isolatedMigration(
+            '2026_09_02_142139_convert_segments_name_to_citext',
+            function () {
+                // Setup data before migration
+                $group1 = Group::factory()->create(['name' => 'Group name']);
+                $group2 = Group::factory()->create(['name' => 'group Name']);
+                $group3 = Group::factory()->create(['name' => 'group name']);
+
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/group/database/migrations/2026_09_02_142139_convert_segments_name_to_citext.php']);
+
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+
+                // Add any assertions to verify the migration's effects
+                expect($group1->refresh()->name)->toBe('Group name');
+                expect($group2->refresh()->name)->toBe('group Name-2');
+                expect($group3->refresh()->name)->toBe('group name-3');
+            }
+        );
+    });
+});
+
 // TODO: Cleanup Task RoleCitextCleanup - Delete this describe and everything contained within
 describe('role citext change', function () {
     it('properly deduplicates role names case insensitively per guard', function () {
@@ -396,6 +424,29 @@ describe('department citext change', function () {
                 expect($department1->refresh()->name)->toBe('Department');
                 expect($department2->refresh()->name)->toBe('department-2');
                 expect($department3->refresh()->name)->toBe('DEPARTMENT-3');
+            }
+        );
+    });
+});
+
+// TODO: Cleanup Task SystemUserCitextCleanup - Delete this describe and everything contained within
+describe('system user citext change', function () {
+    it('properly changes system user names', function () {
+        isolatedMigration(
+            '2026_09_02_062437_convert_system_user_name_to_citext',
+            function () {
+                // Setup data before migration
+                $systemUser1 = SystemUser::factory(['name' => 'System user'])->create();
+                $systemUser2 = SystemUser::factory(['name' => 'system User'])->create();
+                $systemUser3 = SystemUser::factory(['name' => 'system user'])->create();
+                // Run the migration
+                $migrate = Artisan::call('migrate', ['--path' => 'database/migrations/2026_09_02_062437_convert_system_user_name_to_citext.php']);
+                // Confirm migration ran successfully
+                expect($migrate)->toBe(Command::SUCCESS);
+                // Add any assertions to verify the migration's effects
+                expect($systemUser1->refresh()->name)->toBe('System user');
+                expect($systemUser2->refresh()->name)->toBe('system User-2');
+                expect($systemUser3->refresh()->name)->toBe('system user-3');
             }
         );
     });

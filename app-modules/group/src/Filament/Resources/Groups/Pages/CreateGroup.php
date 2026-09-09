@@ -66,6 +66,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Unique;
 use Iterator;
 use League\Csv\ByteSequence;
 use League\Csv\Writer;
@@ -91,7 +92,12 @@ class CreateGroup extends CreateRecord implements HasTable
                     TextInput::make('name')
                         ->autocomplete(false)
                         ->string()
-                        ->required(),
+                        ->required()
+                        ->unique(
+                            table: 'segments',
+                            column: 'name',
+                            modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                        ),
                     Textarea::make('description'),
                 ]),
             Step::make('Population Group Type')

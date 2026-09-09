@@ -36,10 +36,13 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Group\Filament\Resources\Groups\GroupResource;
+use AdvisingApp\Group\Filament\Resources\Groups\Pages\EditGroup;
 use AdvisingApp\Group\Models\Group;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 test('EditGroup is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -58,4 +61,24 @@ test('EditGroup is gated with proper access control', function () {
         ->get(
             GroupResource::getUrl('edit', ['record' => $group])
         )->assertSuccessful();
+});
+
+test('EditGroup does not allow duplicate group names case insensitively, ignoring soft-deleted records', function () {
+    asSuperAdmin();
+
+    $deletedGroup = Group::factory()->create(['name' => 'Group Name']);
+    $group = Group::factory()->create(['name' => 'Test Group']);
+    Group::factory()->create(['name' => 'Other Group']);
+
+    $deletedGroup->delete();
+
+    livewire(EditGroup::class, ['record' => $group->getRouteKey()])
+        ->fillForm(['name' => 'group name'])
+        ->call('save')
+        ->assertHasNoFormErrors(['name']);
+
+    livewire(EditGroup::class, ['record' => $group->getRouteKey()])
+        ->fillForm(['name' => 'OTHER group'])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'unique']);
 });
