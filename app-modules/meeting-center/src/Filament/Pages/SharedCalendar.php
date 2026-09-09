@@ -200,7 +200,7 @@ class SharedCalendar extends Page implements HasForms, HasTable
                         $educatable = app(ResolveEducatableFromEmail::class)($record->email);
 
                         if ($educatable instanceof Student) {
-                            return StudentResource::getUrl('view', ['record' => $educatable->sisid]);
+                            return StudentResource::getViewUrl($educatable);
                         }
 
                         if ($educatable instanceof Prospect) {

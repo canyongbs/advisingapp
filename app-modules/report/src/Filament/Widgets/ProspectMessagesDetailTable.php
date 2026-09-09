@@ -143,7 +143,7 @@ class ProspectMessagesDetailTable extends BaseWidget
                         default => throw new Exception('Invalid sender type'),
                     } : null)
                     ->url(fn (HolisticEngagement $record): ?string => $record->sentBy ? match ($record->sentBy::class) {
-                        Student::class => StudentResource::getUrl('view', ['record' => $record->sentBy->getKey()]),
+                        Student::class => StudentResource::getViewUrl($record->sentBy),
                         Prospect::class => ProspectResource::getUrl('view', ['record' => $record->sentBy->getKey()]),
                         default => null,
                     } : null)
@@ -167,7 +167,7 @@ class ProspectMessagesDetailTable extends BaseWidget
                         default => 'N/A',
                     } : 'N/A')
                     ->url(fn (HolisticEngagement $record): ?string => $record->sentTo ? match ($record->sentTo::class) {
-                        Student::class => StudentResource::getUrl('view', ['record' => $record->sentTo->getKey()]),
+                        Student::class => StudentResource::getViewUrl($record->sentTo),
                         Prospect::class => ProspectResource::getUrl('view', ['record' => $record->sentTo->getKey()]),
                         default => null,
                     } : null)

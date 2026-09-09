@@ -41,6 +41,7 @@ use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\Action;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
@@ -71,7 +72,9 @@ describe('archiving', function () {
         assertDatabaseHas('enrollments', ['sisid' => $student->getKey(), 'deleted_at' => null]);
     });
 
-    it('hides the `ArchiveAction` when the student is already archived', function () {
+    // Once archived, the student's pages no longer resolve at all, so there is no edit page
+    // on which the action could be shown or hidden.
+    it('cannot be opened once the student is archived', function () {
         asSuperAdmin();
 
         $studentSettings = app(ManageStudentConfigurationSettings::class);
@@ -85,8 +88,8 @@ describe('archiving', function () {
 
         $student->archive();
 
-        livewire(EditStudent::class, ['record' => $student->getKey()])
-            ->assertActionHidden(ArchiveAction::class);
+        expect(fn () => livewire(EditStudent::class, ['record' => $student->getKey()]))
+            ->toThrow(ModelNotFoundException::class);
     });
 
     it('explains what archiving does in the confirmation modal', function () {

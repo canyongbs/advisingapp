@@ -37,9 +37,12 @@
 use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentDeliverableTable;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
+use Filament\Tables\Columns\TextColumn;
 
 use function Pest\Livewire\livewire;
 
@@ -212,4 +215,35 @@ it('does not list archived students', function () {
     ])
         ->assertCanSeeTableRecords($active)
         ->assertCanNotSeeTableRecords(collect([$archived]));
+});
+
+// Archiving is not retroactive: a student archived in September was genuinely part of the
+// student body in March, so a report looking at March still has to list them.
+it('lists a student archived after the reported period without linking to them', function () {
+    $active = Student::factory()->create(['created_at_source' => '2026-03-10']);
+
+    $archived = Student::factory()->create(['created_at_source' => '2026-03-10']);
+    $archived->forceFill(['archived_at' => Carbon::parse('2026-09-15')])->save();
+
+    livewire(StudentDeliverableTable::class, [
+        'cacheTag' => 'report-student-deliverability',
+        'pageFilters' => [
+            'startDate' => '2026-03-01',
+            'endDate' => '2026-03-31',
+        ],
+    ])
+        ->assertCanSeeTableRecords(collect([$active, $archived]))
+        ->assertTableColumnExists(
+            'full_name',
+            fn (TextColumn $column): bool => $column->getUrl() === StudentResource::getUrl('view', ['record' => $active]),
+            $active,
+        )
+        // Listed for the period, but their page no longer resolves, so the name is not a link.
+        // The record is read back through this table's own query, so this also proves the
+        // explicit `select()` loads `archived_at` — without it the link would come back.
+        ->assertTableColumnExists(
+            'full_name',
+            fn (TextColumn $column): bool => $column->getUrl() === null,
+            $archived,
+        );
 });

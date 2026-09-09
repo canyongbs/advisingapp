@@ -128,8 +128,10 @@ class FormSubmissionNotification extends Notification implements ShouldQueue
         $hasAuthorRecord = false;
 
         if ($author instanceof Student) {
-            $authorUrl = StudentResource::getUrl('view', ['record' => $author]);
-            $hasAuthorRecord = true;
+            // An archived student's page no longer resolves, so their name is shown unlinked.
+            $viewUrl = StudentResource::getViewUrl($author);
+            $authorUrl = $viewUrl ?? '#';
+            $hasAuthorRecord = filled($viewUrl);
             $firstName = $author->first ?? 'Unknown';
             $lastName = $author->last ?? 'Unknown';
             $email = $author->primaryEmailAddress->address ?? 'No email';

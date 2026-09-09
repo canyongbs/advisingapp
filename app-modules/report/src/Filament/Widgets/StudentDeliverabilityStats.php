@@ -58,7 +58,7 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
         $shouldBypassCache = filled($startDate) || filled($endDate) || filled($groupId);
 
         $totalStudents = $shouldBypassCache
-            ? Student::query()->tap(new WithoutArchivedStudents())
+            ? Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
@@ -75,7 +75,7 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
             );
 
         $studentsPrimaryEmailMissing = $shouldBypassCache
-            ? Student::query()->tap(new WithoutArchivedStudents())
+            ? Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
@@ -93,7 +93,7 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
             );
 
         $studentsPrimaryEmailUnhealthy = $shouldBypassCache
-            ? Student::query()->tap(new WithoutArchivedStudents())
+            ? Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
                 ->tap(new UnhealthyEducatablePrimaryEmailAddress())
                 ->when(
                     $startDate && $endDate,
@@ -113,7 +113,7 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
             );
 
         $studentsPrimaryPhoneMissing = $shouldBypassCache
-            ? Student::query()->tap(new WithoutArchivedStudents())
+            ? Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
                 ->when(
                     $startDate && $endDate,
                     fn (Builder $query): Builder => $query->whereBetween('created_at_source', [$startDate, $endDate])
@@ -131,7 +131,7 @@ class StudentDeliverabilityStats extends StatsOverviewReportWidget
             );
 
         $studentsPrimaryPhoneUnhealthy = $shouldBypassCache
-            ? Student::query()->tap(new WithoutArchivedStudents())
+            ? Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
                 ->tap(new UnhealthyEducatablePrimaryPhoneNumber())
                 ->when(
                     $startDate && $endDate,

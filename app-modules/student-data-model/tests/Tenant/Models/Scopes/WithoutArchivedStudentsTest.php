@@ -37,6 +37,7 @@
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Features\StudentArchivingFeature;
+use Carbon\Carbon;
 
 use function Tests\asSuperAdmin;
 
@@ -63,4 +64,61 @@ it('leaves the query untouched while the feature is inactive', function () {
 
     expect(Student::query()->tap(new WithoutArchivedStudents())->pluck('sisid'))
         ->toContain($archived->getKey());
+});
+
+describe('as of a point in time', function () {
+    it('includes a student archived after the point in time', function () {
+        asSuperAdmin();
+
+        $student = Student::factory()->create();
+        $student->forceFill(['archived_at' => Carbon::parse('2026-09-15')])->save();
+
+        $sisids = Student::query()
+            ->tap(new WithoutArchivedStudents(asOf: Carbon::parse('2026-08-31')))
+            ->pluck('sisid');
+
+        expect($sisids)->toContain($student->getKey());
+    });
+
+    it('excludes a student archived before the point in time', function () {
+        asSuperAdmin();
+
+        $student = Student::factory()->create();
+        $student->forceFill(['archived_at' => Carbon::parse('2026-08-15')])->save();
+
+        $sisids = Student::query()
+            ->tap(new WithoutArchivedStudents(asOf: Carbon::parse('2026-08-31')))
+            ->pluck('sisid');
+
+        expect($sisids)->not->toContain($student->getKey());
+    });
+
+    // The client settled this boundary: a month bucket reports the state at the END of the
+    // month, so a student archived within it is already gone by the time it is reported.
+    it('excludes a student archived exactly at the point in time', function () {
+        asSuperAdmin();
+
+        $archivedAt = Carbon::parse('2026-08-31 23:59:59');
+
+        $student = Student::factory()->create();
+        $student->forceFill(['archived_at' => $archivedAt])->save();
+
+        $sisids = Student::query()
+            ->tap(new WithoutArchivedStudents(asOf: $archivedAt))
+            ->pluck('sisid');
+
+        expect($sisids)->not->toContain($student->getKey());
+    });
+
+    it('includes a student who was never archived', function () {
+        asSuperAdmin();
+
+        $student = Student::factory()->create();
+
+        $sisids = Student::query()
+            ->tap(new WithoutArchivedStudents(asOf: Carbon::parse('2026-08-31')))
+            ->pluck('sisid');
+
+        expect($sisids)->toContain($student->getKey());
+    });
 });

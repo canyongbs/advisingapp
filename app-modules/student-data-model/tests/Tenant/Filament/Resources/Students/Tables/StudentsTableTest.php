@@ -56,8 +56,6 @@ function enrolledTermConstraintOptions(string $name): array
 }
 
 it('does not offer enrolled terms that only archived students have', function () {
-    Student::truncate();
-
     asSuperAdmin();
 
     $active = Student::factory()->create();

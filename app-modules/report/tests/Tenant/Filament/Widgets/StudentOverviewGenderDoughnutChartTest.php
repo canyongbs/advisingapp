@@ -38,6 +38,7 @@ use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentOverviewGenderDoughnutChart;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Carbon\Carbon;
 
 it('checks student gender doughnut chart', function () {
     $maleCount = random_int(1, 10);
@@ -231,4 +232,20 @@ it('does not count archived students', function () {
     $archived->each(fn (Student $student) => $student->archive());
 
     expect($widgetInstance->getData()['datasets'][0]['data']->sum())->toEqual(3);
+});
+
+// Archiving is not retroactive: a student archived in September was genuinely part of the
+// student body in March, so a report looking at March still has to count them.
+it('counts a student archived after the reported period', function () {
+    $student = Student::factory()->create(['gender' => 'Female', 'created_at_source' => '2026-03-10']);
+    $student->forceFill(['archived_at' => Carbon::parse('2026-09-15')])->save();
+
+    $widgetInstance = new StudentOverviewGenderDoughnutChart();
+    $widgetInstance->cacheTag = 'report-students';
+    $widgetInstance->pageFilters = [
+        'startDate' => '2026-03-01',
+        'endDate' => '2026-03-31',
+    ];
+
+    expect($widgetInstance->getData()['datasets'][0]['data']->sum())->toEqual(1);
 });

@@ -81,7 +81,7 @@ class ViewEventAttendeeAction extends ViewAction
                                 TextEntry::make(Student::displayNameKey())
                                     ->label('Name')
                                     ->color('primary')
-                                    ->url(fn (Student $record): string => StudentResource::getUrl('view', ['record' => $record])),
+                                    ->url(fn (Student $record): ?string => StudentResource::getViewUrl($record)),
                             ])
                             ->columns()
                             ->visible(fn (EventAttendee $record): bool => $record->students->isNotEmpty()),

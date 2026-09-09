@@ -76,7 +76,7 @@ class StudentInteractionStats extends StatsOverviewReportWidget
             );
 
         $studentsWithInteractionsCount = $shouldBypassCache
-            ? Student::query()->tap(new WithoutArchivedStudents())
+            ? Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
                 ->whereHas('interactions', function (Builder $query) use ($startDate, $endDate) {
                     $query->when(
                         $startDate && $endDate,

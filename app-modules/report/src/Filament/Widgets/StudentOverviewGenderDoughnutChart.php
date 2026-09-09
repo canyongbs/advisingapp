@@ -134,7 +134,7 @@ class StudentOverviewGenderDoughnutChart extends ChartReportWidget
      */
     protected function getGenderData(?Carbon $startDate = null, ?Carbon $endDate = null, ?string $groupId = null): Collection
     {
-        return Student::query()->tap(new WithoutArchivedStudents())
+        return Student::query()->tap(new WithoutArchivedStudents(asOf: $endDate))
             ->select(
                 DB::raw('LOWER(gender) as gender_lower'),
                 DB::raw('MIN(gender) as gender'),

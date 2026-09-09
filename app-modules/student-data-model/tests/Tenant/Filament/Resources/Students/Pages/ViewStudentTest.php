@@ -52,14 +52,17 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\Ev
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\FormSubmissionsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\InteractionsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\ProgramsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
@@ -557,4 +560,33 @@ it('renders the `ArchiveAction` based on proper access', function () {
     ])
         ->assertOk()
         ->assertActionVisible(ArchiveAction::class);
+});
+
+describe('archiving', function () {
+    // The resource query excludes archived students, so the page cannot resolve them at all:
+    // a link that was valid before they were archived, or a URL typed by hand, gets a 404.
+    it('cannot be opened once the student is archived', function () {
+        asSuperAdmin();
+
+        $student = Student::factory()->create();
+
+        livewire(ViewStudent::class, ['record' => $student->getKey()])
+            ->assertOk();
+
+        $student->archive();
+
+        expect(fn () => livewire(ViewStudent::class, ['record' => $student->getKey()]))
+            ->toThrow(ModelNotFoundException::class);
+    });
+
+    it('returns not found for a direct URL to an archived student', function () {
+        asSuperAdmin();
+
+        $student = Student::factory()->create();
+        $url = StudentResource::getUrl('view', ['record' => $student]);
+
+        $student->archive();
+
+        get($url)->assertNotFound();
+    });
 });
