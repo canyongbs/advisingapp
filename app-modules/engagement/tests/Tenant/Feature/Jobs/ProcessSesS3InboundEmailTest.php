@@ -55,6 +55,8 @@ use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\partialMock;
 
+use PhpMimeMailParser\Parser;
+
 it('handles spam verdict failure properly', function () {
     Storage::fake('s3');
     Storage::fake('s3-inbound-email');
@@ -201,6 +203,128 @@ it('properly creates an EngagementResponse for an inbound email matching a Stude
 
     $filesystem->assertMissing('s3_email');
 });
+
+it('routes forward-only mail on the SES delivery recipient when the To header is the original mailbox', function () {
+    $student = Student::factory()->create();
+
+    StudentEmailAddress::factory()
+        ->for($student, 'student')
+        ->create(['address' => 'kevin.ullyott@canyongbs.com']);
+
+    Storage::fake('s3');
+    $filesystem = Storage::fake('s3-inbound-email');
+
+    $modulePath = resolve(ModulePath::class);
+
+    $content = file_get_contents($modulePath('engagement', 'tests/Fixtures/s3_email_forward_only'));
+
+    $file = UploadedFile::fake()->createWithContent('s3_email', $content);
+
+    $filesystem->putFileAs('', $file, 's3_email');
+
+    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
+        $mock->shouldAllowMockingProtectedMethods();
+        // @phpstan-ignore-next-line
+        $mock->shouldReceive('getContent')->once()->andReturn($content);
+    });
+
+    assert($mock instanceof ProcessSesS3InboundEmail);
+
+    // @phpstan-ignore-next-line
+    invade($mock)->emailFilePath = 's3_email';
+
+    $filesystem->assertExists('s3_email');
+
+    $mock->handle();
+
+    $engagementResponses = EngagementResponse::all();
+
+    expect($engagementResponses)->toHaveCount(1);
+
+    $engagementResponse = $engagementResponses->first();
+
+    assert($engagementResponse instanceof EngagementResponse);
+
+    expect($engagementResponse->subject)->toBe('This is a test')
+        ->and($engagementResponse->sender->is($student))->toBeTrue()
+        ->and($engagementResponse->type)->toBe(EngagementResponseType::Email)
+        ->and($engagementResponse->status)->toBe(EngagementResponseStatus::New)
+        ->and($engagementResponse->raw)->toBe($content)
+        ->and($engagementResponse->raw)->toContain('Hello there! This should be put in S3!');
+
+    $filesystem->assertMissing('s3_email');
+});
+
+it('does not create duplicate EngagementResponses when the To header and the SES delivery recipient both resolve to the tenant', function () {
+    $student = Student::factory()->create();
+
+    StudentEmailAddress::factory()
+        ->for($student, 'student')
+        ->create(['address' => 'kevin.ullyott@canyongbs.com']);
+
+    Storage::fake('s3');
+    $filesystem = Storage::fake('s3-inbound-email');
+
+    $modulePath = resolve(ModulePath::class);
+
+    $content = file_get_contents($modulePath('engagement', 'tests/Fixtures/s3_email'));
+
+    $file = UploadedFile::fake()->createWithContent('s3_email', $content);
+
+    $filesystem->putFileAs('', $file, 's3_email');
+
+    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
+        $mock->shouldAllowMockingProtectedMethods();
+        // @phpstan-ignore-next-line
+        $mock->shouldReceive('getContent')->once()->andReturn($content);
+    });
+
+    assert($mock instanceof ProcessSesS3InboundEmail);
+
+    // @phpstan-ignore-next-line
+    invade($mock)->emailFilePath = 's3_email';
+
+    $mock->handle();
+
+    $engagementResponses = EngagementResponse::all();
+
+    expect($engagementResponses)->toHaveCount(1);
+
+    $engagementResponse = $engagementResponses->first();
+
+    assert($engagementResponse instanceof EngagementResponse);
+
+    expect($engagementResponse->sender->is($student))->toBeTrue()
+        ->and($engagementResponse->raw)->toBe($content);
+
+    $filesystem->assertMissing('s3_email');
+});
+
+it('extracts the SES delivery recipient from the Received header', function (string $rawHeaders, ?string $expected) {
+    $parser = (new Parser())->setText($rawHeaders . "\r\n\r\nbody");
+
+    $job = new ProcessSesS3InboundEmail('s3_email');
+
+    // @phpstan-ignore-next-line
+    expect(invade($job)->extractSesDeliveryRecipient($parser))->toBe($expected);
+})->with([
+    'folded header' => [
+        "Received: from mail.example.com (mail.example.com [10.0.0.1])\r\n by inbound-smtp.us-west-2.amazonaws.com with SMTP id abc123\r\n for test@mail-dev.advising.app;\r\n Thu, 20 Feb 2025 20:25:41 +0000 (UTC)\r\nFrom: sender@example.com\r\nTo: support@campusconcourse.com",
+        'test@mail-dev.advising.app',
+    ],
+    'mixed case and angle brackets' => [
+        "RECEIVED: from mail.example.com BY Inbound-SMTP.eu-west-1.AmazonAWS.com with SMTP id abc123 FOR <Test@mail-dev.advising.app>; Thu, 20 Feb 2025 20:25:41 +0000 (UTC)\r\nTo: support@campusconcourse.com",
+        'Test@mail-dev.advising.app',
+    ],
+    'ignores non-SES hops' => [
+        "Received: from a.example.com by b.example.com with SMTP id abc123 for other@example.com; Thu, 20 Feb 2025 20:25:41 +0000 (UTC)\r\nReceived: from mail.example.com by inbound-smtp.us-west-2.amazonaws.com with SMTP id abc123 for test@mail-dev.advising.app; Thu, 20 Feb 2025 20:25:41 +0000 (UTC)\r\nTo: support@campusconcourse.com",
+        'test@mail-dev.advising.app',
+    ],
+    'no SES hop' => [
+        "Received: from a.example.com by b.example.com with SMTP id abc123 for other@example.com; Thu, 20 Feb 2025 20:25:41 +0000 (UTC)\r\nTo: support@campusconcourse.com",
+        null,
+    ],
+]);
 
 it('properly creates an EngagementResponse for an inbound email matching a Prospect', function () {
     Storage::fake('s3');

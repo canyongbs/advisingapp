@@ -1,0 +1,19 @@
+Return-Path: <mbchildress@campbellsville.edu>
+Received: from pdx1-sub0-mail-mx201.dreamhost.com (fltr-in2.mail.dreamhost.com [64.90.62.164])
+ by inbound-smtp.us-west-2.amazonaws.com with SMTP id 2v0ukgo33s1n1lm9a32oap3opclbc3viorqmcm01
+ for test@mail-dev.advising.app;
+ Thu, 10 Sep 2026 23:58:33 +0000 (UTC)
+X-SES-Spam-Verdict: PASS
+X-SES-Virus-Verdict: PASS
+Received: from SN4PR0501CU005.outbound.protection.outlook.com (mail-southcentralusazon11021101.outbound.protection.outlook.com [40.93.194.101])
+	by pdx1-sub0-mail-mx201.dreamhost.com (Postfix) with ESMTPS id 4hTSY43CSdz8DBN
+	for <support@campusconcourse.com>; Thu, 10 Sep 2026 16:58:32 -0700 (PDT)
+From: "Ullyott, Kevin" <kevin.ullyott@canyongbs.com>
+To: "support@campusconcourse.com" <support@campusconcourse.com>
+Subject: This is a test
+Date: Thu, 10 Sep 2026 23:58:27 +0000
+Message-ID: <DS7PR07MB774971A63DCEC64D32538E76C3A02@DS7PR07MB7749.namprd07.prod.outlook.com>
+Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+
+Hello there! This should be put in S3!

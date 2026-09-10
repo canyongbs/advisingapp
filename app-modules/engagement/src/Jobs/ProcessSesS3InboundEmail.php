@@ -52,6 +52,7 @@ use Aws\S3\S3Client;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use PhpMimeMailParser\Attachment;
@@ -91,8 +92,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                 new SesS3InboundSpamOrVirusDetected($this->emailFilePath, $parser->getHeader('X-SES-Spam-Verdict'), $parser->getHeader('X-SES-Virus-Verdict')),
             );
 
-            $matchedTenants = collect($parser->getAddresses('to'))
-                ->pluck('address')
+            $matchedTenants = $this->recipientCandidates($parser)
                 ->map(function (string $address) {
                     $localPart = filter_var($address, FILTER_VALIDATE_EMAIL) ? explode('@', $address)[0] : null;
 
@@ -108,7 +108,9 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                         )
                         ->first();
                 })
-                ->filter();
+                ->filter()
+                ->unique(fn (Tenant $tenant): string => (string) $tenant->getKey())
+                ->values();
 
             throw_if(
                 $matchedTenants->isEmpty(),
@@ -308,6 +310,61 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
     protected function moveFile(string $destination): void
     {
         Storage::disk('s3-inbound-email')->move($this->emailFilePath, $destination . '/' . $this->emailFilePath);
+    }
+
+    /**
+     * Build the list of candidate recipient addresses to route on.
+     *
+     * The MIME `To:` header is unreliable for forwarded mail (forward-only forwarding leaves the
+     * original mailbox in `To:`), so the SES envelope recipient from the trusted `Received … for …`
+     * header it stamps on delivery is included as well.
+     *
+     * @return Collection<int, string>
+     */
+    protected function recipientCandidates(Parser $parser): Collection
+    {
+        $candidates = collect($parser->getAddresses('to'))
+            ->pluck('address');
+
+        $sesRecipient = $this->extractSesDeliveryRecipient($parser);
+
+        if ($sesRecipient !== null) {
+            $candidates->push($sesRecipient);
+        }
+
+        return $candidates
+            ->filter(fn (string $address): bool => trim($address) !== '')
+            ->map(fn (string $address): string => trim($address))
+            ->unique(fn (string $address): string => mb_strtolower($address))
+            ->values();
+    }
+
+    /**
+     * Extract the envelope recipient SES delivered to from the
+     * `Received … by inbound-smtp.<region>.amazonaws.com … for <addr>;` header.
+     */
+    protected function extractSesDeliveryRecipient(Parser $parser): ?string
+    {
+        $rawHeaders = str_replace("\r\n", "\n", $parser->getHeadersRaw());
+
+        // Unfold folded header lines (continuation lines begin with whitespace) so each header is a single line.
+        $unfolded = preg_replace('/\n[ \t]+/', ' ', $rawHeaders) ?? $rawHeaders;
+
+        foreach (preg_split('/\n(?=\S)/', $unfolded) ?: [] as $header) {
+            if (! str_starts_with(mb_strtolower($header), 'received:')) {
+                continue;
+            }
+
+            if (! preg_match('/by\s+inbound-smtp\.[^\s]*\bamazonaws\.com\b/i', $header)) {
+                continue;
+            }
+
+            if (preg_match('/\bfor\s+<?([^\s;<>]+@[^\s;<>]+)>?\s*;/i', $header, $matches)) {
+                return $matches[1];
+            }
+        }
+
+        return null;
     }
 
     protected function getContent(): string
