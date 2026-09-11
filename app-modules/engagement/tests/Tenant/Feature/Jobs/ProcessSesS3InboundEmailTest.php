@@ -255,7 +255,7 @@ it('routes forward-only mail on the SES delivery recipient when the To header is
     $filesystem->assertMissing('s3_email');
 });
 
-it('does not create duplicate EngagementResponses when the To header and the SES delivery recipient both resolve to the tenant', function () {
+it('does not create duplicate EngagementResponses when the To header and the SES delivery recipient are the same address', function () {
     $student = Student::factory()->create();
 
     StudentEmailAddress::factory()
@@ -295,6 +295,52 @@ it('does not create duplicate EngagementResponses when the To header and the SES
     assert($engagementResponse instanceof EngagementResponse);
 
     expect($engagementResponse->sender->is($student))->toBeTrue()
+        ->and($engagementResponse->raw)->toBe($content);
+
+    $filesystem->assertMissing('s3_email');
+});
+
+it('does not create duplicate EngagementResponses when forwarding preserves the local part across domains', function () {
+    $student = Student::factory()->create();
+
+    StudentEmailAddress::factory()
+        ->for($student, 'student')
+        ->create(['address' => 'kevin.ullyott@canyongbs.com']);
+
+    Storage::fake('s3');
+    $filesystem = Storage::fake('s3-inbound-email');
+
+    $modulePath = resolve(ModulePath::class);
+
+    $content = file_get_contents($modulePath('engagement', 'tests/Fixtures/s3_email_forward_same_local_part'));
+
+    $file = UploadedFile::fake()->createWithContent('s3_email', $content);
+
+    $filesystem->putFileAs('', $file, 's3_email');
+
+    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
+        $mock->shouldAllowMockingProtectedMethods();
+        // @phpstan-ignore-next-line
+        $mock->shouldReceive('getContent')->once()->andReturn($content);
+    });
+
+    assert($mock instanceof ProcessSesS3InboundEmail);
+
+    // @phpstan-ignore-next-line
+    invade($mock)->emailFilePath = 's3_email';
+
+    $mock->handle();
+
+    $engagementResponses = EngagementResponse::all();
+
+    expect($engagementResponses)->toHaveCount(1);
+
+    $engagementResponse = $engagementResponses->first();
+
+    assert($engagementResponse instanceof EngagementResponse);
+
+    expect($engagementResponse->subject)->toBe('Forwarded with a matching local part')
+        ->and($engagementResponse->sender->is($student))->toBeTrue()
         ->and($engagementResponse->raw)->toBe($content);
 
     $filesystem->assertMissing('s3_email');
