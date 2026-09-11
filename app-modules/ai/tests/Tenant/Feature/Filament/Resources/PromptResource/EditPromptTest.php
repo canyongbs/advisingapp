@@ -229,3 +229,20 @@ it('allows reusing the title of a soft-deleted prompt', function () use ($licens
         'title' => 'archived title',
     ]);
 });
+
+it('allows editing a prompt to have the same title as one in another type', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    $recordToEdit = Prompt::factory()->create();
+    Prompt::factory()->create(['title' => 'Shared Title']);
+
+    livewire(EditPrompt::class, [
+        'record' => $recordToEdit->getRouteKey(),
+    ])
+        ->fillForm(['title' => 'shared title'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+});

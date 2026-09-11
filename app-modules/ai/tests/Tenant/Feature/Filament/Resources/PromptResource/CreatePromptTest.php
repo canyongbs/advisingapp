@@ -189,3 +189,19 @@ it('allows reusing the title of a soft-deleted prompt', function () use ($licens
         'type_id' => $typeId,
     ]);
 });
+
+it('allows creating a prompt with the same title as one in another type', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    Prompt::factory()->create(['title' => 'Shared Title']);
+
+    $record = Prompt::factory()->make(['title' => 'shared title']);
+
+    livewire(CreatePrompt::class)
+        ->fillForm($record->toArray())
+        ->call('create')
+        ->assertHasNoFormErrors();
+});

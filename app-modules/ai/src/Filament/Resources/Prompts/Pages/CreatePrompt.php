@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Filament\Resources\Prompts\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
 use AdvisingApp\Ai\Models\Prompt;
+use App\Features\PromptTitleUniquePerTypeFeature;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use Filament\Forms\Components\Checkbox;
@@ -66,8 +67,9 @@ class CreatePrompt extends CreateRecord
                         TextInput::make('title')
                             ->unique(
                                 table: Prompt::class,
-                                modifyRuleUsing: fn (Unique $rule, Get $get): Unique => $rule
-                                    ->where('type_id', $get('type_id'))
+                                modifyRuleUsing: fn (Unique $rule, Get $get): Unique => (PromptTitleUniquePerTypeFeature::active()
+                                    ? $rule->where('type_id', $get('type_id'))
+                                    : $rule)
                                     ->withoutTrashed(),
                             )
                             ->required()
