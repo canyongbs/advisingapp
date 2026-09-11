@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use App\Features\PromptTitleUniquePerTypeFeature;
 use Database\Migrations\Concerns\FixesDuplicateNames;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Query\Builder;
@@ -75,12 +76,16 @@ return new class () extends Migration {
                 $table->uniqueIndex([...$this->groupByColumns, $this->column], $this->uniqueConstraint)
                     ->where(fn (Builder $condition) => $condition->whereNull('deleted_at'));
             });
+
+            PromptTitleUniquePerTypeFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
+            PromptTitleUniquePerTypeFeature::deactivate();
+
             Schema::table($this->table, function (Blueprint $table) {
                 $table->dropUniqueIndex($this->uniqueConstraint);
             });

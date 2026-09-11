@@ -5,6 +5,8 @@ created: 2026-09-03
 
 ## Feature Flags
 
+- App\Features\PromptTitleUniquePerTypeFeature
+
 ## Temporary Migrations
 
 ## Additional Cleanup

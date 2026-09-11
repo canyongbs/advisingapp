@@ -39,6 +39,7 @@ use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Ai\Settings\AiSettings;
 use App\Http\Requests\Tenants\SyncTenantRequest;
+use Illuminate\Validation\ValidationException;
 
 /**
  * @param array<string, mixed> $overrides
@@ -266,4 +267,32 @@ it('does not delete non-smart prompts', function () {
     ]));
 
     expect(Prompt::find($prompt->getKey()))->not->toBeNull();
+});
+
+it('throws a validation error when a smart prompt title conflicts with an existing custom prompt in the same category, instead of persisting any changes', function () {
+    $promptType = PromptType::factory()->create(['title' => 'Recruitment']);
+    Prompt::factory()->create([
+        'type_id' => $promptType->getKey(),
+        'title' => 'Draft an email',
+        'is_smart' => false,
+    ]);
+
+    $promptId = fake()->uuid();
+
+    expect(fn () => app(SyncTenantSmartPrompts::class)->execute(syncTenantRequest([
+        'smartPrompts' => [
+            [
+                'title' => 'Recruitment',
+                'smart_prompts' => [
+                    [
+                        'id' => $promptId,
+                        'title' => 'Draft an email',
+                        'prompt' => 'Write an email to a prospect.',
+                    ],
+                ],
+            ],
+        ],
+    ])))->toThrow(ValidationException::class);
+
+    expect(Prompt::find($promptId))->toBeNull();
 });

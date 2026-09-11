@@ -48,6 +48,7 @@ use App\Models\Tenant;
 use App\Settings\TenantExpirationSettings;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 use Throwable;
 
 class SyncTenantController
@@ -84,6 +85,8 @@ class SyncTenantController
                     app(SyncTenantSmartPrompts::class)->execute($request);
                 });
             });
+        } catch (ValidationException $exception) {
+            throw $exception;
         } catch (Throwable $exception) {
             report($exception);
 

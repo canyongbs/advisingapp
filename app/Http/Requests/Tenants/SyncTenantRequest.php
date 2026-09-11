@@ -36,9 +36,6 @@
 
 namespace App\Http\Requests\Tenants;
 
-use AdvisingApp\Ai\Models\Prompt;
-use AdvisingApp\Ai\Models\PromptType;
-use AdvisingApp\Ai\Models\Scopes\ConfidentialPromptScope;
 use App\Enums\SubscriptionStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -110,8 +107,6 @@ class SyncTenantRequest extends FormRequest
                     continue;
                 }
 
-                $promptType = PromptType::query()->where('title', (string) ($category['title'] ?? ''))->first();
-
                 $titles = [];
 
                 foreach ($smartPrompts as $promptIndex => $smartPrompt) {
@@ -119,8 +114,7 @@ class SyncTenantRequest extends FormRequest
                         continue;
                     }
 
-                    $rawTitle = (string) ($smartPrompt['title'] ?? '');
-                    $title = mb_strtolower($rawTitle);
+                    $title = mb_strtolower((string) ($smartPrompt['title'] ?? ''));
 
                     if (in_array($title, $titles, true)) {
                         $validator->errors()->add(
@@ -132,23 +126,6 @@ class SyncTenantRequest extends FormRequest
                     }
 
                     $titles[] = $title;
-
-                    if (! $promptType) {
-                        continue;
-                    }
-
-                    $conflictsWithExistingCustomPrompt = Prompt::withoutGlobalScope(ConfidentialPromptScope::class)
-                        ->where('type_id', $promptType->getKey())
-                        ->where('is_smart', false)
-                        ->where('title', $rawTitle)
-                        ->exists();
-
-                    if ($conflictsWithExistingCustomPrompt) {
-                        $validator->errors()->add(
-                            "smartPrompts.{$categoryIndex}.smart_prompts.{$promptIndex}.title",
-                            'The smart prompt title conflicts with an existing custom prompt in this category.',
-                        );
-                    }
                 }
             }
         });
