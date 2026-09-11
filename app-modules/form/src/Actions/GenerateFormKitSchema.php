@@ -82,8 +82,8 @@ class GenerateFormKitSchema
             fn (array $component): array | string => match ($component['type'] ?? null) {
                 'bulletList' => ['$el' => 'ul', 'children' => $this->content($blocks, $component['content'] ?? [], $submissible, $fields)],
                 'grid' => $this->grid($blocks, $component, $fields, $submissible),
-                'gridColumn' => ['$el' => 'div', 'children' => $this->content($blocks, $component['content'], $submissible, $fields), 'attrs' => ['class' => ['grid-col' => true]]],
-                'heading' => ['$el' => "h{$component['attrs']['level']}", 'children' => $this->content($blocks, $component['content'], $submissible, $fields)],
+                'gridColumn' => ['$el' => 'div', 'children' => $this->content($blocks, $component['content'] ?? [], $submissible, $fields), 'attrs' => ['class' => ['grid-col' => true]]],
+                'heading' => ['$el' => "h{$component['attrs']['level']}", 'children' => $this->content($blocks, $component['content'] ?? [], $submissible, $fields)],
                 'horizontalRule' => ['$el' => 'hr'],
                 'listItem' => ['$el' => 'li', 'children' => $this->content($blocks, $component['content'] ?? [], $submissible, $fields)],
                 'orderedList' => ['$el' => 'ol', 'children' => $this->content($blocks, $component['content'] ?? [], $submissible, $fields)],
