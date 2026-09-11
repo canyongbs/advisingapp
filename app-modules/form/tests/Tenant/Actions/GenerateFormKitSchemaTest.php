@@ -72,3 +72,35 @@ it('generates standardized wizard navigation', function () {
         ->not->toContain('"$el":"ul"')
         ->not->toContain('$setActiveStep');
 });
+
+it('renders an empty heading block without throwing', function () {
+    $form = Form::factory()->make();
+
+    $schema = app(GenerateFormKitSchema::class)->content([], [
+        ['type' => 'heading', 'attrs' => ['level' => 2]],
+    ], $form);
+
+    expect($schema[0])->toBe(['$el' => 'h2', 'children' => []]);
+});
+
+it('renders an empty grid column block without throwing', function () {
+    $form = Form::factory()->make();
+
+    $schema = app(GenerateFormKitSchema::class)->content([], [
+        ['type' => 'gridColumn'],
+    ], $form);
+
+    expect($schema[0])->toBe(['$el' => 'div', 'children' => [], 'attrs' => ['class' => ['grid-col' => true]]]);
+});
+
+it('renders a heading and grid column with content', function () {
+    $form = Form::factory()->make();
+
+    $schema = app(GenerateFormKitSchema::class)->content([], [
+        ['type' => 'heading', 'attrs' => ['level' => 2], 'content' => [['type' => 'text', 'text' => 'Title']]],
+        ['type' => 'gridColumn', 'content' => [['type' => 'text', 'text' => 'Column content']]],
+    ], $form);
+
+    expect($schema[0])->toBe(['$el' => 'h2', 'children' => ['Title']])
+        ->and($schema[1])->toBe(['$el' => 'div', 'children' => ['Column content'], 'attrs' => ['class' => ['grid-col' => true]]]);
+});
