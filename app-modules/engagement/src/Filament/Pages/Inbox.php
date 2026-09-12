@@ -117,7 +117,7 @@ class Inbox extends Page implements HasTable
                 TextColumn::make('sender.full_name')
                     ->label('From')
                     ->url(fn (EngagementResponse $record): ?string => match (true) {
-                        $record->sender instanceof Student => StudentResource::getUrl('view', ['record' => $record->sender]),
+                        $record->sender instanceof Student => StudentResource::getViewUrl($record->sender),
                         $record->sender instanceof Prospect => ProspectResource::getUrl('view', ['record' => $record->sender]),
                         default => null,
                     })

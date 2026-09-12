@@ -37,11 +37,18 @@
 namespace AdvisingApp\Form\Actions;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Builder;
 
 class ResolveSubmissionAuthorFromEmail
 {
-    public function __invoke(?string $email): Student | Prospect | null
+    /**
+     * Archived students are excluded by default, so a new submission is never attached to one.
+     * Pass `includingArchived` when identifying who authored an existing submission — they are
+     * still its author, so the record must keep resolving to them.
+     */
+    public function __invoke(?string $email, bool $includingArchived = false): Student | Prospect | null
     {
         if (blank($email)) {
             return null;
@@ -49,6 +56,7 @@ class ResolveSubmissionAuthorFromEmail
 
         /** @var Student $student */
         $student = Student::query()
+            ->when(! $includingArchived, fn (Builder $query): Builder => $query->tap(new WithoutArchivedStudents()))
             ->whereRelation('emailAddresses', 'address', $email)
             ->first();
 

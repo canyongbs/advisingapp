@@ -39,8 +39,10 @@ use AdvisingApp\Portal\Enums\PortalType;
 use AdvisingApp\Portal\Models\PortalAuthentication;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Support\AuthenticationCodeRateLimiter;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Testing\TestResponse;
 
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\withHeader;
@@ -49,58 +51,83 @@ beforeEach(function () {
     withHeader('Origin', config('app.url'));
 });
 
-$advisorDataset = [
-    fn () => CustomerAdvisor::factory()->create(['is_embed_enabled' => true]),
-];
+/**
+ * Creates an embed enabled advisor and an authentication holding $code for $student, and
+ * returns the signed confirm URL for the pair. The URL is returned rather than posted to
+ * so callers can hit the same authentication repeatedly.
+ */
+function customerAdvisorAuthenticationUrl(Student $student, string $code): string
+{
+    $advisor = CustomerAdvisor::factory()->create(['is_embed_enabled' => true]);
 
-it('locks out after too many invalid code attempts', function (CustomerAdvisor $advisor) {
-    $student = Student::factory()->create();
-    $code = '123456';
+    $authentication = PortalAuthentication::factory()
+        ->state([
+            'code' => Hash::make($code),
+            'educatable_id' => $student->getKey(),
+            'educatable_type' => $student->getMorphClass(),
+            'portal_type' => PortalType::CustomerAdvisorWidget,
+        ])
+        ->create();
 
-    $authentication = PortalAuthentication::factory()->create([
-        'educatable_type' => $student->getMorphClass(),
-        'educatable_id' => $student->getKey(),
-        'code' => Hash::make($code),
-        'portal_type' => PortalType::CustomerAdvisorWidget,
-    ]);
-
-    $invalidUrl = URL::signedRoute(
+    return URL::signedRoute(
         name: 'widgets.ai.customer-advisors.api.authentication.confirm',
         parameters: ['advisor' => $advisor, 'authentication' => $authentication],
     );
+}
+
+/**
+ * @return TestResponse<JsonResponse>
+ */
+function confirmCustomerAdvisorAuthentication(Student $student, string $code = '123456'): TestResponse
+{
+    return postJson(customerAdvisorAuthenticationUrl($student, $code), ['code' => $code]);
+}
+
+it('issues tokens for an active student', function () {
+    $student = Student::factory()->create();
+
+    confirmCustomerAdvisorAuthentication($student)
+        ->assertSuccessful()
+        ->assertJsonStructure(['access_token']);
+});
+
+// The middleware already rejects an archived student on every functional route, but redeeming
+// the code would still hand out a three day refresh cookie and report a successful sign in.
+it('rejects a code issued before the student was archived', function () {
+    $student = Student::factory()->create();
+    $student->archive();
+
+    confirmCustomerAdvisorAuthentication($student)
+        ->assertForbidden()
+        ->assertJson(['message' => 'Authentication code is expired.']);
+});
+
+it('locks out after too many invalid code attempts', function () {
+    $code = '123456';
+
+    $url = customerAdvisorAuthenticationUrl(Student::factory()->create(), $code);
 
     for ($attempt = 0; $attempt < AuthenticationCodeRateLimiter::MAX_ATTEMPTS; $attempt++) {
-        postJson($invalidUrl, ['code' => '654321'])
+        postJson($url, ['code' => '654321'])
             ->assertStatus(422)
             ->assertJsonValidationErrors(['code' => 'The provided code is invalid.']);
     }
 
     // Once locked out, even the correct code must be rejected.
-    postJson($invalidUrl, ['code' => $code])
+    postJson($url, ['code' => $code])
         ->assertStatus(422)
         ->assertJsonValidationErrors(['code' => 'Too many invalid attempts. Please request a new code.']);
-})->with($advisorDataset);
+});
 
-it('resets the attempt counter after a successful authentication', function (CustomerAdvisor $advisor) {
-    $student = Student::factory()->create();
+it('resets the attempt counter after a successful authentication', function () {
     $code = '123456';
 
-    $authentication = PortalAuthentication::factory()->create([
-        'educatable_type' => $student->getMorphClass(),
-        'educatable_id' => $student->getKey(),
-        'code' => Hash::make($code),
-        'portal_type' => PortalType::CustomerAdvisorWidget,
-    ]);
-
-    $invalidUrl = URL::signedRoute(
-        name: 'widgets.ai.customer-advisors.api.authentication.confirm',
-        parameters: ['advisor' => $advisor, 'authentication' => $authentication],
-    );
+    $url = customerAdvisorAuthenticationUrl(Student::factory()->create(), $code);
 
     // Record one failed attempt so the counter is non-zero before the successful attempt.
-    postJson($invalidUrl, ['code' => '654321'])->assertStatus(422);
+    postJson($url, ['code' => '654321'])->assertStatus(422);
 
-    postJson($invalidUrl, ['code' => $code])->assertSuccessful();
+    postJson($url, ['code' => $code])->assertSuccessful();
 
     // If the attempt counter were not reset on success, it would still be sitting at 1
     // from the failed attempt above, and locking out would happen sooner than a full
@@ -108,12 +135,12 @@ it('resets the attempt counter after a successful authentication', function (Cus
     // the exact same lockout sequence as the "locks out" test above: this only succeeds
     // if the counter was actually reset to zero.
     for ($attempt = 0; $attempt < AuthenticationCodeRateLimiter::MAX_ATTEMPTS; $attempt++) {
-        postJson($invalidUrl, ['code' => '111111'])
+        postJson($url, ['code' => '111111'])
             ->assertStatus(422)
             ->assertJsonValidationErrors(['code' => 'The provided code is invalid.']);
     }
 
-    postJson($invalidUrl, ['code' => '111111'])
+    postJson($url, ['code' => '111111'])
         ->assertStatus(422)
         ->assertJsonValidationErrors(['code' => 'Too many invalid attempts. Please request a new code.']);
-})->with($advisorDataset);
+});

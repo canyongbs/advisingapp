@@ -36,10 +36,16 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\InteractionResource;
+use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\EditInteraction;
 use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\StudentArchivingFeature;
 use App\Models\User;
+use Filament\Forms\Components\Select;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 test('EditInteraction is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -63,4 +69,72 @@ test('EditInteraction is gated with proper access control', function () {
             InteractionResource::getUrl('edit', ['record' => $interaction])
         )
         ->assertSuccessful();
+});
+
+describe('archived students', function () {
+    it('does not offer archived students in the related to select', function () {
+        asSuperAdmin();
+
+        $student = Student::factory()->create();
+        $interaction = Interaction::factory()->for($student, 'interactable')->create();
+
+        $archived = Student::factory()->create();
+        $archived->archive();
+
+        livewire(EditInteraction::class, ['record' => $interaction->getRouteKey()])
+            ->assertSchemaComponentExists(
+                'interactable_id',
+                checkComponentUsing: function (Select $field) use ($student, $archived): bool {
+                    $sisids = array_map(strval(...), array_keys($field->getSearchResults('')));
+
+                    expect($sisids)->toContain($student->getKey())
+                        ->and($sisids)->not->toContain($archived->getKey());
+
+                    return true;
+                },
+            );
+    });
+
+    it('still shows the archived student the interaction is already attached to', function () {
+        asSuperAdmin();
+
+        $archived = Student::factory()->state(['full_name' => 'Already Selected'])->create();
+        $interaction = Interaction::factory()->for($archived, 'interactable')->create();
+
+        $archived->archive();
+
+        livewire(EditInteraction::class, ['record' => $interaction->getRouteKey()])
+            ->assertSchemaComponentExists(
+                'interactable_id',
+                checkComponentUsing: function (Select $field): bool {
+                    expect($field->getOptionLabel())->toBe('Already Selected');
+
+                    return true;
+                },
+            );
+    });
+
+    it('still offers other students while the feature is inactive', function () {
+        asSuperAdmin();
+
+        StudentArchivingFeature::deactivate();
+
+        $student = Student::factory()->create();
+        $interaction = Interaction::factory()->for($student, 'interactable')->create();
+
+        $other = Student::factory()->create();
+
+        livewire(EditInteraction::class, ['record' => $interaction->getRouteKey()])
+            ->assertSchemaComponentExists(
+                'interactable_id',
+                checkComponentUsing: function (Select $field) use ($student, $other): bool {
+                    $sisids = array_map(strval(...), array_keys($field->getSearchResults('')));
+
+                    expect($sisids)->toContain($student->getKey())
+                        ->and($sisids)->toContain($other->getKey());
+
+                    return true;
+                },
+            );
+    });
 });

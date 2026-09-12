@@ -37,10 +37,12 @@
 namespace AdvisingApp\Group\Importers;
 
 use AdvisingApp\Group\Models\GroupSubject;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\Imports\ImportColumn;
 use Filament\Actions\Imports\Importer;
 use Filament\Actions\Imports\Models\Import;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -56,9 +58,13 @@ class StudentGroupSubjectImporter extends Importer
                 ->rules(['required'])
                 ->examples(['12345678', '87654321', '11223344'])
                 ->relationship(
+                    // The ID match is grouped so the archived filter applies to both
+                    // branches, rather than binding only to the `sisid` one.
                     resolveUsing: fn (mixed $state) => Student::query()
-                        ->where('sisid', $state)
-                        ->orWhere('otherid', $state)
+                        ->tap(new WithoutArchivedStudents())
+                        ->where(fn (Builder $query) => $query
+                            ->where('sisid', $state)
+                            ->orWhere('otherid', $state))
                         ->first(),
                 )
                 ->requiredMapping(),

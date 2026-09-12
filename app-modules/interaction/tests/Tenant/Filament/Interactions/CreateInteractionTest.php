@@ -37,13 +37,16 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\InteractionResource;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\CreateInteraction;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use App\Models\User;
+use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Config;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 test('CreateInteraction is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -97,5 +100,26 @@ it('interaction_confidential_users UserSelect shows all users when filter_admins
         ->assertSuccessful()
         ->assertFormFieldExists('interaction_confidential_users', checkFieldUsing: function (UserSelect $field) use ($adminUser): bool {
             return ! empty($field->getSearchResults($adminUser->name));
+        });
+});
+
+it('does not offer archived students in the related to select', function () {
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+
+    $archived = Student::factory()->create();
+    $archived->archive();
+
+    livewire(CreateInteraction::class)
+        ->assertSuccessful()
+        ->fillForm(['interactable_type' => $student->getMorphClass()])
+        ->assertFormFieldExists('interactable_id', checkFieldUsing: function (Select $field) use ($student, $archived): bool {
+            $sisids = array_map(strval(...), array_keys($field->getSearchResults('')));
+
+            expect($sisids)->toContain($student->getKey())
+                ->and($sisids)->not->toContain($archived->getKey());
+
+            return true;
         });
 });

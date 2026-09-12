@@ -116,7 +116,7 @@ class MostRecentTasksTable extends BaseWidget
                         return $concern->{$concern::displayNameKey()} ?? 'N/A';
                     })
                     ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {
-                        Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
+                        Student::class => StudentResource::getViewUrl($record->concern),
                         Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
                         default => null,
                     }),

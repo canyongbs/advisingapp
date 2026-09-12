@@ -47,6 +47,7 @@ use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Filament\Forms\Components\EducatableSelect;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Forms\Components\Checkbox;
@@ -91,8 +92,11 @@ class InteractionForm
                         ->searchable()
                         ->required()
                         ->types([
-                            ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [Type::make(Student::class)
-                                ->titleAttribute(Student::displayNameKey())] : []),
+                            // These steps only reach relation managers, where the select below is
+                            // hidden, so there is never an already-selected student to resolve
+                            // here. `getSteps()` receives the owning student or prospect rather
+                            // than the interaction, so the escape hatch could not be built anyway.
+                            ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [EducatableSelect::getStudentType(null, null)] : []),
                             ...(auth()->user()->hasLicense(Prospect::getLicenseType()) ? [Type::make(Prospect::class)
                                 ->titleAttribute(Prospect::displayNameKey())
                                 ->modifyOptionsQueryUsing(fn (Builder $query) => $query->tap(new ExcludeConvertedProspects())),

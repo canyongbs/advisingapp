@@ -46,6 +46,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ManageStudent
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudentActivityFeed;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudentAlerts;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\NavigationGroup;
 use App\Filament\Resources\Concerns\HasGlobalSearchResultScoring;
@@ -68,9 +69,37 @@ class StudentResource extends Resource
 
     protected static bool $isGloballySearchable = true;
 
+    /**
+     * Every page of this resource resolves its record through this query, so scoping it is
+     * what makes an archived student's pages unreachable — a stale or hand-typed URL 404s.
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            // The parent is typed `Builder<Model>` rather than `Builder<Student>`, and
+            // `Builder` is not covariant, so this resource's model cannot be proven here.
+            ->tap(new WithoutArchivedStudents()); // @phpstan-ignore argument.type
+    }
+
+    /**
+     * The view page URL for a student, or `null` once they are archived. Archived students
+     * still appear where they are referenced — past reports, existing interactions — but
+     * must not be linked from there, because their pages no longer resolve.
+     */
+    public static function getViewUrl(Student $student): ?string
+    {
+        if ($student->isArchived()) {
+            return null;
+        }
+
+        return static::getUrl('view', ['record' => $student]);
+    }
+
     public static function getGlobalSearchEloquentQuery(): Builder
     {
-        return parent::getGlobalSearchEloquentQuery()->with(['emailAddresses:id,address', 'phoneNumbers:id,number', 'primaryEmailAddress:id,address', 'primaryPhoneNumber:id,number']);
+        // Builds on `getEloquentQuery()`, so archived students are already excluded here.
+        return parent::getGlobalSearchEloquentQuery()
+            ->with(['emailAddresses:id,address', 'phoneNumbers:id,number', 'primaryEmailAddress:id,address', 'primaryPhoneNumber:id,number']);
     }
 
     public static function modifyGlobalSearchQuery(Builder $query, string $search): void

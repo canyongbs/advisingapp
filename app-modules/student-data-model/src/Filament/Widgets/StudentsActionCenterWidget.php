@@ -40,6 +40,7 @@ use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Enums\TaskStatus;
 use App\Enums\Feature;
@@ -70,6 +71,7 @@ class StudentsActionCenterWidget extends TableWidget
             ->heading('Action Center Records')
             ->query(function () use ($groupId, $startDate, $endDate): Builder {
                 $query = Student::query()
+                    ->tap(new WithoutArchivedStudents())
                     ->withCount([
                         'studentAlerts as alerts_count' => fn (Builder $query): Builder => $query->selectRaw('COUNT(DISTINCT alert_configuration_id)'),
                     ])
@@ -88,7 +90,7 @@ class StudentsActionCenterWidget extends TableWidget
                 TextColumn::make('full_name')
                     ->label('Student Name')
                     ->searchable()
-                    ->url(fn (Student $record): string => StudentResource::getUrl('view', ['record' => $record]))
+                    ->url(fn (Student $record): ?string => StudentResource::getViewUrl($record))
                     ->openUrlInNewTab(),
                 TextColumn::make('alerts_count')
                     ->label('Alerts')

@@ -40,6 +40,7 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentsStats;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
+use Carbon\Carbon;
 
 it('returns correct total student stats of students, concerns, groups and tasks within the given date range', function () {
     $startDate = now()->subDays(10);
@@ -161,4 +162,42 @@ it('returns correct total student stats of students, concerns, and tasks based o
     expect($stats[0]->getValue())->toEqual($count + 2)
         ->and($stats[1]->getValue())->toEqual($count)
         ->and($stats[2]->getValue())->toEqual($count);
+});
+
+it('does not count archived students in the total', function () {
+    $startDate = now()->subDays(10);
+    $endDate = now();
+
+    Student::factory()->count(3)->state(['created_at_source' => $startDate])->create();
+
+    $archived = Student::factory()->count(2)->state(['created_at_source' => $startDate])->create();
+
+    $widget = new StudentsStats();
+    $widget->cacheTag = 'report-student';
+    $widget->pageFilters = [
+        'startDate' => $startDate->toDateString(),
+        'endDate' => $endDate->toDateString(),
+    ];
+
+    expect($widget->getStats()[0]->getValue())->toEqual(5);
+
+    $archived->each(fn (Student $student) => $student->archive());
+
+    expect($widget->getStats()[0]->getValue())->toEqual(3);
+});
+
+// Archiving is not retroactive: a student archived in September was genuinely part of the
+// student body in March, so a report looking at March still has to count them.
+it('counts a student archived after the reported period', function () {
+    $student = Student::factory()->create(['created_at_source' => '2026-03-10']);
+    $student->forceFill(['archived_at' => Carbon::parse('2026-09-15')])->save();
+
+    $widget = new StudentsStats();
+    $widget->cacheTag = 'report-student';
+    $widget->pageFilters = [
+        'startDate' => '2026-03-01',
+        'endDate' => '2026-03-31',
+    ];
+
+    expect($widget->getStats()[0]->getValue())->toEqual(1);
 });

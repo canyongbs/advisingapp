@@ -182,6 +182,26 @@ it('updates a student', function () {
     }
 });
 
+// An archived student is unreachable by URL, so they cannot be updated through the API either.
+it('returns not found for an archived student', function () {
+    $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
+    $studentConfigurationSettings->is_enabled = true;
+    $studentConfigurationSettings->save();
+
+    $user = SystemUser::factory()->create();
+    $user->givePermissionTo(['student.view-any', 'student.*.update']);
+    Sanctum::actingAs($user, ['api']);
+
+    $student = Student::factory()->create();
+    $student->archive();
+
+    patchJson(
+        route('api.v1.students.update', ['student' => $student], false),
+        UpdateStudentRequestFactory::new()->create(),
+    )
+        ->assertNotFound();
+});
+
 it('updates a student\'s primary email address', function () {
     $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
     $studentConfigurationSettings->is_enabled = true;

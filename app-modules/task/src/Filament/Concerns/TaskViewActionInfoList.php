@@ -77,7 +77,7 @@ trait TaskViewActionInfoList
                             ->label('Related To')
                             ->state(fn (Task $record): ?string => $record->concern->{$record->concern::displayNameKey()})
                             ->url(fn (Task $record) => match ($record->concern::class) {
-                                Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
+                                Student::class => StudentResource::getViewUrl($record->concern),
                                 Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
                                 default => null,
                             })

@@ -46,6 +46,7 @@ use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Filament\Forms\Components\EducatableSelect;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\DateTimePicker;
@@ -74,8 +75,7 @@ class EditInteraction extends EditRecord
                     ->searchable()
                     ->required()
                     ->types([
-                        ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [Type::make(Student::class)
-                            ->titleAttribute(Student::displayNameKey())] : []),
+                        ...(auth()->user()->hasLicense(Student::getLicenseType()) ? [EducatableSelect::getStudentType('interactable_id', $this->getRecord())] : []),
                         ...(auth()->user()->hasLicense(Prospect::getLicenseType()) ? [
                             Type::make(Prospect::class)
                                 ->titleAttribute(Prospect::displayNameKey())

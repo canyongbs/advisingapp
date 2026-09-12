@@ -36,6 +36,7 @@
 
 namespace App\Filament\Widgets;
 
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -43,10 +44,10 @@ use Illuminate\Support\Number;
 
 class TotalStudents extends StatsOverviewWidget
 {
-    protected function getStats(): array
+    public function getStats(): array
     {
         return [
-            Stat::make('Total Students', Number::abbreviate(Student::count())),
+            Stat::make('Total Students', Number::abbreviate(Student::query()->tap(new WithoutArchivedStudents())->count())),
         ];
     }
 }

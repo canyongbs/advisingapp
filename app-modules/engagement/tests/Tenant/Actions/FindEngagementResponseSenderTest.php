@@ -71,3 +71,14 @@ it('returns null when no match is found', function () {
 
     expect($sender)->toBeNull();
 });
+
+it('does not match to an archived Student', function () {
+    $student = Student::factory()->create();
+    $phoneNumber = $student->phoneNumbers->first()->number;
+
+    expect(app(EngagementResponseSenderFinder::class)->find($phoneNumber))->not->toBeNull();
+
+    $student->archive();
+
+    expect(app(EngagementResponseSenderFinder::class)->find($phoneNumber))->toBeNull();
+});
