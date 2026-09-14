@@ -34,25 +34,31 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Form\Http\Controllers\FormPreviewController;
-use AdvisingApp\Form\Http\Controllers\SubmissionMediaDownloadController;
-use AdvisingApp\Form\Http\Middleware\EnsureFormsFeatureIsActive;
-use App\Livewire\RenderForm;
+use App\Models\Media;
 
-Route::prefix('forms')
-    ->name('forms.')
-    ->middleware([
-        'web',
-        EnsureFormsFeatureIsActive::class,
-    ])
-    ->group(function () {
-        Route::get('/{form}/respond', RenderForm::class)
-            ->name('show');
+describe('attachmentContentDisposition', function () {
+    it('builds an ISO-8859-1 safe disposition for a file name that is not Latin-1 representable', function () {
+        // macOS screenshots use a narrow no-break space (U+202F) before AM/PM, which S3 rejects in the header.
+        $media = new Media();
+        $media->file_name = "Screenshot-2026-09-08-at-7.48.39\u{202F}PM.jpg";
 
-        Route::get('/{form}/preview', FormPreviewController::class)
-            ->name('preview');
+        $disposition = $media->attachmentContentDisposition();
+
+        expect(mb_check_encoding($disposition, 'ISO-8859-1'))->toBeTrue()
+            ->and($disposition)->toStartWith('attachment;')
+            ->and($disposition)->toContain("filename*=utf-8''")
+            ->and(rawurldecode($disposition))->toContain($media->file_name);
     });
 
-Route::middleware(['web', 'auth', 'signed'])
-    ->get('form-submission-media/{media}/download', SubmissionMediaDownloadController::class)
-    ->name('form-submission-media.download');
+    it('builds a simple disposition for an ASCII file name', function () {
+        $media = new Media();
+        $media->file_name = 'report.png';
+
+        $disposition = $media->attachmentContentDisposition();
+
+        expect(mb_check_encoding($disposition, 'ISO-8859-1'))->toBeTrue()
+            ->and($disposition)->toStartWith('attachment;')
+            ->and($disposition)->toContain('report.png')
+            ->and($disposition)->not->toContain('filename*');
+    });
+});

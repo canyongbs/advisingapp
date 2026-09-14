@@ -44,7 +44,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Utilities\Get;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class EducatableUploadFormFieldBlock extends FormFieldBlock
 {
@@ -148,11 +148,10 @@ class EducatableUploadFormFieldBlock extends FormFieldBlock
         $media = (isset($field->pivot) && $field->pivot->hasMedia('files')) ? $field->pivot->getMedia('files')->map(fn ($media) => [
             'id' => $media->id,
             'name' => $media->file_name,
-            // @phpstan-ignore-next-line
-            'temporary_url' => Storage::disk($media->disk)->temporaryUrl(
-                $media->getPathRelativeToRoot(),
+            'temporary_url' => URL::temporarySignedRoute(
+                'form-submission-media.download',
                 now()->addDay(),
-                ['ResponseContentDisposition' => 'attachment; filename="' . $media->file_name . '"']
+                ['media' => $media->getKey()],
             ),
         ])
             ->toArray() : [];
