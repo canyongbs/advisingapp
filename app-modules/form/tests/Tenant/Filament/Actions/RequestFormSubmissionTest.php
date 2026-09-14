@@ -172,7 +172,7 @@ it('allows request_note to be optional', function () {
         ->and($submission->request_note)->toBeNull();
 });
 
-it('only lists forms with authentication enabled in the form select', function () {
+it('only lists forms with authentication enabled in the form select table', function () {
     Queue::fake();
 
     asSuperAdmin();
@@ -181,14 +181,12 @@ it('only lists forms with authentication enabled in the form select', function (
     $authenticatedForm = Form::factory()->create(['is_authenticated' => true]);
     $unauthenticatedForm = Form::factory()->create(['is_authenticated' => false]);
 
-    $options = Form::query()
+    $formIds = Form::query()
         ->where('is_authenticated', true)
-        ->limit(50)
-        ->pluck('name', 'id')
-        ->all();
+        ->pluck('id');
 
-    expect($options)->toHaveKey($authenticatedForm->id)
-        ->and($options)->not->toHaveKey($unauthenticatedForm->id);
+    expect($formIds)->toContain($authenticatedForm->id)
+        ->and($formIds)->not->toContain($unauthenticatedForm->id);
 });
 
 it('reuses an existing requested submission for the same form instead of creating a new one', function () {
