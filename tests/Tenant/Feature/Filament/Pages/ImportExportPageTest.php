@@ -39,9 +39,7 @@ use AdvisingApp\StudentDataModel\Filament\Pages\ManageStudentSyncs;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Filament\Clusters\ImportExport;
 use App\Filament\Imports\UserImporter;
-use App\Filament\Pages\ExportPage;
 use App\Filament\Pages\ImportExportPage;
-use App\Filament\Pages\ImportPage;
 use App\Models\Export;
 use App\Models\Import;
 use App\Models\User;
@@ -233,6 +231,7 @@ it('displays export records in the export table', function () {
     $export->save();
 
     livewire(ImportExportPage::class)
+        ->set('activeTab', 'export')
         ->assertCanSeeTableRecords([$export]);
 });
 
@@ -253,6 +252,7 @@ it('shows the export download button when the export is completed and the user h
     $export->save();
 
     livewire(ImportExportPage::class)
+        ->set('activeTab', 'export')
         ->assertTableActionVisible('download', $export);
 });
 
@@ -272,6 +272,7 @@ it('hides the export download button when the export is not completed', function
     $export->save();
 
     livewire(ImportExportPage::class)
+        ->set('activeTab', 'export')
         ->assertTableActionHidden('download', $export);
 });
 
@@ -291,6 +292,7 @@ it('hides the export download button when the user lacks the export_hub.import p
     $export->save();
 
     livewire(ImportExportPage::class)
+        ->set('activeTab', 'export')
         ->assertTableActionHidden('download', $export);
 });
 

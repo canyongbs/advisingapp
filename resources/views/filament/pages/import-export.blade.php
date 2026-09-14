@@ -69,7 +69,7 @@
         </div>
 
         <!-- Tab Content -->
-        <div class="mt-6">
+        <div class="mt-6" wire:key="table-{{ $activeTab }}">
             {{ $this->content }}
         </div>
     </div>

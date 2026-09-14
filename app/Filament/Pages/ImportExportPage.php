@@ -90,6 +90,14 @@ class ImportExportPage extends Page implements HasActions, HasForms, HasTable
         return $user->can('export_hub.view-any');
     }
 
+    public function updated($name): void
+    {
+        // Reset table state when tab changes
+        if ($name === 'activeTab') {
+            $this->resetTable();
+        }
+    }
+
     public function content(Schema $schema): Schema
     {
         return $schema->components([
