@@ -62,7 +62,7 @@ class EducatableEmailFormFieldBlock extends FormFieldBlock
 
     public static function configureEditorAction(Action $action): Action
     {
-        return $action->schema([
+        return $action->slideOver()->schema([
             Hidden::make('fieldId'),
             FilamentTextInput::make('label')
                 ->required()
