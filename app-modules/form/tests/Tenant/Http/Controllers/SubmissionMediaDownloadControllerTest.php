@@ -98,7 +98,9 @@ describe('SubmissionMediaDownloadController', function () {
     it('redirects to a temporary url whose content disposition is ISO-8859-1 safe for a non-Latin-1 filename', function () {
         $captured = null;
 
-        Storage::disk('s3')->buildTemporaryUrlsUsing(function (string $path, $expiration, array $options) use (&$captured): string {
+        $disk = Storage::disk('s3');
+
+        $disk->buildTemporaryUrlsUsing(function (string $path, DateTimeInterface $expiration, array $options) use (&$captured): string {
             $captured = $options['ResponseContentDisposition'] ?? null;
 
             return 'https://s3.test/' . $path;
