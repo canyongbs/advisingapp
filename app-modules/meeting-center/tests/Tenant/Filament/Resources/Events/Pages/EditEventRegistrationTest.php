@@ -40,6 +40,8 @@ use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use App\Settings\LicenseSettings;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Section;
 
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
@@ -50,6 +52,34 @@ function editEventRegistrationTestSetup(): void
     $settings->data->addons->eventManagement = true;
     $settings->save();
 }
+
+it('groups the multi-step toggle under an Options section', function () {
+    editEventRegistrationTestSetup();
+
+    asSuperAdmin();
+
+    $belongsToSection = function (Component $component, string $heading): bool {
+        $container = $component->getContainer();
+
+        while ($container !== null) {
+            $parent = $container->getParentComponent();
+
+            if ($parent instanceof Section) {
+                return $parent->getHeading() === $heading;
+            }
+
+            $container = $parent?->getContainer();
+        }
+
+        return false;
+    };
+
+    $event = Event::factory()->create();
+
+    livewire(EditEventRegistration::class, ['record' => $event->getKey()])
+        ->assertSuccessful()
+        ->assertSchemaComponentExists('eventRegistrationForm.is_wizard', checkComponentUsing: fn (Component $component): bool => $belongsToSection($component, 'Options'));
+});
 
 it('creates a new version and archives the old one when saving the registration form', function () {
     editEventRegistrationTestSetup();

@@ -39,14 +39,43 @@ use AdvisingApp\Application\Filament\Resources\Applications\Pages\CreateApplicat
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Section;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 // TODO: Write CreateApplication tests
 //test('A successful action on the CreateApplication page', function () {});
 //
 //test('CreateApplication requires valid data', function ($data, $errors) {})->with([]);
+
+it('groups the name field under a Properties section and the embed and wizard toggles under an Options section', function () {
+    asSuperAdmin();
+
+    $belongsToSection = function (Component $component, string $heading): bool {
+        $container = $component->getContainer();
+
+        while ($container !== null) {
+            $parent = $container->getParentComponent();
+
+            if ($parent instanceof Section) {
+                return $parent->getHeading() === $heading;
+            }
+
+            $container = $parent?->getContainer();
+        }
+
+        return false;
+    };
+
+    livewire(CreateApplication::class)
+        ->assertSuccessful()
+        ->assertSchemaComponentExists('name', checkComponentUsing: fn (Component $component): bool => $belongsToSection($component, 'Properties'))
+        ->assertSchemaComponentExists('embed_enabled', checkComponentUsing: fn (Component $component): bool => $belongsToSection($component, 'Options'))
+        ->assertSchemaComponentExists('is_wizard', checkComponentUsing: fn (Component $component): bool => $belongsToSection($component, 'Options'));
+});
 
 // Permission Tests
 

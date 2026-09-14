@@ -34,10 +34,7 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
-use AdvisingApp\Form\Filament\Resources\Forms\Pages\EditForm;
-use AdvisingApp\Form\Models\Form;
-use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Form\Filament\Resources\Forms\Pages\CreateForm;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Section;
 
@@ -63,75 +60,9 @@ it('groups the name field under a Properties section and the embed and wizard to
         return false;
     };
 
-    $form = Form::factory()->create();
-
-    livewire(EditForm::class, ['record' => $form->getRouteKey()])
+    livewire(CreateForm::class)
         ->assertSuccessful()
         ->assertSchemaComponentExists('name', checkComponentUsing: fn (Component $component): bool => $belongsToSection($component, 'Properties'))
         ->assertSchemaComponentExists('embed_enabled', checkComponentUsing: fn (Component $component): bool => $belongsToSection($component, 'Options'))
         ->assertSchemaComponentExists('is_wizard', checkComponentUsing: fn (Component $component): bool => $belongsToSection($component, 'Options'));
-});
-
-it('archive action is always visible and labeled Archive', function () {
-    asSuperAdmin();
-
-    $formWithSubmissions = Form::factory()->create();
-
-    FormSubmission::factory()->create([
-        'form_id' => $formWithSubmissions->id,
-        'submitted_at' => now(),
-    ]);
-
-    $formWithoutSubmissions = Form::factory()->create();
-
-    livewire(EditForm::class, ['record' => $formWithSubmissions->getRouteKey()])
-        ->assertActionVisible('archive')
-        ->assertActionHasLabel('archive', 'Archive');
-
-    livewire(EditForm::class, ['record' => $formWithoutSubmissions->getRouteKey()])
-        ->assertActionVisible('archive')
-        ->assertActionHasLabel('archive', 'Archive');
-});
-
-it('archive action archives the form and redirects to the index when the form has submissions', function () {
-    asSuperAdmin();
-
-    $form = Form::factory()->create();
-
-    FormSubmission::factory()->create([
-        'form_id' => $form->id,
-        'submitted_at' => now(),
-    ]);
-
-    livewire(EditForm::class, ['record' => $form->getRouteKey()])
-        ->callAction('archive')
-        ->assertRedirect(FormResource::getUrl('index'));
-
-    expect($form->fresh()->isArchived())->toBeTrue();
-});
-
-it('does not allow updating a form to a name matching another non-archived form case-insensitively', function () {
-    asSuperAdmin();
-
-    Form::factory()->create(['name' => 'Other Form']);
-    $form = Form::factory()->create(['name' => 'Editable Form']);
-
-    livewire(EditForm::class, ['record' => $form->getRouteKey()])
-        ->fillForm(['name' => 'other form'])
-        ->call('save')
-        ->assertHasFormErrors(['name' => 'unique']);
-});
-
-it('allows updating a form to a name freed up by an archived form case-insensitively', function () {
-    asSuperAdmin();
-
-    $archivedForm = Form::factory()->create(['name' => 'Reusable Name']);
-    $archivedForm->archive();
-
-    $form = Form::factory()->create(['name' => 'Editable Form']);
-
-    livewire(EditForm::class, ['record' => $form->getRouteKey()])
-        ->fillForm(['name' => 'reusable name'])
-        ->call('save')
-        ->assertHasNoFormErrors();
 });
