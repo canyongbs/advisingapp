@@ -38,12 +38,15 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Actions\DeliverFormSubmissionRequestByEmail;
 use AdvisingApp\Form\Actions\DeliverFormSubmissionRequestBySms;
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
+use AdvisingApp\Form\Filament\Tables\RequestableFormsTable;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\FormSubmissionsRelationManager;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use Filament\Forms\Components\TableSelect\Livewire\TableSelectLivewireComponent;
+use Filament\Tables\Table;
 use Illuminate\Support\Facades\Queue;
 
 use function Pest\Livewire\livewire;
@@ -181,12 +184,31 @@ it('only lists forms with authentication enabled in the form select table', func
     $authenticatedForm = Form::factory()->create(['is_authenticated' => true]);
     $unauthenticatedForm = Form::factory()->create(['is_authenticated' => false]);
 
-    $formIds = Form::query()
-        ->where('is_authenticated', true)
+    $formIds = RequestableFormsTable::configure(Table::make(new TableSelectLivewireComponent()))
+        ->getQuery()
         ->pluck('id');
 
     expect($formIds)->toContain($authenticatedForm->id)
         ->and($formIds)->not->toContain($unauthenticatedForm->id);
+});
+
+it('rejects a form_id belonging to a form without authentication enabled', function () {
+    Queue::fake();
+
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+    $unauthenticatedForm = Form::factory()->create(['is_authenticated' => false]);
+
+    livewire(FormSubmissionsRelationManager::class, [
+        'ownerRecord' => $student,
+        'pageClass' => ViewStudent::class,
+    ])
+        ->callTableAction('Request', data: [
+            'form_id' => $unauthenticatedForm->id,
+            'request_method' => FormSubmissionRequestDeliveryMethod::Email->value,
+        ])
+        ->assertHasTableActionErrors(['form_id']);
 });
 
 it('reuses an existing requested submission for the same form instead of creating a new one', function () {
