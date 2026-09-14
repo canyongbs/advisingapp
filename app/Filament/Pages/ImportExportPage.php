@@ -17,7 +17,7 @@
       in the software, and you may not remove or obscure any functionality in the
       software that is protected by the license key.
     - You may not alter, remove, or obscure any licensing, copyright, or other notices
-      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      of the licensor in the software. Any use of the licensor's trademarks is subject
       to applicable law.
     - Canyon GBS Inc. respects the intellectual property rights of others and expects the
       same in return. Canyon GBS® and Advising App® are registered trademarks of
@@ -36,7 +36,9 @@
 
 namespace App\Filament\Pages;
 
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Filament\Clusters\ImportExport;
+use App\Models\Export;
 use App\Models\Import;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -54,22 +56,26 @@ use Filament\Tables\Table;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Url as UrlAttribute;
 
-class ImportPage extends Page implements HasActions, HasForms, HasTable
+class ImportExportPage extends Page implements HasActions, HasForms, HasTable
 {
     use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
 
-    protected static bool $shouldRegisterNavigation = false;
+    protected string $view = 'filament.pages.import-export';
 
-    protected static ?string $navigationLabel = 'Import';
+    protected static ?string $navigationLabel = 'Import/Export';
 
-    protected static ?string $title = 'Import';
+    protected static ?string $title = 'Import/Export';
 
     protected static ?int $navigationSort = 10;
 
     protected static ?string $cluster = ImportExport::class;
+
+    #[UrlAttribute]
+    public string $activeTab = 'import';
 
     /**
      * @var array<int|string, bool>
@@ -92,6 +98,15 @@ class ImportPage extends Page implements HasActions, HasForms, HasTable
     }
 
     public function table(Table $table): Table
+    {
+        return match ($this->activeTab) {
+            'export' => $this->getExportTable($table),
+            'student-sync' => $this->getStudentSyncTable($table),
+            default => $this->getImportTable($table),
+        };
+    }
+
+    protected function getImportTable(Table $table): Table
     {
         $canDownload = auth()->user()->can('export_hub.import');
 
@@ -129,6 +144,53 @@ class ImportPage extends Page implements HasActions, HasForms, HasTable
                     ->visible(fn (Import $record) => $canDownload
                         && $record->completed_at !== null
                         && $this->importFileExists($record)),
+            ]);
+    }
+
+    protected function getExportTable(Table $table): Table
+    {
+        return $table
+            ->query(Export::query()->with('user'))
+            ->defaultSort('created_at', 'desc')
+            ->columns([
+                TextColumn::make('requestor')
+                    ->getStateUsing(function (Export $record): ?string {
+                        return $record->user->name ?? null;
+                    }),
+                TextColumn::make('exporter')
+                    ->label('Export Name')
+                    ->getStateUsing(function (Export $record): string {
+                        if (defined($record->exporter . '::EXPORT_NAME')) {
+                            return constant($record->exporter . '::EXPORT_NAME') . ' Export';
+                        }
+
+                        return Str::of(class_basename($record->exporter))
+                            ->replaceLast('Exporter', '')
+                            ->headline() . ' Export';
+                    }),
+                TextColumn::make('created_at')
+                    ->label('Date Started')
+                    ->dateTime(),
+                TextColumn::make('completed_at')
+                    ->label('Date Completed')
+                    ->dateTime(),
+            ])->recordActions([
+                Action::make('download')
+                    ->label('Download')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->url(fn (Export $record) => URL::signedRoute('exports.download', $record))
+                    ->visible(fn (Export $record) => $record->completed_at !== null && auth()->user()->can('export_hub.import')),
+            ]);
+    }
+
+    protected function getStudentSyncTable(Table $table): Table
+    {
+        // Return a placeholder table for Student Sync
+        // The actual content will be handled by StudentDataImportsTable Livewire component
+        return $table
+            ->query(Import::query()->with('user'))
+            ->columns([
+                TextColumn::make('requestor'),
             ]);
     }
 

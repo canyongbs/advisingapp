@@ -38,12 +38,11 @@ namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Filament\Clusters\ImportExport;
-use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
 
 class ManageStudentSyncs extends Page
 {
-    protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
+    protected static bool $shouldRegisterNavigation = false;
 
     protected static ?string $navigationLabel = 'Student Sync';
 

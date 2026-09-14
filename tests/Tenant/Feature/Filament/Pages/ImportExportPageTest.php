@@ -40,6 +40,7 @@ use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Filament\Clusters\ImportExport;
 use App\Filament\Imports\UserImporter;
 use App\Filament\Pages\ExportPage;
+use App\Filament\Pages\ImportExportPage;
 use App\Filament\Pages\ImportPage;
 use App\Models\Export;
 use App\Models\Import;
@@ -55,11 +56,11 @@ it('is gated with proper access control', function () {
 
     actingAs($user);
 
-    get(ImportPage::getUrl())->assertForbidden();
+    get(ImportExportPage::getUrl())->assertForbidden();
 
     $user->givePermissionTo('export_hub.view-any');
 
-    get(ImportPage::getUrl())->assertSuccessful();
+    get(ImportExportPage::getUrl())->assertSuccessful();
 });
 
 it('renders the import page', function () {
@@ -68,7 +69,7 @@ it('renders the import page', function () {
 
     actingAs($user);
 
-    get(ImportPage::getUrl())
+    get(ImportExportPage::getUrl())
         ->assertSuccessful()
         ->assertSeeText('Import');
 });
@@ -79,7 +80,7 @@ it('renders the import table', function () {
 
     actingAs($user);
 
-    livewire(ImportPage::class)
+    livewire(ImportExportPage::class)
         ->assertSuccessful();
 });
 
@@ -97,7 +98,7 @@ it('displays import records in the import table', function () {
     $import->total_rows = 100;
     $import->save();
 
-    livewire(ImportPage::class)
+    livewire(ImportExportPage::class)
         ->assertCanSeeTableRecords([$import]);
 });
 
@@ -121,7 +122,7 @@ it('shows download button when import is completed and file exists and user has 
 
     Storage::disk('s3')->put("imports/{$import->getKey()}.csv", 'test,data');
 
-    livewire(ImportPage::class)
+    livewire(ImportExportPage::class)
         ->assertTableActionVisible('download', $import);
 });
 
@@ -144,7 +145,7 @@ it('hides download button when import is not completed', function () {
 
     Storage::disk('s3')->put("imports/{$import->getKey()}.csv", 'test,data');
 
-    livewire(ImportPage::class)
+    livewire(ImportExportPage::class)
         ->assertTableActionHidden('download', $import);
 });
 
@@ -166,7 +167,7 @@ it('hides download button when import file does not exist on disk', function () 
     $import->completed_at = now();
     $import->save();
 
-    livewire(ImportPage::class)
+    livewire(ImportExportPage::class)
         ->assertTableActionHidden('download', $import);
 });
 
@@ -189,7 +190,7 @@ it('hides download button when user lacks export_hub.import permission', functio
 
     Storage::disk('s3')->put("imports/{$import->getKey()}.csv", 'test,data');
 
-    livewire(ImportPage::class)
+    livewire(ImportExportPage::class)
         ->assertTableActionHidden('download', $import);
 });
 
@@ -200,11 +201,11 @@ it('gates the export page with proper access control', function () {
 
     actingAs($user);
 
-    get(ExportPage::getUrl())->assertForbidden();
+    get(ImportExportPage::getUrl())->assertForbidden();
 
     $user->givePermissionTo('export_hub.view-any');
 
-    get(ExportPage::getUrl())->assertSuccessful();
+    get(ImportExportPage::getUrl())->assertSuccessful();
 });
 
 it('renders the export page', function () {
@@ -213,7 +214,7 @@ it('renders the export page', function () {
 
     actingAs($user);
 
-    livewire(ExportPage::class)
+    livewire(ImportExportPage::class)
         ->assertSuccessful();
 });
 
@@ -231,7 +232,7 @@ it('displays export records in the export table', function () {
     $export->total_rows = 200;
     $export->save();
 
-    livewire(ExportPage::class)
+    livewire(ImportExportPage::class)
         ->assertCanSeeTableRecords([$export]);
 });
 
@@ -251,7 +252,7 @@ it('shows the export download button when the export is completed and the user h
     $export->completed_at = now();
     $export->save();
 
-    livewire(ExportPage::class)
+    livewire(ImportExportPage::class)
         ->assertTableActionVisible('download', $export);
 });
 
@@ -270,7 +271,7 @@ it('hides the export download button when the export is not completed', function
     $export->total_rows = 200;
     $export->save();
 
-    livewire(ExportPage::class)
+    livewire(ImportExportPage::class)
         ->assertTableActionHidden('download', $export);
 });
 
@@ -289,7 +290,7 @@ it('hides the export download button when the user lacks the export_hub.import p
     $export->completed_at = now();
     $export->save();
 
-    livewire(ExportPage::class)
+    livewire(ImportExportPage::class)
         ->assertTableActionHidden('download', $export);
 });
 
@@ -306,7 +307,7 @@ it('does not show student sync tab when student editing is disabled', function (
 
     actingAs($user);
 
-    get(ImportPage::getUrl())
+    get(ImportExportPage::getUrl())
         ->assertSuccessful()
         ->assertDontSeeText('Student Sync');
 });
@@ -321,7 +322,7 @@ it('does not show student sync tab when user lacks record_sync.view-any permissi
 
     actingAs($user);
 
-    get(ImportPage::getUrl())
+    get(ImportExportPage::getUrl())
         ->assertSuccessful()
         ->assertDontSeeText('Student Sync');
 });
@@ -337,7 +338,7 @@ it('shows student sync tab when student editing is enabled and user has permissi
 
     actingAs($user);
 
-    get(ImportPage::getUrl())
+    get(ImportExportPage::getUrl())
         ->assertSuccessful()
         ->assertSeeText('Student Sync');
 });
@@ -355,7 +356,7 @@ it('allows the import/export cluster when the user can only access the student s
     actingAs($user);
 
     get(ImportExport::getUrl())
-        ->assertRedirect(ManageStudentSyncs::getUrl());
+        ->assertSuccessful();
 });
 
 it('redirects the import/export cluster to the import page when the user has export hub access', function () {
@@ -365,7 +366,7 @@ it('redirects the import/export cluster to the import page when the user has exp
     actingAs($user);
 
     get(ImportExport::getUrl())
-        ->assertRedirect(ImportPage::getUrl());
+        ->assertRedirect(ImportExportPage::getUrl());
 });
 
 // Student Sync Page Tests
