@@ -144,4 +144,3 @@ function observeRichEditorCustomBlocks() {
 }
 
 document.addEventListener('DOMContentLoaded', observeRichEditorCustomBlocks);
-
