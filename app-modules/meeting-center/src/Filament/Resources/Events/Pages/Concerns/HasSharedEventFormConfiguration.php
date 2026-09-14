@@ -160,7 +160,8 @@ trait HasSharedEventFormConfiguration
                         ->columnSpanFull(),
                     Section::make('Appearance')
                         ->schema([
-                            ColorSelect::make('primary_color'),
+                            ColorSelect::make('primary_color')
+                                ->label('Color family (theme)'),
                             Select::make('rounding')
                                 ->options(Rounding::class),
                         ])
