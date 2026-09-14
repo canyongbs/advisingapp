@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Form\Filament\Blocks\EducatableUploadFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\UploadFormFieldBlock;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormField;
@@ -53,7 +54,7 @@ use function Tests\asSuperAdmin;
 
 /**
  * A macOS screenshot name: the space before "PM" is a narrow no-break space (U+202F),
- * which is not representable in ISO-8859-1 and is what breaks the raw S3 download link.
+ * which is not representable in ASCII and is what breaks the raw S3 download link.
  */
 function nonLatin1FileName(): string
 {
@@ -95,7 +96,7 @@ beforeEach(function () {
 });
 
 describe('SubmissionMediaDownloadController', function () {
-    it('redirects to a temporary url whose content disposition is ISO-8859-1 safe for a non-Latin-1 filename', function () {
+    it('redirects to a temporary url whose content disposition is ASCII safe for a non-Latin-1 filename', function () {
         $captured = null;
 
         $disk = Storage::disk('s3');
@@ -119,7 +120,7 @@ describe('SubmissionMediaDownloadController', function () {
         get($url)->assertRedirect();
 
         expect($captured)->not->toBeNull()
-            ->and(mb_check_encoding($captured, 'ISO-8859-1'))->toBeTrue()
+            ->and(mb_check_encoding($captured, 'ASCII'))->toBeTrue()
             ->and($captured)->toStartWith('attachment;')
             ->and($captured)->toContain("filename*=utf-8''");
     });
@@ -131,6 +132,30 @@ describe('SubmissionMediaDownloadController', function () {
 
         get(route('form-submission-media.download', ['media' => $media->getKey()]))
             ->assertForbidden();
+    });
+
+    it('redirects a guest to login even with a valid signature', function () {
+        $downloaded = false;
+
+        Storage::disk('s3')->buildTemporaryUrlsUsing(function () use (&$downloaded): string {
+            $downloaded = true;
+
+            return 'https://s3.test/leaked';
+        });
+
+        [, $media] = createSubmissionFieldWithMedia('report.png');
+
+        $url = URL::temporarySignedRoute(
+            'form-submission-media.download',
+            now()->addDay(),
+            ['media' => $media->getKey()],
+        );
+
+        // The auth middleware must run before the file is served, so a valid signature alone
+        // (with no authenticated panel user) cannot expose the download link.
+        get($url)->assertRedirect(url('/'));
+
+        expect($downloaded)->toBeFalse();
     });
 
     it('aborts when the media is not in the files collection', function () {
@@ -150,17 +175,17 @@ describe('SubmissionMediaDownloadController', function () {
     });
 });
 
-describe('UploadFormFieldBlock submission state', function () {
-    it('builds a sanitizer-safe signed download route instead of a raw storage url', function () {
+describe('upload block submission state', function () {
+    it('builds a sanitizer-safe signed download route instead of a raw storage url', function (string $block) {
         [$field, $media] = createSubmissionFieldWithMedia(nonLatin1FileName());
 
-        $state = UploadFormFieldBlock::getSubmissionState($field, null);
+        $state = $block::getSubmissionState($field, null);
 
         $url = $state['media'][0]['temporary_url'];
 
         // The link is a clean, ASCII-only internal route, so it survives the submission HTML sanitizer.
         expect($url)->toContain('/form-submission-media/' . $media->getKey() . '/download')
-            ->and(mb_check_encoding($url, 'ISO-8859-1'))->toBeTrue();
+            ->and(mb_check_encoding($url, 'ASCII'))->toBeTrue();
 
         $config = app(HtmlSanitizerConfig::class);
         $sanitized = (new HtmlSanitizer($config))->sanitize(
@@ -168,5 +193,8 @@ describe('UploadFormFieldBlock submission state', function () {
         );
 
         expect($sanitized)->toContain('href');
-    });
+    })->with([
+        'UploadFormFieldBlock' => [UploadFormFieldBlock::class],
+        'EducatableUploadFormFieldBlock' => [EducatableUploadFormFieldBlock::class],
+    ]);
 });
