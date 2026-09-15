@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Engagement\Filament\Pages\Inbox;
 use AdvisingApp\Engagement\Filament\Pages\SentItems;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Models\EmailMessage;
@@ -55,6 +56,17 @@ use App\Models\User;
 
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
+
+it('renders the unified inbox tabs as the table header instead of the cluster sub-navigation', function () {
+    asSuperAdmin();
+
+    expect(app(SentItems::class)->getSubNavigation())->toBe([]);
+
+    livewire(SentItems::class)
+        ->assertSeeHtml('fi-unified-inbox-tabs')
+        ->assertSeeHtml(Inbox::getUrl())
+        ->assertSeeText('Inbox');
+});
 
 it('displays the type column with channel icon, email address, and healthy status for email engagements', function () {
     asSuperAdmin();

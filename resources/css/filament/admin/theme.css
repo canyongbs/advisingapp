@@ -40,6 +40,16 @@
     min-width: 20rem;
 }
 
+/* Unified Inbox contained tabs: render the Inbox / Sent Items tabs as the header
+   of the same container as the table, rather than as a separate floating pill. */
+.fi-unified-inbox-ctn {
+    @apply rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10;
+}
+
+.fi-unified-inbox-ctn .fi-ta-ctn {
+    @apply rounded-none bg-transparent shadow-none ring-0 dark:bg-transparent;
+}
+
 /* Bright Sun */
 .dark {
     --primary-50: rgb(255, 251, 235);

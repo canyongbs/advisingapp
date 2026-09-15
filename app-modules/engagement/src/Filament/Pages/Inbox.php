@@ -95,6 +95,17 @@ class Inbox extends Page implements HasTable
         return $user->can('engagement_response.*.view');
     }
 
+    /**
+     * Hide the default cluster sub-navigation so the Unified Inbox tabs can be
+     * rendered as a contained header attached to the table container instead.
+     *
+     * @return array<NavigationItem>
+     */
+    public function getSubNavigation(): array
+    {
+        return [];
+    }
+
     public function table(Table $table): Table
     {
         return $table

@@ -31,10 +31,21 @@
     
     </COPYRIGHT>
 --}}
-<x-filament-panels::page>
-    <div class="fi-unified-inbox-ctn">
-        @include('engagement::filament.pages.partials.unified-inbox-tabs', ['active' => 'sent-items'])
+@php
+    use AdvisingApp\Engagement\Filament\Pages\Inbox;
+    use AdvisingApp\Engagement\Filament\Pages\SentItems;
+@endphp
 
-        {{ $this->table }}
-    </div>
-</x-filament-panels::page>
+<x-filament::tabs :contained="true" class="fi-unified-inbox-tabs">
+    @if (Inbox::canAccess())
+        <x-filament::tabs.item tag="a" :href="Inbox::getUrl()" :active="($active ?? null) === 'inbox'">
+            Inbox
+        </x-filament::tabs.item>
+    @endif
+
+    @if (SentItems::canAccess())
+        <x-filament::tabs.item tag="a" :href="SentItems::getUrl()" :active="($active ?? null) === 'sent-items'">
+            Sent Items
+        </x-filament::tabs.item>
+    @endif
+</x-filament::tabs>
