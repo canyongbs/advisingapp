@@ -68,20 +68,22 @@ abstract class FormFieldBlock extends RichContentCustomBlock
 
     public static function configureEditorAction(Action $action): Action
     {
-        return $action->schema([
-            Hidden::make('fieldId'),
-            TextInput::make('label')
-                ->required()
-                ->string()
-                ->maxLength(255),
-            TextInput::make('description')
-                ->label('Field Description')
-                ->string()
-                ->maxLength(255),
-            Checkbox::make('isRequired')
-                ->label('Required'),
-            ...static::fields(),
-        ]);
+        return $action
+            ->slideOver()
+            ->schema([
+                Hidden::make('fieldId'),
+                TextInput::make('label')
+                    ->required()
+                    ->string()
+                    ->maxLength(255),
+                TextInput::make('description')
+                    ->label('Field Description')
+                    ->string()
+                    ->maxLength(255),
+                Checkbox::make('isRequired')
+                    ->label('Required'),
+                ...static::fields(),
+            ]);
     }
 
     public static function getPreviewLabel(array $config): string
