@@ -34,33 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
-
-use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\Portal\Http\Middleware\AuthenticateIfRequiredByPortalDefinition;
+use AdvisingApp\Portal\Settings\PortalSettings;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Http\Controllers\Controller;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Laravel\Sanctum\PersonalAccessToken;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class ResourceHubPortalUserController extends Controller
+function handleResourceHubPortalRequest(Student $student): Response
 {
-    public function __invoke(Request $request): Educatable|JsonResponse
-    {
-        // Resolve the portal token directly rather than through the Sanctum guard, which would
-        // otherwise return an ambient first-party session user (e.g. a logged-in admin) instead.
-        $accessToken = PersonalAccessToken::findToken((string) $request->bearerToken());
+    $settings = app(PortalSettings::class);
+    $settings->resource_hub_portal_requires_authentication = true;
+    $settings->save();
 
-        $educatable = $accessToken?->tokenable;
+    $token = $student->createToken('resource-hub-portal-access-token', ['resource-hub-portal'])->plainTextToken;
 
-        if (! ($educatable instanceof Educatable) || ! $accessToken->can('resource-hub-portal')) {
-            return response()->json(['message' => 'Unauthenticated.'], 401);
-        }
+    $request = Request::create('/', 'GET');
+    $request->headers->set('Authorization', "Bearer {$token}");
 
-        if ($educatable instanceof Student && $educatable->isArchived()) {
-            return response()->json(['message' => 'Unauthenticated.'], 401);
-        }
-
-        return $educatable;
-    }
+    return app(AuthenticateIfRequiredByPortalDefinition::class)->handle(
+        $request,
+        fn (): Response => response()->json(['ok' => true]),
+    );
 }
+
+it('allows a student with a valid token through', function () {
+    $student = Student::factory()->create();
+
+    expect(handleResourceHubPortalRequest($student)->getStatusCode())->toBe(200);
+});
+
+it('rejects a token belonging to an archived student', function () {
+    $student = Student::factory()->create();
+    $student->archive();
+
+    handleResourceHubPortalRequest($student);
+})->throws(HttpException::class);

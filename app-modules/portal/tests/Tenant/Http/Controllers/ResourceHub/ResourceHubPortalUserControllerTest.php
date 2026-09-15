@@ -101,3 +101,16 @@ it('does not authenticate a request without a token', function () {
     getJson(route('portals.user.auth-check'))
         ->assertUnauthorized();
 });
+
+it('does not authenticate a token belonging to an archived student', function () {
+    $student = Student::factory()->create();
+
+    $token = $student->createToken('resource-hub-portal-access-token', ['resource-hub-portal']);
+
+    $student->archive();
+
+    getJson(route('portals.user.auth-check'), [
+        'Authorization' => "Bearer {$token->plainTextToken}",
+    ])
+        ->assertUnauthorized();
+});

@@ -38,6 +38,7 @@ namespace AdvisingApp\Portal\Http\Middleware;
 
 use AdvisingApp\Portal\Settings\PortalSettings;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Closure;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\PersonalAccessToken;
@@ -60,6 +61,13 @@ class AuthenticateIfRequiredByPortalDefinition
         $educatable = $accessToken?->tokenable;
 
         if (! ($educatable instanceof Educatable) || ! $accessToken->can('resource-hub-portal')) {
+            abort(Response::HTTP_FORBIDDEN);
+        }
+
+        // A token issued before the student was archived must not keep granting access. The
+        // student is re-read on every request, so this also catches an archive written straight
+        // to the table by SIS sync, which never fires model events.
+        if ($educatable instanceof Student && $educatable->isArchived()) {
             abort(Response::HTTP_FORBIDDEN);
         }
 
