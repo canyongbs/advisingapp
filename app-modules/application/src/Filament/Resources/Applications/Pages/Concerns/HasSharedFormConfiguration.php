@@ -148,7 +148,8 @@ trait HasSharedFormConfiguration
                         ->options(FontWeight::class),
                     ColorSelect::make('title_color')
                         ->shadeOptions(),
-                    ColorSelect::make('primary_color'),
+                    ColorSelect::make('primary_color')
+                        ->label('Color family (theme)'),
                     Select::make('rounding')
                         ->options(Rounding::class),
                 ])
@@ -200,7 +201,10 @@ trait HasSharedFormConfiguration
             })
             ->dehydrated(false)
             ->columnSpanFull()
-            ->extraInputAttributes(['style' => 'min-height: 12rem;']);
+            ->extraInputAttributes([
+                'style' => 'min-height: 12rem;',
+                'data-mapped-block-types' => implode(',', FormFieldBlockRegistry::getMappedBlockTypes()),
+            ]);
     }
 
     protected function afterCreate(): void

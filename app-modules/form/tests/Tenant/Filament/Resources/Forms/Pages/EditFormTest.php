@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\EditForm;
 use AdvisingApp\Form\Models\Form;
@@ -104,4 +105,13 @@ it('allows updating a form to a name freed up by an archived form case-insensiti
         ->fillForm(['name' => 'reusable name'])
         ->call('save')
         ->assertHasNoFormErrors();
+});
+
+it('exposes the mapped block types to the fields rich editor for the custom block badges', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    livewire(EditForm::class, ['record' => $form->getRouteKey()])
+        ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });
