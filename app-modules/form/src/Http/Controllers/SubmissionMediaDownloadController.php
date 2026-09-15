@@ -34,25 +34,24 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Form\Http\Controllers\FormPreviewController;
-use AdvisingApp\Form\Http\Controllers\SubmissionMediaDownloadController;
-use AdvisingApp\Form\Http\Middleware\EnsureFormsFeatureIsActive;
-use App\Livewire\RenderForm;
+namespace AdvisingApp\Form\Http\Controllers;
 
-Route::prefix('forms')
-    ->name('forms.')
-    ->middleware([
-        'web',
-        EnsureFormsFeatureIsActive::class,
-    ])
-    ->group(function () {
-        Route::get('/{form}/respond', RenderForm::class)
-            ->name('show');
+use App\Http\Controllers\Controller;
+use App\Models\Media;
+use Illuminate\Http\RedirectResponse;
+use Symfony\Component\HttpFoundation\Response;
 
-        Route::get('/{form}/preview', FormPreviewController::class)
-            ->name('preview');
-    });
+class SubmissionMediaDownloadController extends Controller
+{
+    public function __invoke(Media $media): RedirectResponse
+    {
+        abort_unless($media->collection_name === 'files', Response::HTTP_NOT_FOUND);
 
-Route::middleware(['web', 'auth', 'signed'])
-    ->get('submission-media/{media}/download', SubmissionMediaDownloadController::class)
-    ->name('submission-media.download');
+        return redirect(
+            $media->getTemporaryUrl(
+                expiration: now()->addMinute(),
+                options: ['ResponseContentDisposition' => $media->attachmentContentDisposition()],
+            ),
+        );
+    }
+}

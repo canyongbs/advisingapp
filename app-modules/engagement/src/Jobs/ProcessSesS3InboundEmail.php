@@ -41,6 +41,7 @@ use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Exceptions\SesS3InboundSpamOrVirusDetected;
 use AdvisingApp\Engagement\Exceptions\UnableToDetectTenantFromSesS3EmailPayload;
 use AdvisingApp\Engagement\Exceptions\UnableToRetrieveContentFromSesS3EmailPayload;
+use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\UnmatchedInboundCommunication;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -138,37 +139,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                                 ]);
 
                             collect($parser->getAttachments())->each(function (Attachment $attachment) use ($engagementResponse, $student) {
-                                try {
-                                    if (
-                                        ($attachment->getContentDisposition() === 'inline')
-                                        && filled(trim($contentId = $attachment->getContentID(), '<>'))
-                                    ) {
-                                        $media = $engagementResponse->addMediaFromStream($attachment->getStream())
-                                            ->withCustomProperties(['cid' => trim($contentId, '<>')])
-                                            ->setName($attachment->getFilename())
-                                            ->setFileName($attachment->getFilename())
-                                            ->toMediaCollection('inline_attachments');
-
-                                        if (is_null($media->created_by_id)) {
-                                            $media->createdBy()->associate($student);
-                                            $media->saveQuietly();
-                                        }
-
-                                        return;
-                                    }
-
-                                    $media = $engagementResponse->addMediaFromStream($attachment->getStream())
-                                        ->setName($attachment->getFilename())
-                                        ->setFileName($attachment->getFilename())
-                                        ->toMediaCollection('attachments');
-
-                                    if (is_null($media->created_by_id)) {
-                                        $media->createdBy()->associate($student);
-                                        $media->saveQuietly();
-                                    }
-                                } catch (Throwable $throw) {
-                                    report($throw);
-                                }
+                                $this->storeAttachmentMedia($engagementResponse, $attachment, $student);
                             });
                         });
 
@@ -194,27 +165,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                         ]);
 
                         collect($parser->getAttachments())->each(function (Attachment $attachment) use ($unmatchedInboundCommunication) {
-                            try {
-                                if (
-                                    ($attachment->getContentDisposition() === 'inline')
-                                    && filled(trim($contentId = $attachment->getContentID(), '<>'))
-                                ) {
-                                    $unmatchedInboundCommunication->addMediaFromStream($attachment->getStream())
-                                        ->withCustomProperties(['cid' => trim($contentId, '<>')])
-                                        ->setName($attachment->getFilename())
-                                        ->setFileName($attachment->getFilename())
-                                        ->toMediaCollection('inline_attachments');
-
-                                    return;
-                                }
-
-                                $unmatchedInboundCommunication->addMediaFromStream($attachment->getStream())
-                                    ->setName($attachment->getFilename())
-                                    ->setFileName($attachment->getFilename())
-                                    ->toMediaCollection('attachments');
-                            } catch (Throwable $throw) {
-                                report($throw);
-                            }
+                            $this->storeAttachmentMedia($unmatchedInboundCommunication, $attachment);
                         });
 
                         Storage::disk('s3-inbound-email')->delete($this->emailFilePath);
@@ -236,37 +187,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                             ]);
 
                         collect($parser->getAttachments())->each(function (Attachment $attachment) use ($engagementResponse, $prospect) {
-                            try {
-                                if (
-                                    ($attachment->getContentDisposition() === 'inline')
-                                    && filled(trim($contentId = $attachment->getContentID(), '<>'))
-                                ) {
-                                    $media = $engagementResponse->addMediaFromStream($attachment->getStream())
-                                        ->withCustomProperties(['cid' => trim($contentId, '<>')])
-                                        ->setName($attachment->getFilename())
-                                        ->setFileName($attachment->getFilename())
-                                        ->toMediaCollection('inline_attachments');
-
-                                    if (is_null($media->created_by_id)) {
-                                        $media->createdBy()->associate($prospect);
-                                        $media->saveQuietly();
-                                    }
-
-                                    return;
-                                }
-
-                                $media = $engagementResponse->addMediaFromStream($attachment->getStream())
-                                    ->setName($attachment->getFilename())
-                                    ->setFileName($attachment->getFilename())
-                                    ->toMediaCollection('attachments');
-
-                                if (is_null($media->created_by_id)) {
-                                    $media->createdBy()->associate($prospect);
-                                    $media->saveQuietly();
-                                }
-                            } catch (Throwable $throw) {
-                                report($throw);
-                            }
+                            $this->storeAttachmentMedia($engagementResponse, $attachment, $prospect);
                         });
                     });
 
@@ -310,6 +231,43 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
     protected function moveFile(string $destination): void
     {
         Storage::disk('s3-inbound-email')->move($this->emailFilePath, $destination . '/' . $this->emailFilePath);
+    }
+
+    /**
+     * Store an email attachment on the model, following the media-library convention that the display
+     * name carries no extension (the extension lives only in the file name).
+     */
+    protected function storeAttachmentMedia(
+        EngagementResponse|UnmatchedInboundCommunication $model,
+        Attachment $attachment,
+        Student|Prospect|null $createdBy = null,
+    ): void {
+        try {
+            $fileName = $attachment->getFilename();
+
+            if (
+                ($attachment->getContentDisposition() === 'inline')
+                && filled(trim($contentId = $attachment->getContentID(), '<>'))
+            ) {
+                $media = $model->addMediaFromStream($attachment->getStream())
+                    ->withCustomProperties(['cid' => trim($contentId, '<>')])
+                    ->usingName(pathinfo($fileName, PATHINFO_FILENAME))
+                    ->usingFileName($fileName)
+                    ->toMediaCollection('inline_attachments');
+            } else {
+                $media = $model->addMediaFromStream($attachment->getStream())
+                    ->usingName(pathinfo($fileName, PATHINFO_FILENAME))
+                    ->usingFileName($fileName)
+                    ->toMediaCollection('attachments');
+            }
+
+            if ($createdBy !== null && is_null($media->created_by_id)) {
+                $media->createdBy()->associate($createdBy);
+                $media->saveQuietly();
+            }
+        } catch (Throwable $throw) {
+            report($throw);
+        }
     }
 
     /**

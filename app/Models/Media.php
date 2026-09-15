@@ -42,7 +42,9 @@ use App\Observers\MediaObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Str;
 use Spatie\MediaLibrary\MediaCollections\Models\Media as SpatieMedia;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 
 /**
  * @mixin IdeHelperMedia
@@ -56,6 +58,28 @@ class Media extends SpatieMedia
     public function createdBy(): MorphTo
     {
         return $this->morphTo('createdBy');
+    }
+
+    /**
+     * Build an RFC 6266 `attachment` Content-Disposition value safe to pass to S3.
+     *
+     * S3 rejects `response-content-disposition` values that are not representable in
+     * ISO-8859-1 (e.g. a file name containing a narrow no-break space), so the real
+     * UTF-8 name is carried in the RFC 5987 `filename*` parameter alongside an ASCII fallback.
+     */
+    public function attachmentContentDisposition(): string
+    {
+        $fallback = Str::of($this->file_name)
+            ->ascii()
+            ->replace(['%', '/', '\\', '"'], '')
+            ->trim()
+            ->toString();
+
+        return HeaderUtils::makeDisposition(
+            HeaderUtils::DISPOSITION_ATTACHMENT,
+            $this->file_name,
+            $fallback !== '' ? $fallback : 'download',
+        );
     }
 
     public function getCreatedByNameAttribute(): string
