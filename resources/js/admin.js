@@ -85,6 +85,16 @@ function createRichEditorCustomBlockBadge(label, variant) {
 }
 
 function decorateRichEditorCustomBlock(block) {
+    // Only decorate blocks inside a rich editor that explicitly opts in via
+    // `data-mapped-block-types` (set from FormFieldBlockRegistry::getMappedBlockTypes()).
+    // Editors for unrelated custom blocks (e.g. the survey builder) don't set this
+    // attribute, so they are left alone instead of being mislabelled as "Unmapped".
+    const fieldBuilder = block.closest('[data-mapped-block-types]');
+
+    if (!fieldBuilder) {
+        return;
+    }
+
     const header = block.querySelector(':scope > .fi-fo-rich-editor-custom-block-header');
     const heading = header?.querySelector(':scope > .fi-fo-rich-editor-custom-block-heading');
 
@@ -100,19 +110,17 @@ function decorateRichEditorCustomBlock(block) {
         return;
     }
 
-    const mappedBlockTypes = (
-        block.closest('[data-mapped-block-types]')?.getAttribute('data-mapped-block-types') ?? ''
-    ).split(',');
-    const isMapped = mappedBlockTypes.includes(block.getAttribute('data-id'));
+    const isMapped = fieldBuilder.getAttribute('data-mapped-block-types').split(',').includes(block.getAttribute('data-id'));
 
     const badges = document.createElement('span');
-    badges.className = 'fi-fo-rich-editor-custom-block-badges ms-4 inline-flex items-center gap-x-3';
+    badges.className = 'fi-fo-rich-editor-custom-block-badges inline-flex items-center';
 
     badges.appendChild(createRichEditorCustomBlockBadge(isMapped ? 'Mapped' : 'Unmapped', 'neutral'));
 
     if (typeof config.isRequired === 'boolean') {
         badges.appendChild(createRichEditorCustomBlockBadge(config.isRequired ? 'Required' : 'Optional', 'subtle'));
     }
+
 
     // Appended inside the heading, rather than as its sibling, so the badges sit
     // directly beside the label text instead of being pushed to the far right by

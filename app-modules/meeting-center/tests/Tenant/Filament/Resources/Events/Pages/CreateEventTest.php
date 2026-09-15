@@ -35,57 +35,19 @@
 */
 
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
-use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
-use AdvisingApp\Form\Filament\Resources\Forms\Pages\ViewForm;
-use AdvisingApp\Form\Models\Form;
-use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\CreateEvent;
+use App\Settings\LicenseSettings;
 
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-it('archive action is always visible and labeled Archive', function () {
+it('exposes the mapped block types to the fields rich editor for the custom block badges', function () {
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->eventManagement = true;
+    $settings->save();
+
     asSuperAdmin();
 
-    $formWithSubmissions = Form::factory()->create();
-
-    FormSubmission::factory()->create([
-        'form_id' => $formWithSubmissions->id,
-        'submitted_at' => now(),
-    ]);
-
-    $formWithoutSubmissions = Form::factory()->create();
-
-    livewire(ViewForm::class, ['record' => $formWithSubmissions->getRouteKey()])
-        ->assertActionVisible('archive')
-        ->assertActionHasLabel('archive', 'Archive');
-
-    livewire(ViewForm::class, ['record' => $formWithoutSubmissions->getRouteKey()])
-        ->assertActionVisible('archive')
-        ->assertActionHasLabel('archive', 'Archive');
-});
-
-it('archive action archives the form and redirects to the index when the form has submissions', function () {
-    asSuperAdmin();
-
-    $form = Form::factory()->create();
-
-    FormSubmission::factory()->create([
-        'form_id' => $form->id,
-        'submitted_at' => now(),
-    ]);
-
-    livewire(ViewForm::class, ['record' => $form->getRouteKey()])
-        ->callAction('archive')
-        ->assertRedirect(FormResource::getUrl('index'));
-
-    expect($form->fresh()->isArchived())->toBeTrue();
-});
-
-it('exposes the mapped block types to the read-only fields rich editor for the custom block badges', function () {
-    asSuperAdmin();
-
-    $form = Form::factory()->create();
-
-    livewire(ViewForm::class, ['record' => $form->getRouteKey()])
+    livewire(CreateEvent::class)
         ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });

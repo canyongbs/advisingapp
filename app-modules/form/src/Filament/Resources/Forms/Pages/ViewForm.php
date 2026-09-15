@@ -108,7 +108,10 @@ class ViewForm extends ViewRecord
                             ->hiddenLabel()
                             ->dehydrated(false)
                             ->columnSpanFull()
-                            ->extraInputAttributes(['style' => 'min-height: 12rem;']),
+                            ->extraInputAttributes([
+                                'style' => 'min-height: 12rem;',
+                                'data-mapped-block-types' => implode(',', FormFieldBlockRegistry::getMappedBlockTypes()),
+                            ]),
                     ])
                     ->hidden(fn (Form $record) => $record->is_wizard)
                     ->disabled(),
@@ -129,7 +132,10 @@ class ViewForm extends ViewRecord
                             ->hiddenLabel()
                             ->dehydrated(false)
                             ->columnSpanFull()
-                            ->extraInputAttributes(['style' => 'min-height: 12rem;']),
+                            ->extraInputAttributes([
+                                'style' => 'min-height: 12rem;',
+                                'data-mapped-block-types' => implode(',', FormFieldBlockRegistry::getMappedBlockTypes()),
+                            ]),
                     ])
                     ->addActionLabel('New step')
                     ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
