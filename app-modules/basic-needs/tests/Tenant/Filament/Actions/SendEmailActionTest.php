@@ -36,9 +36,11 @@
 
 use AdvisingApp\BasicNeeds\Filament\Resources\BasicNeedsPrograms\Pages\ViewBasicNeedsProgram;
 use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Forms\Components\Select;
 
+use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
@@ -99,4 +101,31 @@ it('does not offer an archived student searched by their SIS ID or email address
         expect(recipientSisids($field->getSearchResults($student->sisid)))->not->toContain($student->getKey())
             ->and(recipientSisids($field->getSearchResults($address)))->not->toContain($student->getKey());
     });
+});
+
+it('accepts an active student as the submitted recipient', function () {
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+
+    livewire(ViewBasicNeedsProgram::class, ['record' => BasicNeedsProgram::factory()->create()->getKey()])
+        ->mountAction('send_email')
+        ->fillForm(['recipient_type' => 'student', 'recipient_id' => $student->getKey()])
+        ->callMountedAction()
+        ->assertHasNoFormErrors(['recipient_id']);
+});
+
+it('does not send to an archived student even when their id is submitted', function () {
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+    $student->archive();
+
+    livewire(ViewBasicNeedsProgram::class, ['record' => BasicNeedsProgram::factory()->create()->getKey()])
+        ->mountAction('send_email')
+        ->fillForm(['recipient_type' => 'student', 'recipient_id' => $student->getKey()])
+        ->callMountedAction()
+        ->assertHasFormErrors(['recipient_id']);
+
+    assertDatabaseCount(Engagement::class, 0);
 });

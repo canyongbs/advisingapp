@@ -86,6 +86,7 @@ class EditInteraction extends EditRecord
                                 ),
                         ] : []),
                     ])
+                    ->modifyKeySelectUsing(fn (Select $select): Select => $select->rule(EducatableSelect::studentKeyRule('interactable_id', $this->getRecord(), 'interactable_type')))
                     ->columnSpanFull(),
                 Fieldset::make('Details')
                     ->schema([

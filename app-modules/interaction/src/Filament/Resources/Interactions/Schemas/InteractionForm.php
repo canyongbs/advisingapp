@@ -102,6 +102,7 @@ class InteractionForm
                                 ->modifyOptionsQueryUsing(fn (Builder $query) => $query->tap(new ExcludeConvertedProspects())),
                             ] : []),
                         ])
+                        ->modifyKeySelectUsing(fn (Select $select): Select => $select->rule(EducatableSelect::studentKeyRule(null, null, 'interactable_type')))
                         ->live()
                         ->hiddenOn([RelationManager::class, ManageRelatedRecords::class]),
                     Fieldset::make('Confidentiality')

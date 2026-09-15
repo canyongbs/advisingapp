@@ -74,8 +74,7 @@ class ConvertToStudent extends Action
                     ->searchable(),
             ])
             ->action(function (array $data, Prospect $record, Page $livewire) {
-                /** @var Student $student */
-                $student = Student::find($data['student_id']);
+                $student = Student::query()->tap(new WithoutArchivedStudents())->find($data['student_id']);
 
                 if (! $student) {
                     Notification::make()

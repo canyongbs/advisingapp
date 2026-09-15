@@ -114,6 +114,19 @@ describe('archived students', function () {
             );
     });
 
+    it('still saves while attached to the archived student', function () {
+        asSuperAdmin();
+
+        $archived = Student::factory()->create();
+        $interaction = Interaction::factory()->for($archived, 'interactable')->create();
+
+        $archived->archive();
+
+        livewire(EditInteraction::class, ['record' => $interaction->getRouteKey()])
+            ->call('save')
+            ->assertHasNoFormErrors(['interactable_id']);
+    });
+
     it('still offers other students while the feature is inactive', function () {
         asSuperAdmin();
 

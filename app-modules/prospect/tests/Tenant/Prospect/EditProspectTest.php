@@ -185,6 +185,38 @@ test('convert prospect to student', function () {
         ->email->toBe($student->email);
 });
 
+test('the convert action does not attach an archived student even when their id is submitted', function () {
+    $user = User::factory()->licensed([Prospect::getLicenseType(), Student::getLicenseType()])->create();
+
+    $user->givePermissionTo('prospect.view-any');
+    $user->givePermissionTo('prospect.*.update');
+
+    actingAs($user);
+
+    seed([
+        ProspectStatusSeeder::class,
+    ]);
+
+    $prospect = Prospect::factory()->create();
+    $statusId = $prospect->status_id;
+
+    $student = Student::factory()->create();
+    $student->archive();
+
+    livewire(EditProspect::class, [
+        'record' => $prospect->getRouteKey(),
+    ])
+        ->callAction(
+            ConvertToStudent::class,
+            data: ['student_id' => $student->getKey()]
+        );
+
+    $prospect->refresh();
+
+    expect($prospect->student)->toBeNull()
+        ->and($prospect->status_id)->toBe($statusId);
+});
+
 test('the convert action does not offer archived students', function () {
     $user = User::factory()->licensed([Prospect::getLicenseType(), Student::getLicenseType()])->create();
 

@@ -53,3 +53,17 @@ it('does not resolve an archived student from their email address', function () 
 
     expect(app(ResolveEducatableFromEmail::class)($email))->toBeNull();
 });
+
+it('resolves an archived student when asked to include them', function () {
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+    $email = $student->primaryEmailAddress->address;
+
+    $student->archive();
+
+    $educatable = app(ResolveEducatableFromEmail::class)($email, includingArchived: true);
+
+    expect($educatable)->toBeInstanceOf(Student::class)
+        ->and($educatable?->getKey())->toBe($student->getKey());
+});

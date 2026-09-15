@@ -45,6 +45,7 @@ use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
+use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\RichEditor;
@@ -52,6 +53,7 @@ use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\ToggleButtons;
+use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
@@ -80,7 +82,7 @@ class SendEmailAction
             ->model(Engagement::class)
             ->authorize(fn () => Auth::user()->can('create', Engagement::class))
             ->steps(fn (): array => self::getSteps($view))
-            ->action(fn (array $data, Schema $schema, Page $livewire) => self::handleAction($data, $schema, $livewire))
+            ->action(fn (array $data, Schema $schema, Page $livewire, Action $action) => self::handleAction($data, $schema, $livewire, $action))
             ->modalSubmitActionLabel('Send')
             ->modalCloseButton(false)
             ->closeModalByClickingAway(false)
@@ -132,6 +134,11 @@ class SendEmailAction
                             ->options(fn (Get $get) => self::getRecipientOptions($get))
                             ->getSearchResultsUsing(fn (string $search, Get $get) => self::getRecipientSearchResults($search, $get))
                             ->getOptionLabelUsing(fn (string $value, Get $get) => self::getRecipientOptionLabel($value, $get))
+                            ->rule(fn (Get $get): Closure => function (string $attribute, mixed $value, Closure $fail) use ($get): void {
+                                if (! self::resolveRecipient($get('recipient_type'), $value)) {
+                                    $fail('The selected recipient is not available.');
+                                }
+                            })
                             ->afterStateUpdated(function (Get $get, Set $set, Component $livewire) use ($view) {
                                 $record = method_exists($livewire, 'getRecord') ? $livewire->getRecord() : null;
 
@@ -229,9 +236,20 @@ class SendEmailAction
     /**
      * @param array<mixed, mixed> $data
      */
-    protected static function handleAction(array $data, Schema $schema, Page $livewire): void
+    protected static function handleAction(array $data, Schema $schema, Page $livewire, Action $action): void
     {
         $recipient = self::resolveRecipient($data['recipient_type'], $data['recipient_id']);
+
+        if (! $recipient) {
+            Notification::make()
+                ->title('The selected recipient is not available.')
+                ->danger()
+                ->send();
+
+            $action->halt();
+
+            return;
+        }
 
         $data['subject'] ??= ['type' => 'doc', 'content' => []];
         $data['subject']['content'] = [
@@ -264,8 +282,8 @@ class SendEmailAction
     protected static function resolveRecipient(?string $type, ?string $id): Student|Prospect|null
     {
         return match ($type) {
-            'student' => Student::find($id),
-            'prospect' => Prospect::find($id),
+            'student' => Student::query()->tap(new WithoutArchivedStudents())->find($id),
+            'prospect' => Prospect::query()->find($id),
             default => null,
         };
     }
@@ -352,7 +370,7 @@ class SendEmailAction
         $recipientType = $get('recipient_type');
 
         if ($recipientType === 'student') {
-            $student = Student::query()->find($value);
+            $student = Student::query()->tap(new WithoutArchivedStudents())->find($value);
 
             return $student ? self::formatStudentLabel($student) : '';
         }

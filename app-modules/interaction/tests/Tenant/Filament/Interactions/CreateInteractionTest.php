@@ -37,6 +37,7 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\InteractionResource;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\CreateInteraction;
+use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
@@ -122,4 +123,35 @@ it('does not offer archived students in the related to select', function () {
 
             return true;
         });
+});
+
+it('accepts an active student as the submitted related record', function () {
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+
+    livewire(CreateInteraction::class)
+        ->fillForm([
+            'interactable_type' => $student->getMorphClass(),
+            'interactable_id' => $student->getKey(),
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors(['interactable_id']);
+});
+
+it('does not create an interaction for an archived student even when their id is submitted', function () {
+    asSuperAdmin();
+
+    $archived = Student::factory()->create();
+    $archived->archive();
+
+    livewire(CreateInteraction::class)
+        ->fillForm([
+            'interactable_type' => $archived->getMorphClass(),
+            'interactable_id' => $archived->getKey(),
+        ])
+        ->call('create')
+        ->assertHasFormErrors(['interactable_id']);
+
+    expect(Interaction::query()->count())->toBe(0);
 });
