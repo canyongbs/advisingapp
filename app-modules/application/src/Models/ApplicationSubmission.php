@@ -36,10 +36,14 @@
 
 namespace AdvisingApp\Application\Models;
 
+use AdvisingApp\Application\Actions\DeliverApplicationSubmissionRequestByEmail;
+use AdvisingApp\Application\Actions\DeliverApplicationSubmissionRequestBySms;
 use AdvisingApp\Application\Models\Concerns\HasRelationBasedStateMachine;
 use AdvisingApp\Application\Observers\ApplicationSubmissionObserver;
+use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
 use AdvisingApp\Form\Models\Submission;
 use AdvisingApp\StudentDataModel\Models\Scopes\LicensedToEducatable;
+use App\Models\User;
 use CanyonGBS\Common\Models\Concerns\CanBeArchived;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Builder;
@@ -56,6 +60,20 @@ class ApplicationSubmission extends Submission
     use CanBeArchived;
     use HasRelationBasedStateMachine;
 
+    protected $fillable = [
+        'canceled_at',
+        'application_id',
+        'request_method',
+        'request_note',
+        'submitted_at',
+    ];
+
+    protected $casts = [
+        'submitted_at' => 'immutable_datetime',
+        'canceled_at' => 'immutable_datetime',
+        'request_method' => FormSubmissionRequestDeliveryMethod::class,
+    ];
+
     /**
      * @return BelongsTo<Application, $this>
      */
@@ -63,6 +81,14 @@ class ApplicationSubmission extends Submission
     {
         return $this
             ->belongsTo(Application::class, 'application_id');
+    }
+
+    /**
+     * @return BelongsTo<User, $this>
+     */
+    public function requester(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'requester_id');
     }
 
     /**
@@ -103,6 +129,65 @@ class ApplicationSubmission extends Submission
     public function checklistItems(): HasMany
     {
         return $this->hasMany(ApplicationSubmissionsChecklistItem::class, 'application_submission_id');
+    }
+
+    public function deliverRequest(): void
+    {
+        match ($this->request_method) {
+            FormSubmissionRequestDeliveryMethod::Email => DeliverApplicationSubmissionRequestByEmail::dispatch($this),
+            FormSubmissionRequestDeliveryMethod::Sms => DeliverApplicationSubmissionRequestBySms::dispatch($this),
+            default => null,
+        };
+    }
+
+    /**
+     * @param Builder<ApplicationSubmission> $query
+     *
+     * @return Builder<ApplicationSubmission>
+     */
+    public function scopeRequested(Builder $query): Builder
+    {
+        return $query->notSubmitted()->notCanceled();
+    }
+
+    /**
+     * @param Builder<ApplicationSubmission> $query
+     *
+     * @return Builder<ApplicationSubmission>
+     */
+    public function scopeSubmitted(Builder $query): Builder
+    {
+        return $query->whereNotNull('submitted_at');
+    }
+
+    /**
+     * @param Builder<ApplicationSubmission> $query
+     *
+     * @return Builder<ApplicationSubmission>
+     */
+    public function scopeCanceled(Builder $query): Builder
+    {
+        return $query->notSubmitted()->whereNotNull('canceled_at');
+    }
+
+    /**
+     * @param Builder<ApplicationSubmission> $query
+     *
+     * @return Builder<ApplicationSubmission>
+     */
+    public function scopeNotSubmitted(Builder $query): Builder
+    {
+        return $query->whereNull('submitted_at');
+    }
+
+    /**
+     * @param Builder<ApplicationSubmission> $query
+     *
+     * @return Builder<ApplicationSubmission>
+     */
+    public function scopeNotCanceled(Builder $query): Builder
+    {
+        return $query->whereNull('canceled_at');
     }
 
     protected static function booted(): void

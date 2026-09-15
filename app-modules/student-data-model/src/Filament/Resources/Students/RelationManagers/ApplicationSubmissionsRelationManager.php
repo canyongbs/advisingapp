@@ -36,9 +36,11 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers;
 
+use AdvisingApp\Application\Filament\Actions\RequestApplicationSubmission;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use App\Enums\Feature;
+use App\Features\OnlineAdmissionRequestsFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -89,6 +91,11 @@ class ApplicationSubmissionsRelationManager extends RelationManager
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
+            ])
+            ->headerActions([
+                RequestApplicationSubmission::make()
+                    ->slideOver()
+                    ->visible(fn (): bool => OnlineAdmissionRequestsFeature::active()),
             ])
             ->recordActions([
                 ViewAction::make()
