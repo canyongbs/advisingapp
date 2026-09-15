@@ -34,41 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Filament\Resources\PromptTypes\Pages;
+namespace App\Features;
 
-use AdvisingApp\Ai\Filament\Resources\PromptTypes\PromptTypeResource;
-use AdvisingApp\Ai\Models\PromptType;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Resources\Pages\CreateRecord;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
-use Illuminate\Validation\Rules\Unique;
+use App\Support\AbstractFeatureFlag;
 
-class CreatePromptType extends CreateRecord
+class PromptTitleUniquePerTypeFeature extends AbstractFeatureFlag
 {
-    protected static string $resource = PromptTypeResource::class;
-
-    public function form(Schema $schema): Schema
+    public function resolve(mixed $scope): mixed
     {
-        return $schema
-            ->components([
-                Section::make()
-                    ->columns()
-                    ->schema([
-                        TextInput::make('title')
-                            ->required()
-                            ->string()
-                            ->maxLength(255)
-                            ->unique(
-                                table: PromptType::class,
-                                modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
-                            )
-                            ->columnSpanFull(),
-                        Textarea::make('description')
-                            ->string()
-                            ->columnSpanFull(),
-                    ]),
-            ]);
+        return false;
     }
 }

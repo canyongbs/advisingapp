@@ -146,3 +146,42 @@ it('can delete a record', function () use ($licenses, $permissions) {
 
     assertNotNull($record->refresh()->deleted_at);
 });
+
+it('prevents editing a prompt type with a case-insensitively duplicate title', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    $record = PromptType::factory()->create(['title' => 'First Title']);
+    PromptType::factory()->create(['title' => 'Second Title']);
+
+    livewire(EditPromptType::class, [
+        'record' => $record->getRouteKey(),
+    ])
+        ->fillForm(['title' => 'second title'])
+        ->call('save')
+        ->assertHasFormErrors(['title' => 'unique']);
+});
+
+it('allows reusing the title of a soft-deleted prompt type', function () use ($licenses, $permissions) {
+    actingAs(user(
+        licenses: $licenses,
+        permissions: $permissions
+    ));
+
+    $record = PromptType::factory()->create(['title' => 'Active Title']);
+    PromptType::factory()->create(['title' => 'Archived Title'])->delete();
+
+    livewire(EditPromptType::class, [
+        'record' => $record->getRouteKey(),
+    ])
+        ->fillForm(['title' => 'archived title'])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    assertDatabaseHas(PromptType::class, [
+        'id' => $record->id,
+        'title' => 'archived title',
+    ]);
+});

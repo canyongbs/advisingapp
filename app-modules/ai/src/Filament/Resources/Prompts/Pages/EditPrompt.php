@@ -38,6 +38,7 @@ namespace AdvisingApp\Ai\Filament\Resources\Prompts\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
 use AdvisingApp\Ai\Models\Prompt;
+use App\Features\PromptTitleUniquePerTypeFeature;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use Filament\Actions\DeleteAction;
@@ -52,6 +53,7 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Validation\Rules\Unique;
 
 class EditPrompt extends EditRecord
 {
@@ -65,7 +67,14 @@ class EditPrompt extends EditRecord
                     ->columns()
                     ->schema([
                         TextInput::make('title')
-                            ->unique(ignoreRecord: true)
+                            ->unique(
+                                table: Prompt::class,
+                                modifyRuleUsing: fn (Unique $rule, Get $get): Unique => (PromptTitleUniquePerTypeFeature::active()
+                                    ? $rule->where('type_id', $get('type_id'))
+                                    : $rule)
+                                    ->withoutTrashed(),
+                                ignoreRecord: true,
+                            )
                             ->required()
                             ->string()
                             ->maxLength(255),
