@@ -31,15 +31,43 @@
     
     </COPYRIGHT>
 --}}
+
+@props([
+    'active',
+])
+
 @php
-    use AdvisingApp\StudentDataModel\Livewire\StudentDataImportsTable;
-    use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+    use AdvisingApp\StudentDataModel\Filament\Pages\ManageStudentSyncs;
+    use App\Filament\Pages\ExportPage;
+    use App\Filament\Pages\ImportPage;
+    use Filament\Support\Facades\FilamentView;
+
+    $tabs = collect([
+        'import' => ['label' => 'Import', 'page' => ImportPage::class],
+        'export' => ['label' => 'Export', 'page' => ExportPage::class],
+        'student-sync' => ['label' => 'Student Sync', 'page' => ManageStudentSyncs::class],
+    ])->filter(fn (array $tab): bool => $tab['page']::canAccess());
 @endphp
 
-<x-filament-panels::page>
-    <x-import-export-tabs active="student-sync">
-        @if (app(ManageStudentConfigurationSettings::class)->is_enabled)
-            @livewire(StudentDataImportsTable::class)
-        @endif
-    </x-import-export-tabs>
-</x-filament-panels::page>
+@if ($tabs->isNotEmpty())
+    <div class="fi-sc-tabs fi-contained">
+        <x-filament::tabs :contained="true">
+            @foreach ($tabs as $key => $tab)
+                <x-filament::tabs.item
+                    tag="a"
+                    :active="$active === $key"
+                    :href="$tab['page']::getUrl()"
+                    :spa-mode="FilamentView::hasSpaMode()"
+                >
+                    {{ $tab['label'] }}
+                </x-filament::tabs.item>
+            @endforeach
+        </x-filament::tabs>
+
+        <div class="fi-sc-tabs-tab fi-active">
+            {{ $slot }}
+        </div>
+    </div>
+@else
+    {{ $slot }}
+@endif
