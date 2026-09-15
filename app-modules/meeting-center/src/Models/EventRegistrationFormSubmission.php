@@ -38,8 +38,10 @@ namespace AdvisingApp\MeetingCenter\Models;
 
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
 use AdvisingApp\Form\Models\Submission;
+use AdvisingApp\MeetingCenter\Actions\DeliverEventRegistrationFormSubmissionRequestByEmail;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
@@ -102,5 +104,63 @@ class EventRegistrationFormSubmission extends Submission
     public function author(): BelongsTo
     {
         return $this->belongsTo(EventAttendee::class, 'event_attendee_id');
+    }
+
+    public function deliverRequest(): void
+    {
+        match ($this->request_method) {
+            FormSubmissionRequestDeliveryMethod::Email => DeliverEventRegistrationFormSubmissionRequestByEmail::dispatch($this),
+            default => null,
+        };
+    }
+
+    /**
+     * @param Builder<EventRegistrationFormSubmission> $query
+     *
+     * @return Builder<EventRegistrationFormSubmission>
+     */
+    public function scopeRequested(Builder $query): Builder
+    {
+        return $query->notSubmitted()->notCanceled();
+    }
+
+    /**
+     * @param Builder<EventRegistrationFormSubmission> $query
+     *
+     * @return Builder<EventRegistrationFormSubmission>
+     */
+    public function scopeSubmitted(Builder $query): Builder
+    {
+        return $query->whereNotNull('submitted_at');
+    }
+
+    /**
+     * @param Builder<EventRegistrationFormSubmission> $query
+     *
+     * @return Builder<EventRegistrationFormSubmission>
+     */
+    public function scopeCanceled(Builder $query): Builder
+    {
+        return $query->notSubmitted()->whereNotNull('canceled_at');
+    }
+
+    /**
+     * @param Builder<EventRegistrationFormSubmission> $query
+     *
+     * @return Builder<EventRegistrationFormSubmission>
+     */
+    public function scopeNotSubmitted(Builder $query): Builder
+    {
+        return $query->whereNull('submitted_at');
+    }
+
+    /**
+     * @param Builder<EventRegistrationFormSubmission> $query
+     *
+     * @return Builder<EventRegistrationFormSubmission>
+     */
+    public function scopeNotCanceled(Builder $query): Builder
+    {
+        return $query->whereNull('canceled_at');
     }
 }
