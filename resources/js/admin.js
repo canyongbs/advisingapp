@@ -120,8 +120,14 @@ function decorateRichEditorCustomBlock(block) {
 
     badges.appendChild(createRichEditorCustomBlockBadge(isMapped ? 'Mapped' : 'Unmapped', 'neutral'));
 
-    if (typeof config.isRequired === 'boolean') {
-        badges.appendChild(createRichEditorCustomBlockBadge(config.isRequired ? 'Required' : 'Optional', 'subtle'));
+    const requiredFlags = Object.entries(config)
+        .filter(([key, value]) => /required$/i.test(key) && typeof value === 'boolean')
+        .map(([, value]) => value);
+
+    if (requiredFlags.length > 0) {
+        const isRequired = requiredFlags.some(Boolean);
+
+        badges.appendChild(createRichEditorCustomBlockBadge(isRequired ? 'Required' : 'Optional', 'subtle'));
     }
 
     // Appended inside the heading, rather than as its sibling, so the badges sit
