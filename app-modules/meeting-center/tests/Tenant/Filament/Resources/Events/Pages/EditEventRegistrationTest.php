@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEventRegistration;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
@@ -326,4 +327,15 @@ it('persists a newly added wizard step and its fields to the new version', funct
 
     expect($newStep)->not->toBeNull();
     expect($newVersion->fields()->where('step_id', $newStep->getKey())->count())->toBe(1);
+});
+
+it('exposes the mapped block types to the fields rich editor for the custom block badges', function () {
+    editEventRegistrationTestSetup();
+
+    asSuperAdmin();
+
+    $event = Event::factory()->create();
+
+    livewire(EditEventRegistration::class, ['record' => $event->getKey()])
+        ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });
