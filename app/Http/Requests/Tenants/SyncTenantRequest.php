@@ -76,8 +76,11 @@ class SyncTenantRequest extends FormRequest
             'addons.earlyAlert' => ['required', 'boolean'],
             'addons.publicProfiles' => ['required', 'boolean'],
             'smartPrompts' => ['nullable', 'array'],
+            'smartPrompts.*' => ['array'],
             'smartPrompts.*.title' => ['required', 'string', 'distinct:ignore_case'],
             'smartPrompts.*.description' => ['nullable', 'string'],
+            'smartPrompts.*.smart_prompts' => ['sometimes', 'array'],
+            'smartPrompts.*.smart_prompts.*' => ['array'],
             'smartPrompts.*.smart_prompts.*.id' => ['required', 'string', 'distinct'],
             'smartPrompts.*.smart_prompts.*.title' => ['required', 'string'],
             'smartPrompts.*.smart_prompts.*.description' => ['nullable', 'string'],
@@ -96,7 +99,13 @@ class SyncTenantRequest extends FormRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator) {
-            foreach ($this->input('smartPrompts', []) as $categoryIndex => $category) {
+            $categories = $this->input('smartPrompts', []);
+
+            if (! is_array($categories)) {
+                return;
+            }
+
+            foreach ($categories as $categoryIndex => $category) {
                 if (! is_array($category)) {
                     continue;
                 }

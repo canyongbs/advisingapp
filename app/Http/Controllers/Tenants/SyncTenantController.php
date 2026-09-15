@@ -46,6 +46,7 @@ use App\Http\Requests\Tenants\SyncTenantRequest;
 use App\Jobs\UpdateTenantLicenseData;
 use App\Models\Tenant;
 use App\Settings\TenantExpirationSettings;
+use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -53,7 +54,7 @@ use Throwable;
 
 class SyncTenantController
 {
-    public function __invoke(SyncTenantRequest $request, Tenant $tenant): JsonResponse
+    public function __invoke(SyncTenantRequest $request, Tenant $tenant, SyncTenantSmartPrompts $syncTenantSmartPrompts): JsonResponse
     {
         $licenseData = new LicenseData(
             updatedAt: now(),
@@ -63,6 +64,9 @@ class SyncTenantController
         );
 
         try {
+            $syncSmartPrompts = $tenant->execute(fn (): ?Closure => $syncTenantSmartPrompts->execute($request, defer: true));
+            assert($syncSmartPrompts instanceof Closure);
+
             dispatch_sync(new UpdateTenantLicenseData($tenant, $licenseData));
 
             // Subscription status and the expiration banner both live in the landlord
@@ -80,11 +84,7 @@ class SyncTenantController
                 }
             });
 
-            $tenant->execute(function () use ($request): void {
-                DB::connection('tenant')->transaction(function () use ($request): void {
-                    app(SyncTenantSmartPrompts::class)->execute($request);
-                });
-            });
+            $tenant->execute($syncSmartPrompts);
         } catch (ValidationException $exception) {
             throw $exception;
         } catch (Throwable $exception) {
