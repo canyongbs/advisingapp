@@ -144,7 +144,7 @@ class UploadFormFieldBlock extends FormFieldBlock
             'id' => $media->id,
             'name' => $media->file_name,
             'temporary_url' => URL::temporarySignedRoute(
-                'form-submission-media.download',
+                'submission-media.download',
                 now()->addDay(),
                 ['media' => $media->getKey()],
             ),

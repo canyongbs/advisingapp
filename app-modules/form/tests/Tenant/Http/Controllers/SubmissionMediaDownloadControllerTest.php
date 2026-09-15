@@ -112,7 +112,7 @@ describe('SubmissionMediaDownloadController', function () {
         [, $media] = createSubmissionFieldWithMedia(nonLatin1FileName());
 
         $url = URL::temporarySignedRoute(
-            'form-submission-media.download',
+            'submission-media.download',
             now()->addDay(),
             ['media' => $media->getKey()],
         );
@@ -130,7 +130,7 @@ describe('SubmissionMediaDownloadController', function () {
 
         [, $media] = createSubmissionFieldWithMedia('report.png');
 
-        get(route('form-submission-media.download', ['media' => $media->getKey()]))
+        get(route('submission-media.download', ['media' => $media->getKey()]))
             ->assertForbidden();
     });
 
@@ -146,7 +146,7 @@ describe('SubmissionMediaDownloadController', function () {
         [, $media] = createSubmissionFieldWithMedia('report.png');
 
         $url = URL::temporarySignedRoute(
-            'form-submission-media.download',
+            'submission-media.download',
             now()->addDay(),
             ['media' => $media->getKey()],
         );
@@ -166,7 +166,7 @@ describe('SubmissionMediaDownloadController', function () {
         [, $media] = createSubmissionFieldWithMedia('report.png', 'not_files');
 
         $url = URL::temporarySignedRoute(
-            'form-submission-media.download',
+            'submission-media.download',
             now()->addDay(),
             ['media' => $media->getKey()],
         );
@@ -184,7 +184,7 @@ describe('upload block submission state', function () {
         $url = $state['media'][0]['temporary_url'];
 
         // The link is a clean, ASCII-only internal route, so it survives the submission HTML sanitizer.
-        expect($url)->toContain('/form-submission-media/' . $media->getKey() . '/download')
+        expect($url)->toContain('/submission-media/' . $media->getKey() . '/download')
             ->and(mb_check_encoding($url, 'ASCII'))->toBeTrue();
 
         $config = app(HtmlSanitizerConfig::class);
@@ -192,9 +192,39 @@ describe('upload block submission state', function () {
             '<a href="' . htmlspecialchars($url, ENT_QUOTES) . '">download</a>',
         );
 
-        expect($sanitized)->toContain('href');
+        expect($sanitized)->toMatch('/^<a href="[^"]+">download<\/a>$/');
+
+        preg_match('/href="([^"]*)"/', $sanitized, $matches);
+
+        // Decode first: the sanitizer re-encodes "=" as "&#61;", so a raw string
+        // comparison fails even when the URL survives intact.
+        expect(html_entity_decode($matches[1], ENT_QUOTES))->toBe($url);
     })->with([
         'UploadFormFieldBlock' => [UploadFormFieldBlock::class],
         'EducatableUploadFormFieldBlock' => [EducatableUploadFormFieldBlock::class],
     ]);
+
+    it('strips the raw storage url that the signed route replaces', function () {
+        [, $media] = createSubmissionFieldWithMedia(nonLatin1FileName());
+
+        // Derive the URL from the real object key rather than building one by hand: the media
+        // library keys objects as "{id}/{file name}", so the non-ASCII character is in the URL
+        // path itself, percent-encoded the way a storage presigner encodes a key.
+        Storage::disk('s3')->buildTemporaryUrlsUsing(fn (string $path): string => 'https://s3.test/' . implode(
+            '/',
+            array_map(rawurlencode(...), explode('/', $path)),
+        ));
+
+        $rawUrl = $media->getTemporaryUrl(now()->addMinute());
+
+        expect($rawUrl)->toContain(rawurlencode("\u{202F}"));
+
+        $sanitized = (new HtmlSanitizer(app(HtmlSanitizerConfig::class)))->sanitize(
+            '<a href="' . htmlspecialchars($rawUrl, ENT_QUOTES) . '">download</a>',
+        );
+
+        // This is the second defect the signed route fixes, and the reason an ASCII-safe
+        // content disposition alone is not enough: the sanitizer deletes the link outright.
+        expect($sanitized)->not->toContain('href');
+    });
 });

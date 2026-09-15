@@ -54,5 +54,5 @@ Route::prefix('forms')
     });
 
 Route::middleware(['web', 'auth', 'signed'])
-    ->get('form-submission-media/{media}/download', SubmissionMediaDownloadController::class)
-    ->name('form-submission-media.download');
+    ->get('submission-media/{media}/download', SubmissionMediaDownloadController::class)
+    ->name('submission-media.download');

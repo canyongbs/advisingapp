@@ -139,7 +139,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                                 ]);
 
                             collect($parser->getAttachments())->each(function (Attachment $attachment) use ($engagementResponse, $student) {
-                                $this->storeAttachmentMedia($engagementResponse, $attachment, 'attachments', $student);
+                                $this->storeAttachmentMedia($engagementResponse, $attachment, $student);
                             });
                         });
 
@@ -165,7 +165,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                         ]);
 
                         collect($parser->getAttachments())->each(function (Attachment $attachment) use ($unmatchedInboundCommunication) {
-                            $this->storeAttachmentMedia($unmatchedInboundCommunication, $attachment, 'attachments');
+                            $this->storeAttachmentMedia($unmatchedInboundCommunication, $attachment);
                         });
 
                         Storage::disk('s3-inbound-email')->delete($this->emailFilePath);
@@ -187,7 +187,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                             ]);
 
                         collect($parser->getAttachments())->each(function (Attachment $attachment) use ($engagementResponse, $prospect) {
-                            $this->storeAttachmentMedia($engagementResponse, $attachment, 'attachments', $prospect);
+                            $this->storeAttachmentMedia($engagementResponse, $attachment, $prospect);
                         });
                     });
 
@@ -240,7 +240,6 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
     protected function storeAttachmentMedia(
         EngagementResponse|UnmatchedInboundCommunication $model,
         Attachment $attachment,
-        string $collection,
         Student|Prospect|null $createdBy = null,
     ): void {
         try {
@@ -259,7 +258,7 @@ class ProcessSesS3InboundEmail implements ShouldQueue, ShouldBeUnique, NotTenant
                 $media = $model->addMediaFromStream($attachment->getStream())
                     ->usingName(pathinfo($fileName, PATHINFO_FILENAME))
                     ->usingFileName($fileName)
-                    ->toMediaCollection($collection);
+                    ->toMediaCollection('attachments');
             }
 
             if ($createdBy !== null && is_null($media->created_by_id)) {
