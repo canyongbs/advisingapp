@@ -47,7 +47,6 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
@@ -95,7 +94,7 @@ class EditEventDetails extends EditRecord
                 ])
                 ->columns(2),
 
-            Fieldset::make('Options')
+            Section::make('Options')
                 ->relationship('eventRegistrationForm')
                 ->schema([
                     Toggle::make('embed_enabled')
@@ -115,7 +114,7 @@ class EditEventDetails extends EditRecord
                 ])
                 ->columns(1),
 
-            Fieldset::make('Appearance')
+            Section::make('Appearance')
                 ->relationship('eventRegistrationForm')
                 ->schema([
                     ColorSelect::make('primary_color')
