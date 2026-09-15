@@ -38,24 +38,66 @@ namespace AdvisingApp\Ai\Actions;
 
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptType;
+use AdvisingApp\Ai\Models\Scopes\ConfidentialPromptScope;
 use AdvisingApp\Ai\Settings\AiSettings;
+use App\Features\PromptTitleUniquePerTypeFeature;
 use App\Http\Requests\Tenants\SyncTenantRequest;
+use Closure;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\ValidationException;
 
 class SyncTenantSmartPrompts
 {
-    public function execute(SyncTenantRequest $request): void
+    public function execute(SyncTenantRequest $request, bool $defer = false): ?Closure
     {
-        DB::transaction(function () use ($request) {
-            $this->syncInstructions($request);
+        $smartPrompts = $request->validated('smartPrompts');
 
-            $smartPrompts = $request->validated('smartPrompts');
+        if (! is_null($smartPrompts)) {
+            assert(is_array($smartPrompts));
+
+            $this->assertNoTitleConflicts($smartPrompts);
+        }
+
+        $sync = fn () => $this->sync($request, $smartPrompts);
+
+        if ($defer) {
+            return $sync;
+        }
+
+        $sync();
+
+        return null;
+    }
+
+    /**
+     * @param array<int, mixed>|null $smartPrompts
+     */
+    private function sync(SyncTenantRequest $request, ?array $smartPrompts): void
+    {
+        DB::transaction(function () use ($request, $smartPrompts) {
+            $this->syncInstructions($request);
 
             if (is_null($smartPrompts)) {
                 return;
             }
 
             $promptIds = [];
+
+            foreach ($smartPrompts as $smartPromptCategory) {
+                assert(is_array($smartPromptCategory));
+
+                foreach ($smartPromptCategory['smart_prompts'] ?? [] as $smartPrompt) {
+                    assert(is_array($smartPrompt));
+
+                    $promptIds[] = $smartPrompt['id'];
+                }
+            }
+
+            Prompt::query()
+                ->where('is_smart', true)
+                ->whereKeyNot($promptIds)
+                ->delete();
 
             foreach ($smartPrompts as $smartPromptCategory) {
                 $promptType = PromptType::query()
@@ -75,15 +117,8 @@ class SyncTenantSmartPrompts
                     $prompt->type_id = $promptType->getKey();
                     $prompt->is_smart = true;
                     $prompt->save();
-
-                    $promptIds[] = $smartPrompt['id'];
                 }
             }
-
-            Prompt::query()
-                ->where('is_smart', true)
-                ->whereKeyNot($promptIds)
-                ->delete();
         });
     }
 
@@ -95,8 +130,65 @@ class SyncTenantSmartPrompts
             return;
         }
 
+        assert(is_array($instructions));
+
         $settings = app(AiSettings::class);
         $settings->smart_prompt_instructions = $instructions;
         $settings->save();
+    }
+
+    /**
+     * Smart prompt titles are checked here, rather than in `SyncTenantRequest`, because
+     * this runs once the tenant is current. The request is validated on the landlord-api
+     * middleware group, before the tenant connection is configured.
+     *
+     * @param array<int, mixed> $smartPrompts
+     */
+    private function assertNoTitleConflicts(array $smartPrompts): void
+    {
+        $errors = [];
+        $incomingTitles = [];
+        $titleIsUniquePerType = PromptTitleUniquePerTypeFeature::active();
+
+        foreach ($smartPrompts as $categoryIndex => $smartPromptCategory) {
+            assert(is_array($smartPromptCategory));
+
+            $promptType = PromptType::query()->where('title', (string) ($smartPromptCategory['title'] ?? ''))->first();
+
+            foreach ($smartPromptCategory['smart_prompts'] ?? [] as $promptIndex => $smartPrompt) {
+                assert(is_array($smartPrompt));
+
+                $title = (string) ($smartPrompt['title'] ?? '');
+                $normalizedTitle = mb_strtolower($title);
+
+                if (! $titleIsUniquePerType && in_array($normalizedTitle, $incomingTitles, true)) {
+                    $errors["smartPrompts.{$categoryIndex}.smart_prompts.{$promptIndex}.title"] = 'The smart prompt title must be unique across all categories.';
+                }
+
+                $incomingTitles[] = $normalizedTitle;
+
+                if ($titleIsUniquePerType && ! $promptType) {
+                    continue;
+                }
+
+                $conflictingCustomPrompts = Prompt::withoutGlobalScope(ConfidentialPromptScope::class)
+                    ->where('is_smart', false)
+                    ->where(new Expression('lower(title)'), $normalizedTitle);
+
+                if ($titleIsUniquePerType) {
+                    $conflictingCustomPrompts->where('type_id', $promptType->getKey());
+                }
+
+                if ($conflictingCustomPrompts->exists()) {
+                    $errors["smartPrompts.{$categoryIndex}.smart_prompts.{$promptIndex}.title"] = $titleIsUniquePerType
+                        ? 'The smart prompt title conflicts with an existing custom prompt in this category.'
+                        : 'The smart prompt title conflicts with an existing custom prompt.';
+                }
+            }
+        }
+
+        if (filled($errors)) {
+            throw ValidationException::withMessages($errors);
+        }
     }
 }
