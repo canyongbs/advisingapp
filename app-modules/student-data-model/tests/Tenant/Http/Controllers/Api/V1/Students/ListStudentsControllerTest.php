@@ -195,3 +195,21 @@ it('can include related student relationships', function (string $relationship, 
     '`firstEnrollmentTerm`' => ['first_enrollment_term', 'first_enrollment_term'],
     '`mostRecentEnrollmentTerm`' => ['most_recent_enrollment_term', 'most_recent_enrollment_term'],
 ]);
+
+it('does not list archived students', function () {
+    $user = SystemUser::factory()->create();
+    $user->givePermissionTo('student.view-any');
+    Sanctum::actingAs($user, ['api']);
+
+    $active = Student::factory()->create();
+    $archived = Student::factory()->create();
+    $archived->archive();
+
+    $response = getJson(route('api.v1.students.index', [], false));
+    $response->assertOk();
+
+    $sisids = array_column($response['data'], 'sisid');
+
+    expect($sisids)->toContain($active->getKey())
+        ->and($sisids)->not->toContain($archived->getKey());
+});

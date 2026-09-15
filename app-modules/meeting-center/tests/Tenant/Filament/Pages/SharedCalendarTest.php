@@ -38,8 +38,11 @@ use AdvisingApp\MeetingCenter\Filament\Pages\SharedCalendar;
 use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ListBookingGroups;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Team\Models\Department;
 use App\Models\User;
+use Filament\Tables\Columns\TextColumn;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -102,6 +105,64 @@ test('`SharedCalendar` table defaults to hiding past appointments', function () 
         ->assertCountTableRecords(1)
         ->assertCanSeeTableRecords([$futureAppointment])
         ->assertCanNotSeeTableRecords([$pastAppointment]);
+});
+
+test('`SharedCalendar` labels and links an appointment booked by an active student', function () {
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+
+    $appointment = BookingGroupAppointment::factory()
+        ->for(BookingGroup::factory(), 'bookingGroup')
+        ->create([
+            'email' => $student->primaryEmailAddress->address,
+            'starts_at' => now()->addDay(),
+            'ends_at' => now()->addDay()->addHour(),
+        ]);
+
+    livewire(SharedCalendar::class)
+        ->set('data', [
+            'groupFilter' => 'selected',
+            'selectedGroupIds' => [],
+            'hidePast' => false,
+        ])
+        ->assertCanSeeTableRecords([$appointment])
+        ->assertTableColumnStateSet('name', "{$appointment->name} (Student)", $appointment)
+        ->assertTableColumnExists(
+            'name',
+            fn (TextColumn $column): bool => $column->getUrl() === StudentResource::getUrl('view', ['record' => $student]),
+            $appointment,
+        );
+});
+
+test('`SharedCalendar` still labels an appointment booked by an archived student without linking to them', function () {
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+
+    $appointment = BookingGroupAppointment::factory()
+        ->for(BookingGroup::factory(), 'bookingGroup')
+        ->create([
+            'email' => $student->primaryEmailAddress->address,
+            'starts_at' => now()->addDay(),
+            'ends_at' => now()->addDay()->addHour(),
+        ]);
+
+    $student->archive();
+
+    livewire(SharedCalendar::class)
+        ->set('data', [
+            'groupFilter' => 'selected',
+            'selectedGroupIds' => [],
+            'hidePast' => false,
+        ])
+        ->assertCanSeeTableRecords([$appointment])
+        ->assertTableColumnStateSet('name', "{$appointment->name} (Student)", $appointment)
+        ->assertTableColumnExists(
+            'name',
+            fn (TextColumn $column): bool => $column->getUrl() === null,
+            $appointment,
+        );
 });
 
 test('`SharedCalendar` table shows past appointments when Hide Past is disabled', function () {

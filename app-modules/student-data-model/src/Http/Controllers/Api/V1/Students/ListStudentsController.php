@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students;
 
 use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Dedoc\Scramble\Attributes\Example;
 use Dedoc\Scramble\Attributes\Group;
@@ -113,7 +114,7 @@ class ListStudentsController
     {
         Gate::authorize('viewAny', Student::class);
 
-        return QueryBuilder::for(Student::class)
+        return QueryBuilder::for(Student::query()->tap(new WithoutArchivedStudents()))
             ->allowedFilters([
                 AllowedFilter::partial('sisid'),
                 AllowedFilter::partial('otherid'),

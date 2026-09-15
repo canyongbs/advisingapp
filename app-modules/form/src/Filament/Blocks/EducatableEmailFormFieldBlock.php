@@ -41,7 +41,9 @@ use AdvisingApp\Form\Actions\ResolveSubmissionAuthorFromEmail;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -110,12 +112,19 @@ class EducatableEmailFormFieldBlock extends FormFieldBlock
 
     public static function getSubmissionState(SubmissibleField $field, mixed $response): array
     {
-        $author = app(ResolveSubmissionAuthorFromEmail::class)($response);
+        // This identifies who authored a submission that already exists, so an archived student
+        // must still be recognised — but not linked, since their page no longer resolves.
+        $author = app(ResolveSubmissionAuthorFromEmail::class)($response, includingArchived: true);
 
         return [
             ...parent::getSubmissionState($field, $response),
             'authorKey' => $author ? $author->getKey() : null,
             'authorType' => $author ? $author::class : null,
+            'authorUrl' => match (true) {
+                $author instanceof Student => StudentResource::getViewUrl($author),
+                $author instanceof Prospect => ProspectResource::getUrl('view', ['record' => $author]),
+                default => null,
+            },
         ];
     }
 
