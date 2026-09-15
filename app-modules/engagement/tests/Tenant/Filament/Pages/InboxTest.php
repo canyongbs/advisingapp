@@ -37,6 +37,7 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Filament\Pages\Inbox;
+use AdvisingApp\Engagement\Filament\Pages\SentItems;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -48,6 +49,17 @@ use function Tests\asSuperAdmin;
 it('is gated with proper access control', function () {})->todo();
 
 it('displays the correct details', function () {})->todo();
+
+it('renders the unified inbox tabs as the table header instead of the cluster sub-navigation', function () {
+    asSuperAdmin();
+
+    expect(app(Inbox::class)->getSubNavigation())->toBe([]);
+
+    livewire(Inbox::class)
+        ->assertSeeHtml('fi-unified-inbox-tabs')
+        ->assertSeeHtml(SentItems::getUrl())
+        ->assertSeeText('Sent Items');
+});
 
 it('can properly filter sender type', function () {
     asSuperAdmin();

@@ -32,5 +32,9 @@
     </COPYRIGHT>
 --}}
 <x-filament-panels::page>
-    {{ $this->table }}
+    <div class="fi-unified-inbox-ctn">
+        @include('engagement::filament.pages.partials.unified-inbox-tabs', ['active' => 'inbox'])
+
+        {{ $this->table }}
+    </div>
 </x-filament-panels::page>
