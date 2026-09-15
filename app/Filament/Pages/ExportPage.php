@@ -44,10 +44,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\EmbeddedTable;
-use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -61,8 +58,6 @@ class ExportPage extends Page implements HasActions, HasForms, HasTable
     use InteractsWithForms;
     use InteractsWithTable;
 
-    protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
-
     protected static ?string $navigationLabel = 'Export';
 
     protected static ?string $title = 'Export';
@@ -71,19 +66,14 @@ class ExportPage extends Page implements HasActions, HasForms, HasTable
 
     protected static ?string $cluster = ImportExport::class;
 
+    protected string $view = 'filament.pages.export-page';
+
     public static function canAccess(): bool
     {
         $user = auth()->user();
         assert($user instanceof User);
 
         return $user->can('export_hub.view-any');
-    }
-
-    public function content(Schema $schema): Schema
-    {
-        return $schema->components([
-            EmbeddedTable::make(),
-        ]);
     }
 
     public function table(Table $table): Table

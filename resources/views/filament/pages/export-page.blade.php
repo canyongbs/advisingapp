@@ -31,15 +31,8 @@
     
     </COPYRIGHT>
 --}}
-@php
-    use AdvisingApp\StudentDataModel\Livewire\StudentDataImportsTable;
-    use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-@endphp
-
 <x-filament-panels::page>
-    <x-import-export-tabs active="student-sync">
-        @if (app(ManageStudentConfigurationSettings::class)->is_enabled)
-            @livewire(StudentDataImportsTable::class)
-        @endif
+    <x-import-export-tabs active="export">
+        {{ $this->table }}
     </x-import-export-tabs>
 </x-filament-panels::page>

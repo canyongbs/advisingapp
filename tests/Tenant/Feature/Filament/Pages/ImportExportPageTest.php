@@ -44,6 +44,7 @@ use App\Filament\Pages\ImportPage;
 use App\Models\Export;
 use App\Models\Import;
 use App\Models\User;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;
@@ -397,4 +398,49 @@ it('forbids the student sync page when student editing is disabled', function ()
     actingAs($user);
 
     get(ManageStudentSyncs::getUrl())->assertForbidden();
+});
+
+// In-Container Tab Navigation Tests
+
+it('renders tabs linking to the import and export pages, excluding student sync when inaccessible', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+
+    actingAs($user);
+
+    $html = Blade::render('<x-import-export-tabs active="import" />');
+
+    expect($html)
+        ->toContain(ImportPage::getUrl())
+        ->toContain(ExportPage::getUrl())
+        ->not->toContain(ManageStudentSyncs::getUrl());
+});
+
+it('includes a tab linking to the student sync page when it is accessible', function () {
+    $settings = app(ManageStudentConfigurationSettings::class);
+    $settings->is_enabled = true;
+    $settings->save();
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+    $user->givePermissionTo('record_sync.view-any');
+
+    actingAs($user);
+
+    $html = Blade::render('<x-import-export-tabs active="student-sync" />');
+
+    expect($html)
+        ->toContain(ImportPage::getUrl())
+        ->toContain(ExportPage::getUrl())
+        ->toContain(ManageStudentSyncs::getUrl());
+});
+
+it('renders no tabs when the user cannot access any import/export page', function () {
+    $user = User::factory()->create();
+
+    actingAs($user);
+
+    $html = Blade::render('<x-import-export-tabs active="import" />');
+
+    expect(trim($html))->toBe('');
 });
