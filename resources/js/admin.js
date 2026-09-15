@@ -110,7 +110,10 @@ function decorateRichEditorCustomBlock(block) {
         return;
     }
 
-    const isMapped = fieldBuilder.getAttribute('data-mapped-block-types').split(',').includes(block.getAttribute('data-id'));
+    const isMapped = fieldBuilder
+        .getAttribute('data-mapped-block-types')
+        .split(',')
+        .includes(block.getAttribute('data-id'));
 
     const badges = document.createElement('span');
     badges.className = 'fi-fo-rich-editor-custom-block-badges inline-flex items-center';
@@ -120,7 +123,6 @@ function decorateRichEditorCustomBlock(block) {
     if (typeof config.isRequired === 'boolean') {
         badges.appendChild(createRichEditorCustomBlockBadge(config.isRequired ? 'Required' : 'Optional', 'subtle'));
     }
-
 
     // Appended inside the heading, rather than as its sibling, so the badges sit
     // directly beside the label text instead of being pushed to the far right by
