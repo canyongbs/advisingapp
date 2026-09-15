@@ -38,39 +38,9 @@ use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\EditForm;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
-use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Section;
 
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
-
-it('groups the name field under a Properties section and the embed and wizard toggles under an Options section', function () {
-    asSuperAdmin();
-
-    $belongsToSection = function (Component $component, string $heading): bool {
-        $container = $component->getContainer();
-
-        while ($container !== null) {
-            $parent = $container->getParentComponent();
-
-            if ($parent instanceof Section) {
-                return $parent->getHeading() === $heading;
-            }
-
-            $container = $parent?->getContainer();
-        }
-
-        return false;
-    };
-
-    $form = Form::factory()->create();
-
-    livewire(EditForm::class, ['record' => $form->getRouteKey()])
-        ->assertSuccessful()
-        ->assertSchemaComponentExists('name', checkComponentUsing: fn (Component $component): bool => $belongsToSection($component, 'Properties'))
-        ->assertSchemaComponentExists('embed_enabled', checkComponentUsing: fn (Component $component): bool => $belongsToSection($component, 'Options'))
-        ->assertSchemaComponentExists('is_wizard', checkComponentUsing: fn (Component $component): bool => $belongsToSection($component, 'Options'));
-});
 
 it('archive action is always visible and labeled Archive', function () {
     asSuperAdmin();

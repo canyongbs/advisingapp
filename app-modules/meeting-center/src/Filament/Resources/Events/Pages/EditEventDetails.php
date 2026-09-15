@@ -62,7 +62,7 @@ class EditEventDetails extends EditRecord
     public function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make('Event Details')
+            Section::make('Properties')
                 ->schema([
                     TextInput::make('title')
                         ->label('Title')
@@ -95,7 +95,7 @@ class EditEventDetails extends EditRecord
                 ])
                 ->columns(2),
 
-            Fieldset::make('Embed Settings')
+            Fieldset::make('Options')
                 ->relationship('eventRegistrationForm')
                 ->schema([
                     Toggle::make('embed_enabled')
@@ -115,7 +115,7 @@ class EditEventDetails extends EditRecord
                 ])
                 ->columns(1),
 
-            Fieldset::make('Appearance Settings')
+            Fieldset::make('Appearance')
                 ->relationship('eventRegistrationForm')
                 ->schema([
                     ColorSelect::make('primary_color')

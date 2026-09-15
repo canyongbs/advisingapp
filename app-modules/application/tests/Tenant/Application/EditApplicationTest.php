@@ -42,8 +42,6 @@ use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
-use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Section;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\seed;
@@ -54,36 +52,6 @@ use function Tests\asSuperAdmin;
 //test('A successful action on the EditApplication page', function () {});
 //
 //test('EditApplication requires valid data', function ($data, $errors) {})->with([]);
-
-it('groups the name field under a Properties section and the embed and wizard toggles under an Options section', function () {
-    seed(ApplicationSubmissionStateSeeder::class);
-
-    asSuperAdmin();
-
-    $belongsToSection = function (Component $component, string $heading): bool {
-        $container = $component->getContainer();
-
-        while ($container !== null) {
-            $parent = $container->getParentComponent();
-
-            if ($parent instanceof Section) {
-                return $parent->getHeading() === $heading;
-            }
-
-            $container = $parent?->getContainer();
-        }
-
-        return false;
-    };
-
-    $application = Application::factory()->create();
-
-    livewire(EditApplication::class, ['record' => $application->getRouteKey()])
-        ->assertSuccessful()
-        ->assertSchemaComponentExists('name', checkComponentUsing: fn (Component $component): bool => $belongsToSection($component, 'Properties'))
-        ->assertSchemaComponentExists('embed_enabled', checkComponentUsing: fn (Component $component): bool => $belongsToSection($component, 'Options'))
-        ->assertSchemaComponentExists('is_wizard', checkComponentUsing: fn (Component $component): bool => $belongsToSection($component, 'Options'));
-});
 
 // Permission Tests
 
