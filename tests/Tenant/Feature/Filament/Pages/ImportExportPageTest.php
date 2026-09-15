@@ -444,3 +444,42 @@ it('renders no tabs when the user cannot access any import/export page', functio
 
     expect(trim($html))->toBe('');
 });
+
+it('marks the active tab as current', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+
+    actingAs($user);
+
+    $html = Blade::render('<x-import-export-tabs active="export" />');
+
+    $activeHref = null;
+
+    if (preg_match('/<a\b[^>]*\baria-current="page"[^>]*>/i', $html, $match)) {
+        preg_match('/href="([^"]+)"/i', $match[0], $hrefMatch);
+        $activeHref = html_entity_decode($hrefMatch[1] ?? '');
+    }
+
+    expect($activeHref)->toBe(ExportPage::getUrl());
+});
+
+it('renders the slotted page content inside the tab container', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+
+    actingAs($user);
+
+    $html = Blade::render('<x-import-export-tabs active="import">SLOTTED_TABLE_CONTENT</x-import-export-tabs>');
+
+    expect($html)->toContain('SLOTTED_TABLE_CONTENT');
+});
+
+it('renders the slotted content even when no tabs are accessible', function () {
+    $user = User::factory()->create();
+
+    actingAs($user);
+
+    $html = Blade::render('<x-import-export-tabs active="import">FALLBACK_CONTENT</x-import-export-tabs>');
+
+    expect($html)->toContain('FALLBACK_CONTENT');
+});
