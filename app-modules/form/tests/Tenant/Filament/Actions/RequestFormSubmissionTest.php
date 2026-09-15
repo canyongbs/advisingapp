@@ -175,7 +175,7 @@ it('allows request_note to be optional', function () {
         ->and($submission->request_note)->toBeNull();
 });
 
-it('only lists forms with authentication enabled in the form select table', function () {
+it('only lists forms with authentication enabled and not archived in the form select table', function () {
     Queue::fake();
 
     asSuperAdmin();
@@ -183,13 +183,16 @@ it('only lists forms with authentication enabled in the form select table', func
     Student::factory()->create();
     $authenticatedForm = Form::factory()->create(['is_authenticated' => true]);
     $unauthenticatedForm = Form::factory()->create(['is_authenticated' => false]);
+    $archivedForm = Form::factory()->create(['is_authenticated' => true]);
+    $archivedForm->archive();
 
     $formIds = RequestableFormsTable::configure(Table::make(new TableSelectLivewireComponent()))
         ->getQuery()
         ->pluck('id');
 
     expect($formIds)->toContain($authenticatedForm->id)
-        ->and($formIds)->not->toContain($unauthenticatedForm->id);
+        ->and($formIds)->not->toContain($unauthenticatedForm->id)
+        ->and($formIds)->not->toContain($archivedForm->id);
 });
 
 it('rejects a form_id belonging to a form without authentication enabled', function () {
@@ -206,6 +209,26 @@ it('rejects a form_id belonging to a form without authentication enabled', funct
     ])
         ->callTableAction('Request', data: [
             'form_id' => $unauthenticatedForm->id,
+            'request_method' => FormSubmissionRequestDeliveryMethod::Email->value,
+        ])
+        ->assertHasTableActionErrors(['form_id']);
+});
+
+it('rejects a form_id belonging to an archived form', function () {
+    Queue::fake();
+
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+    $archivedForm = Form::factory()->create(['is_authenticated' => true]);
+    $archivedForm->archive();
+
+    livewire(FormSubmissionsRelationManager::class, [
+        'ownerRecord' => $student,
+        'pageClass' => ViewStudent::class,
+    ])
+        ->callTableAction('Request', data: [
+            'form_id' => $archivedForm->id,
             'request_method' => FormSubmissionRequestDeliveryMethod::Email->value,
         ])
         ->assertHasTableActionErrors(['form_id']);

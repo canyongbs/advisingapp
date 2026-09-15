@@ -38,7 +38,7 @@ namespace AdvisingApp\Form\Filament\Actions;
 
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
 use AdvisingApp\Form\Filament\Tables\RequestableFormsTable;
-use AdvisingApp\Form\Models\Form;
+use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TableSelect;
@@ -47,7 +47,6 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Wizard\Step;
-use Illuminate\Validation\Rule;
 
 class RequestFormSubmission extends Action
 {
@@ -62,7 +61,11 @@ class RequestFormSubmission extends Action
                         ->label('Form')
                         ->required()
                         ->rules([
-                            Rule::exists(Form::class, 'id')->where('is_authenticated', true),
+                            fn (): Closure => function (string $attribute, mixed $value, Closure $fail): void {
+                                if (RequestableFormsTable::query()->whereKey($value)->doesntExist()) {
+                                    $fail('The selected form is invalid.');
+                                }
+                            },
                         ])
                         ->tableConfiguration(RequestableFormsTable::class)
                         ->helperText('Forms must have authentication enabled to be requested, to verify the identity of the respondent.'),

@@ -48,10 +48,20 @@ use Illuminate\Database\Eloquent\Builder;
  */
 class RequestableFormsTable
 {
+    /**
+     * @return Builder<Form>
+     */
+    public static function query(): Builder
+    {
+        return Form::query()
+            ->where('is_authenticated', true)
+            ->withoutArchived();
+    }
+
     public static function configure(Table $table): Table
     {
         return $table
-            ->query(fn (): Builder => Form::query()->where('is_authenticated', true))
+            ->query(fn (): Builder => static::query())
             ->columns([
                 TextColumn::make('name')
                     ->label('Name')
