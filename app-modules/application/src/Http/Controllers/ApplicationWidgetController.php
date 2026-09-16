@@ -309,8 +309,14 @@ class ApplicationWidgetController extends Controller
             );
         }
 
-        /** @var ApplicationSubmission $submission */
-        $submission = $application->submissions()->make();
+        /** @var ?ApplicationSubmission $submission */
+        $submission = $authentication ? $application->submissions()
+            ->requested()
+            ->whereMorphedTo('author', $authentication->author)
+            ->first() : null;
+
+        $submission ??= $application->submissions()->make();
+        $submission->submitted_at = now();
 
         if ($authentication) {
             $submission->author()->associate($authentication->author);

@@ -47,6 +47,8 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Wizard\Step;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Str;
 
 class RequestEventRegistrationFormSubmission extends Action
 {
@@ -63,8 +65,20 @@ class RequestEventRegistrationFormSubmission extends Action
                         ->searchable()
                         ->options(fn (): array => Event::query()
                             ->whereHas('eventRegistrationForm')
+                            ->limit(50)
                             ->pluck('title', 'id')
-                            ->all()),
+                            ->all())
+                        ->getSearchResultsUsing(fn (string $search): array => Event::query()
+                            ->whereHas('eventRegistrationForm')
+                            ->where(new Expression('lower(title)'), 'like', '%' . Str::lower($search) . '%')
+                            ->limit(50)
+                            ->pluck('title', 'id')
+                            ->all())
+                        ->getOptionLabelUsing(fn (string | int | null $value): ?string => filled($value)
+                            ? Event::query()
+                                ->whereKey($value)
+                                ->value('title')
+                            : null),
                 ]),
             Step::make('Notification')
                 ->schema([
@@ -74,11 +88,34 @@ class RequestEventRegistrationFormSubmission extends Action
                 ]),
         ]);
 
-        $this->action(function (array $data, ManageRelatedRecords | RelationManager $livewire) {
+        $this->action(function (array $data, Action $action, ManageRelatedRecords | RelationManager $livewire) {
             $owner = $livewire->getOwnerRecord();
             assert($owner instanceof Educatable);
 
-            $event = Event::query()->whereKey($data['event_id'])->firstOrFail();
+            $event = Event::query()->whereKey($data['event_id'])->whereHas('eventRegistrationForm')->first();
+
+            if (! $event) {
+                Notification::make()
+                    ->title('This event no longer accepts registration requests')
+                    ->danger()
+                    ->send();
+
+                $action->halt();
+
+                return;
+            }
+
+            if (blank($owner->primaryEmailAddress?->address)) {
+                Notification::make()
+                    ->title('This record does not have a primary email address to send the request to')
+                    ->danger()
+                    ->send();
+
+                $action->halt();
+
+                return;
+            }
+
             $form = $event->eventRegistrationForm;
 
             $attendee = $event->attendees()->firstOrNew(['email' => $owner->primaryEmailAddress->address]);

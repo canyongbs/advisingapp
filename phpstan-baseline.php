@@ -2880,6 +2880,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/form/src/Http/Controllers/FormWidgetController.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Property AdvisingApp\\\\Application\\\\Models\\\\IdeHelperApplicationSubmission\\:\\:\\$submitted_at \\(Carbon\\\\CarbonImmutable\\|null\\) does not accept Illuminate\\\\Support\\\\Carbon\\.$#',
+    'identifier' => 'assign.propertyType',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/application/src/Http/Controllers/ApplicationWidgetController.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Eloquent models must define a "\\$fillable" property\\. Add a "\\$fillable" property to this model or a parent model\\.$#',
     'identifier' => 'Common.modelMissingFillable',
     'count' => 1,

@@ -255,8 +255,13 @@ class EventRegistrationWidgetController extends Controller
                 );
             }
 
-            /** @var EventRegistrationFormSubmission $submission */
-            $submission = $form->submissions()->make();
+            /** @var ?EventRegistrationFormSubmission $submission */
+            $submission = $form->submissions()
+                ->requested()
+                ->where('event_attendee_id', $authentication->author->getKey())
+                ->first();
+
+            $submission ??= $form->submissions()->make();
 
             $submission->author()->associate($authentication->author);
 

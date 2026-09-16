@@ -52,6 +52,11 @@ return new class () extends Migration {
                 $table->foreignUuid('requester_id')->nullable()->constrained('users')->nullOnDelete();
             });
 
+            // Every pre-existing row was a completed submission (this feature is what introduces pending/unsubmitted rows).
+            DB::table('application_submissions')
+                ->whereNull('submitted_at')
+                ->update(['submitted_at' => DB::raw('created_at')]);
+
             OnlineAdmissionRequestsFeature::activate();
         });
     }
