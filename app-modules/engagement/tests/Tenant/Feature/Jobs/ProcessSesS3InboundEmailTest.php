@@ -465,6 +465,10 @@ it('handles attachments properly for a Student', function () {
         ->and($engagementResponse->getMedia('attachments')->every(fn ($media) => $media->created_by_type === $student->getMorphClass()))->toBeTrue()
         ->and($inlineAttachments->every(fn ($media) => $media->created_by_id === $student->getKey()))->toBeTrue()
         ->and($inlineAttachments->every(fn ($media) => $media->created_by_type === $student->getMorphClass()))->toBeTrue()
+        ->and($engagementResponse->getMedia('attachments')->pluck('name')->all())->toBe(['SampleJPGImage_1mbmb', 'SampleJPGImage_50kbmb'])
+        ->and($engagementResponse->getMedia('attachments')->pluck('file_name')->all())->toBe(['SampleJPGImage_1mbmb.jpg', 'SampleJPGImage_50kbmb.jpg'])
+        ->and($inlineAttachments->first()->name)->toBe('image001')
+        ->and($inlineAttachments->first()->file_name)->toBe('image001.png')
         ->and($engagementResponse->subject)->toBe('This is a test')
         ->and($engagementResponse->sender_id)->toBe($student->getKey())
         ->and($engagementResponse->sender_type)->toBe($student->getMorphClass())
@@ -524,6 +528,10 @@ it('handles attachments properly for a Prospect', function () {
         ->and($engagementResponse->getMedia('attachments')->every(fn ($media) => $media->created_by_type === $prospect->getMorphClass()))->toBeTrue()
         ->and($inlineAttachments->every(fn ($media) => $media->created_by_id === $prospect->getKey()))->toBeTrue()
         ->and($inlineAttachments->every(fn ($media) => $media->created_by_type === $prospect->getMorphClass()))->toBeTrue()
+        ->and($engagementResponse->getMedia('attachments')->pluck('name')->all())->toBe(['SampleJPGImage_1mbmb', 'SampleJPGImage_50kbmb'])
+        ->and($engagementResponse->getMedia('attachments')->pluck('file_name')->all())->toBe(['SampleJPGImage_1mbmb.jpg', 'SampleJPGImage_50kbmb.jpg'])
+        ->and($inlineAttachments->first()->name)->toBe('image001')
+        ->and($inlineAttachments->first()->file_name)->toBe('image001.png')
         ->and($engagementResponse->subject)->toBe('This is a test')
         ->and($engagementResponse->sender_id)->toBe($prospect->getKey())
         ->and($engagementResponse->sender_type)->toBe($prospect->getMorphClass())
@@ -561,3 +569,39 @@ it('handles exceptions correctly in the failed method', function (?Exception $ex
     'unable to retrieve content exception' => [new UnableToRetrieveContentFromSesS3EmailPayload('s3_email'), '/failed'],
     'unable to detect tenant exception' => [new UnableToDetectTenantFromSesS3EmailPayload('s3_email'), '/failed'],
 ]);
+
+it('does not match an inbound email to an archived student', function () {
+    Storage::fake('s3');
+    $filesystem = Storage::fake('s3-inbound-email');
+
+    $student = Student::factory()->create();
+
+    StudentEmailAddress::factory()
+        ->for($student, 'student')
+        ->create(['address' => 'kevin.ullyott@canyongbs.com']);
+
+    $student->archive();
+
+    $modulePath = resolve(ModulePath::class);
+
+    $content = file_get_contents($modulePath('engagement', 'tests/Fixtures/s3_email'));
+
+    $file = UploadedFile::fake()->createWithContent('s3_email', $content);
+
+    $filesystem->putFileAs('', $file, 's3_email');
+
+    /** @var ProcessSesS3InboundEmail&MockInterface $mock */
+    $mock = partialMock(ProcessSesS3InboundEmail::class, function (MockInterface $mock) use ($content) {
+        $mock->shouldAllowMockingProtectedMethods();
+        // @phpstan-ignore-next-line
+        $mock->shouldReceive('getContent')->once()->andReturn($content);
+    });
+
+    // @phpstan-ignore-next-line
+    invade($mock)->emailFilePath = 's3_email';
+
+    $mock->handle();
+
+    assertDatabaseCount(EngagementResponse::class, 0);
+    assertDatabaseCount(UnmatchedInboundCommunication::class, 1);
+});

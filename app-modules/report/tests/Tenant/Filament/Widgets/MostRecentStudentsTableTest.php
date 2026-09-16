@@ -36,6 +36,7 @@
 use AdvisingApp\Report\Filament\Widgets\MostRecentStudentsTable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use Carbon\Carbon;
 use Filament\Actions\ExportAction;
 use Illuminate\Support\Facades\Storage;
 
@@ -96,4 +97,38 @@ it('can start an export, sending a notification', function () {
     ])
         ->callTableAction(ExportAction::class)
         ->assertNotified();
+});
+
+it('does not list archived students', function () {
+    $createdAt = now()->subDays(5);
+
+    $active = Student::factory()->count(2)->create(['created_at_source' => $createdAt]);
+    $archived = Student::factory()->create(['created_at_source' => $createdAt]);
+    $archived->archive();
+
+    livewire(MostRecentStudentsTable::class, [
+        'cacheTag' => 'report-students',
+        'pageFilters' => [
+            'startDate' => now()->subDays(10)->toDateString(),
+            'endDate' => now()->toDateString(),
+        ],
+    ])
+        ->assertCanSeeTableRecords($active)
+        ->assertCanNotSeeTableRecords(collect([$archived]));
+});
+
+// Archiving is not retroactive: a student archived in September was genuinely part of the
+// student body in March, so a report looking at March still has to list them.
+it('lists a student archived after the reported period', function () {
+    $student = Student::factory()->create(['created_at_source' => '2026-03-10']);
+    $student->forceFill(['archived_at' => Carbon::parse('2026-09-15')])->save();
+
+    livewire(MostRecentStudentsTable::class, [
+        'cacheTag' => 'report-students',
+        'pageFilters' => [
+            'startDate' => '2026-03-01',
+            'endDate' => '2026-03-31',
+        ],
+    ])
+        ->assertCanSeeTableRecords(collect([$student]));
 });

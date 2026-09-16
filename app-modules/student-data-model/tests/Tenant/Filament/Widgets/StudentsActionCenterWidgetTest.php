@@ -34,6 +34,12 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
+use AdvisingApp\StudentDataModel\Models\Student;
+
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
+
 it('returns data', function () {})->todo();
 
 it('only shows the alerts count column when the early alert feature is active', function () {})->todo();
@@ -43,3 +49,16 @@ it('can filter for messages', function () {})->todo();
 it('can filter for concerns', function () {})->todo();
 
 it('can filter for tasks', function () {})->todo();
+
+it('does not list archived students', function () {
+    asSuperAdmin();
+
+    $active = Student::factory()->count(2)->create();
+    $archived = Student::factory()->create();
+    $archived->archive();
+
+    livewire(StudentsActionCenterWidget::class)
+        ->assertOk()
+        ->assertCanSeeTableRecords($active)
+        ->assertCanNotSeeTableRecords([$archived]);
+});

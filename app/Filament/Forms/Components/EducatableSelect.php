@@ -37,7 +37,9 @@
 namespace App\Filament\Forms\Components;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\StudentArchivingFeature;
 use App\Models\Authenticatable;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Closure;
@@ -48,6 +50,7 @@ use Filament\Forms\Components\Select;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Concerns\HasLabel;
 use Filament\Schemas\Components\Concerns\HasName;
+use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -81,13 +84,19 @@ class EducatableSelect extends Component
             $morphToSelect = MorphToSelect::make($name)
                 ->searchable()
                 ->types(fn (?Model $record, MorphToSelect $component) => [
-                    static::getStudentType(),
+                    static::getStudentType($component->getRelationship()->getForeignKeyName(), $record),
                     static::getProspectType($component->getRelationship()->getForeignKeyName(), $isExcludingConvertedProspects, $record),
                 ]);
 
-            if ($modifyKeySelectUsing) {
-                $morphToSelect->modifyKeySelectUsing($modifyKeySelectUsing);
-            }
+            $morphToSelect->modifyKeySelectUsing(function (Select $select, ?Model $record, MorphToSelect $component) use ($modifyKeySelectUsing): Select {
+                $relationship = $component->getRelationship();
+
+                $select->rule(static::studentKeyRule($relationship->getForeignKeyName(), $record, $relationship->getMorphType()));
+
+                return $modifyKeySelectUsing
+                    ? ($component->evaluate($modifyKeySelectUsing, ['select' => $select]) ?? $select)
+                    : $select;
+            });
 
             return $morphToSelect;
         }
@@ -101,10 +110,45 @@ class EducatableSelect extends Component
         return $static;
     }
 
-    public static function getStudentType(): Type
+    /**
+     * @param  ?string  $typeColumnName
+     */
+    public static function studentKeyRule(?string $keyColumnName, ?Model $record, ?string $typeColumnName = null): Closure
+    {
+        return fn (Get $get): Closure => function (string $attribute, mixed $value, Closure $fail) use ($get, $keyColumnName, $record, $typeColumnName): void {
+            if (filled($typeColumnName) && $get($typeColumnName) !== (new Student())->getMorphClass()) {
+                return;
+            }
+
+            if (filled($keyColumnName) && $record && (string) $record->{$keyColumnName} === (string) $value) {
+                return;
+            }
+
+            if (! Student::query()->tap(new WithoutArchivedStudents())->whereKey($value)->exists()) {
+                $fail('The selected student is not available.');
+            }
+        };
+    }
+
+    public static function getStudentType(?string $keyColumnName, ?Model $record): Type
     {
         return Type::make(Student::class)
-            ->titleAttribute(Student::displayNameKey());
+            ->titleAttribute(Student::displayNameKey())
+            ->modifyOptionsQueryUsing(function (Builder $query) use ($keyColumnName, $record) {
+                if (! StudentArchivingFeature::active()) {
+                    return;
+                }
+
+                // Filament runs this closure when resolving the label of the selected value as
+                // well as when building the options, so an already-selected archived student
+                // must stay resolvable or their name disappears from the record they are on.
+                $query->where(fn (Builder $query) => $query
+                    ->tap(new WithoutArchivedStudents())
+                    ->when(
+                        filled($keyColumnName) && $record,
+                        fn (Builder $query) => $query->orWhere($query->getModel()->getQualifiedKeyName(), $record->{$keyColumnName}),
+                    ));
+            });
     }
 
     public static function getProspectType(string $keyColumnName, bool $isExcludingConvertedProspects = true, ?Model $record = null): Type
@@ -133,7 +177,10 @@ class EducatableSelect extends Component
         $relationship = $this->getRelationship();
 
         $type = match (true) {
-            $user->hasLicense(Student::getLicenseType()) => static::getStudentType(),
+            $user->hasLicense(Student::getLicenseType()) => static::getStudentType(
+                $relationship->getForeignKeyName(),
+                $this->getRecord()
+            ),
             $user->hasLicense(Prospect::getLicenseType()) => static::getProspectType(
                 $relationship->getForeignKeyName(),
                 $this->isExcludingConvertedProspects,
@@ -156,6 +203,10 @@ class EducatableSelect extends Component
             ->afterStateUpdated(function () {
                 $this->callAfterStateUpdatedForChildComponent();
             });
+
+        if ($type->getModel() === Student::class) {
+            $keySelect->rule(static::studentKeyRule($relationship->getForeignKeyName(), $this->getRecord()));
+        }
 
         if ($this->modifyKeySelectUsing) {
             $keySelect = ($this->modifyKeySelectUsing)($keySelect) ?? $keySelect;

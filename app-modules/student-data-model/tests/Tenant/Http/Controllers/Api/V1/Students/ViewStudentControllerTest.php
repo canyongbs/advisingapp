@@ -89,6 +89,20 @@ it('returns a student resource', function () {
         ->toBe($student->sisid);
 });
 
+// The panel returns not found for an archived student's pages; the API binds the student by
+// route instead of through the resource, so it has to refuse them the same way.
+it('returns not found for an archived student', function () {
+    $user = SystemUser::factory()->create();
+    $user->givePermissionTo(['student.view-any', 'student.*.view']);
+    Sanctum::actingAs($user, ['api']);
+
+    $student = Student::factory()->create();
+    $student->archive();
+
+    getJson(route('api.v1.students.view', ['student' => $student], false))
+        ->assertNotFound();
+});
+
 it('can include related student relationships', function (string $relationship, string $responseKey) {
     $user = SystemUser::factory()->create();
     $user->givePermissionTo(['student.view-any', 'student.*.view']);

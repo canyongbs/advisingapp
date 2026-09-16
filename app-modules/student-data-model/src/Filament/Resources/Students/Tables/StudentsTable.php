@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\Tables;
 
 use AdvisingApp\Alert\Filament\Filters\AlertStatusConstraint;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\ExistingValuesSelectConstraint;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\EqualsOperatorWithEnrollmentSemester;
@@ -70,7 +71,7 @@ class StudentsTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->query(fn () => Student::query())
+            ->query(fn () => Student::query()->tap(new WithoutArchivedStudents()))
             ->columns([
                 TextColumn::make(Student::displayNameKey())
                     ->label('Name')
@@ -315,6 +316,7 @@ class StudentsTable
                 [$relationship, $column] = explode('.', $field, 2);
 
                 return Student::query()
+                    ->tap(new WithoutArchivedStudents())
                     ->join('enrollments', function (JoinClause $join) use ($relationship) {
                         $join->on('students.sisid', '=', 'enrollments.sisid');
 

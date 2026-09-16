@@ -37,11 +37,18 @@
 namespace AdvisingApp\StudentDataModel\Actions;
 
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Illuminate\Database\Eloquent\Builder;
 
 class ResolveEducatableFromEmail
 {
-    public function __invoke(?string $email): Student | Prospect | null
+    /**
+     * Archived students are excluded by default, so nothing new is ever attached to one. Pass
+     * `includingArchived` when identifying who an existing record belongs to — an appointment
+     * booked before the student was archived is still theirs, so it must keep resolving.
+     */
+    public function __invoke(?string $email, bool $includingArchived = false): Student | Prospect | null
     {
         if (blank($email)) {
             return null;
@@ -49,6 +56,7 @@ class ResolveEducatableFromEmail
 
         /** @var Student $student */
         $student = Student::query()
+            ->when(! $includingArchived, fn (Builder $query): Builder => $query->tap(new WithoutArchivedStudents()))
             ->whereRelation('emailAddresses', 'address', $email)
             ->first();
 

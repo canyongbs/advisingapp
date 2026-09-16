@@ -42,6 +42,7 @@ use AdvisingApp\Prospect\Models\ProspectEmailAddress;
 use AdvisingApp\Prospect\Models\ProspectPhoneNumber;
 use AdvisingApp\StudentDataModel\Enums\EmailAddressOptInOptOutStatus;
 use AdvisingApp\StudentDataModel\Models\Scopes\Textable;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
@@ -74,20 +75,26 @@ class EngagementRecipientStep
                     EducatableSelect::make(
                         name: 'recipient',
                         isExcludingConvertedProspects: true,
-                        modifyKeySelectUsing: function (Select $select): Select {
-                            return $select->disableOptionWhen(function (string $value): bool {
-                                static $noContactCache = [];
-                                $cacheKey = $value;
+                        modifyKeySelectUsing: function (Select $select) use ($resolveEducatable): Select {
+                            return $select
+                                ->rule(fn (Get $get): Closure => function (string $attribute, mixed $value, Closure $fail) use ($get, $resolveEducatable): void {
+                                    if (! ($resolveEducatable)($get)) {
+                                        $fail('The selected recipient is not available.');
+                                    }
+                                })
+                                ->disableOptionWhen(function (string $value): bool {
+                                    static $noContactCache = [];
+                                    $cacheKey = $value;
 
-                                if (! array_key_exists($cacheKey, $noContactCache)) {
-                                    $educatable = Student::find($value) ?? Prospect::find($value);
-                                    $noContactCache[$cacheKey] = $educatable
-                                        ? ! $educatable->hasAnyValidContactRoute()
-                                        : false;
-                                }
+                                    if (! array_key_exists($cacheKey, $noContactCache)) {
+                                        $educatable = Student::query()->tap(new WithoutArchivedStudents())->find($value) ?? Prospect::query()->find($value);
+                                        $noContactCache[$cacheKey] = $educatable
+                                            ? ! $educatable->hasAnyValidContactRoute()
+                                            : false;
+                                    }
 
-                                return $noContactCache[$cacheKey];
-                            });
+                                    return $noContactCache[$cacheKey];
+                                });
                         },
                     )
                         ->label('Recipient Info')
@@ -97,8 +104,8 @@ class EngagementRecipientStep
                         ->columns(2)
                         ->afterStateUpdated(function (Get $get, Set $set) {
                             $educatable = match ($get('recipient_type')) {
-                                'student' => Student::find($get('recipient_id')),
-                                'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
+                                'student' => Student::query()->tap(new WithoutArchivedStudents())->find($get('recipient_id')),
+                                'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::query()->find($get('recipient_id')) : null,
                                 default => null,
                             };
 

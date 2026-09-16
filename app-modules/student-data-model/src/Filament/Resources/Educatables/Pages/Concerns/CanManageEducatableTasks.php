@@ -152,7 +152,7 @@ trait CanManageEducatableTasks
                 TextColumn::make('concern.full_name')
                     ->label('Related To')
                     ->url(fn (Task $record) => match ($record->concern ? $record->concern::class : null) {
-                        Student::class => StudentResource::getUrl('view', ['record' => $record->concern]),
+                        Student::class => StudentResource::getViewUrl($record->concern),
                         Prospect::class => ProspectResource::getUrl('view', ['record' => $record->concern]),
                         default => null,
                     }),
