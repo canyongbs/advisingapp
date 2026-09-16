@@ -63,73 +63,80 @@ trait HasSharedFormConfiguration
     public function fields(): array
     {
         return [
-            TextInput::make('name')
-                ->required()
-                ->string()
-                ->maxLength(255)
-                ->unique(modifyRuleUsing: fn ($rule) => $rule->whereNull('archived_at'), ignoreRecord: true)
-                ->autocomplete(false)
-                ->columnSpanFull()
-                ->helperText('The name of this form will only display for form administrators.'),
-            TextInput::make('title')
-                ->string()
-                ->maxLength(255)
-                ->autocomplete(false)
-                ->columnSpanFull()
-                ->helperText('The title of this form will be displayed when the form is embedded.'),
-            Textarea::make('description')
-                ->string()
-                ->columnSpanFull(),
-            Grid::make()
+            Section::make('Properties')
                 ->schema([
-                    Toggle::make('embed_enabled')
-                        ->label('Embed Enabled')
+                    TextInput::make('name')
+                        ->required()
+                        ->string()
+                        ->maxLength(255)
+                        ->unique(modifyRuleUsing: fn ($rule) => $rule->whereNull('archived_at'), ignoreRecord: true)
+                        ->autocomplete(false)
+                        ->columnSpanFull()
+                        ->helperText('The name of this form will only display for form administrators.'),
+                    TextInput::make('title')
+                        ->string()
+                        ->maxLength(255)
+                        ->autocomplete(false)
+                        ->columnSpanFull()
+                        ->helperText('The title of this form will be displayed when the form is embedded.'),
+                    Textarea::make('description')
+                        ->string()
+                        ->columnSpanFull(),
+                ]),
+            Section::make('Options')
+                ->columns(2)
+                ->schema([
+                    Grid::make()
+                        ->schema([
+                            Toggle::make('embed_enabled')
+                                ->label('Embed Enabled')
+                                ->live()
+                                ->helperText('If enabled, this form can be embedded on other websites.'),
+                            TagsInput::make('allowed_domains')
+                                ->label('Allowed Domains')
+                                ->helperText('Only these domains will be allowed to embed this form.')
+                                ->placeholder('example.com')
+                                ->hidden(fn (Get $get) => ! $get('embed_enabled'))
+                                ->disabled(fn (Get $get) => ! $get('embed_enabled'))
+                                ->nestedRecursiveRules(
+                                    [
+                                        'string',
+                                        new IsDomain(),
+                                    ]
+                                ),
+                        ])
+                        ->columnSpanFull(),
+                    Toggle::make('is_authenticated')
+                        ->label('Requires authentication')
+                        ->helperText('If enabled, students and prospects must verify their email address before they can open and submit this form.')
+                        ->default((bool) request()->query('is_authenticated'))
+                        ->disabled()
+                        ->dehydrated(),
+                    Toggle::make('allow_view_past_submissions')
+                        ->label('Allow viewing past submissions')
+                        ->helperText('If enabled, students and prospects can view their past submissions on this form.')
+                        ->visible(fn (Get $get) => $get('is_authenticated')),
+                    Toggle::make('generate_prospects')
+                        ->label('Generate Prospects')
+                        ->helperText('If enabled, the system will check the primary email address submitted on the form and create a prospect if no match is found.')
+                        ->default((bool) request()->query('generate_prospects'))
+                        ->disabled()
+                        ->dehydrated(),
+                    Toggle::make('is_wizard')
+                        ->label('Multi-step form')
                         ->live()
-                        ->helperText('If enabled, this form can be embedded on other websites.'),
-                    TagsInput::make('allowed_domains')
-                        ->label('Allowed Domains')
-                        ->helperText('Only these domains will be allowed to embed this form.')
-                        ->placeholder('example.com')
-                        ->hidden(fn (Get $get) => ! $get('embed_enabled'))
-                        ->disabled(fn (Get $get) => ! $get('embed_enabled'))
-                        ->nestedRecursiveRules(
-                            [
-                                'string',
-                                new IsDomain(),
-                            ]
-                        ),
-                ])
-                ->columnSpanFull(),
-            Toggle::make('is_authenticated')
-                ->label('Requires authentication')
-                ->helperText('If enabled, students and prospects must verify their email address before they can open and submit this form.')
-                ->default((bool) request()->query('is_authenticated'))
-                ->disabled()
-                ->dehydrated(),
-            Toggle::make('allow_view_past_submissions')
-                ->label('Allow viewing past submissions')
-                ->helperText('If enabled, students and prospects can view their past submissions on this form.')
-                ->visible(fn (Get $get) => $get('is_authenticated')),
-            Toggle::make('generate_prospects')
-                ->label('Generate Prospects')
-                ->helperText('If enabled, the system will check the primary email address submitted on the form and create a prospect if no match is found.')
-                ->default((bool) request()->query('generate_prospects'))
-                ->disabled()
-                ->dehydrated(),
-            Toggle::make('is_wizard')
-                ->label('Multi-step form')
-                ->live()
-                ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists())
-                ->columnStart(1),
-            Toggle::make('recaptcha_enabled')
-                ->label('Enable reCAPTCHA')
-                ->live()
-                ->disabled(fn (GoogleRecaptchaSettings $settings) => ! $settings->is_enabled)
-                ->helperText(function (GoogleRecaptchaSettings $settings) {
-                    if (! $settings->is_enabled) {
-                        return 'Enable and configure reCAPTCHA in order to use it on your forms.';
-                    }
-                }),
+                        ->disabled(fn (?Form $record) => $record?->submissions()->submitted()->exists())
+                        ->columnStart(1),
+                    Toggle::make('recaptcha_enabled')
+                        ->label('Enable reCAPTCHA')
+                        ->live()
+                        ->disabled(fn (GoogleRecaptchaSettings $settings) => ! $settings->is_enabled)
+                        ->helperText(function (GoogleRecaptchaSettings $settings) {
+                            if (! $settings->is_enabled) {
+                                return 'Enable and configure reCAPTCHA in order to use it on your forms.';
+                            }
+                        }),
+                ]),
             Section::make('Fields')
                 ->schema([
                     $this->fieldBuilder()
