@@ -41,6 +41,7 @@ use AdvisingApp\Group\Importers\StudentGroupSubjectImporter;
 use AdvisingApp\Prospect\Filament\Resources\Prospects\Tables\ProspectsTable;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Tables\StudentsTable;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\QueryBuilder\Constraints\Constraint;
 use Filament\QueryBuilder\Models\Scopes\QueryBuilderScope;
@@ -67,7 +68,7 @@ enum GroupModel: string implements HasLabel
     public function query(): Builder
     {
         return match ($this) {
-            static::Student => Student::query(),
+            static::Student => Student::query()->tap(new WithoutArchivedStudents()),
             static::Prospect => Prospect::query(),
         };
     }

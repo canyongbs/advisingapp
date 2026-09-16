@@ -36,20 +36,31 @@
 
 namespace App\Filament\Widgets;
 
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Number;
 
 class MyStudents extends StatsOverviewWidget
 {
-    protected function getStats(): array
+    public function getStats(): array
     {
         return [
             Stat::make(
                 'Students (Subscribed)',
                 Number::abbreviate(
-                    auth()->user()->subscriptions()->where('subscribable_type', (new Student())->getMorphClass())->count()
+                    auth()->user()->subscriptions()
+                        ->whereHasMorph(
+                            'subscribable',
+                            Student::class,
+                            // The morph callback is typed `Builder<Model>` rather than
+                            // `Builder<Student>`, and `Builder` is not covariant, so the
+                            // constrained model cannot be proven here.
+                            fn (Builder $query) => $query->tap(new WithoutArchivedStudents()), // @phpstan-ignore argument.type
+                        )
+                        ->count()
                 )
             ),
         ];

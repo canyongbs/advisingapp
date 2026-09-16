@@ -39,6 +39,7 @@ namespace AdvisingApp\Alert\Filament\Widgets;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Alert\Models\StudentAlert;
 use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 use Illuminate\Database\Eloquent\Builder;
@@ -55,6 +56,8 @@ class AlertStats extends StatsOverviewWidget
         $groupId = $this->getSelectedGroup();
 
         $studentQuery = function (Builder $query) use ($groupId): Builder {
+            $query->tap(new WithoutArchivedStudents());
+
             if ($groupId) {
                 $this->groupFilter($query, $groupId);
             }

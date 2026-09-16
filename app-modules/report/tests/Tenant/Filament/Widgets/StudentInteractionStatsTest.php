@@ -244,3 +244,27 @@ it('returns correct total and unique student interaction counts based on group f
     expect($studentsWithInteractionsStat->getValue())
         ->toEqual($studentsWithJohnNameInteractions + $studentsWithDoeNameInteractions);
 });
+
+it('does not count archived students in the students with interactions stat', function () {
+    $startDate = now()->subDays(10);
+
+    $active = Student::factory()->count(2)->create();
+    $archived = Student::factory()->count(2)->create();
+
+    foreach ($active->merge($archived) as $student) {
+        Interaction::factory()->for($student, 'interactable')->create(['created_at' => now()->subDays(5)]);
+    }
+
+    $widget = new StudentInteractionStats();
+    $widget->cacheTag = 'report-student-interaction';
+    $widget->pageFilters = [
+        'startDate' => $startDate->toDateString(),
+        'endDate' => now()->toDateString(),
+    ];
+
+    expect($widget->getStats()[1]->getValue())->toEqual(4);
+
+    $archived->each(fn (Student $student) => $student->archive());
+
+    expect($widget->getStats()[1]->getValue())->toEqual(2);
+});

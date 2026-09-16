@@ -102,3 +102,22 @@ it('deletes a student', function () {
         'sisid' => $student->sisid,
     ]);
 });
+
+// An archived student is unreachable by URL, so they cannot be deleted through the API either.
+it('returns not found for an archived student', function () {
+    $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
+    $studentConfigurationSettings->is_enabled = true;
+    $studentConfigurationSettings->save();
+
+    $user = SystemUser::factory()->create();
+    $user->givePermissionTo(['student.view-any', 'student.*.delete']);
+    Sanctum::actingAs($user, ['api']);
+
+    $student = Student::factory()->create();
+    $student->archive();
+
+    deleteJson(route('api.v1.students.delete', ['student' => $student], false))
+        ->assertNotFound();
+
+    expect($student->fresh()->trashed())->toBeFalse();
+});

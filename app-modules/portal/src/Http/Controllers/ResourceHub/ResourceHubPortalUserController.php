@@ -37,6 +37,7 @@
 namespace AdvisingApp\Portal\Http\Controllers\ResourceHub;
 
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -53,6 +54,10 @@ class ResourceHubPortalUserController extends Controller
         $educatable = $accessToken?->tokenable;
 
         if (! ($educatable instanceof Educatable) || ! $accessToken->can('resource-hub-portal')) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
+        }
+
+        if ($educatable instanceof Student && $educatable->isArchived()) {
             return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 

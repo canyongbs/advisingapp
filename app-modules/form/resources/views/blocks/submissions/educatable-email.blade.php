@@ -33,25 +33,28 @@
 --}}
 @php
     use AdvisingApp\StudentDataModel\Models\Student;
-    use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
     use AdvisingApp\Prospect\Models\Prospect;
-    use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
+
+    $authorLabel = match ($authorType) {
+        Student::class => 'Student',
+        Prospect::class => 'Prospect',
+        default => null,
+    };
 @endphp
 
 <x-form::blocks.field-wrapper class="py-3" :$label :$isRequired :description="$description ?? null">
     @if (filled($response ?? null))
         <div class="not-prose flex flex-wrap items-center gap-3">
             <span>{{ $response ?? null }}</span>
-            @if ($authorType === Student::class)
-                <a href="{{ StudentResource::getUrl('view', ['record' => $authorKey]) }}" target="_blank">
-                    <x-filament::badge color="success">Student</x-filament::badge>
-                </a>
-            @elseif ($authorType === Prospect::class)
-                <a href="{{ ProspectResource::getUrl('view', ['record' => $authorKey]) }}" target="_blank">
-                    <x-filament::badge color="success">Prospect</x-filament::badge>
+            @if (blank($authorLabel))
+                <x-filament::badge color="danger">Not found</x-filament::badge>
+            @elseif (filled($authorUrl ?? null))
+                <a href="{{ $authorUrl }}" target="_blank">
+                    <x-filament::badge color="success">{{ $authorLabel }}</x-filament::badge>
                 </a>
             @else
-                <x-filament::badge color="danger">Not found</x-filament::badge>
+                {{-- An archived student is still the author, but their page no longer resolves. --}}
+                <x-filament::badge color="success">{{ $authorLabel }}</x-filament::badge>
             @endif
         </div>
     @else
