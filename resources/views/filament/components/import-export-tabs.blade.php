@@ -31,8 +31,6 @@
     
     </COPYRIGHT>
 --}}
-<x-filament-panels::page>
-    <x-import-export-tabs active="import">
-        {{ $this->table }}
-    </x-import-export-tabs>
-</x-filament-panels::page>
+<x-import-export-tabs :active="$active">
+    {{ $getChildComponentContainer() }}
+</x-import-export-tabs>

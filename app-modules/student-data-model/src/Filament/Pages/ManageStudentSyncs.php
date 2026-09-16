@@ -36,9 +36,13 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Pages;
 
+use AdvisingApp\StudentDataModel\Livewire\StudentDataImportsTable;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Filament\Clusters\ImportExport;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Livewire;
+use Filament\Schemas\Components\View;
+use Filament\Schemas\Schema;
 
 class ManageStudentSyncs extends Page
 {
@@ -49,8 +53,6 @@ class ManageStudentSyncs extends Page
     protected static ?int $navigationSort = 30;
 
     protected static ?string $cluster = ImportExport::class;
-
-    protected string $view = 'student-data-model::filament.pages.manage-student-syncs';
 
     public static function canAccess(): bool
     {
@@ -63,5 +65,16 @@ class ManageStudentSyncs extends Page
         }
 
         return parent::canAccess();
+    }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema->components([
+            View::make('filament.components.import-export-tabs')
+                ->viewData(['active' => 'student-sync'])
+                ->schema([
+                    Livewire::make(StudentDataImportsTable::class),
+                ]),
+        ]);
     }
 }

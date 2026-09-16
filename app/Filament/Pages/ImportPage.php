@@ -45,6 +45,9 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\EmbeddedTable;
+use Filament\Schemas\Components\View;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -67,8 +70,6 @@ class ImportPage extends Page implements HasActions, HasForms, HasTable
 
     protected static ?string $cluster = ImportExport::class;
 
-    protected string $view = 'filament.pages.import-page';
-
     /**
      * @var array<int|string, bool>
      */
@@ -80,6 +81,17 @@ class ImportPage extends Page implements HasActions, HasForms, HasTable
         assert($user instanceof User);
 
         return $user->can('export_hub.view-any');
+    }
+
+    public function content(Schema $schema): Schema
+    {
+        return $schema->components([
+            View::make('filament.components.import-export-tabs')
+                ->viewData(['active' => 'import'])
+                ->schema([
+                    EmbeddedTable::make(),
+                ]),
+        ]);
     }
 
     public function table(Table $table): Table
