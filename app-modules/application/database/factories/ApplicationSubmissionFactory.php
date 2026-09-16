@@ -60,6 +60,7 @@ class ApplicationSubmissionFactory extends Factory
                 };
             },
             'state_id' => ApplicationSubmissionState::factory(),
+            'submitted_at' => now(),
         ];
     }
 }
