@@ -71,8 +71,8 @@ window.history.replaceState = function (...args) {
 // progressively enhances that header after Filament renders it, without
 // overriding any of Filament's own rich editor JavaScript.
 const richEditorCustomBlockBadgeClasses = {
-    neutral: 'bg-gray-200 text-black dark:bg-white/10 dark:text-white',
-    subtle: 'border border-gray-300 bg-white text-gray-600 dark:border-white/20 dark:bg-transparent dark:text-gray-400',
+    neutral: 'bg-gray-200 text-black dark:bg-gray-600 dark:text-white',
+    subtle: 'border border-gray-300 bg-white text-gray-600 dark:border-gray-300 dark:bg-gray-200 dark:text-gray-700',
 };
 
 function createRichEditorCustomBlockBadge(label, variant) {
