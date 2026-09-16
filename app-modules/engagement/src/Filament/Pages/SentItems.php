@@ -39,6 +39,7 @@ namespace AdvisingApp\Engagement\Filament\Pages;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
+use AdvisingApp\Engagement\Filament\Components\UnifiedInboxTabs;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Group\Actions\TranslateGroupFilters;
 use AdvisingApp\Group\Enums\GroupModel;
@@ -54,8 +55,9 @@ use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
 use Filament\Actions\ViewAction;
 use Filament\Navigation\NavigationItem;
-use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\EmbeddedTable;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -71,11 +73,7 @@ class SentItems extends Page implements HasTable
 {
     use InteractsWithTable;
 
-    protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
-
     protected static ?string $navigationLabel = 'Sent Items';
-
-    protected string $view = 'engagement::filament.pages.sent-items';
 
     protected static ?string $cluster = UnifiedInbox::class;
 
@@ -97,15 +95,14 @@ class SentItems extends Page implements HasTable
         return $user->can('engagement.*.view');
     }
 
-    /**
-     * Hide the default cluster sub-navigation so the Unified Inbox tabs can be
-     * rendered as a contained header attached to the table container instead.
-     *
-     * @return array<NavigationItem>
-     */
-    public function getSubNavigation(): array
+    public function content(Schema $schema): Schema
     {
-        return [];
+        return $schema->components([
+            UnifiedInboxTabs::make('sent-items')
+                ->schema([
+                    EmbeddedTable::make(),
+                ]),
+        ]);
     }
 
     public function table(Table $table): Table

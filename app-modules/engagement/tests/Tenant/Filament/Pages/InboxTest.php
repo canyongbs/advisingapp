@@ -50,14 +50,14 @@ it('is gated with proper access control', function () {})->todo();
 
 it('displays the correct details', function () {})->todo();
 
-it('renders the unified inbox tabs as the table header instead of the cluster sub-navigation', function () {
+it('renders the unified inbox tabs as the page content instead of the cluster sub-navigation', function () {
     asSuperAdmin();
-
-    expect(app(Inbox::class)->getSubNavigation())->toBe([]);
 
     livewire(Inbox::class)
         ->assertSeeHtml('fi-unified-inbox-tabs')
+        ->assertSeeHtml(Inbox::getUrl())
         ->assertSeeHtml(SentItems::getUrl())
+        ->assertSeeText('Inbox')
         ->assertSeeText('Sent Items');
 });
 

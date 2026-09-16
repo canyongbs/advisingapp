@@ -60,15 +60,15 @@ use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-it('renders the unified inbox tabs as the table header instead of the cluster sub-navigation', function () {
+it('renders the unified inbox tabs as the page content instead of the cluster sub-navigation', function () {
     asSuperAdmin();
-
-    expect(app(SentItems::class)->getSubNavigation())->toBe([]);
 
     livewire(SentItems::class)
         ->assertSeeHtml('fi-unified-inbox-tabs')
         ->assertSeeHtml(Inbox::getUrl())
-        ->assertSeeText('Inbox');
+        ->assertSeeHtml(SentItems::getUrl())
+        ->assertSeeText('Inbox')
+        ->assertSeeText('Sent Items');
 });
 
 it('displays the type column with channel icon, email address, and healthy status for email engagements', function () {

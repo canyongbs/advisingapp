@@ -40,6 +40,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Filament\Actions\BulkChangeStatusAction;
+use AdvisingApp\Engagement\Filament\Components\UnifiedInboxTabs;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Group\Actions\TranslateGroupFilters;
@@ -54,8 +55,9 @@ use App\Models\User;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\ViewAction;
 use Filament\Navigation\NavigationItem;
-use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\EmbeddedTable;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -70,10 +72,6 @@ use Illuminate\Support\Str;
 class Inbox extends Page implements HasTable
 {
     use InteractsWithTable;
-
-    protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
-
-    protected string $view = 'engagement::filament.pages.inbox';
 
     protected static ?string $cluster = UnifiedInbox::class;
 
@@ -95,15 +93,14 @@ class Inbox extends Page implements HasTable
         return $user->can('engagement_response.*.view');
     }
 
-    /**
-     * Hide the default cluster sub-navigation so the Unified Inbox tabs can be
-     * rendered as a contained header attached to the table container instead.
-     *
-     * @return array<NavigationItem>
-     */
-    public function getSubNavigation(): array
+    public function content(Schema $schema): Schema
     {
-        return [];
+        return $schema->components([
+            UnifiedInboxTabs::make('inbox')
+                ->schema([
+                    EmbeddedTable::make(),
+                ]),
+        ]);
     }
 
     public function table(Table $table): Table
