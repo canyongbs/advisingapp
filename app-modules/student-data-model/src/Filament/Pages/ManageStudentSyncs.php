@@ -39,9 +39,9 @@ namespace AdvisingApp\StudentDataModel\Filament\Pages;
 use AdvisingApp\StudentDataModel\Livewire\StudentDataImportsTable;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Filament\Clusters\ImportExport;
+use App\Filament\Components\ImportExportTabs;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Livewire;
-use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 
 class ManageStudentSyncs extends Page
@@ -70,8 +70,7 @@ class ManageStudentSyncs extends Page
     public function content(Schema $schema): Schema
     {
         return $schema->components([
-            View::make('filament.components.import-export-tabs')
-                ->viewData(['active' => 'student-sync'])
+            ImportExportTabs::make('student-sync')
                 ->schema([
                     Livewire::make(StudentDataImportsTable::class),
                 ]),

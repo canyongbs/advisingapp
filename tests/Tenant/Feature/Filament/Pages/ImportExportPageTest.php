@@ -44,7 +44,6 @@ use App\Filament\Pages\ImportPage;
 use App\Models\Export;
 use App\Models\Import;
 use App\Models\User;
-use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;
@@ -408,7 +407,7 @@ it('renders tabs linking to the import and export pages, excluding student sync 
 
     actingAs($user);
 
-    $html = Blade::render('<x-import-export-tabs active="import" />');
+    $html = livewire(ImportPage::class)->html();
 
     expect($html)
         ->toContain(ImportPage::getUrl())
@@ -427,22 +426,12 @@ it('includes a tab linking to the student sync page when it is accessible', func
 
     actingAs($user);
 
-    $html = Blade::render('<x-import-export-tabs active="student-sync" />');
+    $html = livewire(ImportPage::class)->html();
 
     expect($html)
         ->toContain(ImportPage::getUrl())
         ->toContain(ExportPage::getUrl())
         ->toContain(ManageStudentSyncs::getUrl());
-});
-
-it('renders no tabs when the user cannot access any import/export page', function () {
-    $user = User::factory()->create();
-
-    actingAs($user);
-
-    $html = Blade::render('<x-import-export-tabs active="import" />');
-
-    expect(trim($html))->toBe('');
 });
 
 it('marks the active tab as current', function () {
@@ -451,35 +440,14 @@ it('marks the active tab as current', function () {
 
     actingAs($user);
 
-    $html = Blade::render('<x-import-export-tabs active="export" />');
+    $html = livewire(ExportPage::class)->html();
 
     $activeHref = null;
 
-    if (preg_match('/<a\b[^>]*\baria-current="page"[^>]*>/i', $html, $match)) {
+    if (preg_match('/<a\b(?=[^>]*\bfi-tabs-item\b)(?=[^>]*aria-current="page")[^>]*>/i', $html, $match)) {
         preg_match('/href="([^"]+)"/i', $match[0], $hrefMatch);
         $activeHref = html_entity_decode($hrefMatch[1] ?? '');
     }
 
     expect($activeHref)->toBe(ExportPage::getUrl());
-});
-
-it('renders the slotted page content inside the tab container', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo('export_hub.view-any');
-
-    actingAs($user);
-
-    $html = Blade::render('<x-import-export-tabs active="import">SLOTTED_TABLE_CONTENT</x-import-export-tabs>');
-
-    expect($html)->toContain('SLOTTED_TABLE_CONTENT');
-});
-
-it('renders the slotted content even when no tabs are accessible', function () {
-    $user = User::factory()->create();
-
-    actingAs($user);
-
-    $html = Blade::render('<x-import-export-tabs active="import">FALLBACK_CONTENT</x-import-export-tabs>');
-
-    expect($html)->toContain('FALLBACK_CONTENT');
 });

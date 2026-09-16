@@ -37,6 +37,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Clusters\ImportExport;
+use App\Filament\Components\ImportExportTabs;
 use App\Models\Import;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -46,7 +47,6 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\EmbeddedTable;
-use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -86,8 +86,7 @@ class ImportPage extends Page implements HasActions, HasForms, HasTable
     public function content(Schema $schema): Schema
     {
         return $schema->components([
-            View::make('filament.components.import-export-tabs')
-                ->viewData(['active' => 'import'])
+            ImportExportTabs::make('import')
                 ->schema([
                     EmbeddedTable::make(),
                 ]),
