@@ -234,7 +234,10 @@ class EditEventRegistration extends EditRecord
             })
             ->dehydrated(false)
             ->columnSpanFull()
-            ->extraInputAttributes(['style' => 'min-height: 12rem;']);
+            ->extraInputAttributes([
+                'style' => 'min-height: 12rem;',
+                'data-mapped-block-types' => implode(',', FormFieldBlockRegistry::getMappedBlockTypes()),
+            ]);
     }
 
     /**

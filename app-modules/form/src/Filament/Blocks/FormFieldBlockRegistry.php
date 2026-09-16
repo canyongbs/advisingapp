@@ -92,6 +92,16 @@ class FormFieldBlockRegistry
     }
 
     /**
+     * @return array<int, string>
+     */
+    public static function getMappedBlockTypes(): array
+    {
+        return collect(static::getMappedBlocks())
+            ->map(fn (string $block): string => $block::type())
+            ->all();
+    }
+
+    /**
      * @return array<class-string<FormFieldBlock>>
      */
     public static function getUnmappedBlocksForEvents(): array

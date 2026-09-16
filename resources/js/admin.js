@@ -63,3 +63,100 @@ window.history.replaceState = function (...args) {
 
     original.apply(this, args);
 };
+
+// Filament's rich editor renders a custom block's header label as a plain
+// text node (see `fi-fo-rich-editor-custom-block-heading` in
+// `filament/forms`), so it cannot display the "Mapped"/"Unmapped" and
+// "Required"/"Optional" badges shown in the forms field builder. This
+// progressively enhances that header after Filament renders it, without
+// overriding any of Filament's own rich editor JavaScript.
+const richEditorCustomBlockBadgeClasses = {
+    neutral: 'bg-gray-200 text-black dark:bg-gray-600 dark:text-white',
+    subtle: 'border border-gray-300 bg-white text-gray-600 dark:border-gray-300 dark:bg-gray-200 dark:text-gray-700',
+};
+
+function createRichEditorCustomBlockBadge(label, variant) {
+    const badge = document.createElement('span');
+
+    badge.className = `inline-flex items-center whitespace-nowrap rounded-full px-2 py-0.5 text-xs font-medium ${richEditorCustomBlockBadgeClasses[variant]}`;
+    badge.textContent = label;
+
+    return badge;
+}
+
+function decorateRichEditorCustomBlock(block) {
+    // Only decorate blocks inside a rich editor that explicitly opts in via
+    // `data-mapped-block-types` (set from FormFieldBlockRegistry::getMappedBlockTypes()).
+    // Editors for unrelated custom blocks (e.g. the survey builder) don't set this
+    // attribute, so they are left alone instead of being mislabelled as "Unmapped".
+    const fieldBuilder = block.closest('[data-mapped-block-types]');
+
+    if (!fieldBuilder) {
+        return;
+    }
+
+    const header = block.querySelector(':scope > .fi-fo-rich-editor-custom-block-header');
+    const heading = header?.querySelector(':scope > .fi-fo-rich-editor-custom-block-heading');
+
+    if (!header || !heading || heading.querySelector(':scope > .fi-fo-rich-editor-custom-block-badges')) {
+        return;
+    }
+
+    let config = {};
+
+    try {
+        config = JSON.parse(block.getAttribute('data-config') ?? '{}') ?? {};
+    } catch {
+        return;
+    }
+
+    const isMapped = fieldBuilder
+        .getAttribute('data-mapped-block-types')
+        .split(',')
+        .includes(block.getAttribute('data-id'));
+
+    const badges = document.createElement('span');
+    badges.className = 'fi-fo-rich-editor-custom-block-badges inline-flex items-center';
+
+    badges.appendChild(createRichEditorCustomBlockBadge(isMapped ? 'Mapped' : 'Unmapped', 'neutral'));
+
+    const requiredFlags = Object.entries(config)
+        .filter(([key, value]) => /required$/i.test(key) && typeof value === 'boolean')
+        .map(([, value]) => value);
+
+    if (requiredFlags.length > 0) {
+        const isRequired = requiredFlags.some(Boolean);
+
+        badges.appendChild(createRichEditorCustomBlockBadge(isRequired ? 'Required' : 'Optional', 'subtle'));
+    }
+
+    // Appended inside the heading, rather than as its sibling, so the badges sit
+    // directly beside the label text instead of being pushed to the far right by
+    // the heading's `flex: 1` in Filament's rich editor header layout.
+    heading.appendChild(badges);
+}
+
+function observeRichEditorCustomBlocks() {
+    document.querySelectorAll('div[data-type="customBlock"]').forEach(decorateRichEditorCustomBlock);
+
+    new MutationObserver((mutations) => {
+        for (const mutation of mutations) {
+            for (const node of mutation.addedNodes) {
+                if (!(node instanceof HTMLElement)) {
+                    continue;
+                }
+
+                if (node.matches('div[data-type="customBlock"]')) {
+                    decorateRichEditorCustomBlock(node);
+                }
+
+                node.querySelectorAll?.('div[data-type="customBlock"]').forEach(decorateRichEditorCustomBlock);
+            }
+        }
+    }).observe(document.body, {
+        childList: true,
+        subtree: true,
+    });
+}
+
+document.addEventListener('DOMContentLoaded', observeRichEditorCustomBlocks);

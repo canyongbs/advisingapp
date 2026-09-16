@@ -40,6 +40,7 @@ use AdvisingApp\Application\Filament\Resources\Applications\Pages\EditApplicatio
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 
@@ -164,4 +165,15 @@ it('archive action archives the application and redirects to the index when the 
         ->assertRedirect(ApplicationResource::getUrl('index'));
 
     expect($application->fresh()->isArchived())->toBeTrue();
+});
+
+it('exposes the mapped block types to the fields rich editor for the custom block badges', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+
+    livewire(EditApplication::class, ['record' => $application->getRouteKey()])
+        ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });

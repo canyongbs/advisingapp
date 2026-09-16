@@ -39,6 +39,7 @@ use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ViewApplication;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 
 use function Pest\Laravel\seed;
 use function Pest\Livewire\livewire;
@@ -83,4 +84,15 @@ it('archive action archives the application and redirects to the index when the 
         ->assertRedirect(ApplicationResource::getUrl('index'));
 
     expect($application->fresh()->isArchived())->toBeTrue();
+});
+
+it('exposes the mapped block types to the read-only fields rich editor for the custom block badges', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+
+    livewire(ViewApplication::class, ['record' => $application->getRouteKey()])
+        ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });

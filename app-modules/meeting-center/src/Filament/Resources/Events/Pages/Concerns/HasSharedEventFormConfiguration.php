@@ -167,7 +167,8 @@ trait HasSharedEventFormConfiguration
                         ->columnSpanFull(),
                     Section::make('Appearance')
                         ->schema([
-                            ColorSelect::make('primary_color'),
+                            ColorSelect::make('primary_color')
+                                ->label('Color family (theme)'),
                             Select::make('rounding')
                                 ->options(Rounding::class),
                         ])
@@ -226,7 +227,10 @@ trait HasSharedEventFormConfiguration
             })
             ->dehydrated(false)
             ->columnSpanFull()
-            ->extraInputAttributes(['style' => 'min-height: 12rem;']);
+            ->extraInputAttributes([
+                'style' => 'min-height: 12rem;',
+                'data-mapped-block-types' => implode(',', FormFieldBlockRegistry::getMappedBlockTypes()),
+            ]);
     }
 
     public function saveFieldsFromComponents(EventRegistrationForm $form, array $components, ?EventRegistrationFormStep $eventRegistrationFormStep): array
