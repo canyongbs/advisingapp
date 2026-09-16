@@ -38,6 +38,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Filament\Pages\Inbox;
 use AdvisingApp\Engagement\Filament\Pages\SentItems;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\EmailMessage;
 use AdvisingApp\Notification\Models\SmsMessage;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -53,7 +54,9 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use App\Models\User;
+use Illuminate\Support\Facades\Queue;
 
+use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
@@ -816,4 +819,51 @@ it('can properly filter by care team', function () {
     livewire(SentItems::class)
         ->assertCanSeeTableRecords($careTeamEngagements)
         ->assertCanNotSeeTableRecords($otherEngagements);
+});
+
+it('accepts an active student as the submitted recipient of a new engagement', function () {
+    Queue::fake();
+
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+
+    livewire(SentItems::class)
+        ->mountAction('engage')
+        ->fillForm([
+            'recipient_type' => 'student',
+            'recipient_id' => $student->getKey(),
+            'channel' => NotificationChannel::Email->value,
+            'recipient_route_id' => $student->primaryEmailAddress?->getKey(),
+            'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Subject']]]]],
+            'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Body']]]]],
+        ])
+        ->callMountedAction()
+        ->assertHasNoFormErrors(['recipient_id']);
+
+    expect($student->engagements()->count())->toBe(1);
+});
+
+it('does not send a new engagement to an archived student even when their id is submitted', function () {
+    Queue::fake();
+
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+    $student->archive();
+
+    livewire(SentItems::class)
+        ->mountAction('engage')
+        ->fillForm([
+            'recipient_type' => 'student',
+            'recipient_id' => $student->getKey(),
+            'channel' => NotificationChannel::Email->value,
+            'recipient_route_id' => $student->primaryEmailAddress?->getKey(),
+            'subject' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Subject']]]]],
+            'body' => ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Body']]]]],
+        ])
+        ->callMountedAction()
+        ->assertHasFormErrors(['recipient_id']);
+
+    assertDatabaseCount(Engagement::class, 0);
 });

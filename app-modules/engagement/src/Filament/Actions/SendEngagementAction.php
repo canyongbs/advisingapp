@@ -47,11 +47,13 @@ use AdvisingApp\Engagement\Filament\Schemas\Components\EngagementSubjectInput;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Toggle;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Utilities\Get;
@@ -173,8 +175,8 @@ class SendEngagementAction extends Action
     public function resolveEducatable(Get $get): Student | Prospect | null
     {
         return $this->getEducatable() ?? match ($get('recipient_type')) {
-            'student' => Student::find($get('recipient_id')),
-            'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::find($get('recipient_id')) : null,
+            'student' => Student::query()->tap(new WithoutArchivedStudents())->find($get('recipient_id')),
+            'prospect' => Str::isUuid($get('recipient_id')) ? Prospect::query()->find($get('recipient_id')) : null,
             default => null,
         };
     }
@@ -250,12 +252,23 @@ class SendEngagementAction extends Action
      */
     protected function createEngagement(array $data, Schema $schema): void
     {
-        /** @var Student | Prospect $recipient */
         $recipient = $this->getEducatable() ?? match ($data['recipient_type']) {
-            'student' => Student::find($data['recipient_id']),
-            'prospect' => Str::isUuid($data['recipient_id']) ? Prospect::find($data['recipient_id']) : null,
+            'student' => Student::query()->tap(new WithoutArchivedStudents())->find($data['recipient_id']),
+            'prospect' => Str::isUuid($data['recipient_id']) ? Prospect::query()->find($data['recipient_id']) : null,
             default => null,
         };
+
+        if (! $recipient) {
+            Notification::make()
+                ->title('The selected recipient is not available.')
+                ->danger()
+                ->send();
+
+            $this->halt();
+
+            return;
+        }
+
         $data['subject'] ??= ['type' => 'doc', 'content' => []];
         $data['subject']['content'] = [
             ...($data['subject']['content'] ?? []),

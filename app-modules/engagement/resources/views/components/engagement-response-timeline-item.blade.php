@@ -31,15 +31,26 @@
     
     </COPYRIGHT>
 --}}
+@use('AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource')
+@use('AdvisingApp\StudentDataModel\Models\Student')
+
+@php
+    $senderUrl =
+        $record->sender instanceof Student
+            ? StudentResource::getViewUrl($record->sender)
+            : $record->sender->filamentResource()::getUrl('view', ['record' => $record->sender]);
+@endphp
+
 <div>
     <div class="flex flex-row justify-between">
         <h3 class="mb-1 flex items-center text-lg font-semibold text-gray-500 dark:text-gray-100">
-            <a
-                class="font-medium underline"
-                href="{{ $record->sender->filamentResource()::getUrl('view', ['record' => $record->sender]) }}"
-            >
-                {{ $record->sender->full_name }}
-            </a>
+            @if ($senderUrl)
+                <a class="font-medium underline" href="{{ $senderUrl }}">
+                    {{ $record->sender->full_name }}
+                </a>
+            @else
+                <span class="font-medium">{{ $record->sender->full_name }}</span>
+            @endif
         </h3>
 
         <div>

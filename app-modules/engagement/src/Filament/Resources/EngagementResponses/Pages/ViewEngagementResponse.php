@@ -74,7 +74,7 @@ class ViewEngagementResponse extends ViewRecord
                                 $sender = $record->sender;
 
                                 return match ($sender::class) {
-                                    Student::class => StudentResource::getUrl('view', ['record' => $sender->sisid]),
+                                    Student::class => StudentResource::getViewUrl($sender),
                                     Prospect::class => ProspectResource::getUrl('view', ['record' => $sender->id]),
                                 };
                             }),

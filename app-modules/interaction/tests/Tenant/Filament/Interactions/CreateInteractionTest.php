@@ -37,13 +37,17 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\InteractionResource;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\CreateInteraction;
+use AdvisingApp\Interaction\Models\Interaction;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use App\Models\User;
+use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Config;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
 test('CreateInteraction is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -98,4 +102,56 @@ it('interaction_confidential_users UserSelect shows all users when filter_admins
         ->assertFormFieldExists('interaction_confidential_users', checkFieldUsing: function (UserSelect $field) use ($adminUser): bool {
             return ! empty($field->getSearchResults($adminUser->name));
         });
+});
+
+it('does not offer archived students in the related to select', function () {
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+
+    $archived = Student::factory()->create();
+    $archived->archive();
+
+    livewire(CreateInteraction::class)
+        ->assertSuccessful()
+        ->fillForm(['interactable_type' => $student->getMorphClass()])
+        ->assertFormFieldExists('interactable_id', checkFieldUsing: function (Select $field) use ($student, $archived): bool {
+            $sisids = array_map(strval(...), array_keys($field->getSearchResults('')));
+
+            expect($sisids)->toContain($student->getKey())
+                ->and($sisids)->not->toContain($archived->getKey());
+
+            return true;
+        });
+});
+
+it('accepts an active student as the submitted related record', function () {
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+
+    livewire(CreateInteraction::class)
+        ->fillForm([
+            'interactable_type' => $student->getMorphClass(),
+            'interactable_id' => $student->getKey(),
+        ])
+        ->call('create')
+        ->assertHasNoFormErrors(['interactable_id']);
+});
+
+it('does not create an interaction for an archived student even when their id is submitted', function () {
+    asSuperAdmin();
+
+    $archived = Student::factory()->create();
+    $archived->archive();
+
+    livewire(CreateInteraction::class)
+        ->fillForm([
+            'interactable_type' => $archived->getMorphClass(),
+            'interactable_id' => $archived->getKey(),
+        ])
+        ->call('create')
+        ->assertHasFormErrors(['interactable_id']);
+
+    expect(Interaction::query()->count())->toBe(0);
 });

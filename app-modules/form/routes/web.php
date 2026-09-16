@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Form\Http\Controllers\FormPreviewController;
+use AdvisingApp\Form\Http\Controllers\SubmissionMediaDownloadController;
 use AdvisingApp\Form\Http\Middleware\EnsureFormsFeatureIsActive;
 use App\Livewire\RenderForm;
 
@@ -51,3 +52,7 @@ Route::prefix('forms')
         Route::get('/{form}/preview', FormPreviewController::class)
             ->name('preview');
     });
+
+Route::middleware(['web', 'auth', 'signed'])
+    ->get('submission-media/{media}/download', SubmissionMediaDownloadController::class)
+    ->name('submission-media.download');

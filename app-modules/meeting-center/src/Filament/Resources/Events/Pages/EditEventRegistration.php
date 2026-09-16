@@ -143,10 +143,13 @@ class EditEventRegistration extends EditRecord
                 })
                 ->saveRelationshipsUsing(null)
                 ->schema([
-                    Toggle::make('is_wizard')
-                        ->label('Multi-step form')
-                        ->live()
-                        ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
+                    Section::make('Options')
+                        ->schema([
+                            Toggle::make('is_wizard')
+                                ->label('Multi-step form')
+                                ->live()
+                                ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
+                        ]),
 
                     Section::make('Form Fields')
                         ->schema([

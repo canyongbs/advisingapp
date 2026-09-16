@@ -1,0 +1,124 @@
+<?php
+
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS Inc.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+
+use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\StudentArchivingFeature;
+use Carbon\Carbon;
+
+use function Tests\asSuperAdmin;
+
+it('excludes archived students', function () {
+    asSuperAdmin();
+
+    $active = Student::factory()->create();
+    $archived = Student::factory()->create();
+    $archived->archive();
+
+    $sisids = Student::query()->tap(new WithoutArchivedStudents())->pluck('sisid');
+
+    expect($sisids)->toContain($active->getKey())
+        ->and($sisids)->not->toContain($archived->getKey());
+});
+
+it('leaves the query untouched while the feature is inactive', function () {
+    asSuperAdmin();
+
+    StudentArchivingFeature::deactivate();
+
+    $archived = Student::factory()->create();
+    $archived->archive();
+
+    expect(Student::query()->tap(new WithoutArchivedStudents())->pluck('sisid'))
+        ->toContain($archived->getKey());
+});
+
+describe('as of a point in time', function () {
+    it('includes a student archived after the point in time', function () {
+        asSuperAdmin();
+
+        $student = Student::factory()->create();
+        $student->forceFill(['archived_at' => Carbon::parse('2026-09-15')])->save();
+
+        $sisids = Student::query()
+            ->tap(new WithoutArchivedStudents(asOf: Carbon::parse('2026-08-31')))
+            ->pluck('sisid');
+
+        expect($sisids)->toContain($student->getKey());
+    });
+
+    it('excludes a student archived before the point in time', function () {
+        asSuperAdmin();
+
+        $student = Student::factory()->create();
+        $student->forceFill(['archived_at' => Carbon::parse('2026-08-15')])->save();
+
+        $sisids = Student::query()
+            ->tap(new WithoutArchivedStudents(asOf: Carbon::parse('2026-08-31')))
+            ->pluck('sisid');
+
+        expect($sisids)->not->toContain($student->getKey());
+    });
+
+    // The client settled this boundary: a month bucket reports the state at the END of the
+    // month, so a student archived within it is already gone by the time it is reported.
+    it('excludes a student archived exactly at the point in time', function () {
+        asSuperAdmin();
+
+        $archivedAt = Carbon::parse('2026-08-31 23:59:59');
+
+        $student = Student::factory()->create();
+        $student->forceFill(['archived_at' => $archivedAt])->save();
+
+        $sisids = Student::query()
+            ->tap(new WithoutArchivedStudents(asOf: $archivedAt))
+            ->pluck('sisid');
+
+        expect($sisids)->not->toContain($student->getKey());
+    });
+
+    it('includes a student who was never archived', function () {
+        asSuperAdmin();
+
+        $student = Student::factory()->create();
+
+        $sisids = Student::query()
+            ->tap(new WithoutArchivedStudents(asOf: Carbon::parse('2026-08-31')))
+            ->pluck('sisid');
+
+        expect($sisids)->toContain($student->getKey());
+    });
+});

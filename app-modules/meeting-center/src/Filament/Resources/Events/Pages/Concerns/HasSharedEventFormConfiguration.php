@@ -66,29 +66,33 @@ trait HasSharedEventFormConfiguration
     public function fields(): array
     {
         return [
-            TextInput::make('title')
-                ->string()
-                ->required()
-                ->maxLength(255)
-                ->unique(
-                    table: 'events',
-                    column: 'title',
-                    ignoreRecord: true,
-                    modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
-                ),
-            TextInput::make('location')
-                ->string()
-                ->nullable(),
-            TextInput::make('capacity')
-                ->integer()
-                ->minValue(1)
-                ->nullable(),
-            DateTimePicker::make('starts_at')
-                ->seconds(false)
-                ->required(),
-            DateTimePicker::make('ends_at')
-                ->seconds(false)
-                ->required(),
+            Section::make('Properties')
+                ->schema([
+                    TextInput::make('title')
+                        ->string()
+                        ->required()
+                        ->maxLength(255)
+                        ->unique(
+                            table: 'events',
+                            column: 'title',
+                            ignoreRecord: true,
+                            modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                        ),
+                    TextInput::make('location')
+                        ->string()
+                        ->nullable(),
+                    TextInput::make('capacity')
+                        ->integer()
+                        ->minValue(1)
+                        ->nullable(),
+                    DateTimePicker::make('starts_at')
+                        ->seconds(false)
+                        ->required(),
+                    DateTimePicker::make('ends_at')
+                        ->seconds(false)
+                        ->required(),
+                ])
+                ->columns(2),
             Fieldset::make('Registration Form')
                 ->relationship('eventRegistrationForm')
                 ->saveRelationshipsBeforeChildrenUsing(static function (Component | CanEntangleWithSingularRelationships $component): void {
@@ -110,30 +114,33 @@ trait HasSharedEventFormConfiguration
                 })
                 ->saveRelationshipsUsing(null)
                 ->schema([
-                    Grid::make()
+                    Section::make('Options')
                         ->schema([
-                            Toggle::make('embed_enabled')
-                                ->label('Embed Enabled')
+                            Grid::make()
+                                ->schema([
+                                    Toggle::make('embed_enabled')
+                                        ->label('Embed Enabled')
+                                        ->live()
+                                        ->helperText('If enabled, this form can be embedded on other websites.'),
+                                    TagsInput::make('allowed_domains')
+                                        ->label('Allowed Domains')
+                                        ->helperText('Only these domains will be allowed to embed this form.')
+                                        ->placeholder('example.com')
+                                        ->hidden(fn (Get $get) => ! $get('embed_enabled'))
+                                        ->disabled(fn (Get $get) => ! $get('embed_enabled'))
+                                        ->nestedRecursiveRules(
+                                            [
+                                                'string',
+                                                new IsDomain(),
+                                            ]
+                                        ),
+                                ])
+                                ->columnSpanFull(),
+                            Toggle::make('is_wizard')
+                                ->label('Multi-step form')
                                 ->live()
-                                ->helperText('If enabled, this form can be embedded on other websites.'),
-                            TagsInput::make('allowed_domains')
-                                ->label('Allowed Domains')
-                                ->helperText('Only these domains will be allowed to embed this form.')
-                                ->placeholder('example.com')
-                                ->hidden(fn (Get $get) => ! $get('embed_enabled'))
-                                ->disabled(fn (Get $get) => ! $get('embed_enabled'))
-                                ->nestedRecursiveRules(
-                                    [
-                                        'string',
-                                        new IsDomain(),
-                                    ]
-                                ),
-                        ])
-                        ->columnSpanFull(),
-                    Toggle::make('is_wizard')
-                        ->label('Multi-step form')
-                        ->live()
-                        ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
+                                ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
+                        ]),
                     Section::make('Fields')
                         ->schema([
                             $this->fieldBuilder(),

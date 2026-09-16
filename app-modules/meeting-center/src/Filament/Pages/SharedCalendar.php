@@ -184,7 +184,7 @@ class SharedCalendar extends Page implements HasForms, HasTable
                     ->label('Name')
                     ->searchable()
                     ->state(function (BookingGroupAppointment $record): string {
-                        $educatable = app(ResolveEducatableFromEmail::class)($record->email);
+                        $educatable = app(ResolveEducatableFromEmail::class)($record->email, includingArchived: true);
 
                         if ($educatable instanceof Student) {
                             return "{$record->name} (Student)";
@@ -197,10 +197,10 @@ class SharedCalendar extends Page implements HasForms, HasTable
                         return $record->name;
                     })
                     ->url(function (BookingGroupAppointment $record): ?string {
-                        $educatable = app(ResolveEducatableFromEmail::class)($record->email);
+                        $educatable = app(ResolveEducatableFromEmail::class)($record->email, includingArchived: true);
 
                         if ($educatable instanceof Student) {
-                            return StudentResource::getUrl('view', ['record' => $educatable->sisid]);
+                            return StudentResource::getViewUrl($educatable);
                         }
 
                         if ($educatable instanceof Prospect) {
