@@ -33,7 +33,7 @@
 --}}
 <x-filament-panels::page>
     <x-filament::section>
-        <x-slot name="heading">Activity Feed</x-slot>
+        <x-slot name="heading">{{ $this->getTitle() }}</x-slot>
 
         {{-- @todo: Refactor --}}
         <ol class="relative">
@@ -110,7 +110,7 @@
                 <div class="my-4 flex flex-row items-center gap-x-4">
                     <hr class="flex-grow border-t border-dashed border-gray-200 dark:border-gray-700" />
                     <span class="mt-1 text-sm text-gray-900 dark:text-white">
-                        You have reached the end of the engagement timeline.
+                        You have reached the end of the activity feed.
                     </span>
                     <hr class="flex-grow border-t border-dashed border-gray-200 dark:border-gray-700" />
                 </div>
