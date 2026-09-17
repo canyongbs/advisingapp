@@ -363,32 +363,27 @@ class EngagementsRelationManager extends RelationManager
                     )
                     ->visible($canAccessEngagements && $canAccessEngagementResponses),
                 SelectFilter::make('type')
-                    ->options(NotificationChannel::class)
-                    ->modifyQueryUsing(
-                        fn (Builder $query, array $data) => $query
-                            ->when(
-                                $data['value'] === NotificationChannel::Email->value,
-                                fn (Builder $query) => $query
-                                    ->whereHasMorph(
-                                        'timelineable',
-                                        [Engagement::class],
-                                        fn (Builder $query, string $type) => match ($type) {
-                                            Engagement::class => $query->where('channel', $data['value']),
-                                        }
-                                    )
-                            )
-                            ->when(
-                                $data['value'] === NotificationChannel::Sms->value,
-                                fn (Builder $query) => $query->whereHasMorph(
-                                    'timelineable',
-                                    [Engagement::class, EngagementResponse::class],
-                                    fn (Builder $query, string $type) => match ($type) {
-                                        Engagement::class => $query->where('channel', $data['value']),
-                                        EngagementResponse::class => $query,
-                                    }
-                                )
-                            )
-                    ),
+                    ->options([
+                        NotificationChannel::Email->value => NotificationChannel::Email->getLabel(),
+                        NotificationChannel::Sms->value => NotificationChannel::Sms->getLabel(),
+                    ])
+                    ->modifyQueryUsing(function (Builder $query, array $data): Builder {
+                        $channel = NotificationChannel::parse($data['value'] ?? null);
+                        $responseType = EngagementResponseType::tryFrom($data['value'] ?? '');
+
+                        if (is_null($channel) || is_null($responseType)) {
+                            return $query;
+                        }
+
+                        return $query->whereHasMorph(
+                            'timelineable',
+                            [Engagement::class, EngagementResponse::class],
+                            fn (Builder $query, string $type) => match ($type) {
+                                Engagement::class => $query->where('channel', $channel),
+                                EngagementResponse::class => $query->where('type', $responseType),
+                            }
+                        );
+                    }),
             ]);
     }
 

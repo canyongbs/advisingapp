@@ -177,7 +177,7 @@ class ProspectMessagesDetailTable extends BaseWidget
                     ->sortable()
                     ->formatStateUsing(fn (string $state): string => match ($state) {
                         'email' => 'Email',
-                        'sms' => 'SMS',
+                        'sms' => 'Text',
                         default => throw new Exception('Invalid type'),
                     })
                     ->icon(fn (string $state) => match ($state) {
@@ -244,7 +244,7 @@ class ProspectMessagesDetailTable extends BaseWidget
                 SelectFilter::make('type')
                     ->options([
                         'email' => 'Email',
-                        'sms' => 'SMS',
+                        'sms' => 'Text',
                     ]),
             ]);
     }
