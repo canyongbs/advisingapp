@@ -227,7 +227,7 @@ it('can start a new thread', function () use ($setUp) {
 });
 
 it('shows a link to switch back to the institutional advisor when using an employee advisor', function () use ($setUp) {
-    ['user' => $user] = $setUp();
+    ['user' => $user, 'assistant' => $institutionalAdvisor] = $setUp();
 
     $employeeAdvisor = AiAssistant::factory()->create([
         'application' => AiAssistantApplication::PersonalAssistant,
@@ -243,7 +243,9 @@ it('shows a link to switch back to the institutional advisor when using an emplo
 
     Livewire::test(InstitutionalAdvisor::class)
         ->call('selectThread', $employeeAdvisorThread->toArray())
-        ->assertSee('Switch to institutional advisor');
+        ->assertSee('Switch to institutional advisor')
+        ->call('createThread')
+        ->assertSet('thread.assistant_id', $institutionalAdvisor->id);
 });
 
 it('does not show the switch link when already using the institutional advisor', function () use ($setUp) {
@@ -257,6 +259,29 @@ it('does not show the switch link when already using the institutional advisor',
 
     Livewire::test(InstitutionalAdvisor::class)
         ->assertDontSee('Switch to institutional advisor');
+});
+
+it('shows the switch link for a thread on an archived employee advisor even when no active custom advisors exist', function () use ($setUp) {
+    ['user' => $user, 'assistant' => $institutionalAdvisor] = $setUp();
+
+    $archivedEmployeeAdvisor = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::PersonalAssistant,
+        'is_default' => false,
+        'model' => AiModel::Test,
+        'archived_at' => now(),
+    ]);
+
+    $archivedEmployeeAdvisorThread = AiThread::factory()
+        ->for($archivedEmployeeAdvisor, 'assistant')
+        ->for($user)
+        ->has(AiMessage::factory()->count(5), 'messages')
+        ->create();
+
+    Livewire::test(InstitutionalAdvisor::class)
+        ->call('selectThread', $archivedEmployeeAdvisorThread->toArray())
+        ->assertSee('Switch to institutional advisor')
+        ->call('createThread')
+        ->assertSet('thread.assistant_id', $institutionalAdvisor->id);
 });
 
 it('can create a folder', function () use ($setUp) {
