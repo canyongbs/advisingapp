@@ -226,6 +226,39 @@ it('can start a new thread', function () use ($setUp) {
         ->assertNotSet('thread.id', $thread->id);
 });
 
+it('shows a link to switch back to the institutional advisor when using an employee advisor', function () use ($setUp) {
+    ['user' => $user] = $setUp();
+
+    $employeeAdvisor = AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::PersonalAssistant,
+        'is_default' => false,
+        'model' => AiModel::Test,
+    ]);
+
+    $employeeAdvisorThread = AiThread::factory()
+        ->for($employeeAdvisor, 'assistant')
+        ->for($user)
+        ->has(AiMessage::factory()->count(5), 'messages')
+        ->create();
+
+    Livewire::test(InstitutionalAdvisor::class)
+        ->call('selectThread', $employeeAdvisorThread->toArray())
+        ->assertSee('Switch to institutional advisor');
+});
+
+it('does not show the switch link when already using the institutional advisor', function () use ($setUp) {
+    $setUp();
+
+    AiAssistant::factory()->create([
+        'application' => AiAssistantApplication::PersonalAssistant,
+        'is_default' => false,
+        'model' => AiModel::Test,
+    ]);
+
+    Livewire::test(InstitutionalAdvisor::class)
+        ->assertDontSee('Switch to institutional advisor');
+});
+
 it('can create a folder', function () use ($setUp) {
     ['user' => $user] = $setUp();
 
