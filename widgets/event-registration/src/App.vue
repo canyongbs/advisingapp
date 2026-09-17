@@ -33,7 +33,7 @@
 -->
 <script setup>
     import { UserIcon } from '@heroicons/vue/24/outline';
-    import { defineProps, onMounted, reactive, ref } from 'vue';
+    import { computed, defineProps, onMounted, reactive, ref } from 'vue';
     import wizard from '../../form/src/FormKit/wizard';
 
     import attachRecaptchaScript from '../../../app-modules/integration-google-recaptcha/resources/js/Services/AttachRecaptchaScript.js';
@@ -47,7 +47,11 @@
         });
     });
 
-    let { activeStep, currentStep, totalSteps, setStep, wizardPlugin } = wizard();
+    let { activeStep, currentStep, totalSteps, setStep, wizardPlugin, resetWizard } = wizard();
+
+    const percentComplete = computed(() =>
+        totalSteps.value > 0 ? Math.round((currentStep.value / totalSteps.value) * 100) : 0,
+    );
 
     const props = defineProps({ entryUrl: String });
 
@@ -55,6 +59,7 @@
         activeStep,
         currentStep,
         totalSteps,
+        percentComplete,
         plugins: [wizardPlugin, asteriskPlugin],
         setStep: (target) => () => {
             setStep(target);
@@ -197,6 +202,7 @@
             requestUrl: authentication.value.requestUrl,
             url: null,
         };
+        resetWizard();
     }
 
     async function authenticate(formData, node) {
@@ -365,23 +371,7 @@
                     </div>
                 </div>
 
-                <div v-if="totalSteps > 1" class="not-prose">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-sm font-bold text-gray-900">Step {{ currentStep }} of {{ totalSteps }}</span>
-                        <span class="text-sm text-gray-500"
-                            >{{ Math.round((currentStep / totalSteps) * 100) }}% complete</span
-                        >
-                    </div>
-                    <div class="h-2 w-full rounded-full bg-gray-200">
-                        <div
-                            class="h-2 rounded-full bg-primary-600 transition-all"
-                            :style="{ width: `${(currentStep / totalSteps) * 100}%` }"
-                        ></div>
-                    </div>
-                </div>
-
                 <div class="form-fields">
-                    <hr class="not-prose my-6 border-0 border-t border-gray-200" />
                     <FormKitSchema :schema="schema" :data="data" />
                 </div>
             </div>

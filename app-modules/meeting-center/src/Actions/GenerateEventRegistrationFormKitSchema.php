@@ -72,6 +72,52 @@ class GenerateEventRegistrationFormKitSchema extends GenerateFormKitSchema
                 ],
                 [
                     '$el' => 'div',
+                    'if' => '$totalSteps > 1 && $get(attending).value === "yes"',
+                    'attrs' => [
+                        'class' => 'step-loader not-prose',
+                    ],
+                    'children' => [
+                        [
+                            '$el' => 'div',
+                            'attrs' => [
+                                'class' => 'step-loader__meta',
+                            ],
+                            'children' => [
+                                [
+                                    '$el' => 'span',
+                                    'attrs' => [
+                                        'class' => 'step-loader__label',
+                                    ],
+                                    'children' => '$: "Step " + $currentStep + " of " + $totalSteps',
+                                ],
+                                [
+                                    '$el' => 'span',
+                                    'attrs' => [
+                                        'class' => 'step-loader__percent',
+                                    ],
+                                    'children' => '$percentComplete + "% complete"',
+                                ],
+                            ],
+                        ],
+                        [
+                            '$el' => 'div',
+                            'attrs' => [
+                                'class' => 'step-loader__track',
+                            ],
+                            'children' => [
+                                [
+                                    '$el' => 'div',
+                                    'attrs' => [
+                                        'class' => 'step-loader__fill',
+                                        'style' => '$: `width: ${$percentComplete}%`',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+                [
+                    '$el' => 'div',
                     'if' => '$get(attending).value === "yes"',
                     'children' => $this->generateContent($submissible),
                 ],

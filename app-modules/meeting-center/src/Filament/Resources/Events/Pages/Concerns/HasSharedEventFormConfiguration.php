@@ -152,6 +152,7 @@ trait HasSharedEventFormConfiguration
                     Repeater::make('steps')
                         ->schema([
                             TextInput::make('label')
+                                ->label('Step Title')
                                 ->required()
                                 ->string()
                                 ->maxLength(255)

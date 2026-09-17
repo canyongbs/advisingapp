@@ -115,6 +115,7 @@ class ViewApplication extends ViewRecord
                 Repeater::make('steps')
                     ->schema([
                         TextInput::make('label')
+                            ->label('Step Title')
                             ->required()
                             ->string()
                             ->maxLength(255)

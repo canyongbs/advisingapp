@@ -52,7 +52,7 @@
 }
 
 .wizard-description {
-    @apply mb-0 text-sm text-gray-600 wrap-break-word;
+    @apply mb-0 max-w-2xl text-sm text-gray-600 wrap-break-word;
 }
 
 .step-nav {
@@ -92,8 +92,36 @@
     margin-left: 0.5rem;
 }
 
+.step-loader {
+    @apply mb-6;
+}
+
+.step-loader__meta {
+    @apply mb-2 flex items-center justify-between;
+}
+
+.step-loader__label {
+    @apply text-sm font-bold text-gray-900;
+}
+
+.step-loader__percent {
+    @apply text-sm text-gray-500;
+}
+
+.step-loader__track {
+    @apply h-2 w-full rounded-full bg-gray-200;
+}
+
+.step-loader__fill {
+    @apply h-2 rounded-full bg-primary-600 transition-all;
+}
+
 .form-fields .formkit-inner {
     @apply max-w-none;
+}
+
+.form-fields .formkit-fieldset {
+    @apply w-full max-w-none;
 }
 
 .responsive-grid-2 {

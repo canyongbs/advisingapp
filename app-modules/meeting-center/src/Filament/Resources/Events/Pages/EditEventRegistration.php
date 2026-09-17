@@ -102,7 +102,7 @@ class EditEventRegistration extends EditRecord
                                 foreach ($steps as $key => $stepData) {
                                     $newStep = $newVersion->steps()->create([
                                         'label' => $stepData['label'] ?? 'Untitled Step',
-                                        'description' => $stepData['description'] ?? null,
+                                        ...(StepDescriptionFeature::active() ? ['description' => $stepData['description'] ?? null] : []),
                                         'sort' => $sort++,
                                     ]);
 
@@ -164,6 +164,7 @@ class EditEventRegistration extends EditRecord
                     Repeater::make('steps')
                         ->schema([
                             TextInput::make('label')
+                                ->label('Step Title')
                                 ->required()
                                 ->string()
                                 ->maxLength(255)

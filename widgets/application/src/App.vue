@@ -36,7 +36,7 @@
     import { computed, defineProps, reactive, ref } from 'vue';
     import asteriskPlugin from '../../form/src/FormKit/asterisk.js';
     import wizard from '../../form/src/FormKit/wizard';
-    let { visitedSteps, activeStep, currentStep, totalSteps, setStep, wizardPlugin } = wizard();
+    let { visitedSteps, activeStep, currentStep, totalSteps, setStep, wizardPlugin, resetWizard } = wizard();
 
     const percentComplete = computed(() =>
         totalSteps.value > 0 ? Math.round((currentStep.value / totalSteps.value) * 100) : 0,
@@ -204,6 +204,7 @@
         pastSubmissionsMeta.value = null;
         pastSubmissionsCurrentPage.value = 1;
         currentSubmission.value = null;
+        resetWizard();
     }
 
     fetch(props.entryUrl)
@@ -788,9 +789,9 @@
                             ></div>
                         </div>
                     </div>
+                    <hr class="not-prose my-6 border-0 border-t border-gray-200" />
 
                     <div class="form-fields">
-                        <hr class="not-prose my-6 border-0 border-t border-gray-200" />
                         <FormKitSchema :schema="schema" :data="data" />
                     </div>
                 </div>
