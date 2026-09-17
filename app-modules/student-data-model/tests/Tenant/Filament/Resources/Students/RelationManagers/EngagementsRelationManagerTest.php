@@ -111,6 +111,13 @@ describe('filters', function () {
                 'recipient_type' => $owner->getMorphClass(),
             ]);
 
+        $emailResponse = EngagementResponse::factory()
+            ->email()
+            ->create([
+                'sender_id' => $owner->getKey(),
+                'sender_type' => $owner->getMorphClass(),
+            ]);
+
         $smsResponse = EngagementResponse::factory()
             ->sms()
             ->create([
@@ -123,17 +130,45 @@ describe('filters', function () {
             'pageClass' => $pageClass,
         ])
             ->filterTable('type', NotificationChannel::Email->value)
-            ->assertCanSeeTableRecords([$emailEngagement->timelineRecord])
+            ->assertCanSeeTableRecords([$emailEngagement->timelineRecord, $emailResponse->timelineRecord])
             ->assertCanNotSeeTableRecords([$smsEngagement->timelineRecord, $smsResponse->timelineRecord])
             ->filterTable('type', NotificationChannel::Sms->value)
             ->assertCanSeeTableRecords([$smsEngagement->timelineRecord, $smsResponse->timelineRecord])
-            ->assertCanNotSeeTableRecords([$emailEngagement->timelineRecord])
+            ->assertCanNotSeeTableRecords([$emailEngagement->timelineRecord, $emailResponse->timelineRecord])
             ->removeTableFilter('type')
             ->assertCanSeeTableRecords([
                 $emailEngagement->timelineRecord,
+                $emailResponse->timelineRecord,
                 $smsEngagement->timelineRecord,
                 $smsResponse->timelineRecord,
             ]);
+    })->with('messages tab owners');
+
+    it('ignores an unsupported message type filter value', function (string $ownerType, string $pageClass) {
+        $owner = createMessagesTabOwner($ownerType);
+
+        actingAsUserWithMessagesTabAccess($owner);
+
+        $engagement = Engagement::factory()
+            ->email()
+            ->create([
+                'recipient_id' => $owner->getKey(),
+                'recipient_type' => $owner->getMorphClass(),
+            ]);
+
+        $response = EngagementResponse::factory()
+            ->sms()
+            ->create([
+                'sender_id' => $owner->getKey(),
+                'sender_type' => $owner->getMorphClass(),
+            ]);
+
+        livewire(EngagementsRelationManager::class, [
+            'ownerRecord' => $owner,
+            'pageClass' => $pageClass,
+        ])
+            ->filterTable('type', NotificationChannel::Database->value)
+            ->assertCanSeeTableRecords([$engagement->timelineRecord, $response->timelineRecord]);
     })->with('messages tab owners');
 
     it('filters messages by direction', function (string $ownerType, string $pageClass) {
