@@ -47,6 +47,7 @@ use AdvisingApp\Report\Filament\Widgets\StudentMessagesDetailTable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Actions\ExportAction;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -459,6 +460,17 @@ it('filters by direction properly', function () {
         ->filterTable('direction', 'inbound')
         ->assertCanSeeTableRecords(collect([$holisticEngagementInbound]))
         ->assertCanNotSeeTableRecords(collect([$holisticEngagementOutbound]));
+});
+
+it('offers email and text as type filter options', function () {
+    livewire(StudentMessagesDetailTable::class, [
+        'cacheTag' => 'report-student-messages',
+        'filters' => [],
+    ])
+        ->assertTableFilterExists('type', fn (SelectFilter $filter): bool => $filter->getFormField()->getOptions() === [
+            'email' => 'Email',
+            'sms' => 'Text',
+        ]);
 });
 
 it('filters by type properly', function () {

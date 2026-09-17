@@ -46,6 +46,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectMessagesDetailTable;
 use App\Models\User;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Str;
 
 use function Pest\Livewire\livewire;
@@ -455,6 +456,17 @@ it('filters by direction properly', function () {
         ->filterTable('direction', 'inbound')
         ->assertCanSeeTableRecords(collect([$holisticEngagementInbound]))
         ->assertCanNotSeeTableRecords(collect([$holisticEngagementOutbound]));
+});
+
+it('offers email and text as type filter options', function () {
+    livewire(ProspectMessagesDetailTable::class, [
+        'cacheTag' => 'report-prospect-messages',
+        'filters' => [],
+    ])
+        ->assertTableFilterExists('type', fn (SelectFilter $filter): bool => $filter->getFormField()->getOptions() === [
+            'email' => 'Email',
+            'sms' => 'Text',
+        ]);
 });
 
 it('filters by type properly', function () {
