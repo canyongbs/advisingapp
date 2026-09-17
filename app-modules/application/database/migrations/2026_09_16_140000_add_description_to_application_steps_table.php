@@ -34,47 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Models;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use App\Models\Attributes\NoPermissions;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
-
-/**
- * @mixin IdeHelperFormStep
- */
-#[NoPermissions]
-class FormStep extends SubmissibleStep
-{
-    use SoftDeletes;
-
-    protected $fillable = [
-        'label',
-        'description',
-        'content',
-        'sort',
-    ];
-
-    protected $casts = [
-        'content' => 'array',
-        'sort' => 'integer',
-    ];
-
-    /**
-     * @return BelongsTo<Form, $this>
-     */
-    public function submissible(): BelongsTo
+return new class () extends Migration {
+    public function up(): void
     {
-        return $this
-            ->belongsTo(Form::class, 'form_id');
+        DB::transaction(function () {
+            Schema::table('application_steps', function (Blueprint $table) {
+                $table->text('description')->nullable();
+            });
+        });
     }
 
-    /**
-     * @return HasMany<FormField, $this>
-     */
-    public function fields(): HasMany
+    public function down(): void
     {
-        return $this->hasMany(FormField::class, 'step_id');
+        DB::transaction(function () {
+            Schema::table('application_steps', function (Blueprint $table) {
+                $table->dropColumn('description');
+            });
+        });
     }
-}
+};

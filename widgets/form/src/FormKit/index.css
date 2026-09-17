@@ -39,8 +39,20 @@
     --tw-space-y-reverse: 0;
 }
 
+.wizard-header {
+    @apply mb-4 rounded-lg bg-blue-50 px-4 py-3;
+}
+
 .wizard-title {
-    @apply mb-3 text-xl font-semibold text-gray-900 wrap-break-word;
+    @apply mb-0.5 mt-0.5 text-xl font-semibold text-gray-900 wrap-break-word;
+}
+
+.wizard-header .wizard-title:last-child {
+    @apply mb-0;
+}
+
+.wizard-description {
+    @apply mb-0 text-sm text-gray-600 wrap-break-word;
 }
 
 .step-nav {
@@ -51,12 +63,37 @@
     @apply justify-self-start min-w-0;
 }
 
+.step-nav__back button {
+    @apply min-w-24 justify-center bg-gray-300 px-5 text-gray-500 hover:bg-gray-400 formkit-disabled:bg-gray-500 formkit-disabled:text-gray-700 formkit-disabled:cursor-not-allowed;
+}
+
 .step-progress {
-    @apply justify-self-center whitespace-nowrap font-medium text-gray-700;
+    @apply justify-self-center text-center;
+}
+
+.step-progress__label {
+    @apply mb-0 text-sm font-bold text-gray-900 wrap-break-word;
+}
+
+.step-progress__percent {
+    @apply mb-0 mt-0.5 text-xs text-gray-500 wrap-break-word;
 }
 
 .step-nav__next {
     @apply justify-self-end min-w-0;
+}
+
+.step-nav__next-btn button {
+    @apply min-w-24 justify-center px-5;
+}
+
+.step-nav__next-btn button::after {
+    content: '\2192';
+    margin-left: 0.5rem;
+}
+
+.form-fields .formkit-inner {
+    @apply max-w-none;
 }
 
 .responsive-grid-2 {

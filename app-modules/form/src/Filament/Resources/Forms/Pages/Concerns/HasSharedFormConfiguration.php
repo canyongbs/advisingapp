@@ -44,6 +44,7 @@ use AdvisingApp\Form\Models\FormStep;
 use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 use App\Enums\FontWeight;
+use App\Features\StepDescriptionFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Closure;
 use Filament\Forms\Components\Repeater;
@@ -160,12 +161,18 @@ trait HasSharedFormConfiguration
             Repeater::make('steps')
                 ->schema([
                     TextInput::make('label')
+                        ->label('Step Title')
                         ->required()
                         ->string()
                         ->maxLength(255)
                         ->autocomplete(false)
                         ->columnSpanFull()
                         ->lazy(),
+                    Textarea::make('description')
+                        ->label('Step Description')
+                        ->string()
+                        ->columnSpanFull()
+                        ->visible(fn (): bool => StepDescriptionFeature::active()),
                     $this->fieldBuilder(
                         isAuthenticatedPath: '../../is_authenticated',
                         generateProspectsPath: '../../generate_prospects'

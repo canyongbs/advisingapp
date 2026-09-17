@@ -52,6 +52,7 @@ class SaveSubmissibleFieldsFromContent
             foreach ($data['steps'] ?? [] as $stepData) {
                 $step = $submissible->steps()->create([
                     'label' => $stepData['label'] ?? 'Untitled Step',
+                    'description' => $stepData['description'] ?? null,
                     'sort' => $sort++,
                 ]);
 

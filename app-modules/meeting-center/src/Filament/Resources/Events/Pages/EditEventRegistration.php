@@ -43,9 +43,11 @@ use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
+use App\Features\StepDescriptionFeature;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
@@ -94,12 +96,13 @@ class EditEventRegistration extends EditRecord
                                 $steps = ! empty($repeaterState)
                                     ? $repeaterState
                                     : $record->steps()->orderBy('sort')->get()
-                                        ->mapWithKeys(fn (EventRegistrationFormStep $step) => [$step->id => ['label' => $step->label]])
+                                        ->mapWithKeys(fn (EventRegistrationFormStep $step) => [$step->id => ['label' => $step->label, 'description' => $step->description]])
                                         ->all();
 
                                 foreach ($steps as $key => $stepData) {
                                     $newStep = $newVersion->steps()->create([
                                         'label' => $stepData['label'] ?? 'Untitled Step',
+                                        'description' => $stepData['description'] ?? null,
                                         'sort' => $sort++,
                                     ]);
 
@@ -167,6 +170,11 @@ class EditEventRegistration extends EditRecord
                                 ->autocomplete(false)
                                 ->columnSpanFull()
                                 ->lazy(),
+                            Textarea::make('description')
+                                ->label('Step Description')
+                                ->string()
+                                ->columnSpanFull()
+                                ->visible(fn (): bool => StepDescriptionFeature::active()),
                             $this->fieldBuilder(),
                         ])
                         ->addActionLabel('New step')
