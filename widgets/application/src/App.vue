@@ -774,8 +774,12 @@
 
                     <div v-if="totalSteps > 1" class="not-prose">
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-sm font-bold text-gray-900">Step {{ currentStep }} of {{ totalSteps }}</span>
-                            <span class="text-sm text-gray-500">{{ Math.round((currentStep / totalSteps) * 100) }}% complete</span>
+                            <span class="text-sm font-bold text-gray-900"
+                                >Step {{ currentStep }} of {{ totalSteps }}</span
+                            >
+                            <span class="text-sm text-gray-500"
+                                >{{ Math.round((currentStep / totalSteps) * 100) }}% complete</span
+                            >
                         </div>
                         <div class="h-2 w-full rounded-full bg-gray-200">
                             <div
