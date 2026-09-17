@@ -363,7 +363,10 @@ class EngagementsRelationManager extends RelationManager
                     )
                     ->visible($canAccessEngagements && $canAccessEngagementResponses),
                 SelectFilter::make('type')
-                    ->options(NotificationChannel::class)
+                    ->options([
+                        NotificationChannel::Email->value => NotificationChannel::Email->getLabel(),
+                        NotificationChannel::Sms->value => NotificationChannel::Sms->getLabel(),
+                    ])
                     ->modifyQueryUsing(
                         fn (Builder $query, array $data) => $query
                             ->when(

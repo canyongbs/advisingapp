@@ -241,6 +241,37 @@ it('ensures status is set properly for engagements and responses', function () {
         ->assertTableColumnFormattedStateSet('status', 'New', record: $holisticEngagementInbound);
 });
 
+it('ensures type is formatted properly for engagements and responses', function () {
+    $student = Student::factory()->create();
+
+    $emailEngagement = Engagement::factory()->email()->create([
+        'recipient_id' => $student->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $smsEngagement = Engagement::factory()->sms()->create([
+        'recipient_id' => $student->sisid,
+        'recipient_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $smsResponse = EngagementResponse::factory()->sms()->create([
+        'sender_id' => $student->sisid,
+        'sender_type' => (new Student())->getMorphClass(),
+    ]);
+
+    $holisticEmailEngagement = HolisticEngagement::where('record_id', $emailEngagement->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $holisticSmsEngagement = HolisticEngagement::where('record_id', $smsEngagement->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $holisticSmsResponse = HolisticEngagement::where('record_id', $smsResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
+
+    livewire(StudentMessagesDetailTable::class, [
+        'cacheTag' => 'report-student-messages',
+        'filters' => [],
+    ])
+        ->assertTableColumnFormattedStateSet('type', 'Email', record: $holisticEmailEngagement)
+        ->assertTableColumnFormattedStateSet('type', 'Text', record: $holisticSmsEngagement)
+        ->assertTableColumnFormattedStateSet('type', 'Text', record: $holisticSmsResponse);
+});
+
 it('ensures sent_by is properly rendered in the table', function () {
     $user = User::factory()->create();
     $student = Student::factory()->create();
