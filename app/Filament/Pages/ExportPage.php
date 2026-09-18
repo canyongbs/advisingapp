@@ -37,6 +37,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Clusters\ImportExport;
+use App\Filament\Components\ImportExportTabs;
 use App\Models\Export;
 use App\Models\User;
 use Filament\Actions\Action;
@@ -44,7 +45,6 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Pages\Enums\SubNavigationPosition;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\EmbeddedTable;
 use Filament\Schemas\Schema;
@@ -60,8 +60,6 @@ class ExportPage extends Page implements HasActions, HasForms, HasTable
     use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
-
-    protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
 
     protected static ?string $navigationLabel = 'Export';
 
@@ -82,7 +80,10 @@ class ExportPage extends Page implements HasActions, HasForms, HasTable
     public function content(Schema $schema): Schema
     {
         return $schema->components([
-            EmbeddedTable::make(),
+            ImportExportTabs::make('export')
+                ->schema([
+                    EmbeddedTable::make(),
+                ]),
         ]);
     }
 

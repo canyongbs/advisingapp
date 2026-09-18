@@ -47,4 +47,10 @@ class ImportExport extends Cluster
     protected static string | UnitEnum | null $navigationGroup = NavigationGroup::DataAndAnalytics;
 
     protected static ?string $navigationLabel = 'Import/Export';
+
+    /**
+     * The pages within this cluster present their own in-container tabs, so the
+     * default cluster sub-navigation (segmented control) is disabled.
+     */
+    protected static bool $shouldRegisterSubNavigation = false;
 }

@@ -398,3 +398,56 @@ it('forbids the student sync page when student editing is disabled', function ()
 
     get(ManageStudentSyncs::getUrl())->assertForbidden();
 });
+
+// In-Container Tab Navigation Tests
+
+it('renders tabs linking to the import and export pages, excluding student sync when inaccessible', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+
+    actingAs($user);
+
+    $html = livewire(ImportPage::class)->html();
+
+    expect($html)
+        ->toContain(ImportPage::getUrl())
+        ->toContain(ExportPage::getUrl())
+        ->not->toContain(ManageStudentSyncs::getUrl());
+});
+
+it('includes a tab linking to the student sync page when it is accessible', function () {
+    $settings = app(ManageStudentConfigurationSettings::class);
+    $settings->is_enabled = true;
+    $settings->save();
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+    $user->givePermissionTo('record_sync.view-any');
+
+    actingAs($user);
+
+    $html = livewire(ImportPage::class)->html();
+
+    expect($html)
+        ->toContain(ImportPage::getUrl())
+        ->toContain(ExportPage::getUrl())
+        ->toContain(ManageStudentSyncs::getUrl());
+});
+
+it('marks the active tab as current', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+
+    actingAs($user);
+
+    $html = livewire(ExportPage::class)->html();
+
+    $activeHref = null;
+
+    if (preg_match('/<a\b(?=[^>]*\bfi-tabs-item\b)(?=[^>]*aria-current="page")[^>]*>/i', $html, $match)) {
+        preg_match('/href="([^"]+)"/i', $match[0], $hrefMatch);
+        $activeHref = html_entity_decode($hrefMatch[1] ?? '');
+    }
+
+    expect($activeHref)->toBe(ExportPage::getUrl());
+});
