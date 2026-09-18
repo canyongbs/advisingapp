@@ -38,6 +38,7 @@ namespace AdvisingApp\Application\Filament\Actions;
 
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Models\Scopes\Requested;
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -99,7 +100,7 @@ class RequestApplicationSubmission extends Action
 
             assert($owner instanceof Student || $owner instanceof Prospect);
 
-            $submission = $owner->applicationSubmissions()->requested()->firstOrNew(['application_id' => $data['application_id']]);
+            $submission = $owner->applicationSubmissions()->tap(new Requested())->firstOrNew(['application_id' => $data['application_id']]);
             $submission->fill($data);
             $submission->requester()->associate(auth()->user());
             $submission->save();

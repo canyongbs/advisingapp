@@ -40,6 +40,7 @@ use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use AdvisingApp\MeetingCenter\Models\Scopes\Requested;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -144,7 +145,7 @@ class RequestEventRegistrationFormSubmission extends Action
 
             $attendee->save();
 
-            $submission = $attendee->submissions()->requested()->firstOrNew(['form_id' => $form->id]);
+            $submission = $attendee->submissions()->tap(new Requested())->firstOrNew(['form_id' => $form->id]);
 
             if (blank($submission->attendee_status)) {
                 $submission->attendee_status = EventAttendeeStatus::Invited;

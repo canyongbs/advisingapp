@@ -119,16 +119,6 @@ class EventRegistrationFormSubmission extends Submission
      *
      * @return Builder<EventRegistrationFormSubmission>
      */
-    public function scopeRequested(Builder $query): Builder
-    {
-        return $query->notSubmitted()->notCanceled();
-    }
-
-    /**
-     * @param Builder<EventRegistrationFormSubmission> $query
-     *
-     * @return Builder<EventRegistrationFormSubmission>
-     */
     public function scopeSubmitted(Builder $query): Builder
     {
         return $query->whereNotNull('submitted_at');

@@ -6787,12 +6787,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/application/src/Models/ApplicationSubmission.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeRequested" method on "AdvisingApp\\\\Application\\\\Models\\\\ApplicationSubmission" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
-    'identifier' => 'Common.noLocalModelScope',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Models/ApplicationSubmission.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Eloquent local scopes are not allowed\\. The "scopeSubmitted" method on "AdvisingApp\\\\Application\\\\Models\\\\ApplicationSubmission" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
     'identifier' => 'Common.noLocalModelScope',
     'count' => 1,
@@ -6812,12 +6806,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Eloquent local scopes are not allowed\\. The "scopeNotSubmitted" method on "AdvisingApp\\\\MeetingCenter\\\\Models\\\\EventRegistrationFormSubmission" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
-    'identifier' => 'Common.noLocalModelScope',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/meeting-center/src/Models/EventRegistrationFormSubmission.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Eloquent local scopes are not allowed\\. The "scopeRequested" method on "AdvisingApp\\\\MeetingCenter\\\\Models\\\\EventRegistrationFormSubmission" defines a local scope, which relies on magic methods that static analysis cannot reason about\\. Use a tappable scope instead\\. See https\\://seankegel\\.com/elevate\\-your\\-laravel\\-eloquent\\-queries\\-with\\-tappable\\-scopes\\.$#',
     'identifier' => 'Common.noLocalModelScope',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/meeting-center/src/Models/EventRegistrationFormSubmission.php',

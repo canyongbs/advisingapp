@@ -45,6 +45,7 @@ use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormAuthentication;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
+use AdvisingApp\MeetingCenter\Models\Scopes\Requested;
 use AdvisingApp\MeetingCenter\Notifications\AuthenticateEventRegistrationFormNotification;
 use App\Http\Controllers\Controller;
 use App\Rules\ValidAuthenticationCode;
@@ -257,7 +258,7 @@ class EventRegistrationWidgetController extends Controller
 
             /** @var ?EventRegistrationFormSubmission $submission */
             $submission = $form->submissions()
-                ->requested()
+                ->tap(new Requested())
                 ->where('event_attendee_id', $authentication->author->getKey())
                 ->first();
 

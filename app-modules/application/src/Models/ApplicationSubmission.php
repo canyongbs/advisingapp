@@ -145,16 +145,6 @@ class ApplicationSubmission extends Submission
      *
      * @return Builder<ApplicationSubmission>
      */
-    public function scopeRequested(Builder $query): Builder
-    {
-        return $query->notSubmitted()->notCanceled();
-    }
-
-    /**
-     * @param Builder<ApplicationSubmission> $query
-     *
-     * @return Builder<ApplicationSubmission>
-     */
     public function scopeSubmitted(Builder $query): Builder
     {
         return $query->whereNotNull('submitted_at');
