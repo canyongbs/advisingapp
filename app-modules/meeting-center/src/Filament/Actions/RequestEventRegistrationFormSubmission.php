@@ -39,6 +39,7 @@ namespace AdvisingApp\MeetingCenter\Filament\Actions;
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\StudentDataModel\Models\Contracts\Educatable;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
@@ -55,6 +56,8 @@ class RequestEventRegistrationFormSubmission extends Action
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->authorize(fn (): bool => auth()->user()?->can('create', EventAttendee::class) ?? false);
 
         $this->steps([
             Step::make('Event')
@@ -108,6 +111,17 @@ class RequestEventRegistrationFormSubmission extends Action
             if (blank($owner->primaryEmailAddress?->address)) {
                 Notification::make()
                     ->title('This record does not have a primary email address to send the request to')
+                    ->danger()
+                    ->send();
+
+                $action->halt();
+
+                return;
+            }
+
+            if (! $owner->canReceiveEmail()) {
+                Notification::make()
+                    ->title('This record cannot currently receive email requests')
                     ->danger()
                     ->send();
 

@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Application\Actions\DeliverApplicationSubmissionRequestByEmail;
-use AdvisingApp\Application\Actions\DeliverApplicationSubmissionRequestBySms;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
+use AdvisingApp\Application\Jobs\DeliverApplicationSubmissionRequestByEmail;
+use AdvisingApp\Application\Jobs\DeliverApplicationSubmissionRequestBySms;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
@@ -49,6 +49,7 @@ use App\Features\OnlineAdmissionRequestsFeature;
 use App\Models\User;
 use Illuminate\Support\Facades\Queue;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
@@ -323,4 +324,45 @@ it('hides the request action when the feature flag is inactive', function () {
         'pageClass' => ViewStudent::class,
     ])
         ->assertTableActionHidden('Request');
+});
+
+it('hides the request action from a user without the application.create ability', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.*.view');
+
+    actingAs($user);
+
+    $student = Student::factory()->create();
+
+    livewire(ApplicationSubmissionsRelationManager::class, [
+        'ownerRecord' => $student,
+        'pageClass' => ViewStudent::class,
+    ])
+        ->assertTableActionHidden('Request');
+});
+
+it('allows a user with the application.create ability to request an application submission', function () {
+    Queue::fake();
+
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.*.view');
+    $user->givePermissionTo('application.create');
+
+    actingAs($user);
+
+    $student = Student::factory()->create();
+    $application = Application::factory()->create();
+
+    livewire(ApplicationSubmissionsRelationManager::class, [
+        'ownerRecord' => $student,
+        'pageClass' => ViewStudent::class,
+    ])
+        ->assertTableActionVisible('Request')
+        ->callTableAction('Request', data: [
+            'application_id' => $application->id,
+            'request_method' => FormSubmissionRequestDeliveryMethod::Email->value,
+        ])
+        ->assertHasNoTableActionErrors();
 });

@@ -37,7 +37,10 @@
 namespace AdvisingApp\Application\Filament\Actions;
 
 use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
+use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -53,6 +56,8 @@ class RequestApplicationSubmission extends Action
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->authorize(fn (): bool => auth()->user()?->can('create', ApplicationSubmission::class) ?? false);
 
         $this->steps([
             Step::make('Application')
@@ -90,7 +95,11 @@ class RequestApplicationSubmission extends Action
         ]);
 
         $this->action(function (array $data, ManageRelatedRecords | RelationManager $livewire) {
-            $submission = $livewire->getOwnerRecord()->applicationSubmissions()->requested()->firstOrNew(['application_id' => $data['application_id']]);
+            $owner = $livewire->getOwnerRecord();
+
+            assert($owner instanceof Student || $owner instanceof Prospect);
+
+            $submission = $owner->applicationSubmissions()->requested()->firstOrNew(['application_id' => $data['application_id']]);
             $submission->fill($data);
             $submission->requester()->associate(auth()->user());
             $submission->save();

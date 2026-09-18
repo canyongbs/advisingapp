@@ -36,8 +36,8 @@
 
 namespace AdvisingApp\Application\Models;
 
-use AdvisingApp\Application\Actions\DeliverApplicationSubmissionRequestByEmail;
-use AdvisingApp\Application\Actions\DeliverApplicationSubmissionRequestBySms;
+use AdvisingApp\Application\Jobs\DeliverApplicationSubmissionRequestByEmail;
+use AdvisingApp\Application\Jobs\DeliverApplicationSubmissionRequestBySms;
 use AdvisingApp\Application\Models\Concerns\HasRelationBasedStateMachine;
 use AdvisingApp\Application\Observers\ApplicationSubmissionObserver;
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;

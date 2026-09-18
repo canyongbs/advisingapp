@@ -93,6 +93,8 @@ interface Educatable extends Identifiable, CanBeNotified
 
     public function canReceiveSms(): bool;
 
+    public function canReceiveEmail(): bool;
+
     public function hasValidEmail(): bool;
 
     public function hasValidSms(): bool;

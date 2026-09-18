@@ -36,8 +36,8 @@
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
-use AdvisingApp\MeetingCenter\Actions\DeliverEventRegistrationFormSubmissionRequestByEmail;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use AdvisingApp\MeetingCenter\Jobs\DeliverEventRegistrationFormSubmissionRequestByEmail;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
@@ -48,6 +48,7 @@ use App\Features\EventRegistrationRequestsFeature;
 use App\Models\User;
 use Illuminate\Support\Facades\Queue;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
@@ -293,4 +294,46 @@ it('hides the request action when the feature flag is inactive', function () {
         'pageClass' => ViewStudent::class,
     ])
         ->assertTableActionHidden('request');
+});
+
+it('hides the request action from a user without the event_attendee.create ability', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.*.view');
+    $user->givePermissionTo('event_attendee.view-any');
+
+    actingAs($user);
+
+    $student = Student::factory()->create();
+
+    livewire(EventsRelationManager::class, [
+        'ownerRecord' => $student,
+        'pageClass' => ViewStudent::class,
+    ])
+        ->assertTableActionHidden('request');
+});
+
+it('allows a user with the event_attendee.create ability to request an event registration form submission', function () {
+    Queue::fake();
+
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.*.view');
+    $user->givePermissionTo('event_attendee.view-any');
+    $user->givePermissionTo('event_attendee.create');
+
+    actingAs($user);
+
+    $student = Student::factory()->create();
+    $event = Event::factory()->create();
+
+    livewire(EventsRelationManager::class, [
+        'ownerRecord' => $student,
+        'pageClass' => ViewStudent::class,
+    ])
+        ->assertTableActionVisible('request')
+        ->callTableAction('request', data: [
+            'event_id' => $event->id,
+        ])
+        ->assertHasNoTableActionErrors();
 });

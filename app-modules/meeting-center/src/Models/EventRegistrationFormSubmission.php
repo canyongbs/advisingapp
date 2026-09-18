@@ -38,8 +38,8 @@ namespace AdvisingApp\MeetingCenter\Models;
 
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
 use AdvisingApp\Form\Models\Submission;
-use AdvisingApp\MeetingCenter\Actions\DeliverEventRegistrationFormSubmissionRequestByEmail;
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
+use AdvisingApp\MeetingCenter\Jobs\DeliverEventRegistrationFormSubmissionRequestByEmail;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

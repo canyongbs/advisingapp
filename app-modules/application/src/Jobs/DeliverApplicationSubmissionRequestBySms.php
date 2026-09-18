@@ -34,18 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Actions;
+namespace AdvisingApp\Application\Jobs;
 
-use AdvisingApp\MeetingCenter\Notifications\EventRegistrationFormSubmissionRequestNotification;
+use AdvisingApp\Application\Actions\DeliverApplicationSubmissionRequest;
+use AdvisingApp\Application\Notifications\ApplicationSubmissionRequestSmsNotification;
 
-class DeliverEventRegistrationFormSubmissionRequestByEmail extends DeliverEventRegistrationFormSubmissionRequest
+class DeliverApplicationSubmissionRequestBySms extends DeliverApplicationSubmissionRequest
 {
     public function handle(): void
     {
-        if ($this->submission->author?->canReceiveEmail()) {
+        if ($this->submission->author?->canReceiveSms()) {
             $this->submission
                 ->author
-                ->notify(new EventRegistrationFormSubmissionRequestNotification($this->submission));
+                ->notify(new ApplicationSubmissionRequestSmsNotification($this->submission));
         }
     }
 }
