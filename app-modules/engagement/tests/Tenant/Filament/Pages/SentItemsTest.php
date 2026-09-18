@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Engagement\Filament\Pages\Inbox;
 use AdvisingApp\Engagement\Filament\Pages\SentItems;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -58,6 +59,17 @@ use Illuminate\Support\Facades\Queue;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
+
+it('renders the unified inbox tabs as the page content instead of the cluster sub-navigation', function () {
+    asSuperAdmin();
+
+    livewire(SentItems::class)
+        ->assertSeeHtml('fi-unified-inbox-tabs')
+        ->assertSeeHtml(Inbox::getUrl())
+        ->assertSeeHtml(SentItems::getUrl())
+        ->assertSeeText('Inbox')
+        ->assertSeeText('Sent Items');
+});
 
 it('displays the type column with channel icon, email address, and healthy status for email engagements', function () {
     asSuperAdmin();
