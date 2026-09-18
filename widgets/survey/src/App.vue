@@ -32,7 +32,7 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import { defineProps, onMounted, reactive, ref } from 'vue';
+    import { computed, defineProps, onMounted, reactive, ref } from 'vue';
     import wizard from '../../form/src/FormKit/wizard';
 
     import attachRecaptchaScript from '../../../app-modules/integration-google-recaptcha/resources/js/Services/AttachRecaptchaScript.js';
@@ -48,6 +48,10 @@
 
     let { activeStep, currentStep, totalSteps, setStep, wizardPlugin } = wizard();
 
+    const percentComplete = computed(() =>
+        totalSteps.value > 0 ? Math.round((currentStep.value / totalSteps.value) * 100) : 0,
+    );
+
     const props = defineProps({
         entryUrl: {
             type: String,
@@ -59,6 +63,7 @@
         activeStep,
         currentStep,
         totalSteps,
+        percentComplete,
         plugins: [wizardPlugin, asteriskPlugin],
         setStep: (target) => () => {
             setStep(target);
