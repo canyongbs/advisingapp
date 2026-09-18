@@ -34,33 +34,42 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Database\Factories;
+namespace AdvisingApp\MeetingCenter\Notifications;
 
-use AdvisingApp\Application\Models\Application;
-use AdvisingApp\Application\Models\ApplicationSubmission;
-use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
+use AdvisingApp\Notification\Notifications\Messages\MailMessage;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
-/**
- * @extends Factory<ApplicationSubmission>
- */
-class ApplicationSubmissionFactory extends Factory
+class EventRegistrationFormSubmissionRequestNotification extends Notification implements ShouldQueue
 {
-    public function definition(): array
+    use Queueable;
+
+    public function __construct(
+        public EventRegistrationFormSubmission $submission,
+    ) {}
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
     {
-        return [
-            'application_id' => Application::factory(),
-            'author_type' => $this->faker->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
-            'author_id' => function (array $attributes) {
-                return match ($attributes['author_type']) {
-                    (new Student())->getMorphClass() => Student::factory()->create()->getKey(),
-                    default => Prospect::factory()->create()->getKey(),
-                };
-            },
-            'state_id' => ApplicationSubmissionState::factory(),
-            'submitted_at' => now(),
-        ];
+        return ['mail'];
+    }
+
+    public function toMail(object $notifiable): MailMessage
+    {
+        $form = $this->submission->submissible;
+        assert($form instanceof EventRegistrationForm);
+
+        $event = $form->event;
+
+        return MailMessage::make()
+            ->subject("Request to Complete: {$event->title} Registration")
+            ->line("Please complete your registration for {$event->title}.")
+            ->lineIf(filled($this->submission->request_note), $this->submission->request_note)
+            ->action('Complete Registration', route('event-registration.show', ['event' => $event]));
     }
 }

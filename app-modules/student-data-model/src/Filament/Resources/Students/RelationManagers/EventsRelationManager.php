@@ -38,11 +38,13 @@ namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManag
 
 use AdvisingApp\MeetingCenter\Enums\EventAttendeeStatus;
 use AdvisingApp\MeetingCenter\Filament\Actions\InviteEventAttendeeAction;
+use AdvisingApp\MeetingCenter\Filament\Actions\RequestEventRegistrationFormSubmission;
 use AdvisingApp\MeetingCenter\Filament\Actions\Table\ViewEventAttendeeAction;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use App\Enums\Feature;
+use App\Features\EventRegistrationRequestsFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\Action;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -75,6 +77,11 @@ class EventsRelationManager extends RelationManager
                     ->color('primary'),
                 TextColumn::make('status')
                     ->badge(),
+            ])
+            ->headerActions([
+                RequestEventRegistrationFormSubmission::make()
+                    ->slideOver()
+                    ->visible(fn (): bool => EventRegistrationRequestsFeature::active()),
             ])
             ->recordActions([
                 ViewEventAttendeeAction::make(),

@@ -34,33 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Database\Factories;
+use App\Features\EventRegistrationRequestsFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
-use AdvisingApp\Application\Models\Application;
-use AdvisingApp\Application\Models\ApplicationSubmission;
-use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends Factory<ApplicationSubmission>
- */
-class ApplicationSubmissionFactory extends Factory
-{
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'application_id' => Application::factory(),
-            'author_type' => $this->faker->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
-            'author_id' => function (array $attributes) {
-                return match ($attributes['author_type']) {
-                    (new Student())->getMorphClass() => Student::factory()->create()->getKey(),
-                    default => Prospect::factory()->create()->getKey(),
-                };
-            },
-            'state_id' => ApplicationSubmissionState::factory(),
-            'submitted_at' => now(),
-        ];
+        DB::transaction(function () {
+            Schema::table('event_registration_form_submissions', function (Blueprint $table) {
+                $table->timestamp('canceled_at')->nullable();
+                $table->string('request_method')->nullable();
+                $table->text('request_note')->nullable();
+                $table->foreignUuid('requester_id')->nullable()->constrained('users')->nullOnDelete();
+            });
+
+            EventRegistrationRequestsFeature::activate();
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            EventRegistrationRequestsFeature::deactivate();
+
+            Schema::table('event_registration_form_submissions', function (Blueprint $table) {
+                $table->dropConstrainedForeignId('requester_id');
+                $table->dropColumn(['canceled_at', 'request_method', 'request_note']);
+            });
+        });
+    }
+};

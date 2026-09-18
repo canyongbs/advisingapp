@@ -34,33 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Database\Factories;
+namespace AdvisingApp\MeetingCenter\Models\Scopes;
 
-use AdvisingApp\Application\Models\Application;
-use AdvisingApp\Application\Models\ApplicationSubmission;
-use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
+use Illuminate\Database\Eloquent\Builder;
 
-/**
- * @extends Factory<ApplicationSubmission>
- */
-class ApplicationSubmissionFactory extends Factory
+class Requested
 {
-    public function definition(): array
+    /**
+     * @param Builder<EventRegistrationFormSubmission> $query
+     */
+    public function __invoke(Builder $query): void
     {
-        return [
-            'application_id' => Application::factory(),
-            'author_type' => $this->faker->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
-            'author_id' => function (array $attributes) {
-                return match ($attributes['author_type']) {
-                    (new Student())->getMorphClass() => Student::factory()->create()->getKey(),
-                    default => Prospect::factory()->create()->getKey(),
-                };
-            },
-            'state_id' => ApplicationSubmissionState::factory(),
-            'submitted_at' => now(),
-        ];
+        $query->whereNull('submitted_at')->whereNull('canceled_at');
     }
 }

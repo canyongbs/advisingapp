@@ -34,51 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Policies;
+namespace AdvisingApp\Application\Notifications;
 
 use AdvisingApp\Application\Models\ApplicationSubmission;
-use App\Models\Authenticatable;
-use Illuminate\Auth\Access\Response;
+use AdvisingApp\Notification\Notifications\Messages\TwilioMessage;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Notifications\Notification;
 
-class ApplicationSubmissionPolicy
+class ApplicationSubmissionRequestSmsNotification extends Notification implements ShouldQueue
 {
-    public function create(Authenticatable $authenticatable): Response
+    use Queueable;
+
+    public function __construct(
+        public ApplicationSubmission $submission,
+    ) {}
+
+    /**
+     * @return array<int, string>
+     */
+    public function via(object $notifiable): array
     {
-        return $authenticatable->canOrElse(
-            abilities: ['application.create'],
-            denyResponse: 'You do not have permission to create application submissions.'
-        );
+        return ['sms'];
     }
 
-    public function update(Authenticatable $authenticatable, ApplicationSubmission $applicationSubmission): Response
+    public function toSms(object $notifiable): TwilioMessage
     {
-        return $authenticatable->canOrElse(
-            abilities: ['application.*.update'],
-            denyResponse: 'You do not have permission to update this application submission.'
-        );
-    }
+        $body = "You have been sent a request to complete {$this->submission->submissible->name} by {$this->submission->requester->name}." .
+                    (filled($this->submission->request_note) ? " {$this->submission->request_note}" : '') .
+                    ' ' . route('applications.show', ['application' => $this->submission->submissible]);
 
-    public function delete(Authenticatable $authenticatable, ApplicationSubmission $applicationSubmission): Response
-    {
-        return $authenticatable->canOrElse(
-            abilities: ['application.*.update'],
-            denyResponse: 'You do not have permission to delete this application submission.'
-        );
-    }
-
-    public function deleteAny(Authenticatable $authenticatable): Response
-    {
-        return $authenticatable->canOrElse(
-            abilities: ['application.*.update'],
-            denyResponse: 'You do not have permission to delete application submissions.'
-        );
-    }
-
-    public function archive(Authenticatable $authenticatable, ApplicationSubmission $applicationSubmission): Response
-    {
-        return $authenticatable->canOrElse(
-            abilities: ['application.*.update'],
-            denyResponse: 'You do not have permission to archive this application submission.'
-        );
+        return TwilioMessage::make($notifiable)
+            ->content($body);
     }
 }

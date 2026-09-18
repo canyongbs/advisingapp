@@ -34,33 +34,25 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Database\Factories;
+namespace AdvisingApp\Application\Jobs;
 
-use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
-use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
 
-/**
- * @extends Factory<ApplicationSubmission>
- */
-class ApplicationSubmissionFactory extends Factory
+abstract class DeliverApplicationSubmissionRequest implements ShouldQueue
 {
-    public function definition(): array
-    {
-        return [
-            'application_id' => Application::factory(),
-            'author_type' => $this->faker->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
-            'author_id' => function (array $attributes) {
-                return match ($attributes['author_type']) {
-                    (new Student())->getMorphClass() => Student::factory()->create()->getKey(),
-                    default => Prospect::factory()->create()->getKey(),
-                };
-            },
-            'state_id' => ApplicationSubmissionState::factory(),
-            'submitted_at' => now(),
-        ];
-    }
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
+
+    public function __construct(
+        public ApplicationSubmission $submission,
+    ) {}
+
+    abstract public function handle(): void;
 }

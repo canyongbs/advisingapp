@@ -34,33 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Database\Factories;
+namespace App\Features;
 
-use AdvisingApp\Application\Models\Application;
-use AdvisingApp\Application\Models\ApplicationSubmission;
-use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @extends Factory<ApplicationSubmission>
- */
-class ApplicationSubmissionFactory extends Factory
+class OnlineAdmissionRequestsFeature extends AbstractFeatureFlag
 {
-    public function definition(): array
+    public function resolve(mixed $scope): mixed
     {
-        return [
-            'application_id' => Application::factory(),
-            'author_type' => $this->faker->randomElement([(new Student())->getMorphClass(), (new Prospect())->getMorphClass()]),
-            'author_id' => function (array $attributes) {
-                return match ($attributes['author_type']) {
-                    (new Student())->getMorphClass() => Student::factory()->create()->getKey(),
-                    default => Prospect::factory()->create()->getKey(),
-                };
-            },
-            'state_id' => ApplicationSubmissionState::factory(),
-            'submitted_at' => now(),
-        ];
+        return false;
     }
 }
