@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Actions;
+namespace AdvisingApp\Application\Jobs;
 
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use Illuminate\Bus\Queueable;

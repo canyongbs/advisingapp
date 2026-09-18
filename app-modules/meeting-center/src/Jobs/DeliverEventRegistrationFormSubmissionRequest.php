@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Actions;
+namespace AdvisingApp\MeetingCenter\Jobs;
 
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use Illuminate\Bus\Queueable;

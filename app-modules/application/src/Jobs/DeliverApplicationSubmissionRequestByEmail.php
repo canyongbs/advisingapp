@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Application\Jobs;
 
-use AdvisingApp\Application\Actions\DeliverApplicationSubmissionRequest;
 use AdvisingApp\Application\Notifications\ApplicationSubmissionRequestNotification;
 
 class DeliverApplicationSubmissionRequestByEmail extends DeliverApplicationSubmissionRequest

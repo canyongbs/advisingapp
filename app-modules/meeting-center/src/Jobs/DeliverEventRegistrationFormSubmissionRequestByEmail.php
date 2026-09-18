@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\MeetingCenter\Jobs;
 
-use AdvisingApp\MeetingCenter\Actions\DeliverEventRegistrationFormSubmissionRequest;
 use AdvisingApp\MeetingCenter\Notifications\EventRegistrationFormSubmissionRequestNotification;
 
 class DeliverEventRegistrationFormSubmissionRequestByEmail extends DeliverEventRegistrationFormSubmissionRequest
