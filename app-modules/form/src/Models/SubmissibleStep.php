@@ -46,6 +46,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property string $label
+ * @property ?string $description
  * @property ?array $content
  * @property-read Submissible $submissible
  * @property-read Collection<int, SubmissibleField> $fields

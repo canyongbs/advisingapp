@@ -71,7 +71,7 @@
 </script>
 
 <template>
-    <fieldset class="max-w-md border border-gray-400 rounded px-2 pb-1">
+    <fieldset class="w-full border border-gray-400 rounded px-2 pb-1">
         <legend v-if="fieldLabel" class="font-bold text-sm">
             {{ fieldLabel }}<span v-if="isRequired" class="ml-1 text-red-500">*</span>
         </legend>

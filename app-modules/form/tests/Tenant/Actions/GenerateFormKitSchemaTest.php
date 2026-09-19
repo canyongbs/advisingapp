@@ -49,12 +49,13 @@ it('generates standardized wizard navigation', function () {
     $schema = app(GenerateFormKitSchema::class)->wizardContent([], $form);
     $encodedSchema = json_encode($schema, JSON_THROW_ON_ERROR);
 
-    $nextWrapper = $schema[0]['children'][4]['children'][2]['children'][0];
-    $submitWrapper = $schema[0]['children'][4]['children'][2]['children'][1];
+    $nextWrapper = $schema[0]['children'][3]['children'][2]['children'][0];
+    $submitWrapper = $schema[0]['children'][3]['children'][2]['children'][1];
 
-    expect($schema[0]['children'][0]['attrs']['class'])->toBe('wizard-title')
-        ->and($schema[0]['children'][1]['$el'])->toBe('section')
-        ->and($schema[0]['children'][4]['attrs']['class'])->toBe('step-nav')
+    expect($schema[0]['children'][0]['$el'])->toBe('section')
+        ->and($schema[0]['children'][0]['children'][0]['attrs']['class'])->toBe('wizard-header')
+        ->and($schema[0]['children'][0]['children'][0]['children'][0]['attrs']['class'])->toBe('wizard-title')
+        ->and($schema[0]['children'][3]['attrs']['class'])->toBe('step-nav')
         ->and($nextWrapper['children'][0]['$formkit'])->toBe('button')
         ->and($submitWrapper['children'][0]['$formkit'])->toBe('submit')
         ->and($nextWrapper['children'][0])->not->toHaveKey('if')
@@ -64,6 +65,8 @@ it('generates standardized wizard navigation', function () {
         ->toContain('$activeStep')
         ->toContain('step-progress')
         ->toContain('$currentStep + \\" of \\" + $totalSteps')
+        ->toContain('$percentComplete')
+        ->toContain('step-nav__next-btn')
         ->toContain('Back')
         ->toContain('$setStep(-1)')
         ->toContain('Next')
@@ -71,6 +74,23 @@ it('generates standardized wizard navigation', function () {
         ->toContain('Submit')
         ->not->toContain('"$el":"ul"')
         ->not->toContain('$setActiveStep');
+});
+
+it('includes a step description below the step title when the step has one', function () {
+    $form = Form::factory()->create(['is_wizard' => true]);
+
+    $form->steps()->createMany([
+        ['label' => 'Personal Information', 'description' => 'Tell us about yourself.', 'sort' => 0],
+        ['label' => 'Review', 'sort' => 1],
+    ]);
+
+    $schema = app(GenerateFormKitSchema::class)->wizardContent([], $form);
+
+    expect($schema[0]['children'][0]['children'][0]['attrs']['class'])->toBe('wizard-header')
+        ->and($schema[0]['children'][0]['children'][0]['children'][1]['attrs']['class'])->toBe('wizard-description')
+        ->and($schema[0]['children'][0]['children'][0]['children'][1]['children'])->toBe('Tell us about yourself.')
+        ->and($schema[0]['children'][0]['children'][0]['children'])->toHaveCount(2)
+        ->and($schema[0]['children'][1]['children'][0]['children'])->toHaveCount(1);
 });
 
 it('renders an empty heading block without throwing', function () {

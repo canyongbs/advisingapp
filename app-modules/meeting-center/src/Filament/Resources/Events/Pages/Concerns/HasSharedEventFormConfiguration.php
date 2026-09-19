@@ -43,6 +43,7 @@ use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
+use App\Features\StepDescriptionFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
@@ -50,6 +51,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Component;
@@ -150,12 +152,18 @@ trait HasSharedEventFormConfiguration
                     Repeater::make('steps')
                         ->schema([
                             TextInput::make('label')
+                                ->label('Step Title')
                                 ->required()
                                 ->string()
                                 ->maxLength(255)
                                 ->autocomplete(false)
                                 ->columnSpanFull()
                                 ->lazy(),
+                            Textarea::make('description')
+                                ->label('Step Description')
+                                ->string()
+                                ->columnSpanFull()
+                                ->visible(fn (): bool => StepDescriptionFeature::active()),
                             $this->fieldBuilder(),
                         ])
                         ->addActionLabel('New step')

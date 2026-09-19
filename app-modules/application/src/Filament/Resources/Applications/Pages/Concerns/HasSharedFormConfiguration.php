@@ -44,6 +44,7 @@ use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Rules\IsDomain;
 use App\Enums\FontWeight;
+use App\Features\StepDescriptionFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
@@ -127,12 +128,18 @@ trait HasSharedFormConfiguration
             Repeater::make('steps')
                 ->schema([
                     TextInput::make('label')
+                        ->label('Step Title')
                         ->required()
                         ->string()
                         ->maxLength(255)
                         ->autocomplete(false)
                         ->columnSpanFull()
                         ->lazy(),
+                    Textarea::make('description')
+                        ->label('Step Description')
+                        ->string()
+                        ->columnSpanFull()
+                        ->visible(fn (): bool => StepDescriptionFeature::active()),
                     $this->fieldBuilder(),
                 ])
                 ->addActionLabel('New step')

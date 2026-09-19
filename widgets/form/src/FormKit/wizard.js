@@ -60,7 +60,13 @@ export default function wizard() {
         });
     };
 
+    let suppressActiveStepWatch = false;
+
     watch(activeStep, (newStep, oldStep) => {
+        if (suppressActiveStepWatch) {
+            return;
+        }
+
         if (oldStep && !visitedSteps.value.includes(oldStep)) {
             visitedSteps.value.push(oldStep);
         }
@@ -110,5 +116,12 @@ export default function wizard() {
         }
     };
 
-    return { activeStep, currentStep, totalSteps, visitedSteps, wizardPlugin: stepPlugin, setStep };
+    const resetWizard = () => {
+        suppressActiveStepWatch = true;
+        activeStep.value = '';
+        visitedSteps.value = [];
+        suppressActiveStepWatch = false;
+    };
+
+    return { activeStep, currentStep, totalSteps, visitedSteps, wizardPlugin: stepPlugin, setStep, resetWizard };
 }

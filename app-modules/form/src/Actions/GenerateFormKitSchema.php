@@ -180,13 +180,6 @@ class GenerateFormKitSchema
                     'class' => 'form-body',
                 ],
                 'children' => [
-                    [
-                        '$el' => 'h2',
-                        'attrs' => [
-                            'class' => 'wizard-title',
-                        ],
-                        'children' => '$activeStep',
-                    ],
                     ...$submissible->steps->map(fn (SubmissibleStep $step): array => [
                         '$el' => 'section',
                         'attrs' => [
@@ -196,6 +189,28 @@ class GenerateFormKitSchema
                             ],
                         ],
                         'children' => [
+                            [
+                                '$el' => 'div',
+                                'attrs' => [
+                                    'class' => 'wizard-header',
+                                ],
+                                'children' => [
+                                    [
+                                        '$el' => 'h2',
+                                        'attrs' => [
+                                            'class' => 'wizard-title',
+                                        ],
+                                        'children' => $step->label,
+                                    ],
+                                    ...(filled($step->description) ? [[
+                                        '$el' => 'p',
+                                        'attrs' => [
+                                            'class' => 'wizard-description',
+                                        ],
+                                        'children' => $step->description,
+                                    ]] : []),
+                                ],
+                            ],
                             [
                                 '$formkit' => 'group',
                                 'id' => $step->label,
@@ -226,12 +241,27 @@ class GenerateFormKitSchema
                                 ],
                             ],
                             [
-                                '$el' => 'span',
+                                '$el' => 'div',
                                 'attrs' => [
                                     'class' => 'step-progress',
                                     'aria-live' => 'polite',
                                 ],
-                                'children' => '$currentStep + " of " + $totalSteps',
+                                'children' => [
+                                    [
+                                        '$el' => 'p',
+                                        'attrs' => [
+                                            'class' => 'step-progress__label',
+                                        ],
+                                        'children' => '$: "Step " + $currentStep + " of " + $totalSteps',
+                                    ],
+                                    [
+                                        '$el' => 'p',
+                                        'attrs' => [
+                                            'class' => 'step-progress__percent',
+                                        ],
+                                        'children' => '$percentComplete + "% complete"',
+                                    ],
+                                ],
                             ],
                             [
                                 '$el' => 'div',
@@ -242,6 +272,7 @@ class GenerateFormKitSchema
                                     [
                                         '$el' => 'div',
                                         'attrs' => [
+                                            'class' => 'step-nav__next-btn',
                                             'style' => [
                                                 'if' => '$currentStep === $totalSteps',
                                                 'then' => 'display: none;',

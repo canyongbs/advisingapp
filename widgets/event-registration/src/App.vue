@@ -32,7 +32,8 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import { defineProps, onMounted, reactive, ref } from 'vue';
+    import { UserIcon } from '@heroicons/vue/24/outline';
+    import { computed, defineProps, onMounted, reactive, ref } from 'vue';
     import wizard from '../../form/src/FormKit/wizard';
 
     import attachRecaptchaScript from '../../../app-modules/integration-google-recaptcha/resources/js/Services/AttachRecaptchaScript.js';
@@ -46,7 +47,11 @@
         });
     });
 
-    let { activeStep, currentStep, totalSteps, setStep, wizardPlugin } = wizard();
+    let { activeStep, currentStep, totalSteps, setStep, wizardPlugin, resetWizard } = wizard();
+
+    const percentComplete = computed(() =>
+        totalSteps.value > 0 ? Math.round((currentStep.value / totalSteps.value) * 100) : 0,
+    );
 
     const props = defineProps({ entryUrl: String });
 
@@ -54,6 +59,7 @@
         activeStep,
         currentStep,
         totalSteps,
+        percentComplete,
         plugins: [wizardPlugin, asteriskPlugin],
         setStep: (target) => () => {
             setStep(target);
@@ -186,6 +192,19 @@
             });
     }
 
+    function signOut() {
+        formSubmissionUrl.value = null;
+        authentication.value = {
+            code: null,
+            email: null,
+            isRequested: false,
+            requestedMessage: null,
+            requestUrl: authentication.value.requestUrl,
+            url: null,
+        };
+        resetWizard();
+    }
+
     async function authenticate(formData, node) {
         node.clearErrors();
 
@@ -288,13 +307,15 @@
         class="font-sans"
     >
         <div class="prose max-w-none" v-if="display && !submittedSuccess">
-            <h1>
-                {{ formName }}
-            </h1>
+            <div class="max-w-2xl">
+                <h1 v-if="formName" class="mb-2">
+                    {{ formName }}
+                </h1>
 
-            <p>
-                {{ formDescription }}
-            </p>
+                <p v-if="formDescription" class="mt-0 text-gray-600">
+                    {{ formDescription }}
+                </p>
+            </div>
 
             <div v-if="!formSubmissionUrl">
                 <FormKit type="form" @submit="authenticate" v-model="authentication">
@@ -325,11 +346,34 @@
             </div>
 
             <div v-if="formSubmissionUrl" class="space-y-6">
-                <p v-if="formIsAuthenticated" class="text-sm">
-                    Signed in as <strong>{{ authentication.email }}</strong>
-                </p>
+                <div
+                    v-if="formIsAuthenticated && authentication.email"
+                    class="not-prose flex items-center justify-between gap-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3"
+                >
+                    <div class="flex items-center gap-3">
+                        <span class="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200 text-black">
+                            <UserIcon class="h-5 w-5" />
+                        </span>
+                        <div class="text-sm leading-tight">
+                            <p class="text-xs text-gray-500">Signed in as</p>
+                            <p class="font-semibold text-gray-800">{{ authentication.email }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <span class="h-6 w-px bg-gray-300"></span>
+                        <button
+                            type="button"
+                            @click="signOut"
+                            class="text-sm font-bold text-primary-600 hover:text-primary-800 cursor-pointer transition-colors"
+                        >
+                            Sign out
+                        </button>
+                    </div>
+                </div>
 
-                <FormKitSchema :schema="schema" :data="data" />
+                <div class="form-fields">
+                    <FormKitSchema :schema="schema" :data="data" />
+                </div>
             </div>
         </div>
 

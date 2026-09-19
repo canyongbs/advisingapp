@@ -34,47 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Models;
+namespace App\Features;
 
-use App\Models\Attributes\NoPermissions;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @mixin IdeHelperFormStep
- */
-#[NoPermissions]
-class FormStep extends SubmissibleStep
+class StepDescriptionFeature extends AbstractFeatureFlag
 {
-    use SoftDeletes;
-
-    protected $fillable = [
-        'label',
-        'description',
-        'content',
-        'sort',
-    ];
-
-    protected $casts = [
-        'content' => 'array',
-        'sort' => 'integer',
-    ];
-
-    /**
-     * @return BelongsTo<Form, $this>
-     */
-    public function submissible(): BelongsTo
+    public function resolve(mixed $scope): mixed
     {
-        return $this
-            ->belongsTo(Form::class, 'form_id');
-    }
-
-    /**
-     * @return HasMany<FormField, $this>
-     */
-    public function fields(): HasMany
-    {
-        return $this->hasMany(FormField::class, 'step_id');
+        return false;
     }
 }
