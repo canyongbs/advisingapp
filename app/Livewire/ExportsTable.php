@@ -34,58 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Livewire;
 
-use App\Filament\Clusters\ImportExport;
-use App\Filament\Components\ImportExportTabs;
 use App\Models\Export;
-use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Pages\Page;
-use Filament\Schemas\Components\EmbeddedTable;
-use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
+use Livewire\Component;
 
-class ExportPage extends Page implements HasActions, HasForms, HasTable
+class ExportsTable extends Component implements HasActions, HasForms, HasTable
 {
     use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
-
-    protected static ?string $navigationLabel = 'Export';
-
-    protected static ?string $title = 'Export';
-
-    protected static ?int $navigationSort = 20;
-
-    protected static ?string $cluster = ImportExport::class;
-
-    public static function canAccess(): bool
-    {
-        $user = auth()->user();
-        assert($user instanceof User);
-
-        return $user->can('export_hub.view-any');
-    }
-
-    public function content(Schema $schema): Schema
-    {
-        return $schema->components([
-            ImportExportTabs::make('export')
-                ->schema([
-                    EmbeddedTable::make(),
-                ]),
-        ]);
-    }
 
     public function table(Table $table): Table
     {
@@ -118,8 +87,13 @@ class ExportPage extends Page implements HasActions, HasForms, HasTable
                 Action::make('download')
                     ->label('Download')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->url(fn (Export $record) => URL::signedRoute('exports.download', $record))
+                    ->url(fn (Export $record) => url()->signedRoute('exports.download', $record))
                     ->visible(fn (Export $record) => $record->completed_at !== null && auth()->user()->can('export_hub.import')),
             ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.import-export-table');
     }
 }

@@ -34,64 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Livewire;
 
-use App\Filament\Clusters\ImportExport;
-use App\Filament\Components\ImportExportTabs;
 use App\Models\Import;
-use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Pages\Page;
-use Filament\Schemas\Components\EmbeddedTable;
-use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
+use Livewire\Component;
 
-class ImportPage extends Page implements HasActions, HasForms, HasTable
+class ImportsTable extends Component implements HasActions, HasForms, HasTable
 {
     use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
 
-    protected static ?string $navigationLabel = 'Import';
-
-    protected static ?string $title = 'Import';
-
-    protected static ?int $navigationSort = 10;
-
-    protected static ?string $cluster = ImportExport::class;
-
     /**
      * @var array<int|string, bool>
      */
     protected array $importFileExistsCache = [];
-
-    public static function canAccess(): bool
-    {
-        $user = auth()->user();
-        assert($user instanceof User);
-
-        return $user->can('export_hub.view-any');
-    }
-
-    public function content(Schema $schema): Schema
-    {
-        return $schema->components([
-            ImportExportTabs::make('import')
-                ->schema([
-                    EmbeddedTable::make(),
-                ]),
-        ]);
-    }
 
     public function table(Table $table): Table
     {
@@ -127,11 +96,16 @@ class ImportPage extends Page implements HasActions, HasForms, HasTable
                     ->label('Download')
                     ->icon('heroicon-o-arrow-down-tray')
                     ->tooltip(fn (Import $record) => $record->total_rows ? 'Number of Rows: ' . number_format($record->total_rows) : null)
-                    ->url(fn (Import $record) => URL::signedRoute('imports.download', $record))
+                    ->url(fn (Import $record) => url()->signedRoute('imports.download', $record))
                     ->visible(fn (Import $record) => $canDownload
                         && $record->completed_at !== null
                         && $this->importFileExists($record)),
             ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.import-export-table');
     }
 
     protected function importFileExists(Import $import): bool

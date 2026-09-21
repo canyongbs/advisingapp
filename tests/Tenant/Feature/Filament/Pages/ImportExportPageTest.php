@@ -35,12 +35,11 @@
 */
 
 use AdvisingApp\Report\Filament\Exports\UserExporter;
-use AdvisingApp\StudentDataModel\Filament\Pages\ManageStudentSyncs;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
-use App\Filament\Clusters\ImportExport;
 use App\Filament\Imports\UserImporter;
-use App\Filament\Pages\ExportPage;
-use App\Filament\Pages\ImportPage;
+use App\Filament\Pages\ImportExport;
+use App\Livewire\ExportsTable;
+use App\Livewire\ImportsTable;
 use App\Models\Export;
 use App\Models\Import;
 use App\Models\User;
@@ -50,28 +49,58 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
+// Access Control Tests
+
 it('is gated with proper access control', function () {
     $user = User::factory()->create();
 
     actingAs($user);
 
-    get(ImportPage::getUrl())->assertForbidden();
+    get(ImportExport::getUrl())->assertForbidden();
 
     $user->givePermissionTo('export_hub.view-any');
 
-    get(ImportPage::getUrl())->assertSuccessful();
+    get(ImportExport::getUrl())->assertSuccessful();
 });
 
-it('renders the import page', function () {
+it('forbids the page when student editing is disabled and the user only has record sync access', function () {
+    $settings = app(ManageStudentConfigurationSettings::class);
+    $settings->is_enabled = false;
+    $settings->save();
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('record_sync.view-any');
+
+    actingAs($user);
+
+    get(ImportExport::getUrl())->assertForbidden();
+});
+
+it('allows the page when student editing is enabled and the user only has record sync access', function () {
+    $settings = app(ManageStudentConfigurationSettings::class);
+    $settings->is_enabled = true;
+    $settings->save();
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('record_sync.view-any');
+
+    actingAs($user);
+
+    get(ImportExport::getUrl())->assertSuccessful();
+});
+
+it('renders the import/export page', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('export_hub.view-any');
 
     actingAs($user);
 
-    get(ImportPage::getUrl())
+    get(ImportExport::getUrl())
         ->assertSuccessful()
-        ->assertSeeText('Import');
+        ->assertSeeText(['Import', 'Export']);
 });
+
+// Import Tab Tests
 
 it('renders the import table', function () {
     $user = User::factory()->create();
@@ -79,7 +108,7 @@ it('renders the import table', function () {
 
     actingAs($user);
 
-    livewire(ImportPage::class)
+    livewire(ImportsTable::class)
         ->assertSuccessful();
 });
 
@@ -97,7 +126,7 @@ it('displays import records in the import table', function () {
     $import->total_rows = 100;
     $import->save();
 
-    livewire(ImportPage::class)
+    livewire(ImportsTable::class)
         ->assertCanSeeTableRecords([$import]);
 });
 
@@ -121,7 +150,7 @@ it('shows download button when import is completed and file exists and user has 
 
     Storage::disk('s3')->put("imports/{$import->getKey()}.csv", 'test,data');
 
-    livewire(ImportPage::class)
+    livewire(ImportsTable::class)
         ->assertTableActionVisible('download', $import);
 });
 
@@ -144,7 +173,7 @@ it('hides download button when import is not completed', function () {
 
     Storage::disk('s3')->put("imports/{$import->getKey()}.csv", 'test,data');
 
-    livewire(ImportPage::class)
+    livewire(ImportsTable::class)
         ->assertTableActionHidden('download', $import);
 });
 
@@ -166,7 +195,7 @@ it('hides download button when import file does not exist on disk', function () 
     $import->completed_at = now();
     $import->save();
 
-    livewire(ImportPage::class)
+    livewire(ImportsTable::class)
         ->assertTableActionHidden('download', $import);
 });
 
@@ -189,33 +218,11 @@ it('hides download button when user lacks export_hub.import permission', functio
 
     Storage::disk('s3')->put("imports/{$import->getKey()}.csv", 'test,data');
 
-    livewire(ImportPage::class)
+    livewire(ImportsTable::class)
         ->assertTableActionHidden('download', $import);
 });
 
-// Export Page Tests
-
-it('gates the export page with proper access control', function () {
-    $user = User::factory()->create();
-
-    actingAs($user);
-
-    get(ExportPage::getUrl())->assertForbidden();
-
-    $user->givePermissionTo('export_hub.view-any');
-
-    get(ExportPage::getUrl())->assertSuccessful();
-});
-
-it('renders the export page', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo('export_hub.view-any');
-
-    actingAs($user);
-
-    livewire(ExportPage::class)
-        ->assertSuccessful();
-});
+// Export Tab Tests
 
 it('displays export records in the export table', function () {
     $user = User::factory()->create();
@@ -231,7 +238,7 @@ it('displays export records in the export table', function () {
     $export->total_rows = 200;
     $export->save();
 
-    livewire(ExportPage::class)
+    livewire(ExportsTable::class)
         ->assertCanSeeTableRecords([$export]);
 });
 
@@ -251,7 +258,7 @@ it('shows the export download button when the export is completed and the user h
     $export->completed_at = now();
     $export->save();
 
-    livewire(ExportPage::class)
+    livewire(ExportsTable::class)
         ->assertTableActionVisible('download', $export);
 });
 
@@ -270,7 +277,7 @@ it('hides the export download button when the export is not completed', function
     $export->total_rows = 200;
     $export->save();
 
-    livewire(ExportPage::class)
+    livewire(ExportsTable::class)
         ->assertTableActionHidden('download', $export);
 });
 
@@ -289,7 +296,7 @@ it('hides the export download button when the user lacks the export_hub.import p
     $export->completed_at = now();
     $export->save();
 
-    livewire(ExportPage::class)
+    livewire(ExportsTable::class)
         ->assertTableActionHidden('download', $export);
 });
 
@@ -306,7 +313,7 @@ it('does not show student sync tab when student editing is disabled', function (
 
     actingAs($user);
 
-    get(ImportPage::getUrl())
+    get(ImportExport::getUrl())
         ->assertSuccessful()
         ->assertDontSeeText('Student Sync');
 });
@@ -321,7 +328,7 @@ it('does not show student sync tab when user lacks record_sync.view-any permissi
 
     actingAs($user);
 
-    get(ImportPage::getUrl())
+    get(ImportExport::getUrl())
         ->assertSuccessful()
         ->assertDontSeeText('Student Sync');
 });
@@ -337,14 +344,24 @@ it('shows student sync tab when student editing is enabled and user has permissi
 
     actingAs($user);
 
-    get(ImportPage::getUrl())
+    get(ImportExport::getUrl())
         ->assertSuccessful()
         ->assertSeeText('Student Sync');
 });
 
-// Cluster Access Tests
+// Active Tab Tests
 
-it('allows the import/export cluster when the user can only access the student sync page', function () {
+it('defaults the active tab to import when the user has export hub access', function () {
+    $user = User::factory()->create();
+    $user->givePermissionTo('export_hub.view-any');
+
+    actingAs($user);
+
+    livewire(ImportExport::class)
+        ->assertSet('activeTab', 'import');
+});
+
+it('defaults the active tab to student sync when the user can only access student sync', function () {
     $settings = app(ManageStudentConfigurationSettings::class);
     $settings->is_enabled = true;
     $settings->save();
@@ -354,84 +371,20 @@ it('allows the import/export cluster when the user can only access the student s
 
     actingAs($user);
 
-    get(ImportExport::getUrl())
-        ->assertRedirect(ManageStudentSyncs::getUrl());
+    livewire(ImportExport::class)
+        ->assertSet('activeTab', 'student-sync');
 });
 
-it('redirects the import/export cluster to the import page when the user has export hub access', function () {
+it('syncs the active tab into the component state when switching tabs', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('export_hub.view-any');
 
     actingAs($user);
 
-    get(ImportExport::getUrl())
-        ->assertRedirect(ImportPage::getUrl());
-});
-
-// Student Sync Page Tests
-
-it('gates the student sync page behind the record sync permission', function () {
-    $settings = app(ManageStudentConfigurationSettings::class);
-    $settings->is_enabled = true;
-    $settings->save();
-
-    $user = User::factory()->create();
-
-    actingAs($user);
-
-    get(ManageStudentSyncs::getUrl())->assertForbidden();
-
-    $user->givePermissionTo('record_sync.view-any');
-
-    get(ManageStudentSyncs::getUrl())->assertSuccessful();
-});
-
-it('forbids the student sync page when student editing is disabled', function () {
-    $settings = app(ManageStudentConfigurationSettings::class);
-    $settings->is_enabled = false;
-    $settings->save();
-
-    $user = User::factory()->create();
-    $user->givePermissionTo('record_sync.view-any');
-
-    actingAs($user);
-
-    get(ManageStudentSyncs::getUrl())->assertForbidden();
-});
-
-// In-Container Tab Navigation Tests
-
-it('renders tabs linking to the import and export pages, excluding student sync when inaccessible', function () {
-    $user = User::factory()->create();
-    $user->givePermissionTo('export_hub.view-any');
-
-    actingAs($user);
-
-    $html = livewire(ImportPage::class)->html();
-
-    expect($html)
-        ->toContain(ImportPage::getUrl())
-        ->toContain(ExportPage::getUrl())
-        ->not->toContain(ManageStudentSyncs::getUrl());
-});
-
-it('includes a tab linking to the student sync page when it is accessible', function () {
-    $settings = app(ManageStudentConfigurationSettings::class);
-    $settings->is_enabled = true;
-    $settings->save();
-
-    $user = User::factory()->create();
-    $user->givePermissionTo('export_hub.view-any');
-    $user->givePermissionTo('record_sync.view-any');
-
-    actingAs($user);
-
-    $html = livewire(ImportPage::class)->html();
-
-    expect($html)
-        ->toContain(ImportPage::getUrl())
-        ->toContain(ExportPage::getUrl())
-        ->toContain(ManageStudentSyncs::getUrl());
+    livewire(ImportExport::class)
+        ->assertSet('activeTab', 'import')
+        ->set('activeTab', 'export')
+        ->assertSet('activeTab', 'export');
 });
 
 it('marks the active tab as current', function () {
@@ -440,14 +393,15 @@ it('marks the active tab as current', function () {
 
     actingAs($user);
 
-    $html = livewire(ExportPage::class)->html();
+    $html = livewire(ImportExport::class)
+        ->set('activeTab', 'export')
+        ->html();
 
-    $activeHref = null;
+    $activeLabel = null;
 
-    if (preg_match('/<a\b(?=[^>]*\bfi-tabs-item\b)(?=[^>]*aria-current="page")[^>]*>/i', $html, $match)) {
-        preg_match('/href="([^"]+)"/i', $match[0], $hrefMatch);
-        $activeHref = html_entity_decode($hrefMatch[1] ?? '');
+    if (preg_match('/<button\b(?=[^>]*aria-selected="true")[^>]*>(.*?)<\/button>/is', $html, $match)) {
+        $activeLabel = trim(preg_replace('/\s+/', ' ', strip_tags($match[1])));
     }
 
-    expect($activeHref)->toBe(ExportPage::getUrl());
+    expect($activeLabel)->toContain('Export');
 });
