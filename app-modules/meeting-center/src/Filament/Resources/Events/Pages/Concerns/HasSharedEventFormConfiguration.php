@@ -43,6 +43,7 @@ use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
+use App\Features\StepDescriptionFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
@@ -50,6 +51,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Component;
@@ -66,29 +68,33 @@ trait HasSharedEventFormConfiguration
     public function fields(): array
     {
         return [
-            TextInput::make('title')
-                ->string()
-                ->required()
-                ->maxLength(255)
-                ->unique(
-                    table: 'events',
-                    column: 'title',
-                    ignoreRecord: true,
-                    modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
-                ),
-            TextInput::make('location')
-                ->string()
-                ->nullable(),
-            TextInput::make('capacity')
-                ->integer()
-                ->minValue(1)
-                ->nullable(),
-            DateTimePicker::make('starts_at')
-                ->seconds(false)
-                ->required(),
-            DateTimePicker::make('ends_at')
-                ->seconds(false)
-                ->required(),
+            Section::make('Properties')
+                ->schema([
+                    TextInput::make('title')
+                        ->string()
+                        ->required()
+                        ->maxLength(255)
+                        ->unique(
+                            table: 'events',
+                            column: 'title',
+                            ignoreRecord: true,
+                            modifyRuleUsing: fn (Unique $rule): Unique => $rule->withoutTrashed(),
+                        ),
+                    TextInput::make('location')
+                        ->string()
+                        ->nullable(),
+                    TextInput::make('capacity')
+                        ->integer()
+                        ->minValue(1)
+                        ->nullable(),
+                    DateTimePicker::make('starts_at')
+                        ->seconds(false)
+                        ->required(),
+                    DateTimePicker::make('ends_at')
+                        ->seconds(false)
+                        ->required(),
+                ])
+                ->columns(2),
             Fieldset::make('Registration Form')
                 ->relationship('eventRegistrationForm')
                 ->saveRelationshipsBeforeChildrenUsing(static function (Component | CanEntangleWithSingularRelationships $component): void {
@@ -110,30 +116,33 @@ trait HasSharedEventFormConfiguration
                 })
                 ->saveRelationshipsUsing(null)
                 ->schema([
-                    Grid::make()
+                    Section::make('Options')
                         ->schema([
-                            Toggle::make('embed_enabled')
-                                ->label('Embed Enabled')
+                            Grid::make()
+                                ->schema([
+                                    Toggle::make('embed_enabled')
+                                        ->label('Embed Enabled')
+                                        ->live()
+                                        ->helperText('If enabled, this form can be embedded on other websites.'),
+                                    TagsInput::make('allowed_domains')
+                                        ->label('Allowed Domains')
+                                        ->helperText('Only these domains will be allowed to embed this form.')
+                                        ->placeholder('example.com')
+                                        ->hidden(fn (Get $get) => ! $get('embed_enabled'))
+                                        ->disabled(fn (Get $get) => ! $get('embed_enabled'))
+                                        ->nestedRecursiveRules(
+                                            [
+                                                'string',
+                                                new IsDomain(),
+                                            ]
+                                        ),
+                                ])
+                                ->columnSpanFull(),
+                            Toggle::make('is_wizard')
+                                ->label('Multi-step form')
                                 ->live()
-                                ->helperText('If enabled, this form can be embedded on other websites.'),
-                            TagsInput::make('allowed_domains')
-                                ->label('Allowed Domains')
-                                ->helperText('Only these domains will be allowed to embed this form.')
-                                ->placeholder('example.com')
-                                ->hidden(fn (Get $get) => ! $get('embed_enabled'))
-                                ->disabled(fn (Get $get) => ! $get('embed_enabled'))
-                                ->nestedRecursiveRules(
-                                    [
-                                        'string',
-                                        new IsDomain(),
-                                    ]
-                                ),
-                        ])
-                        ->columnSpanFull(),
-                    Toggle::make('is_wizard')
-                        ->label('Multi-step form')
-                        ->live()
-                        ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
+                                ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
+                        ]),
                     Section::make('Fields')
                         ->schema([
                             $this->fieldBuilder(),
@@ -143,12 +152,18 @@ trait HasSharedEventFormConfiguration
                     Repeater::make('steps')
                         ->schema([
                             TextInput::make('label')
+                                ->label('Step Title')
                                 ->required()
                                 ->string()
                                 ->maxLength(255)
                                 ->autocomplete(false)
                                 ->columnSpanFull()
                                 ->lazy(),
+                            Textarea::make('description')
+                                ->label('Step Description')
+                                ->string()
+                                ->columnSpanFull()
+                                ->visible(fn (): bool => StepDescriptionFeature::active()),
                             $this->fieldBuilder(),
                         ])
                         ->addActionLabel('New step')
@@ -160,7 +175,8 @@ trait HasSharedEventFormConfiguration
                         ->columnSpanFull(),
                     Section::make('Appearance')
                         ->schema([
-                            ColorSelect::make('primary_color'),
+                            ColorSelect::make('primary_color')
+                                ->label('Color family (theme)'),
                             Select::make('rounding')
                                 ->options(Rounding::class),
                         ])
@@ -219,7 +235,10 @@ trait HasSharedEventFormConfiguration
             })
             ->dehydrated(false)
             ->columnSpanFull()
-            ->extraInputAttributes(['style' => 'min-height: 12rem;']);
+            ->extraInputAttributes([
+                'style' => 'min-height: 12rem;',
+                'data-mapped-block-types' => implode(',', FormFieldBlockRegistry::getMappedBlockTypes()),
+            ]);
     }
 
     public function saveFieldsFromComponents(EventRegistrationForm $form, array $components, ?EventRegistrationFormStep $eventRegistrationFormStep): array

@@ -40,11 +40,13 @@ use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Models\Form;
+use App\Features\StepDescriptionFeature;
 use CanyonGBS\Common\Enums\Color as ColorEnum;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\ColorEntry;
 use Filament\Infolists\Components\IconEntry;
@@ -108,19 +110,28 @@ class ViewForm extends ViewRecord
                             ->hiddenLabel()
                             ->dehydrated(false)
                             ->columnSpanFull()
-                            ->extraInputAttributes(['style' => 'min-height: 12rem;']),
+                            ->extraInputAttributes([
+                                'style' => 'min-height: 12rem;',
+                                'data-mapped-block-types' => implode(',', FormFieldBlockRegistry::getMappedBlockTypes()),
+                            ]),
                     ])
                     ->hidden(fn (Form $record) => $record->is_wizard)
                     ->disabled(),
                 Repeater::make('steps')
                     ->schema([
                         TextInput::make('label')
+                            ->label('Step Title')
                             ->required()
                             ->string()
                             ->maxLength(255)
                             ->autocomplete(false)
                             ->columnSpanFull()
                             ->lazy(),
+                        Textarea::make('description')
+                            ->label('Step Description')
+                            ->string()
+                            ->columnSpanFull()
+                            ->visible(fn (): bool => StepDescriptionFeature::active()),
                         RichEditor::make('content')
                             ->json()
                             ->customBlocks(FormFieldBlockRegistry::get())
@@ -129,7 +140,10 @@ class ViewForm extends ViewRecord
                             ->hiddenLabel()
                             ->dehydrated(false)
                             ->columnSpanFull()
-                            ->extraInputAttributes(['style' => 'min-height: 12rem;']),
+                            ->extraInputAttributes([
+                                'style' => 'min-height: 12rem;',
+                                'data-mapped-block-types' => implode(',', FormFieldBlockRegistry::getMappedBlockTypes()),
+                            ]),
                     ])
                     ->addActionLabel('New step')
                     ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)

@@ -40,6 +40,7 @@ use AdvisingApp\Application\Jobs\SendApplicationNotificationJob;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
 use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Models\Scopes\Requested;
 use AdvisingApp\Form\Actions\GenerateFormKitSchema;
 use AdvisingApp\Form\Actions\GenerateSubmissibleValidation;
 use AdvisingApp\Form\Actions\GenerateSubmissionViewData;
@@ -309,8 +310,14 @@ class ApplicationWidgetController extends Controller
             );
         }
 
-        /** @var ApplicationSubmission $submission */
-        $submission = $application->submissions()->make();
+        /** @var ?ApplicationSubmission $submission */
+        $submission = $authentication ? $application->submissions()
+            ->tap(new Requested())
+            ->whereMorphedTo('author', $authentication->author)
+            ->first() : null;
+
+        $submission ??= $application->submissions()->make();
+        $submission->submitted_at = now();
 
         if ($authentication) {
             $submission->author()->associate($authentication->author);

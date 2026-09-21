@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\EditForm;
 use AdvisingApp\Form\Models\Form;
@@ -104,4 +105,46 @@ it('allows updating a form to a name freed up by an archived form case-insensiti
         ->fillForm(['name' => 'reusable name'])
         ->call('save')
         ->assertHasNoFormErrors();
+});
+
+it('exposes the mapped block types to the fields rich editor for the custom block badges', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    livewire(EditForm::class, ['record' => $form->getRouteKey()])
+        ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
+});
+
+it('persists edits to an existing wizard step\'s description onto the new form version', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create(['is_wizard' => true]);
+
+    $form->steps()->create([
+        'label' => 'Original label',
+        'description' => 'Original description',
+        'content' => ['type' => 'doc', 'content' => []],
+    ]);
+
+    $component = livewire(EditForm::class, ['record' => $form->getRouteKey()]);
+
+    $formData = $component->get('data');
+    $stepKey = array_key_first($formData['steps']);
+    $formData['steps'][$stepKey]['label'] = 'Updated label';
+    $formData['steps'][$stepKey]['description'] = 'Updated description';
+
+    $component
+        ->fillForm($formData)
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    $newVersion = Form::query()
+        ->where('root_id', $form->root_id)
+        ->where('id', '!=', $form->id)
+        ->firstOrFail();
+
+    expect($newVersion->steps()->first())
+        ->label->toBe('Updated label')
+        ->description->toBe('Updated description');
 });

@@ -46,6 +46,7 @@ use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectMessagesDetailTable;
 use App\Models\User;
+use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Str;
 
 use function Pest\Livewire\livewire;
@@ -237,6 +238,37 @@ it('ensures status is set properly for engagements and responses', function () {
         ->assertTableColumnFormattedStateSet('status', 'New', record: $holisticEngagementInbound);
 });
 
+it('ensures type is formatted properly for engagements and responses', function () {
+    $prospect = Prospect::factory()->create();
+
+    $emailEngagement = Engagement::factory()->email()->create([
+        'recipient_id' => $prospect->id,
+        'recipient_type' => (new Prospect())->getMorphClass(),
+    ]);
+
+    $smsEngagement = Engagement::factory()->sms()->create([
+        'recipient_id' => $prospect->id,
+        'recipient_type' => (new Prospect())->getMorphClass(),
+    ]);
+
+    $smsResponse = EngagementResponse::factory()->sms()->create([
+        'sender_id' => $prospect->id,
+        'sender_type' => (new Prospect())->getMorphClass(),
+    ]);
+
+    $holisticEmailEngagement = HolisticEngagement::where('record_id', $emailEngagement->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $holisticSmsEngagement = HolisticEngagement::where('record_id', $smsEngagement->id)->where('record_type', new Engagement()->getMorphClass())->first();
+    $holisticSmsResponse = HolisticEngagement::where('record_id', $smsResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
+
+    livewire(ProspectMessagesDetailTable::class, [
+        'cacheTag' => 'report-prospect-messages',
+        'filters' => [],
+    ])
+        ->assertTableColumnFormattedStateSet('type', 'Email', record: $holisticEmailEngagement)
+        ->assertTableColumnFormattedStateSet('type', 'Text', record: $holisticSmsEngagement)
+        ->assertTableColumnFormattedStateSet('type', 'Text', record: $holisticSmsResponse);
+});
+
 it('ensures sent_by is properly rendered in the table', function () {
     $user = User::factory()->create();
     $prospect = Prospect::factory()->create();
@@ -424,6 +456,17 @@ it('filters by direction properly', function () {
         ->filterTable('direction', 'inbound')
         ->assertCanSeeTableRecords(collect([$holisticEngagementInbound]))
         ->assertCanNotSeeTableRecords(collect([$holisticEngagementOutbound]));
+});
+
+it('offers email and text as type filter options', function () {
+    livewire(ProspectMessagesDetailTable::class, [
+        'cacheTag' => 'report-prospect-messages',
+        'filters' => [],
+    ])
+        ->assertTableFilterExists('type', fn (SelectFilter $filter): bool => $filter->getFormField()->getOptions() === [
+            'email' => 'Email',
+            'sms' => 'Text',
+        ]);
 });
 
 it('filters by type properly', function () {

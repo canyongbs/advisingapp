@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ViewForm;
 use AdvisingApp\Form\Models\Form;
@@ -78,4 +79,13 @@ it('archive action archives the form and redirects to the index when the form ha
         ->assertRedirect(FormResource::getUrl('index'));
 
     expect($form->fresh()->isArchived())->toBeTrue();
+});
+
+it('exposes the mapped block types to the read-only fields rich editor for the custom block badges', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+
+    livewire(ViewForm::class, ['record' => $form->getRouteKey()])
+        ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });

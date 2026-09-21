@@ -37,16 +37,16 @@
 namespace AdvisingApp\Form\Filament\Actions;
 
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
-use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Form\Filament\Tables\RequestableFormsTable;
+use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TableSelect;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Wizard\Step;
-use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Str;
 
 class RequestFormSubmission extends Action
 {
@@ -57,27 +57,17 @@ class RequestFormSubmission extends Action
         $this->steps([
             Step::make('Form')
                 ->schema([
-                    Select::make('form_id')
+                    TableSelect::make('form_id')
                         ->label('Form')
                         ->required()
-                        ->options(fn (): array => Form::query()
-                            ->where('is_authenticated', true)
-                            ->limit(50)
-                            ->pluck('name', 'id')
-                            ->all())
-                        ->getSearchResultsUsing(fn (string $search): array => Form::query()
-                            ->where('is_authenticated', true)
-                            ->where(new Expression('lower(name)'), 'like', '%' . Str::lower($search) . '%')
-                            ->limit(50)
-                            ->pluck('name', 'id')
-                            ->all())
-                        ->getOptionLabelUsing(fn (string | int | null $value): ?string => filled($value)
-                            ? Form::query()
-                                ->where('is_authenticated', true)
-                                ->whereKey($value)
-                                ->value('name')
-                            : null)
-                        ->searchable()
+                        ->rules([
+                            fn (): Closure => function (string $attribute, mixed $value, Closure $fail): void {
+                                if (RequestableFormsTable::query()->whereKey($value)->doesntExist()) {
+                                    $fail('The selected form is invalid.');
+                                }
+                            },
+                        ])
+                        ->tableConfiguration(RequestableFormsTable::class)
                         ->helperText('Forms must have authentication enabled to be requested, to verify the identity of the respondent.'),
                 ]),
             Step::make('Notification')

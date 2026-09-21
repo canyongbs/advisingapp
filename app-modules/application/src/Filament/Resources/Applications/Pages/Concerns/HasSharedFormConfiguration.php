@@ -44,6 +44,7 @@ use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Rules\IsDomain;
 use App\Enums\FontWeight;
+use App\Features\StepDescriptionFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
@@ -62,55 +63,62 @@ trait HasSharedFormConfiguration
     public function fields(): array
     {
         return [
-            TextInput::make('name')
-                ->required()
-                ->string()
-                ->maxLength(255)
-                ->unique(modifyRuleUsing: fn ($rule) => $rule->whereNull('archived_at'), ignoreRecord: true)
-                ->autocomplete(false)
-                ->columnSpanFull()
-                ->helperText('The name of this application will only display for form administrators.'),
-            TextInput::make('title')
-                ->string()
-                ->maxLength(255)
-                ->autocomplete(false)
-                ->columnSpanFull()
-                ->helperText('The title of this application will be displayed when the form is embedded.'),
-            Textarea::make('description')
-                ->string()
-                ->columnSpanFull(),
-            Grid::make()
+            Section::make('Properties')
                 ->schema([
-                    Toggle::make('embed_enabled')
-                        ->label('Embed Enabled')
+                    TextInput::make('name')
+                        ->required()
+                        ->string()
+                        ->maxLength(255)
+                        ->unique(modifyRuleUsing: fn ($rule) => $rule->whereNull('archived_at'), ignoreRecord: true)
+                        ->autocomplete(false)
+                        ->columnSpanFull()
+                        ->helperText('The name of this application will only display for form administrators.'),
+                    TextInput::make('title')
+                        ->string()
+                        ->maxLength(255)
+                        ->autocomplete(false)
+                        ->columnSpanFull()
+                        ->helperText('The title of this application will be displayed when the form is embedded.'),
+                    Textarea::make('description')
+                        ->string()
+                        ->columnSpanFull(),
+                ]),
+            Section::make('Options')
+                ->columns(2)
+                ->schema([
+                    Grid::make()
+                        ->schema([
+                            Toggle::make('embed_enabled')
+                                ->label('Embed Enabled')
+                                ->live()
+                                ->helperText('If enabled, this form can be embedded on other websites.'),
+                            TagsInput::make('allowed_domains')
+                                ->label('Allowed Domains')
+                                ->helperText('Only these domains will be allowed to embed this form.')
+                                ->placeholder('example.com')
+                                ->hidden(fn (Get $get) => ! $get('embed_enabled'))
+                                ->disabled(fn (Get $get) => ! $get('embed_enabled'))
+                                ->nestedRecursiveRules(
+                                    [
+                                        'string',
+                                        new IsDomain(),
+                                    ]
+                                ),
+                        ])
+                        ->columnSpanFull(),
+                    Toggle::make('is_wizard')
+                        ->label('Multi-step form')
                         ->live()
-                        ->helperText('If enabled, this form can be embedded on other websites.'),
-                    TagsInput::make('allowed_domains')
-                        ->label('Allowed Domains')
-                        ->helperText('Only these domains will be allowed to embed this form.')
-                        ->placeholder('example.com')
-                        ->hidden(fn (Get $get) => ! $get('embed_enabled'))
-                        ->disabled(fn (Get $get) => ! $get('embed_enabled'))
-                        ->nestedRecursiveRules(
-                            [
-                                'string',
-                                new IsDomain(),
-                            ]
-                        ),
-                ])
-                ->columnSpanFull(),
-            Toggle::make('is_wizard')
-                ->label('Multi-step form')
-                ->live()
-                ->disabled(fn (?Application $record) => $record?->submissions()->exists()),
-            Toggle::make('should_generate_prospects')
-                ->label('Generate Prospects')
-                ->helperText('If enabled, a request to submit by an unknown prospect will result in a new prospect being created.')
-                ->disabled(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm))
-                ->hintIcon(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm) ? 'heroicon-m-lock-closed' : null),
-            Toggle::make('allow_view_past_submissions')
-                ->label('Allow viewing past submissions')
-                ->helperText('If enabled, students and prospects can view their past submissions on this form.'),
+                        ->disabled(fn (?Application $record) => $record?->submissions()->exists()),
+                    Toggle::make('should_generate_prospects')
+                        ->label('Generate Prospects')
+                        ->helperText('If enabled, a request to submit by an unknown prospect will result in a new prospect being created.')
+                        ->disabled(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm))
+                        ->hintIcon(fn () => ! auth()->user()?->hasLicense(LicenseType::RecruitmentCrm) ? 'heroicon-m-lock-closed' : null),
+                    Toggle::make('allow_view_past_submissions')
+                        ->label('Allow viewing past submissions')
+                        ->helperText('If enabled, students and prospects can view their past submissions on this form.'),
+                ]),
             Section::make('Fields')
                 ->schema([
                     $this->fieldBuilder(),
@@ -120,12 +128,18 @@ trait HasSharedFormConfiguration
             Repeater::make('steps')
                 ->schema([
                     TextInput::make('label')
+                        ->label('Step Title')
                         ->required()
                         ->string()
                         ->maxLength(255)
                         ->autocomplete(false)
                         ->columnSpanFull()
                         ->lazy(),
+                    Textarea::make('description')
+                        ->label('Step Description')
+                        ->string()
+                        ->columnSpanFull()
+                        ->visible(fn (): bool => StepDescriptionFeature::active()),
                     $this->fieldBuilder(),
                 ])
                 ->addActionLabel('New step')
@@ -148,7 +162,8 @@ trait HasSharedFormConfiguration
                         ->options(FontWeight::class),
                     ColorSelect::make('title_color')
                         ->shadeOptions(),
-                    ColorSelect::make('primary_color'),
+                    ColorSelect::make('primary_color')
+                        ->label('Color family (theme)'),
                     Select::make('rounding')
                         ->options(Rounding::class),
                 ])
@@ -200,7 +215,10 @@ trait HasSharedFormConfiguration
             })
             ->dehydrated(false)
             ->columnSpanFull()
-            ->extraInputAttributes(['style' => 'min-height: 12rem;']);
+            ->extraInputAttributes([
+                'style' => 'min-height: 12rem;',
+                'data-mapped-block-types' => implode(',', FormFieldBlockRegistry::getMappedBlockTypes()),
+            ]);
     }
 
     protected function afterCreate(): void

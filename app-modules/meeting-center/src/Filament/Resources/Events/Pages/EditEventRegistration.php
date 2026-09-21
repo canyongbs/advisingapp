@@ -43,9 +43,11 @@ use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
+use App\Features\StepDescriptionFeature;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
@@ -94,12 +96,13 @@ class EditEventRegistration extends EditRecord
                                 $steps = ! empty($repeaterState)
                                     ? $repeaterState
                                     : $record->steps()->orderBy('sort')->get()
-                                        ->mapWithKeys(fn (EventRegistrationFormStep $step) => [$step->id => ['label' => $step->label]])
+                                        ->mapWithKeys(fn (EventRegistrationFormStep $step) => [$step->id => ['label' => $step->label, 'description' => $step->description]])
                                         ->all();
 
                                 foreach ($steps as $key => $stepData) {
                                     $newStep = $newVersion->steps()->create([
                                         'label' => $stepData['label'] ?? 'Untitled Step',
+                                        ...(StepDescriptionFeature::active() ? ['description' => $stepData['description'] ?? null] : []),
                                         'sort' => $sort++,
                                     ]);
 
@@ -143,10 +146,13 @@ class EditEventRegistration extends EditRecord
                 })
                 ->saveRelationshipsUsing(null)
                 ->schema([
-                    Toggle::make('is_wizard')
-                        ->label('Multi-step form')
-                        ->live()
-                        ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
+                    Section::make('Options')
+                        ->schema([
+                            Toggle::make('is_wizard')
+                                ->label('Multi-step form')
+                                ->live()
+                                ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
+                        ]),
 
                     Section::make('Form Fields')
                         ->schema([
@@ -158,12 +164,18 @@ class EditEventRegistration extends EditRecord
                     Repeater::make('steps')
                         ->schema([
                             TextInput::make('label')
+                                ->label('Step Title')
                                 ->required()
                                 ->string()
                                 ->maxLength(255)
                                 ->autocomplete(false)
                                 ->columnSpanFull()
                                 ->lazy(),
+                            Textarea::make('description')
+                                ->label('Step Description')
+                                ->string()
+                                ->columnSpanFull()
+                                ->visible(fn (): bool => StepDescriptionFeature::active()),
                             $this->fieldBuilder(),
                         ])
                         ->addActionLabel('New step')
@@ -231,7 +243,10 @@ class EditEventRegistration extends EditRecord
             })
             ->dehydrated(false)
             ->columnSpanFull()
-            ->extraInputAttributes(['style' => 'min-height: 12rem;']);
+            ->extraInputAttributes([
+                'style' => 'min-height: 12rem;',
+                'data-mapped-block-types' => implode(',', FormFieldBlockRegistry::getMappedBlockTypes()),
+            ]);
     }
 
     /**

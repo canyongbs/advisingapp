@@ -72,18 +72,21 @@ class ApplicationSubmissionObserver
 
     public function created(ApplicationSubmission $submission): void
     {
-        Event::dispatch(
-            event: new ApplicationSubmissionCreated(submission: $submission)
-        );
+        // A pending request has no submitted_at yet, so it hasn't actually been received.
+        if ($submission->submitted_at) {
+            Event::dispatch(
+                event: new ApplicationSubmissionCreated(submission: $submission)
+            );
 
-        $submission->loadMissing('state');
+            $submission->loadMissing('state');
 
-        Event::dispatch(
-            event: new ApplicationSubmissionStateEntered(
-                submission: $submission,
-                state: $submission->state,
-            )
-        );
+            Event::dispatch(
+                event: new ApplicationSubmissionStateEntered(
+                    submission: $submission,
+                    state: $submission->state,
+                )
+            );
+        }
 
         $submission->loadMissing('submissible');
 
@@ -97,22 +100,32 @@ class ApplicationSubmissionObserver
 
     public function updated(ApplicationSubmission $submission): void
     {
-        if (! $submission->wasChanged('state_id')) {
+        $justCompleted = $submission->wasChanged('submitted_at') && $submission->submitted_at;
+
+        if ($justCompleted) {
+            Event::dispatch(
+                event: new ApplicationSubmissionCreated(submission: $submission)
+            );
+        }
+
+        if ((! $submission->wasChanged('state_id')) && (! $justCompleted)) {
             return;
         }
 
-        $previousStateId = $submission->getOriginal('state_id');
+        if ($submission->wasChanged('state_id')) {
+            $previousStateId = $submission->getOriginal('state_id');
 
-        if ($previousStateId) {
-            $previousState = ApplicationSubmissionState::withTrashed()->find($previousStateId);
+            if ($previousStateId) {
+                $previousState = ApplicationSubmissionState::withTrashed()->find($previousStateId);
 
-            if ($previousState) {
-                Event::dispatch(
-                    event: new ApplicationSubmissionStateExited(
-                        submission: $submission,
-                        state: $previousState,
-                    )
-                );
+                if ($previousState) {
+                    Event::dispatch(
+                        event: new ApplicationSubmissionStateExited(
+                            submission: $submission,
+                            state: $previousState,
+                        )
+                    );
+                }
             }
         }
 
