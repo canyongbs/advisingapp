@@ -32,7 +32,6 @@
     </COPYRIGHT>
 --}}
 @php
-    use App\Features\ThemeLogoPublicDiskFeature;
     use AdvisingApp\Theme\Settings\ThemeSettings;
     use Illuminate\Support\Facades\Vite;
 
@@ -45,16 +44,10 @@
 
 @if ($themeSettings->is_logo_active && $logo)
     @php
-        $logoUrl = ThemeLogoPublicDiskFeature::active() ?
-            $settingsProperty->getFirstMediaUrl(
-                'logo',
-                $logo->hasGeneratedConversion('logo-height-250px') ? 'logo-height-250px' : '',
-            ) :
-            $logo->getTemporaryUrl(
-                expiration: now()->addMinutes(5),
-                conversionName: $logo->hasGeneratedConversion('logo-height-250px') ? 'logo-height-250px' : '',
-            )
-            
+        $logoUrl = $settingsProperty->getFirstMediaUrl(
+            'logo',
+            $logo->hasGeneratedConversion('logo-height-250px') ? 'logo-height-250px' : '',
+        );
     @endphp
     <img
         src="{{ $logoUrl }}"

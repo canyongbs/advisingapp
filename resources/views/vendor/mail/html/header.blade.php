@@ -33,7 +33,6 @@
 --}}
 @props(['url', 'settings' => null])
 @php
-    use App\Features\ThemeLogoPublicDiskFeature;
     use App\Settings\NotificationSettings;
     use AdvisingApp\Theme\Settings\ThemeSettings;
 
@@ -50,7 +49,7 @@
                      style="height: 75px; max-height: 75px; max-width: 100vw;"
                      alt="Logo">
             @elseif ($themeSettings->is_logo_active && $logo)
-                 <img src="{{ ThemeLogoPublicDiskFeature::active() ? $logo->getUrl() : $logo->getTemporaryUrl(now()->addDays(6)) }}"
+                 <img src="{{ $logo->getUrl() }}"
                      style="height: 75px; max-height: 75px; max-width: 100vw;"
                      alt="Logo">
             @else
