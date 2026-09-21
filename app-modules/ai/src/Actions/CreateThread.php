@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Enums\AiAssistantApplication;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Settings\AiSettings;
-use App\Features\AiThreadAutoNamingFeature;
 use App\Models\Tenant;
 use App\Settings\DisplaySettings;
 
@@ -54,11 +53,7 @@ class CreateThread
             ->whereBelongsTo($assistant, 'assistant')
             ->whereDoesntHave('messages');
 
-        if (AiThreadAutoNamingFeature::active()) {
-            $existingThreadQuery->whereNull('named_by_user_at');
-        } else {
-            $existingThreadQuery->whereNull('name');
-        }
+        $existingThreadQuery->whereNull('named_by_user_at');
 
         $existingThread = $existingThreadQuery->first();
 
@@ -70,9 +65,7 @@ class CreateThread
         $thread->assistant()->associate($assistant);
         $thread->user()->associate(auth()->user());
 
-        if (AiThreadAutoNamingFeature::active()) {
-            $thread->name = $this->getDefaultThreadName();
-        }
+        $thread->name = $this->getDefaultThreadName();
 
         $thread->save();
 
