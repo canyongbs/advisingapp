@@ -37,7 +37,6 @@
 namespace AdvisingApp\Report\Filament\Widgets;
 
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\StudentArchivingFeature;
 use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
@@ -143,9 +142,7 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
 
         $addedPerMonth = $this->countPerMonth($population(), 'created_at_source');
 
-        $archivedPerMonth = StudentArchivingFeature::active()
-            ? $this->countPerMonth($population()->onlyArchived(), 'archived_at')
-            : collect();
+        $archivedPerMonth = $this->countPerMonth($population()->onlyArchived(), 'archived_at');
 
         $runningTotal = [];
         $total = 0;

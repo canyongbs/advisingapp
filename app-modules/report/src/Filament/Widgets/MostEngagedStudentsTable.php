@@ -41,7 +41,6 @@ use AdvisingApp\Report\Filament\Widgets\Concerns\InteractsWithPageFilters;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\StudentArchivingFeature;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Tables\Columns\TextColumn;
@@ -80,8 +79,7 @@ class MostEngagedStudentsTable extends BaseWidget
             ->query(function () use ($startDate, $endDate, $groupId) {
                 return Student::with('primaryEmailAddress:id,address')
                     ->tap(new WithoutArchivedStudents(asOf: $endDate))
-                    ->select('sisid', 'full_name', 'primary_email_id')
-                    ->when(StudentArchivingFeature::active(), fn (Builder $query): Builder => $query->addSelect('archived_at'))
+                    ->select('sisid', 'full_name', 'primary_email_id', 'archived_at')
                     ->withCount([
                         'engagements as engagements_count' => function (Builder $query) use ($startDate, $endDate): Builder {
                             if ($startDate && $endDate) {
