@@ -38,17 +38,21 @@
 
     <div class="prose flex-1 dark:prose-invert">
         <p
-            x-data="{ message: @js('Hi ' . auth()->user()->name . ', I am happy to help you draft this template. Please describe what you would like the proposed message to say:'), position: 0 }"
+            x-data="{ message: @js('Hi ' . auth()->user()->name . ', I am happy to help you draft this template. Please describe what you would like the proposed message to say:'), characters: [], position: 0 }"
             x-init="
-                for (; position < message.length; position++) {
-                    await new Promise((resolve) =>
-                        setTimeout(resolve, Math.floor(Math.random() * 100)),
-                    )
-                }
+                (async () => {
+                    characters = Array.from(message)
+
+                    for (; position < characters.length; position++) {
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, Math.floor(Math.random() * 20)),
+                        )
+                    }
+                })()
             "
         >
-            <span x-text="message.slice(0, position)"></span>
-            <span class="text-transparent" x-text="message.slice(position)"></span>
+            <span x-text="characters.slice(0, position).join('')"></span>
+            <span class="text-transparent" x-text="characters.slice(position).join('')"></span>
         </p>
     </div>
 </div>
