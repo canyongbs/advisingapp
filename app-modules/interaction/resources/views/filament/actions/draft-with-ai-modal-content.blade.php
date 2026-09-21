@@ -1,19 +1,15 @@
 {{--
-            x-data="{ message: @js('Hi ' . auth()->user()->name . ", I am happy to help you draft this message to {$recordTitle}. Please describe what you would like the proposed message to say:"), characters: [], position: 0 }"
+    <COPYRIGHT>
     
-                (async () => {
-                    characters = Array.from(message)
-
-                    for (; position < characters.length; position++) {
-                        await new Promise((resolve) =>
-                            setTimeout(resolve, Math.floor(Math.random() * 20)),
-                        )
-                    }
-                })()
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+    
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+    
     Notice:
     
-            <span x-text="characters.slice(0, position).join('')"></span>
-            <span class="text-transparent" x-text="characters.slice(position).join('')"></span>
+    - You may not provide the software to third parties as a hosted or managed
+    service, where the service provides users with access to any substantial set of
     the features or functionality of the software.
     - You may not move, change, disable, or circumvent the license key functionality
     in the software, and you may not remove or obscure any functionality in the
