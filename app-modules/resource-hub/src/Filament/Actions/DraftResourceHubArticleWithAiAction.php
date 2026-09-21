@@ -49,7 +49,6 @@ use Filament\Notifications\Notification;
 use Filament\Resources\Pages\Page;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Support\Enums\Width;
 use Illuminate\Support\Facades\Vite;
 
 class DraftResourceHubArticleWithAiAction extends Action
@@ -62,12 +61,12 @@ class DraftResourceHubArticleWithAiAction extends Action
             ->label('Draft with AI Assistant')
             ->link()
             ->icon('heroicon-m-pencil')
+            ->slideOver()
             ->modalContent(fn (Page $livewire) => view('resource-hub::filament.actions.draft-with-ai-modal-content-resource-hub', [
                 'recordTitle' => (string) data_get($livewire, 'data.title', ''),
                 'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
                     ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
             ]))
-            ->modalWidth(Width::ExtraLarge)
             ->modalSubmitActionLabel('Draft')
             ->form([
                 Textarea::make('instructions')

@@ -51,7 +51,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Support\Enums\Width;
 use Illuminate\Support\Facades\Vite;
 
 class DraftEngagementBlockWithAi extends Action
@@ -69,11 +68,11 @@ class DraftEngagementBlockWithAi extends Action
             ->label('Draft with AI Assistant')
             ->link()
             ->icon('heroicon-m-pencil')
+            ->slideOver()
             ->modalContent(fn () => view('campaign::filament.blocks.draft-engagement-block-with-ai-modal-content', [
                 'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
                     ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
             ]))
-            ->modalWidth(Width::ExtraLarge)
             ->modalSubmitActionLabel('Draft')
             ->form([
                 Textarea::make('instructions')

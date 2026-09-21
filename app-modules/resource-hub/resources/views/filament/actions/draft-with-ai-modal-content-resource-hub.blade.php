@@ -36,23 +36,19 @@
         <img class="h-8 w-8 rounded-full object-cover object-center" src="{{ $avatarUrl }}" alt="Assistant avatar" />
     </div>
 
-    <div class="prose h-36 flex-1 dark:prose-invert sm:h-20">
+    <div class="prose flex-1 dark:prose-invert">
         <p
-            x-data="{ content: '' }"
+            x-data="{ message: @js('Hi ' . auth()->user()->name . ", I am happy to help you draft your resource hub article for {$recordTitle}. Please describe what information you would like in the article and I will take it from there:"), position: 0 }"
             x-init="
-                const message = @js('Hi ' . auth()->user()->name . ", I am happy to help you draft your resource hub article for {$recordTitle}. Please describe what information you would like in the article and I will take it from there:")
-
-                const typeWord = async (word, delay) => {
-                    content += word + ' '
-
-                    await new Promise((resolve) => setTimeout(resolve, delay))
-                }
-
-                for (const word of message.split(' ')) {
-                    await typeWord(word, Math.floor(Math.random() * 100))
+                for (; position < message.length; position++) {
+                    await new Promise((resolve) =>
+                        setTimeout(resolve, Math.floor(Math.random() * 100)),
+                    )
                 }
             "
-            x-text="content"
-        ></p>
+        >
+            <span x-text="message.slice(0, position)"></span>
+            <span class="text-transparent" x-text="message.slice(position)"></span>
+        </p>
     </div>
 </div>
