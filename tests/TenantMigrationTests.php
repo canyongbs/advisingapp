@@ -39,7 +39,6 @@ use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Group\Models\Group;
-use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
@@ -199,41 +198,6 @@ describe('form name citext change', function () {
                 expect($form2->refresh()->name)->toBe('form Name-2');
                 expect($form3->refresh()->name)->toBe('form name-3');
                 expect($archivedForm->refresh()->name)->toBe('FORM NAME');
-            }
-        );
-    });
-});
-
-// TODO: Cleanup Task EventCitextCleanup - Delete this describe and everything contained within
-describe('event title citext change', function () {
-    it('renames case-insensitive duplicate event titles', function () {
-        isolatedMigration(
-            '2026_09_02_120000_convert_events_title_to_citext',
-            function () {
-                // Setup data before migration
-
-                $event1 = Event::factory()->create(['title' => 'Event title', 'created_at' => now()->subMinutes(3)]);
-                $event2 = Event::factory()->create(['title' => 'event Title', 'created_at' => now()->subMinutes(2)]);
-                $event3 = Event::factory()->create(['title' => 'event title', 'created_at' => now()->subMinutes(1)]);
-
-                // A soft-deleted event sharing a title with the live duplicate group must be
-                // ignored by de-duplication: it should neither affect the live renumbering
-                // nor get renamed itself.
-                $deletedEvent = Event::factory()->create(['title' => 'event title', 'created_at' => now()->subMinutes(4)]);
-                $deletedEvent->delete();
-
-                // Run the migration
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/meeting-center/database/migrations/2026_09_02_120000_convert_events_title_to_citext.php']);
-
-                // Confirm migration ran successfully
-                expect($migrate)->toBe(Command::SUCCESS);
-
-                // Add any assertions to verify the migration's effects
-                expect($event1->refresh()->title)->toBe('Event title');
-                expect($event2->refresh()->title)->toBe('event Title-2');
-                expect($event3->refresh()->title)->toBe('event title-3');
-                // Untouched: excluded from the live dedup group entirely, despite the title collision
-                expect($deletedEvent->refresh()->title)->toBe('event title');
             }
         );
     });
