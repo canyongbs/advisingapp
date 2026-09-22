@@ -49,13 +49,11 @@ class CreateThread
     {
         $assistant ??= $this->getDefaultAiAssistant($application);
 
-        $existingThreadQuery = auth()->user()->aiThreads()
+        $existingThread = auth()->user()->aiThreads()
             ->whereBelongsTo($assistant, 'assistant')
-            ->whereDoesntHave('messages');
-
-        $existingThreadQuery->whereNull('named_by_user_at');
-
-        $existingThread = $existingThreadQuery->first();
+            ->whereDoesntHave('messages')
+            ->whereNull('named_by_user_at')
+            ->first();
 
         if ($existingThread) {
             return $existingThread;
