@@ -38,8 +38,6 @@ use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Group\Models\Group;
-use App\Enums\TagType;
-use App\Models\Tag;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -185,35 +183,6 @@ describe('segment name citext change', function () {
                 expect($group1->refresh()->name)->toBe('Group name');
                 expect($group2->refresh()->name)->toBe('group Name-2');
                 expect($group3->refresh()->name)->toBe('group name-3');
-            }
-        );
-    });
-});
-
-// TODO: Cleanup Task TagCitextCleanup - Delete this describe and everything contained within
-describe('tag citext change', function () {
-    it('properly changes tag names', function () {
-        isolatedMigration(
-            '2026_09_02_135528_convert_tag_name_to_citext',
-            function () {
-                // Setup data before migration
-                $studentTag1 = Tag::factory(['name' => 'Student Tag', 'type' => TagType::Student])->create();
-                $prospectTag1 = Tag::factory(['name' => 'Prospect Tag', 'type' => TagType::Prospect])->create();
-                $studentTag2 = Tag::factory(['name' => 'Student Tag', 'type' => TagType::Student])->create();
-                $prospectTag2 = Tag::factory(['name' => 'Prospect Tag', 'type' => TagType::Prospect])->create();
-                $studentTag3 = Tag::factory(['name' => 'Student Tag', 'type' => TagType::Student])->create();
-                $prospectTag3 = Tag::factory(['name' => 'Prospect Tag', 'type' => TagType::Prospect])->create();
-                // Run the migration
-                $migrate = Artisan::call('migrate', ['--path' => 'database/migrations/2026_09_02_135528_convert_tag_name_to_citext.php']);
-                // Confirm migration ran successfully
-                expect($migrate)->toBe(Command::SUCCESS);
-                // Add any assertions to verify the migration's effects
-                expect($studentTag1->refresh()->name)->toBe('Student Tag');
-                expect($prospectTag1->refresh()->name)->toBe('Prospect Tag');
-                expect($studentTag2->refresh()->name)->toBe('Student Tag-2');
-                expect($prospectTag2->refresh()->name)->toBe('Prospect Tag-2');
-                expect($studentTag3->refresh()->name)->toBe('Student Tag-3');
-                expect($prospectTag3->refresh()->name)->toBe('Prospect Tag-3');
             }
         );
     });
