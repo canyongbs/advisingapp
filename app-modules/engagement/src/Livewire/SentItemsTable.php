@@ -34,12 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Pages;
+namespace AdvisingApp\Engagement\Livewire;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Enums\EngagementDisplayStatus;
-use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
-use AdvisingApp\Engagement\Filament\Components\UnifiedInboxTabs;
+use AdvisingApp\Engagement\Filament\Pages\ViewEngagement;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Group\Actions\TranslateGroupFilters;
 use AdvisingApp\Group\Enums\GroupModel;
@@ -51,13 +49,11 @@ use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Filament\Clusters\UnifiedInbox;
-use App\Models\User;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Actions\ViewAction;
-use Filament\Navigation\NavigationItem;
-use Filament\Pages\Page;
-use Filament\Schemas\Components\EmbeddedTable;
-use Filament\Schemas\Schema;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
@@ -65,45 +61,17 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Str;
+use Livewire\Component;
 
-class SentItems extends Page implements HasTable
+class SentItemsTable extends Component implements HasActions, HasForms, HasTable
 {
+    use InteractsWithActions;
+    use InteractsWithForms;
     use InteractsWithTable;
-
-    protected static ?string $navigationLabel = 'Sent Items';
-
-    protected static ?string $cluster = UnifiedInbox::class;
-
-    public static function canAccess(): bool
-    {
-        $user = auth()->user();
-
-        assert($user instanceof User);
-
-        if (! $user->can('viewAny', Engagement::class)) {
-            return false;
-        }
-
-        if (! $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm])) {
-            return false;
-        }
-
-        // This authorization check has been preserved from the original message center.
-        return $user->can('engagement.*.view');
-    }
-
-    public function content(Schema $schema): Schema
-    {
-        return $schema->components([
-            UnifiedInboxTabs::make('sent-items')
-                ->schema([
-                    EmbeddedTable::make(),
-                ]),
-        ]);
-    }
 
     public function table(Table $table): Table
     {
@@ -258,24 +226,9 @@ class SentItems extends Page implements HasTable
             ]);
     }
 
-    /**
-     * @return array<NavigationItem>
-     */
-    public static function getNavigationItems(): array
+    public function render(): View
     {
-        return [
-            parent::getNavigationItems()[0]
-                ->isActiveWhen(fn (): bool => request()->routeIs(static::getNavigationItemActiveRoutePattern(), ViewEngagement::getNavigationItemActiveRoutePattern())),
-        ];
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            SendEngagementAction::make()
-                ->label('New')
-                ->icon(null),
-        ];
+        return view('engagement::livewire.unified-inbox-table');
     }
 
     /**

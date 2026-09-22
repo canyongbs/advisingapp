@@ -42,7 +42,6 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
-use App\Filament\Clusters\UnifiedInbox;
 use App\Infolists\Components\EngagementBody;
 use App\Models\User;
 use Filament\Infolists\Components\RepeatableEntry;
@@ -60,8 +59,6 @@ use Livewire\Attributes\Locked;
 class ViewEngagement extends Page
 {
     protected string $view = 'engagement::filament.pages.view-engagement';
-
-    protected static ?string $cluster = UnifiedInbox::class;
 
     protected static bool $shouldRegisterNavigation = false;
 
@@ -91,9 +88,10 @@ class ViewEngagement extends Page
      */
     public function getBreadcrumbs(): array
     {
-        return static::getCluster()::unshiftClusterBreadcrumbs([
-            SentItems::getUrl() => 'Sent Items',
-        ]);
+        return [
+            Inbox::getUrl(['tab' => 'sent-items']) => 'Unified Inbox',
+            $this->getTitle(),
+        ];
     }
 
     public static function getRoutePath(Panel $panel): string

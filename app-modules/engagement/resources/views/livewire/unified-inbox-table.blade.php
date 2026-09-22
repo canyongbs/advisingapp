@@ -1,6 +1,4 @@
-<?php
-
-/*
+{{--
 <COPYRIGHT>
 
     Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
@@ -32,25 +30,7 @@
     https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
 
 </COPYRIGHT>
-*/
-
-namespace App\Filament\Clusters;
-
-use App\Enums\NavigationGroup;
-use Filament\Clusters\Cluster;
-use UnitEnum;
-
-class UnifiedInbox extends Cluster
-{
-    protected static ?int $navigationSort = 10;
-
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
-
-    protected static ?string $navigationLabel = 'Unified Inbox';
-
-    /**
-     * The pages within this cluster present their own in-container tabs, so the
-     * default cluster sub-navigation (segmented control) is disabled.
-     */
-    protected static bool $shouldRegisterSubNavigation = false;
-}
+--}}
+<div>
+    {{ $this->table }}
+</div>

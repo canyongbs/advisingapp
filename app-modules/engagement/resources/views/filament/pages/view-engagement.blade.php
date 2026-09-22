@@ -34,7 +34,7 @@
 <x-filament-panels::page>
     <div>
         <x-filament::link
-            :href="\AdvisingApp\Engagement\Filament\Pages\SentItems::getUrl()"
+            :href="\AdvisingApp\Engagement\Filament\Pages\Inbox::getUrl(['tab' => 'sent-items'])"
             icon="heroicon-m-arrow-left"
         >
             Back to Sent Items

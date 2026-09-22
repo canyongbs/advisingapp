@@ -37,43 +37,34 @@
 namespace AdvisingApp\Engagement\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Engagement\Enums\EngagementResponseStatus;
-use AdvisingApp\Engagement\Enums\EngagementResponseType;
-use AdvisingApp\Engagement\Filament\Actions\BulkChangeStatusAction;
-use AdvisingApp\Engagement\Filament\Components\UnifiedInboxTabs;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
+use AdvisingApp\Engagement\Livewire\InboxTable;
+use AdvisingApp\Engagement\Livewire\SentItemsTable;
+use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
-use AdvisingApp\Group\Actions\TranslateGroupFilters;
-use AdvisingApp\Group\Enums\GroupModel;
-use AdvisingApp\Group\Models\Group;
-use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
-use AdvisingApp\StudentDataModel\Models\Student;
-use App\Filament\Clusters\UnifiedInbox;
+use App\Enums\NavigationGroup;
 use App\Models\User;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\ViewAction;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\EmbeddedTable;
+use Filament\Schemas\Components\Livewire;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Concerns\InteractsWithTable;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\SelectFilter;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
+use Livewire\Attributes\Url;
+use UnitEnum;
 
-class Inbox extends Page implements HasTable
+class Inbox extends Page
 {
-    use InteractsWithTable;
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
 
-    protected static ?string $cluster = UnifiedInbox::class;
+    protected static ?string $navigationLabel = 'Unified Inbox';
+
+    protected static ?string $title = 'Unified Inbox';
+
+    protected static ?int $navigationSort = 10;
+
+    #[Url(as: 'tab')]
+    public string $activeTab = 'inbox';
 
     public static function canAccess(): bool
     {
@@ -81,163 +72,43 @@ class Inbox extends Page implements HasTable
 
         assert($user instanceof User);
 
-        if (! $user->can('viewAny', EngagementResponse::class)) {
-            return false;
-        }
-
         if (! $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm])) {
             return false;
         }
 
-        // This authorization check has been preserved from the original message center.
-        return $user->can('engagement_response.*.view');
+        // These authorization checks have been preserved from the original message center.
+        return ($user->can('viewAny', EngagementResponse::class) && $user->can('engagement_response.*.view'))
+            || ($user->can('viewAny', Engagement::class) && $user->can('engagement.*.view'));
+    }
+
+    public function mount(): void
+    {
+        if ($this->isTabVisible($this->activeTab)) {
+            return;
+        }
+
+        $this->activeTab = collect(['inbox', 'sent-items'])
+            ->first(fn (string $tab): bool => $this->isTabVisible($tab)) ?? 'inbox';
     }
 
     public function content(Schema $schema): Schema
     {
         return $schema->components([
-            UnifiedInboxTabs::make('inbox')
-                ->schema([
-                    EmbeddedTable::make(),
+            Tabs::make()
+                ->livewireProperty('activeTab')
+                ->tabs([
+                    'inbox' => Tab::make('Inbox')
+                        ->visible(fn (): bool => $this->isTabVisible('inbox'))
+                        ->schema([
+                            Livewire::make(InboxTable::class),
+                        ]),
+                    'sent-items' => Tab::make('Sent Items')
+                        ->visible(fn (): bool => $this->isTabVisible('sent-items'))
+                        ->schema([
+                            Livewire::make(SentItemsTable::class),
+                        ]),
                 ]),
         ]);
-    }
-
-    public function table(Table $table): Table
-    {
-        return $table
-            ->query(
-                EngagementResponse::query()->with('latestActionedNote')
-            )
-            ->columns([
-                TextColumn::make('direction')
-                    ->state('Inbound')
-                    ->icon('heroicon-o-arrow-down-tray')
-                    ->toggleable(isToggledHiddenByDefault: true)
-                    ->badge(),
-                TextColumn::make('status')
-                    ->badge()
-                    ->tooltip(fn (EngagementResponse $record): ?string => $record->status === EngagementResponseStatus::Actioned ? $record->latestActionedNote?->getActionedNoteTooltip() : null),
-                TextColumn::make('sender_type')
-                    ->label('Relation')
-                    ->formatStateUsing(fn (EngagementResponse $record) => ucwords($record->sender_type))
-                    ->sortable(),
-                TextColumn::make('sender.full_name')
-                    ->label('From')
-                    ->url(fn (EngagementResponse $record): ?string => match (true) {
-                        $record->sender instanceof Student => StudentResource::getViewUrl($record->sender),
-                        $record->sender instanceof Prospect => ProspectResource::getUrl('view', ['record' => $record->sender]),
-                        default => null,
-                    })
-                    ->openUrlInNewTab(),
-                TextColumn::make('type')
-                    ->formatStateUsing(fn (EngagementResponse $record) => match ($record->type) {
-                        EngagementResponseType::Email => 'Email',
-                        EngagementResponseType::Sms => 'Text',
-                    })
-                    ->sortable(),
-                TextColumn::make('subject')
-                    ->formatStateUsing(function (EngagementResponse $record): ?string {
-                        if ($record->type === EngagementResponseType::Email && filled($record->subject)) {
-                            return $record->subject;
-                        }
-
-                        return filled($body = $record->getBody())
-                            ? Str::limit(html_entity_decode(strip_tags($body), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50)
-                            : null;
-                    })
-                    ->description(function (EngagementResponse $record): ?string {
-                        if ($record->type === EngagementResponseType::Email && filled($record->subject)) {
-                            return filled($body = $record->getBody())
-                                ? Str::limit(html_entity_decode(strip_tags($body), ENT_QUOTES | ENT_HTML5, 'UTF-8'), 50)
-                                : null;
-                        }
-
-                        return null;
-                    })
-                    ->searchable(['subject', 'content']),
-                TextColumn::make('sent_at')
-                    ->label('Date')
-                    ->dateTime()
-                    ->sortable(),
-            ])
-            ->recordActions([
-                ViewAction::make()
-                    ->url(fn (EngagementResponse $record): string => ViewEngagementResponse::getUrl(['record' => $record])),
-            ])
-            ->filters([
-                Filter::make('subscribed')
-                    ->query(fn (Builder $query): Builder => $query->whereRelation('sender.subscriptions.user', 'id', auth()->id())),
-                Filter::make('care_team')
-                    ->label('Care Team')
-                    ->query(
-                        function (Builder $query) {
-                            return $query
-                                ->whereRelation('sender.careTeam', 'user_id', auth()->id());
-                        }
-                    )
-                    ->default(),
-                SelectFilter::make('my_groups')
-                    ->label('My Population Groups')
-                    ->options(
-                        auth()->user()->groups()
-                            ->limit(20)
-                            ->pluck('name', 'id'),
-                    )
-                    ->searchable()
-                    ->getSearchResultsUsing(
-                        fn (string $search): Collection => auth()->user()->groups()
-                            ->where(new Expression('lower(name)'), 'like', '%' . Str::lower($search) . '%')
-                            ->limit(20)
-                            ->pluck('name', 'id')
-                    )
-                    ->getOptionLabelUsing(fn (string | int | null $value): ?string => filled($value)
-                        ? auth()->user()->groups()->whereKey($value)->value('name')
-                        : null)
-                    ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
-                SelectFilter::make('all_groups')
-                    ->label('All Population Groups')
-                    ->options(
-                        Group::all()
-                            ->pluck('name', 'id'),
-                    )
-                    ->searchable()
-                    ->getSearchResultsUsing(
-                        fn (string $search): Collection => Group::query()
-                            ->where(new Expression('lower(name)'), 'like', '%' . Str::lower($search) . '%')
-                            ->limit(20)
-                            ->pluck('name', 'id')
-                    )
-                    ->getOptionLabelUsing(fn (string | int | null $value): ?string => filled($value)
-                        ? Group::query()->whereKey($value)->value('name')
-                        : null)
-                    ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
-                SelectFilter::make('status')
-                    ->multiple()
-                    ->label('Status')
-                    ->options(EngagementResponseStatus::class)
-                    ->searchable()
-                    ->preload(),
-                SelectFilter::make('sender_type')
-                    ->label('Relation')
-                    ->options([
-                        'student' => 'Student',
-                        'prospect' => 'Prospect',
-                    ]),
-                SelectFilter::make('type')
-                    ->options([
-                        EngagementResponseType::Email->value => 'Email',
-                        EngagementResponseType::Sms->value => 'Text',
-                    ]),
-            ])
-            ->recordUrl(fn (EngagementResponse $record): string => ViewEngagementResponse::getUrl(['record' => $record]))
-            ->defaultSort('sent_at', 'desc')
-            ->emptyStateHeading('No Engagements yet.')
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    BulkChangeStatusAction::make(),
-                ]),
-            ]);
     }
 
     /**
@@ -247,7 +118,11 @@ class Inbox extends Page implements HasTable
     {
         return [
             parent::getNavigationItems()[0]
-                ->isActiveWhen(fn (): bool => request()->routeIs(static::getNavigationItemActiveRoutePattern(), ViewEngagementResponse::getNavigationItemActiveRoutePattern())),
+                ->isActiveWhen(fn (): bool => request()->routeIs(
+                    static::getNavigationItemActiveRoutePattern(),
+                    ViewEngagementResponse::getNavigationItemActiveRoutePattern(),
+                    ViewEngagement::getNavigationItemActiveRoutePattern(),
+                )),
         ];
     }
 
@@ -260,38 +135,20 @@ class Inbox extends Page implements HasTable
         ];
     }
 
-    /**
-     * @param Builder<EngagementResponse> $query
-     * @param array<string, mixed> $data
-     */
-    protected function groupFilter(Builder $query, array $data): void
+    protected function isTabVisible(string $tab): bool
     {
-        if (blank($data['value'])) {
-            return;
+        $user = auth()->user();
+
+        assert($user instanceof User);
+
+        if (! $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm])) {
+            return false;
         }
 
-        $modelType = Group::find($data['value'])?->model;
-
-        $query->whereHasMorph(
-            'sender',
-            [
-                Student::class,
-                Prospect::class,
-            ],
-            function (Builder $query, string $type) use ($data, $modelType): void {
-                $shouldApplyFilter = match ($type) {
-                    Student::class => $modelType === GroupModel::Student,
-                    Prospect::class => $modelType === GroupModel::Prospect,
-                    default => false,
-                };
-
-                if ($shouldApplyFilter) {
-                    app(TranslateGroupFilters::class)
-                        ->applyFilterToQuery($data['value'], $query);
-                } else {
-                    $query->whereRaw('1 = 0');
-                }
-            }
-        );
+        return match ($tab) {
+            'inbox' => $user->can('viewAny', EngagementResponse::class) && $user->can('engagement_response.*.view'),
+            'sent-items' => $user->can('viewAny', Engagement::class) && $user->can('engagement.*.view'),
+            default => false,
+        };
     }
 }

@@ -37,7 +37,7 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Enums\EngagementResponseType;
 use AdvisingApp\Engagement\Filament\Pages\Inbox;
-use AdvisingApp\Engagement\Filament\Pages\SentItems;
+use AdvisingApp\Engagement\Livewire\InboxTable;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -50,15 +50,22 @@ it('is gated with proper access control', function () {})->todo();
 
 it('displays the correct details', function () {})->todo();
 
-it('renders the unified inbox tabs as the page content instead of the cluster sub-navigation', function () {
+it('renders the unified inbox as a single page using the native tabs component', function () {
     asSuperAdmin();
 
     livewire(Inbox::class)
-        ->assertSeeHtml('fi-unified-inbox-tabs')
-        ->assertSeeHtml(Inbox::getUrl())
-        ->assertSeeHtml(SentItems::getUrl())
+        ->assertSet('activeTab', 'inbox')
         ->assertSeeText('Inbox')
         ->assertSeeText('Sent Items');
+});
+
+it('syncs the active tab into the component state when switching tabs', function () {
+    asSuperAdmin();
+
+    livewire(Inbox::class)
+        ->assertSet('activeTab', 'inbox')
+        ->set('activeTab', 'sent-items')
+        ->assertSet('activeTab', 'sent-items');
 });
 
 it('can properly filter sender type', function () {
@@ -67,7 +74,7 @@ it('can properly filter sender type', function () {
     $prospectEngagementResponses = EngagementResponse::factory()->count(5)->create(['sender_type' => (new Prospect())->getMorphClass()]);
     $studentEngagementResponses = EngagementResponse::factory()->count(5)->create(['sender_type' => (new Student())->getMorphClass()]);
 
-    livewire(Inbox::class)
+    livewire(InboxTable::class)
         ->set('tableRecordsPerPage', 10)
         ->removeTableFilter('care_team')
         ->assertCanSeeTableRecords($prospectEngagementResponses->merge($studentEngagementResponses))
@@ -85,7 +92,7 @@ it('can properly filter engagement response type', function () {
     $emailEngagementResponses = EngagementResponse::factory()->count(5)->create(['type' => EngagementResponseType::Email]);
     $smsEngagementResponses = EngagementResponse::factory()->count(5)->create(['type' => EngagementResponseType::Sms]);
 
-    livewire(Inbox::class)
+    livewire(InboxTable::class)
         ->set('tableRecordsPerPage', 10)
         ->removeTableFilter('care_team')
         ->assertCanSeeTableRecords($emailEngagementResponses->merge($smsEngagementResponses))
@@ -100,7 +107,7 @@ it('can properly filter engagement response type', function () {
 it('loads the Care Team filter as active when the component first renders', function () {
     asSuperAdmin();
 
-    livewire(Inbox::class)
+    livewire(InboxTable::class)
         ->assertTableFilterExists('care_team')
         ->assertSet('tableFilters.care_team.isActive', true);
 });
@@ -123,7 +130,7 @@ it('can properly filter by care team', function () {
         'sender_id' => $otherStudent->getKey(),
     ]);
 
-    livewire(Inbox::class)
+    livewire(InboxTable::class)
         ->assertCanSeeTableRecords($careTeamResponses)
         ->assertCanNotSeeTableRecords($otherResponses);
 });
