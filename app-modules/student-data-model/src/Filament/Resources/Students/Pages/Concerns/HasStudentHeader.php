@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\Concerns;
 
 use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
-use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Educatables\Pages\Concerns\HasEducatableHeader;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Actions\StudentTagsAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Actions\SyncStudentSisAction;
@@ -45,10 +44,8 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
-use App\Features\StudentArchivingFeature;
 use App\Settings\DisplaySettings;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
-use Filament\Actions\DeleteAction;
 use Illuminate\Contracts\View\View;
 
 trait HasStudentHeader
@@ -106,15 +103,7 @@ trait HasStudentHeader
             SyncStudentSisAction::make(),
             SubscribeHeaderAction::make()
                 ->view('student-data-model::filament.resources.educatables.subscribe-header-action', ['record' => $this->getRecord()]),
-            ...(StudentArchivingFeature::active() ? [
-                $this->studentArchiveAction(),
-            ] : [
-                DeleteAction::make()
-                    ->modalDescription('Are you sure you wish to delete the student? By deleting a student record, you will remove any related enrollment and program data, along with any related interactions, notes, etc. This action cannot be reversed.')
-                    ->using(function (Student $record) {
-                        app(DeleteStudent::class)->execute($record);
-                    }),
-            ]),
+            $this->studentArchiveAction(),
         ];
     }
 

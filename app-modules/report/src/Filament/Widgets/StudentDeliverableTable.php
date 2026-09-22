@@ -46,7 +46,6 @@ use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryEmailAd
 use AdvisingApp\StudentDataModel\Models\Scopes\UnhealthyEducatablePrimaryPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\StudentArchivingFeature;
 use Filament\Actions\ExportAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -85,9 +84,8 @@ class StudentDeliverableTable extends BaseWidget
 
         return $table
             ->query(
-                Student::select('sisid', 'full_name', 'primary_email_id', 'primary_phone_id')
+                Student::select('sisid', 'full_name', 'primary_email_id', 'primary_phone_id', 'archived_at')
                     ->tap(new WithoutArchivedStudents(asOf: $endDate))
-                    ->when(StudentArchivingFeature::active(), fn (Builder $query): Builder => $query->addSelect('archived_at'))
                     ->with(['primaryEmailAddress', 'primaryPhoneNumber'])
                     ->when(
                         $startDate && $endDate,

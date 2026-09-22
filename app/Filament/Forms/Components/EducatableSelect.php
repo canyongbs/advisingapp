@@ -39,7 +39,6 @@ namespace App\Filament\Forms\Components;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\StudentArchivingFeature;
 use App\Models\Authenticatable;
 use App\Models\Scopes\ExcludeConvertedProspects;
 use Closure;
@@ -135,10 +134,6 @@ class EducatableSelect extends Component
         return Type::make(Student::class)
             ->titleAttribute(Student::displayNameKey())
             ->modifyOptionsQueryUsing(function (Builder $query) use ($keyColumnName, $record) {
-                if (! StudentArchivingFeature::active()) {
-                    return;
-                }
-
                 // Filament runs this closure when resolving the label of the selected value as
                 // well as when building the options, so an already-selected archived student
                 // must stay resolvable or their name disappears from the record they are on.

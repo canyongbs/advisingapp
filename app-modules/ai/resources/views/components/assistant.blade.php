@@ -504,13 +504,21 @@
                             </x-filament::dropdown>
                         </div>
 
-                        @if ($this->customAssistants)
-                            <x-filament::badge :size="Size::Large">
-                                <h1 class="text-xxs uppercase leading-3">
-                                    {{ $this->thread->assistant->name }}
-                                </h1>
-                            </x-filament::badge>
-                        @endif
+                        <div class="flex items-center gap-3">
+                            @if ($this->customAssistants)
+                                <x-filament::badge :size="Size::Large">
+                                    <h1 class="text-xxs uppercase leading-3">
+                                        {{ $this->thread->assistant->name }}
+                                    </h1>
+                                </x-filament::badge>
+                            @endif
+
+                            @if (! $this->thread->assistant->isDefault())
+                                <x-filament::link tag="button" size="xs" wire:click="createThread">
+                                    Switch to institutional advisor
+                                </x-filament::link>
+                            @endif
+                        </div>
                     </div>
 
                     @if (! $this->thread->assistant->is_default && ! $this->thread->assistant->archived_at)

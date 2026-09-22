@@ -39,7 +39,6 @@ namespace AdvisingApp\Ai\Jobs\Advisors;
 use AdvisingApp\Ai\Events\Advisors\AdvisorThreadRenamed;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\AiThread;
-use App\Features\AiThreadAutoNamingFeature;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -62,10 +61,6 @@ class GenerateAiThreadName implements ShouldQueue
 
     public function handle(): void
     {
-        if (! AiThreadAutoNamingFeature::active()) {
-            return;
-        }
-
         // The thread may have been renamed by the user, or deleted entirely, between
         // when this job was dispatched and when it runs, in which case it must not be
         // overwritten.

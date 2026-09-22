@@ -36,7 +36,6 @@
 
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\StudentArchivingFeature;
 use Carbon\Carbon;
 
 use function Tests\asSuperAdmin;
@@ -52,18 +51,6 @@ it('excludes archived students', function () {
 
     expect($sisids)->toContain($active->getKey())
         ->and($sisids)->not->toContain($archived->getKey());
-});
-
-it('leaves the query untouched while the feature is inactive', function () {
-    asSuperAdmin();
-
-    StudentArchivingFeature::deactivate();
-
-    $archived = Student::factory()->create();
-    $archived->archive();
-
-    expect(Student::query()->tap(new WithoutArchivedStudents())->pluck('sisid'))
-        ->toContain($archived->getKey());
 });
 
 describe('as of a point in time', function () {
