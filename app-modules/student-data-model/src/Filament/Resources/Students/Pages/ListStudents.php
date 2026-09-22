@@ -47,24 +47,20 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Interaction\Filament\Actions\BulkCreateInteractionAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
-use AdvisingApp\StudentDataModel\Actions\DeleteStudent;
 use AdvisingApp\StudentDataModel\Filament\Actions\StudentTagsBulkAction;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
 use App\Enums\TagType;
-use App\Features\StudentArchivingFeature;
 use App\Models\Tag;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Actions\ArchiveBulkAction;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
-use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\TextInput;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
@@ -73,7 +69,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Gate;
 
 class ListStudents extends ListRecords
@@ -220,59 +215,10 @@ class ListStudents extends ListRecords
                         BulkGroupAction::make(groupModel: GroupModel::Student),
                     ])->dropdown(false),
                     ActionGroup::make([
-                        ...(StudentArchivingFeature::active() ? [
-                            // Authorized per record to preserve the behaviour of the delete bulk
-                            // action it replaces, which inspected `delete` for every record.
-                            ArchiveBulkAction::make()
-                                ->authorizeIndividualRecords('delete'),
-                        ] : [
-                            DeleteBulkAction::make()
-                                ->label('Delete')
-                                ->modalDescription('Are you sure you wish to delete the selected record(s)? This action cannot be reversed')
-                                ->action(function (Collection $records) {
-                                    $deletedCount = 0;
-                                    $notDeleteCount = 0;
-
-                                    /** @var Collection|Student[] $records */
-                                    foreach ($records as $record) {
-                                        /** @var Student $record */
-                                        $response = Gate::inspect('delete', $record);
-
-                                        if ($response->allowed()) {
-                                            app(DeleteStudent::class)->execute($record);
-                                            $deletedCount++;
-                                        } else {
-                                            $notDeleteCount++;
-                                        }
-                                    }
-
-                                    $wasWere = fn ($count) => $count === 1 ? 'was' : 'were';
-
-                                    $notification = match (true) {
-                                        $deletedCount === 0 => [
-                                            'title' => 'None deleted',
-                                            'status' => 'danger',
-                                            'body' => "{$notDeleteCount} {$wasWere($notDeleteCount)} skipped because you do not have permission to delete.",
-                                        ],
-                                        $deletedCount > 0 && $notDeleteCount > 0 => [
-                                            'title' => 'Some deleted',
-                                            'status' => 'warning',
-                                            'body' => "{$deletedCount} {$wasWere($deletedCount)} deleted, but {$notDeleteCount} {$wasWere($notDeleteCount)} skipped because you do not have permission to delete.",
-                                        ],
-                                        default => [
-                                            'title' => 'Deleted',
-                                            'status' => 'success',
-                                            'body' => null,
-                                        ],
-                                    };
-
-                                    Notification::make()
-                                        ->title($notification['title'])
-                                        ->{$notification['status']}()
-                                        ->body($notification['body'])
-                                        ->send();
-                                }),
-                        ]),
+                        // Authorized per record to preserve the behaviour of the delete bulk
+                        // action it replaces, which inspected `delete` for every record.
+                        ArchiveBulkAction::make()
+                            ->authorizeIndividualRecords('delete'),
                     ])->dropdown(false),
                 ]),
             ]);
