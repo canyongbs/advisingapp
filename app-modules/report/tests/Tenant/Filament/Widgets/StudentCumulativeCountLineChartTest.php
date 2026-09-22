@@ -38,7 +38,6 @@ use AdvisingApp\Group\Enums\GroupModel;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Report\Filament\Widgets\StudentCumulativeCountLineChart;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\StudentArchivingFeature;
 use Carbon\Carbon;
 
 /**
@@ -167,19 +166,6 @@ describe('archiving', function () {
             'Apr 2026' => 0,
             'May 2026' => 0,
             'Jun 2026' => 0,
-        ]);
-    });
-
-    it('does not subtract archived students while the feature is inactive', function () {
-        StudentArchivingFeature::deactivate();
-
-        $archived = Student::factory()->create(['created_at_source' => '2026-04-10']);
-        $archived->forceFill(['archived_at' => Carbon::parse('2026-05-20')])->save();
-
-        expect(cumulativeStudentsByMonth())->toBe([
-            'Apr 2026' => 1,
-            'May 2026' => 1,
-            'Jun 2026' => 1,
         ]);
     });
 });

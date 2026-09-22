@@ -39,7 +39,6 @@ use AdvisingApp\Interaction\Filament\Resources\Interactions\InteractionResource;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\EditInteraction;
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\StudentArchivingFeature;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 
@@ -125,29 +124,5 @@ describe('archived students', function () {
         livewire(EditInteraction::class, ['record' => $interaction->getRouteKey()])
             ->call('save')
             ->assertHasNoFormErrors(['interactable_id']);
-    });
-
-    it('still offers other students while the feature is inactive', function () {
-        asSuperAdmin();
-
-        StudentArchivingFeature::deactivate();
-
-        $student = Student::factory()->create();
-        $interaction = Interaction::factory()->for($student, 'interactable')->create();
-
-        $other = Student::factory()->create();
-
-        livewire(EditInteraction::class, ['record' => $interaction->getRouteKey()])
-            ->assertSchemaComponentExists(
-                'interactable_id',
-                checkComponentUsing: function (Select $field) use ($student, $other): bool {
-                    $sisids = array_map(strval(...), array_keys($field->getSearchResults('')));
-
-                    expect($sisids)->toContain($student->getKey())
-                        ->and($sisids)->toContain($other->getKey());
-
-                    return true;
-                },
-            );
     });
 });

@@ -34,19 +34,15 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Authorization\Models\Role;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Group\Models\Group;
-use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
-use AdvisingApp\Team\Models\Department;
 use App\Enums\TagType;
-use App\Models\SystemUser;
 use App\Models\Tag;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
@@ -141,38 +137,6 @@ test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements
     );
 });
 
-describe('survey name citext change', function () {
-    it('deduplicates case-insensitive survey names before converting the column', function () {
-        isolatedMigration(
-            '2026_09_01_122143_convert_surveys_name_to_citext',
-            function () {
-                // Setup data before migration. A plain, case-sensitive unique index
-                // allows these three names to coexist prior to the citext conversion.
-                $survey1 = (string) Str::uuid();
-                $survey2 = (string) Str::uuid();
-                $survey3 = (string) Str::uuid();
-
-                DB::table('surveys')->insert([
-                    ['id' => $survey1, 'name' => 'Survey', 'created_at' => now()->subMinutes(3), 'updated_at' => now()],
-                    ['id' => $survey2, 'name' => 'survey', 'created_at' => now()->subMinutes(2), 'updated_at' => now()],
-                    ['id' => $survey3, 'name' => 'SURVEY', 'created_at' => now()->subMinutes(1), 'updated_at' => now()],
-                ]);
-
-                // Run the migration
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/survey/database/migrations/2026_09_01_122143_convert_surveys_name_to_citext.php']);
-
-                // Confirm migration ran successfully
-                expect($migrate)->toBe(Command::SUCCESS);
-
-                // The oldest record keeps its name, later duplicates are suffixed.
-                expect(DB::table('surveys')->where('id', $survey1)->value('name'))->toBe('Survey');
-                expect(DB::table('surveys')->where('id', $survey2)->value('name'))->toBe('survey-2');
-                expect(DB::table('surveys')->where('id', $survey3)->value('name'))->toBe('SURVEY-3');
-            }
-        );
-    });
-});
-
 // TODO: Cleanup Task FormCitextCleanup - Delete this describe and everything contained within
 describe('form name citext change', function () {
     it('renames case-insensitive duplicate non-archived form names', function () {
@@ -204,41 +168,6 @@ describe('form name citext change', function () {
     });
 });
 
-// TODO: Cleanup Task EventCitextCleanup - Delete this describe and everything contained within
-describe('event title citext change', function () {
-    it('renames case-insensitive duplicate event titles', function () {
-        isolatedMigration(
-            '2026_09_02_120000_convert_events_title_to_citext',
-            function () {
-                // Setup data before migration
-
-                $event1 = Event::factory()->create(['title' => 'Event title', 'created_at' => now()->subMinutes(3)]);
-                $event2 = Event::factory()->create(['title' => 'event Title', 'created_at' => now()->subMinutes(2)]);
-                $event3 = Event::factory()->create(['title' => 'event title', 'created_at' => now()->subMinutes(1)]);
-
-                // A soft-deleted event sharing a title with the live duplicate group must be
-                // ignored by de-duplication: it should neither affect the live renumbering
-                // nor get renamed itself.
-                $deletedEvent = Event::factory()->create(['title' => 'event title', 'created_at' => now()->subMinutes(4)]);
-                $deletedEvent->delete();
-
-                // Run the migration
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/meeting-center/database/migrations/2026_09_02_120000_convert_events_title_to_citext.php']);
-
-                // Confirm migration ran successfully
-                expect($migrate)->toBe(Command::SUCCESS);
-
-                // Add any assertions to verify the migration's effects
-                expect($event1->refresh()->title)->toBe('Event title');
-                expect($event2->refresh()->title)->toBe('event Title-2');
-                expect($event3->refresh()->title)->toBe('event title-3');
-                // Untouched: excluded from the live dedup group entirely, despite the title collision
-                expect($deletedEvent->refresh()->title)->toBe('event title');
-            }
-        );
-    });
-});
-
 // TODO: Cleanup Task GroupCitextCleanup - Delete this describe and everything contained within
 describe('segment name citext change', function () {
     it('renames case-insensitive duplicate group names', function () {
@@ -260,35 +189,6 @@ describe('segment name citext change', function () {
                 expect($group1->refresh()->name)->toBe('Group name');
                 expect($group2->refresh()->name)->toBe('group Name-2');
                 expect($group3->refresh()->name)->toBe('group name-3');
-            }
-        );
-    });
-});
-
-// TODO: Cleanup Task RoleCitextCleanup - Delete this describe and everything contained within
-describe('role citext change', function () {
-    it('properly deduplicates role names case insensitively per guard', function () {
-        isolatedMigration(
-            '2026_09_02_125430_convert_role_name_to_citext',
-            function () {
-                // Setup data before migration
-                $role1 = Role::factory()->create(['name' => 'Role', 'guard_name' => 'web']);
-                $role2 = Role::factory()->create(['name' => 'role', 'guard_name' => 'web']);
-                $role3 = Role::factory()->create(['name' => 'ROLE', 'guard_name' => 'web']);
-                // A matching name under a different guard must be left untouched
-                $role4 = Role::factory()->create(['name' => 'role', 'guard_name' => 'api']);
-
-                // Run the migration
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/authorization/database/migrations/2026_09_02_125430_convert_role_name_to_citext.php']);
-
-                // Confirm migration ran successfully
-                expect($migrate)->toBe(Command::SUCCESS);
-
-                // The first record keeps its name, the rest are suffixed within the guard
-                expect($role1->refresh()->name)->toBe('Role');
-                expect($role2->refresh()->name)->toBe('role-2');
-                expect($role3->refresh()->name)->toBe('ROLE-3');
-                expect($role4->refresh()->name)->toBe('role');
             }
         );
     });
@@ -401,52 +301,6 @@ describe('tag citext change', function () {
                 expect($prospectTag2->refresh()->name)->toBe('Prospect Tag-2');
                 expect($studentTag3->refresh()->name)->toBe('Student Tag-3');
                 expect($prospectTag3->refresh()->name)->toBe('Prospect Tag-3');
-            }
-        );
-    });
-});
-
-// TODO: Cleanup Task DepartmentCitextCleanup - Delete this describe and everything contained within
-describe('department citext change', function () {
-    it('properly changes department names', function () {
-        isolatedMigration(
-            '2026_09_02_151101_convert_teams_name_to_citext',
-            function () {
-                // Setup data before migration
-                $department1 = Department::factory(['name' => 'Department'])->create();
-                $department2 = Department::factory(['name' => 'department'])->create();
-                $department3 = Department::factory(['name' => 'DEPARTMENT'])->create();
-                // Run the migration
-                $migrate = Artisan::call('migrate', ['--path' => 'app-modules/team/database/migrations/2026_09_02_151101_convert_teams_name_to_citext.php']);
-                // Confirm migration ran successfully
-                expect($migrate)->toBe(Command::SUCCESS);
-                // Add any assertions to verify the migration's effects
-                expect($department1->refresh()->name)->toBe('Department');
-                expect($department2->refresh()->name)->toBe('department-2');
-                expect($department3->refresh()->name)->toBe('DEPARTMENT-3');
-            }
-        );
-    });
-});
-
-// TODO: Cleanup Task SystemUserCitextCleanup - Delete this describe and everything contained within
-describe('system user citext change', function () {
-    it('properly changes system user names', function () {
-        isolatedMigration(
-            '2026_09_02_062437_convert_system_user_name_to_citext',
-            function () {
-                // Setup data before migration
-                $systemUser1 = SystemUser::factory(['name' => 'System user'])->create();
-                $systemUser2 = SystemUser::factory(['name' => 'system User'])->create();
-                $systemUser3 = SystemUser::factory(['name' => 'system user'])->create();
-                // Run the migration
-                $migrate = Artisan::call('migrate', ['--path' => 'database/migrations/2026_09_02_062437_convert_system_user_name_to_citext.php']);
-                // Confirm migration ran successfully
-                expect($migrate)->toBe(Command::SUCCESS);
-                // Add any assertions to verify the migration's effects
-                expect($systemUser1->refresh()->name)->toBe('System user');
-                expect($systemUser2->refresh()->name)->toBe('system User-2');
-                expect($systemUser3->refresh()->name)->toBe('system user-3');
             }
         );
     });
