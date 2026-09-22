@@ -81,11 +81,12 @@
     <img
         src="{{ Vite::asset('resources/images/default-logo-light-201124.svg') }}"
         class="h-full max-h-9 max-w-full min-h-8 dark:hidden block"
-
+        alt="Logo"
     />
 
     <img
         src="{{ Vite::asset('resources/images/default-logo-dark-201124.svg') }}"
         class="h-full max-h-9 max-w-full min-h-8 hidden dark:block"
+        alt="Logo"
     />
 @endif
