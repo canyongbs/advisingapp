@@ -34,14 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+namespace AdvisingApp\Application\Models\Scopes;
 
-use App\Support\AbstractFeatureFlag;
+use AdvisingApp\Application\Models\ApplicationSubmission;
+use Illuminate\Database\Eloquent\Builder;
 
-class StudentArchivingFeature extends AbstractFeatureFlag
+class Requested
 {
-    public function resolve(mixed $scope): mixed
+    /**
+     * @param Builder<ApplicationSubmission> $query
+     */
+    public function __invoke(Builder $query): void
     {
-        return false;
+        $query->whereNull('submitted_at')->whereNull('canceled_at');
     }
 }

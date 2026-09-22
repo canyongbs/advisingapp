@@ -106,7 +106,7 @@ class StudentMessagesExporter extends Exporter
                 ->label('Type')
                 ->formatStateUsing(fn (string $state): string => match ($state) {
                     'email' => 'Email',
-                    'sms' => 'SMS',
+                    'sms' => 'Text',
                     default => throw new Exception('Invalid type'),
                 }),
             ExportColumn::make('details')

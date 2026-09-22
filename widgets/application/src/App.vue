@@ -32,11 +32,15 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import { ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
-    import { defineProps, reactive, ref } from 'vue';
+    import { ArrowLeftIcon, ChevronLeftIcon, ChevronRightIcon, UserIcon } from '@heroicons/vue/24/outline';
+    import { computed, defineProps, reactive, ref } from 'vue';
     import asteriskPlugin from '../../form/src/FormKit/asterisk.js';
     import wizard from '../../form/src/FormKit/wizard';
-    let { visitedSteps, activeStep, currentStep, totalSteps, setStep, wizardPlugin } = wizard();
+    let { visitedSteps, activeStep, currentStep, totalSteps, setStep, wizardPlugin, resetWizard } = wizard();
+
+    const percentComplete = computed(() =>
+        totalSteps.value > 0 ? Math.round((currentStep.value / totalSteps.value) * 100) : 0,
+    );
 
     const props = defineProps({
         entryUrl: {
@@ -53,6 +57,7 @@
         activeStep,
         currentStep,
         totalSteps,
+        percentComplete,
         plugins: [wizardPlugin, asteriskPlugin],
         setStep: (target) => () => {
             setStep(target);
@@ -178,6 +183,28 @@
 
     function backToSplash() {
         currentView.value = 'splash';
+    }
+
+    function signOut() {
+        applicationSubmissionUrl.value = null;
+        authentication.value = {
+            code: null,
+            email: null,
+            isRequested: false,
+            requestedMessage: null,
+            requestUrl: authentication.value.requestUrl,
+            url: null,
+            registrationAllowed: false,
+        };
+        currentView.value = 'form';
+        allowViewPastSubmissions.value = false;
+        pastSubmissionsCount.value = 0;
+        pastSubmissionsUrl.value = null;
+        pastSubmissions.value = [];
+        pastSubmissionsMeta.value = null;
+        pastSubmissionsCurrentPage.value = 1;
+        currentSubmission.value = null;
+        resetWizard();
     }
 
     fetch(props.entryUrl)
@@ -434,19 +461,22 @@
                 </p>
             </div>
 
-            <h1
-                v-if="applicationName"
-                :style="{
-                    fontWeight: applicationTitleFontWeight,
-                    color: `rgb(${applicationTitleColor})`,
-                }"
-            >
-                {{ applicationName }}
-            </h1>
+            <div class="max-w-2xl">
+                <h1
+                    v-if="applicationName"
+                    class="mb-2"
+                    :style="{
+                        fontWeight: applicationTitleFontWeight,
+                        color: `rgb(${applicationTitleColor})`,
+                    }"
+                >
+                    {{ applicationName }}
+                </h1>
 
-            <p v-if="applicationDescription">
-                {{ applicationDescription }}
-            </p>
+                <p v-if="applicationDescription" class="mt-0 text-gray-600">
+                    {{ applicationDescription }}
+                </p>
+            </div>
 
             <div v-if="!applicationSubmissionUrl">
                 <FormKit type="form" @submit="authenticate" v-model="authentication">
@@ -706,24 +736,62 @@
                             {{ formatSubmissionDateTime(currentSubmission.submitted_at) }}.
                         </div>
 
-                        <FormKitSchema
-                            v-if="currentSubmission.schema"
-                            :schema="currentSubmission.schema"
-                            :data="data"
-                        />
+                        <div class="form-fields">
+                            <FormKitSchema
+                                v-if="currentSubmission.schema"
+                                :schema="currentSubmission.schema"
+                                :data="data"
+                            />
+                        </div>
                     </div>
                 </div>
 
                 <!-- Normal new submission form -->
                 <div v-else class="space-y-6">
-                    <p
+                    <div
                         v-if="authentication.email && !(props.preview === 'true' || props.preview === true)"
-                        class="text-sm"
+                        class="not-prose flex items-center justify-between gap-4 rounded-lg border border-blue-200 bg-blue-50 px-4 py-3"
                     >
-                        Signed in as <strong>{{ authentication.email }}</strong>
-                    </p>
+                        <div class="flex items-center gap-3">
+                            <span class="flex h-9 w-9 items-center justify-center rounded-full bg-gray-200 text-black">
+                                <UserIcon class="h-5 w-5" />
+                            </span>
+                            <div class="text-sm leading-tight">
+                                <p class="text-xs text-gray-500">Signed in as</p>
+                                <p class="font-semibold text-gray-800">{{ authentication.email }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <span class="h-6 w-px bg-gray-300"></span>
+                            <button
+                                type="button"
+                                @click="signOut"
+                                class="text-sm font-bold text-primary-600 hover:text-primary-800 cursor-pointer transition-colors"
+                            >
+                                Sign out
+                            </button>
+                        </div>
+                    </div>
 
-                    <FormKitSchema :schema="schema" :data="data" />
+                    <div v-if="totalSteps > 1" class="not-prose">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-bold text-gray-900"
+                                >Step {{ currentStep }} of {{ totalSteps }}</span
+                            >
+                            <span class="text-sm text-gray-500">{{ percentComplete }}% complete</span>
+                        </div>
+                        <div class="h-2 w-full rounded-full bg-gray-200">
+                            <div
+                                class="h-2 rounded-full bg-primary-600 transition-all"
+                                :style="{ width: `${(currentStep / totalSteps) * 100}%` }"
+                            ></div>
+                        </div>
+                    </div>
+                    <hr class="not-prose my-6 border-0 border-t border-gray-200" />
+
+                    <div class="form-fields">
+                        <FormKitSchema :schema="schema" :data="data" />
+                    </div>
                 </div>
             </div>
         </div>

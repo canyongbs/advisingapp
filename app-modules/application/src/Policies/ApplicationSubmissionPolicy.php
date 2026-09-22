@@ -42,6 +42,14 @@ use Illuminate\Auth\Access\Response;
 
 class ApplicationSubmissionPolicy
 {
+    public function create(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: ['application.create'],
+            denyResponse: 'You do not have permission to create application submissions.'
+        );
+    }
+
     public function update(Authenticatable $authenticatable, ApplicationSubmission $applicationSubmission): Response
     {
         return $authenticatable->canOrElse(

@@ -41,11 +41,9 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\DataTransferObjects\AutocompletedAddress;
-use App\Features\StudentArchivingFeature;
 use App\Filament\Forms\Components\AddressInput;
 use DefStudio\SearchableInput\DTO\SearchResult;
 use Filament\Actions\Action;
-use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
@@ -371,11 +369,7 @@ class EditStudent extends EditRecord
     {
         return [
             ViewAction::make(),
-            ...(StudentArchivingFeature::active() ? [
-                $this->studentArchiveAction(),
-            ] : [
-                DeleteAction::make(),
-            ]),
+            $this->studentArchiveAction(),
         ];
     }
 

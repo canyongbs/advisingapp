@@ -37,7 +37,6 @@
 namespace AdvisingApp\StudentDataModel\Models\Scopes;
 
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\StudentArchivingFeature;
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -62,10 +61,6 @@ class WithoutArchivedStudents
      */
     public function __invoke(Builder $query): Builder
     {
-        if (! StudentArchivingFeature::active()) {
-            return $query;
-        }
-
         if (is_null($this->asOf)) {
             return $query->withoutArchived();
         }

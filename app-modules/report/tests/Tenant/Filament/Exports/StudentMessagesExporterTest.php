@@ -34,14 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use AdvisingApp\Report\Filament\Exports\StudentMessagesExporter;
+use Filament\Actions\Exports\ExportColumn;
 
-use App\Support\AbstractFeatureFlag;
-
-class AiThreadAutoNamingFeature extends AbstractFeatureFlag
+function studentMessagesExportColumn(string $name): ExportColumn
 {
-    public function resolve(mixed $scope): mixed
-    {
-        return false;
-    }
+    $column = collect(StudentMessagesExporter::getColumns())
+        ->first(fn (ExportColumn $column): bool => $column->getName() === $name);
+
+    assert($column instanceof ExportColumn);
+
+    return $column;
 }
+
+it('formats the exported `type` value', function (string $state, string $expected) {
+    expect(studentMessagesExportColumn('type')->formatState($state))->toBe($expected);
+})->with([
+    'email' => ['email', 'Email'],
+    'sms' => ['sms', 'Text'],
+]);
+
+it('rejects an unknown exported `type` value', function () {
+    expect(fn () => studentMessagesExportColumn('type')->formatState('database'))
+        ->toThrow(Exception::class, 'Invalid type');
+});

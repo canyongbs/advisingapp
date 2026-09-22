@@ -63,6 +63,7 @@ class ApplicationStep extends SubmissibleStep implements HasMedia, HasRichConten
 
     protected $fillable = [
         'label',
+        'description',
         'content',
         'sort',
     ];

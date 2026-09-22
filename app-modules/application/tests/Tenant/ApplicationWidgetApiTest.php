@@ -35,13 +35,16 @@
 */
 
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
+use AdvisingApp\Application\Events\ApplicationSubmissionCreated;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationAuthentication;
 use AdvisingApp\Application\Models\ApplicationField;
+use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Settings\LicenseSettings;
 use App\Support\AuthenticationCodeRateLimiter;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
@@ -421,4 +424,61 @@ test('request-authentication invalidates prior codes for the same target', funct
 
     expect($records)->toHaveCount(1);
     expect($records->first()->id)->not->toBe($firstId);
+});
+
+test('completing a requested submission fires ApplicationSubmissionCreated and reuses the pending record', function () {
+    withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+    seed(ApplicationSubmissionStateSeeder::class);
+
+    $settings = app(LicenseSettings::class);
+
+    $settings->data->addons->onlineAdmissions = true;
+
+    $settings->save();
+
+    Event::fake(ApplicationSubmissionCreated::class);
+
+    $application = Application::factory()->create();
+
+    $application->content = [];
+
+    $application->save();
+
+    $application->fields()->delete();
+
+    $prospect = Prospect::factory()->create();
+
+    $requestedSubmission = ApplicationSubmission::factory()->create([
+        'application_id' => $application->id,
+        'author_type' => $prospect->getMorphClass(),
+        'author_id' => $prospect->getKey(),
+        'submitted_at' => null,
+    ]);
+
+    $authorization = ApplicationAuthentication::factory()->create([
+        'application_id' => $application->id,
+        'author_type' => $prospect->getMorphClass(),
+        'author_id' => $prospect->getKey(),
+    ]);
+
+    post(URL::signedRoute(
+        name: 'widgets.applications.api.submit',
+        parameters: ['application' => $application, 'authentication' => $authorization],
+    ))
+        ->assertSuccessful();
+
+    expect(
+        ApplicationSubmission::query()
+            ->where('application_id', $application->id)
+            ->whereMorphedTo('author', $prospect)
+            ->count()
+    )->toBe(1);
+
+    expect($requestedSubmission->refresh()->submitted_at)->not->toBeNull();
+
+    Event::assertDispatched(
+        event: ApplicationSubmissionCreated::class,
+        callback: fn (ApplicationSubmissionCreated $event) => $event->submission->is($requestedSubmission)
+    );
 });

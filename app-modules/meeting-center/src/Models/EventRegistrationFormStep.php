@@ -52,6 +52,7 @@ class EventRegistrationFormStep extends SubmissibleStep
 
     protected $fillable = [
         'label',
+        'description',
         'content',
         'sort',
     ];

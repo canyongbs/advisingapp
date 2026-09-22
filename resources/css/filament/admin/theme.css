@@ -76,6 +76,10 @@
     @apply text-wrap;
 }
 
+.fi-fo-rich-editor-custom-block-badges {
+    @apply ms-3 gap-x-2;
+}
+
 .fi-sidebar-group-label {
     @apply text-gray-700! dark:text-gray-200!;
 }

@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEventRegistration;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
@@ -133,6 +134,49 @@ it('the event registration form relationship resolves to the latest non-archived
     expect($currentForm)->not->toBeNull();
     expect($currentForm->id)->not->toBe($originalId);
     expect($currentForm->archived_at)->toBeNull();
+});
+
+it('persists edits to an existing wizard step\'s description onto the new event registration form version', function () {
+    editEventRegistrationTestSetup();
+
+    asSuperAdmin();
+
+    $event = Event::factory()->create();
+    $form = $event->eventRegistrationForm;
+
+    $form->steps()->delete();
+    $form->is_wizard = true;
+    $form->content = null;
+    $form->save();
+
+    $form->steps()->create([
+        'label' => 'Original label',
+        'description' => 'Original description',
+        'content' => ['type' => 'doc', 'content' => []],
+    ]);
+
+    $originalRootId = $form->root_id;
+
+    $component = livewire(EditEventRegistration::class, ['record' => $event->getKey()]);
+
+    $steps = data_get($component->instance()->form->getRawState(), 'eventRegistrationForm.steps', []);
+    $stepKey = array_key_first($steps);
+    $steps[$stepKey]['label'] = 'Updated label';
+    $steps[$stepKey]['description'] = 'Updated description';
+
+    $component
+        ->fillForm(['eventRegistrationForm' => ['steps' => $steps]])
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $newVersion = EventRegistrationForm::withoutGlobalScopes()
+        ->where('root_id', $originalRootId)
+        ->whereNull('archived_at')
+        ->first();
+
+    expect($newVersion->steps()->first())
+        ->label->toBe('Updated label')
+        ->description->toBe('Updated description');
 });
 
 it('sets root_id to its own id when a registration form is first created', function () {
@@ -326,4 +370,15 @@ it('persists a newly added wizard step and its fields to the new version', funct
 
     expect($newStep)->not->toBeNull();
     expect($newVersion->fields()->where('step_id', $newStep->getKey())->count())->toBe(1);
+});
+
+it('exposes the mapped block types to the fields rich editor for the custom block badges', function () {
+    editEventRegistrationTestSetup();
+
+    asSuperAdmin();
+
+    $event = Event::factory()->create();
+
+    livewire(EditEventRegistration::class, ['record' => $event->getKey()])
+        ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });

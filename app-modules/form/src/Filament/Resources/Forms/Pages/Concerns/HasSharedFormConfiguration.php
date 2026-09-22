@@ -44,6 +44,7 @@ use AdvisingApp\Form\Models\FormStep;
 use AdvisingApp\Form\Rules\IsDomain;
 use AdvisingApp\IntegrationGoogleRecaptcha\Settings\GoogleRecaptchaSettings;
 use App\Enums\FontWeight;
+use App\Features\StepDescriptionFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Closure;
 use Filament\Forms\Components\Repeater;
@@ -160,12 +161,18 @@ trait HasSharedFormConfiguration
             Repeater::make('steps')
                 ->schema([
                     TextInput::make('label')
+                        ->label('Step Title')
                         ->required()
                         ->string()
                         ->maxLength(255)
                         ->autocomplete(false)
                         ->columnSpanFull()
                         ->lazy(),
+                    Textarea::make('description')
+                        ->label('Step Description')
+                        ->string()
+                        ->columnSpanFull()
+                        ->visible(fn (): bool => StepDescriptionFeature::active()),
                     $this->fieldBuilder(
                         isAuthenticatedPath: '../../is_authenticated',
                         generateProspectsPath: '../../generate_prospects'
@@ -206,7 +213,8 @@ trait HasSharedFormConfiguration
                         ->options(FontWeight::class),
                     ColorSelect::make('title_color')
                         ->shadeOptions(),
-                    ColorSelect::make('primary_color'),
+                    ColorSelect::make('primary_color')
+                        ->label('Color family (theme)'),
                     Select::make('rounding')
                         ->options(Rounding::class),
                 ])
@@ -255,7 +263,10 @@ trait HasSharedFormConfiguration
             })
             ->dehydrated(false)
             ->columnSpanFull()
-            ->extraInputAttributes(['style' => 'min-height: 12rem;']);
+            ->extraInputAttributes([
+                'style' => 'min-height: 12rem;',
+                'data-mapped-block-types' => implode(',', FormFieldBlockRegistry::getMappedBlockTypes()),
+            ]);
     }
 
     protected function afterCreate(): void
