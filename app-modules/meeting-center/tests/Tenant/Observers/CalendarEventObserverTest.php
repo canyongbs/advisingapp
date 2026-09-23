@@ -42,7 +42,9 @@ use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use App\Models\User;
+use Illuminate\Queue\Events\JobQueued;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 
 function makeObserverCalendar(): Calendar
@@ -52,17 +54,43 @@ function makeObserverCalendar(): Calendar
         ->create(['provider_id' => 'observer-calendar']);
 }
 
+function useObserverRedisQueue(): void
+{
+    app('queue')->setDefaultDriver('redis');
+    Queue::clear();
+}
+
+function restoreObserverSyncQueue(): void
+{
+    Queue::clear();
+    app('queue')->setDefaultDriver('sync');
+}
+
 it('queues an after-commit provider sync when a calendar event is created', function () {
     $calendar = makeObserverCalendar();
 
-    Queue::fake();
+    useObserverRedisQueue();
+    Event::fake([JobQueued::class]);
 
-    $event = CalendarEvent::factory()->create(['calendar_id' => $calendar->id]);
+    try {
+        DB::beginTransaction();
 
-    Queue::assertPushed(
-        SyncCalendarEventToProvider::class,
-        fn (SyncCalendarEventToProvider $job): bool => $job->event->is($event),
-    );
+        $event = CalendarEvent::factory()->create(['calendar_id' => $calendar->id]);
+
+        expect(Queue::size())->toBe(0);
+        Event::assertNotDispatched(JobQueued::class);
+
+        DB::commit();
+
+        expect(Queue::size())->toBe(1);
+        Event::assertDispatched(
+            JobQueued::class,
+            fn (JobQueued $jobQueued): bool => $jobQueued->job instanceof SyncCalendarEventToProvider
+                && $jobQueued->job->event->is($event),
+        );
+    } finally {
+        restoreObserverSyncQueue();
+    }
 });
 
 it('does not queue a provider sync when a calendar event is created quietly', function () {
@@ -78,6 +106,9 @@ it('does not queue a provider sync when a calendar event is created quietly', fu
 it('does not push to the provider when the surrounding transaction rolls back', function () {
     $calendar = makeObserverCalendar();
 
+    useObserverRedisQueue();
+    Event::fake([JobQueued::class]);
+
     $driver = Mockery::mock(CalendarInterface::class);
     $driver->shouldNotReceive('createEvent'); // @phpstan-ignore method.notFound
 
@@ -85,30 +116,51 @@ it('does not push to the provider when the surrounding transaction rolls back', 
     $manager->shouldReceive('driver')->andReturn($driver); // @phpstan-ignore method.notFound
     app()->instance(CalendarManager::class, $manager);
 
-    rescue(function () use ($calendar): void {
-        DB::transaction(function () use ($calendar): void {
-            CalendarEvent::factory()->create(['calendar_id' => $calendar->id]);
+    try {
+        rescue(function () use ($calendar): void {
+            DB::transaction(function () use ($calendar): void {
+                CalendarEvent::factory()->create(['calendar_id' => $calendar->id]);
 
-            throw new RuntimeException('Booking failed after the event was created.');
-        });
-    }, report: false);
+                throw new RuntimeException('Booking failed after the event was created.');
+            });
+        }, report: false);
 
-    expect(CalendarEvent::query()->count())->toBe(0);
+        expect(Queue::size())->toBe(0);
+        Event::assertNotDispatched(JobQueued::class);
+
+        expect(CalendarEvent::query()->count())->toBe(0);
+    } finally {
+        restoreObserverSyncQueue();
+    }
 });
 
 it('queues an after-commit provider update when a calendar event is updated', function () {
     $calendar = makeObserverCalendar();
 
-    Queue::fake();
+    useObserverRedisQueue();
+    Event::fake([JobQueued::class]);
 
     $event = CalendarEvent::factory()->createQuietly(['calendar_id' => $calendar->id]);
 
-    $event->update(['title' => 'Updated title']);
+    try {
+        DB::beginTransaction();
 
-    Queue::assertPushed(
-        UpdateCalendarEventOnProvider::class,
-        fn (UpdateCalendarEventOnProvider $job): bool => $job->event->is($event),
-    );
+        $event->update(['title' => 'Updated title']);
+
+        expect(Queue::size())->toBe(0);
+        Event::assertNotDispatched(JobQueued::class);
+
+        DB::commit();
+
+        expect(Queue::size())->toBe(1);
+        Event::assertDispatched(
+            JobQueued::class,
+            fn (JobQueued $jobQueued): bool => $jobQueued->job instanceof UpdateCalendarEventOnProvider
+                && $jobQueued->job->event->is($event),
+        );
+    } finally {
+        restoreObserverSyncQueue();
+    }
 });
 
 it('does not queue a provider update when a calendar event is updated quietly', function () {
@@ -126,21 +178,35 @@ it('does not queue a provider update when a calendar event is updated quietly', 
 it('queues an after-commit provider delete when a synced calendar event is deleted', function () {
     $calendar = makeObserverCalendar();
 
-    Queue::fake();
+    useObserverRedisQueue();
+    Event::fake([JobQueued::class]);
 
     $event = CalendarEvent::factory()->createQuietly([
         'calendar_id' => $calendar->id,
         'provider_id' => 'synced-event',
     ]);
 
-    $event->delete();
+    try {
+        DB::beginTransaction();
 
-    Queue::assertPushed(
-        DeleteCalendarEventFromProvider::class,
-        fn (DeleteCalendarEventFromProvider $job): bool => $job->providerId === 'synced-event'
-            && $job->calendar->is($calendar)
-            && $job->calendarEventId === $event->id,
-    );
+        $event->delete();
+
+        expect(Queue::size())->toBe(0);
+        Event::assertNotDispatched(JobQueued::class);
+
+        DB::commit();
+
+        expect(Queue::size())->toBe(1);
+        Event::assertDispatched(
+            JobQueued::class,
+            fn (JobQueued $jobQueued): bool => $jobQueued->job instanceof DeleteCalendarEventFromProvider
+                && $jobQueued->job->providerId === 'synced-event'
+                && $jobQueued->job->calendar->is($calendar)
+                && $jobQueued->job->calendarEventId === $event->id,
+        );
+    } finally {
+        restoreObserverSyncQueue();
+    }
 });
 
 it('does not queue a provider delete when the event was never synced', function () {
