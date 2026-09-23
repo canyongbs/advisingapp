@@ -170,6 +170,11 @@ class DraftInteractionWithAiAction extends Action
             );
     }
 
+    public static function getDefaultName(): ?string
+    {
+        return 'draftWithAi';
+    }
+
     private function resolveInteractable(Get $get, Page | RelationManager $livewire): Student | Prospect | null
     {
         if ($livewire instanceof RelationManager) {
@@ -190,10 +195,5 @@ class DraftInteractionWithAiAction extends Action
             Prospect::class => Prospect::query()->find($interactableId),
             default => null,
         };
-    }
-
-    public static function getDefaultName(): ?string
-    {
-        return 'draftWithAi';
     }
 }
