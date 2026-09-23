@@ -3068,6 +3068,7 @@ namespace AdvisingApp\MeetingCenter\Models{
  * @property string|null $meeting_owner_id
  * @property string|null $calendar_event_id
  * @property-read \AdvisingApp\MeetingCenter\Models\BookingGroup $bookingGroup
+ * @property-read \AdvisingApp\MeetingCenter\Models\CalendarEvent|null $calendarEvent
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \AdvisingApp\MeetingCenter\Models\CalendarEvent> $calendarEvents
  * @property-read int|null $calendar_events_count
  * @property-read \App\Models\User|null $meetingOwner
