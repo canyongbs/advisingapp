@@ -43,6 +43,7 @@ use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Support\Facades\Queue;
 
@@ -163,6 +164,15 @@ it('has maxExceptions of 3', function () {
     expect((new UpdateCalendarEventOnProvider($event))->maxExceptions)->toBe(3);
 });
 
+it('is placed on configured queue and has unlimited tries', function () {
+    $event = makeUpdateJobCalendarEvent();
+
+    $job = new UpdateCalendarEventOnProvider($event);
+
+    expect($job->queue)->toBe(config('meeting-center.queue'));
+    expect($job->tries)->toBe(0);
+});
+
 it('uses a backoff of 10 seconds', function () {
     $event = makeUpdateJobCalendarEvent();
 
@@ -171,6 +181,8 @@ it('uses a backoff of 10 seconds', function () {
 
 it('retries for an hour', function () {
     $event = makeUpdateJobCalendarEvent();
+
+    Carbon::setTestNow(Carbon::parse('2026-09-23 12:00:00'));
 
     expect((new UpdateCalendarEventOnProvider($event))->retryUntil()->format(DATE_ATOM))
         ->toBe(now()->addHour()->format(DATE_ATOM));
