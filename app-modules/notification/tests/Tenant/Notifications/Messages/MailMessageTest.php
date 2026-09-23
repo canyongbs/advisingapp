@@ -37,7 +37,6 @@
 use AdvisingApp\Notification\Notifications\Messages\MailMessage;
 use AdvisingApp\Notification\Tests\Fixtures\TestEmailSettingFromNameNotification;
 use AdvisingApp\Theme\Settings\ThemeSettings;
-use App\Features\ThemeLogoPublicDiskFeature;
 use App\Models\User;
 use App\Settings\NotificationSettings;
 use CanyonGBS\Common\Enums\Color;
@@ -85,8 +84,7 @@ it('renders the active theme logo fallback with a public media URL', function ()
 
     $logoUrl = $themeLogo->getFirstMediaUrl('logo');
 
-    expect(ThemeLogoPublicDiskFeature::active())->toBeTrue()
-        ->and((string) view('vendor.mail.html.header', ['url' => url('/')])->render())
+    expect((string) view('vendor.mail.html.header', ['url' => url('/')])->render())
         ->toContain($logoUrl)
         ->not->toContain('X-Amz-Expires');
 });
