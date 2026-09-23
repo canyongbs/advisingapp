@@ -48,7 +48,8 @@ interface InteractsWithCalendarProvider
      * Release the job back onto the queue; provided by Illuminate\Queue\InteractsWithQueue.
      *
      * @param  DateTimeInterface|DateInterval|int  $delay
+     *
+     * @return void
      */
-    // @phpstan-ignore-next-line
     public function release($delay = 0);
 }
