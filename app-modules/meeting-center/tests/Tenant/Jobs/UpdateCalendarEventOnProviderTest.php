@@ -44,10 +44,10 @@ use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use App\Models\User;
 use Carbon\Carbon;
-use function Pest\Laravel\freezeTime;
-use function Pest\Laravel\travelTo;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Support\Facades\Queue;
+
+use function Pest\Laravel\travelTo;
 
 beforeEach(function (): void {
     Queue::fake();
