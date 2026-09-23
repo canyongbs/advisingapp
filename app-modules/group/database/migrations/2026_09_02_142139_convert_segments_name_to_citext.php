@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use Database\Migrations\Concerns\FixesDuplicateNames;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -42,9 +41,6 @@ use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
-    // TODO: Cleanup Task GroupCitextCleanup - remove FixesDuplicateNames trait & usages (if no other migration uses it, restore its trait.unused ignore annotation)
-    use FixesDuplicateNames;
-
     protected string $table = 'segments';
 
     protected string $column = 'name';
@@ -52,19 +48,11 @@ return new class () extends Migration {
     /** @var array<int, string> */
     protected array $groupByColumns = [];
 
-    // TODO: Cleanup Task GroupCitextCleanup - remove $chunkSize and $usesSoftDeletes
-    protected int $chunkSize = 500;
-
-    protected bool $usesSoftDeletes = true;
-
     private string $uniqueConstraint = 'segments_name_unique';
 
     public function up(): void
     {
         DB::transaction(function () {
-            // TODO: Cleanup Task GroupCitextCleanup - remove the $this->fixDuplicates() call (the surrounding schema changes are permanent)
-            $this->fixDuplicates();
-
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
 
             Schema::table($this->table, function (Blueprint $table) {
