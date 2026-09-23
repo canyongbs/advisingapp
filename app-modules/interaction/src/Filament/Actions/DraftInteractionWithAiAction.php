@@ -69,11 +69,15 @@ class DraftInteractionWithAiAction extends Action
             ->link()
             ->icon('heroicon-m-pencil')
             ->slideOver()
-            ->modalContent(fn (Get $get, Page | RelationManager $livewire) => view('interaction::filament.actions.draft-with-ai-modal-content', [
-                'recordTitle' => $this->resolveInteractable($get, $livewire)?->full_name ?? 'this person',
-                'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
-                    ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
-            ]))
+            ->modalContent(function (Get $get, Page | RelationManager $livewire) {
+                $interactable = $this->resolveInteractable($get, $livewire);
+
+                return view('interaction::filament.actions.draft-with-ai-modal-content', [
+                    'recordTitle' => $interactable ? $interactable->full_name : 'this person',
+                    'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
+                        ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
+                ]);
+            })
             ->modalSubmitActionLabel('Draft')
             ->form([
                 Textarea::make('instructions')
