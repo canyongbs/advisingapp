@@ -44,6 +44,8 @@ use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use App\Models\User;
 use Carbon\Carbon;
+use function Pest\Laravel\freezeTime;
+use function Pest\Laravel\travelTo;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Support\Facades\Queue;
 
@@ -182,7 +184,7 @@ it('uses a backoff of 10 seconds', function () {
 it('retries for an hour', function () {
     $event = makeUpdateJobCalendarEvent();
 
-    Carbon::setTestNow(Carbon::parse('2026-09-23 12:00:00'));
+    travelTo(Carbon::parse('2026-09-23 12:00:00'));
 
     expect((new UpdateCalendarEventOnProvider($event))->retryUntil()->format(DATE_ATOM))
         ->toBe(now()->addHour()->format(DATE_ATOM));
