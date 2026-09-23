@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use Database\Migrations\Concerns\FixesDuplicateNames;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
@@ -42,20 +41,9 @@ use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
-    // TODO: Cleanup Task FormCitextCleanup - remove FixesDuplicateNames trait & usages (if no other migration uses it, restore its trait.unused ignore annotation)
-    use FixesDuplicateNames;
-
     protected string $table = 'forms';
 
     protected string $column = 'name';
-
-    /** @var array<int, string> */
-    protected array $groupByColumns = [];
-
-    // TODO: Cleanup Task FormCitextCleanup - remove $chunkSize and $usesSoftDeletes
-    protected int $chunkSize = 500;
-
-    protected bool $usesSoftDeletes = true;
 
     private string $uniqueConstraint = 'forms_name_unique';
 
@@ -65,9 +53,6 @@ return new class () extends Migration {
             Schema::table($this->table, function (Blueprint $table) {
                 $table->dropUniqueIndex($this->uniqueConstraint);
             });
-
-            // TODO: Cleanup Task FormCitextCleanup - remove the $this->fixDuplicates() call (the surrounding schema changes are permanent)
-            $this->fixDuplicates();
 
             DB::statement("ALTER TABLE {$this->table} ALTER COLUMN {$this->column} TYPE citext");
 
@@ -92,11 +77,5 @@ return new class () extends Migration {
                     ->where(fn (Builder $condition) => $condition->whereNull('archived_at'));
             });
         });
-    }
-
-    // TODO: Cleanup Task FormCitextCleanup - remove this method override
-    protected function softDeleteColumn(): string
-    {
-        return 'archived_at';
     }
 };
