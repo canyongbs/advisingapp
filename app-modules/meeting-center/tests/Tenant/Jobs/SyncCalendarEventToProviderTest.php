@@ -120,6 +120,20 @@ it('releases the job when the provider is rate limited', function () {
     $job->assertReleased(45);
 });
 
+it('rethrows MicrosoftGraphRateLimited without retryAfterSeconds', function () {
+    $event = createSyncCalendarEvent();
+
+    $driver = Mockery::mock(CalendarInterface::class);
+    $driver->shouldReceive('createEvent')->once()->andThrow(new MicrosoftGraphRateLimited()); // @phpstan-ignore method.notFound
+
+    $manager = Mockery::mock(CalendarManager::class);
+    $manager->shouldReceive('driver')->with('google')->andReturn($driver); // @phpstan-ignore method.notFound
+    app()->instance(CalendarManager::class, $manager);
+
+    expect(fn () => (new SyncCalendarEventToProvider($event))->handle())
+        ->toThrow(MicrosoftGraphRateLimited::class);
+});
+
 it('prevents overlaps with other provider jobs for the same event', function () {
     $event = createSyncCalendarEvent();
 
