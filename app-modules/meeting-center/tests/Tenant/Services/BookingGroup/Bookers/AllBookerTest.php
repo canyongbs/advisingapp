@@ -42,6 +42,7 @@ use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
+use App\Features\CalendarFaultTolerantFeature;
 use App\Models\User;
 use Illuminate\Support\Carbon;
 use Mockery\MockInterface;
@@ -372,6 +373,82 @@ it('creates calendar event on meeting owner calendar with all members as attende
     expect($calendarEvent->attendees)->toContain('owner@example.com');
     expect($calendarEvent->attendees)->toContain('member@example.com');
     expect($calendarEvent->attendees)->toContain('visitor@example.com');
+});
+
+it('links the appointment to its calendar event via the FK', function () use ($officeHours) {
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $meetingOwner = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'owner-fk-link']))
+        ->create();
+
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($meetingOwner, [], 'users')
+        ->create([
+            'slug' => 'test-fk-link',
+            'meeting_owner_id' => $meetingOwner->id,
+            'available_appointment_hours' => $officeHours,
+        ]);
+
+    postJson(
+        route('widgets.booking-page.group.api.book', ['slug' => 'test-fk-link']),
+        [
+            'name' => 'FK Visitor',
+            'email' => 'fk-visitor@example.com',
+            'starts_at' => now()->addDays(1)->setHour(10)->toIso8601String(),
+            'ends_at' => now()->addDays(1)->setHour(11)->toIso8601String(),
+        ]
+    )->assertStatus(201);
+
+    $calendarEvent = CalendarEvent::query()
+        ->whereBelongsTo($meetingOwner->calendar)
+        ->latest()
+        ->first();
+    $appointment = BookingGroupAppointment::query()
+        ->whereBelongsTo($bookingGroup)
+        ->where('email', 'fk-visitor@example.com')
+        ->latest()
+        ->first();
+
+    expect($calendarEvent)->not->toBeNull()
+        ->and($appointment)->not->toBeNull()
+        ->and($appointment?->calendar_event_id)->toBe($calendarEvent?->id);
+});
+
+it('does not write `calendar_event_id` when the flag is inactive', function () use ($officeHours) {
+    CalendarFaultTolerantFeature::deactivate();
+
+    Carbon::setTestNow(Carbon::parse('2026-04-06 08:00:00', 'UTC'));
+
+    $meetingOwner = User::factory()
+        ->has(Calendar::factory()->state(['provider_id' => 'owner-fk-off']))
+        ->create();
+
+    $bookingGroup = BookingGroup::factory()
+        ->hasAttached($meetingOwner, [], 'users')
+        ->create([
+            'slug' => 'test-fk-off',
+            'meeting_owner_id' => $meetingOwner->id,
+            'available_appointment_hours' => $officeHours,
+        ]);
+
+    postJson(
+        route('widgets.booking-page.group.api.book', ['slug' => 'test-fk-off']),
+        [
+            'name' => 'Off Visitor',
+            'email' => 'off-visitor@example.com',
+            'starts_at' => now()->addDays(1)->setHour(10)->toIso8601String(),
+            'ends_at' => now()->addDays(1)->setHour(11)->toIso8601String(),
+        ]
+    )->assertStatus(201);
+
+    $appointment = BookingGroupAppointment::query()
+        ->whereBelongsTo($bookingGroup)
+        ->where('email', 'off-visitor@example.com')
+        ->first();
+
+    expect($appointment)->not->toBeNull()
+        ->and($appointment?->calendar_event_id)->toBeNull();
 });
 
 it('rejects booking when any one of three members has a calendar conflict', function () use ($officeHours) {
