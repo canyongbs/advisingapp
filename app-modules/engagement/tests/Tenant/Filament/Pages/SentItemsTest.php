@@ -35,7 +35,8 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Engagement\Filament\Pages\SentItems;
+use AdvisingApp\Engagement\Filament\Pages\Inbox;
+use AdvisingApp\Engagement\Livewire\SentItemsTable;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\EmailMessage;
@@ -59,6 +60,16 @@ use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
+it('can activate the sent items tab within the unified inbox page', function () {
+    asSuperAdmin();
+
+    livewire(Inbox::class)
+        ->set('activeTab', 'sent-items')
+        ->assertSet('activeTab', 'sent-items')
+        ->assertSeeText('Inbox')
+        ->assertSeeText('Sent Items');
+});
+
 it('displays the type column with channel icon, email address, and healthy status for email engagements', function () {
     asSuperAdmin();
 
@@ -78,7 +89,7 @@ it('displays the type column with channel icon, email address, and healthy statu
             'recipient_type' => (new Student())->getMorphClass(),
         ]);
 
-    livewire(SentItems::class)
+    livewire(SentItemsTable::class)
         ->assertSuccessful()
         ->removeTableFilter('care_team')
         ->assertTableColumnExists('channel')
@@ -105,7 +116,7 @@ it('displays the type column with channel icon, phone number, and healthy status
             'recipient_type' => (new Student())->getMorphClass(),
         ]);
 
-    livewire(SentItems::class)
+    livewire(SentItemsTable::class)
         ->assertSuccessful()
         ->removeTableFilter('care_team')
         ->assertCanSeeTableRecords([$engagement])
@@ -133,7 +144,7 @@ it('displays the bounced status icon for a bounced email address', function () {
             'recipient_type' => (new Student())->getMorphClass(),
         ]);
 
-    livewire(SentItems::class)
+    livewire(SentItemsTable::class)
         ->assertSuccessful()
         ->removeTableFilter('care_team')
         ->assertSeeHtml($email)
@@ -161,7 +172,7 @@ it('displays the opted out status icon for an opted-out email address', function
             'recipient_type' => (new Student())->getMorphClass(),
         ]);
 
-    livewire(SentItems::class)
+    livewire(SentItemsTable::class)
         ->assertSuccessful()
         ->removeTableFilter('care_team')
         ->assertSeeHtml($email)
@@ -189,7 +200,7 @@ it('displays the bounced status icon for a bounced phone number', function () {
             'recipient_type' => (new Student())->getMorphClass(),
         ]);
 
-    livewire(SentItems::class)
+    livewire(SentItemsTable::class)
         ->assertSuccessful()
         ->removeTableFilter('care_team')
         ->assertSeeHtml($phone)
@@ -217,7 +228,7 @@ it('displays the opted out status icon for an opted-out phone number', function 
             'recipient_type' => (new Student())->getMorphClass(),
         ]);
 
-    livewire(SentItems::class)
+    livewire(SentItemsTable::class)
         ->assertSuccessful()
         ->removeTableFilter('care_team')
         ->assertSeeHtml($phone)
@@ -497,7 +508,7 @@ it('displays the type column with channel icon, email address, and healthy statu
             'recipient_type' => (new Prospect())->getMorphClass(),
         ]);
 
-    livewire(SentItems::class)
+    livewire(SentItemsTable::class)
         ->assertSuccessful()
         ->removeTableFilter('care_team')
         ->assertTableColumnExists('channel')
@@ -524,7 +535,7 @@ it('displays the type column with channel icon, phone number, and healthy status
             'recipient_type' => (new Prospect())->getMorphClass(),
         ]);
 
-    livewire(SentItems::class)
+    livewire(SentItemsTable::class)
         ->assertSuccessful()
         ->removeTableFilter('care_team')
         ->assertCanSeeTableRecords([$engagement])
@@ -552,7 +563,7 @@ it('displays the bounced status icon for a prospect bounced email address', func
             'recipient_type' => (new Prospect())->getMorphClass(),
         ]);
 
-    livewire(SentItems::class)
+    livewire(SentItemsTable::class)
         ->assertSuccessful()
         ->removeTableFilter('care_team')
         ->assertSeeHtml($email)
@@ -580,7 +591,7 @@ it('displays the opted out status icon for a prospect opted-out email address', 
             'recipient_type' => (new Prospect())->getMorphClass(),
         ]);
 
-    livewire(SentItems::class)
+    livewire(SentItemsTable::class)
         ->assertSuccessful()
         ->removeTableFilter('care_team')
         ->assertSeeHtml($email)
@@ -608,7 +619,7 @@ it('displays the bounced status icon for a prospect bounced phone number', funct
             'recipient_type' => (new Prospect())->getMorphClass(),
         ]);
 
-    livewire(SentItems::class)
+    livewire(SentItemsTable::class)
         ->assertSuccessful()
         ->removeTableFilter('care_team')
         ->assertSeeHtml($phone)
@@ -636,7 +647,7 @@ it('displays the opted out status icon for a prospect opted-out phone number', f
             'recipient_type' => (new Prospect())->getMorphClass(),
         ]);
 
-    livewire(SentItems::class)
+    livewire(SentItemsTable::class)
         ->assertSuccessful()
         ->removeTableFilter('care_team')
         ->assertSeeHtml($phone)
@@ -780,7 +791,7 @@ it('returns opted out phone health status for a prospect opted-out phone number'
 it('loads the Care Team filter as active when the component first renders', function () {
     asSuperAdmin();
 
-    livewire(SentItems::class)
+    livewire(SentItemsTable::class)
         ->assertTableFilterExists('care_team')
         ->assertSet('tableFilters.care_team.isActive', true);
 });
@@ -804,7 +815,7 @@ it('can properly filter by care team', function () {
         'user_id' => $user->getKey(),
     ]);
 
-    livewire(SentItems::class)
+    livewire(SentItemsTable::class)
         ->assertCanSeeTableRecords($careTeamEngagements)
         ->assertCanNotSeeTableRecords($otherEngagements);
 });
@@ -816,7 +827,7 @@ it('accepts an active student as the submitted recipient of a new engagement', f
 
     $student = Student::factory()->create();
 
-    livewire(SentItems::class)
+    livewire(Inbox::class)
         ->mountAction('engage')
         ->fillForm([
             'recipient_type' => 'student',
@@ -840,7 +851,7 @@ it('does not send a new engagement to an archived student even when their id is 
     $student = Student::factory()->create();
     $student->archive();
 
-    livewire(SentItems::class)
+    livewire(Inbox::class)
         ->mountAction('engage')
         ->fillForm([
             'recipient_type' => 'student',
