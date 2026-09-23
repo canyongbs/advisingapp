@@ -49,5 +49,6 @@ interface InteractsWithCalendarProvider
      *
      * @param  DateTimeInterface|DateInterval|int  $delay
      */
-    public function release($delay = 0): void;
+    // @phpstan-ignore-next-line
+    public function release($delay = 0);
 }

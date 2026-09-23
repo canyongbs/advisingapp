@@ -76,17 +76,6 @@ class SyncCalendarPeriod implements InteractsWithCalendarProvider, ShouldBeUniqu
         return $this->calendar;
     }
 
-    public function release($delay = 0): void
-    {
-        $delay = $delay instanceof \DateTimeInterface
-            ? $this->secondsUntil($delay)
-            : $delay;
-
-        if ($this->job) {
-            $this->job->release($delay);
-        }
-    }
-
     /**
      * Get the middleware the job should pass through.
      *
