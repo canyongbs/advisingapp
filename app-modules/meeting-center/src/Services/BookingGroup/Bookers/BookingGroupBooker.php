@@ -133,6 +133,8 @@ abstract class BookingGroupBooker
         string $email,
         ?string $meetingOwnerId = null,
     ): array {
+        assert($calendarOwner->calendar !== null);
+
         $calendarEvent = CalendarEvent::create([
             'calendar_id' => $calendarOwner->calendar->id,
             'title' => 'Group Meeting with ' . $name,

@@ -45,6 +45,8 @@ class CalendarEventObserver
 {
     public function created(CalendarEvent $event): void
     {
+        // Push to the external provider only after the surrounding transaction commits so a
+        // later failure rolls the event back cleanly and the provider write stays retryable.
         SyncCalendarEventToProvider::dispatch($event)->afterCommit();
     }
 

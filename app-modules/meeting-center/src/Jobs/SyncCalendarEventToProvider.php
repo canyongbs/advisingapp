@@ -61,8 +61,6 @@ class SyncCalendarEventToProvider implements InteractsWithCalendarProvider, Shou
 
     public int $maxExceptions = 3;
 
-    public int $tries = 0;
-
     public function __construct(public CalendarEvent $event)
     {
         $this->onQueue(config('meeting-center.queue'));
@@ -78,6 +76,8 @@ class SyncCalendarEventToProvider implements InteractsWithCalendarProvider, Shou
      */
     public function middleware(): array
     {
+        // Serialise every provider write for a single event so concurrent create/update/delete
+        // jobs cannot race each other, then respect the provider's per-calendar request limit.
         return [
             (new WithoutOverlapping($this->event->id))->shared()->releaseAfter(10)->expireAfter(60),
             new CalendarRequestsConcurrencyLimit(),

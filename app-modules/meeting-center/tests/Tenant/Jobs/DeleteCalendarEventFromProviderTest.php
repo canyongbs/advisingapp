@@ -148,13 +148,12 @@ it('has maxExceptions of 3', function () {
     expect((new DeleteCalendarEventFromProvider($calendar, 'provider-event-id', (string) Str::uuid()))->maxExceptions)->toBe(3);
 });
 
-it('is placed on configured queue and has unlimited tries', function () {
+it('is placed on configured queue', function () {
     $calendar = makeDeleteJobCalendar();
 
     $job = new DeleteCalendarEventFromProvider($calendar, 'provider-event-id', (string) Str::uuid());
 
-    expect($job->queue)->toBe(config('meeting-center.queue'))
-        ->and($job->tries)->toBe(0);
+    expect($job->queue)->toBe(config('meeting-center.queue'));
 });
 
 it('uses a backoff of 10 seconds', function () {

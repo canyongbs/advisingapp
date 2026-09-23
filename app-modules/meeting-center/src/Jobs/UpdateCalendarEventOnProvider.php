@@ -51,7 +51,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Queue\SerializesModels;
-use Throwable;
 
 class UpdateCalendarEventOnProvider implements InteractsWithCalendarProvider, ShouldQueue
 {
@@ -61,8 +60,6 @@ class UpdateCalendarEventOnProvider implements InteractsWithCalendarProvider, Sh
     use SerializesModels;
 
     public int $maxExceptions = 3;
-
-    public int $tries = 0;
 
     public function __construct(public CalendarEvent $event)
     {
@@ -79,6 +76,8 @@ class UpdateCalendarEventOnProvider implements InteractsWithCalendarProvider, Sh
      */
     public function middleware(): array
     {
+        // Serialise every provider write for a single event so concurrent create/update/delete
+        // jobs cannot race each other, then respect the provider's per-calendar request limit.
         return [
             (new WithoutOverlapping($this->event->id))->shared()->releaseAfter(10)->expireAfter(60),
             new CalendarRequestsConcurrencyLimit(),
@@ -102,6 +101,8 @@ class UpdateCalendarEventOnProvider implements InteractsWithCalendarProvider, Sh
                 ->driver($this->event->calendar->provider_type->value);
             assert($driver instanceof CalendarInterface);
 
+            // The create sync may not have run yet, so fall back to creating rather than
+            // patching an event the provider does not know about.
             if ($this->event->provider_id === null) {
                 $driver->createEvent($this->event);
 
@@ -119,13 +120,6 @@ class UpdateCalendarEventOnProvider implements InteractsWithCalendarProvider, Sh
             }
 
             throw $exception;
-        }
-    }
-
-    public function failed(?Throwable $exception): void
-    {
-        if ($exception) {
-            report($exception);
         }
     }
 }

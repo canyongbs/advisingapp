@@ -166,13 +166,12 @@ it('has maxExceptions of 3', function () {
     expect((new UpdateCalendarEventOnProvider($event))->maxExceptions)->toBe(3);
 });
 
-it('is placed on configured queue and has unlimited tries', function () {
+it('is placed on configured queue', function () {
     $event = makeUpdateJobCalendarEvent();
 
     $job = new UpdateCalendarEventOnProvider($event);
 
     expect($job->queue)->toBe(config('meeting-center.queue'));
-    expect($job->tries)->toBe(0);
 });
 
 it('uses a backoff of 10 seconds', function () {

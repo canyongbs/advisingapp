@@ -51,7 +51,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Queue\SerializesModels;
-use Throwable;
 
 class DeleteCalendarEventFromProvider implements InteractsWithCalendarProvider, ShouldQueue
 {
@@ -62,8 +61,11 @@ class DeleteCalendarEventFromProvider implements InteractsWithCalendarProvider, 
 
     public int $maxExceptions = 3;
 
-    public int $tries = 0;
-
+    /**
+     * The event is already gone from the database by the time this runs, so it is passed as the
+     * surviving calendar plus the provider id rather than a (deleted) CalendarEvent model. The
+     * event id is retained purely as the overlap lock key shared with the create/update jobs.
+     */
     public function __construct(
         public Calendar $calendar,
         public string $providerId,
@@ -82,6 +84,8 @@ class DeleteCalendarEventFromProvider implements InteractsWithCalendarProvider, 
      */
     public function middleware(): array
     {
+        // Serialise every provider write for a single event so concurrent create/update/delete
+        // jobs cannot race each other, then respect the provider's per-calendar request limit.
         return [
             (new WithoutOverlapping($this->calendarEventId))->shared()->releaseAfter(10)->expireAfter(60),
             new CalendarRequestsConcurrencyLimit(),
@@ -105,9 +109,7 @@ class DeleteCalendarEventFromProvider implements InteractsWithCalendarProvider, 
                 ->driver($this->calendar->provider_type->value);
             assert($driver instanceof CalendarInterface);
 
-            $event = (new CalendarEvent())->forceFill([
-                'provider_id' => $this->providerId,
-            ]);
+            $event = (new CalendarEvent())->forceFill(['provider_id' => $this->providerId]);
             $event->setRelation('calendar', $this->calendar);
 
             $driver->deleteEvent($event);
@@ -121,13 +123,6 @@ class DeleteCalendarEventFromProvider implements InteractsWithCalendarProvider, 
             }
 
             throw $exception;
-        }
-    }
-
-    public function failed(?Throwable $exception): void
-    {
-        if ($exception) {
-            report($exception);
         }
     }
 }
