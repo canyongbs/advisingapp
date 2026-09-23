@@ -38,6 +38,7 @@
 
     <div class="prose flex-1 dark:prose-invert">
         <p
+            class="grid"
             x-data="{ message: @js('Hi ' . auth()->user()->name . ', I am happy to help you draft this message. Please describe what you would like the proposed message to say:'), characters: [], position: 0 }"
             x-init="
                 (async () => {
@@ -51,8 +52,12 @@
                 })()
             "
         >
-            <span x-text="characters.slice(0, position).join('')"></span>
-            <span class="text-transparent" x-text="characters.slice(position).join('')"></span>
+            <span class="col-start-1 row-start-1 text-transparent" x-text="message"></span>
+            <span
+                class="col-start-1 row-start-1"
+                x-text="characters.slice(0, position).join('')"
+                aria-hidden="true"
+            ></span>
         </p>
     </div>
 </div>

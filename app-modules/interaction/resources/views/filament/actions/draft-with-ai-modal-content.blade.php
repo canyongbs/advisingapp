@@ -38,17 +38,26 @@
 
     <div class="prose flex-1 dark:prose-invert">
         <p
-            x-data="{ message: @js('Hi ' . auth()->user()->name . ", I am happy to help you draft these interaction details for {$recordTitle}. Please describe your interaction and I will take it from there:"), position: 0 }"
+            class="grid"
+            x-data="{ message: @js('Hi ' . auth()->user()->name . ", I am happy to help you draft these interaction details for {$recordTitle}. Please describe your interaction and I will take it from there:"), characters: [], position: 0 }"
             x-init="
-                for (; position < message.length; position++) {
-                    await new Promise((resolve) =>
-                        setTimeout(resolve, Math.floor(Math.random() * 100)),
-                    )
-                }
+                (async () => {
+                    characters = Array.from(message)
+
+                    for (; position < characters.length; position++) {
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, Math.floor(Math.random() * 20)),
+                        )
+                    }
+                })()
             "
         >
-            <span x-text="message.slice(0, position)"></span>
-            <span class="text-transparent" x-text="message.slice(position)"></span>
+            <span class="col-start-1 row-start-1 text-transparent" x-text="message"></span>
+            <span
+                class="col-start-1 row-start-1"
+                x-text="characters.slice(0, position).join('')"
+                aria-hidden="true"
+            ></span>
         </p>
     </div>
 </div>

@@ -46,6 +46,7 @@ use AdvisingApp\Interaction\Models\InteractionInitiative;
 use AdvisingApp\Interaction\Models\InteractionOutcome;
 use AdvisingApp\Interaction\Models\InteractionType;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
@@ -54,6 +55,7 @@ use Filament\Resources\Pages\Page;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Vite;
 
 class DraftInteractionWithAiAction extends Action
@@ -67,8 +69,8 @@ class DraftInteractionWithAiAction extends Action
             ->link()
             ->icon('heroicon-m-pencil')
             ->slideOver()
-            ->modalContent(fn (Page | RelationManager $livewire) => view('interaction::filament.actions.draft-with-ai-modal-content', [
-                'recordTitle' => ($livewire instanceof RelationManager ? $livewire->getOwnerRecord() : $livewire->getRecord())->full_name,
+            ->modalContent(fn (Get $get, Page | RelationManager $livewire) => view('interaction::filament.actions.draft-with-ai-modal-content', [
+                'recordTitle' => $this->resolveInteractable($get, $livewire)?->full_name ?? 'this person',
                 'avatarUrl' => AiAssistant::query()->where('is_default', true)->first()
                     ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
             ]))
@@ -107,7 +109,18 @@ class DraftInteractionWithAiAction extends Action
 
                 $additionalContext = $context->isNotEmpty() ? $context->implode("\n") : '';
 
-                $record = ($livewire instanceof RelationManager ? $livewire->getOwnerRecord() : $livewire->getRecord());
+                $record = $this->resolveInteractable($get, $livewire);
+
+                if (! $record) {
+                    Notification::make()
+                        ->title('Interaction subject not found')
+                        ->body('Select a student or prospect before drafting with AI.')
+                        ->danger()
+                        ->send();
+
+                    $this->halt();
+                }
+
                 $modelName = match ($record::class) {
                     Prospect::class => 'prospect',
                     default => 'student',
@@ -155,6 +168,28 @@ class DraftInteractionWithAiAction extends Action
             ->visible(
                 auth()->user()->hasLicense(LicenseType::ConversationalAi)
             );
+    }
+
+    private function resolveInteractable(Get $get, Page | RelationManager $livewire): Student | Prospect | null
+    {
+        if ($livewire instanceof RelationManager) {
+            $ownerRecord = $livewire->getOwnerRecord();
+
+            return ($ownerRecord instanceof Student || $ownerRecord instanceof Prospect) ? $ownerRecord : null;
+        }
+
+        $interactableId = $get('interactable_id');
+        $interactableType = $get('interactable_type');
+
+        if (blank($interactableId) || blank($interactableType)) {
+            return null;
+        }
+
+        return match (Relation::getMorphedModel($interactableType)) {
+            Student::class => Student::query()->find($interactableId),
+            Prospect::class => Prospect::query()->find($interactableId),
+            default => null,
+        };
     }
 
     public static function getDefaultName(): ?string
