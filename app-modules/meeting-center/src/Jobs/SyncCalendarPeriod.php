@@ -38,6 +38,7 @@ namespace AdvisingApp\MeetingCenter\Jobs;
 
 use AdvisingApp\MeetingCenter\Exceptions\CouldNotRefreshToken;
 use AdvisingApp\MeetingCenter\Exceptions\MicrosoftGraphRateLimited;
+use AdvisingApp\MeetingCenter\Jobs\Contracts\InteractsWithCalendarProvider;
 use AdvisingApp\MeetingCenter\Jobs\Middleware\CalendarRequestsConcurrencyLimit;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use AdvisingApp\MeetingCenter\Models\Calendar;
@@ -51,7 +52,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
-class SyncCalendarPeriod implements ShouldQueue, ShouldBeUnique
+class SyncCalendarPeriod implements InteractsWithCalendarProvider, ShouldBeUnique, ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -68,6 +69,22 @@ class SyncCalendarPeriod implements ShouldQueue, ShouldBeUnique
         public Carbon $end,
     ) {
         $this->onQueue(config('meeting-center.queue'));
+    }
+
+    public function getCalendar(): Calendar
+    {
+        return $this->calendar;
+    }
+
+    public function release($delay = 0): void
+    {
+        $delay = $delay instanceof \DateTimeInterface
+            ? $this->secondsUntil($delay)
+            : $delay;
+
+        if ($this->job) {
+            $this->job->release($delay);
+        }
     }
 
     /**

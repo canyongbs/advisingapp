@@ -34,36 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Jobs\Middleware;
+namespace AdvisingApp\MeetingCenter\Jobs\Contracts;
 
-use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use AdvisingApp\MeetingCenter\Jobs\Contracts\InteractsWithCalendarProvider;
-use Closure;
-use Illuminate\Support\Facades\Redis;
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use DateInterval;
+use DateTimeInterface;
 
-class CalendarRequestsConcurrencyLimit
+interface InteractsWithCalendarProvider
 {
+    public function getCalendar(): Calendar;
+
     /**
-     * @param Closure(object): void $next
+     * Release the job back onto the queue; provided by Illuminate\Queue\InteractsWithQueue.
+     *
+     * @param  DateTimeInterface|DateInterval|int  $delay
      */
-    public function handle(InteractsWithCalendarProvider $job, Closure $next): void
-    {
-        $calendar = $job->getCalendar();
-
-        if ($calendar->provider_type !== CalendarProvider::Outlook) {
-            // Only apply concurrency limit to Outlook calendars
-            $next($job);
-
-            return;
-        }
-
-        Redis::funnel("{calendar-concurrency-{$calendar->provider_id}}")
-            ->block(10)
-            ->limit(4)
-            ->then(function () use ($job, $next) {
-                $next($job);
-            }, function () use ($job) {
-                $job->release(10);
-            });
-    }
+    public function release($delay = 0): void;
 }
