@@ -55,7 +55,6 @@ use AdvisingApp\StudentDataModel\Models\Scopes\Textable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
-use App\Filament\Clusters\UnifiedInbox;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
@@ -83,8 +82,6 @@ use Livewire\Attributes\Locked;
 class ViewEngagementResponse extends Page
 {
     protected string $view = 'engagement::filament.pages.view-engagement-response';
-
-    protected static ?string $cluster = UnifiedInbox::class;
 
     protected static bool $shouldRegisterNavigation = false;
 
@@ -133,9 +130,10 @@ class ViewEngagementResponse extends Page
      */
     public function getBreadcrumbs(): array
     {
-        return static::getCluster()::unshiftClusterBreadcrumbs([
-            Inbox::getUrl() => 'Inbox',
-        ]);
+        return [
+            Inbox::getUrl() => 'Unified Inbox',
+            $this->getTitle(),
+        ];
     }
 
     public static function getRoutePath(Panel $panel): string

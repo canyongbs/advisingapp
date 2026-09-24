@@ -47,15 +47,15 @@
             @if ($notificationLogo?->hasMedia('logo'))
                 <img src="{{ $notificationLogo->getFirstMediaUrl('logo') }}"
                      style="height: 75px; max-height: 75px; max-width: 100vw;"
-                     alt="Logo">
+                     alt="Organization logo">
             @elseif ($themeSettings->is_logo_active && $logo)
                  <img src="{{ $logo->getUrl() }}"
                      style="height: 75px; max-height: 75px; max-width: 100vw;"
-                     alt="Logo">
+                     alt="Organization logo">
             @else
                 <img src="{{ url(Vite::asset('resources/images/default-logo-light-201124.svg')) }}"
                      style="height: 75px; max-height: 75px; max-width: 100vw;"
-                     alt="Logo">
+                     alt="Advising App">
             @endif
         </a>
     </td>

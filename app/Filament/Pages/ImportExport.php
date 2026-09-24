@@ -34,17 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Engagement\Filament\Pages;
+namespace App\Filament\Pages;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
-use AdvisingApp\Engagement\Livewire\InboxTable;
-use AdvisingApp\Engagement\Livewire\SentItemsTable;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementResponse;
+use AdvisingApp\StudentDataModel\Livewire\StudentDataImportsTable;
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Enums\NavigationGroup;
+use App\Livewire\ExportsTable;
+use App\Livewire\ImportsTable;
 use App\Models\User;
-use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Tabs;
@@ -53,32 +50,30 @@ use Filament\Schemas\Schema;
 use Livewire\Attributes\Url;
 use UnitEnum;
 
-class Inbox extends Page
+class ImportExport extends Page
 {
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Crm;
+    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::DataAndAnalytics;
 
-    protected static ?string $navigationLabel = 'Unified Inbox';
+    protected static ?string $navigationLabel = 'Import/Export';
 
-    protected static ?string $title = 'Unified Inbox';
+    protected static ?string $title = 'Import/Export';
 
-    protected static ?int $navigationSort = 10;
+    protected static ?int $navigationSort = 30;
 
     #[Url(as: 'tab')]
-    public string $activeTab = 'inbox';
+    public string $activeTab = 'import';
 
     public static function canAccess(): bool
     {
         $user = auth()->user();
-
         assert($user instanceof User);
 
-        if (! $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm])) {
-            return false;
+        if ($user->can('export_hub.view-any')) {
+            return true;
         }
 
-        // These authorization checks have been preserved from the original message center.
-        return ($user->can('viewAny', EngagementResponse::class) && $user->can('engagement_response.*.view'))
-            || ($user->can('viewAny', Engagement::class) && $user->can('engagement.*.view'));
+        return app(ManageStudentConfigurationSettings::class)->is_enabled
+            && $user->can('record_sync.view-any');
     }
 
     public function mount(): void
@@ -87,8 +82,8 @@ class Inbox extends Page
             return;
         }
 
-        $this->activeTab = collect(['inbox', 'sent-items'])
-            ->first(fn (string $tab): bool => $this->isTabVisible($tab)) ?? 'inbox';
+        $this->activeTab = collect(['import', 'export', 'student-sync'])
+            ->first(fn (string $tab): bool => $this->isTabVisible($tab)) ?? 'import';
     }
 
     public function content(Schema $schema): Schema
@@ -97,57 +92,34 @@ class Inbox extends Page
             Tabs::make()
                 ->livewireProperty('activeTab')
                 ->tabs([
-                    'inbox' => Tab::make('Inbox')
-                        ->visible(fn (): bool => $this->isTabVisible('inbox'))
+                    'import' => Tab::make('Import')
+                        ->visible(fn (): bool => $this->isTabVisible('import'))
                         ->schema([
-                            Livewire::make(InboxTable::class),
+                            Livewire::make(ImportsTable::class),
                         ]),
-                    'sent-items' => Tab::make('Sent Items')
-                        ->visible(fn (): bool => $this->isTabVisible('sent-items'))
+                    'export' => Tab::make('Export')
+                        ->visible(fn (): bool => $this->isTabVisible('export'))
                         ->schema([
-                            Livewire::make(SentItemsTable::class),
+                            Livewire::make(ExportsTable::class),
+                        ]),
+                    'student-sync' => Tab::make('Student Sync')
+                        ->visible(fn (): bool => $this->isTabVisible('student-sync'))
+                        ->schema([
+                            Livewire::make(StudentDataImportsTable::class),
                         ]),
                 ]),
         ]);
     }
 
-    /**
-     * @return array<NavigationItem>
-     */
-    public static function getNavigationItems(): array
-    {
-        return [
-            parent::getNavigationItems()[0]
-                ->isActiveWhen(fn (): bool => request()->routeIs(
-                    static::getNavigationItemActiveRoutePattern(),
-                    ViewEngagementResponse::getNavigationItemActiveRoutePattern(),
-                    ViewEngagement::getNavigationItemActiveRoutePattern(),
-                )),
-        ];
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            SendEngagementAction::make()
-                ->label('New')
-                ->icon(null),
-        ];
-    }
-
     protected function isTabVisible(string $tab): bool
     {
         $user = auth()->user();
-
         assert($user instanceof User);
 
-        if (! $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm])) {
-            return false;
-        }
-
         return match ($tab) {
-            'inbox' => $user->can('viewAny', EngagementResponse::class) && $user->can('engagement_response.*.view'),
-            'sent-items' => $user->can('viewAny', Engagement::class) && $user->can('engagement.*.view'),
+            'import', 'export' => $user->can('export_hub.view-any'),
+            'student-sync' => app(ManageStudentConfigurationSettings::class)->is_enabled
+                && $user->can('record_sync.view-any'),
             default => false,
         };
     }

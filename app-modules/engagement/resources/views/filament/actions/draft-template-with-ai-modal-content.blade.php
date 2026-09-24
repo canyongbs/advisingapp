@@ -36,23 +36,28 @@
         <img class="h-8 w-8 rounded-full object-cover object-center" src="{{ $avatarUrl }}" alt="Assistant avatar" />
     </div>
 
-    <div class="prose h-36 flex-1 dark:prose-invert sm:h-20">
+    <div class="prose flex-1 dark:prose-invert">
         <p
-            x-data="{ content: '' }"
+            class="grid"
+            x-data="{ message: @js('Hi ' . auth()->user()->name . ', I am happy to help you draft this template. Please describe what you would like the proposed message to say:'), characters: [], position: 0 }"
             x-init="
-                const message = @js('Hi ' . auth()->user()->name . ', I am happy to help you draft this template. Please describe what you would like the proposed message to say:')
+                (async () => {
+                    characters = Array.from(message)
 
-                const typeWord = async (word, delay) => {
-                    content += word + ' '
-
-                    await new Promise((resolve) => setTimeout(resolve, delay))
-                }
-
-                for (const word of message.split(' ')) {
-                    await typeWord(word, Math.floor(Math.random() * 100))
-                }
+                    for (; position < characters.length; position++) {
+                        await new Promise((resolve) =>
+                            setTimeout(resolve, Math.floor(Math.random() * 20)),
+                        )
+                    }
+                })()
             "
-            x-text="content"
-        ></p>
+        >
+            <span class="col-start-1 row-start-1 text-transparent" x-text="message"></span>
+            <span
+                class="col-start-1 row-start-1"
+                x-text="characters.slice(0, position).join('')"
+                aria-hidden="true"
+            ></span>
+        </p>
     </div>
 </div>

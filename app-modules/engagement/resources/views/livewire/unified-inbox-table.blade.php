@@ -31,6 +31,6 @@
     
     </COPYRIGHT>
 --}}
-<x-filament-panels::page>
+<div>
     {{ $this->table }}
-</x-filament-panels::page>
+</div>

@@ -54,7 +54,6 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
-use Filament\Support\Enums\Width;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Vite;
 
@@ -81,6 +80,7 @@ class DraftWithAiAction extends Action
             ->label('Draft with AI Assistant')
             ->link()
             ->icon('heroicon-m-pencil')
+            ->slideOver()
             ->modalContent(function (Page $livewire): View {
                 $educatable = $this->getEducatable();
 
@@ -92,7 +92,6 @@ class DraftWithAiAction extends Action
                         ?->getFirstTemporaryUrl(now()->addHour(), 'avatar', 'avatar-height-250px') ?: Vite::asset('resources/images/canyon-ai-headshot.jpg'),
                 ]);
             })
-            ->modalWidth(Width::ExtraLarge)
             ->modalSubmitActionLabel('Draft')
             ->form([
                 Textarea::make('instructions')

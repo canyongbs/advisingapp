@@ -34,78 +34,56 @@
 </COPYRIGHT>
 */
 
-namespace App\Filament\Pages;
+namespace App\Livewire;
 
-use App\Filament\Clusters\ImportExport;
-use App\Models\Export;
-use App\Models\User;
+use App\Models\Import;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Pages\Enums\SubNavigationPosition;
-use Filament\Pages\Page;
-use Filament\Schemas\Components\EmbeddedTable;
-use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Livewire\Component;
 
-class ExportPage extends Page implements HasActions, HasForms, HasTable
+class ImportsTable extends Component implements HasActions, HasForms, HasTable
 {
     use InteractsWithActions;
     use InteractsWithForms;
     use InteractsWithTable;
 
-    protected static ?SubNavigationPosition $subNavigationPosition = SubNavigationPosition::Top;
-
-    protected static ?string $navigationLabel = 'Export';
-
-    protected static ?string $title = 'Export';
-
-    protected static ?int $navigationSort = 20;
-
-    protected static ?string $cluster = ImportExport::class;
-
-    public static function canAccess(): bool
-    {
-        $user = auth()->user();
-        assert($user instanceof User);
-
-        return $user->can('export_hub.view-any');
-    }
-
-    public function content(Schema $schema): Schema
-    {
-        return $schema->components([
-            EmbeddedTable::make(),
-        ]);
-    }
+    /**
+     * @var array<int|string, bool>
+     */
+    protected array $importFileExistsCache = [];
 
     public function table(Table $table): Table
     {
+        $canDownload = auth()->user()->can('export_hub.import');
+
         return $table
-            ->query(Export::query()->with('user'))
+            ->query(Import::query()->with('user'))
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('requestor')
-                    ->getStateUsing(function (Export $record): ?string {
+                    ->getStateUsing(function (Import $record): ?string {
                         return $record->user->name ?? null;
                     }),
-                TextColumn::make('exporter')
-                    ->label('Export Name')
-                    ->getStateUsing(function (Export $record): string {
-                        if (defined($record->exporter . '::EXPORT_NAME')) {
-                            return constant($record->exporter . '::EXPORT_NAME') . ' Export';
+                TextColumn::make('importer')
+                    ->label('Import Name')
+                    ->getStateUsing(function (Import $record): string {
+                        if (defined($record->importer . '::IMPORT_NAME')) {
+                            return constant($record->importer . '::IMPORT_NAME') . ' Import';
                         }
 
-                        return Str::of(class_basename($record->exporter))
-                            ->replaceLast('Exporter', '')
-                            ->headline() . ' Export';
+                        return Str::of(class_basename($record->importer))
+                            ->replaceLast('Importer', '')
+                            ->headline() . ' Import';
                     }),
                 TextColumn::make('created_at')
                     ->label('Date Started')
@@ -117,8 +95,21 @@ class ExportPage extends Page implements HasActions, HasForms, HasTable
                 Action::make('download')
                     ->label('Download')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->url(fn (Export $record) => URL::signedRoute('exports.download', $record))
-                    ->visible(fn (Export $record) => $record->completed_at !== null && auth()->user()->can('export_hub.import')),
+                    ->tooltip(fn (Import $record) => $record->total_rows ? 'Number of Rows: ' . number_format($record->total_rows) : null)
+                    ->url(fn (Import $record) => url()->signedRoute('imports.download', $record))
+                    ->visible(fn (Import $record) => $canDownload
+                        && $record->completed_at !== null
+                        && $this->importFileExists($record)),
             ]);
+    }
+
+    public function render(): View
+    {
+        return view('livewire.import-export-table');
+    }
+
+    protected function importFileExists(Import $import): bool
+    {
+        return $this->importFileExistsCache[$import->getKey()] ??= Storage::disk('s3')->exists("imports/{$import->getKey()}.csv");
     }
 }

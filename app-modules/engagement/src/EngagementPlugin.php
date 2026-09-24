@@ -36,6 +36,8 @@
 
 namespace AdvisingApp\Engagement;
 
+use AdvisingApp\Engagement\Livewire\InboxTable;
+use AdvisingApp\Engagement\Livewire\SentItemsTable;
 use Filament\Contracts\Plugin;
 use Filament\Panel;
 
@@ -56,7 +58,11 @@ class EngagementPlugin implements Plugin
             ->discoverPages(
                 in: __DIR__ . '/Filament/Pages',
                 for: 'AdvisingApp\\Engagement\\Filament\\Pages'
-            );
+            )
+            ->livewireComponents([
+                InboxTable::class,
+                SentItemsTable::class,
+            ]);
     }
 
     public function boot(Panel $panel): void {}
