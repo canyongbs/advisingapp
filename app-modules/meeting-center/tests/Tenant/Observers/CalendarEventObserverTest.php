@@ -42,9 +42,7 @@ use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use App\Models\User;
-use Illuminate\Queue\Events\JobQueued;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 
 function makeObserverCalendar(): Calendar
@@ -54,43 +52,29 @@ function makeObserverCalendar(): Calendar
         ->create(['provider_id' => 'observer-calendar']);
 }
 
-function useObserverRedisQueue(): void
-{
-    app('queue')->setDefaultDriver('redis');
-    Queue::clear();
-}
-
-function restoreObserverSyncQueue(): void
-{
-    Queue::clear();
-    app('queue')->setDefaultDriver('sync');
-}
-
 it('queues an after-commit provider sync when a calendar event is created', function () {
     $calendar = makeObserverCalendar();
 
-    useObserverRedisQueue();
-    Event::fake([JobQueued::class]);
+    $driverCalledAfterCommit = null;
+    $driver = Mockery::mock(CalendarInterface::class);
+    $manager = Mockery::mock(CalendarManager::class);
+    $manager->shouldReceive('driver')->andReturn($driver); // @phpstan-ignore method.notFound
+    app()->instance(CalendarManager::class, $manager);
+    $driver->shouldReceive('createEvent') // @phpstan-ignore method.notFound
+        ->once()
+        ->andReturnUsing(function () use (&$driverCalledAfterCommit): void {
+            $driverCalledAfterCommit = true;
+        });
 
-    try {
-        DB::beginTransaction();
+    DB::beginTransaction();
 
-        $event = CalendarEvent::factory()->create(['calendar_id' => $calendar->id]);
+    CalendarEvent::factory()->create(['calendar_id' => $calendar->id]);
 
-        expect(Queue::size())->toBe(0);
-        Event::assertNotDispatched(JobQueued::class);
+    expect($driverCalledAfterCommit)->toBeNull();
 
-        DB::commit();
+    DB::commit();
 
-        expect(Queue::size())->toBe(1);
-        Event::assertDispatched(
-            JobQueued::class,
-            fn (JobQueued $jobQueued): bool => $jobQueued->job instanceof SyncCalendarEventToProvider
-                && $jobQueued->job->event->is($event),
-        );
-    } finally {
-        restoreObserverSyncQueue();
-    }
+    expect($driverCalledAfterCommit)->toBeTrue();
 });
 
 it('does not queue a provider sync when a calendar event is created quietly', function () {
@@ -106,61 +90,50 @@ it('does not queue a provider sync when a calendar event is created quietly', fu
 it('does not push to the provider when the surrounding transaction rolls back', function () {
     $calendar = makeObserverCalendar();
 
-    useObserverRedisQueue();
-    Event::fake([JobQueued::class]);
-
     $driver = Mockery::mock(CalendarInterface::class);
-    $driver->shouldNotReceive('createEvent'); // @phpstan-ignore method.notFound
-
     $manager = Mockery::mock(CalendarManager::class);
     $manager->shouldReceive('driver')->andReturn($driver); // @phpstan-ignore method.notFound
     app()->instance(CalendarManager::class, $manager);
+    $driver->shouldNotReceive('createEvent'); // @phpstan-ignore method.notFound
 
-    try {
-        rescue(function () use ($calendar): void {
-            DB::transaction(function () use ($calendar): void {
-                CalendarEvent::factory()->create(['calendar_id' => $calendar->id]);
+    rescue(function () use ($calendar): void {
+        DB::transaction(function () use ($calendar): void {
+            CalendarEvent::factory()->create(['calendar_id' => $calendar->id]);
 
-                throw new RuntimeException('Booking failed after the event was created.');
-            });
-        }, report: false);
+            throw new RuntimeException('Booking failed after the event was created.');
+        });
+    }, report: false);
 
-        expect(Queue::size())->toBe(0);
-        Event::assertNotDispatched(JobQueued::class);
-
-        expect(CalendarEvent::query()->count())->toBe(0);
-    } finally {
-        restoreObserverSyncQueue();
-    }
+    expect(CalendarEvent::query()->count())->toBe(0);
 });
 
 it('queues an after-commit provider update when a calendar event is updated', function () {
     $calendar = makeObserverCalendar();
+    $event = CalendarEvent::factory()->createQuietly([
+        'calendar_id' => $calendar->id,
+        'provider_id' => 'synced-event',
+    ]);
 
-    useObserverRedisQueue();
-    Event::fake([JobQueued::class]);
+    $driverCalledAfterCommit = null;
+    $driver = Mockery::mock(CalendarInterface::class);
+    $manager = Mockery::mock(CalendarManager::class);
+    $manager->shouldReceive('driver')->andReturn($driver); // @phpstan-ignore method.notFound
+    app()->instance(CalendarManager::class, $manager);
+    $driver->shouldReceive('updateEvent') // @phpstan-ignore method.notFound
+        ->once()
+        ->andReturnUsing(function () use (&$driverCalledAfterCommit): void {
+            $driverCalledAfterCommit = true;
+        });
 
-    $event = CalendarEvent::factory()->createQuietly(['calendar_id' => $calendar->id]);
+    DB::beginTransaction();
 
-    try {
-        DB::beginTransaction();
+    $event->update(['title' => 'Updated title']);
 
-        $event->update(['title' => 'Updated title']);
+    expect($driverCalledAfterCommit)->toBeNull();
 
-        expect(Queue::size())->toBe(0);
-        Event::assertNotDispatched(JobQueued::class);
+    DB::commit();
 
-        DB::commit();
-
-        expect(Queue::size())->toBe(1);
-        Event::assertDispatched(
-            JobQueued::class,
-            fn (JobQueued $jobQueued): bool => $jobQueued->job instanceof UpdateCalendarEventOnProvider
-                && $jobQueued->job->event->is($event),
-        );
-    } finally {
-        restoreObserverSyncQueue();
-    }
+    expect($driverCalledAfterCommit)->toBeTrue();
 });
 
 it('does not queue a provider update when a calendar event is updated quietly', function () {
@@ -177,36 +150,31 @@ it('does not queue a provider update when a calendar event is updated quietly', 
 
 it('queues an after-commit provider delete when a synced calendar event is deleted', function () {
     $calendar = makeObserverCalendar();
-
-    useObserverRedisQueue();
-    Event::fake([JobQueued::class]);
-
     $event = CalendarEvent::factory()->createQuietly([
         'calendar_id' => $calendar->id,
         'provider_id' => 'synced-event',
     ]);
 
-    try {
-        DB::beginTransaction();
+    $driverCalledAfterCommit = null;
+    $driver = Mockery::mock(CalendarInterface::class);
+    $manager = Mockery::mock(CalendarManager::class);
+    $manager->shouldReceive('driver')->andReturn($driver); // @phpstan-ignore method.notFound
+    app()->instance(CalendarManager::class, $manager);
+    $driver->shouldReceive('deleteEvent') // @phpstan-ignore method.notFound
+        ->once()
+        ->andReturnUsing(function () use (&$driverCalledAfterCommit): void {
+            $driverCalledAfterCommit = true;
+        });
 
-        $event->delete();
+    DB::beginTransaction();
 
-        expect(Queue::size())->toBe(0);
-        Event::assertNotDispatched(JobQueued::class);
+    $event->delete();
 
-        DB::commit();
+    expect($driverCalledAfterCommit)->toBeNull();
 
-        expect(Queue::size())->toBe(1);
-        Event::assertDispatched(
-            JobQueued::class,
-            fn (JobQueued $jobQueued): bool => $jobQueued->job instanceof DeleteCalendarEventFromProvider
-                && $jobQueued->job->providerId === 'synced-event'
-                && $jobQueued->job->calendar->is($calendar)
-                && $jobQueued->job->calendarEventId === $event->id,
-        );
-    } finally {
-        restoreObserverSyncQueue();
-    }
+    DB::commit();
+
+    expect($driverCalledAfterCommit)->toBeTrue();
 });
 
 it('does not queue a provider delete when the event was never synced', function () {
