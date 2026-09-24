@@ -135,6 +135,7 @@ The source code is distributed under the [Elastic License 2.0](./LICENSE).
 
 <br />
 
+<a id="contributing"></a>
 <details>
 <summary><strong>Contributing</strong></summary>
 
