@@ -48,7 +48,7 @@ class SesDeliveryDelayData extends Data
         #[DataCollectionOf(SesDelayedRecipientsData::class)]
         public DataCollection $delayedRecipients,
         public string $expirationTime,
-        public string|Optional $reportingMTA,
+        public string|Optional $reportingMta,
         public string $timestamp,
     ) {}
 }

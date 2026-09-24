@@ -70,7 +70,7 @@ class Login extends \Filament\Auth\Pages\Login
     public bool $needsMfaSetup = false;
 
     #[Locked]
-    public bool $needsMFA = false;
+    public bool $needsMfa = false;
 
     #[Locked]
     public bool $usingRecoveryCode = false;
@@ -114,7 +114,7 @@ class Login extends \Filament\Auth\Pages\Login
                 $user->enableMultifactorAuthentication();
 
                 $this->needsMfaSetup = true;
-                $this->needsMFA = true;
+                $this->needsMfa = true;
 
                 return null;
             }
@@ -124,7 +124,7 @@ class Login extends \Filament\Auth\Pages\Login
             if (empty($data['code'])) {
                 Filament::auth()->logout();
 
-                $this->needsMFA = true;
+                $this->needsMfa = true;
 
                 return null;
             }
@@ -132,7 +132,7 @@ class Login extends \Filament\Auth\Pages\Login
             if (! $this->isValidCode($user, $data['code'])) {
                 Filament::auth()->logout();
 
-                $this->needsMFA = false;
+                $this->needsMfa = false;
 
                 $this->usingRecoveryCode = false;
 
@@ -205,13 +205,13 @@ class Login extends \Filament\Auth\Pages\Login
             ->components([
                 $this->getEmailFormComponent() /** @phpstan-ignore method.notFound */
                     ->label('Email')
-                    ->hidden(fn (Login $livewire) => $livewire->needsMFA)
+                    ->hidden(fn (Login $livewire) => $livewire->needsMfa)
                     ->dehydratedWhenHidden(),
                 $this->getPasswordFormComponent()
-                    ->hidden(fn (Login $livewire) => $livewire->needsMFA)
+                    ->hidden(fn (Login $livewire) => $livewire->needsMfa)
                     ->dehydratedWhenHidden(),
                 $this->getRememberFormComponent()
-                    ->hidden(fn (Login $livewire) => $livewire->needsMFA)
+                    ->hidden(fn (Login $livewire) => $livewire->needsMfa)
                     ->dehydratedWhenHidden(),
                 TextInput::make('code')
                     ->label(
@@ -241,8 +241,8 @@ class Login extends \Filament\Auth\Pages\Login
                     )
                     ->numeric(fn (Login $livewire) => ! $livewire->usingRecoveryCode)
                     ->string(fn (Login $livewire) => $livewire->usingRecoveryCode)
-                    ->required(fn (Login $livewire) => $livewire->needsMFA)
-                    ->hidden(fn (Login $livewire) => ! $livewire->needsMFA)
+                    ->required(fn (Login $livewire) => $livewire->needsMfa)
+                    ->hidden(fn (Login $livewire) => ! $livewire->needsMfa)
                     ->dehydratedWhenHidden(),
             ])
             ->statePath('data');

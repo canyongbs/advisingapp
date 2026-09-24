@@ -62,7 +62,7 @@ class HandleAwsSnsRequest
                 return response(status: 200);
             }
 
-            file_get_contents($data->subscribeURL);
+            file_get_contents($data->subscribeUrl);
 
             return response(status: 200);
         }

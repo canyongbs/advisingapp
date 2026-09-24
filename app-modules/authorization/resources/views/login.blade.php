@@ -80,7 +80,7 @@
             @endif
         </form>
 
-        @if ($this->needsMFA && ! $this->needsMfaSetup)
+        @if ($this->needsMfa && ! $this->needsMfaSetup)
             <x-filament::link
                 class="cursor-pointer"
                 size="sm"
