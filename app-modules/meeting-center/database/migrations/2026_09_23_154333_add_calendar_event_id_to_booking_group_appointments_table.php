@@ -34,33 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Observers;
+use App\Features\CalendarFaultTolerantFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\MeetingCenter\Jobs\DeleteCalendarEventFromProvider;
-use AdvisingApp\MeetingCenter\Jobs\SyncCalendarEventToProvider;
-use AdvisingApp\MeetingCenter\Jobs\UpdateCalendarEventOnProvider;
-use AdvisingApp\MeetingCenter\Models\CalendarEvent;
-
-class CalendarEventObserver
-{
-    public function created(CalendarEvent $event): void
+return new class () extends Migration {
+    public function up(): void
     {
-        // Push to the external provider only after the surrounding transaction commits so a
-        // later failure rolls the event back cleanly and the provider write stays retryable.
-        SyncCalendarEventToProvider::dispatch($event)->afterCommit();
+        DB::transaction(function () {
+            Schema::table('booking_group_appointments', function (Blueprint $table) {
+                $table->foreignUuid('calendar_event_id')
+                    ->nullable()
+                    ->constrained('calendar_events')
+                    ->nullOnDelete();
+            });
+
+            CalendarFaultTolerantFeature::activate();
+        });
     }
 
-    public function updated(CalendarEvent $event): void
+    public function down(): void
     {
-        UpdateCalendarEventOnProvider::dispatch($event)->afterCommit();
-    }
+        DB::transaction(function () {
+            CalendarFaultTolerantFeature::deactivate();
 
-    public function deleted(CalendarEvent $event): void
-    {
-        if ($event->provider_id === null) {
-            return;
-        }
-
-        DeleteCalendarEventFromProvider::dispatch($event->calendar, $event->provider_id, $event->id)->afterCommit();
+            Schema::table('booking_group_appointments', function (Blueprint $table) {
+                $table->dropConstrainedForeignId('calendar_event_id');
+            });
+        });
     }
-}
+};

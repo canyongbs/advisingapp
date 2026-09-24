@@ -41,18 +41,18 @@ use AdvisingApp\MeetingCenter\Exceptions\MicrosoftGraphRateLimited;
 use AdvisingApp\MeetingCenter\Jobs\Contracts\InteractsWithCalendarProvider;
 use AdvisingApp\MeetingCenter\Jobs\Middleware\CalendarRequestsConcurrencyLimit;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
+use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\Calendar;
-use App\Models\Tenant;
-use Carbon\Carbon;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use DateTime;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Queue\SerializesModels;
 
-class SyncCalendarPeriod implements InteractsWithCalendarProvider, ShouldBeUnique, ShouldQueue
+class DeleteCalendarEventFromProvider implements InteractsWithCalendarProvider, ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -61,12 +61,15 @@ class SyncCalendarPeriod implements InteractsWithCalendarProvider, ShouldBeUniqu
 
     public int $maxExceptions = 3;
 
-    public int $uniqueFor = 7200;
-
+    /**
+     * The event is already gone from the database by the time this runs, so it is passed as the
+     * surviving calendar plus the provider id rather than a (deleted) CalendarEvent model. The
+     * event id is retained purely as the overlap lock key shared with the create/update jobs.
+     */
     public function __construct(
         public Calendar $calendar,
-        public Carbon $start,
-        public Carbon $end,
+        public string $providerId,
+        public string $calendarEventId,
     ) {
         $this->onQueue(config('meeting-center.queue'));
     }
@@ -77,13 +80,16 @@ class SyncCalendarPeriod implements InteractsWithCalendarProvider, ShouldBeUniqu
     }
 
     /**
-     * Get the middleware the job should pass through.
-     *
      * @return array<int, object>
      */
     public function middleware(): array
     {
-        return [new CalendarRequestsConcurrencyLimit()];
+        // Serialise every provider write for a single event so concurrent create/update/delete
+        // jobs cannot race each other, then respect the provider's per-calendar request limit.
+        return [
+            (new WithoutOverlapping($this->calendarEventId))->shared()->releaseAfter(10)->expireAfter(60),
+            new CalendarRequestsConcurrencyLimit(),
+        ];
     }
 
     public function retryUntil(): DateTime
@@ -91,28 +97,29 @@ class SyncCalendarPeriod implements InteractsWithCalendarProvider, ShouldBeUniqu
         return now()->addHour();
     }
 
-    public function uniqueId(): string
+    public function backoff(): int
     {
-        return Tenant::current()->getKey() . ':' . $this->calendar->getKey() . ':' . $this->start->format('Y-m-d') . ':' . $this->end->format('Y-m-d');
+        return 10;
     }
 
     public function handle(): void
     {
         try {
-            resolve(CalendarManager::class)
-                ->driver($this->calendar->provider_type->value)
-                ->syncEvents(
-                    $this->calendar,
-                    new DateTime($this->start->toDateTimeString()),
-                    new DateTime($this->end->toDateTimeString())
-                );
-        } catch (CouldNotRefreshToken $exception) {
-            $this->fail($exception);
+            $driver = resolve(CalendarManager::class)
+                ->driver($this->calendar->provider_type->value);
+            assert($driver instanceof CalendarInterface);
 
-            return;
+            $event = (new CalendarEvent())->forceFill(['provider_id' => $this->providerId]);
+            $event->setRelation('calendar', $this->calendar);
+
+            $driver->deleteEvent($event);
+        } catch (CouldNotRefreshToken) {
+            // Tokens have been cleared and the user has been notified; nothing further needed.
         } catch (MicrosoftGraphRateLimited $exception) {
             if (filled($exception->retryAfterSeconds)) {
                 $this->release($exception->retryAfterSeconds);
+
+                return;
             }
 
             throw $exception;

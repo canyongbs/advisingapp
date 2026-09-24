@@ -53,7 +53,7 @@ class BookingGroupAppointment extends BaseModel
 
     protected $fillable = [
         'booking_group_id',
-        'calendar_event_provider_uid',
+        'calendar_event_id',
         'name',
         'email',
         'starts_at',
@@ -77,9 +77,19 @@ class BookingGroupAppointment extends BaseModel
     /**
      * @return HasMany<CalendarEvent, $this>
      */
+    // TODO: Cleanup Task (calendar-fault-tolerant): remove this relation and the
+    // calendar_event_provider_uid column once every tenant is on calendar_event_id.
     public function calendarEvents(): HasMany
     {
         return $this->hasMany(CalendarEvent::class, 'provider_uid', 'calendar_event_provider_uid');
+    }
+
+    /**
+     * @return BelongsTo<CalendarEvent, $this>
+     */
+    public function calendarEvent(): BelongsTo
+    {
+        return $this->belongsTo(CalendarEvent::class);
     }
 
     /**

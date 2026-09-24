@@ -37,7 +37,7 @@
 namespace AdvisingApp\MeetingCenter\Jobs\Middleware;
 
 use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use AdvisingApp\MeetingCenter\Jobs\SyncCalendarPeriod;
+use AdvisingApp\MeetingCenter\Jobs\Contracts\InteractsWithCalendarProvider;
 use Closure;
 use Illuminate\Support\Facades\Redis;
 
@@ -46,18 +46,18 @@ class CalendarRequestsConcurrencyLimit
     /**
      * @param Closure(object): void $next
      */
-    public function handle(SyncCalendarPeriod $job, Closure $next): void
+    public function handle(InteractsWithCalendarProvider $job, Closure $next): void
     {
-        $provider = $job->calendar->provider_type;
+        $calendar = $job->getCalendar();
 
-        if ($provider !== CalendarProvider::Outlook) {
+        if ($calendar->provider_type !== CalendarProvider::Outlook) {
             // Only apply concurrency limit to Outlook calendars
             $next($job);
 
             return;
         }
 
-        Redis::funnel("{calendar-concurrency-{$job->calendar->provider_id}}")
+        Redis::funnel("{calendar-concurrency-{$calendar->provider_id}}")
             ->block(10)
             ->limit(4)
             ->then(function () use ($job, $next) {

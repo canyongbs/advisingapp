@@ -81,6 +81,6 @@ class CalendarEvent extends BaseModel
      */
     public function bookingGroupAppointment(): HasOne
     {
-        return $this->hasOne(BookingGroupAppointment::class, 'calendar_event_provider_uid', 'provider_uid');
+        return $this->hasOne(BookingGroupAppointment::class);
     }
 }

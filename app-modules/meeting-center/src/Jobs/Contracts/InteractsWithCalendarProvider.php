@@ -34,33 +34,22 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Observers;
+namespace AdvisingApp\MeetingCenter\Jobs\Contracts;
 
-use AdvisingApp\MeetingCenter\Jobs\DeleteCalendarEventFromProvider;
-use AdvisingApp\MeetingCenter\Jobs\SyncCalendarEventToProvider;
-use AdvisingApp\MeetingCenter\Jobs\UpdateCalendarEventOnProvider;
-use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use DateInterval;
+use DateTimeInterface;
 
-class CalendarEventObserver
+interface InteractsWithCalendarProvider
 {
-    public function created(CalendarEvent $event): void
-    {
-        // Push to the external provider only after the surrounding transaction commits so a
-        // later failure rolls the event back cleanly and the provider write stays retryable.
-        SyncCalendarEventToProvider::dispatch($event)->afterCommit();
-    }
+    public function getCalendar(): Calendar;
 
-    public function updated(CalendarEvent $event): void
-    {
-        UpdateCalendarEventOnProvider::dispatch($event)->afterCommit();
-    }
-
-    public function deleted(CalendarEvent $event): void
-    {
-        if ($event->provider_id === null) {
-            return;
-        }
-
-        DeleteCalendarEventFromProvider::dispatch($event->calendar, $event->provider_id, $event->id)->afterCommit();
-    }
+    /**
+     * Release the job back onto the queue; provided by Illuminate\Queue\InteractsWithQueue.
+     *
+     * @param  DateTimeInterface|DateInterval|int  $delay
+     *
+     * @return void
+     */
+    public function release($delay = 0);
 }

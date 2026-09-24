@@ -34,33 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Observers;
+namespace App\Features;
 
-use AdvisingApp\MeetingCenter\Jobs\DeleteCalendarEventFromProvider;
-use AdvisingApp\MeetingCenter\Jobs\SyncCalendarEventToProvider;
-use AdvisingApp\MeetingCenter\Jobs\UpdateCalendarEventOnProvider;
-use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use App\Support\AbstractFeatureFlag;
 
-class CalendarEventObserver
+class CalendarFaultTolerantFeature extends AbstractFeatureFlag
 {
-    public function created(CalendarEvent $event): void
+    public function resolve(mixed $scope): mixed
     {
-        // Push to the external provider only after the surrounding transaction commits so a
-        // later failure rolls the event back cleanly and the provider write stays retryable.
-        SyncCalendarEventToProvider::dispatch($event)->afterCommit();
-    }
-
-    public function updated(CalendarEvent $event): void
-    {
-        UpdateCalendarEventOnProvider::dispatch($event)->afterCommit();
-    }
-
-    public function deleted(CalendarEvent $event): void
-    {
-        if ($event->provider_id === null) {
-            return;
-        }
-
-        DeleteCalendarEventFromProvider::dispatch($event->calendar, $event->provider_id, $event->id)->afterCommit();
+        return false;
     }
 }
