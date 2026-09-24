@@ -203,29 +203,21 @@ Trusted technology for organizations that serve the public good.
 
 </div>
 
-
 <!-- MARKDOWN LINKS & IMAGES -->
 
 [contributors-shield]: https://img.shields.io/github/contributors/canyongbs/advisingapp?style=flat-square&label=Contributors
 [contributors-url]: https://github.com/canyongbs/advisingapp/graphs/contributors
-
 [stars-shield]: https://img.shields.io/github/stars/canyongbs/advisingapp?style=flat-square&label=Stars
 [stars-url]: https://github.com/canyongbs/advisingapp/stargazers
-
 [license-shield]: https://img.shields.io/badge/License-Elastic%202.0-4c8da6?style=flat-square
 [license-url]: https://github.com/canyongbs/advisingapp/blob/main/LICENSE
-
 [tailwind-shield]: https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white
 [tailwind-url]: https://tailwindcss.com/
-
 [alpine-shield]: https://img.shields.io/badge/Alpine.js-8BC0D0?style=flat-square&logo=alpinedotjs&logoColor=white
 [alpine-url]: https://alpinejs.dev/
-
 [laravel-stack-shield]: https://img.shields.io/badge/Laravel-FF2D20?style=flat-square&logo=laravel&logoColor=white
 [laravel-url]: https://laravel.com/
-
 [livewire-shield]: https://img.shields.io/badge/Livewire-4E56A6?style=flat-square&logo=livewire&logoColor=white
 [livewire-url]: https://livewire.laravel.com/
-
 [filament-shield]: https://img.shields.io/badge/Filament-FDAE4B?style=flat-square&logo=filament&logoColor=black
 [filament-url]: https://filamentphp.com/
