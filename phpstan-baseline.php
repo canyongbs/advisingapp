@@ -990,6 +990,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/authorization/src/Filament/Pages/Auth/Login.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Property name "needsMFA" is not in camelCase\\.$#',
+    'identifier' => 'MeliorStan.propertyNameNotCamelCase',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Pages/Auth/Login.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Authorization\\\\Filament\\\\Pages\\\\Auth\\\\Login\\:\\:getSsoFormActions\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
