@@ -174,6 +174,27 @@ it('gives a duplicated event registration form its own version tree rather than 
     expect($duplicatedForm->archived_at)->toBeNull();
 });
 
+it('archive bulk action archives all selected events', function () {
+    asSuperAdmin();
+
+    $eventWithAttendees = Event::factory()->create(['starts_at' => now()->addWeek()]);
+    EventAttendee::factory()->create(['event_id' => $eventWithAttendees->id]);
+
+    $eventWithoutAttendees = Event::factory()->create(['starts_at' => now()->addWeek()]);
+    $eventWithoutAttendees->attendees()->delete();
+
+    $records = collect([$eventWithAttendees, $eventWithoutAttendees]);
+
+    livewire(ListEvents::class)
+        ->removeTableFilter('pastEvents')
+        ->selectTableRecords($records->pluck('id')->all())
+        ->callAction(TestAction::make('archive')->table()->bulk())
+        ->assertNotified();
+
+    expect($eventWithAttendees->fresh()->archived_at)->not->toBeNull();
+    expect($eventWithoutAttendees->fresh()->archived_at)->not->toBeNull();
+});
+
 describe('duplication', function () {
     beforeEach(function () {
         asSuperAdmin();
@@ -241,25 +262,4 @@ describe('duplication', function () {
         Storage::disk('s3-public')->assertExists($duplicatedDescriptionImage->getPathRelativeToRoot());
         Storage::disk('s3-public')->assertExists($duplicatedHeroImage->getPathRelativeToRoot());
     });
-});
-
-it('archive bulk action archives all selected events', function () {
-    asSuperAdmin();
-
-    $eventWithAttendees = Event::factory()->create(['starts_at' => now()->addWeek()]);
-    EventAttendee::factory()->create(['event_id' => $eventWithAttendees->id]);
-
-    $eventWithoutAttendees = Event::factory()->create(['starts_at' => now()->addWeek()]);
-    $eventWithoutAttendees->attendees()->delete();
-
-    $records = collect([$eventWithAttendees, $eventWithoutAttendees]);
-
-    livewire(ListEvents::class)
-        ->removeTableFilter('pastEvents')
-        ->selectTableRecords($records->pluck('id')->all())
-        ->callAction(TestAction::make('archive')->table()->bulk())
-        ->assertNotified();
-
-    expect($eventWithAttendees->fresh()->archived_at)->not->toBeNull();
-    expect($eventWithoutAttendees->fresh()->archived_at)->not->toBeNull();
 });
