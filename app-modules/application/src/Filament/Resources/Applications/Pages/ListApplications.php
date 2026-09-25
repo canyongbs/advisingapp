@@ -53,7 +53,6 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 
 class ListApplications extends ListRecords
 {
@@ -104,8 +103,10 @@ class ListApplications extends ListRecords
                                 ->required(),
                         ]);
                     })
-                    ->beforeReplicaSaved(function (Model $replica, array $data): void {
+                    ->beforeReplicaSaved(function (Application $replica, array $data): void {
                         $replica->name = $data['name'];
+                        $replica->setAttribute('root_id', null);
+                        $replica->archived_at = null;
                     })
                     ->after(function (Application $replica, Application $record): void {
                         resolve(DuplicateApplication::class, ['original' => $record, 'replica' => $replica])();
