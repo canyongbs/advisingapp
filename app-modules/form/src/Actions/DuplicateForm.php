@@ -110,9 +110,48 @@ class DuplicateForm
 
     private function replicateEmailAutoReply(): void
     {
-        if ($this->original->emailAutoReply) {
-            $this->original->emailAutoReply->replicate()->save();
+        $originalEmailAutoReply = $this->original->emailAutoReply;
+
+        if (! $originalEmailAutoReply) {
+            return;
         }
+
+        $replicaEmailAutoReply = $this->replica->emailAutoReply()->updateOrCreate([], [
+            'subject' => $originalEmailAutoReply->subject,
+            'body' => $originalEmailAutoReply->body,
+            'is_enabled' => $originalEmailAutoReply->is_enabled,
+        ]);
+
+        $mediaUuidMap = [];
+
+        foreach ($originalEmailAutoReply->getMedia('body') as $media) {
+            $mediaUuidMap[$media->uuid] = $media->copy($replicaEmailAutoReply, 'body', 's3-public')->uuid;
+        }
+
+        if ($mediaUuidMap === []) {
+            return;
+        }
+
+        $replicaEmailAutoReply->body = $this->remapMediaUuids($replicaEmailAutoReply->body, $mediaUuidMap);
+        $replicaEmailAutoReply->save();
+    }
+
+    /**
+     * @param array<string, mixed>|null $content
+     * @param array<string, string> $mediaUuidMap
+     *
+     * @return array<string, mixed>|null
+     */
+    private function remapMediaUuids(?array $content, array $mediaUuidMap): ?array
+    {
+        if (! $content) {
+            return $content;
+        }
+
+        $json = json_encode($content);
+        $json = str_replace(array_keys($mediaUuidMap), array_values($mediaUuidMap), $json);
+
+        return json_decode($json, true);
     }
 
     /**
