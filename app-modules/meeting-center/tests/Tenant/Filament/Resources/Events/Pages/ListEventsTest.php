@@ -43,6 +43,8 @@ use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -191,4 +193,73 @@ it('archive bulk action archives all selected events', function () {
 
     expect($eventWithAttendees->fresh()->archived_at)->not->toBeNull();
     expect($eventWithoutAttendees->fresh()->archived_at)->not->toBeNull();
+});
+
+describe('duplication', function () {
+    beforeEach(function () {
+        asSuperAdmin();
+    });
+
+    it('leaves the original registration form steps fields submissions and attendees untouched', function () {
+        $event = Event::factory()->create();
+        $originalForm = $event->eventRegistrationForm;
+
+        $originalFieldIds = $originalForm->fields()->pluck('id')->all();
+        $originalStepIds = $originalForm->steps()->pluck('id')->all();
+        $originalSubmissionIds = $originalForm->submissions()->pluck('id')->all();
+        $originalAttendeeCount = $event->attendees()->count();
+
+        expect($originalSubmissionIds)->not->toBeEmpty();
+
+        livewire(ListEvents::class)
+            ->removeTableFilter('pastEvents')
+            ->callAction(TestAction::make('Duplicate')->table($event))
+            ->assertHasNoFormErrors();
+
+        $duplicatedEvent = Event::query()->whereKeyNot($event->getKey())->firstOrFail();
+        $duplicatedForm = $duplicatedEvent->eventRegistrationForm;
+
+        expect($originalForm->fields()->pluck('id')->all())->toEqualCanonicalizing($originalFieldIds)
+            ->and($originalForm->steps()->pluck('id')->all())->toEqualCanonicalizing($originalStepIds)
+            ->and($originalForm->submissions()->pluck('id')->all())->toEqualCanonicalizing($originalSubmissionIds)
+            ->and($event->attendees()->count())->toBe($originalAttendeeCount)
+            ->and($duplicatedForm->fields()->count())->toBe(count($originalFieldIds))
+            ->and($duplicatedForm->fields()->whereIn('id', $originalFieldIds)->exists())->toBeFalse()
+            ->and($duplicatedForm->steps()->count())->toBe(count($originalStepIds))
+            ->and($duplicatedForm->submissions()->count())->toBe(0)
+            ->and($duplicatedEvent->attendees()->count())->toBe(0);
+    });
+
+    it('copies the description images and hero image to the duplicated event', function () {
+        Storage::fake('s3-public');
+
+        $event = Event::factory()->create();
+
+        $descriptionImage = $event->addMedia(UploadedFile::fake()->image('description.png'))->toMediaCollection('description', 's3-public');
+        $event->update(['description' => ['type' => 'doc', 'content' => [['type' => 'image', 'attrs' => ['id' => $descriptionImage->uuid]]]]]);
+
+        $heroImage = $event->addMedia(UploadedFile::fake()->image('hero.png'))->toMediaCollection('hero_image');
+
+        livewire(ListEvents::class)
+            ->removeTableFilter('pastEvents')
+            ->callAction(TestAction::make('Duplicate')->table($event))
+            ->assertHasNoFormErrors();
+
+        $duplicatedEvent = Event::query()->whereKeyNot($event->getKey())->firstOrFail();
+
+        $duplicatedDescriptionImage = $duplicatedEvent->getFirstMedia('description');
+        $duplicatedHeroImage = $duplicatedEvent->getFirstMedia('hero_image');
+
+        expect($duplicatedDescriptionImage)->not->toBeNull()
+            ->and($duplicatedDescriptionImage->uuid)->not->toBe($descriptionImage->uuid)
+            ->and(json_encode($duplicatedEvent->description))->toContain($duplicatedDescriptionImage->uuid)->not->toContain($descriptionImage->uuid)
+            ->and($duplicatedHeroImage)->not->toBeNull()
+            ->and($duplicatedHeroImage->uuid)->not->toBe($heroImage->uuid)
+            ->and($event->refresh()->getMedia('description')->pluck('uuid')->all())->toBe([$descriptionImage->uuid])
+            ->and(json_encode($event->description))->toContain($descriptionImage->uuid)
+            ->and($event->getMedia('hero_image')->pluck('uuid')->all())->toBe([$heroImage->uuid]);
+
+        Storage::disk('s3-public')->assertExists($duplicatedDescriptionImage->getPathRelativeToRoot());
+        Storage::disk('s3-public')->assertExists($duplicatedHeroImage->getPathRelativeToRoot());
+    });
 });
