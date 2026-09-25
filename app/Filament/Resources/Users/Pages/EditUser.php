@@ -105,7 +105,7 @@ class EditUser extends EditRecord
                                 if ($azureSsoSettings || $googleSsoSettings) {
                                     $component->state(true);
 
-                                    return $this->mountAction('showSSOModal');
+                                    return $this->mountAction('showSsoModal');
                                 }
 
                                 return null;
@@ -142,7 +142,7 @@ class EditUser extends EditRecord
             ]);
     }
 
-    public function showSSOModal(): Action
+    public function showSsoModal(): Action
     {
         return Action::make('Warning')
             ->action(fn () => $this->data['is_external'] = false)

@@ -990,6 +990,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/authorization/src/Filament/Pages/Auth/Login.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Property name "needsMFA" is not in camelCase\\.$#',
+    'identifier' => 'MeliorStan.propertyNameNotCamelCase',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Pages/Auth/Login.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Authorization\\\\Filament\\\\Pages\\\\Auth\\\\Login\\:\\:getSsoFormActions\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -999,12 +1005,6 @@ $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$value of function collect expects Illuminate\\\\Contracts\\\\Support\\\\Arrayable\\<\\(int\\|string\\), mixed\\>\\|iterable\\<\\(int\\|string\\), mixed\\>\\|null, string\\|null given\\.$#',
     'identifier' => 'argument.type',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Pages/Auth/Login.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property name "needsMFA" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.propertyNameNotCamelCase',
-    'count' => 1,
     'path' => __DIR__ . '/app-modules/authorization/src/Filament/Pages/Auth/Login.php',
 ];
 $ignoreErrors[] = [
@@ -1258,12 +1258,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/basic-needs/src/Providers/BasicNeedsServiceProvider.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$basic_needs_category_id" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.variableNameNotCamelCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/basic-needs/tests/Tenant/BasicNeedsProgram/BasicNeedsProgramTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Faker\\\\Generator\\:\\:catchPhrase\\(\\)\\.$#',
@@ -6264,24 +6258,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/webhook/src/Actions/StoreInboundWebhook.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter name "signingCertURL" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.parameterNameNotCamelCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/webhook/src/DataTransferObjects/SnsMessage.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter name "subscribeURL" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.parameterNameNotCamelCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/webhook/src/DataTransferObjects/SnsMessage.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter name "unsubscribeURL" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.parameterNameNotCamelCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/webhook/src/DataTransferObjects/SnsMessage.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to function is_array\\(\\) with string will always evaluate to false\\.$#',
     'identifier' => 'function.impossibleType',
     'count' => 1,
@@ -6432,22 +6408,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Filament/Resources/Users/Actions/AssignLicensesBulkAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method name "showSSOModal" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.methodNameNotCamelCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Resources/Users/Pages/CreateUser.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
     'path' => __DIR__ . '/app/Filament/Resources/Users/Pages/CreateUser.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method name "showSSOModal" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.methodNameNotCamelCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Resources/Users/Pages/EditUser.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
