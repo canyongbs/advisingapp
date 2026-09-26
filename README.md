@@ -1,172 +1,223 @@
-<div id="top"></div>
+<div align="center">
 
-<!-- PROJECT SHIELDS -->
-<!--[![Forks][forks-shield]][forks-url]-->
-<!--[![Issues][issues-shield]][issues-url]-->
+<a href="https://canyongbs.com/">
+  <img
+    src=".github/assets/github-advising-app-hero.png"
+    alt="Advising App by Canyon GBS. Every Student Interaction, Connected."
+    width="100%"
+  />
+</a>
+
+<br />
+<br />
 
 [![Contributors][contributors-shield]][contributors-url]
-[![Stargazers][stars-shield]][stars-url]
+[![Stars][stars-shield]][stars-url]
+[![License][license-shield]][license-url]
 
-<!-- PROJECT LOGO -->
+<br />
 
-[![Canyon GBS GitHub Header Image!](https://s3.us-west-2.amazonaws.com/canyongbs.com/LinkedIn-CompanyCoverImage.png 'Canyyon GBS GitHub Header Image')](https://canyongbs.com)\
-\
-[Click here to visit the Canyon GBS Website](https://canyongbs.com/)
+[**Website**](https://canyongbs.com/) ·
+[**Documentation**](./docs/) ·
+[**Local Setup**](./docs/how-tos/local-setup.md) ·
+[**Report an Issue**](https://github.com/canyongbs/advisingapp/issues)
 
-<!-- ABOUT THE PROJECT -->
+<br />
 
-## About The Project
+### Student engagement and relationship management in one connected platform.
 
-👋 Welcome!\
-\
-This repository includes the software solution known as **Advising App®** created by Canyon GBS®. \
-\
-The software in this repository is offerred as a fully managed and supported, SOC 2 compliant and ISO 27001:2022 certified, SaaS offerring to colleges and universities through Canyon GBS Inc. Additionally, the software is released as open-source under the Elastic License 2.0 (see the [license file](./LICENSE) for more details.)\
-\
-_Note: This software is developed, under copyright, and trademarked by Canyon GBS Inc. ([canyongbs.com](https://canyongbs.com))._
+Advising App® helps student-facing staff reach the right students, understand what they need, and guide every interaction toward a clear next step.
 
-## Key AI + CRM Features
+<br />
 
-### Artificial Intelligence
+[**Explore the Documentation →**](./docs/) &nbsp;&nbsp;&nbsp;
+[**Set Up Locally →**](./docs/how-tos/local-setup.md)
 
-Our robust personal assistant is designed to support your student service professionals in their day-to-day roles. Some key capabilities the assistant can help with includes:
+</div>
 
-- Research Tasks
-- Draft Communication
-- Language Translation
-- Content Creation
-- Student Profile Analysis
-- Project Planning
-- Ideation
-- And Much More...
+<br />
 
-### Student Service CRM
+## Platform at a Glance
 
-Our student service CRM is designed to support the management of prospective and enrolled students. Some key features include:
+<table>
+<tr>
+<td width="50%" valign="top">
 
-- Record Mangement
-- Email and SMS
-- Service Management
-- Population Segmentation
-- Task Management
-- Interaction Tracking
-- Files and Documents
-- And Much More...
+### Digital Engagement
 
-## Technology
+#### Student Messaging
 
-### Proudly Built With
+Reach students by text and email while keeping every conversation organized and searchable.
 
-[Filament - Accelerated Laravel Development.](https://filamentphp.com/)
+#### AI Chat
 
-### Stack
+Answer routine questions around the clock with responses grounded in approved campus content.
 
-A [PHP](https://php.net) TALL Stack is used to create our software:
+#### Guided Outreach
 
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Alpine.js](https://alpinejs.dev)
-- [Laravel](https://laravel.com/)
-- [Livewire](https://laravel-livewire.com/)
+Plan outreach sequences that combine messages, reminders, staff actions, and follow-up.
 
-### Dependences for AI + CRM (800+)
+</td>
 
-- [GitHub Insights: Dependencies](https://github.com/canyongbs/advisingapp/network/dependencies)
+<td width="50%" valign="top">
 
-### Recommended Cloud Infrastructure
+### Student Relationship Management
 
-Cloudflare DNS<br>
-Amazon Web Services (AWS):
+#### Holistic Profile
 
-- AWS WAF
-- AWS ALB
-- AWS EC2 (Multi-AZ)
-- AWS SQS
-- AWS ElastiCache Redis Instance
-- AWS RDS Aurora PostgreSQL w/ FDW Configuration (Serverless)
-- AWS RDS ElastiCache Redis Instance
-- AWS S3
+See each student's records, notes, messages, tasks, and history in one place so staff can act with context.
 
-Microsoft Azure
+#### Dynamic Groups
 
-- Azure Cognitive Services
+Identify priority student populations and launch targeted outreach, tasks, care team updates, and follow-up.
 
-## Additional Project Details
+#### Integrated and Secure
+
+Connect securely with campus systems while supporting SSO and enterprise security and compliance requirements.
+
+</td>
+</tr>
+</table>
+
+<br />
+
+## Built for Student Success
+
+Advising App brings communication, student context, outreach, and relationship management into one connected platform for colleges and universities.
+
+It is designed to help teams:
+
+- Keep student conversations organized and accessible.
+- Reduce repetitive questions with AI-powered support grounded in approved content.
+- Coordinate outreach across messages, reminders, tasks, and staff actions.
+- Give staff a more complete view of each student.
+- Identify and engage priority student populations.
+- Connect with campus systems while supporting enterprise security requirements.
+
+<br />
+
+## Built With
+
+<div align="center">
+
+Advising App is built on the **TALL stack** and powered by **Filament**.
+
+<br />
+
+[![Tailwind CSS][tailwind-shield]][tailwind-url]
+[![Alpine.js][alpine-shield]][alpine-url]
+[![Laravel][laravel-stack-shield]][laravel-url]
+[![Livewire][livewire-shield]][livewire-url]
+[![Filament][filament-shield]][filament-url]
+
+</div>
+
+<br />
+
+## Get Started
+
+To run Advising App locally, start with the [Local Setup Guide](./docs/how-tos/local-setup.md).
 
 ### Documentation
 
 - [Local Setup](./docs/how-tos/local-setup.md)
-- [Integrations: Azure OpenAI](./docs/how-tos/integrations/azure_open_ai.md)
+- [Azure OpenAI Integration](./docs/how-tos/integrations/azure_open_ai.md)
 - [Custom Metadata](./docs/explanations/custom-metadata.md)
+- [Project Documentation](./docs/)
 
-_Note: More documentation coming soon._
+<br />
 
-## Feature Requests & Issues
+## Source Available + Managed SaaS
 
-For SaaS customers, please channel your feature requests through your customer success associate. For issues, please open a support request so that your issue can be promptly addressed.\
-\
-For DIY customers, please open your feature request or issue using [GitHub Issues](https://github.com/canyongbs/advisingapp/issues).
+Advising App is developed by [Canyon GBS](https://canyongbs.com/) and is available as both source-available software and a fully managed, supported SaaS offering for colleges and universities.
 
-## Contributing
+The source code is distributed under the [Elastic License 2.0](./LICENSE).
 
-The software for this project is created and managed by a professional engineering team inside Canyon GBS Inc.\
-\
-All contributions to the project must be pre-approved in order to ensure product integrity. Create an issue with the correct "Change Type" label, and include the details of your proposed change. A member of the product team at Canyon GBS will review, and if approved, you may fork the repo and create a pull request. Once complete, engineering at Canyon GBS will review for quality assurance prior to merging the PR. You may be asked to make changes in order to meet our quality standards for the project.
+<br />
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+<a id="contributing"></a>
+<details>
+<summary><strong>Contributing</strong></summary>
 
-When opening your Pull Request please ensure you are compliant with the following requirements:
+<br />
 
-- Title the PR with the ticket/issue number and a short description of the changes made. Or if no ticket/issue exists, title the PR with a detailed description of the changes made
-- Linked a relevant ticket or issue or describe the issue/feature which this PR resolves/implements.
-- Resolved all conflicts, if any.
-- Before opening your PR make sure to rebase your branch PR on top of the latest upstream `main` branch.
+Advising App is maintained by the Canyon GBS engineering team.
 
-_Don't forget to ⭐ the project to show your support! Thanks again!_
+Before beginning a contribution, please [open an issue](https://github.com/canyongbs/advisingapp/issues) describing the proposed feature, enhancement, or fix.
 
-## License
+Contributions should be approved by the product team before development begins.
 
-This software is developed by Canyon GBS Inc. who is the copyright and trademark holder for this project. The source code itself is distributed under the Elastic License 2.0. See [License](./LICENSE) for more details.
+Once approved:
 
-## Contact Information
+1. Fork the repository.
+2. Create a feature branch.
+3. Make and test your changes.
+4. Rebase your branch on the latest `main` branch.
+5. Open a pull request linked to the relevant issue.
 
-### Customers & Employees
+</details>
 
-- [Become a Canyon GBS Customer](https://canyongbs.com/work-with-us)
-- [Become a Canyon GBS Employee](https://canyongbs.com/our-mission/work-culture/)
+<br />
 
-### Web & Social Media
+<details>
+<summary><strong>License</strong></summary>
 
-- [Canyon GBS on the Web](https://canyongbs.com)
-- [Canyon GBS on Twitter](https://twitter.com/canyongbs)
-- [Canyon GBS on LinkedIn](https://linkedin.com/company/canyongbs)
+<br />
 
-## Acknowledgments
+Copyright © Canyon GBS Inc.
 
-We want to extend a special think you to the Postsecondary Success team at the [Bill & Melinda Gates Foundation](https://www.gatesfoundation.org/our-work/programs/us-program/postsecondary-success).
-\
-\
-The creation and successful release of this ambitious project would not have been possible without their support.
+Advising App is source available under the [Elastic License 2.0](./LICENSE).
 
-<p align="right">(<a href="#top">back to top</a>)</p>
+</details>
+
+<br />
+
+<details>
+<summary><strong>Acknowledgments</strong></summary>
+
+<br />
+
+Special thanks to the Postsecondary Success team at the [Gates Foundation](https://www.gatesfoundation.org/our-work/programs/us-program/postsecondary-success) for supporting the creation and release of Advising App.
+
+</details>
+
+<br />
+
+---
+
+<br />
+
+<div align="center">
+
+### Advising App® by [Canyon GBS®](https://canyongbs.com/)
+
+Trusted technology for organizations that serve the public good.
+
+<br />
+
+[**Website**](https://canyongbs.com/) ·
+[**LinkedIn**](https://www.linkedin.com/company/canyongbs) ·
+[**Canyon GBS on X**](https://x.com/canyongbs)
+
+<br />
+
+</div>
 
 <!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[contributors-shield]: https://img.shields.io/github/contributors/canyongbs/advisingapp.svg?style=for-the-badge
+[contributors-shield]: https://img.shields.io/github/contributors/canyongbs/advisingapp?style=flat-square&label=Contributors
 [contributors-url]: https://github.com/canyongbs/advisingapp/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/canyongbs/advisingapp.svg?style=for-the-badge
-[forks-url]: https://github.com/canyongbs/advisingapp/network/members
-[stars-shield]: https://img.shields.io/github/stars/canyongbs/advisingapp.svg?style=for-the-badge
+[stars-shield]: https://img.shields.io/github/stars/canyongbs/advisingapp?style=flat-square&label=Stars
 [stars-url]: https://github.com/canyongbs/advisingapp/stargazers
-[issues-shield]: https://img.shields.io/github/issues/canyongbs/advisingapp.svg?style=for-the-badge
-[issues-url]: https://github.com/canyongbs/advisingapp/issues
-
-<!-- [license-shield]: https://img.shields.io/github/license/canyongbs/advisingapp.svg?style=for-the-badge -->
-
+[license-shield]: https://img.shields.io/badge/License-Elastic%202.0-4c8da6?style=flat-square
 [license-url]: https://github.com/canyongbs/advisingapp/blob/main/LICENSE
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=for-the-badge&logo=linkedin&colorB=555
-[linkedin-url]: https://www.linkedin.com/company/canyongbs
+[tailwind-shield]: https://img.shields.io/badge/Tailwind_CSS-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white
+[tailwind-url]: https://tailwindcss.com/
+[alpine-shield]: https://img.shields.io/badge/Alpine.js-8BC0D0?style=flat-square&logo=alpinedotjs&logoColor=white
+[alpine-url]: https://alpinejs.dev/
+[laravel-stack-shield]: https://img.shields.io/badge/Laravel-FF2D20?style=flat-square&logo=laravel&logoColor=white
+[laravel-url]: https://laravel.com/
+[livewire-shield]: https://img.shields.io/badge/Livewire-4E56A6?style=flat-square&logo=livewire&logoColor=white
+[livewire-url]: https://livewire.laravel.com/
+[filament-shield]: https://img.shields.io/badge/Filament-FDAE4B?style=flat-square&logo=filament&logoColor=black
+[filament-url]: https://filamentphp.com/
