@@ -361,7 +361,7 @@ it('shows the delete bulk action for users with the delete permission', function
 it('can filter basic needs program by `program category`', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
     $basicNeedsPrograms = BasicNeedsProgram::factory()->count(10)->create();
-    $basic_needs_category_id = $basicNeedsPrograms->first()->basic_needs_category_id;
+    $basicNeedsCategoryId = $basicNeedsPrograms->first()->basic_needs_category_id;
 
     actingAs($user)
         ->get(
@@ -373,9 +373,9 @@ it('can filter basic needs program by `program category`', function () {
     livewire(ListBasicNeedsPrograms::class)
         ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($basicNeedsPrograms)
-        ->filterTable('basic_category_id', $basic_needs_category_id)
-        ->assertCanSeeTableRecords($basicNeedsPrograms->where('basic_needs_category_id', $basic_needs_category_id))
-        ->assertCanNotSeeTableRecords($basicNeedsPrograms->where('basic_needs_category_id', '!=', $basic_needs_category_id));
+        ->filterTable('basic_category_id', $basicNeedsCategoryId)
+        ->assertCanSeeTableRecords($basicNeedsPrograms->where('basic_needs_category_id', $basicNeedsCategoryId))
+        ->assertCanNotSeeTableRecords($basicNeedsPrograms->where('basic_needs_category_id', '!=', $basicNeedsCategoryId));
 });
 
 it('is gated with proper access control', function () {
