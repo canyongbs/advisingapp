@@ -89,7 +89,7 @@ class CreateUser extends CreateRecord
 
                                 if ($azureSsoSettings || $googleSsoSettings) {
                                     $component->state(true);
-                                    $this->mountAction('showSSOModal');
+                                    $this->mountAction('showSsoModal');
                                 }
 
                                 return null;
@@ -105,7 +105,7 @@ class CreateUser extends CreateRecord
             ]);
     }
 
-    public function showSSOModal(): Action
+    public function showSsoModal(): Action
     {
         return Action::make('Warning')
             ->action(fn () => $this->data['is_external'] = false)

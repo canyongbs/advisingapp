@@ -43,6 +43,8 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\seed;
@@ -218,4 +220,118 @@ it('archive bulk action archives all selected applications', function () {
 
     expect($applicationWithSubmissions->fresh()->archived_at)->not->toBeNull();
     expect($applicationWithoutSubmissions->fresh()->archived_at)->not->toBeNull();
+});
+
+describe('duplication', function () {
+    beforeEach(function () {
+        seed(ApplicationSubmissionStateSeeder::class);
+
+        asSuperAdmin();
+    });
+
+    it('can duplicate an application its steps and its fields', function () {
+        $application = Application::factory()->create();
+
+        expect(Application::count())->toBe(1);
+
+        livewire(ListApplications::class)
+            ->callAction(TestAction::make('Duplicate')->table($application))
+            ->assertHasNoFormErrors();
+
+        $duplicatedApplication = Application::query()->whereKeyNot($application->getKey())->firstOrFail();
+
+        expect(Application::count())->toBe(2)
+            ->and($duplicatedApplication->name)->toBe("Copy - {$application->name}")
+            ->and($duplicatedApplication->fields()->count())->toBe($application->fields()->count())
+            ->and($duplicatedApplication->steps()->count())->toBe($application->steps()->count());
+    });
+
+    it('does not duplicate application submissions', function () {
+        $application = Application::factory()->create();
+
+        $submissionCount = ApplicationSubmission::count();
+
+        expect($submissionCount)->toBeGreaterThan(0);
+
+        livewire(ListApplications::class)
+            ->callAction(TestAction::make('Duplicate')->table($application))
+            ->assertHasNoFormErrors();
+
+        $duplicatedApplication = Application::query()->whereKeyNot($application->getKey())->firstOrFail();
+
+        expect(ApplicationSubmission::count())->toBe($submissionCount)
+            ->and($duplicatedApplication->submissions()->count())->toBe(0);
+    });
+
+    it('gives a duplicated application its own version tree rather than sharing the original', function () {
+        $application = Application::factory()->create();
+
+        livewire(ListApplications::class)
+            ->callAction(TestAction::make('Duplicate')->table($application))
+            ->assertHasNoFormErrors();
+
+        $duplicatedApplication = Application::query()->whereKeyNot($application->getKey())->firstOrFail();
+
+        expect($duplicatedApplication->root_id)->toBe($duplicatedApplication->getKey())
+            ->and($duplicatedApplication->root_id)->not->toBe($application->root_id)
+            ->and($duplicatedApplication->latestVersion()?->is($duplicatedApplication))->toBeTrue()
+            ->and($application->latestVersion()?->is($application))->toBeTrue();
+    });
+
+    it('does not show the original application submissions count on the duplicated application', function () {
+        $application = Application::factory()->create();
+
+        $submissionCount = $application->submissions()->count();
+
+        expect($submissionCount)->toBeGreaterThan(0);
+
+        livewire(ListApplications::class)
+            ->callAction(TestAction::make('Duplicate')->table($application))
+            ->assertHasNoFormErrors();
+
+        $duplicatedApplication = Application::query()->whereKeyNot($application->getKey())->firstOrFail();
+
+        livewire(ListApplications::class)
+            ->assertTableColumnStateSet('submissions_count', $submissionCount, record: $application)
+            ->assertTableColumnStateSet('submissions_count', 0, record: $duplicatedApplication);
+    });
+
+    it('copies the application and step content images to the duplicated application', function () {
+        Storage::fake('s3-public');
+
+        $application = Application::factory()->create();
+
+        $applicationImage = $application->addMedia(UploadedFile::fake()->image('application.png'))->toMediaCollection('content', 's3-public');
+        $applicationContent = $application->content;
+        $applicationContent['content'][] = ['type' => 'image', 'attrs' => ['id' => $applicationImage->uuid]];
+        $application->update(['content' => $applicationContent]);
+
+        $step = $application->steps()->create(['label' => 'Step 1', 'sort' => 1, 'content' => ['type' => 'doc', 'content' => []]]);
+        $stepImage = $step->addMedia(UploadedFile::fake()->image('step.png'))->toMediaCollection('content', 's3-public');
+        $step->update(['content' => ['type' => 'doc', 'content' => [['type' => 'image', 'attrs' => ['id' => $stepImage->uuid]]]]]);
+
+        livewire(ListApplications::class)
+            ->callAction(TestAction::make('Duplicate')->table($application))
+            ->assertHasNoFormErrors();
+
+        $duplicatedApplication = Application::query()->whereKeyNot($application->getKey())->firstOrFail();
+        $duplicatedStep = $duplicatedApplication->steps()->firstOrFail();
+
+        $duplicatedApplicationImage = $duplicatedApplication->getFirstMedia('content');
+        $duplicatedStepImage = $duplicatedStep->getFirstMedia('content');
+
+        expect($duplicatedApplicationImage)->not->toBeNull()
+            ->and($duplicatedApplicationImage->uuid)->not->toBe($applicationImage->uuid)
+            ->and(json_encode($duplicatedApplication->content))->toContain($duplicatedApplicationImage->uuid)->not->toContain($applicationImage->uuid)
+            ->and($duplicatedStepImage)->not->toBeNull()
+            ->and($duplicatedStepImage->uuid)->not->toBe($stepImage->uuid)
+            ->and(json_encode($duplicatedStep->content))->toContain($duplicatedStepImage->uuid)->not->toContain($stepImage->uuid)
+            ->and($application->refresh()->getMedia('content')->pluck('uuid')->all())->toBe([$applicationImage->uuid])
+            ->and(json_encode($application->content))->toContain($applicationImage->uuid)
+            ->and($step->refresh()->getMedia('content')->pluck('uuid')->all())->toBe([$stepImage->uuid])
+            ->and(json_encode($step->content))->toContain($stepImage->uuid);
+
+        Storage::disk('s3-public')->assertExists($duplicatedApplicationImage->getPathRelativeToRoot());
+        Storage::disk('s3-public')->assertExists($duplicatedStepImage->getPathRelativeToRoot());
+    });
 });

@@ -53,6 +53,8 @@ class DuplicateEvent
         $stepMap = $this->replicateSteps();
         $fieldMap = $this->replicateFields($stepMap);
         $this->updateStepContent($fieldMap);
+        $this->replicateDescriptionMedia();
+        $this->replicateHeroImage();
     }
 
     private function replicateEventRegistrationForm(): void
@@ -107,6 +109,45 @@ class DuplicateEvent
                 'content' => $this->replaceIdsInContent($content, $fieldMap),
             ]);
         });
+    }
+
+    private function replicateDescriptionMedia(): void
+    {
+        $mediaUuidMap = [];
+
+        foreach ($this->original->getMedia('description') as $media) {
+            $mediaUuidMap[$media->uuid] = $media->copy($this->replica, 'description', 's3-public')->uuid;
+        }
+
+        if ($mediaUuidMap === []) {
+            return;
+        }
+
+        $this->replica->description = $this->remapMediaUuids($this->replica->description, $mediaUuidMap);
+        $this->replica->save();
+    }
+
+    private function replicateHeroImage(): void
+    {
+        $this->original->getFirstMedia('hero_image')?->copy($this->replica, 'hero_image', 's3-public');
+    }
+
+    /**
+     * @param array<string, mixed>|null $content
+     * @param array<string, string> $mediaUuidMap
+     *
+     * @return array<string, mixed>|null
+     */
+    private function remapMediaUuids(?array $content, array $mediaUuidMap): ?array
+    {
+        if (! $content) {
+            return $content;
+        }
+
+        $json = json_encode($content);
+        $json = str_replace(array_keys($mediaUuidMap), array_values($mediaUuidMap), $json);
+
+        return json_decode($json, true);
     }
 
     private function replaceIdsInContent(&$content, $fieldMap)

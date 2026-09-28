@@ -37,10 +37,13 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ListForms;
 use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Form\Models\FormEmailAutoReply;
 use AdvisingApp\Form\Models\FormSubmission;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -255,4 +258,99 @@ it('archive bulk action archives all selected forms', function () {
 
     expect($formWithSubmissions->fresh()->archived_at)->not->toBeNull();
     expect($formWithoutSubmissions->fresh()->archived_at)->not->toBeNull();
+});
+
+describe('duplication', function () {
+    beforeEach(function () {
+        asSuperAdmin();
+    });
+
+    it('gives a duplicated form its own version tree rather than sharing the original', function () {
+        $form = Form::factory()->create();
+
+        livewire(ListForms::class)
+            ->callAction(TestAction::make('Duplicate')->table($form))
+            ->assertHasNoFormErrors();
+
+        $duplicatedForm = Form::query()->whereKeyNot($form->getKey())->firstOrFail();
+
+        expect($duplicatedForm->root_id)->toBe($duplicatedForm->getKey())
+            ->and($duplicatedForm->root_id)->not->toBe($form->root_id);
+    });
+
+    it('does not show the original form submissions count on the duplicated form', function () {
+        $form = Form::factory()->create();
+
+        FormSubmission::factory()->count(3)->create([
+            'form_id' => $form->getKey(),
+            'submitted_at' => now(),
+        ]);
+
+        livewire(ListForms::class)
+            ->callAction(TestAction::make('Duplicate')->table($form))
+            ->assertHasNoFormErrors();
+
+        $duplicatedForm = Form::query()->whereKeyNot($form->getKey())->firstOrFail();
+
+        livewire(ListForms::class)
+            ->assertTableColumnStateSet('submissions_count', 3, record: $form)
+            ->assertTableColumnStateSet('submissions_count', 0, record: $duplicatedForm);
+    });
+
+    it('copies the email auto reply to the duplicated form without adding one to the original', function () {
+        $form = Form::factory()->create();
+
+        $subject = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Thanks for submitting']]]]];
+        $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'We received your submission.']]]]];
+
+        $form->emailAutoReply()->updateOrCreate([], [
+            'subject' => $subject,
+            'body' => $body,
+            'is_enabled' => true,
+        ]);
+
+        expect(FormEmailAutoReply::query()->where('form_id', $form->getKey())->count())->toBe(1);
+
+        livewire(ListForms::class)
+            ->callAction(TestAction::make('Duplicate')->table($form))
+            ->assertHasNoFormErrors();
+
+        $duplicatedForm = Form::query()->whereKeyNot($form->getKey())->firstOrFail();
+        $duplicatedEmailAutoReply = $duplicatedForm->emailAutoReply;
+
+        expect(FormEmailAutoReply::query()->where('form_id', $form->getKey())->count())->toBe(1)
+            ->and(FormEmailAutoReply::query()->where('form_id', $duplicatedForm->getKey())->count())->toBe(1)
+            ->and($duplicatedEmailAutoReply?->subject)->toEqual($subject)
+            ->and($duplicatedEmailAutoReply?->body)->toEqual($body)
+            ->and($duplicatedEmailAutoReply?->is_enabled)->toBeTrue();
+    });
+
+    it('copies the email auto reply images to the duplicated form', function () {
+        Storage::fake('s3-public');
+
+        $form = Form::factory()->create();
+
+        $emailAutoReply = $form->emailAutoReply()->firstOrFail();
+        $image = $emailAutoReply->addMedia(UploadedFile::fake()->image('logo.png'))->toMediaCollection('body', 's3-public');
+        $emailAutoReply->update([
+            'body' => ['type' => 'doc', 'content' => [['type' => 'image', 'attrs' => ['id' => $image->uuid]]]],
+            'is_enabled' => true,
+        ]);
+
+        livewire(ListForms::class)
+            ->callAction(TestAction::make('Duplicate')->table($form))
+            ->assertHasNoFormErrors();
+
+        $duplicatedForm = Form::query()->whereKeyNot($form->getKey())->firstOrFail();
+        $duplicatedEmailAutoReply = $duplicatedForm->emailAutoReply()->firstOrFail();
+        $duplicatedImage = $duplicatedEmailAutoReply->getFirstMedia('body');
+
+        expect($duplicatedImage)->not->toBeNull()
+            ->and($duplicatedImage->uuid)->not->toBe($image->uuid)
+            ->and(json_encode($duplicatedEmailAutoReply->body))->toContain($duplicatedImage->uuid)->not->toContain($image->uuid)
+            ->and($emailAutoReply->refresh()->getMedia('body')->pluck('uuid')->all())->toBe([$image->uuid])
+            ->and(json_encode($emailAutoReply->body))->toContain($image->uuid);
+
+        Storage::disk('s3-public')->assertExists($duplicatedImage->getPathRelativeToRoot());
+    });
 });
