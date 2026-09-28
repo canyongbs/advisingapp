@@ -34,57 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace App\Enums;
-
-use App\Models\Authenticatable;
+use AdvisingApp\Ai\Models\DataAdvisor;
+use App\Models\User;
 use App\Settings\LicenseSettings;
+use App\Support\FeatureAccessResponse;
 use Illuminate\Support\Facades\Gate;
 
-enum Feature: string
-{
-    case OnlineForms = 'online-forms';
+use function Pest\Laravel\actingAs;
+use function Tests\setEnterpriseAiEnabled;
 
-    case OnlineSurveys = 'online-surveys';
+describe('enterprise ai', function () {
+    it('denies access to data advisors while Enterprise AI is disabled', function () {
+        $licenseSettings = app(LicenseSettings::class);
+        $licenseSettings->data->addons->dataAdvisor = true;
+        $licenseSettings->save();
 
-    case OnlineAdmissions = 'online-admissions';
+        actingAs(User::factory()->create());
 
-    case ResourceHub = 'resource-hub';
+        expect(Gate::inspect('viewAny', DataAdvisor::class))->not->toBeInstanceOf(FeatureAccessResponse::class);
 
-    case SupportPrograms = 'support-programs';
+        setEnterpriseAiEnabled(false);
 
-    case EventManagement = 'event-management';
-
-    case RealtimeChat = 'realtime-chat';
-
-    case MobileApps = 'mobile-apps';
-
-    case ScheduleAndAppointments = 'schedule-and-appointments';
-
-    case EmployeeAdvisors = 'employee-advisors';
-
-    case ResearchAdvisor = 'research-advisor';
-
-    case CustomerAdvisors = 'customer-advisors';
-
-    case DataAdvisor = 'data-advisor';
-
-    case EarlyAlert = 'early-alert';
-
-    case PublicProfiles = 'public-profiles';
-
-    case EnterpriseAi = 'enterprise-ai';
-
-    public function generateGate(): void
-    {
-        // If features are added that are not based on a License Addon we will need to update this
-        Gate::define(
-            $this->getGateName(),
-            fn (?Authenticatable $authenticatable) => app(LicenseSettings::class)->data->addons->{str($this->value)->camel()}
-        );
-    }
-
-    public function getGateName(): string
-    {
-        return "feature-{$this->value}";
-    }
-}
+        expect(Gate::inspect('viewAny', DataAdvisor::class))->toBeInstanceOf(FeatureAccessResponse::class)
+            ->and(Gate::inspect('viewAny', DataAdvisor::class)->denied())->toBeTrue();
+    });
+});

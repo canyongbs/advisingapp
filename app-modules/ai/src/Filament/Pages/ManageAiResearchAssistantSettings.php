@@ -40,12 +40,14 @@ use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Enums\AiResearchReasoningEffort;
 use AdvisingApp\Ai\Settings\AiResearchAssistantSettings;
+use App\Enums\Feature;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Pages\SettingsPage;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class ManageAiResearchAssistantSettings extends SettingsPage
@@ -62,6 +64,10 @@ class ManageAiResearchAssistantSettings extends SettingsPage
 
     public static function canAccess(): bool
     {
+        if (! Gate::check(Feature::EnterpriseAi->getGateName())) {
+            return false;
+        }
+
         $user = auth()->user();
 
         assert($user instanceof User);

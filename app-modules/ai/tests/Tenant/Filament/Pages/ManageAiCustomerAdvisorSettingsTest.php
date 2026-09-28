@@ -34,57 +34,24 @@
 </COPYRIGHT>
 */
 
-namespace App\Enums;
+use AdvisingApp\Ai\Filament\Pages\ManageAiCustomerAdvisorSettings;
 
-use App\Models\Authenticatable;
-use App\Settings\LicenseSettings;
-use Illuminate\Support\Facades\Gate;
+use function Pest\Laravel\get;
+use function Tests\asSuperAdmin;
+use function Tests\setEnterpriseAiEnabled;
 
-enum Feature: string
-{
-    case OnlineForms = 'online-forms';
+describe('authorization', function () {
+    it('allows a super admin to access the page', function () {
+        asSuperAdmin();
 
-    case OnlineSurveys = 'online-surveys';
+        get(ManageAiCustomerAdvisorSettings::getUrl())->assertSuccessful();
+    });
 
-    case OnlineAdmissions = 'online-admissions';
+    it('denies a super admin access to the page while Enterprise AI is disabled', function () {
+        asSuperAdmin();
 
-    case ResourceHub = 'resource-hub';
+        setEnterpriseAiEnabled(false);
 
-    case SupportPrograms = 'support-programs';
-
-    case EventManagement = 'event-management';
-
-    case RealtimeChat = 'realtime-chat';
-
-    case MobileApps = 'mobile-apps';
-
-    case ScheduleAndAppointments = 'schedule-and-appointments';
-
-    case EmployeeAdvisors = 'employee-advisors';
-
-    case ResearchAdvisor = 'research-advisor';
-
-    case CustomerAdvisors = 'customer-advisors';
-
-    case DataAdvisor = 'data-advisor';
-
-    case EarlyAlert = 'early-alert';
-
-    case PublicProfiles = 'public-profiles';
-
-    case EnterpriseAi = 'enterprise-ai';
-
-    public function generateGate(): void
-    {
-        // If features are added that are not based on a License Addon we will need to update this
-        Gate::define(
-            $this->getGateName(),
-            fn (?Authenticatable $authenticatable) => app(LicenseSettings::class)->data->addons->{str($this->value)->camel()}
-        );
-    }
-
-    public function getGateName(): string
-    {
-        return "feature-{$this->value}";
-    }
-}
+        get(ManageAiCustomerAdvisorSettings::getUrl())->assertForbidden();
+    });
+});
