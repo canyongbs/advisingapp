@@ -38,7 +38,6 @@ use AdvisingApp\Ai\Actions\SyncTenantSmartPrompts;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Ai\Settings\AiSettings;
-use App\Features\PromptTitleUniquePerTypeFeature;
 use App\Http\Requests\Tenants\SyncTenantRequest;
 use Illuminate\Validation\ValidationException;
 
@@ -377,59 +376,4 @@ it('allows the same prompt title in different categories when title uniqueness i
     ]));
 
     expect(Prompt::find($promptId))->not->toBeNull();
-});
-
-it('rejects a prompt title that conflicts with a custom prompt in another category while per-type uniqueness is inactive', function () {
-    PromptTitleUniquePerTypeFeature::deactivate();
-
-    $existingPromptType = PromptType::factory()->create(['title' => 'Retention']);
-    Prompt::factory()->create([
-        'type_id' => $existingPromptType->getKey(),
-        'title' => 'Draft an email',
-        'is_smart' => false,
-    ]);
-
-    expect(fn () => app(SyncTenantSmartPrompts::class)->execute(syncTenantRequest([
-        'smartPrompts' => [
-            [
-                'title' => 'Recruitment',
-                'smart_prompts' => [
-                    [
-                        'id' => fake()->uuid(),
-                        'title' => 'Draft an email',
-                        'prompt' => 'Write an email to a prospect.',
-                    ],
-                ],
-            ],
-        ],
-    ])))->toThrow(ValidationException::class);
-});
-
-it('rejects duplicate incoming prompt titles across categories while per-type uniqueness is inactive', function () {
-    PromptTitleUniquePerTypeFeature::deactivate();
-
-    expect(fn () => app(SyncTenantSmartPrompts::class)->execute(syncTenantRequest([
-        'smartPrompts' => [
-            [
-                'title' => 'Recruitment',
-                'smart_prompts' => [
-                    [
-                        'id' => fake()->uuid(),
-                        'title' => 'Draft an email',
-                        'prompt' => 'Write an email to a prospect.',
-                    ],
-                ],
-            ],
-            [
-                'title' => 'Retention',
-                'smart_prompts' => [
-                    [
-                        'id' => fake()->uuid(),
-                        'title' => 'DRAFT AN EMAIL',
-                        'prompt' => 'Write an email to a student.',
-                    ],
-                ],
-            ],
-        ],
-    ])))->toThrow(ValidationException::class);
 });

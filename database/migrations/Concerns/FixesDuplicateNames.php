@@ -41,6 +41,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
+/** @phpstan-ignore trait.unused */
 trait FixesDuplicateNames
 {
     /**

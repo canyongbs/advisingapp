@@ -40,7 +40,6 @@ use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Ai\Models\Scopes\ConfidentialPromptScope;
 use AdvisingApp\Ai\Settings\AiSettings;
-use App\Features\PromptTitleUniquePerTypeFeature;
 use App\Http\Requests\Tenants\SyncTenantRequest;
 use Closure;
 use Illuminate\Database\Query\Expression;
@@ -147,8 +146,6 @@ class SyncTenantSmartPrompts
     private function assertNoTitleConflicts(array $smartPrompts): void
     {
         $errors = [];
-        $incomingTitles = [];
-        $titleIsUniquePerType = PromptTitleUniquePerTypeFeature::active();
 
         foreach ($smartPrompts as $categoryIndex => $smartPromptCategory) {
             assert(is_array($smartPromptCategory));
@@ -161,28 +158,17 @@ class SyncTenantSmartPrompts
                 $title = (string) ($smartPrompt['title'] ?? '');
                 $normalizedTitle = mb_strtolower($title);
 
-                if (! $titleIsUniquePerType && in_array($normalizedTitle, $incomingTitles, true)) {
-                    $errors["smartPrompts.{$categoryIndex}.smart_prompts.{$promptIndex}.title"] = 'The smart prompt title must be unique across all categories.';
-                }
-
-                $incomingTitles[] = $normalizedTitle;
-
-                if ($titleIsUniquePerType && ! $promptType) {
+                if (! $promptType) {
                     continue;
                 }
 
                 $conflictingCustomPrompts = Prompt::withoutGlobalScope(ConfidentialPromptScope::class)
                     ->where('is_smart', false)
-                    ->where(new Expression('lower(title)'), $normalizedTitle);
-
-                if ($titleIsUniquePerType) {
-                    $conflictingCustomPrompts->where('type_id', $promptType->getKey());
-                }
+                    ->where(new Expression('lower(title)'), $normalizedTitle)
+                    ->where('type_id', $promptType->getKey());
 
                 if ($conflictingCustomPrompts->exists()) {
-                    $errors["smartPrompts.{$categoryIndex}.smart_prompts.{$promptIndex}.title"] = $titleIsUniquePerType
-                        ? 'The smart prompt title conflicts with an existing custom prompt in this category.'
-                        : 'The smart prompt title conflicts with an existing custom prompt.';
+                    $errors["smartPrompts.{$categoryIndex}.smart_prompts.{$promptIndex}.title"] = 'The smart prompt title conflicts with an existing custom prompt in this category.';
                 }
             }
         }
