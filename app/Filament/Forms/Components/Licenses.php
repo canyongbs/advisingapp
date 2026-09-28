@@ -57,11 +57,13 @@ class Licenses extends Section
                 'md' => 3,
             ])
             ->collapsible()
-            ->schema([
-                $this->generateBlockForLicenseType(LicenseType::ConversationalAi),
-                $this->generateBlockForLicenseType(LicenseType::RetentionCrm),
-                $this->generateBlockForLicenseType(LicenseType::RecruitmentCrm),
-            ]);
+            ->schema(
+                collect(LicenseType::cases())
+                    ->filter(fn (LicenseType $licenseType): bool => $licenseType->isEnabled())
+                    ->map(fn (LicenseType $licenseType): Fieldset => $this->generateBlockForLicenseType($licenseType))
+                    ->values()
+                    ->all()
+            );
     }
 
     private function generateBlockForLicenseType(LicenseType $licenseType): Fieldset

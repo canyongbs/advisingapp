@@ -183,6 +183,8 @@ class ManageLicenseSettings extends SettingsPage
                                 ->label('Early Alert'),
                             Toggle::make('data.addons.publicProfiles')
                                 ->label('Public Profiles'),
+                            Toggle::make('data.addons.enterpriseAi')
+                                ->label('Enterprise AI'),
                         ]
                     ),
             ])

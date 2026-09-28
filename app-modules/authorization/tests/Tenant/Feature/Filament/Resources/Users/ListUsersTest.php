@@ -53,6 +53,7 @@ use function PHPUnit\Framework\assertTrue;
 use STS\FilamentImpersonate\Actions\Impersonate;
 
 use function Tests\asSuperAdmin;
+use function Tests\setEnterpriseAiEnabled;
 
 it('renders impersonate button for non super admin users when user is super admin', function () {
     asSuperAdmin();
@@ -494,4 +495,36 @@ it('Filter users based on Created After', function () {
         ->filterTable('created_after', ['created_at' => '11/20/2024 23:00:00'])
         ->assertCanSeeTableRecords($createdAfterUsers)
         ->assertCanNotSeeTableRecords($createdBeforeUsers);
+});
+
+describe('enterprise ai', function () {
+    it('hides the `ConversationalAi` license column while Enterprise AI is disabled', function () {
+        asSuperAdmin();
+
+        livewire(ListUsers::class)
+            ->assertTableColumnVisible(LicenseType::ConversationalAi->value . '_enabled');
+
+        setEnterpriseAiEnabled(false);
+
+        livewire(ListUsers::class)
+            ->assertTableColumnHidden(LicenseType::ConversationalAi->value . '_enabled')
+            ->assertTableColumnVisible(LicenseType::RetentionCrm->value . '_enabled');
+    });
+
+    it('excludes the `ConversationalAi` license from the license filter while Enterprise AI is disabled', function () {
+        asSuperAdmin();
+
+        $licenseFilterOptions = fn (): array => livewire(ListUsers::class)
+            ->instance()
+            ->getTable()
+            ->getFilter('licenses')
+            ->getOptions()['Licenses'];
+
+        expect($licenseFilterOptions())->toHaveKey(LicenseType::ConversationalAi->value);
+
+        setEnterpriseAiEnabled(false);
+
+        expect($licenseFilterOptions())->not->toHaveKey(LicenseType::ConversationalAi->value)
+            ->toHaveKeys([LicenseType::RetentionCrm->value, LicenseType::RecruitmentCrm->value]);
+    });
 });

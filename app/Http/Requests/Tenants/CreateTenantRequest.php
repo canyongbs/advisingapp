@@ -76,6 +76,7 @@ class CreateTenantRequest extends FormRequest
             'addons.dataAdvisor' => ['required', 'boolean'],
             'addons.earlyAlert' => ['required', 'boolean'],
             'addons.publicProfiles' => ['required', 'boolean'],
+            'addons.enterpriseAi' => ['sometimes', 'boolean'], // TODO: Cleanup Task (enterprise-ai): make this required
             'subscription' => ['required', 'array'],
             'subscription.clientName' => ['required', 'string'],
             'subscription.partnerName' => ['required', 'string'],

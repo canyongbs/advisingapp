@@ -37,10 +37,12 @@
 namespace AdvisingApp\Authorization\Enums;
 
 use AdvisingApp\Authorization\Models\License;
+use App\Enums\Feature;
 use App\Models\Authenticatable;
 use App\Settings\LicenseSettings;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Gate;
 
 enum LicenseType: string implements HasLabel
 {
@@ -69,8 +71,25 @@ enum LicenseType: string implements HasLabel
         return $this->getSeats() > 0;
     }
 
+    /**
+     * Whether the subscription feature this license type belongs to is enabled.
+     * A disabled license type is treated as having no seats and is not held by any user,
+     * while existing license records are preserved so access returns when it is re-enabled.
+     */
+    public function isEnabled(): bool
+    {
+        return match ($this) {
+            LicenseType::ConversationalAi => Gate::check(Feature::EnterpriseAi->getGateName()),
+            LicenseType::RetentionCrm, LicenseType::RecruitmentCrm => true,
+        };
+    }
+
     public function getSeats(): int
     {
+        if (! $this->isEnabled()) {
+            return 0;
+        }
+
         $licenseSettings = app(LicenseSettings::class);
 
         return match ($this) {
