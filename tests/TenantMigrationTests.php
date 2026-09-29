@@ -36,6 +36,11 @@
 
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\MeetingCenter\Models\BookingGroup;
+use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -61,6 +66,59 @@ use Illuminate\Support\Str;
 //        );
 //    });
 //});
+
+test('2026_09_23_154333_add_calendar_event_id_to_booking_group_appointments_table backfills legacy event links', function () {
+    isolatedMigration(
+        '2026_09_23_154333_add_calendar_event_id_to_booking_group_appointments_table',
+        function () {
+            $owner = User::factory()
+                ->has(Calendar::factory())
+                ->create();
+            $otherOwner = User::factory()
+                ->has(Calendar::factory())
+                ->create();
+            $bookingGroup = BookingGroup::factory()->create([
+                'meeting_owner_id' => $owner->id,
+            ]);
+            $startsAt = now()->addDay()->startOfHour();
+            $endsAt = $startsAt->copy()->addHour();
+
+            $event = CalendarEvent::factory()
+                ->for($owner->calendar)
+                ->createQuietly([
+                    'provider_uid' => 'shared-provider-uid',
+                    'starts_at' => $startsAt,
+                    'ends_at' => $endsAt,
+                ]);
+
+            CalendarEvent::factory()
+                ->for($otherOwner->calendar)
+                ->createQuietly([
+                    'provider_uid' => 'shared-provider-uid',
+                    'starts_at' => $startsAt,
+                    'ends_at' => $endsAt,
+                ]);
+
+            $appointment = BookingGroupAppointment::factory()
+                ->for($bookingGroup)
+                ->create([
+                    'calendar_event_provider_uid' => 'shared-provider-uid',
+                    'starts_at' => $startsAt,
+                    'ends_at' => $endsAt,
+                ]);
+
+            $migrate = Artisan::call('migrate', [
+                '--path' => 'app-modules/meeting-center/database/migrations/2026_09_23_154333_add_calendar_event_id_to_booking_group_appointments_table.php',
+            ]);
+
+            expect($migrate)->toBe(Command::SUCCESS)
+                ->and(DB::table('booking_group_appointments')
+                    ->where('id', $appointment->id)
+                    ->value('calendar_event_id'))
+                ->toBe($event->id);
+        }
+    );
+});
 
 test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements_table renames column and backfills source_type', function () {
     isolatedMigration(

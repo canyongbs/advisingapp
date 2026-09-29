@@ -51,6 +51,33 @@ return new class () extends Migration {
                     ->nullOnDelete();
             });
 
+            DB::statement(<<<'SQL'
+                WITH matching_events AS (
+                    SELECT
+                        booking_group_appointments.id AS appointment_id,
+                        MIN(calendar_events.id::text)::uuid AS calendar_event_id
+                    FROM booking_group_appointments
+                    INNER JOIN booking_groups
+                        ON booking_groups.id = booking_group_appointments.booking_group_id
+                    INNER JOIN calendars
+                        ON calendars.user_id = COALESCE(
+                            booking_group_appointments.meeting_owner_id,
+                            booking_groups.meeting_owner_id
+                        )
+                    INNER JOIN calendar_events
+                        ON calendar_events.calendar_id = calendars.id
+                        AND calendar_events.provider_uid = booking_group_appointments.calendar_event_provider_uid
+                    WHERE booking_group_appointments.calendar_event_id IS NULL
+                        AND booking_group_appointments.calendar_event_provider_uid IS NOT NULL
+                    GROUP BY booking_group_appointments.id
+                    HAVING COUNT(*) = 1
+                )
+                UPDATE booking_group_appointments
+                SET calendar_event_id = matching_events.calendar_event_id
+                FROM matching_events
+                WHERE booking_group_appointments.id = matching_events.appointment_id
+                SQL);
+
             CalendarFaultTolerantFeature::activate();
         });
     }
