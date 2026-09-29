@@ -87,4 +87,37 @@ enum Feature: string
     {
         return "feature-{$this->value}";
     }
+
+    /**
+     * @return array<string>
+     */
+    public function getPermissionGroupNames(): array
+    {
+        return match ($this) {
+            Feature::EnterpriseAi => [
+                'Assistant',
+                'Assistant Chat Message Log',
+                'Assistant Custom',
+                'Customer Advisor',
+                'Customer Advisor Embed',
+                'Data Advisor',
+                'Prompt',
+                'Research Advisor',
+            ],
+            default => [],
+        };
+    }
+
+    /**
+     * @return array<string>
+     */
+    public static function getDisabledPermissionGroupNames(): array
+    {
+        return collect(Feature::cases())
+            ->reject(fn (Feature $feature): bool => Gate::check($feature->getGateName()))
+            ->flatMap(fn (Feature $feature): array => $feature->getPermissionGroupNames())
+            ->unique()
+            ->values()
+            ->all();
+    }
 }

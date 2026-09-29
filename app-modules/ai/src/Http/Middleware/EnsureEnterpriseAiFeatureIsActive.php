@@ -34,33 +34,29 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Http\Controllers\Advisors\CompleteResponseController;
-use AdvisingApp\Ai\Http\Controllers\Advisors\DownloadImageController;
-use AdvisingApp\Ai\Http\Controllers\Advisors\RetryMessageController;
-use AdvisingApp\Ai\Http\Controllers\Advisors\SendMessageController;
-use AdvisingApp\Ai\Http\Controllers\Advisors\ShowThreadController;
-use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\PreviewAdvisorEmbedController;
-use AdvisingApp\Ai\Http\Middleware\EnsureEnterpriseAiFeatureIsActive;
-use Illuminate\Support\Facades\Route;
+namespace AdvisingApp\Ai\Http\Middleware;
 
-Route::middleware(['web', 'auth', EnsureEnterpriseAiFeatureIsActive::class])
-    ->name('ai.')
-    ->group(function () {
-        Route::get('ai/advisors/threads/{thread}', ShowThreadController::class)
-            ->name('advisors.threads.show');
+use App\Enums\Feature;
+use Closure;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
+use Symfony\Component\HttpFoundation\Response;
 
-        Route::post('ai/advisors/threads/{thread}/messages', SendMessageController::class)
-            ->name('advisors.threads.messages.send');
+class EnsureEnterpriseAiFeatureIsActive
+{
+    /**
+     * @param  Closure(Request): (Response)  $next
+     */
+    public function handle(Request $request, Closure $next): Response
+    {
+        if (! Gate::check(Feature::EnterpriseAi->getGateName())) {
+            if ($request->expectsJson()) {
+                return response()->json(['error' => 'Enterprise AI is not enabled.'], Response::HTTP_FORBIDDEN);
+            }
 
-        Route::post('ai/advisors/threads/{thread}/messages/retry', RetryMessageController::class)
-            ->name('advisors.threads.messages.retry');
+            abort(Response::HTTP_FORBIDDEN);
+        }
 
-        Route::post('ai/advisors/threads/{thread}/messages/complete-response', CompleteResponseController::class)
-            ->name('advisors.threads.messages.complete-response');
-
-        Route::post('ai/advisors/threads/{thread}/download-image', DownloadImageController::class)
-            ->name('advisors.threads.download-image');
-
-        Route::get('ai/customer-advisors/{advisor}/preview-embed', PreviewAdvisorEmbedController::class)
-            ->name('customer-advisors.preview-embed');
-    });
+        return $next($request);
+    }
+}

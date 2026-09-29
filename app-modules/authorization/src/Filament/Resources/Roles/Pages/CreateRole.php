@@ -39,6 +39,7 @@ namespace AdvisingApp\Authorization\Filament\Resources\Roles\Pages;
 use AdvisingApp\Authorization\Enums\PermissionDescription;
 use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
 use AdvisingApp\Authorization\Models\PermissionGroup;
+use App\Enums\Feature;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -85,7 +86,8 @@ class CreateRole extends CreateRecord
                     ->guard(fn (Get $get): string => $get('guard_name'))
                     ->visible(fn (Get $get): bool => filled($get('guard_name')))
                     ->descriptions(PermissionDescription::cases())
-                    ->permissionGroupModel(PermissionGroup::class),
+                    ->permissionGroupModel(PermissionGroup::class)
+                    ->hiddenPermissionGroups(fn (): array => Feature::getDisabledPermissionGroupNames()),
             ]);
     }
 }
