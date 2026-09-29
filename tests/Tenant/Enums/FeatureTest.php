@@ -34,33 +34,18 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Http\Controllers\Advisors\CompleteResponseController;
-use AdvisingApp\Ai\Http\Controllers\Advisors\DownloadImageController;
-use AdvisingApp\Ai\Http\Controllers\Advisors\RetryMessageController;
-use AdvisingApp\Ai\Http\Controllers\Advisors\SendMessageController;
-use AdvisingApp\Ai\Http\Controllers\Advisors\ShowThreadController;
-use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\PreviewAdvisorEmbedController;
-use AdvisingApp\Ai\Http\Middleware\EnsureEnterpriseAiFeatureIsActive;
-use Illuminate\Support\Facades\Route;
+use App\Enums\Feature;
 
-Route::middleware(['web', 'auth', EnsureEnterpriseAiFeatureIsActive::class])
-    ->name('ai.')
-    ->group(function () {
-        Route::get('ai/advisors/threads/{thread}', ShowThreadController::class)
-            ->name('advisors.threads.show');
+use function Tests\setEnterpriseAiEnabled;
 
-        Route::post('ai/advisors/threads/{thread}/messages', SendMessageController::class)
-            ->name('advisors.threads.messages.send');
-
-        Route::post('ai/advisors/threads/{thread}/messages/retry', RetryMessageController::class)
-            ->name('advisors.threads.messages.retry');
-
-        Route::post('ai/advisors/threads/{thread}/messages/complete-response', CompleteResponseController::class)
-            ->name('advisors.threads.messages.complete-response');
-
-        Route::post('ai/advisors/threads/{thread}/download-image', DownloadImageController::class)
-            ->name('advisors.threads.download-image');
-
-        Route::get('ai/customer-advisors/{advisor}/preview-embed', PreviewAdvisorEmbedController::class)
-            ->name('customer-advisors.preview-embed');
+describe('permission groups', function () {
+    it('does not report any disabled permission groups while Enterprise AI is enabled', function () {
+        expect(array_intersect(Feature::getDisabledPermissionGroupNames(), Feature::EnterpriseAi->getPermissionGroupNames()))->toBeEmpty();
     });
+
+    it('reports the Enterprise AI permission groups as disabled while Enterprise AI is disabled', function () {
+        setEnterpriseAiEnabled(false);
+
+        expect(Feature::getDisabledPermissionGroupNames())->toContain(...Feature::EnterpriseAi->getPermissionGroupNames());
+    });
+});

@@ -50,6 +50,7 @@ use AdvisingApp\Ai\Http\Middleware\CustomerAdvisorAuthorization;
 use AdvisingApp\Ai\Http\Middleware\CustomerAdvisorWidgetCors;
 use AdvisingApp\Ai\Http\Middleware\EnsureCustomerAdvisorEmbedIsEnabled;
 use AdvisingApp\Ai\Http\Middleware\EnsureCustomerAdvisorRequestComingFromAuthorizedDomain;
+use AdvisingApp\Ai\Http\Middleware\EnsureEnterpriseAiFeatureIsActive;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
 use App\Http\Middleware\EncryptCookies;
 use Illuminate\Http\Request;
@@ -142,6 +143,7 @@ Route::middleware([
     'api',
     EncryptCookies::class,
     CustomerAdvisorWidgetCors::class,
+    EnsureEnterpriseAiFeatureIsActive::class,
 ])
     ->name('widgets.ai.customer-advisors.')
     ->prefix('widgets/ai/customer-advisors')
@@ -152,6 +154,7 @@ Route::middleware([
     'api',
     EncryptCookies::class,
     CustomerAdvisorWidgetCors::class,
+    EnsureEnterpriseAiFeatureIsActive::class,
 ])
     ->name('widgets.ai.qna-advisors.')
     ->prefix('widgets/ai/qna-advisors')

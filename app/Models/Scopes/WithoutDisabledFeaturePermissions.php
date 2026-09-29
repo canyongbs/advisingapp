@@ -34,33 +34,28 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Http\Controllers\Advisors\CompleteResponseController;
-use AdvisingApp\Ai\Http\Controllers\Advisors\DownloadImageController;
-use AdvisingApp\Ai\Http\Controllers\Advisors\RetryMessageController;
-use AdvisingApp\Ai\Http\Controllers\Advisors\SendMessageController;
-use AdvisingApp\Ai\Http\Controllers\Advisors\ShowThreadController;
-use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\PreviewAdvisorEmbedController;
-use AdvisingApp\Ai\Http\Middleware\EnsureEnterpriseAiFeatureIsActive;
-use Illuminate\Support\Facades\Route;
+namespace App\Models\Scopes;
 
-Route::middleware(['web', 'auth', EnsureEnterpriseAiFeatureIsActive::class])
-    ->name('ai.')
-    ->group(function () {
-        Route::get('ai/advisors/threads/{thread}', ShowThreadController::class)
-            ->name('advisors.threads.show');
+use AdvisingApp\Authorization\Models\Permission;
+use App\Enums\Feature;
+use Illuminate\Database\Eloquent\Builder;
 
-        Route::post('ai/advisors/threads/{thread}/messages', SendMessageController::class)
-            ->name('advisors.threads.messages.send');
+class WithoutDisabledFeaturePermissions
+{
+    /**
+     * @param Builder<Permission> $query
+     */
+    public function __invoke(Builder $query): void
+    {
+        $disabledPermissionGroupNames = Feature::getDisabledPermissionGroupNames();
 
-        Route::post('ai/advisors/threads/{thread}/messages/retry', RetryMessageController::class)
-            ->name('advisors.threads.messages.retry');
+        if (blank($disabledPermissionGroupNames)) {
+            return;
+        }
 
-        Route::post('ai/advisors/threads/{thread}/messages/complete-response', CompleteResponseController::class)
-            ->name('advisors.threads.messages.complete-response');
-
-        Route::post('ai/advisors/threads/{thread}/download-image', DownloadImageController::class)
-            ->name('advisors.threads.download-image');
-
-        Route::get('ai/customer-advisors/{advisor}/preview-embed', PreviewAdvisorEmbedController::class)
-            ->name('customer-advisors.preview-embed');
-    });
+        $query->whereDoesntHave(
+            'group',
+            fn (Builder $query) => $query->whereIn('name', $disabledPermissionGroupNames),
+        );
+    }
+}
