@@ -88,6 +88,7 @@ return [
             'throw' => false,
             'root' => env('AWS_S3_ROOT'),
             'media_library_visibility' => 'private',
+            'http' => ['verify' => env('AWS_S3_VERIFY_SSL', true)],
         ],
 
         's3-public' => [
@@ -102,6 +103,7 @@ return [
             'throw' => false,
             'root' => ltrim(env('AWS_S3_PUBLIC_ROOT', env('AWS_S3_ROOT') . '/PUBLIC'), '/'),
             'media_library_visibility' => 'public',
+            'http' => ['verify' => env('AWS_S3_VERIFY_SSL', true)],
         ],
 
         's3-inbound-email' => [
@@ -116,6 +118,7 @@ return [
             'throw' => true,
             'root' => ltrim(env('AWS_S3_ROOT') . '/inbound-email', '/'),
             'media_library_visibility' => 'private',
+            'http' => ['verify' => env('AWS_S3_VERIFY_SSL', true)],
         ],
     ],
 
