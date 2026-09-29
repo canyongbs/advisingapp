@@ -34,54 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Blocks;
+use AdvisingApp\Form\Filament\Blocks\RadioFormFieldBlock;
+use AdvisingApp\Form\Models\FormField;
 
-use AdvisingApp\Form\Models\Submissible;
-use AdvisingApp\Form\Models\SubmissibleField;
-use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\StudentDataModel\Models\Student;
+it('validates the response against the option values, regardless of the stored options format', function (array $options) {
+    $field = new FormField(['config' => ['options' => $options, 'hasOtherOption' => false]]);
 
-class SelectFormFieldBlock extends FormFieldBlock
-{
-    public static function type(): string
-    {
-        return 'select';
-    }
+    expect(RadioFormFieldBlock::getValidationRules($field))->toBe([
+        'string',
+        'in:option-one,option-two',
+    ]);
+})->with([
+    'legacy value => label map' => [
+        ['option-one' => 'Option One', 'option-two' => 'Option Two'],
+    ],
+    'options repeater rows' => [
+        [
+            ['label' => 'Option One', 'value' => 'option-one'],
+            ['label' => 'Option Two', 'value' => 'option-two'],
+        ],
+    ],
+]);
 
-    public static function getLabel(): string
-    {
-        return 'Drop Down';
-    }
+it('allows any string response when the other option is enabled', function () {
+    $field = new FormField(['config' => ['options' => ['option-one' => 'Option One'], 'hasOtherOption' => true]]);
 
-    public static function fields(): array
-    {
-        return [
-            static::optionsRepeaterField(),
-        ];
-    }
-
-    public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
-    {
-        return [
-            '$formkit' => 'select',
-            'label' => $field->label,
-            'name' => $field->getKey(),
-            ...($field->is_required ? ['validation' => 'required'] : []),
-            'options' => $field->config['options'],
-            ...self::getDescriptionSectionsSchema($field),
-        ];
-    }
-
-    public static function getValidationRules(SubmissibleField $field): array
-    {
-        return [
-            'string',
-            'in:' . static::normalizeOptions($field->config['options'])->keys()->join(','),
-        ];
-    }
-
-    protected static function renderedView(): string
-    {
-        return 'form::blocks.submissions.select';
-    }
-}
+    expect(RadioFormFieldBlock::getValidationRules($field))->toBe(['string']);
+});

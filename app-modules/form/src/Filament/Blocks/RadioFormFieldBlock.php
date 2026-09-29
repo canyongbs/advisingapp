@@ -42,9 +42,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Repeater\TableColumn;
-use Filament\Forms\Components\TextInput;
 use Filament\Support\Enums\Width;
 
 class RadioFormFieldBlock extends FormFieldBlock
@@ -65,17 +62,7 @@ class RadioFormFieldBlock extends FormFieldBlock
         return [
             Checkbox::make('hasOtherOption')
                 ->label('Include Other'),
-            Repeater::make('options')
-                ->saveRelationshipsUsing(fn () => null)
-                ->table([
-                    TableColumn::make('Value'),
-                    TableColumn::make('Label'),
-                ])
-                ->schema([
-                    TextInput::make('value')->required(),
-                    TextInput::make('label')->required(),
-                ])
-                ->reorderable(),
+            static::optionsRepeaterField(),
         ];
     }
 
@@ -111,19 +98,9 @@ class RadioFormFieldBlock extends FormFieldBlock
             return ['string'];
         }
 
-        /** @var array<int, array<string, string>>|array<string, string> */
-        $options = $field->config['options'];
-        $values = collect($options);
-
-        if (isset($options[0]) && is_array($options[0])) {
-            $values = $values->pluck('value');
-        } else {
-            $values = $values->keys();
-        }
-
         return [
             'string',
-            'in:' . $values->join(','),
+            'in:' . static::normalizeOptions($field->config['options'])->keys()->join(','),
         ];
     }
 

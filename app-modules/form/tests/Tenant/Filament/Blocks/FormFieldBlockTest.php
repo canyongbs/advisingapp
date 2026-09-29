@@ -69,3 +69,12 @@ it('falls back to the block type label inside the preview body when no field lab
     expect(TextInputFormFieldBlock::toPreviewHtml([]))
         ->toContain('Text input');
 });
+
+it('derives an option value from its label by slugifying it', function (?string $label, string $expected) {
+    expect(FormFieldBlock::slugifyOptionValue($label))->toBe($expected);
+})->with([
+    'simple label' => ['Option One', 'option-one'],
+    'extra whitespace' => ['  Option   One  ', 'option-one'],
+    'punctuation' => ['Yes / No', 'yes-no'],
+    'null label' => [null, ''],
+]);
