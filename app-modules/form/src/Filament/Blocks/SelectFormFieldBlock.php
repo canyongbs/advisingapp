@@ -41,6 +41,8 @@ use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\Action;
+use Filament\Forms\Components\KeyValue;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\Width;
 
 class SelectFormFieldBlock extends FormFieldBlock
@@ -64,8 +66,46 @@ class SelectFormFieldBlock extends FormFieldBlock
     public static function fields(): array
     {
         return [
-            static::optionsRepeaterField(),
+            static::optionsKeyValueField(),
         ];
+    }
+
+    /**
+     * The stored option config is always a value => label map (see
+     * FormFieldBlock::normalizeOptions()), but a KeyValue field's "key"
+     * column is always rendered before its "value" column. To show the
+     * editable Label before the disabled, auto-derived Value, the field is
+     * edited internally as a label => value map and flipped back to a
+     * value => label map when hydrating from/dehydrating to storage.
+     */
+    protected static function optionsKeyValueField(string $name = 'options'): KeyValue
+    {
+        return KeyValue::make($name)
+            ->keyLabel('Label')
+            ->valueLabel('Value')
+            ->editableValues(false)
+            ->reorderable()
+            ->live(onBlur: true)
+            ->afterStateHydrated(function (Set $set, ?array $state) use ($name): void {
+                $set($name, static::deriveOptionValuesFromLabels(array_flip($state ?? [])));
+            })
+            ->afterStateUpdated(function (Set $set, ?array $state) use ($name): void {
+                $set($name, static::deriveOptionValuesFromLabels($state ?? []));
+            })
+            ->dehydrateStateUsing(fn (?array $state): array => array_flip(static::deriveOptionValuesFromLabels($state ?? [])));
+    }
+
+    /**
+     * @param array<int|string, mixed> $labels
+     *
+     * @return array<string, string>
+     */
+    protected static function deriveOptionValuesFromLabels(array $labels): array
+    {
+        return collect($labels)
+            ->keys()
+            ->mapWithKeys(fn (int|string $label): array => [(string) $label => static::slugifyOptionValue((string) $label)])
+            ->all();
     }
 
     public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
