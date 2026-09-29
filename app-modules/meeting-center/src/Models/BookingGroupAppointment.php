@@ -54,6 +54,7 @@ class BookingGroupAppointment extends BaseModel
     protected $fillable = [
         'booking_group_id',
         'calendar_event_id',
+        'calendar_event_provider_uid',
         'name',
         'email',
         'starts_at',

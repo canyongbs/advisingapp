@@ -448,7 +448,8 @@ it('does not write `calendar_event_id` when the flag is inactive', function () u
         ->first();
 
     expect($appointment)->not->toBeNull()
-        ->and($appointment?->calendar_event_id)->toBeNull();
+        ->and($appointment?->calendar_event_id)->toBeNull()
+        ->and($appointment?->calendar_event_provider_uid)->toBe('mock-provider-uid');
 });
 
 it('rejects booking when any one of three members has a calendar conflict', function () use ($officeHours) {
