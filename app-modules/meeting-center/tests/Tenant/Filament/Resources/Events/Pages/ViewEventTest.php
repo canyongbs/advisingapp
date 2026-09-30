@@ -3,7 +3,7 @@
 /*
 <COPYRIGHT>
 
-    Copyright 2016-2026, Canyon GBS Inc. All rights reserved.
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
 
     Advising App® is licensed under the Elastic License 2.0. For more details,
     see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.

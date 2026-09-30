@@ -47,80 +47,80 @@ use function Tests\asSuperAdmin;
 
 function eventDetailsManagerTestUser(): User
 {
-  $settings = app(LicenseSettings::class);
-  $settings->data->addons->eventManagement = true;
-  $settings->save();
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->eventManagement = true;
+    $settings->save();
 
-  $user = User::factory()->licensed(LicenseType::cases())->create();
-  $user->givePermissionTo(['event.view-any', 'event.*.view']);
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo(['event.view-any', 'event.*.view']);
 
-  return $user;
+    return $user;
 }
 
 it('does not allow updating an event to a title matching another non-deleted event case-insensitively', function () {
-  asSuperAdmin();
+    asSuperAdmin();
 
-  Event::factory()->create(['title' => 'Other Event']);
-  $event = Event::factory()->create(['title' => 'Editable Event']);
+    Event::factory()->create(['title' => 'Other Event']);
+    $event = Event::factory()->create(['title' => 'Editable Event']);
 
-  livewire(EventDetailsManager::class, ['record' => $event])
-    ->fillForm(['title' => 'other event'])
-    ->call('save')
-    ->assertHasFormErrors(['title' => 'unique']);
+    livewire(EventDetailsManager::class, ['record' => $event])
+        ->fillForm(['title' => 'other event'])
+        ->call('save')
+        ->assertHasFormErrors(['title' => 'unique']);
 });
 
 it('allows updating an event to a title freed up by a soft-deleted event case-insensitively', function () {
-  asSuperAdmin();
+    asSuperAdmin();
 
-  $deletedEvent = Event::factory()->create(['title' => 'Reusable Title']);
-  $deletedEvent->delete();
+    $deletedEvent = Event::factory()->create(['title' => 'Reusable Title']);
+    $deletedEvent->delete();
 
-  $event = Event::factory()->create(['title' => 'Editable Event']);
+    $event = Event::factory()->create(['title' => 'Editable Event']);
 
-  livewire(EventDetailsManager::class, ['record' => $event])
-    ->fillForm(['title' => 'reusable title'])
-    ->call('save')
-    ->assertHasNoFormErrors(['title']);
+    livewire(EventDetailsManager::class, ['record' => $event])
+        ->fillForm(['title' => 'reusable title'])
+        ->call('save')
+        ->assertHasNoFormErrors(['title']);
 });
 
 it('saves the eventRegistrationForm relationship fields alongside the event', function () {
-  asSuperAdmin();
+    asSuperAdmin();
 
-  $event = Event::factory()->create();
-  $event->eventRegistrationForm->update([
-    'embed_enabled' => false,
-    'allowed_domains' => [],
-    'primary_color' => 'blue',
-    'rounding' => Rounding::None,
-  ]);
+    $event = Event::factory()->create();
+    $event->eventRegistrationForm->update([
+        'embed_enabled' => false,
+        'allowed_domains' => [],
+        'primary_color' => 'blue',
+        'rounding' => Rounding::None,
+    ]);
 
-  livewire(EventDetailsManager::class, ['record' => $event])
-    ->fillForm([
-      'eventRegistrationForm' => [
-        'embed_enabled' => true,
-        'allowed_domains' => ['example.com'],
-        'primary_color' => 'red',
-        'rounding' => Rounding::Full,
-      ],
-    ])
-    ->call('save')
-    ->assertHasNoFormErrors();
+    livewire(EventDetailsManager::class, ['record' => $event])
+        ->fillForm([
+            'eventRegistrationForm' => [
+                'embed_enabled' => true,
+                'allowed_domains' => ['example.com'],
+                'primary_color' => 'red',
+                'rounding' => Rounding::Full,
+            ],
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
 
-  expect($event->eventRegistrationForm->fresh())
-    ->embed_enabled->toBeTrue()
-    ->allowed_domains->toBe(['example.com'])
-    ->primary_color->toBe('red')
-    ->rounding->toBe(Rounding::Full);
+    expect($event->eventRegistrationForm->fresh())
+        ->embed_enabled->toBeTrue()
+        ->allowed_domains->toBe(['example.com'])
+        ->primary_color->toBe('red')
+        ->rounding->toBe(Rounding::Full);
 });
 
 describe('authorization', function () {
-  it('denies direct access without the `event.*.update` permission', function () {
-    $user = eventDetailsManagerTestUser();
-    actingAs($user);
+    it('denies direct access without the `event.*.update` permission', function () {
+        $user = eventDetailsManagerTestUser();
+        actingAs($user);
 
-    $event = Event::factory()->create();
+        $event = Event::factory()->create();
 
-    livewire(EventDetailsManager::class, ['record' => $event])
-      ->assertForbidden();
-  });
+        livewire(EventDetailsManager::class, ['record' => $event])
+            ->assertForbidden();
+    });
 });
