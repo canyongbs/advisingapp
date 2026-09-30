@@ -34,36 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Jobs\Middleware;
+namespace App\Features;
 
-use AdvisingApp\MeetingCenter\Enums\CalendarProvider;
-use AdvisingApp\MeetingCenter\Jobs\Contracts\InteractsWithCalendarProvider;
-use Closure;
-use Illuminate\Support\Facades\Redis;
+use App\Support\AbstractFeatureFlag;
 
-class CalendarRequestsConcurrencyLimit
+class CalendarFaultTolerantFeature extends AbstractFeatureFlag
 {
-    /**
-     * @param Closure(object): void $next
-     */
-    public function handle(InteractsWithCalendarProvider $job, Closure $next): void
+    public function resolve(mixed $scope): mixed
     {
-        $calendar = $job->getCalendar();
-
-        if ($calendar->provider_type !== CalendarProvider::Outlook) {
-            // Only apply concurrency limit to Outlook calendars
-            $next($job);
-
-            return;
-        }
-
-        Redis::funnel("{calendar-concurrency-{$calendar->provider_id}}")
-            ->block(10)
-            ->limit(4)
-            ->then(function () use ($job, $next) {
-                $next($job);
-            }, function () use ($job) {
-                $job->release(10);
-            });
+        return false;
     }
 }

@@ -41,18 +41,18 @@ use AdvisingApp\MeetingCenter\Exceptions\MicrosoftGraphRateLimited;
 use AdvisingApp\MeetingCenter\Jobs\Contracts\InteractsWithCalendarProvider;
 use AdvisingApp\MeetingCenter\Jobs\Middleware\CalendarRequestsConcurrencyLimit;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
+use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\Calendar;
-use App\Models\Tenant;
-use Carbon\Carbon;
+use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use DateTime;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Queue\SerializesModels;
 
-class SyncCalendarPeriod implements InteractsWithCalendarProvider, ShouldBeUnique, ShouldQueue
+class SyncCalendarEventToProvider implements InteractsWithCalendarProvider, ShouldQueue
 {
     use Dispatchable;
     use InteractsWithQueue;
@@ -61,29 +61,27 @@ class SyncCalendarPeriod implements InteractsWithCalendarProvider, ShouldBeUniqu
 
     public int $maxExceptions = 3;
 
-    public int $uniqueFor = 7200;
-
-    public function __construct(
-        public Calendar $calendar,
-        public Carbon $start,
-        public Carbon $end,
-    ) {
+    public function __construct(public CalendarEvent $event)
+    {
         $this->onQueue(config('meeting-center.queue'));
     }
 
     public function getCalendar(): Calendar
     {
-        return $this->calendar;
+        return $this->event->calendar;
     }
 
     /**
-     * Get the middleware the job should pass through.
-     *
      * @return array<int, object>
      */
     public function middleware(): array
     {
-        return [new CalendarRequestsConcurrencyLimit()];
+        // Serialise every provider write for a single event so concurrent create/update/delete
+        // jobs cannot race each other, then respect the provider's per-calendar request limit.
+        return [
+            (new WithoutOverlapping($this->event->id))->shared()->releaseAfter(10)->expireAfter(60),
+            new CalendarRequestsConcurrencyLimit(),
+        ];
     }
 
     public function retryUntil(): DateTime
@@ -91,28 +89,30 @@ class SyncCalendarPeriod implements InteractsWithCalendarProvider, ShouldBeUniqu
         return now()->addHour();
     }
 
-    public function uniqueId(): string
+    public function backoff(): int
     {
-        return Tenant::current()->getKey() . ':' . $this->calendar->getKey() . ':' . $this->start->format('Y-m-d') . ':' . $this->end->format('Y-m-d');
+        return 10;
     }
 
     public function handle(): void
     {
-        try {
-            resolve(CalendarManager::class)
-                ->driver($this->calendar->provider_type->value)
-                ->syncEvents(
-                    $this->calendar,
-                    new DateTime($this->start->toDateTimeString()),
-                    new DateTime($this->end->toDateTimeString())
-                );
-        } catch (CouldNotRefreshToken $exception) {
-            $this->fail($exception);
-
+        if ($this->event->provider_id !== null) {
             return;
+        }
+
+        try {
+            $driver = resolve(CalendarManager::class)
+                ->driver($this->event->calendar->provider_type->value);
+            assert($driver instanceof CalendarInterface);
+
+            $driver->createEvent($this->event);
+        } catch (CouldNotRefreshToken) {
+            // Tokens have been cleared and the user has been notified; nothing further needed.
         } catch (MicrosoftGraphRateLimited $exception) {
             if (filled($exception->retryAfterSeconds)) {
                 $this->release($exception->retryAfterSeconds);
+
+                return;
             }
 
             throw $exception;

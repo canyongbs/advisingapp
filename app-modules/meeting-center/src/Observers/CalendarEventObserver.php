@@ -37,47 +37,75 @@
 namespace AdvisingApp\MeetingCenter\Observers;
 
 use AdvisingApp\MeetingCenter\Exceptions\CouldNotRefreshToken;
+use AdvisingApp\MeetingCenter\Jobs\DeleteCalendarEventFromProvider;
+use AdvisingApp\MeetingCenter\Jobs\SyncCalendarEventToProvider;
+use AdvisingApp\MeetingCenter\Jobs\UpdateCalendarEventOnProvider;
 use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
+use App\Features\CalendarFaultTolerantFeature;
 
 class CalendarEventObserver
 {
     public function created(CalendarEvent $event): void
     {
-        if ($event->calendar) {
-            try {
-                resolve(CalendarManager::class)
-                    ->driver($event->calendar->provider_type->value)
-                    ->createEvent($event);
-            } catch (CouldNotRefreshToken) {
-                // Tokens have been cleared and the user has been notified; nothing further needed.
+        if (! CalendarFaultTolerantFeature::active()) {
+            if ($event->calendar) {
+                try {
+                    resolve(CalendarManager::class)
+                        ->driver($event->calendar->provider_type->value)
+                        ->createEvent($event);
+                } catch (CouldNotRefreshToken) {
+                    // Tokens have been cleared and the user has been notified; nothing further needed.
+                }
             }
+
+            return;
         }
+
+        // Push to the external provider only after the surrounding transaction commits so a
+        // later failure rolls the event back cleanly and the provider write stays retryable.
+        SyncCalendarEventToProvider::dispatch($event)->afterCommit();
     }
 
     public function updated(CalendarEvent $event): void
     {
-        if ($event->calendar) {
-            try {
-                resolve(CalendarManager::class)
-                    ->driver($event->calendar->provider_type->value)
-                    ->updateEvent($event);
-            } catch (CouldNotRefreshToken) {
-                // Tokens have been cleared and the user has been notified; nothing further needed.
+        if (! CalendarFaultTolerantFeature::active()) {
+            if ($event->calendar) {
+                try {
+                    resolve(CalendarManager::class)
+                        ->driver($event->calendar->provider_type->value)
+                        ->updateEvent($event);
+                } catch (CouldNotRefreshToken) {
+                    // Tokens have been cleared and the user has been notified; nothing further needed.
+                }
             }
+
+            return;
         }
+
+        UpdateCalendarEventOnProvider::dispatch($event)->afterCommit();
     }
 
     public function deleted(CalendarEvent $event): void
     {
-        if ($event->calendar) {
-            try {
-                resolve(CalendarManager::class)
-                    ->driver($event->calendar->provider_type->value)
-                    ->deleteEvent($event);
-            } catch (CouldNotRefreshToken) {
-                // Tokens have been cleared and the user has been notified; nothing further needed.
+        if (! CalendarFaultTolerantFeature::active()) {
+            if ($event->calendar) {
+                try {
+                    resolve(CalendarManager::class)
+                        ->driver($event->calendar->provider_type->value)
+                        ->deleteEvent($event);
+                } catch (CouldNotRefreshToken) {
+                    // Tokens have been cleared and the user has been notified; nothing further needed.
+                }
             }
+
+            return;
         }
+
+        if ($event->provider_id === null) {
+            return;
+        }
+
+        DeleteCalendarEventFromProvider::dispatch($event->calendar, $event->provider_id, $event->id)->afterCommit();
     }
 }
