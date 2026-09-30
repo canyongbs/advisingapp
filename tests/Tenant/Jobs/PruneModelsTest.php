@@ -34,44 +34,49 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Engagement\Models\EngagementFile;
+use AdvisingApp\Audit\Models\Audit;
+use AdvisingApp\Audit\Settings\AuditSettings;
 use App\Jobs\PruneModels;
-use Illuminate\Database\Console\PruneCommand;
+use Illuminate\Support\Facades\Exceptions;
 
-use function Pest\Laravel\artisan;
-use function Pest\Laravel\assertModelExists;
-use function Pest\Laravel\assertModelMissing;
-
-it('correctly prunes EngagementFiles based on retention_date', function () {
-    $expiredFile = EngagementFile::factory()->create([
-        'retention_date' => fake()->dateTimeBetween('-1 year', '-1 day'),
+it('prunes stale records and keeps recent ones', function () {
+    $stale = Audit::factory()->create();
+    Audit::query()->whereKey($stale->getKey())->update([
+        'created_at' => now()->subDays(app(AuditSettings::class)->retention_duration_in_days + 1),
     ]);
 
-    $noRetentionDateFile = EngagementFile::factory()->create([
-        'retention_date' => null,
-    ]);
+    $recent = Audit::factory()->create();
 
-    $futureRetentionDateFile = EngagementFile::factory()->create([
-        'retention_date' => fake()->dateTimeBetween('+1 day', '+ 1 year'),
-    ]);
-
-    artisan(PruneCommand::class, [
-        '--model' => EngagementFile::class,
-    ])->assertExitCode(0);
-
-    assertModelMissing($expiredFile);
-    assertModelExists($noRetentionDateFile);
-    assertModelExists($futureRetentionDateFile);
-});
-
-it('is pruned by the daily `PruneModels` job', function () {
-    $expiredFile = EngagementFile::factory()->create([
-        'retention_date' => now()->subDay(),
-    ]);
-
-    assertModelExists($expiredFile);
+    expect(Audit::query()->whereKey($stale->getKey())->exists())->toBeTrue();
 
     (new PruneModels())->handle();
 
-    assertModelMissing($expiredFile);
+    expect(Audit::query()->whereKey($stale->getKey())->exists())->toBeFalse()
+        ->and(Audit::query()->whereKey($recent->getKey())->exists())->toBeTrue();
+});
+
+it('reports a failing model and still prunes the rest', function () {
+    Exceptions::fake();
+
+    $job = new class () extends PruneModels {
+        public bool $laterPrunerRan = false;
+
+        protected function pruners(): array
+        {
+            return [
+                fn (): int => throw new RuntimeException('prune failed'),
+                function (): int {
+                    $this->laterPrunerRan = true;
+
+                    return 0;
+                },
+            ];
+        }
+    };
+
+    $job->handle();
+
+    expect($job->laterPrunerRan)->toBeTrue();
+
+    Exceptions::assertReported(fn (RuntimeException $throw) => $throw->getMessage() === 'prune failed');
 });

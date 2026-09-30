@@ -34,44 +34,37 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Engagement\Models\EngagementFile;
-use App\Jobs\PruneModels;
-use Illuminate\Database\Console\PruneCommand;
+use App\Exceptions\ArtisanCommandFailedException;
+use App\Jobs\PruneStaleCacheTags;
+use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Support\Facades\Artisan;
+use Mockery\MockInterface;
+use Symfony\Component\Console\Output\BufferedOutput;
 
-use function Pest\Laravel\artisan;
-use function Pest\Laravel\assertModelExists;
-use function Pest\Laravel\assertModelMissing;
+it('runs the `cache:prune-stale-tags` command', function () {
+    $kernel = app(Kernel::class);
 
-it('correctly prunes EngagementFiles based on retention_date', function () {
-    $expiredFile = EngagementFile::factory()->create([
-        'retention_date' => fake()->dateTimeBetween('-1 year', '-1 day'),
-    ]);
+    Artisan::swap(Mockery::mock(Kernel::class, function (MockInterface $mock) {
+        $mock->shouldReceive('call')
+            ->once()
+            ->with('cache:prune-stale-tags', [], Mockery::type(BufferedOutput::class))
+            ->andReturn(0);
+    }));
 
-    $noRetentionDateFile = EngagementFile::factory()->create([
-        'retention_date' => null,
-    ]);
+    (new PruneStaleCacheTags())->handle();
 
-    $futureRetentionDateFile = EngagementFile::factory()->create([
-        'retention_date' => fake()->dateTimeBetween('+1 day', '+ 1 year'),
-    ]);
-
-    artisan(PruneCommand::class, [
-        '--model' => EngagementFile::class,
-    ])->assertExitCode(0);
-
-    assertModelMissing($expiredFile);
-    assertModelExists($noRetentionDateFile);
-    assertModelExists($futureRetentionDateFile);
+    Artisan::swap($kernel);
 });
 
-it('is pruned by the daily `PruneModels` job', function () {
-    $expiredFile = EngagementFile::factory()->create([
-        'retention_date' => now()->subDay(),
-    ]);
+it('fails with an `ArtisanCommandFailedException` when the command exits non-zero', function () {
+    $kernel = app(Kernel::class);
 
-    assertModelExists($expiredFile);
+    Artisan::swap(Mockery::mock(Kernel::class, function (MockInterface $mock) {
+        $mock->shouldReceive('call')->once()->andReturn(1);
+    }));
 
-    (new PruneModels())->handle();
+    expect(fn () => (new PruneStaleCacheTags())->handle())
+        ->toThrow(ArtisanCommandFailedException::class);
 
-    assertModelMissing($expiredFile);
+    Artisan::swap($kernel);
 });

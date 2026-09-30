@@ -34,44 +34,24 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Engagement\Models\EngagementFile;
-use App\Jobs\PruneModels;
-use Illuminate\Database\Console\PruneCommand;
+namespace App\Jobs;
 
-use function Pest\Laravel\artisan;
-use function Pest\Laravel\assertModelExists;
-use function Pest\Laravel\assertModelMissing;
+use App\Jobs\Concerns\RunsArtisanCommand;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
-it('correctly prunes EngagementFiles based on retention_date', function () {
-    $expiredFile = EngagementFile::factory()->create([
-        'retention_date' => fake()->dateTimeBetween('-1 year', '-1 day'),
-    ]);
+class PruneStaleCacheTags implements ShouldQueue, ShouldBeUnique
+{
+    use Queueable;
+    use RunsArtisanCommand;
 
-    $noRetentionDateFile = EngagementFile::factory()->create([
-        'retention_date' => null,
-    ]);
+    public int $tries = 1;
 
-    $futureRetentionDateFile = EngagementFile::factory()->create([
-        'retention_date' => fake()->dateTimeBetween('+1 day', '+ 1 year'),
-    ]);
+    public int $uniqueFor = 900;
 
-    artisan(PruneCommand::class, [
-        '--model' => EngagementFile::class,
-    ])->assertExitCode(0);
-
-    assertModelMissing($expiredFile);
-    assertModelExists($noRetentionDateFile);
-    assertModelExists($futureRetentionDateFile);
-});
-
-it('is pruned by the daily `PruneModels` job', function () {
-    $expiredFile = EngagementFile::factory()->create([
-        'retention_date' => now()->subDay(),
-    ]);
-
-    assertModelExists($expiredFile);
-
-    (new PruneModels())->handle();
-
-    assertModelMissing($expiredFile);
-});
+    public function handle(): void
+    {
+        $this->runArtisanCommand('cache:prune-stale-tags');
+    }
+}

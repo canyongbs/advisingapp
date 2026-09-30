@@ -34,44 +34,19 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Engagement\Models\EngagementFile;
-use App\Jobs\PruneModels;
-use Illuminate\Database\Console\PruneCommand;
+namespace App\Exceptions;
 
-use function Pest\Laravel\artisan;
-use function Pest\Laravel\assertModelExists;
-use function Pest\Laravel\assertModelMissing;
+use RuntimeException;
 
-it('correctly prunes EngagementFiles based on retention_date', function () {
-    $expiredFile = EngagementFile::factory()->create([
-        'retention_date' => fake()->dateTimeBetween('-1 year', '-1 day'),
-    ]);
-
-    $noRetentionDateFile = EngagementFile::factory()->create([
-        'retention_date' => null,
-    ]);
-
-    $futureRetentionDateFile = EngagementFile::factory()->create([
-        'retention_date' => fake()->dateTimeBetween('+1 day', '+ 1 year'),
-    ]);
-
-    artisan(PruneCommand::class, [
-        '--model' => EngagementFile::class,
-    ])->assertExitCode(0);
-
-    assertModelMissing($expiredFile);
-    assertModelExists($noRetentionDateFile);
-    assertModelExists($futureRetentionDateFile);
-});
-
-it('is pruned by the daily `PruneModels` job', function () {
-    $expiredFile = EngagementFile::factory()->create([
-        'retention_date' => now()->subDay(),
-    ]);
-
-    assertModelExists($expiredFile);
-
-    (new PruneModels())->handle();
-
-    assertModelMissing($expiredFile);
-});
+class ArtisanCommandFailedException extends RuntimeException
+{
+    public function __construct(
+        public readonly string $command,
+        public readonly int $exitCode,
+        public readonly string $commandOutput,
+    ) {
+        parent::__construct(
+            "Artisan command [{$command}] failed with exit code {$exitCode}." . PHP_EOL . 'Output:' . PHP_EOL . $commandOutput,
+        );
+    }
+}

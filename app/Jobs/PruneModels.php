@@ -34,44 +34,53 @@
 </COPYRIGHT>
 */
 
+namespace App\Jobs;
+
+use AdvisingApp\Ai\Models\AiMessage;
+use AdvisingApp\Ai\Models\AiMessageFile;
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Audit\Models\Audit;
 use AdvisingApp\Engagement\Models\EngagementFile;
-use App\Jobs\PruneModels;
-use Illuminate\Database\Console\PruneCommand;
+use AdvisingApp\Form\Models\FormAuthentication;
+use App\Models\HealthCheckResultHistoryItem;
+use Filament\Actions\Imports\Models\FailedImportRow;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
+use Throwable;
 
-use function Pest\Laravel\artisan;
-use function Pest\Laravel\assertModelExists;
-use function Pest\Laravel\assertModelMissing;
+class PruneModels implements ShouldQueue, ShouldBeUnique
+{
+    use Queueable;
 
-it('correctly prunes EngagementFiles based on retention_date', function () {
-    $expiredFile = EngagementFile::factory()->create([
-        'retention_date' => fake()->dateTimeBetween('-1 year', '-1 day'),
-    ]);
+    public int $uniqueFor = 3600;
 
-    $noRetentionDateFile = EngagementFile::factory()->create([
-        'retention_date' => null,
-    ]);
+    public function handle(): void
+    {
+        // Isolate each model so one model's pruning failure is reported without skipping the rest.
+        foreach ($this->pruners() as $prune) {
+            try {
+                $prune();
+            } catch (Throwable $throw) {
+                report($throw);
+            }
+        }
+    }
 
-    $futureRetentionDateFile = EngagementFile::factory()->create([
-        'retention_date' => fake()->dateTimeBetween('+1 day', '+ 1 year'),
-    ]);
-
-    artisan(PruneCommand::class, [
-        '--model' => EngagementFile::class,
-    ])->assertExitCode(0);
-
-    assertModelMissing($expiredFile);
-    assertModelExists($noRetentionDateFile);
-    assertModelExists($futureRetentionDateFile);
-});
-
-it('is pruned by the daily `PruneModels` job', function () {
-    $expiredFile = EngagementFile::factory()->create([
-        'retention_date' => now()->subDay(),
-    ]);
-
-    assertModelExists($expiredFile);
-
-    (new PruneModels())->handle();
-
-    assertModelMissing($expiredFile);
-});
+    /**
+     * @return array<int, callable(): int>
+     */
+    protected function pruners(): array
+    {
+        return [
+            fn (): int => (new AiMessageFile())->pruneAll(),
+            fn (): int => (new AiMessage())->pruneAll(),
+            fn (): int => (new AiThread())->pruneAll(),
+            fn (): int => (new Audit())->pruneAll(),
+            fn (): int => (new EngagementFile())->pruneAll(),
+            fn (): int => (new FailedImportRow())->pruneAll(),
+            fn (): int => (new FormAuthentication())->pruneAll(),
+            fn (): int => (new HealthCheckResultHistoryItem())->pruneAll(),
+        ];
+    }
+}
