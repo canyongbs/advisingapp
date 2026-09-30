@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
+use AdvisingApp\Form\Filament\Forms\Components\OptionsKeyValue;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -62,7 +63,7 @@ class RadioFormFieldBlock extends FormFieldBlock
         return [
             Checkbox::make('hasOtherOption')
                 ->label('Include Other'),
-            static::optionsRepeaterField(),
+            OptionsKeyValue::make('options'),
         ];
     }
 

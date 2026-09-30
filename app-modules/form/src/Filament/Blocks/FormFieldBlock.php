@@ -44,11 +44,8 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\TextInput;
-use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -193,48 +190,10 @@ abstract class FormFieldBlock extends RichContentCustomBlock
     }
 
     /**
-     * A reusable "Label" / "Value" options repeater for choice-style fields
-     * (select, radio, checkboxes). The value is always derived from the
-     * label, so it stays in sync with what the end user sees: it is
-     * disabled and can no longer be edited directly, and it is recomputed
-     * from the label both live as the label is typed and whenever existing
-     * options are loaded back into the field builder.
-     */
-    protected static function optionsRepeaterField(string $name = 'options'): Repeater
-    {
-        return Repeater::make($name)
-            ->saveRelationshipsUsing(fn () => null)
-            ->rule(fn (): Closure => function (string $attribute, mixed $value, Closure $fail): void {
-                static::validateOptionValues(
-                    collect(is_array($value) ? $value : [])
-                        ->map(fn (mixed $option): string => static::slugifyOptionValue(is_array($option) && is_string($option['label'] ?? null) ? $option['label'] : null))
-                        ->all(),
-                    $fail,
-                );
-            })
-            ->table([
-                TableColumn::make('Label'),
-                TableColumn::make('Value'),
-            ])
-            ->schema([
-                TextInput::make('label')
-                    ->required()
-                    ->live(onBlur: true)
-                    ->afterStateHydrated(fn (Set $set, ?string $state) => $set('value', static::slugifyOptionValue($state)))
-                    ->afterStateUpdated(fn (Set $set, ?string $state) => $set('value', static::slugifyOptionValue($state))),
-                TextInput::make('value')
-                    ->required()
-                    ->disabled()
-                    ->dehydrated(),
-            ])
-            ->reorderable();
-    }
-
-    /**
      * Normalizes an options config array into a value => label map, whether
      * it was stored as a legacy value => label map, or as a list of
      * ['label' => ..., 'value' => ...] rows produced by the options
-     * repeater.
+     * editor.
      *
      * @param array<int|string, mixed> $options
      *
