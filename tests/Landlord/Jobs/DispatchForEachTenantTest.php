@@ -42,6 +42,11 @@ use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Support\Facades\Queue;
 
+use function Sentry\configureScope;
+
+use Sentry\Event;
+use Sentry\State\Scope;
+
 it('dispatches its job for each eligible tenant', function () {
     $dispatcher = new class () extends DispatchForEachTenant {
         protected function jobForTenant(Tenant $tenant): object
@@ -150,4 +155,32 @@ it('reports the failure and continues dispatching for the remaining tenants', fu
 
     // Prevents the shared test tenant teardown from resolving this non-migratable tenant via Tenant::firstOrFail().
     $secondEligibleTenant->delete();
+});
+
+it('tags the failure report with the tenant it failed for', function () {
+    $tenant = Tenant::query()->firstOrFail();
+
+    $reportedTags = null;
+
+    Exceptions::reportable(function (RuntimeException $throw) use (&$reportedTags): void {
+        configureScope(function (Scope $scope) use (&$reportedTags): void {
+            $reportedTags = $scope->applyToEvent(Event::createEvent())?->getTags();
+        });
+    })->stop();
+
+    $dispatcher = new class () extends DispatchForEachTenant {
+        protected function jobForTenant(Tenant $tenant): object
+        {
+            throw new RuntimeException('Boom');
+        }
+    };
+
+    Queue::fake();
+
+    $dispatcher->handle();
+
+    expect($reportedTags)->toMatchArray([
+        'tenant.id' => $tenant->getKey(),
+        'tenant.name' => $tenant->name,
+    ]);
 });

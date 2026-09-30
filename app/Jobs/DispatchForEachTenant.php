@@ -42,6 +42,10 @@ use App\Models\Tenant;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Sentry\State\Scope;
+
+use function Sentry\withScope;
+
 use Spatie\Multitenancy\Jobs\NotTenantAware;
 use Throwable;
 
@@ -79,7 +83,15 @@ abstract class DispatchForEachTenant implements ShouldBeUnique, ShouldQueue, Not
                         dispatch($job);
                     });
                 } catch (Throwable $throw) {
-                    report($throw);
+                    // The tenant has been forgotten by now, which clears its Sentry tags, so re-apply them for this report.
+                    withScope(function (Scope $scope) use ($tenant, $throw): void {
+                        $scope->setTags([
+                            'tenant.id' => $tenant->getKey(),
+                            'tenant.name' => $tenant->name,
+                        ]);
+
+                        report($throw);
+                    });
                 }
             });
     }
