@@ -42,9 +42,13 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
+use Filament\Schemas\Schema;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
+/**
+ * @property-read Schema $form
+ */
 abstract class EventFormManager extends Component implements HasForms
 {
     use InteractsWithForms;
@@ -52,6 +56,7 @@ abstract class EventFormManager extends Component implements HasForms
 
     public Event $record;
 
+    /** @var array<string, mixed> */
     public ?array $data = [];
 
     public function mount(): void
