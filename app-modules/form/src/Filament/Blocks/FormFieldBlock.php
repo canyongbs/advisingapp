@@ -40,6 +40,7 @@ use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;
@@ -134,6 +135,29 @@ abstract class FormFieldBlock extends RichContentCustomBlock
         return Str::slug($label ?? '');
     }
 
+    /**
+     * Slugging does not guarantee a usable value: a punctuation-only label
+     * produces an empty string, and distinct labels such as "A B" and "A-B"
+     * both produce "a-b". Since option values cannot be edited directly,
+     * this fails validation so the user can correct the labels instead.
+     *
+     * @param array<int|string, mixed> $values
+     */
+    public static function validateOptionValues(array $values, Closure $fail): void
+    {
+        $values = array_map(fn (mixed $value): string => is_scalar($value) ? (string) $value : '', array_values($values));
+
+        if (in_array('', $values, true)) {
+            $fail('Each option label must contain at least one letter or number so a value can be generated.');
+
+            return;
+        }
+
+        if (count($values) !== count(array_unique($values))) {
+            $fail('Each option label must generate a distinct value. Labels such as "A B" and "A-B" generate the same value.');
+        }
+    }
+
     abstract public static function type(): string;
 
     /**
@@ -180,6 +204,14 @@ abstract class FormFieldBlock extends RichContentCustomBlock
     {
         return Repeater::make($name)
             ->saveRelationshipsUsing(fn () => null)
+            ->rule(fn (): Closure => function (string $attribute, mixed $value, Closure $fail): void {
+                static::validateOptionValues(
+                    collect(is_array($value) ? $value : [])
+                        ->map(fn (mixed $option): string => static::slugifyOptionValue(is_array($option) && is_string($option['label'] ?? null) ? $option['label'] : null))
+                        ->all(),
+                    $fail,
+                );
+            })
             ->table([
                 TableColumn::make('Label'),
                 TableColumn::make('Value'),

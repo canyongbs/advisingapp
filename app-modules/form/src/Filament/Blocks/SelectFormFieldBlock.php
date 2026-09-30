@@ -40,6 +40,7 @@ use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\KeyValue;
 use Filament\Schemas\Components\Utilities\Set;
@@ -106,25 +107,34 @@ class SelectFormFieldBlock extends FormFieldBlock
             ->editableValues(false)
             ->reorderable()
             ->live(onBlur: true)
+            ->rule(fn (): Closure => function (string $attribute, mixed $value, Closure $fail): void {
+                static::validateOptionValues(is_array($value) ? $value : [], $fail);
+            })
             ->afterStateHydrated(function (Set $set, ?array $state) use ($name): void {
-                $set($name, static::deriveOptionValuesFromLabels(array_flip($state ?? [])));
+                $set($name, static::fillMissingOptionValues(array_flip($state ?? [])));
             })
             ->afterStateUpdated(function (Set $set, ?array $state) use ($name): void {
-                $set($name, static::deriveOptionValuesFromLabels($state ?? []));
+                $set($name, static::fillMissingOptionValues($state ?? []));
             })
-            ->dehydrateStateUsing(fn (?array $state): array => array_flip(static::deriveOptionValuesFromLabels($state ?? [])));
+            ->dehydrateStateUsing(fn (?array $state): array => array_flip(static::fillMissingOptionValues($state ?? [])));
     }
 
     /**
-     * @param array<int|string, mixed> $labels
+     * Keeps every option value that is already present (so stable codes that
+     * were persisted, e.g. "us" => "United States", are never rewritten) and
+     * only derives a value from the label for options that have none yet,
+     * i.e. newly added ones.
+     *
+     * @param array<int|string, mixed> $options label => value
      *
      * @return array<string, string>
      */
-    protected static function deriveOptionValuesFromLabels(array $labels): array
+    protected static function fillMissingOptionValues(array $options): array
     {
-        return collect($labels)
-            ->keys()
-            ->mapWithKeys(fn (int|string $label): array => [(string) $label => static::slugifyOptionValue((string) $label)])
+        return collect($options)
+            ->mapWithKeys(fn (mixed $value, int|string $label): array => [
+                (string) $label => filled($value) ? (string) $value : static::slugifyOptionValue((string) $label),
+            ])
             ->all();
     }
 
