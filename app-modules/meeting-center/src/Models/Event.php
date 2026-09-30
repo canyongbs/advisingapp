@@ -63,6 +63,17 @@ class Event extends BaseModel implements HasMedia, HasRichContent
 
     use InteractsWithRichContent;
 
+    /**
+     * Single source of truth shared with EventLandingPageManager's hero_image field.
+     *
+     * @var array<string>
+     */
+    public const array HERO_IMAGE_MIME_TYPES = [
+        'image/jpeg',
+        'image/png',
+        'image/gif',
+    ];
+
     protected $fillable = [
         'title',
         'description',
@@ -92,11 +103,7 @@ class Event extends BaseModel implements HasMedia, HasRichContent
         $this->addMediaCollection('hero_image')
             ->useDisk('s3-public')
             ->singleFile()
-            ->acceptsMimeTypes([
-                'image/jpeg',
-                'image/png',
-                'image/gif',
-            ]);
+            ->acceptsMimeTypes(self::HERO_IMAGE_MIME_TYPES);
     }
 
     /**

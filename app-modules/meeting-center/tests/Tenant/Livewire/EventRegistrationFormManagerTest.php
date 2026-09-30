@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
-use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEventRegistration;
+use AdvisingApp\MeetingCenter\Livewire\EventRegistrationFormManager;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
@@ -66,7 +66,7 @@ it('creates a new version and archives the old one when saving the registration 
     expect($form->archived_at)->toBeNull();
     expect(EventRegistrationForm::withoutGlobalScopes()->where('root_id', $originalRootId)->count())->toBe(1);
 
-    livewire(EditEventRegistration::class, ['record' => $event->getKey()])
+    livewire(EventRegistrationFormManager::class, ['record' => $event])
         ->call('save')
         ->assertHasNoErrors();
 
@@ -102,7 +102,7 @@ it('the new version inherits embed settings from the old version', function () {
 
     $originalRootId = $form->root_id;
 
-    livewire(EditEventRegistration::class, ['record' => $event->getKey()])
+    livewire(EventRegistrationFormManager::class, ['record' => $event])
         ->call('save')
         ->assertHasNoErrors();
 
@@ -124,7 +124,7 @@ it('the event registration form relationship resolves to the latest non-archived
     $form = $event->eventRegistrationForm;
     $originalId = $form->id;
 
-    livewire(EditEventRegistration::class, ['record' => $event->getKey()])
+    livewire(EventRegistrationFormManager::class, ['record' => $event])
         ->call('save')
         ->assertHasNoErrors();
 
@@ -157,7 +157,7 @@ it('persists edits to an existing wizard step\'s description onto the new event 
 
     $originalRootId = $form->root_id;
 
-    $component = livewire(EditEventRegistration::class, ['record' => $event->getKey()]);
+    $component = livewire(EventRegistrationFormManager::class, ['record' => $event]);
 
     $steps = data_get($component->instance()->form->getRawState(), 'eventRegistrationForm.steps', []);
     $stepKey = array_key_first($steps);
@@ -208,7 +208,7 @@ it('when saving a wizard registration form, the new version retains the same num
     $originalRootId = $form->root_id;
     $originalId = $form->id;
 
-    livewire(EditEventRegistration::class, ['record' => $event->getKey()])
+    livewire(EventRegistrationFormManager::class, ['record' => $event])
         ->call('save')
         ->assertHasNoErrors();
 
@@ -249,7 +249,7 @@ it('when saving a wizard registration form, the archived version still has its o
     $originalStepCount = $form->steps()->count();
     $originalId = $form->id;
 
-    livewire(EditEventRegistration::class, ['record' => $event->getKey()])
+    livewire(EventRegistrationFormManager::class, ['record' => $event])
         ->call('save')
         ->assertHasNoErrors();
 
@@ -298,7 +298,7 @@ it('carries each wizard step its own fields onto the new version when saving', f
     $originalRootId = $form->root_id;
     $originalFieldIds = $form->fields()->pluck('id');
 
-    livewire(EditEventRegistration::class, ['record' => $event->getKey()])
+    livewire(EventRegistrationFormManager::class, ['record' => $event])
         ->call('save')
         ->assertHasNoErrors();
 
@@ -339,7 +339,7 @@ it('persists a newly added wizard step and its fields to the new version', funct
 
     $originalRootId = $form->root_id;
 
-    $component = livewire(EditEventRegistration::class, ['record' => $event->getKey()]);
+    $component = livewire(EventRegistrationFormManager::class, ['record' => $event]);
 
     $steps = data_get($component->instance()->form->getRawState(), 'eventRegistrationForm.steps', []);
     $steps['newStepKey'] = [
@@ -379,6 +379,6 @@ it('exposes the mapped block types to the fields rich editor for the custom bloc
 
     $event = Event::factory()->create();
 
-    livewire(EditEventRegistration::class, ['record' => $event->getKey()])
+    livewire(EventRegistrationFormManager::class, ['record' => $event])
         ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });

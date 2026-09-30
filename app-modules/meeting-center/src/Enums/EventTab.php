@@ -34,19 +34,30 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
+namespace AdvisingApp\MeetingCenter\Enums;
 
-use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
-use Filament\Resources\Pages\Page;
+use Filament\Support\Contracts\HasLabel;
 
-class EditEvent extends Page
+enum EventTab: string implements HasLabel
 {
-    protected static string $resource = EventResource::class;
+    case Overview = 'overview';
 
-    protected static ?string $navigationLabel = 'Edit';
+    case Details = 'details';
 
-    public function mount(int | string $record): void
+    case LandingPage = 'landing-page';
+
+    case RegistrationForm = 'registration-form';
+
+    case Attendees = 'attendees';
+
+    public function getLabel(): string
     {
-        $this->redirect(EventResource::getUrl('edit-details', ['record' => $record]));
+        return match ($this) {
+            self::Overview => 'Overview',
+            self::Details => 'Details',
+            self::LandingPage => 'Landing Page',
+            self::RegistrationForm => 'Registration Form',
+            self::Attendees => 'Attendees',
+        };
     }
 }
