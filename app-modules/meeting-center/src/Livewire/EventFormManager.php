@@ -34,50 +34,72 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Actions;
+namespace AdvisingApp\MeetingCenter\Livewire;
 
-use AdvisingApp\MeetingCenter\Jobs\CreateEventAttendees;
+use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Models\Event;
-use App\Models\User;
-use Filament\Actions\Action;
-use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
-use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
+use Illuminate\Contracts\View\View;
+use Livewire\Component;
 
-class InviteEventAttendeesAction extends Action
+abstract class EventFormManager extends Component implements HasForms
 {
-  protected function setUp(): void
-  {
-    parent::setUp();
+    use InteractsWithForms;
+    use RestrictsFileUploadsToSchemaComponents;
 
-    $this->label('Invite')
-      ->icon('heroicon-o-envelope')
-      ->schema([
-        TagsInput::make('attendees')
-          ->placeholder('Add attendee email')
-          ->nestedRecursiveRules(['email'])
-          ->required(),
-      ])
-      ->action(function (array $data, RelationManager $livewire) {
-        $record = $livewire->getOwnerRecord();
-        assert($record instanceof Event);
+    public Event $record;
 
-        /** @var User $user */
-        $user = auth()->user();
+    public ?array $data = [];
 
-        $emails = $data['attendees'];
+    public function mount(): void
+    {
+        $this->authorizeEdit();
 
-        dispatch(new CreateEventAttendees($record, $emails, $user));
+        $this->form->fill($this->record->attributesToArray());
+    }
+
+    public function hydrate(): void
+    {
+        $this->authorizeEdit();
+    }
+
+    public function save(): void
+    {
+        $this->authorizeEdit();
+
+        $data = $this->form->getState();
+
+        foreach ($this->attributesToSave() as $attribute) {
+            $this->record->{$attribute} = $data[$attribute] ?? null;
+        }
+
+        $this->record->save();
+
+        $this->afterSave();
 
         Notification::make()
-          ->title(count($emails) > 1 ? 'The invitations are being sent' : 'The invitation is being sent')
-          ->success()
-          ->send();
-      });
-  }
+            ->title('Saved')
+            ->success()
+            ->send();
+    }
 
-  public static function getDefaultName(): ?string
-  {
-    return 'invite';
-  }
+    public function render(): View
+    {
+        return view('meeting-center::livewire.event-form-manager');
+    }
+
+    protected function authorizeEdit(): void
+    {
+        EventResource::authorizeEdit($this->record);
+    }
+
+    /**
+     * @return array<string>
+     */
+    abstract protected function attributesToSave(): array;
+
+    protected function afterSave(): void {}
 }

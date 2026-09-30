@@ -37,15 +37,10 @@
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\CreateEvent;
-use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEventDetails;
-use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEventPage;
-use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEventRegistration;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ListEvents;
-use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ManageEventAttendees;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ViewEvent;
 use AdvisingApp\MeetingCenter\Models\Event;
 use App\Enums\NavigationGroup;
-use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Model;
 use UnitEnum;
@@ -68,17 +63,6 @@ class EventResource extends Resource
 
     protected static bool $isGloballySearchable = true;
 
-    public static function getRecordSubNavigation(Page $page): array
-    {
-        return $page->generateNavigationItems([
-            ViewEvent::class,
-            EditEventDetails::class,
-            EditEventPage::class,
-            EditEventRegistration::class,
-            ManageEventAttendees::class,
-        ]);
-    }
-
     public static function getGlobalSearchResultUrl(Model $record): string
     {
         return EventResource::getUrl('view', ['record' => $record]);
@@ -90,10 +74,6 @@ class EventResource extends Resource
             'index' => ListEvents::route('/'),
             'create' => CreateEvent::route('/create'),
             'view' => ViewEvent::route('/{record}'),
-            'edit-details' => EditEventDetails::route('/{record}/edit-details'),
-            'edit-page' => EditEventPage::route('/{record}/edit-page'),
-            'edit-registration' => EditEventRegistration::route('/{record}/edit-registration'),
-            'manage-attendees' => ManageEventAttendees::route('/{record}/manage-attendees'),
         ];
     }
 }
