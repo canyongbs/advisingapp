@@ -36,31 +36,24 @@
 
 namespace App\Console;
 
-use AdvisingApp\Ai\Jobs\CustomerAdvisors\AutomaticallyEndCustomerAdvisors;
-use AdvisingApp\Ai\Jobs\CustomerAdvisors\UpdateCurrentCustomerAdvisorLinks;
-use AdvisingApp\Ai\Models\AiMessage;
-use AdvisingApp\Ai\Models\AiMessageFile;
-use AdvisingApp\Ai\Models\AiThread;
-use AdvisingApp\Audit\Models\Audit;
-use AdvisingApp\Campaign\Jobs\ExecuteCampaignActions;
-use AdvisingApp\Engagement\Jobs\DeliverEngagements as DeliverEngagementsJob;
+use AdvisingApp\Ai\Jobs\DispatchAutomaticallyEndCustomerAdvisorsForEachTenant;
+use AdvisingApp\Ai\Jobs\DispatchDeleteUnsavedAiThreadsForEachTenant;
+use AdvisingApp\Ai\Jobs\DispatchFetchAiFilesParsingResultsForEachTenant;
+use AdvisingApp\Ai\Jobs\DispatchUpdateCurrentCustomerAdvisorLinksForEachTenant;
+use AdvisingApp\Campaign\Jobs\DispatchExecuteCampaignActionsForEachTenant;
+use AdvisingApp\Engagement\Jobs\DispatchDeliverEngagementsForEachTenant;
+use AdvisingApp\Engagement\Jobs\DispatchUnmatchedInboundCommunicationsForEachTenant;
 use AdvisingApp\Engagement\Jobs\GatherAndDispatchSesS3InboundEmails;
-use AdvisingApp\Engagement\Jobs\UnmatchedInboundCommunicationsJob;
-use AdvisingApp\Engagement\Models\EngagementFile;
-use AdvisingApp\Form\Models\FormAuthentication;
-use AdvisingApp\MeetingCenter\Console\Commands\RefreshCalendarRefreshTokens;
-use AdvisingApp\MeetingCenter\Jobs\SyncCalendars;
-use AdvisingApp\Workflow\Jobs\ExecuteWorkflowActionStepsJob;
-use App\Models\HealthCheckResultHistoryItem;
+use AdvisingApp\IntegrationOpenAi\Jobs\DispatchUploadFilesToVectorStoresForEachTenant;
+use AdvisingApp\MeetingCenter\Jobs\DispatchRefreshCalendarRefreshTokensForEachTenant;
+use AdvisingApp\MeetingCenter\Jobs\DispatchSyncCalendarsForEachTenant;
+use AdvisingApp\Workflow\Jobs\DispatchExecuteWorkflowActionStepsForEachTenant;
+use App\Jobs\DispatchHealthChecksForEachTenant;
+use App\Jobs\DispatchModelPruningForEachTenant;
+use App\Jobs\DispatchStaleCacheTagPruningForEachTenant;
 use App\Models\MonitoredScheduledTaskLogItem;
-use App\Models\Scopes\ExcludeExpiredSubscriptions;
-use App\Models\Scopes\SetupIsComplete;
-use App\Models\Tenant;
-use Filament\Actions\Imports\Models\FailedImportRow;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
-use Illuminate\Support\Facades\Log;
-use Throwable;
 
 class Kernel extends ConsoleKernel
 {
@@ -71,168 +64,101 @@ class Kernel extends ConsoleKernel
     {
         $schedule->command('model:prune', ['--model' => MonitoredScheduledTaskLogItem::class])
             ->daily()
-            ->withoutOverlapping(720)
+            ->onOneServer()
             ->monitorName('Landlord Prune MonitoredScheduledTaskLogItems');
 
         $schedule->job(new GatherAndDispatchSesS3InboundEmails())
             ->everyMinute()
             ->name('Gather and Dispatch SES S3 Inbound Emails')
+            ->onOneServer()
             ->monitorName('Gather and Dispatch SES S3 Inbound Emails');
 
-        Tenant::query()
-            ->tap(new SetupIsComplete())
-            ->tap(new ExcludeExpiredSubscriptions())
-            ->cursor()
-            ->each(function (Tenant $tenant) use ($schedule) {
-                try {
-                    $schedule->call(function () use ($tenant) {
-                        $tenant->execute(function () {
-                            dispatch(app(DeliverEngagementsJob::class));
-                        });
-                    })
-                        ->everyMinute()
-                        ->name("Dispatch DeliverEngagements | Tenant {$tenant->domain}")
-                        ->monitorName("Dispatch DeliverEngagements | Tenant {$tenant->domain}")
-                        ->withoutOverlapping(15);
+        $schedule->job(new DispatchDeliverEngagementsForEachTenant())
+            ->everyMinute()
+            ->onOneServer()
+            ->monitorName('Dispatch Deliver Engagements For Each Tenant');
 
-                    $schedule->call(function () use ($tenant) {
-                        $tenant->execute(function () {
-                            dispatch(new UnmatchedInboundCommunicationsJob());
-                        });
-                    })
-                        ->daily()
-                        ->name("Process Unmatched Inbound Communications | Tenant {$tenant->domain}")
-                        ->monitorName("Process Unmatched Inbound Communications | Tenant {$tenant->domain}")
-                        ->withoutOverlapping(720);
+        $schedule->job(new DispatchExecuteCampaignActionsForEachTenant())
+            ->everyMinute()
+            ->onOneServer()
+            ->monitorName('Dispatch Execute Campaign Actions For Each Tenant');
 
-                    $schedule->call(function () use ($tenant) {
-                        $tenant->execute(function () {
-                            dispatch(new SyncCalendars());
-                        });
-                    })
-                        ->everyFifteenMinutes()
-                        ->name("Dispatch SyncCalendars | Tenant {$tenant->domain}")
-                        ->monitorName("Dispatch SyncCalendars | Tenant {$tenant->domain}")
-                        ->withoutOverlapping(60);
+        $schedule->job(new DispatchExecuteWorkflowActionStepsForEachTenant())
+            ->everyMinute()
+            ->onOneServer()
+            ->monitorName('Dispatch Execute Workflow Action Steps For Each Tenant');
 
-                    $schedule->call(function () use ($tenant) {
-                        $tenant->execute(function () {
-                            dispatch(new ExecuteCampaignActions());
-                        });
-                    })
-                        ->everyMinute()
-                        ->name("Dispatch ExecuteCampaignActions | Tenant {$tenant->domain}")
-                        ->monitorName("Dispatch ExecuteCampaignActions | Tenant {$tenant->domain}")
-                        ->withoutOverlapping(15);
+        $schedule->job(new DispatchAutomaticallyEndCustomerAdvisorsForEachTenant())
+            ->everyMinute()
+            ->onOneServer()
+            ->monitorName('Dispatch Automatically End Customer Advisors For Each Tenant');
 
-                    $schedule->call(function () use ($tenant) {
-                        $tenant->execute(function () {
-                            dispatch(new ExecuteWorkflowActionStepsJob());
-                        });
-                    })
-                        ->everyMinute()
-                        ->name("Dispatch ExecuteWorkflowActionStepsJob | Tenant {$tenant->domain}")
-                        ->monitorName("Dispatch ExecuteWorkflowActionStepsJob | Tenant {$tenant->domain}")
-                        ->withoutOverlapping(15);
+        $schedule->job(new DispatchFetchAiFilesParsingResultsForEachTenant())
+            ->everyMinute()
+            ->onOneServer()
+            ->monitorName('Dispatch Fetch AI Files Parsing Results For Each Tenant');
 
-                    $schedule->call(function () use ($tenant) {
-                        $tenant->execute(function () {
-                            dispatch(new AutomaticallyEndCustomerAdvisors());
-                        });
-                    })
-                        ->everyMinute()
-                        ->name("Dispatch AutomaticallyEndCustomerAdvisors | Tenant {$tenant->domain}")
-                        ->monitorName("Dispatch AutomaticallyEndCustomerAdvisors | Tenant {$tenant->domain}")
-                        ->withoutOverlapping(15);
+        $schedule->job(new DispatchHealthChecksForEachTenant())
+            ->everyMinute()
+            ->onOneServer()
+            ->monitorName('Dispatch Health Checks For Each Tenant');
 
-                    $schedule->call(function () use ($tenant) {
-                        $tenant->execute(function () {
-                            dispatch(new UpdateCurrentCustomerAdvisorLinks());
-                        });
-                    })
-                        ->monthlyOn(1, '0:0')
-                        ->name("Dispatch UpdateCurrentCustomerAdvisorLinks | Tenant {$tenant->domain}")
-                        ->monitorName("Dispatch UpdateCurrentCustomerAdvisorLinks | Tenant {$tenant->domain}");
+        $schedule->job(new DispatchSyncCalendarsForEachTenant())
+            ->everyFifteenMinutes()
+            ->onOneServer()
+            ->monitorName('Dispatch Sync Calendars For Each Tenant');
 
-                    $schedule->command("tenants:artisan \"cache:prune-stale-tags\" --tenant={$tenant->id}")
-                        ->hourly()
-                        ->name("Prune Stale Cache Tags | Tenant {$tenant->domain}")
-                        ->monitorName("Prune Stale Cache Tags | Tenant {$tenant->domain}")
-                        ->withoutOverlapping(15);
+        $schedule->job(new DispatchUploadFilesToVectorStoresForEachTenant())
+            ->everyFifteenMinutes()
+            ->onOneServer()
+            ->monitorName('Dispatch Upload Files To Vector Stores For Each Tenant');
 
-                    $schedule->command("tenants:artisan \"health:queue-check-heartbeat\" --tenant={$tenant->id}")
-                        ->everyMinute()
-                        ->name("Queue Check Heartbeat | Tenant {$tenant->domain}")
-                        ->monitorName("Queue Check Heartbeat | Tenant {$tenant->domain}")
-                        ->withoutOverlapping(15);
+        $schedule->job(new DispatchStaleCacheTagPruningForEachTenant())
+            ->hourly()
+            ->onOneServer()
+            ->monitorName('Dispatch Stale Cache Tag Pruning For Each Tenant');
 
-                    $schedule->command("ai:fetch-files-parsing-results --tenant={$tenant->id}")
-                        ->everyMinute()
-                        ->name("Fetch AI Assistant Files Parsed Results | Tenant {$tenant->domain}")
-                        ->monitorName("Fetch AI Assistant Files Parsed Results | Tenant {$tenant->domain}")
-                        ->withoutOverlapping(15);
+        $schedule->job(new DispatchUnmatchedInboundCommunicationsForEachTenant())
+            ->daily()
+            ->onOneServer()
+            ->monitorName('Dispatch Unmatched Inbound Communications For Each Tenant');
 
-                    $schedule->command("ai:delete-unsaved-ai-threads --tenant={$tenant->id}")
-                        ->daily()
-                        ->name("Delete Unsaved AI Threads | Tenant {$tenant->domain}")
-                        ->monitorName("Delete Unsaved AI Threads | Tenant {$tenant->domain}")
-                        ->withoutOverlapping(720);
+        $schedule->job(new DispatchDeleteUnsavedAiThreadsForEachTenant())
+            ->daily()
+            ->onOneServer()
+            ->monitorName('Dispatch Delete Unsaved AI Threads For Each Tenant');
 
-                    $schedule->command("integration-open-ai:upload-files-to-vector-stores --tenant={$tenant->id}")
-                        ->everyFifteenMinutes()
-                        ->name("Upload AI Assistant Files To Open AI Vector Stores | Tenant {$tenant->domain}")
-                        ->monitorName("Upload AI Assistant Files To Open AI Vector Stores | Tenant {$tenant->domain}")
-                        ->withoutOverlapping(60);
+        $schedule->job(new DispatchModelPruningForEachTenant())
+            ->daily()
+            ->onOneServer()
+            ->monitorName('Dispatch Model Pruning For Each Tenant');
 
-                    $modelsToPrune = collect([
-                        AiMessageFile::class,
-                        AiMessage::class,
-                        AiThread::class,
-                        Audit::class,
-                        EngagementFile::class,
-                        FailedImportRow::class,
-                        FormAuthentication::class,
-                        HealthCheckResultHistoryItem::class,
-                    ])
-                        ->join(',');
+        $schedule->job(new DispatchRefreshCalendarRefreshTokensForEachTenant())
+            ->daily()
+            ->onOneServer()
+            ->monitorName('Dispatch Refresh Calendar Refresh Tokens For Each Tenant');
 
-                    $schedule->command("tenants:artisan \"model:prune --model={$modelsToPrune}\" --tenant={$tenant->id}")
-                        ->daily()
-                        ->name("Prune Models | Tenant {$tenant->domain}")
-                        ->monitorName("Prune Models | Tenant {$tenant->domain}")
-                        ->withoutOverlapping(720);
+        $schedule->job(new DispatchUpdateCurrentCustomerAdvisorLinksForEachTenant())
+            ->monthlyOn(1, '0:0')
+            ->onOneServer()
+            ->monitorName('Dispatch Update Current Customer Advisor Links For Each Tenant');
 
-                    $schedule->command(
-                        command: RefreshCalendarRefreshTokens::class,
-                        parameters: [
-                            "--tenant={$tenant->id}",
-                        ]
-                    )
-                        ->daily()
-                        ->name("Refresh Calendar Refresh Tokens | Tenant {$tenant->domain}")
-                        ->monitorName("Refresh Calendar Refresh Tokens | Tenant {$tenant->domain}")
-                        ->withoutOverlapping(720);
+        $schedule->command('health:queue-check-heartbeat')
+            ->everyMinute()
+            ->onOneServer()
+            ->monitorName('Queue Check Heartbeat');
 
-                    $schedule->command("tenants:artisan \"health:check\" --tenant={$tenant->id}")
-                        ->everyMinute()
-                        ->name("Health Check | Tenant {$tenant->domain}")
-                        ->monitorName("Health Check | Tenant {$tenant->domain}")
-                        ->withoutOverlapping(15);
+        $schedule->command('health:schedule-check-heartbeat')
+            ->everyMinute()
+            ->onOneServer()
+            ->monitorName('Schedule Check Heartbeat');
 
-                    $schedule->command("tenants:artisan \"health:schedule-check-heartbeat\" --tenant={$tenant->id}")
-                        ->everyMinute()
-                        ->name("Schedule Check Heartbeat | Tenant {$tenant->domain}")
-                        ->monitorName("Schedule Check Heartbeat | Tenant {$tenant->domain}")
-                        ->withoutOverlapping(15);
-                } catch (Throwable $exception) {
-                    Log::error('Error scheduling tenant commands.', [
-                        'tenant' => $tenant->id,
-                        'exception' => $exception,
-                    ]);
-
-                    report($exception);
-                }
-            });
+        // Registered last so it only records once a full schedule run has been dispatched; per-node, so never onOneServer().
+        $schedule->call(fn () => touch(storage_path('framework/schedule-heartbeat')))
+            ->everyMinute()
+            ->name('Schedule Liveness Beacon')
+            ->doNotMonitor()
+            ->sentryMonitor(monitorSlug: 'advisingapp-scheduler-liveness', checkInMargin: 5, failureIssueThreshold: 5);
     }
 
     /**
