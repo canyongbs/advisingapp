@@ -32,7 +32,7 @@
     </COPYRIGHT>
 --}}
 
-<div {{ $attributes->class('flex w-full flex-col gap-2') }}>
+<footer {{ $attributes->class('flex w-full flex-col gap-2') }}>
     <div class="flex w-full justify-center">
         <img
             class="hidden h-7 dark:block"
@@ -56,4 +56,4 @@
             .
         </span>
     </div>
-</div>
+</footer>
