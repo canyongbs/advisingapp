@@ -527,4 +527,40 @@ describe('enterprise ai', function () {
         expect($licenseFilterOptions())->not->toHaveKey(LicenseType::ConversationalAi->value)
             ->toHaveKeys([LicenseType::RetentionCrm->value, LicenseType::RecruitmentCrm->value]);
     });
+
+    it('treats users with only a `ConversationalAi` license as having no assigned license while Enterprise AI is disabled', function () {
+        asSuperAdmin();
+
+        $aiOnlyUser = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+        $retentionUser = User::factory()->licensed(LicenseType::RetentionCrm)->create();
+        $unlicensedUser = User::factory()->create();
+
+        livewire(ListUsers::class)
+            ->filterTable('licenses', ['no_assigned_license'])
+            ->assertCanSeeTableRecords([$unlicensedUser])
+            ->assertCanNotSeeTableRecords([$aiOnlyUser, $retentionUser]);
+
+        setEnterpriseAiEnabled(false);
+
+        livewire(ListUsers::class)
+            ->filterTable('licenses', ['no_assigned_license'])
+            ->assertCanSeeTableRecords([$unlicensedUser, $aiOnlyUser])
+            ->assertCanNotSeeTableRecords([$retentionUser]);
+    });
+
+    it('does not filter by the `ConversationalAi` license while Enterprise AI is disabled', function () {
+        asSuperAdmin();
+
+        $aiOnlyUser = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+
+        livewire(ListUsers::class)
+            ->filterTable('licenses', [LicenseType::ConversationalAi->value])
+            ->assertCanSeeTableRecords([$aiOnlyUser]);
+
+        setEnterpriseAiEnabled(false);
+
+        livewire(ListUsers::class)
+            ->filterTable('licenses', [LicenseType::ConversationalAi->value])
+            ->assertCanNotSeeTableRecords([$aiOnlyUser]);
+    });
 });
