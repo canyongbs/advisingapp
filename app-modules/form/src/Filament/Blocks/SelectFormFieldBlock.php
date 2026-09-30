@@ -36,14 +36,12 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
+use AdvisingApp\Form\Filament\Forms\Components\OptionsKeyValue;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Closure;
 use Filament\Actions\Action;
-use Filament\Forms\Components\KeyValue;
-use Filament\Schemas\Components\Utilities\Set;
 use Filament\Support\Enums\Width;
 
 class SelectFormFieldBlock extends FormFieldBlock
@@ -67,7 +65,7 @@ class SelectFormFieldBlock extends FormFieldBlock
     public static function fields(): array
     {
         return [
-            static::optionsKeyValueField(),
+            OptionsKeyValue::make('options'),
         ];
     }
 
@@ -89,53 +87,6 @@ class SelectFormFieldBlock extends FormFieldBlock
             'string',
             'in:' . static::normalizeOptions($field->config['options'])->keys()->join(','),
         ];
-    }
-
-    /**
-     * The stored option config is always a value => label map (see
-     * FormFieldBlock::normalizeOptions()), but a KeyValue field's "key"
-     * column is always rendered before its "value" column. To show the
-     * editable Label before the disabled, auto-derived Value, the field is
-     * edited internally as a label => value map and flipped back to a
-     * value => label map when hydrating from/dehydrating to storage.
-     */
-    protected static function optionsKeyValueField(string $name = 'options'): KeyValue
-    {
-        return KeyValue::make($name)
-            ->keyLabel('Label')
-            ->valueLabel('Value')
-            ->editableValues(false)
-            ->reorderable()
-            ->live(onBlur: true)
-            ->rule(fn (): Closure => function (string $attribute, mixed $value, Closure $fail): void {
-                static::validateOptionValues(is_array($value) ? $value : [], $fail);
-            })
-            ->afterStateHydrated(function (Set $set, ?array $state) use ($name): void {
-                $set($name, static::fillMissingOptionValues(array_flip($state ?? [])));
-            })
-            ->afterStateUpdated(function (Set $set, ?array $state) use ($name): void {
-                $set($name, static::fillMissingOptionValues($state ?? []));
-            })
-            ->dehydrateStateUsing(fn (?array $state): array => array_flip(static::fillMissingOptionValues($state ?? [])));
-    }
-
-    /**
-     * Keeps every option value that is already present (so stable codes that
-     * were persisted, e.g. "us" => "United States", are never rewritten) and
-     * only derives a value from the label for options that have none yet,
-     * i.e. newly added ones.
-     *
-     * @param array<int|string, mixed> $options label => value
-     *
-     * @return array<string, string>
-     */
-    protected static function fillMissingOptionValues(array $options): array
-    {
-        return collect($options)
-            ->mapWithKeys(fn (mixed $value, int|string $label): array => [
-                (string) $label => filled($value) ? (string) $value : static::slugifyOptionValue((string) $label),
-            ])
-            ->all();
     }
 
     protected static function renderedView(): string
