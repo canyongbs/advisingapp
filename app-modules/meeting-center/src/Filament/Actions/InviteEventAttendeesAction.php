@@ -46,38 +46,38 @@ use Filament\Resources\RelationManagers\RelationManager;
 
 class InviteEventAttendeesAction extends Action
 {
-  protected function setUp(): void
-  {
-    parent::setUp();
+    protected function setUp(): void
+    {
+        parent::setUp();
 
-    $this->label('Invite')
-      ->icon('heroicon-o-envelope')
-      ->schema([
-        TagsInput::make('attendees')
-          ->placeholder('Add attendee email')
-          ->nestedRecursiveRules(['email'])
-          ->required(),
-      ])
-      ->action(function (array $data, RelationManager $livewire) {
-        $record = $livewire->getOwnerRecord();
-        assert($record instanceof Event);
+        $this->label('Invite')
+            ->icon('heroicon-o-envelope')
+            ->schema([
+                TagsInput::make('attendees')
+                    ->placeholder('Add attendee email')
+                    ->nestedRecursiveRules(['email'])
+                    ->required(),
+            ])
+            ->action(function (array $data, RelationManager $livewire) {
+                $record = $livewire->getOwnerRecord();
+                assert($record instanceof Event);
 
-        /** @var User $user */
-        $user = auth()->user();
+                /** @var User $user */
+                $user = auth()->user();
 
-        $emails = $data['attendees'];
+                $emails = $data['attendees'];
 
-        dispatch(new CreateEventAttendees($record, $emails, $user));
+                dispatch(new CreateEventAttendees($record, $emails, $user));
 
-        Notification::make()
-          ->title(count($emails) > 1 ? 'The invitations are being sent' : 'The invitation is being sent')
-          ->success()
-          ->send();
-      });
-  }
+                Notification::make()
+                    ->title(count($emails) > 1 ? 'The invitations are being sent' : 'The invitation is being sent')
+                    ->success()
+                    ->send();
+            });
+    }
 
-  public static function getDefaultName(): ?string
-  {
-    return 'invite';
-  }
+    public static function getDefaultName(): ?string
+    {
+        return 'invite';
+    }
 }
