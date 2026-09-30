@@ -70,6 +70,26 @@ class SelectFormFieldBlock extends FormFieldBlock
         ];
     }
 
+    public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
+    {
+        return [
+            '$formkit' => 'select',
+            'label' => $field->label,
+            'name' => $field->getKey(),
+            ...($field->is_required ? ['validation' => 'required'] : []),
+            'options' => $field->config['options'],
+            ...self::getDescriptionSectionsSchema($field),
+        ];
+    }
+
+    public static function getValidationRules(SubmissibleField $field): array
+    {
+        return [
+            'string',
+            'in:' . static::normalizeOptions($field->config['options'])->keys()->join(','),
+        ];
+    }
+
     /**
      * The stored option config is always a value => label map (see
      * FormFieldBlock::normalizeOptions()), but a KeyValue field's "key"
@@ -106,26 +126,6 @@ class SelectFormFieldBlock extends FormFieldBlock
             ->keys()
             ->mapWithKeys(fn (int|string $label): array => [(string) $label => static::slugifyOptionValue((string) $label)])
             ->all();
-    }
-
-    public static function getFormKitSchema(SubmissibleField $field, ?Submissible $submissible = null, Student|Prospect|null $author = null): array
-    {
-        return [
-            '$formkit' => 'select',
-            'label' => $field->label,
-            'name' => $field->getKey(),
-            ...($field->is_required ? ['validation' => 'required'] : []),
-            'options' => $field->config['options'],
-            ...self::getDescriptionSectionsSchema($field),
-        ];
-    }
-
-    public static function getValidationRules(SubmissibleField $field): array
-    {
-        return [
-            'string',
-            'in:' . static::normalizeOptions($field->config['options'])->keys()->join(','),
-        ];
     }
 
     protected static function renderedView(): string
