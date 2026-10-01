@@ -48,6 +48,7 @@ use function Tests\asSuperAdmin;
 
 /**
  * @param array<int, string> $permissions
+ *
  * @return User
  */
 function viewEventTestUser(array $permissions): User
