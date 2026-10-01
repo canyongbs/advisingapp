@@ -58,7 +58,7 @@ use Microsoft\Graph\Model\DateTimeTimeZone;
 use Microsoft\Graph\Model\Event;
 use Mockery\MockInterface;
 
-function createMockOutlookEvent(string $id, string $subject, ?string $iCalUid = null): Event // @phpstan-ignore MeliorStan.parameterNameNotCamelCase
+function createMockOutlookEvent(string $id, string $subject, ?string $icalUid = null): Event
 {
     $start = new DateTimeTimeZone();
     $start->setDateTime('2026-03-05T10:00:00');
@@ -70,7 +70,7 @@ function createMockOutlookEvent(string $id, string $subject, ?string $iCalUid = 
 
     $event = new Event();
     $event->setId($id);
-    $event->setICalUId($iCalUid ?? "ical-{$id}");
+    $event->setICalUId($icalUid ?? "ical-{$id}");
     $event->setSubject($subject);
     $event->setBodyPreview('Test body');
     $event->setStart($start);
@@ -110,9 +110,11 @@ function createMockedManager(): array
 function mockAzureCalendarSettings(): void
 {
     $settings = Mockery::mock(AzureCalendarSettings::class);
-    $settings->client_id = 'test-client-id'; // @phpstan-ignore property.notFound
-    $settings->client_secret = 'test-client-secret'; // @phpstan-ignore property.notFound
-    $settings->tenant_id = 'test-tenant-id'; // @phpstan-ignore property.notFound
+    assert($settings instanceof AzureCalendarSettings);
+
+    $settings->client_id = 'test-client-id';
+    $settings->client_secret = 'test-client-secret';
+    $settings->tenant_id = 'test-tenant-id';
     app()->instance(AzureCalendarSettings::class, $settings);
 }
 
