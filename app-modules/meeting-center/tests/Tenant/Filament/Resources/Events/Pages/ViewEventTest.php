@@ -46,6 +46,10 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
+/**
+ * @param array<int, string> $permissions
+ * @return User
+ */
 function viewEventTestUser(array $permissions): User
 {
     $settings = app(LicenseSettings::class);
