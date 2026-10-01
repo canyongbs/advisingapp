@@ -94,13 +94,11 @@ $createOutlookCalendar = function (array $overrides = []): Calendar {
 /** @return array{0: MockInterface&OutlookCalendarManager, 1: MockInterface&Graph} */
 $createMockedManager = function (): array {
     $graph = Mockery::mock(Graph::class);
-    $graph->shouldReceive('setAccessToken')->andReturnSelf();
-    // @phpstan-ignore method.notFound
+    $graph->shouldReceive('setAccessToken')->andReturnSelf(); // @phpstan-ignore method.notFound
     $manager = Mockery::mock(OutlookCalendarManager::class)->makePartial();
     $manager->shouldReceive('makeClient')->andReturn($graph);
 
-    return [$manager, $graph];
-    // @phpstan-ignore return.type
+    return [$manager, $graph]; // @phpstan-ignore return.type
 };
 
 $mockAzureCalendarSettings = function (): void {

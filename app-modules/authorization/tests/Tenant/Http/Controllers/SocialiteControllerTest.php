@@ -57,8 +57,7 @@ $fakeAzureSocialiteDriver = function (string $email): void {
     $socialiteUser->name = 'External User';
     $socialiteUser->avatar = 'https://example.com/avatar.png';
     $driver = Mockery::mock();
-    $driver->shouldReceive('setConfig')->andReturnSelf();
-    // @phpstan-ignore method.notFound
+    $driver->shouldReceive('setConfig')->andReturnSelf(); // @phpstan-ignore method.notFound
     $driver->shouldReceive('user')->andReturn($socialiteUser);
     Socialite::shouldReceive('driver')->andReturn($driver);
 };
