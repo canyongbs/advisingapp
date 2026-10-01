@@ -75,20 +75,32 @@ class OptionsKeyValueTestHost extends Component implements HasSchemas
     }
 }
 
-it('hydrates stored value => label options as label => value rows', function () {
+it('keeps the stored value => label structure as key => value rows', function () {
     $host = livewire(OptionsKeyValueTestHost::class, ['options' => ['us' => 'United States', 'ca' => 'Canada']]);
 
     expect($host->instance()->form->getRawState()['options'])->toBe([
-        ['key' => 'United States', 'value' => 'us'],
-        ['key' => 'Canada', 'value' => 'ca'],
+        ['key' => 'us', 'value' => 'United States'],
+        ['key' => 'ca', 'value' => 'Canada'],
     ]);
 });
 
-it('derives a value from the label for new options, keeping existing values', function () {
-    $host = livewire(OptionsKeyValueTestHost::class, ['options' => ['us' => 'United States']])
+it('hydrates options saved as a list of label and value rows', function () {
+    $host = livewire(OptionsKeyValueTestHost::class, ['options' => [
+        ['label' => 'United States', 'value' => 'us'],
+        ['label' => 'Canada', 'value' => 'ca'],
+    ]]);
+
+    expect($host->instance()->form->getRawState()['options'])->toBe([
+        ['key' => 'us', 'value' => 'United States'],
+        ['key' => 'ca', 'value' => 'Canada'],
+    ]);
+});
+
+it('dehydrates rows back to a stored value => label map', function () {
+    $host = livewire(OptionsKeyValueTestHost::class)
         ->set('data.options', [
-            ['key' => 'United States', 'value' => 'us'],
-            ['key' => 'New Option', 'value' => ''],
+            ['key' => 'us', 'value' => 'United States'],
+            ['key' => 'new-option', 'value' => 'New Option'],
         ]);
 
     expect($host->instance()->form->getState()['options'])->toBe([
@@ -97,18 +109,9 @@ it('derives a value from the label for new options, keeping existing values', fu
     ]);
 });
 
-it('re-derives the value of a renamed option, but keeps the values of unchanged options', function () {
-    $host = livewire(OptionsKeyValueTestHost::class, ['options' => ['us' => 'United States', 'ca' => 'Canada']]);
-
-    $host->set('data.options', [
-        ['key' => 'United States', 'value' => 'us'],
-        ['key' => 'Canada Renamed', 'value' => 'ca'],
-    ]);
-
-    expect($host->instance()->form->getRawState()['options'])->toBe([
-        ['key' => 'United States', 'value' => 'us'],
-        ['key' => 'Canada Renamed', 'value' => 'canada-renamed'],
-    ]);
+it('renders the label column before the generated value column', function () {
+    livewire(OptionsKeyValueTestHost::class)
+        ->assertSeeHtmlInOrder(['aria-label="Label"', 'aria-label="Value"']);
 });
 
 it('validates that every label generates a distinct, non-empty value', function (array $rows) {
@@ -117,6 +120,6 @@ it('validates that every label generates a distinct, non-empty value', function 
         ->call('save')
         ->assertHasErrors(['data.options']);
 })->with([
-    'punctuation-only label' => [[['key' => '!!!', 'value' => '']]],
-    'labels that slug to the same value' => [[['key' => 'A B', 'value' => ''], ['key' => 'A-B', 'value' => '']]],
+    'punctuation-only label' => [[['key' => '', 'value' => '!!!']]],
+    'labels that generate the same value' => [[['key' => 'a-b', 'value' => 'A B'], ['key' => 'a-b', 'value' => 'A-B']]],
 ]);
