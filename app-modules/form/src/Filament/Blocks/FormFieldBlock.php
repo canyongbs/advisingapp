@@ -40,11 +40,14 @@ use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 
 abstract class FormFieldBlock extends RichContentCustomBlock
 {
@@ -120,6 +123,38 @@ abstract class FormFieldBlock extends RichContentCustomBlock
         return [];
     }
 
+    /**
+     * Derives an option's value from its label, replacing spaces (and any
+     * other non-alphanumeric separators) with hyphens.
+     */
+    public static function slugifyOptionValue(?string $label): string
+    {
+        return Str::slug($label ?? '');
+    }
+
+    /**
+     * Slugging does not guarantee a usable value: a punctuation-only label
+     * produces an empty string, and distinct labels such as "A B" and "A-B"
+     * both produce "a-b". Since option values cannot be edited directly,
+     * this fails validation so the user can correct the labels instead.
+     *
+     * @param array<int|string, mixed> $values
+     */
+    public static function validateOptionValues(array $values, Closure $fail): void
+    {
+        $values = array_map(fn (mixed $value): string => is_scalar($value) ? (string) $value : '', array_values($values));
+
+        if (in_array('', $values, true)) {
+            $fail('Each option label must contain at least one letter or number so a value can be generated.');
+
+            return;
+        }
+
+        if (count($values) !== count(array_unique($values))) {
+            $fail('Each option label must generate a distinct value. Labels such as "A B" and "A-B" generate the same value.');
+        }
+    }
+
     abstract public static function type(): string;
 
     /**
@@ -152,6 +187,36 @@ abstract class FormFieldBlock extends RichContentCustomBlock
             'field' => $field,
             'response' => $response,
         ];
+    }
+
+    /**
+     * Normalizes an options config array into a value => label map, whether
+     * it was stored as a legacy value => label map, or as a list of
+     * ['label' => ..., 'value' => ...] rows produced by the options
+     * editor.
+     *
+     * @param array<int|string, mixed> $options
+     *
+     * @return Collection<string, string>
+     */
+    protected static function normalizeOptions(array $options): Collection
+    {
+        if (isset($options[0]) && is_array($options[0])) {
+            return collect($options)
+                ->mapWithKeys(function (array $option): array {
+                    assert(is_string($option['value']) || is_int($option['value']));
+                    assert(is_string($option['label']));
+
+                    return [(string) $option['value'] => $option['label']];
+                });
+        }
+
+        return collect($options)
+            ->mapWithKeys(function (mixed $label, int|string $value): array {
+                assert(is_string($label));
+
+                return [(string) $value => $label];
+            });
     }
 
     protected static function previewView(): string

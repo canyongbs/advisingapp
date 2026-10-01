@@ -36,11 +36,13 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
+use AdvisingApp\Form\Filament\Forms\Components\OptionsKeyValue;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Forms\Components\KeyValue;
+use Filament\Actions\Action;
+use Filament\Support\Enums\Width;
 
 class SelectFormFieldBlock extends FormFieldBlock
 {
@@ -54,12 +56,16 @@ class SelectFormFieldBlock extends FormFieldBlock
         return 'Drop Down';
     }
 
+    public static function configureEditorAction(Action $action): Action
+    {
+        return parent::configureEditorAction($action)
+            ->modalWidth(Width::TwoExtraLarge);
+    }
+
     public static function fields(): array
     {
         return [
-            KeyValue::make('options')
-                ->keyLabel('Value')
-                ->valueLabel('Label'),
+            OptionsKeyValue::make('options'),
         ];
     }
 
@@ -79,7 +85,7 @@ class SelectFormFieldBlock extends FormFieldBlock
     {
         return [
             'string',
-            'in:' . collect($field->config['options'])->keys()->join(','),
+            'in:' . static::normalizeOptions($field->config['options'])->keys()->join(','),
         ];
     }
 

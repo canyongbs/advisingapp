@@ -36,15 +36,13 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
+use AdvisingApp\Form\Filament\Forms\Components\OptionsKeyValue;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Repeater\TableColumn;
-use Filament\Forms\Components\TextInput;
 use Filament\Support\Enums\Width;
 
 class CheckboxesFormFieldBlock extends FormFieldBlock
@@ -65,17 +63,7 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
         return [
             Checkbox::make('hasOtherOption')
                 ->label('Include Other'),
-            Repeater::make('options')
-                ->saveRelationshipsUsing(fn () => null)
-                ->table([
-                    TableColumn::make('Value'),
-                    TableColumn::make('Label'),
-                ])
-                ->schema([
-                    TextInput::make('value')->required(),
-                    TextInput::make('label')->required(),
-                ])
-                ->reorderable(),
+            OptionsKeyValue::make('options'),
         ];
     }
 
@@ -111,30 +99,16 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
             return ['array'];
         }
 
-        /** @var array<int, array<string, string>>|array<string, string> */
-        $options = $field->config['options'];
-        $values = collect($options);
-
-        if (isset($options[0]) && is_array($options[0])) {
-            $values = $values->pluck('value');
-        } else {
-            $values = $values->keys();
-        }
-
         return [
             'array',
-            'in:' . $values->join(','),
+            'in:' . static::normalizeOptions($field->config['options'])->keys()->join(','),
         ];
     }
 
     public static function getSubmissionState(SubmissibleField $field, mixed $response): array
     {
         $hasOtherOption = $field->config['hasOtherOption'] ?? false;
-        $options = collect($field->config['options']);
-
-        if (isset($field->config['options'][0]) && is_array($field->config['options'][0])) {
-            $options = $options->pluck('label', 'value');
-        }
+        $options = static::normalizeOptions($field->config['options']);
 
         $responseArray = is_array($response) ? $response : [];
         $optionKeysLower = $options->keys()->map(fn ($key) => strtolower($key));
