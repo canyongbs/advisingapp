@@ -84,6 +84,17 @@ enum LicenseType: string implements HasLabel
         };
     }
 
+    /**
+     * @return array<LicenseType>
+     */
+    public static function enabledCases(): array
+    {
+        return array_values(array_filter(
+            LicenseType::cases(),
+            fn (LicenseType $licenseType): bool => $licenseType->isEnabled(),
+        ));
+    }
+
     public function getSeats(): int
     {
         if (! $this->isEnabled()) {

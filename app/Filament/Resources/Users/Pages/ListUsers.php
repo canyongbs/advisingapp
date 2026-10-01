@@ -256,12 +256,12 @@ class ListUsers extends ListRecords
                             '' => [
                                 'no_assigned_license' => 'No Assigned License',
                             ],
-                            'Licenses' => collect($this->getEnabledLicenseTypes())
+                            'Licenses' => collect(LicenseType::enabledCases())
                                 ->mapWithKeys(fn ($case) => [$case->value => $case->name])
                                 ->toArray(),
                         ]
                     )
-                    ->getSearchResultsUsing(fn (string $search): array => ['Licenses' => collect($this->getEnabledLicenseTypes())->filter(fn ($case) => str_contains(strtolower($case->name), strtolower($search)))->mapWithKeys(fn ($case) => [$case->value => $case->name])->toArray()])
+                    ->getSearchResultsUsing(fn (string $search): array => ['Licenses' => collect(LicenseType::enabledCases())->filter(fn ($case) => str_contains(strtolower($case->name), strtolower($search)))->mapWithKeys(fn ($case) => [$case->value => $case->name])->toArray()])
                     ->getOptionLabelsUsing(function (array $values): array {
                         $values = array_values(array_filter($values, filled(...)));
 
@@ -271,7 +271,7 @@ class ListUsers extends ListRecords
                             $labels['no_assigned_license'] = 'No Assigned License';
                         }
 
-                        $licenseLabelsByValue = collect($this->getEnabledLicenseTypes())
+                        $licenseLabelsByValue = collect(LicenseType::enabledCases())
                             ->mapWithKeys(fn (LicenseType $licenseType): array => [$licenseType->value => $licenseType->name]);
 
                         foreach ($values as $value) {
@@ -290,7 +290,7 @@ class ListUsers extends ListRecords
 
                             $enabledLicenseTypeValues = array_map(
                                 fn (LicenseType $licenseType): string => $licenseType->value,
-                                $this->getEnabledLicenseTypes(),
+                                LicenseType::enabledCases(),
                             );
 
                             $query->when(in_array('no_assigned_license', $data['values']), function (Builder $query) use ($enabledLicenseTypeValues) {
@@ -338,16 +338,5 @@ class ListUsers extends ListRecords
                 ->authorize('import', User::class),
             CreateAction::make(),
         ];
-    }
-
-    /**
-     * @return array<LicenseType>
-     */
-    private function getEnabledLicenseTypes(): array
-    {
-        return array_values(array_filter(
-            LicenseType::cases(),
-            fn (LicenseType $licenseType): bool => $licenseType->isEnabled(),
-        ));
     }
 }
