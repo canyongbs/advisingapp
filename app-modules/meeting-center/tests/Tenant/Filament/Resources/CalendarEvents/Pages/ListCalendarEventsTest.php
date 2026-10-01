@@ -48,17 +48,16 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 
-function listCalendarEventsTestUser(): User
-{
+$listCalendarEventsTestUser = function (): User {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->scheduleAndAppointments = true;
     $settings->save();
 
     return User::factory()->licensed(LicenseType::cases())->create();
-}
+};
 
-it('the delete bulk action is gated by the delete permission', function () {
-    $user = listCalendarEventsTestUser();
+it('the delete bulk action is gated by the delete permission', function () use ($listCalendarEventsTestUser) {
+    $user = $listCalendarEventsTestUser();
     $user->givePermissionTo('calendar_event.view-any');
 
     actingAs($user);
@@ -72,8 +71,8 @@ it('the delete bulk action is gated by the delete permission', function () {
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
-it('renders ManagePersonalBookingPage and ConnectedAccounts in settings view', function () {
-    $user = listCalendarEventsTestUser();
+it('renders ManagePersonalBookingPage and ConnectedAccounts in settings view', function () use ($listCalendarEventsTestUser) {
+    $user = $listCalendarEventsTestUser();
     $user->givePermissionTo('calendar_event.view-any');
 
     Calendar::factory()->for($user)->create();

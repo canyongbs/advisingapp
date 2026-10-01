@@ -49,17 +49,16 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-function listFormsTestUser(): User
-{
+$listFormsTestUser = function (): User {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->onlineForms = true;
     $settings->save();
 
     return User::factory()->licensed(LicenseType::cases())->create();
-}
+};
 
-it('the create action is gated by the create permission', function () {
-    $user = listFormsTestUser();
+it('the create action is gated by the create permission', function () use ($listFormsTestUser) {
+    $user = $listFormsTestUser();
     $user->givePermissionTo('form.view-any');
 
     actingAs($user);
@@ -73,8 +72,8 @@ it('the create action is gated by the create permission', function () {
         ->assertActionVisible('create');
 });
 
-it('the duplicate action is gated by the create permission', function () {
-    $user = listFormsTestUser();
+it('the duplicate action is gated by the create permission', function () use ($listFormsTestUser) {
+    $user = $listFormsTestUser();
     $user->givePermissionTo('form.view-any');
 
     actingAs($user);

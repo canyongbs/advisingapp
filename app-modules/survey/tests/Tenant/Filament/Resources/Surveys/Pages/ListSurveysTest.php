@@ -46,17 +46,16 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-function listSurveysTestUser(): User
-{
+$listSurveysTestUser = function (): User {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->onlineSurveys = true;
     $settings->save();
 
     return User::factory()->licensed(LicenseType::cases())->create();
-}
+};
 
-it('the delete bulk action is gated by the delete permission', function () {
-    $user = listSurveysTestUser();
+it('the delete bulk action is gated by the delete permission', function () use ($listSurveysTestUser) {
+    $user = $listSurveysTestUser();
     $user->givePermissionTo('survey.view-any');
 
     actingAs($user);
@@ -70,8 +69,8 @@ it('the delete bulk action is gated by the delete permission', function () {
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
-it('the duplicate action is gated by the create permission', function () {
-    $user = listSurveysTestUser();
+it('the duplicate action is gated by the create permission', function () use ($listSurveysTestUser) {
+    $user = $listSurveysTestUser();
     $user->givePermissionTo('survey.view-any');
 
     actingAs($user);

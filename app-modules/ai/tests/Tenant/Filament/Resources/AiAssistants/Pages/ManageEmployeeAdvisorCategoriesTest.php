@@ -58,6 +58,27 @@ use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 
+$employeeCategoryImporter = function (User $user, AiAssistant $assistant): EmployeeAdvisorCategoryImporter {
+    $import = new Import();
+    $import->user()->associate($user);
+    $import->file_name = 'employee-categories.csv';
+    $import->file_path = 'imports/employee-categories.csv';
+    $import->importer = EmployeeAdvisorCategoryImporter::class;
+    $import->total_rows = 1;
+    $import->save();
+
+    return app(EmployeeAdvisorCategoryImporter::class, [
+        'import' => $import,
+        'columnMap' => [
+            'name' => 'name',
+            'description' => 'description',
+        ],
+        'options' => [
+            'employee_advisor_id' => $assistant->getKey(),
+        ],
+    ]);
+};
+
 beforeEach(function () {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->employeeAdvisors = true;
@@ -303,29 +324,7 @@ test('editing an employee advisor category validates the inputs', function (Empl
         ]
     );
 
-function employeeCategoryImporter(User $user, AiAssistant $assistant): EmployeeAdvisorCategoryImporter
-{
-    $import = new Import();
-    $import->user()->associate($user);
-    $import->file_name = 'employee-categories.csv';
-    $import->file_path = 'imports/employee-categories.csv';
-    $import->importer = EmployeeAdvisorCategoryImporter::class;
-    $import->total_rows = 1;
-    $import->save();
-
-    return app(EmployeeAdvisorCategoryImporter::class, [
-        'import' => $import,
-        'columnMap' => [
-            'name' => 'name',
-            'description' => 'description',
-        ],
-        'options' => [
-            'employee_advisor_id' => $assistant->getKey(),
-        ],
-    ]);
-}
-
-describe('import and export', function () {
+describe('import and export', function () use ($employeeCategoryImporter) {
     it('shows the `ImportAction` and `ExportAction` actions', function () {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
         $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view', 'assistant_custom.create']);
@@ -385,7 +384,7 @@ describe('import and export', function () {
             ->not->toContain('Payroll related prompts');
     });
 
-    it('imports employee advisor categories scoped to the selected assistant', function () {
+    it('imports employee advisor categories scoped to the selected assistant', function () use ($employeeCategoryImporter) {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
         $assistant = AiAssistant::factory()->create();
@@ -393,7 +392,7 @@ describe('import and export', function () {
 
         assertDatabaseMissing(EmployeeAdvisorCategory::class, ['name' => 'Knowledge Base']);
 
-        employeeCategoryImporter($user, $assistant)([
+        $employeeCategoryImporter($user, $assistant)([
             'name' => 'Knowledge Base',
             'description' => 'Internal article support responses.',
         ]);
@@ -410,17 +409,17 @@ describe('import and export', function () {
         ]);
     });
 
-    it('validates required fields during employee advisor category import', function () {
+    it('validates required fields during employee advisor category import', function () use ($employeeCategoryImporter) {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
         $assistant = AiAssistant::factory()->create();
 
-        expect(fn () => employeeCategoryImporter($user, $assistant)([
+        expect(fn () => $employeeCategoryImporter($user, $assistant)([
             'name' => 'Housing',
             'description' => null,
         ]))->toThrow(ValidationException::class);
     });
 
-    it('validates employee advisor category import uniqueness case-insensitively', function () {
+    it('validates employee advisor category import uniqueness case-insensitively', function () use ($employeeCategoryImporter) {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
         $assistant = AiAssistant::factory()->create();
 
@@ -429,13 +428,13 @@ describe('import and export', function () {
             'name' => 'Support',
         ])->create();
 
-        expect(fn () => employeeCategoryImporter($user, $assistant)([
+        expect(fn () => $employeeCategoryImporter($user, $assistant)([
             'name' => 'support',
             'description' => 'Duplicate name for the same assistant.',
         ]))->toThrow(ValidationException::class);
     });
 
-    it('imports a name freed by a soft deleted category', function () {
+    it('imports a name freed by a soft deleted category', function () use ($employeeCategoryImporter) {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
         $assistant = AiAssistant::factory()->create();
@@ -447,7 +446,7 @@ describe('import and export', function () {
 
         $category->delete();
 
-        employeeCategoryImporter($user, $assistant)([
+        $employeeCategoryImporter($user, $assistant)([
             'name' => 'Help Desk',
             'description' => 'Recreated after the original was soft deleted.',
         ]);

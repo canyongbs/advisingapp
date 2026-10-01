@@ -55,10 +55,9 @@ use Telnyx\HttpClient\CurlClient;
  * @param array<mixed> $data
  * @param array<string, mixed> $responseHeaders
  */
-function fakeTelnyxLookup(array $data, int $status = 200, array $responseHeaders = []): void
-{
+$fakeTelnyxLookup = function (array $data, int $status = 200, array $responseHeaders = []): void {
     ApiRequestor::setHttpClient(new FakeTelnyxHttpClient(json_encode($data, JSON_THROW_ON_ERROR), $status, $responseHeaders));
-}
+};
 
 beforeEach(function () {
     $settings = app(TwilioSettings::class);
@@ -71,8 +70,8 @@ afterEach(function () {
     ApiRequestor::setHttpClient(CurlClient::instance());
 });
 
-it('stores a successful carrier lookup result', function () {
-    fakeTelnyxLookup([
+it('stores a successful carrier lookup result', function () use ($fakeTelnyxLookup) {
+    $fakeTelnyxLookup([
         'data' => [
             'record_type' => 'number_lookup',
             'phone_number' => '+16502530000',
@@ -95,8 +94,8 @@ it('stores a successful carrier lookup result', function () {
         ->and(PhoneNumberLookup::query()->where('number', '+16502530000')->count())->toBe(1);
 });
 
-it('maps a successful lookup with an inconclusive carrier type to unknown', function () {
-    fakeTelnyxLookup([
+it('maps a successful lookup with an inconclusive carrier type to unknown', function () use ($fakeTelnyxLookup) {
+    $fakeTelnyxLookup([
         'data' => [
             'record_type' => 'number_lookup',
             'phone_number' => '+16502530000',
@@ -108,10 +107,10 @@ it('maps a successful lookup with an inconclusive carrier type to unknown', func
         ->toBe(PhoneNumberLookupStatus::Unknown);
 });
 
-it('falls back to portability data when the carrier object is null', function () {
+it('falls back to portability data when the carrier object is null', function () use ($fakeTelnyxLookup) {
     // Telnyx commonly returns a null carrier for US / VoIP / ported numbers,
     // with the line type and carrier name in the portability object instead.
-    fakeTelnyxLookup([
+    $fakeTelnyxLookup([
         'data' => [
             'record_type' => 'number_lookup',
             'phone_number' => '+16502530000',
@@ -131,8 +130,8 @@ it('falls back to portability data when the carrier object is null', function ()
         ->and($lookup->carrier_name)->toBe('Bandwidth.com CLEC, LLC');
 });
 
-it('maps a number Telnyx reports as not valid to invalid', function () {
-    fakeTelnyxLookup([
+it('maps a number Telnyx reports as not valid to invalid', function () use ($fakeTelnyxLookup) {
+    $fakeTelnyxLookup([
         'data' => [
             'record_type' => 'number_lookup',
             'phone_number' => '+16502530000',
@@ -145,11 +144,11 @@ it('maps a number Telnyx reports as not valid to invalid', function () {
         ->toBe(PhoneNumberLookupStatus::Invalid);
 });
 
-it('reuses an existing lookup result instead of calling Telnyx again', function () {
+it('reuses an existing lookup result instead of calling Telnyx again', function () use ($fakeTelnyxLookup) {
     $existing = PhoneNumberLookup::factory()->mobile()->create(['number' => '+16502530000']);
 
     // A different result that would be returned if Telnyx were (incorrectly) called.
-    fakeTelnyxLookup([
+    $fakeTelnyxLookup([
         'data' => [
             'record_type' => 'number_lookup',
             'carrier' => ['name' => 'Other Carrier', 'type' => 'voip'],
@@ -163,8 +162,8 @@ it('reuses an existing lookup result instead of calling Telnyx again', function 
         ->and(PhoneNumberLookup::query()->where('number', '+16502530000')->count())->toBe(1);
 });
 
-it('stores an invalid result when Telnyx cannot recognize the number', function () {
-    fakeTelnyxLookup([
+it('stores an invalid result when Telnyx cannot recognize the number', function () use ($fakeTelnyxLookup) {
+    $fakeTelnyxLookup([
         'errors' => [
             ['code' => '10005', 'title' => 'Resource not found'],
         ],
@@ -177,8 +176,8 @@ it('stores an invalid result when Telnyx cannot recognize the number', function 
         ->and($lookup->carrier_type)->toBeNull();
 });
 
-it('re-throws transient provider errors without storing a result', function () {
-    fakeTelnyxLookup([
+it('re-throws transient provider errors without storing a result', function () use ($fakeTelnyxLookup) {
+    $fakeTelnyxLookup([
         'errors' => [
             ['code' => '90000', 'title' => 'Internal server error'],
         ],
@@ -238,10 +237,10 @@ it('reports as not configured when Telnyx is not the selected provider', functio
     expect(app(PhoneNumberLookupService::class)->isConfigured())->toBeFalse();
 });
 
-it('throws PhoneNumberLookupRateLimited and caches the clear-at timestamp when Telnyx returns 429', function () {
+it('throws PhoneNumberLookupRateLimited and caches the clear-at timestamp when Telnyx returns 429', function () use ($fakeTelnyxLookup) {
     travelTo(now()->startOfMinute());
 
-    fakeTelnyxLookup(
+    $fakeTelnyxLookup(
         ['errors' => [['code' => '10009', 'title' => 'Rate limit exceeded']]],
         429,
         ['x-ratelimit-reset' => '42'],

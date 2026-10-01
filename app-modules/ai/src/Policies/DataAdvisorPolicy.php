@@ -137,6 +137,6 @@ class DataAdvisorPolicy
 
     protected function requiredFeatures(): array
     {
-        return [Feature::DataAdvisor];
+        return [Feature::EnterpriseAi, Feature::DataAdvisor];
     }
 }

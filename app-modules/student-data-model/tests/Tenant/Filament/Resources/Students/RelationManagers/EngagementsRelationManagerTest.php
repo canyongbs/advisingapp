@@ -49,22 +49,16 @@ use function Pest\Livewire\livewire;
 
 // The Messages tab is powered by a single relation manager shared by the student and
 // prospect profiles, so every case below runs against both owners.
-dataset('messages tab owners', [
-    'student' => [Student::class, ViewStudent::class],
-    'prospect' => [Prospect::class, ViewProspect::class],
-]);
 
-function createMessagesTabOwner(string $ownerType): Student | Prospect
-{
+$createMessagesTabOwner = function (string $ownerType): Student | Prospect {
     return match ($ownerType) {
         Student::class => Student::factory()->create(),
         Prospect::class => Prospect::factory()->create(),
         default => throw new Exception("Unsupported messages tab owner type [{$ownerType}]."),
     };
-}
+};
 
-function actingAsUserWithMessagesTabAccess(Student | Prospect $owner): void
-{
+$actingAsUserWithMessagesTabAccess = function (Student | Prospect $owner): void {
     actingAs(user(
         licenses: $owner::getLicenseType(),
         permissions: [
@@ -74,13 +68,18 @@ function actingAsUserWithMessagesTabAccess(Student | Prospect $owner): void
             'engagement_response.view-any',
         ],
     ));
-}
+};
 
-describe('filters', function () {
-    it('only offers email and text as message types', function (string $ownerType, string $pageClass) {
-        $owner = createMessagesTabOwner($ownerType);
+dataset('messages tab owners', [
+    'student' => [Student::class, ViewStudent::class],
+    'prospect' => [Prospect::class, ViewProspect::class],
+]);
 
-        actingAsUserWithMessagesTabAccess($owner);
+describe('filters', function () use ($createMessagesTabOwner, $actingAsUserWithMessagesTabAccess) {
+    it('only offers email and text as message types', function (string $ownerType, string $pageClass) use ($createMessagesTabOwner, $actingAsUserWithMessagesTabAccess) {
+        $owner = $createMessagesTabOwner($ownerType);
+
+        $actingAsUserWithMessagesTabAccess($owner);
 
         livewire(EngagementsRelationManager::class, [
             'ownerRecord' => $owner,
@@ -92,10 +91,10 @@ describe('filters', function () {
             ]);
     })->with('messages tab owners');
 
-    it('filters messages by type', function (string $ownerType, string $pageClass) {
-        $owner = createMessagesTabOwner($ownerType);
+    it('filters messages by type', function (string $ownerType, string $pageClass) use ($createMessagesTabOwner, $actingAsUserWithMessagesTabAccess) {
+        $owner = $createMessagesTabOwner($ownerType);
 
-        actingAsUserWithMessagesTabAccess($owner);
+        $actingAsUserWithMessagesTabAccess($owner);
 
         $emailEngagement = Engagement::factory()
             ->email()
@@ -144,10 +143,10 @@ describe('filters', function () {
             ]);
     })->with('messages tab owners');
 
-    it('ignores an unsupported message type filter value', function (string $ownerType, string $pageClass) {
-        $owner = createMessagesTabOwner($ownerType);
+    it('ignores an unsupported message type filter value', function (string $ownerType, string $pageClass) use ($createMessagesTabOwner, $actingAsUserWithMessagesTabAccess) {
+        $owner = $createMessagesTabOwner($ownerType);
 
-        actingAsUserWithMessagesTabAccess($owner);
+        $actingAsUserWithMessagesTabAccess($owner);
 
         $engagement = Engagement::factory()
             ->email()
@@ -171,10 +170,10 @@ describe('filters', function () {
             ->assertCanSeeTableRecords([$engagement->timelineRecord, $response->timelineRecord]);
     })->with('messages tab owners');
 
-    it('filters messages by direction', function (string $ownerType, string $pageClass) {
-        $owner = createMessagesTabOwner($ownerType);
+    it('filters messages by direction', function (string $ownerType, string $pageClass) use ($createMessagesTabOwner, $actingAsUserWithMessagesTabAccess) {
+        $owner = $createMessagesTabOwner($ownerType);
 
-        actingAsUserWithMessagesTabAccess($owner);
+        $actingAsUserWithMessagesTabAccess($owner);
 
         $engagement = Engagement::factory()
             ->email()

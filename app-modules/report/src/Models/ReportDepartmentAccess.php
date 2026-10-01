@@ -38,8 +38,8 @@ namespace AdvisingApp\Report\Models;
 
 use AdvisingApp\Team\Models\Department;
 use App\Models\BaseModel;
+use CanyonGBS\Common\Models\Concerns\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**
