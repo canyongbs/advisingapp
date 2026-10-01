@@ -46,6 +46,7 @@ use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
+use function Tests\setEnterpriseAiEnabled;
 
 // TODO: Write EditResourceHubArticle tests
 //test('A successful action on the EditResourceHubArticle page', function () {});
@@ -122,6 +123,20 @@ test('EditResourceHubArticle is gated with proper feature access control', funct
     )->assertSuccessful();
 
     // TODO Restore testing the edit form
+});
+
+it('hides the `draftWithAi` action while Enterprise AI is disabled', function () {
+    asSuperAdmin();
+
+    $resourceHubArticle = ResourceHubArticle::factory()->create();
+
+    livewire(EditResourceHubArticle::class, ['record' => $resourceHubArticle->getRouteKey()])
+        ->assertSchemaComponentVisible('draft-with-ai');
+
+    setEnterpriseAiEnabled(false);
+
+    livewire(EditResourceHubArticle::class, ['record' => $resourceHubArticle->getRouteKey()])
+        ->assertSchemaComponentHidden('draft-with-ai');
 });
 
 test('EditResourceHubArticle does not allow for duplicate article titles of non-deleted articles case insensitively', function () {

@@ -109,6 +109,16 @@ it('treats the `ConversationalAi` license type as having no seats while Enterpri
         ->and(LicenseType::ConversationalAi->hasAvailableLicenses())->toBeFalse();
 });
 
+it('excludes the `ConversationalAi` license type from the enabled cases while Enterprise AI is disabled', function () {
+    expect(LicenseType::enabledCases())->toBe(LicenseType::cases());
+
+    $licenseSettings = app(LicenseSettings::class);
+    $licenseSettings->data->addons->enterpriseAi = false;
+    $licenseSettings->save();
+
+    expect(LicenseType::enabledCases())->toBe([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
+});
+
 it('does not disable CRM license types while Enterprise AI is disabled', function (LicenseType $licenseType) {
     $licenseSettings = app(LicenseSettings::class);
     $licenseSettings->data->limits->retentionCrmSeats = 10;

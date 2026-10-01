@@ -58,11 +58,10 @@ class Licenses extends Section
             ])
             ->collapsible()
             ->schema(
-                collect(LicenseType::cases())
-                    ->filter(fn (LicenseType $licenseType): bool => $licenseType->isEnabled())
-                    ->map(fn (LicenseType $licenseType): Fieldset => $this->generateBlockForLicenseType($licenseType))
-                    ->values()
-                    ->all()
+                array_map(
+                    fn (LicenseType $licenseType): Fieldset => $this->generateBlockForLicenseType($licenseType),
+                    LicenseType::enabledCases(),
+                )
             );
     }
 

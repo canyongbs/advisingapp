@@ -36,12 +36,12 @@ This guide covers gating features behind addon toggles tied to the account subsc
         {
             return [
                 // ...
-                'addons.exampleFeature' => ['nullable', 'boolean'],
+                'addons.exampleFeature' => ['sometimes', 'boolean'],
             ];
         }
     ```
 
-    Additionally, a cleanup task should be created to make this new field required in the future, in both files. Allowing it to be nullable prevents issues if the app is updated before the external API.
+    Additionally, a cleanup task should be created to make this new field required in the future, in both files. Using `sometimes` lets the field be omitted, which prevents issues if the app is updated before the external API. Do not use `nullable`: the DTO property is a non-nullable `bool`, so a `null` would pass validation and then fail when the DTO is built.
 
 4. Add Feature Toggle to License Settings
 
@@ -114,6 +114,25 @@ This guide covers gating features behind addon toggles tied to the account subsc
             //...
         }
     ```
+
+    ### Permissions
+
+    Permissions that belong to a disabled feature are hidden wherever permissions are listed (the role permission matrix and the user / programmatic user permission tables), while existing grants are kept. To hide the feature's permissions, add its permission group names to `getPermissionGroupNames()` in `app/Enums/Feature.php`:
+
+    ```php
+    public function getPermissionGroupNames(): array
+    {
+        return match ($this) {
+            // ...
+            Feature::ExampleFeature => [
+                'Example',
+            ],
+            default => [],
+        };
+    }
+    ```
+
+    Use the group names exactly as they are stored in the `permission_groups` table.
 
 6. Tests
 
