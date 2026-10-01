@@ -36,190 +36,175 @@
     "key" is the stored option value and its "value" is the label, but the label
     column is rendered first and the key is generated from it in the browser.
 --}}
-<div
-    x-data="{
-        state: $wire.{{ $entangleExpression }},
+@php
+    $id = $getId();
+@endphp
 
-        rows: [],
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field" label-tag="div" class="fi-fo-key-value-wrp">
+    <x-filament::input.wrapper :valid="! $errors->has($getStatePath())" class="fi-fo-key-value">
+        <div
+            x-data="{
+                state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$getStatePath()}')") }},
 
-        init() {
-            this.updateRows()
+                rows: [],
 
-            if (this.rows.length <= 0) {
-                this.rows.push({ key: '', value: '' })
-            } else {
-                this.updateState()
-            }
+                init() {
+                    this.updateRows()
 
-            this.$watch('state', (state, oldState) => {
-                if (! Array.isArray(state)) {
-                    return
-                }
+                    if (this.rows.length <= 0) {
+                        this.rows.push({ key: '', value: '' })
+                    } else {
+                        this.updateState()
+                    }
 
-                if (
-                    state.length === 0 &&
-                    Array.isArray(oldState) &&
-                    oldState.length === 0
-                ) {
-                    return
-                }
+                    this.$watch('state', (state, oldState) => {
+                        if (! Array.isArray(state)) {
+                            return
+                        }
 
-                this.updateRows()
-            })
-        },
+                        if (
+                            state.length === 0 &&
+                            Array.isArray(oldState) &&
+                            oldState.length === 0
+                        ) {
+                            return
+                        }
 
-        slugify(label) {
-            return (label ?? '')
-                .normalize('NFD')
-                .replace(/[\u0300-\u036f]/g, '')
-                .toLowerCase()
-                .replace(/[^\p{L}\p{N}]+/gu, '-')
-                .replace(/^-+|-+$/g, '')
-        },
+                        this.updateRows()
+                    })
+                },
 
-        addRow() {
-            this.rows.push({ key: '', value: '' })
+                slugify(label) {
+                    return (label ?? '')
+                        .normalize('NFD')
+                        .replace(/[\u0300-\u036f]/g, '')
+                        .toLowerCase()
+                        .replace(/[^\p{L}\p{N}]+/gu, '-')
+                        .replace(/^-+|-+$/g, '')
+                },
 
-            this.updateState()
-        },
+                addRow() {
+                    this.rows.push({ key: '', value: '' })
 
-        deleteRow(index) {
-            this.rows.splice(index, 1)
+                    this.updateState()
+                },
 
-            if (this.rows.length <= 0) {
-                this.addRow()
-            }
+                deleteRow(index) {
+                    this.rows.splice(index, 1)
 
-            this.updateState()
-        },
+                    if (this.rows.length <= 0) {
+                        this.addRow()
+                    }
 
-        reorderRows(event) {
-            const rows = Alpine.raw(this.rows)
+                    this.updateState()
+                },
 
-            this.rows = []
+                reorderRows(event) {
+                    const rows = Alpine.raw(this.rows)
 
-            const reorderedRow = rows.splice(event.oldIndex, 1)[0]
-            rows.splice(event.newIndex, 0, reorderedRow)
+                    this.rows = []
 
-            this.$nextTick(() => {
-                this.rows = rows
+                    const reorderedRow = rows.splice(event.oldIndex, 1)[0]
+                    rows.splice(event.newIndex, 0, reorderedRow)
 
-                this.updateState()
-            })
-        },
+                    this.$nextTick(() => {
+                        this.rows = rows
 
-        updateRows() {
-            const mergedRows = Alpine.raw(this.state).map((row) => ({
-                key: row.key,
-                value: row.value,
-            }))
+                        this.updateState()
+                    })
+                },
 
-            this.rows.forEach((row) => {
-                if (row.value === '' || row.value === null) {
-                    mergedRows.push({ key: '', value: '' })
-                }
-            })
+                updateRows() {
+                    const mergedRows = Alpine.raw(this.state).map((row) => ({
+                        key: row.key,
+                        value: row.value,
+                    }))
 
-            this.rows = mergedRows
-        },
+                    this.rows.forEach((row) => {
+                        if (row.value === '' || row.value === null) {
+                            mergedRows.push({ key: '', value: '' })
+                        }
+                    })
 
-        updateState() {
-            const state = this.rows
-                .filter((row) => row.value !== '' && row.value !== null)
-                .map((row) => ({ key: row.key, value: row.value }))
+                    this.rows = mergedRows
+                },
 
-            if (JSON.stringify(this.state) !== JSON.stringify(state)) {
-                this.state = state
-            }
-        },
-    }"
-    wire:ignore
-    wire:key="{{ $livewireKey }}.{{ $isDisabled ? "disabled" : "enabled" }}"
-    {!! $alpineAttributes !!}
->
-    <table aria-labelledby="{{ $id }}-label" id="{{ $id }}" class="fi-fo-key-value-table">
-        <thead>
-            <tr>
-                @if ($isReorderable && ! $isDisabled)
-                    <th scope="col" x-show="rows.length" class="fi-has-action">
-                        <span class="fi-sr-only">
-                            {{ __("filament-forms::components.key_value.columns.reorder.label") }}
-                        </span>
-                    </th>
-                @endif
+                updateState() {
+                    const state = this.rows
+                        .filter((row) => row.value !== '' && row.value !== null)
+                        .map((row) => ({ key: row.key, value: row.value }))
 
-                <th scope="col">{{ $valueLabel }}</th>
-
-                <th scope="col">{{ $keyLabel }}</th>
-
-                @if ($isDeletable && ! $isDisabled)
-                    <th scope="col" x-show="rows.length" class="fi-has-action">
-                        <span class="fi-sr-only">
-                            {{ __("filament-forms::components.key_value.columns.actions.label") }}
-                        </span>
-                    </th>
-                @endif
-            </tr>
-        </thead>
-
-        <tbody
-            @if ($isReorderable)
-                x-on:end.stop="reorderRows($event)"
-                x-sortable
-                data-sortable-animation-duration="{{ $reorderAnimationDuration }}"
-            @endif
+                    if (JSON.stringify(this.state) !== JSON.stringify(state)) {
+                        this.state = state
+                    }
+                },
+            }"
+            wire:ignore
+            wire:key="{{ $getLivewireKey() }}"
+            {{ $getExtraAlpineAttributeBag()->class(['fi-fo-key-value-table-ctn']) }}
         >
-            <template x-bind:key="index" x-for="(row, index) in rows">
-                <tr
-                    @if ($isReorderable)
-                        x-bind:x-sortable-item="row.key"
-                    @endif
+            <table aria-labelledby="{{ $id }}-label" id="{{ $id }}" class="fi-fo-key-value-table">
+                <thead>
+                    <tr>
+                        <th scope="col" class="fi-has-action">
+                            <span class="fi-sr-only">
+                                {{ __('filament-forms::components.key_value.columns.reorder.label') }}
+                            </span>
+                        </th>
+
+                        <th scope="col">Label</th>
+
+                        <th scope="col">Value</th>
+
+                        <th scope="col" class="fi-has-action">
+                            <span class="fi-sr-only">
+                                {{ __('filament-forms::components.key_value.columns.actions.label') }}
+                            </span>
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody
+                    x-on:end.stop="reorderRows($event)"
+                    x-sortable
+                    data-sortable-animation-duration="{{ $getReorderAnimationDuration() }}"
                 >
-                    @if ($isReorderable && ! $isDisabled)
-                        <td class="fi-has-action">
-                            <div x-sortable-handle class="fi-fo-key-value-table-row-sortable-handle">
-                                {!! $reorderActionHtml !!}
-                            </div>
-                        </td>
-                    @endif
+                    <template x-bind:key="index" x-for="(row, index) in rows">
+                        <tr x-bind:x-sortable-item="row.key">
+                            <td class="fi-has-action">
+                                <div x-sortable-handle class="fi-fo-key-value-table-row-sortable-handle">
+                                    {{ $getAction('reorder') }}
+                                </div>
+                            </td>
 
-                    <td>
-                        <input
-                            aria-label="{{ $valueLabel }}"
-                            @disabled($isDisabled)
-                            type="text"
-                            x-model="row.value"
-                            x-on:input="row.key = slugify(row.value)"
-                            x-on:input.debounce.{{ $debounce }}="updateState"
-                            class="fi-input"
-                        />
-                    </td>
+                            <td>
+                                <input
+                                    aria-label="Label"
+                                    type="text"
+                                    x-model="row.value"
+                                    x-on:input="row.key = slugify(row.value)"
+                                    x-on:input.debounce.500ms="updateState"
+                                    class="fi-input"
+                                />
+                            </td>
 
-                    <td>
-                        <input
-                            aria-label="{{ $keyLabel }}"
-                            disabled
-                            type="text"
-                            x-model="row.key"
-                            class="fi-input"
-                        />
-                    </td>
+                            <td>
+                                <input aria-label="Value" disabled type="text" x-model="row.key" class="fi-input" />
+                            </td>
 
-                    @if ($isDeletable && ! $isDisabled)
-                        <td class="fi-has-action">
-                            <div x-on:click="deleteRow(index)">
-                                {!! $deleteActionHtml !!}
-                            </div>
-                        </td>
-                    @endif
-                </tr>
-            </template>
-        </tbody>
-    </table>
+                            <td class="fi-has-action">
+                                <div x-on:click="deleteRow(index)">
+                                    {{ $getAction('delete') }}
+                                </div>
+                            </td>
+                        </tr>
+                    </template>
+                </tbody>
+            </table>
 
-    @if ($isAddable && ! $isDisabled)
-        <div x-on:click="addRow" class="fi-fo-key-value-add-action-ctn">
-            {!! $addActionHtml !!}
+            <div x-on:click="addRow" class="fi-fo-key-value-add-action-ctn">
+                {{ $getAction('add') }}
+            </div>
         </div>
-    @endif
-</div>
+    </x-filament::input.wrapper>
+</x-dynamic-component>
