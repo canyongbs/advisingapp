@@ -153,6 +153,17 @@ test('invite action dispatches attendee invitations for the owner event', functi
 });
 
 describe('authorization', function () {
+    it('hides the Invite action without the `event_attendee.create` permission', function () {
+        $user = eventAttendeesRelationManagerTestUser();
+        $user->givePermissionTo('event_attendee.view-any');
+        actingAs($user);
+
+        $event = Event::factory()->create();
+
+        livewire(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ViewEvent::class])
+            ->assertActionHidden(TestAction::make('invite')->table());
+    });
+
     it('denies direct access without the `event_attendee.view-any` permission', function () {
         $user = eventAttendeesRelationManagerTestUser();
         actingAs($user);
