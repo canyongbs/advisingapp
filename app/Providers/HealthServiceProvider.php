@@ -52,6 +52,7 @@ use Spatie\Health\Checks\Checks\OptimizedAppCheck;
 use Spatie\Health\Checks\Checks\PingCheck;
 use Spatie\Health\Checks\Checks\QueueCheck;
 use Spatie\Health\Checks\Checks\RedisCheck;
+use Spatie\Health\Checks\Checks\ScheduleCheck;
 use Spatie\Health\Facades\Health;
 
 class HealthServiceProvider extends ServiceProvider
@@ -86,7 +87,8 @@ class HealthServiceProvider extends ServiceProvider
                 ->timeout(5)
                 ->unless($local),
             QueueCheck::new()
-                ->failAfterMinutes(3),
+                ->failAfterMinutes(3)
+                ->useCacheStore('health'),
             RedisCheck::new(),
             AzureCredentialsExpiringCheck::new()
                 ->if(function () {
@@ -107,8 +109,9 @@ class HealthServiceProvider extends ServiceProvider
             // OpcacheCachedFilesCheck::new()
             //     ->if(fn () => app(OpcacheStatusService::class)->getStatus() !== false)
             //     ->label('OPcache Cached Files'),
-            // ScheduleCheck::new()
-            //     ->heartbeatMaxAgeInMinutes(2),
+            ScheduleCheck::new()
+                ->heartbeatMaxAgeInMinutes(2)
+                ->useCacheStore('health'),
             // ScheduleMonitorCheck::new(),
         ]);
     }

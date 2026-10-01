@@ -34,23 +34,49 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Models\AiThread;
-use App\Models\Tenant;
+use AdvisingApp\Audit\Models\Audit;
+use AdvisingApp\Audit\Settings\AuditSettings;
+use App\Jobs\PruneModels;
+use Illuminate\Support\Facades\Exceptions;
 
-use function Pest\Laravel\artisan;
+it('prunes stale records and keeps recent ones', function () {
+    $stale = Audit::factory()->create();
+    Audit::query()->whereKey($stale->getKey())->update([
+        'created_at' => now()->subDays(app(AuditSettings::class)->retention_duration_in_days + 1),
+    ]);
 
-it('selects and soft deletes the proper records', function () {
-    $notSavedAndOlderThanThreeDays = AiThread::factory()->create(['saved_at' => null, 'created_at' => now()->subDays(4)]);
-    $notSavedAndEarlierThanThreeDays = AiThread::factory()->create(['saved_at' => null, 'created_at' => now()->subDays(2)]);
-    $savedAndOlderThanThreeDays = AiThread::factory()->create(['saved_at' => now(), 'created_at' => now()->subDays(4)]);
-    $savedAndEarlierThanThreeDays = AiThread::factory()->create(['saved_at' => now(), 'created_at' => now()->subDays(2)]);
+    $recent = Audit::factory()->create();
 
-    $tenant = Tenant::current();
+    expect(Audit::query()->whereKey($stale->getKey())->exists())->toBeTrue();
 
-    artisan("ai:delete-unsaved-ai-threads --tenant={$tenant->getKey()}");
+    (new PruneModels())->handle();
 
-    expect($notSavedAndOlderThanThreeDays->fresh()->deleted_at)->not->toBeNull()
-        ->and($notSavedAndEarlierThanThreeDays->fresh()->deleted_at)->toBeNull()
-        ->and($savedAndOlderThanThreeDays->fresh()->deleted_at)->toBeNull()
-        ->and($savedAndEarlierThanThreeDays->fresh()->deleted_at)->toBeNull();
+    expect(Audit::query()->whereKey($stale->getKey())->exists())->toBeFalse()
+        ->and(Audit::query()->whereKey($recent->getKey())->exists())->toBeTrue();
+});
+
+it('reports a failing model and still prunes the rest', function () {
+    Exceptions::fake();
+
+    $job = new class () extends PruneModels {
+        public bool $laterPrunerRan = false;
+
+        protected function pruners(): array
+        {
+            return [
+                fn (): int => throw new RuntimeException('prune failed'),
+                function (): int {
+                    $this->laterPrunerRan = true;
+
+                    return 0;
+                },
+            ];
+        }
+    };
+
+    $job->handle();
+
+    expect($job->laterPrunerRan)->toBeTrue();
+
+    Exceptions::assertReported(fn (RuntimeException $throw) => $throw->getMessage() === 'prune failed');
 });

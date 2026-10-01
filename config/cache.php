@@ -89,6 +89,14 @@ return [
             'connection' => 'cache',
             'lock_connection' => 'default',
         ],
+
+        // Fixed prefix keeps this store out of the per-tenant cache namespace so landlord-level health heartbeats are shared across all tenants.
+        'health' => [
+            'driver' => 'redis',
+            'connection' => 'cache',
+            'lock_connection' => 'default',
+            'prefix' => env('CACHE_PREFIX', '{advisingapp_landlord_cache}') . ':health',
+        ],
     ],
 
     /*

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Console\Commands;
+namespace AdvisingApp\Ai\Jobs;
 
 use AdvisingApp\Ai\Jobs\Advisors\FetchAiAssistantFileParsingResults;
 use AdvisingApp\Ai\Jobs\AiAssistants\FetchAiAssistantLinkParsingResults;
@@ -44,16 +44,12 @@ use AdvisingApp\Ai\Models\AiAssistantFile;
 use AdvisingApp\Ai\Models\AiAssistantLink;
 use AdvisingApp\Ai\Models\CustomerAdvisorFile;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
-use Illuminate\Console\Command;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
-class FetchAiFilesParsingResults extends Command
+class FetchAiFilesParsingResults implements ShouldQueue
 {
-    use TenantAware;
-
-    protected $signature = 'ai:fetch-files-parsing-results {--tenant=*}';
-
-    protected $description = 'Finds AI files that were uploaded in the past hour and do not yet have parsed results.';
+    use Queueable;
 
     public function handle(): void
     {

@@ -34,30 +34,19 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Jobs\CustomerAdvisors\FetchCustomerAdvisorLinkParsingResults;
-use AdvisingApp\Ai\Jobs\CustomerAdvisors\UpdateCurrentCustomerAdvisorLinks;
-use AdvisingApp\Ai\Models\CustomerAdvisorLink;
-use Illuminate\Support\Facades\Queue;
+namespace App\Exceptions;
 
-it('dispatches FetchCustomerAdvisorLinkParsingResults only for current links', function () {
-    Queue::fake();
+use RuntimeException;
 
-    $currentLink = CustomerAdvisorLink::factory()->create([
-        'is_keep_current_enabled' => true,
-    ]);
-
-    $nonCurrentLink = CustomerAdvisorLink::factory()->create([
-        'is_keep_current_enabled' => false,
-    ]);
-
-    (new UpdateCurrentCustomerAdvisorLinks())->handle();
-
-    Queue::assertPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($currentLink) {
-        return $job->uniqueId() === $currentLink->id
-            && $job->refreshesExistingParsingResults();
-    });
-
-    Queue::assertNotPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($nonCurrentLink) {
-        return $job->uniqueId() === $nonCurrentLink->id;
-    });
-});
+class ArtisanCommandFailedException extends RuntimeException
+{
+    public function __construct(
+        public readonly string $command,
+        public readonly int $exitCode,
+        public readonly string $commandOutput,
+    ) {
+        parent::__construct(
+            "Artisan command [{$command}] failed with exit code {$exitCode}." . PHP_EOL . 'Output:' . PHP_EOL . $commandOutput,
+        );
+    }
+}

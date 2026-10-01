@@ -34,30 +34,16 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Jobs\CustomerAdvisors\FetchCustomerAdvisorLinkParsingResults;
+namespace AdvisingApp\Ai\Jobs;
+
 use AdvisingApp\Ai\Jobs\CustomerAdvisors\UpdateCurrentCustomerAdvisorLinks;
-use AdvisingApp\Ai\Models\CustomerAdvisorLink;
-use Illuminate\Support\Facades\Queue;
+use App\Jobs\DispatchForEachTenant;
+use App\Models\Tenant;
 
-it('dispatches FetchCustomerAdvisorLinkParsingResults only for current links', function () {
-    Queue::fake();
-
-    $currentLink = CustomerAdvisorLink::factory()->create([
-        'is_keep_current_enabled' => true,
-    ]);
-
-    $nonCurrentLink = CustomerAdvisorLink::factory()->create([
-        'is_keep_current_enabled' => false,
-    ]);
-
-    (new UpdateCurrentCustomerAdvisorLinks())->handle();
-
-    Queue::assertPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($currentLink) {
-        return $job->uniqueId() === $currentLink->id
-            && $job->refreshesExistingParsingResults();
-    });
-
-    Queue::assertNotPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($nonCurrentLink) {
-        return $job->uniqueId() === $nonCurrentLink->id;
-    });
-});
+class DispatchUpdateCurrentCustomerAdvisorLinksForEachTenant extends DispatchForEachTenant
+{
+    protected function jobForTenant(Tenant $tenant): ?object
+    {
+        return new UpdateCurrentCustomerAdvisorLinks();
+    }
+}

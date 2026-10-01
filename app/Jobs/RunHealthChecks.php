@@ -34,30 +34,24 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Jobs\CustomerAdvisors\FetchCustomerAdvisorLinkParsingResults;
-use AdvisingApp\Ai\Jobs\CustomerAdvisors\UpdateCurrentCustomerAdvisorLinks;
-use AdvisingApp\Ai\Models\CustomerAdvisorLink;
-use Illuminate\Support\Facades\Queue;
+namespace App\Jobs;
 
-it('dispatches FetchCustomerAdvisorLinkParsingResults only for current links', function () {
-    Queue::fake();
+use App\Jobs\Concerns\RunsArtisanCommand;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
-    $currentLink = CustomerAdvisorLink::factory()->create([
-        'is_keep_current_enabled' => true,
-    ]);
+class RunHealthChecks implements ShouldQueue, ShouldBeUnique
+{
+    use Queueable;
+    use RunsArtisanCommand;
 
-    $nonCurrentLink = CustomerAdvisorLink::factory()->create([
-        'is_keep_current_enabled' => false,
-    ]);
+    public int $tries = 1;
 
-    (new UpdateCurrentCustomerAdvisorLinks())->handle();
+    public int $uniqueFor = 900;
 
-    Queue::assertPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($currentLink) {
-        return $job->uniqueId() === $currentLink->id
-            && $job->refreshesExistingParsingResults();
-    });
-
-    Queue::assertNotPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($nonCurrentLink) {
-        return $job->uniqueId() === $nonCurrentLink->id;
-    });
-});
+    public function handle(): void
+    {
+        $this->runArtisanCommand('health:check');
+    }
+}

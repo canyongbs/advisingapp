@@ -34,30 +34,25 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Jobs\CustomerAdvisors\FetchCustomerAdvisorLinkParsingResults;
-use AdvisingApp\Ai\Jobs\CustomerAdvisors\UpdateCurrentCustomerAdvisorLinks;
-use AdvisingApp\Ai\Models\CustomerAdvisorLink;
-use Illuminate\Support\Facades\Queue;
+namespace App\Jobs\Concerns;
 
-it('dispatches FetchCustomerAdvisorLinkParsingResults only for current links', function () {
-    Queue::fake();
+use App\Exceptions\ArtisanCommandFailedException;
+use Illuminate\Support\Facades\Artisan;
+use Symfony\Component\Console\Output\BufferedOutput;
 
-    $currentLink = CustomerAdvisorLink::factory()->create([
-        'is_keep_current_enabled' => true,
-    ]);
+trait RunsArtisanCommand
+{
+    /**
+     * @param array<string, mixed> $parameters
+     */
+    protected function runArtisanCommand(string $command, array $parameters = []): void
+    {
+        $output = new BufferedOutput();
 
-    $nonCurrentLink = CustomerAdvisorLink::factory()->create([
-        'is_keep_current_enabled' => false,
-    ]);
+        $exitCode = Artisan::call($command, $parameters, $output);
 
-    (new UpdateCurrentCustomerAdvisorLinks())->handle();
-
-    Queue::assertPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($currentLink) {
-        return $job->uniqueId() === $currentLink->id
-            && $job->refreshesExistingParsingResults();
-    });
-
-    Queue::assertNotPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($nonCurrentLink) {
-        return $job->uniqueId() === $nonCurrentLink->id;
-    });
-});
+        if ($exitCode !== 0) {
+            throw new ArtisanCommandFailedException($command, $exitCode, $output->fetch());
+        }
+    }
+}

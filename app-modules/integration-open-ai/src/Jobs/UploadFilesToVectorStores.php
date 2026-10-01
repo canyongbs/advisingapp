@@ -34,24 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationOpenAi\Console\Commands;
+namespace AdvisingApp\IntegrationOpenAi\Jobs;
 
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\CustomerAdvisor;
-use AdvisingApp\IntegrationOpenAi\Jobs\UploadAssistantFilesToVectorStore;
-use AdvisingApp\IntegrationOpenAi\Jobs\UploadCustomerAdvisorFilesToVectorStore;
-use Illuminate\Console\Command;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Builder;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+use Illuminate\Foundation\Queue\Queueable;
 use Throwable;
 
-class UploadFilesToVectorStores extends Command
+class UploadFilesToVectorStores implements ShouldQueue
 {
-    use TenantAware;
-
-    protected $signature = 'integration-open-ai:upload-files-to-vector-stores {--tenant=*}';
-
-    protected $description = 'Uploads AI files to a vector stores once they have been parsed.';
+    use Queueable;
 
     public function handle(): void
     {

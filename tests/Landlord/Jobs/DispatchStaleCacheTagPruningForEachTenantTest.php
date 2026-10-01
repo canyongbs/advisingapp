@@ -34,29 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Console\Commands;
+use App\Jobs\DispatchStaleCacheTagPruningForEachTenant;
+use App\Jobs\PruneStaleCacheTags;
+use Illuminate\Support\Facades\Queue;
 
-use AdvisingApp\MeetingCenter\Jobs\RefreshCalendarRefreshToken;
-use AdvisingApp\MeetingCenter\Models\Calendar;
-use Illuminate\Console\Command;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+it('dispatches `PruneStaleCacheTags` for each eligible tenant', function () {
+    Queue::fake();
 
-class RefreshCalendarRefreshTokens extends Command
-{
-    use TenantAware;
+    (new DispatchStaleCacheTagPruningForEachTenant())->handle();
 
-    protected $signature =
-        'meeting-center:refresh-calendar-refresh-tokens {--tenant=*}';
-
-    protected $description = 'Triggers a refresh of all calendar refresh tokens that are needed.';
-
-    public function handle(): int
-    {
-        Calendar::query()
-            ->whereNotNull('oauth_refresh_token')
-            ->where('updated_at', '<=', now()->subDays(14))
-            ->each(fn (Calendar $calendar) => RefreshCalendarRefreshToken::dispatch($calendar));
-
-        return static::SUCCESS;
-    }
-}
+    Queue::assertPushed(PruneStaleCacheTags::class, 1);
+});

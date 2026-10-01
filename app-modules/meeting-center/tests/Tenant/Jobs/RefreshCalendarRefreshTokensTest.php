@@ -34,30 +34,24 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Jobs\CustomerAdvisors\FetchCustomerAdvisorLinkParsingResults;
-use AdvisingApp\Ai\Jobs\CustomerAdvisors\UpdateCurrentCustomerAdvisorLinks;
-use AdvisingApp\Ai\Models\CustomerAdvisorLink;
+use AdvisingApp\MeetingCenter\Jobs\RefreshCalendarRefreshToken;
+use AdvisingApp\MeetingCenter\Jobs\RefreshCalendarRefreshTokens;
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use App\Models\User;
 use Illuminate\Support\Facades\Queue;
 
-it('dispatches FetchCustomerAdvisorLinkParsingResults only for current links', function () {
+it('dispatches a refresh only for calendars with a refresh token not updated in 14 days', function () {
     Queue::fake();
 
-    $currentLink = CustomerAdvisorLink::factory()->create([
-        'is_keep_current_enabled' => true,
+    $staleCalendar = Calendar::factory()->for(User::factory())->create(['updated_at' => now()->subDays(15)]);
+    Calendar::factory()->for(User::factory())->create(['updated_at' => now()->subDays(13)]);
+    Calendar::factory()->for(User::factory())->create([
+        'oauth_refresh_token' => null,
+        'updated_at' => now()->subDays(15),
     ]);
 
-    $nonCurrentLink = CustomerAdvisorLink::factory()->create([
-        'is_keep_current_enabled' => false,
-    ]);
+    (new RefreshCalendarRefreshTokens())->handle();
 
-    (new UpdateCurrentCustomerAdvisorLinks())->handle();
-
-    Queue::assertPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($currentLink) {
-        return $job->uniqueId() === $currentLink->id
-            && $job->refreshesExistingParsingResults();
-    });
-
-    Queue::assertNotPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($nonCurrentLink) {
-        return $job->uniqueId() === $nonCurrentLink->id;
-    });
+    Queue::assertPushed(RefreshCalendarRefreshToken::class, 1);
+    Queue::assertPushed(RefreshCalendarRefreshToken::class, fn (RefreshCalendarRefreshToken $job) => $job->calendar->is($staleCalendar));
 });

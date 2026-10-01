@@ -34,30 +34,21 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Jobs\CustomerAdvisors\FetchCustomerAdvisorLinkParsingResults;
-use AdvisingApp\Ai\Jobs\CustomerAdvisors\UpdateCurrentCustomerAdvisorLinks;
-use AdvisingApp\Ai\Models\CustomerAdvisorLink;
-use Illuminate\Support\Facades\Queue;
+namespace AdvisingApp\MeetingCenter\Jobs;
 
-it('dispatches FetchCustomerAdvisorLinkParsingResults only for current links', function () {
-    Queue::fake();
+use AdvisingApp\MeetingCenter\Models\Calendar;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Queue\Queueable;
 
-    $currentLink = CustomerAdvisorLink::factory()->create([
-        'is_keep_current_enabled' => true,
-    ]);
+class RefreshCalendarRefreshTokens implements ShouldQueue
+{
+    use Queueable;
 
-    $nonCurrentLink = CustomerAdvisorLink::factory()->create([
-        'is_keep_current_enabled' => false,
-    ]);
-
-    (new UpdateCurrentCustomerAdvisorLinks())->handle();
-
-    Queue::assertPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($currentLink) {
-        return $job->uniqueId() === $currentLink->id
-            && $job->refreshesExistingParsingResults();
-    });
-
-    Queue::assertNotPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($nonCurrentLink) {
-        return $job->uniqueId() === $nonCurrentLink->id;
-    });
-});
+    public function handle(): void
+    {
+        Calendar::query()
+            ->whereNotNull('oauth_refresh_token')
+            ->where('updated_at', '<=', now()->subDays(14))
+            ->each(fn (Calendar $calendar) => RefreshCalendarRefreshToken::dispatch($calendar));
+    }
+}

@@ -34,18 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace App\Listeners;
+namespace App\Jobs;
 
-use App\Multitenancy\Events\NewTenantSetupComplete;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Artisan;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
-use Spatie\ScheduleMonitor\Commands\SyncCommand;
+use App\Models\Tenant;
 
-class SyncScheduleMonitor implements ShouldQueue, NotTenantAware
+class DispatchStaleCacheTagPruningForEachTenant extends DispatchForEachTenant
 {
-    public function handle(NewTenantSetupComplete $event): void
+    protected function jobForTenant(Tenant $tenant): ?object
     {
-        Artisan::call(SyncCommand::class);
+        return new PruneStaleCacheTags();
     }
 }

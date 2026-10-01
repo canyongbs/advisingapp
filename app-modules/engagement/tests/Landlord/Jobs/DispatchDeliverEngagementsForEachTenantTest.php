@@ -34,25 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Console\Commands;
+use AdvisingApp\Engagement\Jobs\DeliverEngagements;
+use AdvisingApp\Engagement\Jobs\DispatchDeliverEngagementsForEachTenant;
+use Illuminate\Support\Facades\Queue;
 
-use AdvisingApp\Ai\Models\AiThread;
-use Illuminate\Console\Command;
-use Spatie\Multitenancy\Commands\Concerns\TenantAware;
+it('dispatches `DeliverEngagements` for each eligible tenant', function () {
+    Queue::fake();
 
-class DeleteUnsavedAiThreads extends Command
-{
-    use TenantAware;
+    (new DispatchDeliverEngagementsForEachTenant())->handle();
 
-    protected $signature = 'ai:delete-unsaved-ai-threads {--tenant=*}';
-
-    protected $description = 'Finds unsaved AiThreads older than 3 days and marks them for deletion.';
-
-    public function handle(): void
-    {
-        AiThread::query()
-            ->whereNull('saved_at')
-            ->where('created_at', '<=', now()->subDays(3))
-            ->each(fn (AiThread $aiThread) => $aiThread->delete());
-    }
-}
+    Queue::assertPushed(DeliverEngagements::class, 1);
+});

@@ -34,30 +34,19 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Jobs\CustomerAdvisors\FetchCustomerAdvisorLinkParsingResults;
-use AdvisingApp\Ai\Jobs\CustomerAdvisors\UpdateCurrentCustomerAdvisorLinks;
-use AdvisingApp\Ai\Models\CustomerAdvisorLink;
-use Illuminate\Support\Facades\Queue;
+use AdvisingApp\Ai\Jobs\DeleteUnsavedAiThreads;
+use AdvisingApp\Ai\Models\AiThread;
 
-it('dispatches FetchCustomerAdvisorLinkParsingResults only for current links', function () {
-    Queue::fake();
+it('selects and soft deletes the proper records', function () {
+    $notSavedAndOlderThanThreeDays = AiThread::factory()->create(['saved_at' => null, 'created_at' => now()->subDays(4)]);
+    $notSavedAndEarlierThanThreeDays = AiThread::factory()->create(['saved_at' => null, 'created_at' => now()->subDays(2)]);
+    $savedAndOlderThanThreeDays = AiThread::factory()->create(['saved_at' => now(), 'created_at' => now()->subDays(4)]);
+    $savedAndEarlierThanThreeDays = AiThread::factory()->create(['saved_at' => now(), 'created_at' => now()->subDays(2)]);
 
-    $currentLink = CustomerAdvisorLink::factory()->create([
-        'is_keep_current_enabled' => true,
-    ]);
+    (new DeleteUnsavedAiThreads())->handle();
 
-    $nonCurrentLink = CustomerAdvisorLink::factory()->create([
-        'is_keep_current_enabled' => false,
-    ]);
-
-    (new UpdateCurrentCustomerAdvisorLinks())->handle();
-
-    Queue::assertPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($currentLink) {
-        return $job->uniqueId() === $currentLink->id
-            && $job->refreshesExistingParsingResults();
-    });
-
-    Queue::assertNotPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($nonCurrentLink) {
-        return $job->uniqueId() === $nonCurrentLink->id;
-    });
+    expect($notSavedAndOlderThanThreeDays->fresh()->deleted_at)->not->toBeNull()
+        ->and($notSavedAndEarlierThanThreeDays->fresh()->deleted_at)->toBeNull()
+        ->and($savedAndOlderThanThreeDays->fresh()->deleted_at)->toBeNull()
+        ->and($savedAndEarlierThanThreeDays->fresh()->deleted_at)->toBeNull();
 });

@@ -34,30 +34,37 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Ai\Jobs\CustomerAdvisors\FetchCustomerAdvisorLinkParsingResults;
-use AdvisingApp\Ai\Jobs\CustomerAdvisors\UpdateCurrentCustomerAdvisorLinks;
-use AdvisingApp\Ai\Models\CustomerAdvisorLink;
-use Illuminate\Support\Facades\Queue;
+use App\Exceptions\ArtisanCommandFailedException;
+use App\Jobs\RunHealthChecks;
+use Illuminate\Contracts\Console\Kernel;
+use Illuminate\Support\Facades\Artisan;
+use Mockery\MockInterface;
+use Symfony\Component\Console\Output\BufferedOutput;
 
-it('dispatches FetchCustomerAdvisorLinkParsingResults only for current links', function () {
-    Queue::fake();
+it('runs the `health:check` command', function () {
+    $kernel = app(Kernel::class);
 
-    $currentLink = CustomerAdvisorLink::factory()->create([
-        'is_keep_current_enabled' => true,
-    ]);
+    Artisan::swap(Mockery::mock(Kernel::class, function (MockInterface $mock) {
+        $mock->shouldReceive('call')
+            ->once()
+            ->with('health:check', [], Mockery::type(BufferedOutput::class))
+            ->andReturn(0);
+    }));
 
-    $nonCurrentLink = CustomerAdvisorLink::factory()->create([
-        'is_keep_current_enabled' => false,
-    ]);
+    (new RunHealthChecks())->handle();
 
-    (new UpdateCurrentCustomerAdvisorLinks())->handle();
+    Artisan::swap($kernel);
+});
 
-    Queue::assertPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($currentLink) {
-        return $job->uniqueId() === $currentLink->id
-            && $job->refreshesExistingParsingResults();
-    });
+it('fails with an `ArtisanCommandFailedException` when the command exits non-zero', function () {
+    $kernel = app(Kernel::class);
 
-    Queue::assertNotPushed(FetchCustomerAdvisorLinkParsingResults::class, function (FetchCustomerAdvisorLinkParsingResults $job) use ($nonCurrentLink) {
-        return $job->uniqueId() === $nonCurrentLink->id;
-    });
+    Artisan::swap(Mockery::mock(Kernel::class, function (MockInterface $mock) {
+        $mock->shouldReceive('call')->once()->andReturn(1);
+    }));
+
+    expect(fn () => (new RunHealthChecks())->handle())
+        ->toThrow(ArtisanCommandFailedException::class);
+
+    Artisan::swap($kernel);
 });
