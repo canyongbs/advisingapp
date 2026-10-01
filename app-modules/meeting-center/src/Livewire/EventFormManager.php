@@ -44,6 +44,7 @@ use Filament\Notifications\Notification;
 use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\DB;
 use Livewire\Component;
 
 /**
@@ -75,15 +76,17 @@ abstract class EventFormManager extends Component implements HasForms
     {
         $this->authorizeEdit();
 
-        $data = $this->form->getState();
+        DB::transaction(function (): void {
+            $data = $this->form->getState();
 
-        foreach ($this->attributesToSave() as $attribute) {
-            $this->record->{$attribute} = $data[$attribute] ?? null;
-        }
+            foreach ($this->attributesToSave() as $attribute) {
+                $this->record->{$attribute} = $data[$attribute] ?? null;
+            }
 
-        $this->record->save();
+            $this->record->save();
 
-        $this->afterSave();
+            $this->afterSave();
+        });
 
         Notification::make()
             ->title('Saved')
