@@ -45,27 +45,25 @@ use Illuminate\Support\Facades\Hash;
 /**
  * @return array<string, mixed>
  */
-function authenticateResourceHubPortal(Student $student, string $code = '123456'): array
-{
+$authenticateResourceHubPortal = function (Student $student, string $code = '123456'): array {
     $authentication = PortalAuthentication::factory()->create([
         'code' => Hash::make($code),
         'educatable_id' => $student->getKey(),
         'educatable_type' => $student->getMorphClass(),
         'portal_type' => PortalType::ResourceHub,
     ]);
-
     $response = app(ResourceHubPortalAuthenticateController::class)(
         Request::create('/', 'POST', ['code' => $code]),
         $authentication,
     );
 
     return json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
-}
+};
 
-it('authenticates a student and issues a token', function () {
+it('authenticates a student and issues a token', function () use ($authenticateResourceHubPortal) {
     $student = Student::factory()->create();
 
-    $payload = authenticateResourceHubPortal($student);
+    $payload = $authenticateResourceHubPortal($student);
 
     expect($payload['success'] ?? null)->toBeTrue()
         ->and($payload['token'] ?? null)->toBeString()
@@ -73,11 +71,11 @@ it('authenticates a student and issues a token', function () {
 });
 
 // A code is valid for a day, so a student can be archived between requesting and redeeming it.
-it('does not authenticate an archived student', function () {
+it('does not authenticate an archived student', function () use ($authenticateResourceHubPortal) {
     $student = Student::factory()->create();
     $student->archive();
 
-    $payload = authenticateResourceHubPortal($student);
+    $payload = $authenticateResourceHubPortal($student);
 
     expect($payload['is_expired'] ?? null)->toBeTrue()
         ->and($payload)->not->toHaveKey('token')

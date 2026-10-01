@@ -47,40 +47,39 @@ use Symfony\Component\HttpKernel\Exception\HttpException;
 
 use function Tests\setEnterpriseAiEnabled;
 
-function handleEnterpriseAiRequest(Request $request): Response
-{
+$handleEnterpriseAiRequest = function (Request $request): Response {
     return app(EnsureEnterpriseAiFeatureIsActive::class)->handle(
         $request,
         fn (): Response => response()->json(['ok' => true]),
     );
-}
+};
 
-it('lets the request through while Enterprise AI is enabled', function () {
-    $response = handleEnterpriseAiRequest(Request::create('/', 'GET'));
+it('lets the request through while Enterprise AI is enabled', function () use ($handleEnterpriseAiRequest) {
+    $response = $handleEnterpriseAiRequest(Request::create('/', 'GET'));
 
     expect($response->getStatusCode())->toBe(200);
 });
 
-it('returns a JSON forbidden response to JSON requests while Enterprise AI is disabled', function () {
+it('returns a JSON forbidden response to JSON requests while Enterprise AI is disabled', function () use ($handleEnterpriseAiRequest) {
     setEnterpriseAiEnabled(false);
 
     $request = Request::create('/', 'POST');
     $request->headers->set('Accept', 'application/json');
 
-    $response = handleEnterpriseAiRequest($request);
+    $response = $handleEnterpriseAiRequest($request);
 
     expect($response->getStatusCode())->toBe(403)
         ->and(json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR))
         ->toBe(['error' => 'Enterprise AI is not enabled.']);
 });
 
-it('aborts other requests with forbidden while Enterprise AI is disabled', function () {
+it('aborts other requests with forbidden while Enterprise AI is disabled', function () use ($handleEnterpriseAiRequest) {
     setEnterpriseAiEnabled(false);
 
     $thrownException = null;
 
     try {
-        handleEnterpriseAiRequest(Request::create('/', 'GET'));
+        $handleEnterpriseAiRequest(Request::create('/', 'GET'));
     } catch (HttpException $exception) {
         $thrownException = $exception;
     }

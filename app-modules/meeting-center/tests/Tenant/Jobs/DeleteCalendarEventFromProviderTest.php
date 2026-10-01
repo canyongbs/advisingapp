@@ -50,19 +50,18 @@ use Illuminate\Support\Str;
 
 use function Pest\Laravel\travelTo;
 
+$makeDeleteJobCalendar = function (): Calendar {
+    return Calendar::factory()
+        ->for(User::factory())
+        ->create(['provider_id' => 'job-calendar']);
+};
+
 beforeEach(function (): void {
     Queue::fake();
 });
 
-function makeDeleteJobCalendar(): Calendar
-{
-    return Calendar::factory()
-        ->for(User::factory())
-        ->create(['provider_id' => 'job-calendar']);
-}
-
-it('deletes the event on the resolved provider driver', function () {
-    $calendar = makeDeleteJobCalendar();
+it('deletes the event on the resolved provider driver', function () use ($makeDeleteJobCalendar) {
+    $calendar = $makeDeleteJobCalendar();
     $eventId = (string) Str::uuid();
 
     $driver = Mockery::mock(CalendarInterface::class);
@@ -80,8 +79,8 @@ it('deletes the event on the resolved provider driver', function () {
     (new DeleteCalendarEventFromProvider($calendar, 'provider-event-id', $eventId))->handle();
 });
 
-it('swallows a CouldNotRefreshToken failure', function () {
-    $calendar = makeDeleteJobCalendar();
+it('swallows a CouldNotRefreshToken failure', function () use ($makeDeleteJobCalendar) {
+    $calendar = $makeDeleteJobCalendar();
 
     $driver = Mockery::mock(CalendarInterface::class);
     $driver->shouldReceive('deleteEvent')->once()->andThrow(new CouldNotRefreshToken()); // @phpstan-ignore method.notFound
@@ -93,8 +92,8 @@ it('swallows a CouldNotRefreshToken failure', function () {
     (new DeleteCalendarEventFromProvider($calendar, 'provider-event-id', (string) Str::uuid()))->handle();
 });
 
-it('releases the job when the provider is rate limited', function () {
-    $calendar = makeDeleteJobCalendar();
+it('releases the job when the provider is rate limited', function () use ($makeDeleteJobCalendar) {
+    $calendar = $makeDeleteJobCalendar();
 
     $driver = Mockery::mock(CalendarInterface::class);
     $driver->shouldReceive('deleteEvent')->once()->andThrow(new MicrosoftGraphRateLimited(retryAfterSeconds: 45)); // @phpstan-ignore method.notFound
@@ -109,8 +108,8 @@ it('releases the job when the provider is rate limited', function () {
     $job->assertReleased(45);
 });
 
-it('rethrows MicrosoftGraphRateLimited without retryAfterSeconds', function () {
-    $calendar = makeDeleteJobCalendar();
+it('rethrows MicrosoftGraphRateLimited without retryAfterSeconds', function () use ($makeDeleteJobCalendar) {
+    $calendar = $makeDeleteJobCalendar();
 
     $driver = Mockery::mock(CalendarInterface::class);
     $driver->shouldReceive('deleteEvent')->once()->andThrow(new MicrosoftGraphRateLimited()); // @phpstan-ignore method.notFound
@@ -123,8 +122,8 @@ it('rethrows MicrosoftGraphRateLimited without retryAfterSeconds', function () {
         ->toThrow(MicrosoftGraphRateLimited::class);
 });
 
-it('prevents overlaps with other provider jobs for the same event', function () {
-    $calendar = makeDeleteJobCalendar();
+it('prevents overlaps with other provider jobs for the same event', function () use ($makeDeleteJobCalendar) {
+    $calendar = $makeDeleteJobCalendar();
     $eventId = (string) Str::uuid();
 
     $middleware = (new DeleteCalendarEventFromProvider($calendar, 'provider-event-id', $eventId))->middleware();
@@ -142,28 +141,28 @@ it('prevents overlaps with other provider jobs for the same event', function () 
     expect((int) $middleware[0]->expiresAfter)->toBe(60);
 });
 
-it('has maxExceptions of 3', function () {
-    $calendar = makeDeleteJobCalendar();
+it('has maxExceptions of 3', function () use ($makeDeleteJobCalendar) {
+    $calendar = $makeDeleteJobCalendar();
 
     expect((new DeleteCalendarEventFromProvider($calendar, 'provider-event-id', (string) Str::uuid()))->maxExceptions)->toBe(3);
 });
 
-it('is placed on configured queue', function () {
-    $calendar = makeDeleteJobCalendar();
+it('is placed on configured queue', function () use ($makeDeleteJobCalendar) {
+    $calendar = $makeDeleteJobCalendar();
 
     $job = new DeleteCalendarEventFromProvider($calendar, 'provider-event-id', (string) Str::uuid());
 
     expect($job->queue)->toBe(config('meeting-center.queue'));
 });
 
-it('uses a backoff of 10 seconds', function () {
-    $calendar = makeDeleteJobCalendar();
+it('uses a backoff of 10 seconds', function () use ($makeDeleteJobCalendar) {
+    $calendar = $makeDeleteJobCalendar();
 
     expect((new DeleteCalendarEventFromProvider($calendar, 'provider-event-id', (string) Str::uuid()))->backoff())->toBe(10);
 });
 
-it('retries for an hour', function () {
-    $calendar = makeDeleteJobCalendar();
+it('retries for an hour', function () use ($makeDeleteJobCalendar) {
+    $calendar = $makeDeleteJobCalendar();
 
     travelTo(Carbon::parse('2026-09-23 12:00:00'));
 
