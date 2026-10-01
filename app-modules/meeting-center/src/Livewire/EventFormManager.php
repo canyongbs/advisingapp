@@ -77,13 +77,15 @@ abstract class EventFormManager extends Component implements HasForms
         $this->authorizeEdit();
 
         DB::transaction(function (): void {
-            $data = $this->form->getState();
+            $data = $this->form->getState(false);
 
             foreach ($this->attributesToSave() as $attribute) {
                 $this->record->{$attribute} = $data[$attribute] ?? null;
             }
 
             $this->record->save();
+
+            $this->form->saveRelationships();
 
             $this->afterSave();
         });
