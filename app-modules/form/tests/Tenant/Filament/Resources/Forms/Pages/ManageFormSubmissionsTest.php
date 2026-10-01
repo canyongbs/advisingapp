@@ -45,14 +45,13 @@ use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-function manageFormSubmissionsTestUser(): User
-{
+$manageFormSubmissionsTestUser = function (): User {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->onlineForms = true;
     $settings->save();
 
     return User::factory()->licensed(LicenseType::cases())->create();
-}
+};
 
 test('archive action is visible when submission is not archived', function () {
     asSuperAdmin();

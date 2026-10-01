@@ -39,17 +39,16 @@ use AdvisingApp\Authorization\Settings\GoogleSsoSettings;
 
 use function Pest\Laravel\get;
 
-function enableGoogleSso(): void
-{
+$enableGoogleSso = function (): void {
     $googleSsoSettings = app(GoogleSsoSettings::class);
     $googleSsoSettings->is_enabled = true;
     $googleSsoSettings->client_id = 'test-client-id';
     $googleSsoSettings->client_secret = 'test-client-secret';
     $googleSsoSettings->save();
-}
+};
 
-it('does not show the switch tenant control or a google unavailable message for a normal browser', function () {
-    enableGoogleSso();
+it('does not show the switch tenant control or a google unavailable message for a normal browser', function () use ($enableGoogleSso) {
+    $enableGoogleSso();
 
     get(route('filament.admin.auth.login'), ['User-Agent' => 'Mozilla/5.0'])
         ->assertOk()
@@ -71,8 +70,8 @@ it('does not show the switch tenant control when google sso is not enabled and t
         ->assertDontSee('Switch tenant');
 });
 
-it('replaces the google sign-in button with an unavailable message for the mobile app when google sso is enabled', function () {
-    enableGoogleSso();
+it('replaces the google sign-in button with an unavailable message for the mobile app when google sso is enabled', function () use ($enableGoogleSso) {
+    $enableGoogleSso();
 
     get(route('filament.admin.auth.login'), ['User-Agent' => 'AdvisingAppMobile/1.0'])
         ->assertOk()

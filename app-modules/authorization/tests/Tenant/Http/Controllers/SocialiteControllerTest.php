@@ -49,21 +49,19 @@ use function Pest\Laravel\get;
 
 use SocialiteProviders\Azure\User as AzureUser;
 
-function fakeAzureSocialiteDriver(string $email): void
-{
+$fakeAzureSocialiteDriver = function (string $email): void {
     $socialiteUser = new AzureUser();
     $socialiteUser->principalName = $email;
     $socialiteUser->mail = $email;
     $socialiteUser->token = 'fake-token';
     $socialiteUser->name = 'External User';
     $socialiteUser->avatar = 'https://example.com/avatar.png';
-
     $driver = Mockery::mock();
-    $driver->shouldReceive('setConfig')->andReturnSelf(); // @phpstan-ignore method.notFound
+    $driver->shouldReceive('setConfig')->andReturnSelf();
+    // @phpstan-ignore method.notFound
     $driver->shouldReceive('user')->andReturn($socialiteUser);
-
     Socialite::shouldReceive('driver')->andReturn($driver);
-}
+};
 
 beforeEach(function () {
     $settings = app(AzureSsoSettings::class);
@@ -73,12 +71,12 @@ beforeEach(function () {
     Sleep::fake();
 });
 
-it('does not report an error when the user has no Azure profile photo', function () {
+it('does not report an error when the user has no Azure profile photo', function () use ($fakeAzureSocialiteDriver) {
     Exceptions::fake();
 
     $user = User::factory()->external()->create();
 
-    fakeAzureSocialiteDriver($user->email);
+    $fakeAzureSocialiteDriver($user->email);
 
     Http::fake([
         'graph.microsoft.com/*' => Http::response([
@@ -101,12 +99,12 @@ it('does not report an error when the user has no Azure profile photo', function
     expect($user->refresh()->getFirstMedia('avatar'))->toBeNull();
 });
 
-it('retries and reports transient Azure failures', function (int $status) {
+it('retries and reports transient Azure failures', function (int $status) use ($fakeAzureSocialiteDriver) {
     Exceptions::fake();
 
     $user = User::factory()->external()->create();
 
-    fakeAzureSocialiteDriver($user->email);
+    $fakeAzureSocialiteDriver($user->email);
 
     Http::fake([
         'graph.microsoft.com/*' => Http::response('error', $status),
@@ -125,12 +123,12 @@ it('retries and reports transient Azure failures', function (int $status) {
     'rate limit' => [429],
 ]);
 
-it('does not report when Azure returns a non-error response that is not successful', function () {
+it('does not report when Azure returns a non-error response that is not successful', function () use ($fakeAzureSocialiteDriver) {
     Exceptions::fake();
 
     $user = User::factory()->external()->create();
 
-    fakeAzureSocialiteDriver($user->email);
+    $fakeAzureSocialiteDriver($user->email);
 
     Http::fake([
         'graph.microsoft.com/*' => Http::response('', 302),
@@ -146,12 +144,12 @@ it('does not report when Azure returns a non-error response that is not successf
     Exceptions::assertNothingReported();
 });
 
-it('still logs the user in and reports the error when the Azure photo request fails to connect', function () {
+it('still logs the user in and reports the error when the Azure photo request fails to connect', function () use ($fakeAzureSocialiteDriver) {
     Exceptions::fake();
 
     $user = User::factory()->external()->create();
 
-    fakeAzureSocialiteDriver($user->email);
+    $fakeAzureSocialiteDriver($user->email);
 
     Http::fake(fn () => throw new ConnectionException('Connection timed out'));
 

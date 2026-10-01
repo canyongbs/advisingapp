@@ -45,15 +45,14 @@ use App\Settings\LicenseSettings;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-function editEventRegistrationTestSetup(): void
-{
+$editEventRegistrationTestSetup = function (): void {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->eventManagement = true;
     $settings->save();
-}
+};
 
-it('creates a new version and archives the old one when saving the registration form', function () {
-    editEventRegistrationTestSetup();
+it('creates a new version and archives the old one when saving the registration form', function () use ($editEventRegistrationTestSetup) {
+    $editEventRegistrationTestSetup();
 
     asSuperAdmin();
 
@@ -89,8 +88,8 @@ it('creates a new version and archives the old one when saving the registration 
     expect($newForm->root_id)->toBe($originalRootId);
 });
 
-it('the new version inherits embed settings from the old version', function () {
-    editEventRegistrationTestSetup();
+it('the new version inherits embed settings from the old version', function () use ($editEventRegistrationTestSetup) {
+    $editEventRegistrationTestSetup();
 
     asSuperAdmin();
 
@@ -115,8 +114,8 @@ it('the new version inherits embed settings from the old version', function () {
     expect($newForm->allowed_domains)->toBe(['example.com']);
 });
 
-it('the event registration form relationship resolves to the latest non-archived version', function () {
-    editEventRegistrationTestSetup();
+it('the event registration form relationship resolves to the latest non-archived version', function () use ($editEventRegistrationTestSetup) {
+    $editEventRegistrationTestSetup();
 
     asSuperAdmin();
 
@@ -136,8 +135,8 @@ it('the event registration form relationship resolves to the latest non-archived
     expect($currentForm->archived_at)->toBeNull();
 });
 
-it('persists edits to an existing wizard step\'s description onto the new event registration form version', function () {
-    editEventRegistrationTestSetup();
+it('persists edits to an existing wizard step\'s description onto the new event registration form version', function () use ($editEventRegistrationTestSetup) {
+    $editEventRegistrationTestSetup();
 
     asSuperAdmin();
 
@@ -179,8 +178,8 @@ it('persists edits to an existing wizard step\'s description onto the new event 
         ->description->toBe('Updated description');
 });
 
-it('sets root_id to its own id when a registration form is first created', function () {
-    editEventRegistrationTestSetup();
+it('sets root_id to its own id when a registration form is first created', function () use ($editEventRegistrationTestSetup) {
+    $editEventRegistrationTestSetup();
 
     $event = Event::factory()->create();
     $form = $event->eventRegistrationForm;
@@ -188,8 +187,8 @@ it('sets root_id to its own id when a registration form is first created', funct
     expect($form->root_id)->toBe($form->id);
 });
 
-it('when saving a wizard registration form, the new version retains the same number of steps', function () {
-    editEventRegistrationTestSetup();
+it('when saving a wizard registration form, the new version retains the same number of steps', function () use ($editEventRegistrationTestSetup) {
+    $editEventRegistrationTestSetup();
 
     asSuperAdmin();
 
@@ -231,8 +230,8 @@ it('when saving a wizard registration form, the new version retains the same num
     expect($archivedVersion->steps()->count())->toBe($originalStepCount);
 });
 
-it('when saving a wizard registration form, the archived version still has its original steps', function () {
-    editEventRegistrationTestSetup();
+it('when saving a wizard registration form, the archived version still has its original steps', function () use ($editEventRegistrationTestSetup) {
+    $editEventRegistrationTestSetup();
 
     asSuperAdmin();
 
@@ -261,8 +260,8 @@ it('when saving a wizard registration form, the archived version still has its o
     expect($archivedVersion->steps()->count())->toBe($originalStepCount);
 });
 
-it('carries each wizard step its own fields onto the new version when saving', function () {
-    editEventRegistrationTestSetup();
+it('carries each wizard step its own fields onto the new version when saving', function () use ($editEventRegistrationTestSetup) {
+    $editEventRegistrationTestSetup();
 
     asSuperAdmin();
 
@@ -318,8 +317,8 @@ it('carries each wizard step its own fields onto the new version when saving', f
     });
 });
 
-it('persists a newly added wizard step and its fields to the new version', function () {
-    editEventRegistrationTestSetup();
+it('persists a newly added wizard step and its fields to the new version', function () use ($editEventRegistrationTestSetup) {
+    $editEventRegistrationTestSetup();
 
     asSuperAdmin();
 
@@ -372,8 +371,8 @@ it('persists a newly added wizard step and its fields to the new version', funct
     expect($newVersion->fields()->where('step_id', $newStep->getKey())->count())->toBe(1);
 });
 
-it('exposes the mapped block types to the fields rich editor for the custom block badges', function () {
-    editEventRegistrationTestSetup();
+it('exposes the mapped block types to the fields rich editor for the custom block badges', function () use ($editEventRegistrationTestSetup) {
+    $editEventRegistrationTestSetup();
 
     asSuperAdmin();
 

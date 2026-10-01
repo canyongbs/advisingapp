@@ -44,8 +44,7 @@ use Illuminate\Validation\ValidationException;
 /**
  * @param array<string, mixed> $overrides
  */
-function syncTenantRequest(array $overrides = []): SyncTenantRequest
-{
+$syncTenantRequest = function (array $overrides = []): SyncTenantRequest {
     $payload = array_merge([
         'limits' => [
             'conversationalAiSeats' => 0,
@@ -83,7 +82,6 @@ function syncTenantRequest(array $overrides = []): SyncTenantRequest
         ],
         'subscriptionStatus' => 'active',
     ], $overrides);
-
     $request = SyncTenantRequest::create('/', 'POST', $payload);
     $request->headers->set('Accept', 'application/json');
     $request->setContainer(app());
@@ -91,9 +89,9 @@ function syncTenantRequest(array $overrides = []): SyncTenantRequest
     $request->validateResolved();
 
     return $request;
-}
+};
 
-it('syncs the smart prompt instructions into the ai settings', function () {
+it('syncs the smart prompt instructions into the ai settings', function () use ($syncTenantRequest) {
     $instructions = [
         'type' => 'doc',
         'content' => [
@@ -106,7 +104,7 @@ it('syncs the smart prompt instructions into the ai settings', function () {
         ],
     ];
 
-    app(SyncTenantSmartPrompts::class)->execute(syncTenantRequest([
+    app(SyncTenantSmartPrompts::class)->execute($syncTenantRequest([
         'smartPromptInstructions' => $instructions,
     ]));
 
@@ -114,7 +112,7 @@ it('syncs the smart prompt instructions into the ai settings', function () {
         ->toBe($instructions);
 });
 
-it('does not overwrite the ai settings when no instructions are provided', function () {
+it('does not overwrite the ai settings when no instructions are provided', function () use ($syncTenantRequest) {
     $existing = [
         'type' => 'doc',
         'content' => [
@@ -131,16 +129,16 @@ it('does not overwrite the ai settings when no instructions are provided', funct
     $settings->smart_prompt_instructions = $existing;
     $settings->save();
 
-    app(SyncTenantSmartPrompts::class)->execute(syncTenantRequest());
+    app(SyncTenantSmartPrompts::class)->execute($syncTenantRequest());
 
     expect(app(AiSettings::class)->smart_prompt_instructions)
         ->toBe($existing);
 });
 
-it('creates the prompt types and smart prompts from the payload', function () {
+it('creates the prompt types and smart prompts from the payload', function () use ($syncTenantRequest) {
     $promptId = fake()->uuid();
 
-    app(SyncTenantSmartPrompts::class)->execute(syncTenantRequest([
+    app(SyncTenantSmartPrompts::class)->execute($syncTenantRequest([
         'smartPrompts' => [
             [
                 'title' => 'Recruitment',
@@ -171,10 +169,10 @@ it('creates the prompt types and smart prompts from the payload', function () {
         ->and($prompt->is_smart)->toBeTrue();
 });
 
-it('does not persist smart prompt changes until the deferred sync runs', function () {
+it('does not persist smart prompt changes until the deferred sync runs', function () use ($syncTenantRequest) {
     $promptId = fake()->uuid();
 
-    $sync = app(SyncTenantSmartPrompts::class)->execute(syncTenantRequest([
+    $sync = app(SyncTenantSmartPrompts::class)->execute($syncTenantRequest([
         'smartPrompts' => [
             [
                 'title' => 'Recruitment',
@@ -197,10 +195,10 @@ it('does not persist smart prompt changes until the deferred sync runs', functio
     expect(Prompt::find($promptId))->not->toBeNull();
 });
 
-it('reuses an existing prompt type with the same title', function () {
+it('reuses an existing prompt type with the same title', function () use ($syncTenantRequest) {
     $promptType = PromptType::factory()->create(['title' => 'Retention']);
 
-    app(SyncTenantSmartPrompts::class)->execute(syncTenantRequest([
+    app(SyncTenantSmartPrompts::class)->execute($syncTenantRequest([
         'smartPrompts' => [
             [
                 'title' => 'Retention',
@@ -219,10 +217,10 @@ it('reuses an existing prompt type with the same title', function () {
         ->and(Prompt::query()->where('is_smart', true)->sole()->type_id)->toBe($promptType->getKey());
 });
 
-it('updates an existing smart prompt with the same id', function () {
+it('updates an existing smart prompt with the same id', function () use ($syncTenantRequest) {
     $promptId = fake()->uuid();
 
-    app(SyncTenantSmartPrompts::class)->execute(syncTenantRequest([
+    app(SyncTenantSmartPrompts::class)->execute($syncTenantRequest([
         'smartPrompts' => [
             [
                 'title' => 'Recruitment',
@@ -237,7 +235,7 @@ it('updates an existing smart prompt with the same id', function () {
         ],
     ]));
 
-    app(SyncTenantSmartPrompts::class)->execute(syncTenantRequest([
+    app(SyncTenantSmartPrompts::class)->execute($syncTenantRequest([
         'smartPrompts' => [
             [
                 'title' => 'Recruitment',
@@ -260,10 +258,10 @@ it('updates an existing smart prompt with the same id', function () {
         ->and($prompt->prompt)->toBe('Updated prompt.');
 });
 
-it('deletes smart prompts that are no longer in the payload', function () {
+it('deletes smart prompts that are no longer in the payload', function () use ($syncTenantRequest) {
     $staleId = fake()->uuid();
 
-    app(SyncTenantSmartPrompts::class)->execute(syncTenantRequest([
+    app(SyncTenantSmartPrompts::class)->execute($syncTenantRequest([
         'smartPrompts' => [
             [
                 'title' => 'Recruitment',
@@ -280,27 +278,27 @@ it('deletes smart prompts that are no longer in the payload', function () {
 
     expect(Prompt::find($staleId))->not->toBeNull();
 
-    app(SyncTenantSmartPrompts::class)->execute(syncTenantRequest([
+    app(SyncTenantSmartPrompts::class)->execute($syncTenantRequest([
         'smartPrompts' => [],
     ]));
 
     expect(Prompt::find($staleId))->toBeNull();
 });
 
-it('does not delete non-smart prompts', function () {
+it('does not delete non-smart prompts', function () use ($syncTenantRequest) {
     $prompt = Prompt::factory()->create(['is_smart' => false]);
 
-    app(SyncTenantSmartPrompts::class)->execute(syncTenantRequest([
+    app(SyncTenantSmartPrompts::class)->execute($syncTenantRequest([
         'smartPrompts' => [],
     ]));
 
     expect(Prompt::find($prompt->getKey()))->not->toBeNull();
 });
 
-it('rejects malformed smart prompt containers without deleting existing smart prompts', function (mixed $smartPrompts) {
+it('rejects malformed smart prompt containers without deleting existing smart prompts', function (mixed $smartPrompts) use ($syncTenantRequest) {
     $existingPrompt = Prompt::factory()->create(['is_smart' => true]);
 
-    expect(fn () => syncTenantRequest([
+    expect(fn () => $syncTenantRequest([
         'smartPrompts' => $smartPrompts,
     ]))->toThrow(ValidationException::class);
 
@@ -322,7 +320,7 @@ it('rejects malformed smart prompt containers without deleting existing smart pr
     ]],
 ]);
 
-it('throws a validation error when a smart prompt title conflicts with an existing custom prompt in the same category, instead of persisting any changes', function () {
+it('throws a validation error when a smart prompt title conflicts with an existing custom prompt in the same category, instead of persisting any changes', function () use ($syncTenantRequest) {
     $promptType = PromptType::factory()->create(['title' => 'Recruitment']);
     Prompt::factory()->create([
         'type_id' => $promptType->getKey(),
@@ -332,7 +330,7 @@ it('throws a validation error when a smart prompt title conflicts with an existi
 
     $promptId = fake()->uuid();
 
-    expect(fn () => app(SyncTenantSmartPrompts::class)->execute(syncTenantRequest([
+    expect(fn () => app(SyncTenantSmartPrompts::class)->execute($syncTenantRequest([
         'smartPrompts' => [
             [
                 'title' => 'Recruitment',
@@ -350,7 +348,7 @@ it('throws a validation error when a smart prompt title conflicts with an existi
     expect(Prompt::find($promptId))->toBeNull();
 });
 
-it('allows the same prompt title in different categories when title uniqueness is scoped per type', function () {
+it('allows the same prompt title in different categories when title uniqueness is scoped per type', function () use ($syncTenantRequest) {
     $existingPromptType = PromptType::factory()->create(['title' => 'Retention']);
     Prompt::factory()->create([
         'type_id' => $existingPromptType->getKey(),
@@ -360,7 +358,7 @@ it('allows the same prompt title in different categories when title uniqueness i
 
     $promptId = fake()->uuid();
 
-    app(SyncTenantSmartPrompts::class)->execute(syncTenantRequest([
+    app(SyncTenantSmartPrompts::class)->execute($syncTenantRequest([
         'smartPrompts' => [
             [
                 'title' => 'Recruitment',
