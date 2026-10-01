@@ -56,8 +56,7 @@ class OptionsKeyValue extends KeyValue
         parent::setUp();
 
         $this
-            ->keyLabel('Value')
-            ->valueLabel('Label')
+            ->view('form::components.options-key-value')
             ->reorderable()
             ->afterStateHydrated(function (OptionsKeyValue $component): void {
                 $state = $component->getRawState();
@@ -72,35 +71,5 @@ class OptionsKeyValue extends KeyValue
 
                 FormFieldBlock::validateOptionValues($rows->pluck('key')->all(), $fail);
             });
-    }
-
-    public function toEmbeddedHtml(): string
-    {
-        $slotHtml = view('form::components.options-key-value', [
-            'addActionHtml' => $this->getAction('add')->toHtml(),
-            'alpineAttributes' => $this->getExtraAlpineAttributeBag()->class(['fi-fo-key-value-table-ctn'])->toHtml(),
-            'debounce' => $this->getLiveDebounce() ?? '500ms',
-            'deleteActionHtml' => $this->getAction('delete')->toHtml(),
-            'entangleExpression' => $this->applyStateBindingModifiers("\$entangle('{$this->getStatePath()}')"),
-            'id' => $this->getId(),
-            'isAddable' => $this->isAddable(),
-            'isDeletable' => $this->isDeletable(),
-            'isDisabled' => $this->isDisabled(),
-            'isReorderable' => $this->isReorderable(),
-            'keyLabel' => $this->getKeyLabel(),
-            'livewireKey' => $this->getLivewireKey(),
-            'reorderActionHtml' => $this->getAction('reorder')->toHtml(),
-            'reorderAnimationDuration' => $this->getReorderAnimationDuration(),
-            'valueLabel' => $this->getValueLabel(),
-        ])->render();
-
-        return $this->wrapEmbeddedHtml(
-            $this->wrapInputHtml(
-                $slotHtml,
-                attributes: $this->getExtraAttributeBag()->class(['fi-fo-key-value']),
-            ),
-            extraWrapperAttributes: ['class' => 'fi-fo-key-value-wrp'],
-            labelTag: 'div',
-        );
     }
 }
