@@ -36,52 +36,125 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 
+use AdvisingApp\MeetingCenter\Enums\EventTab;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
+use AdvisingApp\MeetingCenter\Filament\Resources\Events\RelationManagers\EventAttendeesRelationManager;
+use AdvisingApp\MeetingCenter\Livewire\EventDetailsManager;
+use AdvisingApp\MeetingCenter\Livewire\EventLandingPageManager;
+use AdvisingApp\MeetingCenter\Livewire\EventRegistrationFormManager;
 use AdvisingApp\MeetingCenter\Models\Event;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\Action;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs;
+use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
+use Livewire\Attributes\Url;
 
 class ViewEvent extends ViewRecord
 {
     protected static string $resource = EventResource::class;
 
-    protected static ?string $navigationLabel = 'View';
+    #[Url(as: 'tab')]
+    public string $activeTab = EventTab::Overview->value;
+
+    public function mount(int | string $record): void
+    {
+        parent::mount($record);
+
+        if ($this->isActiveTabVisible()) {
+            return;
+        }
+
+        $firstVisibleTab = collect(EventTab::cases())
+            ->first(fn (EventTab $tab): bool => $this->isTabVisible($tab));
+
+        abort_unless($firstVisibleTab !== null, 403);
+
+        $this->activeTab = $firstVisibleTab->value;
+    }
 
     public function infolist(Schema $schema): Schema
     {
         return $schema
             ->schema([
-                Section::make()
-                    ->schema([
-                        TextEntry::make('title'),
-                        TextEntry::make('description')
-                            ->label('Description')
-                            ->state(function (Event $record): string {
-                                if (blank($record->description)) {
-                                    return '-';
-                                }
+                Tabs::make()
+                    ->columnSpanFull()
+                    ->livewireProperty('activeTab')
+                    ->tabs([
+                        EventTab::Overview->value => Tab::make(EventTab::Overview->getLabel())
+                            ->visible(fn (): bool => $this->isTabVisible(EventTab::Overview))
+                            ->schema([
+                                Section::make()
+                                    ->schema([
+                                        TextEntry::make('title'),
+                                        TextEntry::make('description')
+                                            ->label('Description')
+                                            ->state(function (Event $record): string {
+                                                if (blank($record->description)) {
+                                                    return '-';
+                                                }
 
-                                return $record->getRichContentAttribute('description')?->toHtml() ?? '-';
-                            })
-                            ->html()
-                            ->columnSpanFull(),
-                        TextEntry::make('location'),
-                        TextEntry::make('capacity'),
-                        TextEntry::make('starts_at')
-                            ->dateTime(),
-                        TextEntry::make('ends_at')
-                            ->dateTime(),
-                        TextEntry::make('createdBy.name')
-                            ->label('Created By'),
-                        TextEntry::make('lastUpdatedBy.name')
-                            ->label('Last Updated By'),
-                    ])
-                    ->columns(),
+                                                return $record->getRichContentAttribute('description')?->toHtml() ?? '-';
+                                            })
+                                            ->html()
+                                            ->columnSpanFull(),
+                                        TextEntry::make('location'),
+                                        TextEntry::make('capacity'),
+                                        TextEntry::make('starts_at')
+                                            ->dateTime(),
+                                        TextEntry::make('ends_at')
+                                            ->dateTime(),
+                                        TextEntry::make('createdBy.name')
+                                            ->label('Created By'),
+                                        TextEntry::make('lastUpdatedBy.name')
+                                            ->label('Last Updated By'),
+                                    ])
+                                    ->columns(),
+                            ]),
+                        EventTab::Details->value => Tab::make(EventTab::Details->getLabel())
+                            ->visible(fn (): bool => $this->isTabVisible(EventTab::Details))
+                            ->schema([
+                                Livewire::make(EventDetailsManager::class, [
+                                    'record' => $this->getRecord(),
+                                    'lazy' => 'on-load',
+                                ])->key('event-details-manager'),
+                            ]),
+                        EventTab::LandingPage->value => Tab::make(EventTab::LandingPage->getLabel())
+                            ->visible(fn (): bool => $this->isTabVisible(EventTab::LandingPage))
+                            ->schema([
+                                Livewire::make(EventLandingPageManager::class, [
+                                    'record' => $this->getRecord(),
+                                    'lazy' => 'on-load',
+                                ])->key('event-landing-page-manager'),
+                            ]),
+                        EventTab::RegistrationForm->value => Tab::make(EventTab::RegistrationForm->getLabel())
+                            ->visible(fn (): bool => $this->isTabVisible(EventTab::RegistrationForm))
+                            ->schema([
+                                Livewire::make(EventRegistrationFormManager::class, [
+                                    'record' => $this->getRecord(),
+                                    'lazy' => 'on-load',
+                                ])->key('event-registration-form-manager'),
+                            ]),
+                        EventTab::Attendees->value => Tab::make(EventTab::Attendees->getLabel())
+                            ->visible(fn (): bool => $this->isTabVisible(EventTab::Attendees))
+                            ->schema([
+                                Livewire::make(EventAttendeesRelationManager::class, [
+                                    'ownerRecord' => $this->getRecord(),
+                                    'pageClass' => static::class,
+                                    'lazy' => 'on-load',
+                                ])->key('event-attendees-relation-manager'),
+                            ]),
+                    ]),
             ]);
+    }
+
+    protected function authorizeAccess(): void
+    {
+        abort_unless(collect(EventTab::cases())->contains(fn (EventTab $tab): bool => $this->isTabVisible($tab)), 403);
     }
 
     protected function getHeaderActions(): array
@@ -93,5 +166,22 @@ class ViewEvent extends ViewRecord
                 ->openUrlInNewTab(),
             ArchiveAction::make(),
         ];
+    }
+
+    protected function isActiveTabVisible(): bool
+    {
+        return ($tab = EventTab::tryFrom($this->activeTab)) instanceof EventTab
+            && $this->isTabVisible($tab);
+    }
+
+    protected function isTabVisible(EventTab $tab): bool
+    {
+        $record = $this->getRecord();
+
+        return match ($tab) {
+            EventTab::Overview => EventResource::canView($record),
+            EventTab::Details, EventTab::LandingPage, EventTab::RegistrationForm => EventResource::canEdit($record),
+            EventTab::Attendees => EventAttendeesRelationManager::canViewForRecord($record, static::class),
+        };
     }
 }

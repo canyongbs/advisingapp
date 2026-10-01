@@ -34,44 +34,28 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
-use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\EditEventDetails;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Form\Enums\Rounding;
+use AdvisingApp\MeetingCenter\Livewire\EventDetailsManager;
 use AdvisingApp\MeetingCenter\Models\Event;
-use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use App\Models\User;
+use App\Settings\LicenseSettings;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-it('archive action is always visible and labeled Archive', function () {
-    asSuperAdmin();
+function eventDetailsManagerTestUser(): User
+{
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->eventManagement = true;
+    $settings->save();
 
-    $eventWithAttendees = Event::factory()->create(['starts_at' => now()->addWeek()]);
-    EventAttendee::factory()->create(['event_id' => $eventWithAttendees->id]);
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo(['event.view-any', 'event.*.view']);
 
-    $eventWithoutAttendees = Event::factory()->create(['starts_at' => now()->addWeek()]);
-    $eventWithoutAttendees->attendees()->delete();
-
-    livewire(EditEventDetails::class, ['record' => $eventWithAttendees->getRouteKey()])
-        ->assertActionVisible('archive')
-        ->assertActionHasLabel('archive', 'Archive');
-
-    livewire(EditEventDetails::class, ['record' => $eventWithoutAttendees->getRouteKey()])
-        ->assertActionVisible('archive')
-        ->assertActionHasLabel('archive', 'Archive');
-});
-
-it('archive action archives the event and redirects to the index when the event has attendees', function () {
-    asSuperAdmin();
-
-    $event = Event::factory()->create(['starts_at' => now()->addWeek()]);
-    EventAttendee::factory()->create(['event_id' => $event->id]);
-
-    livewire(EditEventDetails::class, ['record' => $event->getRouteKey()])
-        ->callAction('archive')
-        ->assertRedirect(EventResource::getUrl('index'));
-
-    expect($event->fresh()->isArchived())->toBeTrue();
-});
+    return $user;
+}
 
 it('does not allow updating an event to a title matching another non-deleted event case-insensitively', function () {
     asSuperAdmin();
@@ -79,7 +63,7 @@ it('does not allow updating an event to a title matching another non-deleted eve
     Event::factory()->create(['title' => 'Other Event']);
     $event = Event::factory()->create(['title' => 'Editable Event']);
 
-    livewire(EditEventDetails::class, ['record' => $event->getRouteKey()])
+    livewire(EventDetailsManager::class, ['record' => $event])
         ->fillForm(['title' => 'other event'])
         ->call('save')
         ->assertHasFormErrors(['title' => 'unique']);
@@ -93,8 +77,50 @@ it('allows updating an event to a title freed up by a soft-deleted event case-in
 
     $event = Event::factory()->create(['title' => 'Editable Event']);
 
-    livewire(EditEventDetails::class, ['record' => $event->getRouteKey()])
+    livewire(EventDetailsManager::class, ['record' => $event])
         ->fillForm(['title' => 'reusable title'])
         ->call('save')
         ->assertHasNoFormErrors(['title']);
+});
+
+it('saves the eventRegistrationForm relationship fields alongside the event', function () {
+    asSuperAdmin();
+
+    $event = Event::factory()->create();
+    $event->eventRegistrationForm->update([
+        'embed_enabled' => false,
+        'allowed_domains' => [],
+        'primary_color' => 'blue',
+        'rounding' => Rounding::None,
+    ]);
+
+    livewire(EventDetailsManager::class, ['record' => $event])
+        ->fillForm([
+            'eventRegistrationForm' => [
+                'embed_enabled' => true,
+                'allowed_domains' => ['example.com'],
+                'primary_color' => 'red',
+                'rounding' => Rounding::Full,
+            ],
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    expect($event->eventRegistrationForm->fresh())
+        ->embed_enabled->toBeTrue()
+        ->allowed_domains->toBe(['example.com'])
+        ->primary_color->toBe('red')
+        ->rounding->toBe(Rounding::Full);
+});
+
+describe('authorization', function () {
+    it('denies direct access without the `event.*.update` permission', function () {
+        $user = eventDetailsManagerTestUser();
+        actingAs($user);
+
+        $event = Event::factory()->create();
+
+        livewire(EventDetailsManager::class, ['record' => $event])
+            ->assertForbidden();
+    });
 });

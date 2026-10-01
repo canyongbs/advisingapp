@@ -34,46 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\Events;
-
-use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\CreateEvent;
-use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ListEvents;
-use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ViewEvent;
+use AdvisingApp\MeetingCenter\Livewire\EventLandingPageManager;
 use AdvisingApp\MeetingCenter\Models\Event;
-use App\Enums\NavigationGroup;
-use Filament\Resources\Resource;
-use Illuminate\Database\Eloquent\Model;
-use UnitEnum;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
-class EventResource extends Resource
-{
-    protected static ?string $model = Event::class;
+use function Pest\Livewire\livewire;
+use function Tests\asSuperAdmin;
 
-    protected static string | UnitEnum | null $navigationGroup = NavigationGroup::Scheduling;
+it('saves the rich description and hero image onto the event', function () {
+    Storage::fake('s3-public');
 
-    protected static ?int $navigationSort = 30;
+    asSuperAdmin();
 
-    protected static ?string $navigationLabel = 'Events';
+    $event = Event::factory()->create(['description' => null]);
 
-    protected static ?string $breadcrumb = 'Events';
+    expect($event->getFirstMedia('hero_image'))->toBeNull();
 
-    protected static ?string $modelLabel = 'Event';
+    $description = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Join us for this event.']]]]];
 
-    protected static ?string $recordTitleAttribute = 'title';
+    livewire(EventLandingPageManager::class, ['record' => $event])
+        ->fillForm([
+            'description' => $description,
+            'hero_image' => UploadedFile::fake()->image('hero.png'),
+        ])
+        ->call('save')
+        ->assertHasNoFormErrors();
 
-    protected static bool $isGloballySearchable = true;
+    $event = $event->fresh();
 
-    public static function getGlobalSearchResultUrl(Model $record): string
-    {
-        return EventResource::getUrl('view', ['record' => $record]);
-    }
-
-    public static function getPages(): array
-    {
-        return [
-            'index' => ListEvents::route('/'),
-            'create' => CreateEvent::route('/create'),
-            'view' => ViewEvent::route('/{record}'),
-        ];
-    }
-}
+    expect($event->description)->toEqual($description)
+        ->and($event->getFirstMedia('hero_image'))->not->toBeNull();
+});

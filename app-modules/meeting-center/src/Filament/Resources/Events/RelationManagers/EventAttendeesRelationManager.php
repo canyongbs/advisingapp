@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
+namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\RelationManagers;
 
 use AdvisingApp\MeetingCenter\Filament\Actions\InviteEventAttendeesAction;
 use AdvisingApp\MeetingCenter\Filament\Actions\Table\ViewEventAttendeeAction;
@@ -45,27 +45,35 @@ use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Gate;
 
-class ManageEventAttendees extends ManageRelatedRecords
+class EventAttendeesRelationManager extends RelationManager
 {
     protected static string $resource = EventResource::class;
 
-    // TODO: Obsolete when there is no table, remove from Filament
     protected static string $relationship = 'attendees';
 
-    protected static ?string $navigationLabel = 'Attendees';
+    protected static ?string $title = 'Attendees';
 
-    protected static ?string $breadcrumb = 'Attendees';
+    public function mount(): void
+    {
+        abort_unless(static::canViewForRecord($this->getOwnerRecord(), $this->getPageClass()), 403);
+
+        parent::mount();
+    }
 
     public function table(Table $table): Table
     {
         return $table
+            ->headerActions([
+                InviteEventAttendeesAction::make(),
+            ])
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('status')
@@ -86,7 +94,7 @@ class ManageEventAttendees extends ManageRelatedRecords
                     ->requiresConfirmation()
                     ->modalHeading('Archive Attendee')
                     ->modalSubmitActionLabel('Archive')
-                    ->authorize(fn (EventAttendee $record): bool => auth()->user()->can('archive', $record))
+                    ->authorize(fn (EventAttendee $record): bool => Gate::allows('archive', $record))
                     ->action(function (EventAttendee $record): void {
                         $record->archive();
 
@@ -106,7 +114,7 @@ class ManageEventAttendees extends ManageRelatedRecords
                         ->requiresConfirmation()
                         ->modalHeading('Archive Attendees')
                         ->modalSubmitActionLabel('Archive')
-                        ->authorize(fn () => auth()->user()->can('deleteAny', EventAttendee::class))
+                        ->authorize(fn (): bool => Gate::allows('deleteAny', EventAttendee::class))
                         ->action(function (Collection $records): void {
                             /** @phpstan-ignore argument.type */
                             $records->each(function (EventAttendee $record): void {
@@ -124,12 +132,5 @@ class ManageEventAttendees extends ManageRelatedRecords
                         }),
                 ]),
             ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            InviteEventAttendeesAction::make(),
-        ];
     }
 }

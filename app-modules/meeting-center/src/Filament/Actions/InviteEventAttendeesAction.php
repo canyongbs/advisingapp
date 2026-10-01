@@ -38,10 +38,12 @@ namespace AdvisingApp\MeetingCenter\Filament\Actions;
 
 use AdvisingApp\MeetingCenter\Jobs\CreateEventAttendees;
 use AdvisingApp\MeetingCenter\Models\Event;
+use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\TagsInput;
 use Filament\Notifications\Notification;
+use Filament\Resources\RelationManagers\RelationManager;
 
 class InviteEventAttendeesAction extends Action
 {
@@ -57,7 +59,11 @@ class InviteEventAttendeesAction extends Action
                     ->nestedRecursiveRules(['email'])
                     ->required(),
             ])
-            ->action(function (array $data, Event $record) {
+            ->authorize('create', EventAttendee::class)
+            ->action(function (array $data, RelationManager $livewire) {
+                $record = $livewire->getOwnerRecord();
+                assert($record instanceof Event);
+
                 /** @var User $user */
                 $user = auth()->user();
 
