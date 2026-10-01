@@ -43,14 +43,11 @@ use Filament\Schemas\Components\StateCasts\KeyValueStateCast;
 
 /**
  * A "Label" / "Value" options editor for choice-style form fields (select,
- * radio, checkboxes). Rows are added, removed, and reordered entirely in the
- * browser, so those actions need no server round trips.
+ * radio, checkboxes).
  *
- * The stored option config is a value => label map, but a KeyValue field's
- * "key" column is always rendered before its "value" column. To show the
- * editable Label before the disabled, auto-derived Value, the field is
- * edited internally as a label => value map, and flipped back to a
- * value => label map when hydrating from / dehydrating to storage.
+ * The state is a standard KeyValue state (option value => label), but the
+ * label column is rendered first and the value is generated from the label
+ * in the browser, so no network requests are needed to add or edit rows.
  */
 class OptionsKeyValue extends KeyValue
 {
@@ -59,58 +56,51 @@ class OptionsKeyValue extends KeyValue
         parent::setUp();
 
         $this
-            ->keyLabel('Label')
-            ->valueLabel('Value')
-            ->editableValues(false)
+            ->keyLabel('Value')
+            ->valueLabel('Label')
             ->reorderable()
-            ->live(onBlur: true)
+            ->afterStateHydrated(function (OptionsKeyValue $component): void {
+                $state = $component->getRawState();
+
+                if (is_array($state) && is_array($state[0] ?? null) && array_key_exists('label', $state[0])) {
+                    $component->state(collect($state)->pluck('label', 'value')->all());
+                }
+            })
             ->rule(fn (): Closure => function (string $attribute, mixed $value, Closure $fail): void {
-                FormFieldBlock::validateOptionValues(static::fillMissingValues(app(KeyValueStateCast::class)->get($value)), $fail);
-            })
-            ->afterStateHydrated(function (OptionsKeyValue $component, ?array $state): void {
-                $component->state(static::fillMissingValues(array_flip($state ?? [])));
-            })
-            ->afterStateUpdated(function (OptionsKeyValue $component, ?array $state, ?array $old): void {
-                $component->state(static::deriveValues($state ?? [], $old ?? []));
-            })
-            ->dehydrateStateUsing(fn (?array $state): array => array_flip(static::fillMissingValues($state ?? [])));
+                $rows = collect(app(KeyValueStateCast::class)->set($value))
+                    ->filter(fn (array $row): bool => filled($row['value'] ?? null));
+
+                FormFieldBlock::validateOptionValues($rows->pluck('key')->all(), $fail);
+            });
     }
 
-    /**
-     * Keeps the value of every row whose label is unchanged (so stable codes
-     * that were persisted, e.g. "us" => "United States", are not rewritten by
-     * unrelated edits) and re-derives it from the label for new or renamed
-     * rows, whose value would otherwise be stale.
-     *
-     * @param array<int|string, mixed> $options label => value
-     * @param array<int|string, mixed> $previous label => value, before the update
-     *
-     * @return array<string, string>
-     */
-    protected static function deriveValues(array $options, array $previous): array
+    public function toEmbeddedHtml(): string
     {
-        return collect($options)
-            ->mapWithKeys(fn (mixed $value, int|string $label): array => [
-                (string) $label => (filled($value) && ($previous[$label] ?? null) === $value)
-                    ? (string) $value
-                    : FormFieldBlock::slugifyOptionValue((string) $label),
-            ])
-            ->all();
-    }
+        $slotHtml = view('form::components.options-key-value', [
+            'addActionHtml' => $this->getAction('add')->toHtml(),
+            'alpineAttributes' => $this->getExtraAlpineAttributeBag()->class(['fi-fo-key-value-table-ctn'])->toHtml(),
+            'debounce' => $this->getLiveDebounce() ?? '500ms',
+            'deleteActionHtml' => $this->getAction('delete')->toHtml(),
+            'entangleExpression' => $this->applyStateBindingModifiers("\$entangle('{$this->getStatePath()}')"),
+            'id' => $this->getId(),
+            'isAddable' => $this->isAddable(),
+            'isDeletable' => $this->isDeletable(),
+            'isDisabled' => $this->isDisabled(),
+            'isReorderable' => $this->isReorderable(),
+            'keyLabel' => $this->getKeyLabel(),
+            'livewireKey' => $this->getLivewireKey(),
+            'reorderActionHtml' => $this->getAction('reorder')->toHtml(),
+            'reorderAnimationDuration' => $this->getReorderAnimationDuration(),
+            'valueLabel' => $this->getValueLabel(),
+        ])->render();
 
-    /**
-     * Fills in a value, derived from the label, for options that have none.
-     *
-     * @param array<int|string, mixed> $options label => value
-     *
-     * @return array<string, string>
-     */
-    protected static function fillMissingValues(array $options): array
-    {
-        return collect($options)
-            ->mapWithKeys(fn (mixed $value, int|string $label): array => [
-                (string) $label => filled($value) ? (string) $value : FormFieldBlock::slugifyOptionValue((string) $label),
-            ])
-            ->all();
+        return $this->wrapEmbeddedHtml(
+            $this->wrapInputHtml(
+                $slotHtml,
+                attributes: $this->getExtraAttributeBag()->class(['fi-fo-key-value']),
+            ),
+            extraWrapperAttributes: ['class' => 'fi-fo-key-value-wrp'],
+            labelTag: 'div',
+        );
     }
 }
