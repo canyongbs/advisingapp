@@ -34,6 +34,8 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Filament\Exports\AssistantUtilizationExporter;
+use AdvisingApp\Ai\Filament\Imports\EmployeeAdvisorQuestionImporter;
 use AdvisingApp\Report\Filament\Exports\UserExporter;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Filament\Imports\UserImporter;
@@ -48,6 +50,7 @@ use Illuminate\Support\Facades\Storage;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
+use function Tests\setEnterpriseAiEnabled;
 
 // Access Control Tests
 
@@ -404,4 +407,68 @@ it('marks the active tab as current', function () {
     }
 
     expect($activeLabel)->toContain('Export');
+});
+
+describe('enterprise ai', function () {
+    it('hides Enterprise AI exports from the export table while Enterprise AI is disabled', function () {
+        $user = User::factory()->create();
+        $user->givePermissionTo('export_hub.view-any');
+
+        actingAs($user);
+
+        $createExport = function (string $exporter) use ($user): Export {
+            $export = new Export();
+            $export->user()->associate($user);
+            $export->file_name = 'test-export.csv';
+            $export->file_disk = 's3';
+            $export->exporter = $exporter;
+            $export->total_rows = 200;
+            $export->save();
+
+            return $export;
+        };
+
+        $enterpriseAiExport = $createExport(AssistantUtilizationExporter::class);
+        $otherExport = $createExport(UserExporter::class);
+
+        livewire(ExportsTable::class)
+            ->assertCanSeeTableRecords([$enterpriseAiExport, $otherExport]);
+
+        setEnterpriseAiEnabled(false);
+
+        livewire(ExportsTable::class)
+            ->assertCanSeeTableRecords([$otherExport])
+            ->assertCanNotSeeTableRecords([$enterpriseAiExport]);
+    });
+
+    it('hides Enterprise AI imports from the import table while Enterprise AI is disabled', function () {
+        $user = User::factory()->create();
+        $user->givePermissionTo('export_hub.view-any');
+
+        actingAs($user);
+
+        $createImport = function (string $importer) use ($user): Import {
+            $import = new Import();
+            $import->user()->associate($user);
+            $import->file_name = 'test-import.csv';
+            $import->file_path = '/tmp/test-import.csv';
+            $import->importer = $importer;
+            $import->total_rows = 100;
+            $import->save();
+
+            return $import;
+        };
+
+        $enterpriseAiImport = $createImport(EmployeeAdvisorQuestionImporter::class);
+        $otherImport = $createImport(UserImporter::class);
+
+        livewire(ImportsTable::class)
+            ->assertCanSeeTableRecords([$enterpriseAiImport, $otherImport]);
+
+        setEnterpriseAiEnabled(false);
+
+        livewire(ImportsTable::class)
+            ->assertCanSeeTableRecords([$otherImport])
+            ->assertCanNotSeeTableRecords([$enterpriseAiImport]);
+    });
 });

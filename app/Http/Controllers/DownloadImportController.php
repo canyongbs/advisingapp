@@ -36,6 +36,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\Feature;
 use App\Models\Import;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -45,6 +46,7 @@ class DownloadImportController extends Controller
     public function __invoke(Import $import): StreamedResponse
     {
         abort_unless(auth()->user()->can('export_hub.import'), 403);
+        abort_if(in_array($import->importer, Feature::getDisabledImporterAndExporterClasses(), true), 403);
 
         $path = "imports/{$import->getKey()}.csv";
 

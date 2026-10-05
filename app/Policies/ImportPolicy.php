@@ -34,30 +34,28 @@
 </COPYRIGHT>
 */
 
+namespace App\Policies;
+
 use App\Enums\Feature;
+use App\Models\Authenticatable;
+use App\Models\Import;
+use App\Support\FeatureAccessResponse;
+use Illuminate\Auth\Access\Response;
 
-use function Tests\setEnterpriseAiEnabled;
+class ImportPolicy
+{
+    /**
+     * Used by Filament to authorize downloading an import's failed rows. Only the user who ran the import may do so,
+     * matching Filament's behaviour without a policy, and not while the importer's feature is disabled.
+     */
+    public function view(Authenticatable $authenticatable, Import $import): Response
+    {
+        if (in_array($import->importer, Feature::getDisabledImporterAndExporterClasses(), true)) {
+            return FeatureAccessResponse::deny();
+        }
 
-describe('permission groups', function () {
-    it('does not report any disabled permission groups while Enterprise AI is enabled', function () {
-        expect(array_intersect(Feature::getDisabledPermissionGroupNames(), Feature::EnterpriseAi->getPermissionGroupNames()))->toBeEmpty();
-    });
-
-    it('reports the Enterprise AI permission groups as disabled while Enterprise AI is disabled', function () {
-        setEnterpriseAiEnabled(false);
-
-        expect(Feature::getDisabledPermissionGroupNames())->toContain(...Feature::EnterpriseAi->getPermissionGroupNames());
-    });
-});
-
-describe('importers and exporters', function () {
-    it('does not report any disabled importers or exporters while Enterprise AI is enabled', function () {
-        expect(array_intersect(Feature::getDisabledImporterAndExporterClasses(), Feature::EnterpriseAi->getImporterAndExporterClasses()))->toBeEmpty();
-    });
-
-    it('reports the Enterprise AI importers and exporters as disabled while Enterprise AI is disabled', function () {
-        setEnterpriseAiEnabled(false);
-
-        expect(Feature::getDisabledImporterAndExporterClasses())->toContain(...Feature::EnterpriseAi->getImporterAndExporterClasses());
-    });
-});
+        return $import->user()->is($authenticatable)
+            ? Response::allow()
+            : Response::deny('You do not have permission to view this import.');
+    }
+}

@@ -134,6 +134,24 @@ This guide covers gating features behind addon toggles tied to the account subsc
 
     Use the group names exactly as they are stored in the `permission_groups` table.
 
+    ### Imports and Exports
+
+    Imports and exports created by a disabled feature's importers and exporters are hidden from the Import/Export page, and their files cannot be downloaded, while existing records are kept. To hide them, add the feature's importer and exporter classes to `getImporterAndExporterClasses()` in `app/Enums/Feature.php`:
+
+    ```php
+    public function getImporterAndExporterClasses(): array
+    {
+        return match ($this) {
+            // ...
+            Feature::ExampleFeature => [
+                ExampleImporter::class,
+                ExampleExporter::class,
+            ],
+            default => [],
+        };
+    }
+    ```
+
 6. Tests
 
     Additionally, access control tests should be modified or created for the affected pages and/or resources (one page in a resource, e.g. the list page, is acceptable; but make sure to separately test relationship managers in other resources).
