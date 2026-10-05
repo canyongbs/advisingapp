@@ -34,18 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Listeners;
-
+use AdvisingApp\Ai\Actions\GetCustomerAdvisorInstructions;
+use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
+use AdvisingApp\Ai\Settings\AiSettings;
 use Illuminate\Support\Facades\Cache;
-use Spatie\LaravelSettings\Events\SettingsSaved;
 
-class ClearCustomerAdvisorInstructionsCacheOnGlobalSettingsUpdate
-{
-    public function handle(SettingsSaved $event): void
-    {
-        if ($event->settings instanceof AiCustomerAdvisorSettings) {
-            Cache::tags(['{customer_advisor_instructions}'])->flush();
-        }
-    }
-}
+beforeEach(function () {
+    Cache::tags(['{customer_advisor_instructions}'])->flush();
+});
+
+it('clears the cached customer advisor instructions when the customer advisor settings are saved', function () {
+    $customerAdvisor = CustomerAdvisor::factory()->create();
+
+    app(GetCustomerAdvisorInstructions::class)->execute($customerAdvisor);
+
+    expect(Cache::tags(['{customer_advisor_instructions}'])->has($customerAdvisor->getInstructionsCacheKey()))->toBeTrue();
+
+    $settings = app(AiCustomerAdvisorSettings::class);
+    $settings->instructions = 'Updated instructions';
+    $settings->save();
+
+    expect(Cache::tags(['{customer_advisor_instructions}'])->has($customerAdvisor->getInstructionsCacheKey()))->toBeFalse()
+        ->and(app(GetCustomerAdvisorInstructions::class)->execute($customerAdvisor))->toContain('Updated instructions');
+});
+
+it('does not clear the cached customer advisor instructions when other settings are saved', function () {
+    $customerAdvisor = CustomerAdvisor::factory()->create();
+
+    app(GetCustomerAdvisorInstructions::class)->execute($customerAdvisor);
+
+    expect(Cache::tags(['{customer_advisor_instructions}'])->has($customerAdvisor->getInstructionsCacheKey()))->toBeTrue();
+
+    app(AiSettings::class)->save();
+
+    expect(Cache::tags(['{customer_advisor_instructions}'])->has($customerAdvisor->getInstructionsCacheKey()))->toBeTrue();
+});
