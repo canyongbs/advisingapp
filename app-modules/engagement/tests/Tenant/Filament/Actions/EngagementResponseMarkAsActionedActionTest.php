@@ -39,6 +39,7 @@ use AdvisingApp\Engagement\Filament\Actions\EngagementResponseMarkAsActionedActi
 use AdvisingApp\Engagement\Filament\Pages\ViewEngagementResponse;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\HolisticEngagement;
+use App\Settings\LicenseSettings;
 
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
@@ -46,6 +47,12 @@ use function Tests\setUnifiedInboxEnabled;
 
 beforeEach(function () {
     setUnifiedInboxEnabled(true);
+});
+
+beforeEach(function () {
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->unifiedInbox = true;
+    $settings->save();
 });
 
 it('can mark an engagement response as actioned and create an actioned note', function () {
