@@ -42,10 +42,8 @@ use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
-use App\Features\CalendarFaultTolerantFeature;
 use App\Models\User;
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 
@@ -155,15 +153,7 @@ abstract class BookingGroupBooker
             'meeting_owner_id' => $meetingOwnerId,
         ];
 
-        if (CalendarFaultTolerantFeature::active()) {
-            $appointmentAttributes['calendar_event_id'] = $calendarEvent->id;
-        } else {
-            if ($calendarEvent->provider_uid === null) {
-                report(new Exception('Calendar event was created but provider UID was not returned.'));
-            }
-
-            $appointmentAttributes['calendar_event_provider_uid'] = $calendarEvent->provider_uid;
-        }
+        $appointmentAttributes['calendar_event_id'] = $calendarEvent->id;
 
         $appointment = BookingGroupAppointment::create($appointmentAttributes);
 

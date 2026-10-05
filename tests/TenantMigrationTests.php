@@ -37,7 +37,6 @@
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use AdvisingApp\MeetingCenter\Models\BookingGroupAppointment;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use App\Models\User;
@@ -99,13 +98,22 @@ test('2026_09_23_154333_add_calendar_event_id_to_booking_group_appointments_tabl
                     'ends_at' => $endsAt,
                 ]);
 
-            $appointment = BookingGroupAppointment::factory()
-                ->for($bookingGroup)
-                ->create([
-                    'calendar_event_provider_uid' => 'shared-provider-uid',
-                    'starts_at' => $startsAt,
-                    'ends_at' => $endsAt,
-                ]);
+            $appointmentId = (string) Str::uuid();
+
+            // Seed the legacy row with a raw insert: the current model no longer knows
+            // about calendar_event_provider_uid, but the column still exists at this
+            // migration point and the backfill depends on it.
+            DB::table('booking_group_appointments')->insert([
+                'id' => $appointmentId,
+                'booking_group_id' => $bookingGroup->id,
+                'calendar_event_provider_uid' => 'shared-provider-uid',
+                'name' => 'Legacy Visitor',
+                'email' => 'legacy-visitor@example.com',
+                'starts_at' => $startsAt,
+                'ends_at' => $endsAt,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
             $migrate = Artisan::call('migrate', [
                 '--path' => 'app-modules/meeting-center/database/migrations/2026_09_23_154333_add_calendar_event_id_to_booking_group_appointments_table.php',
@@ -113,7 +121,7 @@ test('2026_09_23_154333_add_calendar_event_id_to_booking_group_appointments_tabl
 
             expect($migrate)->toBe(Command::SUCCESS)
                 ->and(DB::table('booking_group_appointments')
-                    ->where('id', $appointment->id)
+                    ->where('id', $appointmentId)
                     ->value('calendar_event_id'))
                 ->toBe($event->id);
         }
