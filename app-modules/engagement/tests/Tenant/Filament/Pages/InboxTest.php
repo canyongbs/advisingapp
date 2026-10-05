@@ -59,7 +59,7 @@ it('requires the unified inbox feature addon to access', function () {
     $settings->save();
 
     get(Inbox::getUrl())->assertForbidden();
-    
+
     $settings->data->addons->unifiedInbox = true;
     $settings->save();
 

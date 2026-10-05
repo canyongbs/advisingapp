@@ -111,7 +111,7 @@ class ViewEngagementResponse extends Page
 
     public static function canAccess(): bool
     {
-        if(! Gate::check(Feature::UnifiedInbox->getGateName())) {
+        if (! Gate::check(Feature::UnifiedInbox->getGateName())) {
             return false;
         }
 
