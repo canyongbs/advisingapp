@@ -36,6 +36,15 @@
 
 use Illuminate\Support\Str;
 
+$redisClusterSeedNode = [
+    'scheme' => env('REDIS_SCHEME', 'tcp'),
+    'url' => env('REDIS_URL'),
+    'host' => env('REDIS_HOST', '127.0.0.1'),
+    'username' => env('REDIS_USERNAME'),
+    'password' => env('REDIS_PASSWORD'),
+    'port' => env('REDIS_PORT', '6379'),
+];
+
 return [
     /*
     |--------------------------------------------------------------------------
@@ -115,9 +124,10 @@ return [
     | Redis Databases
     |--------------------------------------------------------------------------
     |
-    | Redis is an open source, fast, and advanced key-value store that also
-    | provides a richer body of commands than a typical key-value system
-    | such as APC or Memcached. Laravel makes it easy to dig right in.
+    | Every Redis connection targets the same cluster: ElastiCache Serverless in staging and
+    | production (which always runs in cluster mode), and a local multi-node cluster in development
+    | and CI. Cluster mode only has database 0 and rejects SELECT, so no connection sets a database
+    | index, and multi-key operations rely on {hash tag} key names to stay within a single slot.
     |
     */
 
@@ -127,35 +137,32 @@ return [
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
             'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
+            // PhpRedis defaults both to 0 (unbounded), so a node that stalls mid-response would hang the request.
+            'timeout' => (float) env('REDIS_TIMEOUT', 5),
+            'read_timeout' => (float) env('REDIS_READ_TIMEOUT', 5),
+            // Rides out ElastiCache Serverless slot migrations and transient drops instead of surfacing them as errors.
+            'max_retries' => (int) env('REDIS_MAX_RETRIES', 5),
+            'backoff_algorithm' => env('REDIS_BACKOFF_ALGORITHM', 'decorrelated_jitter'),
+            'backoff_base' => (int) env('REDIS_BACKOFF_BASE', 50),
+            'backoff_cap' => (int) env('REDIS_BACKOFF_CAP', 1000),
+            // OPT_TCP_KEEPALIVE is deliberately not set: setting it on a RedisCluster client segfaults phpredis 6.3.0.
+            'persistent' => (bool) env('REDIS_PERSISTENT', true),
+            // 0 = FAILOVER_NONE: all traffic goes to the writer, keeping strong read-after-write consistency.
+            'failover' => (int) env('REDIS_FAILOVER', 0),
+            // Nodes discovered via CLUSTER SLOTS have no scheme, so without this context phpredis connects to them in plaintext.
+            ...(env('REDIS_SCHEME', 'tcp') === 'tls' ? ['context' => ['ssl' => [
+                'verify_peer' => (bool) env('REDIS_VERIFY_PEER', true),
+                'verify_peer_name' => (bool) env('REDIS_VERIFY_PEER', true),
+            ]]] : []),
         ],
 
-        'default' => [
-            'scheme' => env('REDIS_SCHEME', 'tcp'),
-            'host' => env('REDIS_HOST', '127.0.0.1'),
-            'username' => env('REDIS_USERNAME'),
-            'password' => env('REDIS_PASSWORD'),
-            'port' => env('REDIS_PORT', '6379'),
-            'database' => env('REDIS_DB', '0'),
-        ],
+        // phpredis discovers the rest of the cluster topology from the seed node via CLUSTER SLOTS.
+        'clusters' => [
+            'default' => [$redisClusterSeedNode],
 
-        'cache' => [
-            'scheme' => env('REDIS_SCHEME', 'tcp'),
-            'url' => env('REDIS_URL'),
-            'host' => env('REDIS_HOST', '127.0.0.1'),
-            'username' => env('REDIS_USERNAME'),
-            'password' => env('REDIS_PASSWORD'),
-            'port' => env('REDIS_PORT', '6379'),
-            'database' => env('REDIS_CACHE_DB', '1'),
-        ],
+            'cache' => [$redisClusterSeedNode],
 
-        'session' => [
-            'scheme' => env('REDIS_SCHEME', 'tcp'),
-            'url' => env('REDIS_URL'),
-            'host' => env('REDIS_HOST', '127.0.0.1'),
-            'username' => env('REDIS_USERNAME'),
-            'password' => env('REDIS_PASSWORD'),
-            'port' => env('REDIS_PORT', '6379'),
-            'database' => env('REDIS_SESSION_DB', '2'),
+            'session' => [$redisClusterSeedNode],
         ],
     ],
 ];

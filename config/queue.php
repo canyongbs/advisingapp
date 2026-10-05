@@ -115,11 +115,13 @@ return [
             ],
         ],
 
+        // Local development only. Redis Cluster requires hash-tagged queue names ({default}) so each queue's keys share one slot,
+        // and retry_after matches the 1200s visibility timeout of the SQS queues used in staging and production.
         'redis' => [
             'driver' => 'redis',
             'connection' => 'default',
-            'queue' => env('REDIS_QUEUE', 'default'),
-            'retry_after' => 90,
+            'queue' => env('REDIS_QUEUE', env('SQS_QUEUE', '{default}')),
+            'retry_after' => (int) env('REDIS_QUEUE_RETRY_AFTER', 1200),
             'block_for' => null,
             'after_commit' => false,
         ],
