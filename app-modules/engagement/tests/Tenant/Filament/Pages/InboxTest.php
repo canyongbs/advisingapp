@@ -48,6 +48,12 @@ use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
+beforeEach(function () {
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->unifiedInbox = true;
+    $settings->save();
+});
+
 it('is gated with proper access control', function () {})->todo();
 
 it('requires the unified inbox feature addon to access', function () {
