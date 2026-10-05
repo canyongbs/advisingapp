@@ -77,6 +77,7 @@ class CreateTenantRequest extends FormRequest
             'addons.earlyAlert' => ['required', 'boolean'],
             'addons.publicProfiles' => ['required', 'boolean'],
             'addons.enterpriseAi' => ['sometimes', 'boolean'], // TODO: Cleanup Task (enterprise-ai): make this required
+            'addons.unifiedInbox' => ['sometimes', 'boolean'], // TODO: Unified Inbox Addon Cleanup - make this required
             'subscription' => ['required', 'array'],
             'subscription.clientName' => ['required', 'string'],
             'subscription.partnerName' => ['required', 'string'],

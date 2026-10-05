@@ -42,11 +42,29 @@ use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use App\Settings\LicenseSettings;
 
+use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('is gated with proper access control', function () {})->todo();
+
+it('requires the unified inbox feature addon to access', function () {
+    $settings = app(LicenseSettings::class);
+
+    asSuperAdmin();
+
+    $settings->data->addons->unifiedInbox = false;
+    $settings->save();
+
+    get(Inbox::getUrl())->assertForbidden();
+    
+    $settings->data->addons->unifiedInbox = true;
+    $settings->save();
+
+    get(Inbox::getUrl())->assertOk();
+});
 
 it('displays the correct details', function () {})->todo();
 

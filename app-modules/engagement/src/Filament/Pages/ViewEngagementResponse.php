@@ -55,6 +55,7 @@ use AdvisingApp\StudentDataModel\Models\Scopes\Textable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
+use App\Enums\Feature;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
@@ -73,6 +74,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Locked;
 
@@ -109,6 +111,10 @@ class ViewEngagementResponse extends Page
 
     public static function canAccess(): bool
     {
+        if(! Gate::check(Feature::UnifiedInbox->getGateName())) {
+            return false;
+        }
+
         $user = auth()->user();
 
         assert($user instanceof User);

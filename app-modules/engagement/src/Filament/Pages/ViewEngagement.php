@@ -42,6 +42,7 @@ use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
+use App\Enums\Feature;
 use App\Infolists\Components\EngagementBody;
 use App\Models\User;
 use Filament\Infolists\Components\RepeatableEntry;
@@ -53,6 +54,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Locked;
 
@@ -67,6 +69,10 @@ class ViewEngagement extends Page
 
     public static function canAccess(): bool
     {
+        if(! Gate::check(Feature::UnifiedInbox->getGateName())) {
+            return false;
+        }
+
         $user = auth()->user();
 
         assert($user instanceof User);
