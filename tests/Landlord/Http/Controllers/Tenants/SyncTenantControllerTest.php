@@ -167,3 +167,48 @@ describe('enterprise ai', function () use ($syncTenantControllerRequest) {
             ->and($thrownException?->errors())->toHaveKey('addons.enterpriseAi');
     });
 });
+
+describe('unified inbox', function () use ($syncTenantControllerRequest) {
+    it('passes the `unifiedInbox` addon through to the tenant license data', function (array $addons, bool $isUnifiedInboxEnabled) use ($syncTenantControllerRequest) {
+        Bus::fake();
+
+        $tenant = Tenant::query()->firstOrFail();
+
+        $syncTenantSmartPrompts = Mockery::mock(SyncTenantSmartPrompts::class);
+        $syncTenantSmartPrompts
+            ->shouldReceive('execute')
+            ->once()
+            ->andReturn(fn () => null);
+        assert($syncTenantSmartPrompts instanceof SyncTenantSmartPrompts);
+
+        $response = app(SyncTenantController::class)(
+            $syncTenantControllerRequest($addons),
+            $tenant,
+            $syncTenantSmartPrompts,
+        );
+
+        expect($response->getStatusCode())->toBe(200);
+
+        Bus::assertDispatchedSync(
+            UpdateTenantLicenseData::class,
+            fn (UpdateTenantLicenseData $job): bool => $job->data->addons->unifiedInbox === $isUnifiedInboxEnabled,
+        );
+    })->with([
+        'omitted by a legacy payload' => [[], true],
+        'explicitly disabled' => [['unifiedInbox' => false], false],
+        'explicitly enabled' => [['unifiedInbox' => true], true],
+    ]);
+
+    it('rejects a null `unifiedInbox` addon', function () use ($syncTenantControllerRequest) {
+        $thrownException = null;
+
+        try {
+            $syncTenantControllerRequest(['unifiedInbox' => null]);
+        } catch (ValidationException $exception) {
+            $thrownException = $exception;
+        }
+
+        expect($thrownException)->toBeInstanceOf(ValidationException::class)
+            ->and($thrownException?->errors())->toHaveKey('addons.unifiedInbox');
+    });
+})->only();
