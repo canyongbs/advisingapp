@@ -54,11 +54,18 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use App\Models\User;
+use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Queue;
 
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
+
+beforeEach(function () {
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->unifiedInbox = true;
+    $settings->save();
+});
 
 it('can activate the sent items tab within the unified inbox page', function () {
     asSuperAdmin();
