@@ -211,4 +211,4 @@ describe('unified inbox', function () use ($syncTenantControllerRequest) {
         expect($thrownException)->toBeInstanceOf(ValidationException::class)
             ->and($thrownException?->errors())->toHaveKey('addons.unifiedInbox');
     });
-})->only();
+});
