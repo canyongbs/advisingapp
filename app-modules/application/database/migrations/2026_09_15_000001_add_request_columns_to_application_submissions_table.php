@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\OnlineAdmissionRequestsFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
@@ -56,16 +55,12 @@ return new class () extends Migration {
             DB::table('application_submissions')
                 ->whereNull('submitted_at')
                 ->update(['submitted_at' => DB::raw('created_at')]);
-
-            OnlineAdmissionRequestsFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            OnlineAdmissionRequestsFeature::deactivate();
-
             Schema::table('application_submissions', function (Blueprint $table) {
                 $table->dropConstrainedForeignId('requester_id');
                 $table->dropColumn(['submitted_at', 'canceled_at', 'request_method', 'request_note']);
