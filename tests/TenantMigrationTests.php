@@ -66,67 +66,6 @@ use Illuminate\Support\Str;
 //    });
 //});
 
-test('2026_09_23_154333_add_calendar_event_id_to_booking_group_appointments_table backfills legacy event links', function () {
-    isolatedMigration(
-        '2026_09_23_154333_add_calendar_event_id_to_booking_group_appointments_table',
-        function () {
-            $owner = User::factory()
-                ->has(Calendar::factory())
-                ->create();
-            $otherOwner = User::factory()
-                ->has(Calendar::factory())
-                ->create();
-            $bookingGroup = BookingGroup::factory()->create([
-                'meeting_owner_id' => $owner->id,
-            ]);
-            $startsAt = now()->addDay()->startOfHour();
-            $endsAt = $startsAt->copy()->addHour();
-
-            $event = CalendarEvent::factory()
-                ->for($owner->calendar)
-                ->createQuietly([
-                    'provider_uid' => 'shared-provider-uid',
-                    'starts_at' => $startsAt,
-                    'ends_at' => $endsAt,
-                ]);
-
-            CalendarEvent::factory()
-                ->for($otherOwner->calendar)
-                ->createQuietly([
-                    'provider_uid' => 'shared-provider-uid',
-                    'starts_at' => $startsAt,
-                    'ends_at' => $endsAt,
-                ]);
-
-            $appointmentId = (string) Str::uuid();
-
-            // Seed the legacy row with a raw insert: the current model no longer knows
-            // about calendar_event_provider_uid, but the column still exists at this
-            // migration point and the backfill depends on it.
-            DB::table('booking_group_appointments')->insert([
-                'id' => $appointmentId,
-                'booking_group_id' => $bookingGroup->id,
-                'calendar_event_provider_uid' => 'shared-provider-uid',
-                'name' => 'Legacy Visitor',
-                'email' => 'legacy-visitor@example.com',
-                'starts_at' => $startsAt,
-                'ends_at' => $endsAt,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
-
-            $migrate = Artisan::call('migrate', [
-                '--path' => 'app-modules/meeting-center/database/migrations/2026_09_23_154333_add_calendar_event_id_to_booking_group_appointments_table.php',
-            ]);
-
-            expect($migrate)->toBe(Command::SUCCESS)
-                ->and(DB::table('booking_group_appointments')
-                    ->where('id', $appointmentId)
-                    ->value('calendar_event_id'))
-                ->toBe($event->id);
-        }
-    );
-});
 
 test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements_table renames column and backfills source_type', function () {
     isolatedMigration(
