@@ -34,22 +34,32 @@
 </COPYRIGHT>
 */
 
+use App\Features\TermAttributesFeature;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
     public function up(): void
     {
-        Schema::table('enrollments', function (Blueprint $table) {
-            $table->string('sis_term_id')->nullable()->index();
+        DB::transaction(function () {
+            Schema::table('enrollments', function (Blueprint $table) {
+                $table->string('sis_term_id')->nullable()->index();
+            });
+
+            TermAttributesFeature::activate();
         });
     }
 
     public function down(): void
     {
-        Schema::table('enrollments', function (Blueprint $table) {
-            $table->dropColumn('sis_term_id');
+        DB::transaction(function () {
+            TermAttributesFeature::deactivate();
+
+            Schema::table('enrollments', function (Blueprint $table) {
+                $table->dropColumn('sis_term_id');
+            });
         });
     }
 };

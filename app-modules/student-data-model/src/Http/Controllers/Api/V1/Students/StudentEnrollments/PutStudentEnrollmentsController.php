@@ -41,6 +41,7 @@ use AdvisingApp\StudentDataModel\DataTransferObjects\StudentEnrollmentData;
 use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentEnrollmentResource;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\TermAttributesFeature;
 use Dedoc\Scramble\Attributes\Group;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -81,6 +82,7 @@ class PutStudentEnrollmentsController
             'enrollments.*.faculty_email' => ['sometimes', 'email'],
             'enrollments.*.semester_code' => ['sometimes', 'string', 'max:255'],
             'enrollments.*.semester_name' => ['sometimes', 'string', 'max:255'],
+            ...(TermAttributesFeature::active() ? ['enrollments.*.sis_term_id' => ['sometimes', 'string', 'max:255']] : []),
             'enrollments.*.start_date' => ['sometimes', 'date', 'date_format:Y-m-d H:i:s'],
             'enrollments.*.end_date' => ['sometimes', 'date', 'date_format:Y-m-d H:i:s'],
         ]);

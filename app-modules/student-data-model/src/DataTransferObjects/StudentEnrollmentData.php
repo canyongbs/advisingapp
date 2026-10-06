@@ -58,6 +58,7 @@ class StudentEnrollmentData extends Data
         public string | Optional | null $facultyEmail,
         public string | Optional | null $semesterCode,
         public string | Optional | null $semesterName,
+        public string | Optional | null $sisTermId,
         public string | Optional | null $startDate,
         public string | Optional | null $endDate,
     ) {}

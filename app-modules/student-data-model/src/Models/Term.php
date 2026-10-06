@@ -83,6 +83,16 @@ class Term extends Model
     ];
 
     /**
+     * Term names are not unique in the SIS, so the start month is included to tell them apart (e.g. `FA-20 (Sep 2020)`).
+     */
+    public function getDisplayName(): string
+    {
+        return $this->start_date
+            ? "{$this->name} ({$this->start_date->format('M Y')})"
+            : $this->name;
+    }
+
+    /**
      * @return HasMany<StudentTermAttribute, $this>
      */
     public function studentTermAttributes(): HasMany
