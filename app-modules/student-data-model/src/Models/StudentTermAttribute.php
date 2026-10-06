@@ -36,26 +36,23 @@
 
 namespace AdvisingApp\StudentDataModel\Models;
 
-use AdvisingApp\StudentDataModel\Database\Factories\EnrollmentFactory;
+use AdvisingApp\StudentDataModel\Database\Factories\StudentTermAttributeFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
- * @mixin IdeHelperEnrollment
+ * @mixin IdeHelperStudentTermAttribute
  */
-class Enrollment extends Model
+class StudentTermAttribute extends Model
 {
-    use SoftDeletes;
-
-    /** @use HasFactory<EnrollmentFactory> */
+    /** @use HasFactory<StudentTermAttributeFactory> */
     use HasFactory;
 
     use UsesTenantConnection;
 
-    protected $table = 'enrollments';
+    protected $table = 'student_term_attributes';
 
     /**
      * This Model has a primary key that is auto generated as a v4 UUID by Postgres.
@@ -72,28 +69,13 @@ class Enrollment extends Model
 
     protected $fillable = [
         'sisid',
-        'division',
-        'class_nbr',
-        'crse_grade_off',
-        'unt_taken',
-        'unt_earned',
-        'last_upd_dt_stmp',
-        'section',
-        'name',
-        'department',
-        'faculty_name',
-        'faculty_email',
-        'semester_code',
-        'semester_name',
         'sis_term_id',
-        'start_date',
-        'end_date',
-    ];
-
-    protected $casts = [
-        'last_upd_dt_stmp' => 'datetime',
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
+        'enrollment_status',
+        'academic_status',
+        'campus',
+        'college_level',
+        'commuter',
+        'student_registered',
     ];
 
     /**

@@ -36,31 +36,28 @@
 
 namespace AdvisingApp\StudentDataModel\Models;
 
-use AdvisingApp\StudentDataModel\Database\Factories\EnrollmentFactory;
+use AdvisingApp\StudentDataModel\Database\Factories\TermFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
 /**
- * @mixin IdeHelperEnrollment
+ * @mixin IdeHelperTerm
  */
-class Enrollment extends Model
+class Term extends Model
 {
-    use SoftDeletes;
-
-    /** @use HasFactory<EnrollmentFactory> */
+    /** @use HasFactory<TermFactory> */
     use HasFactory;
 
     use UsesTenantConnection;
 
-    protected $table = 'enrollments';
+    protected $table = 'terms';
 
     /**
      * This Model has a primary key that is auto generated as a v4 UUID by Postgres.
      * We do so so that we can do things like view, edit, and delete a specific record in the UI / API.
-     * This ID should NEVER be used for relationships as these records do not belong to our system, our reset during syncs, and are not truly unique.
+     * This ID should NEVER be used for relationships as these records do not belong to our system. Use `sis_term_id` instead.
      */
     protected $primaryKey = 'id';
 
@@ -71,44 +68,33 @@ class Enrollment extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'sisid',
-        'division',
-        'class_nbr',
-        'crse_grade_off',
-        'unt_taken',
-        'unt_earned',
-        'last_upd_dt_stmp',
-        'section',
-        'name',
-        'department',
-        'faculty_name',
-        'faculty_email',
-        'semester_code',
-        'semester_name',
         'sis_term_id',
+        'name',
+        'code',
         'start_date',
         'end_date',
+        'is_active',
     ];
 
     protected $casts = [
-        'last_upd_dt_stmp' => 'datetime',
-        'start_date' => 'datetime',
-        'end_date' => 'datetime',
+        'start_date' => 'date',
+        'end_date' => 'date',
+        'is_active' => 'boolean',
     ];
 
     /**
-     * @return BelongsTo<Student, $this>
+     * @return HasMany<StudentTermAttribute, $this>
      */
-    public function student(): BelongsTo
+    public function studentTermAttributes(): HasMany
     {
-        return $this->belongsTo(Student::class, 'sisid', 'sisid');
+        return $this->hasMany(StudentTermAttribute::class, 'sis_term_id', 'sis_term_id');
     }
 
     /**
-     * @return BelongsTo<Term, $this>
+     * @return HasMany<Enrollment, $this>
      */
-    public function term(): BelongsTo
+    public function enrollments(): HasMany
     {
-        return $this->belongsTo(Term::class, 'sis_term_id', 'sis_term_id');
+        return $this->hasMany(Enrollment::class, 'sis_term_id', 'sis_term_id');
     }
 }
