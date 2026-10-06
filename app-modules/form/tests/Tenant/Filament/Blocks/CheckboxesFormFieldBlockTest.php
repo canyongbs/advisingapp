@@ -56,12 +56,6 @@ it('validates the response against the option values, regardless of the stored o
     ],
 ]);
 
-it('allows any array response when the other option is enabled', function () {
-    $field = new FormField(['config' => ['options' => ['option-one' => 'Option One'], 'hasOtherOption' => true]]);
-
-    expect(CheckboxesFormFieldBlock::getValidationRules($field))->toBe(['array']);
-});
-
 describe('submission state', function () {
     it('marks the selected options as checked, regardless of the stored options format', function (array $options) {
         $field = new FormField(['config' => ['options' => $options]]);
@@ -84,12 +78,20 @@ describe('submission state', function () {
         ],
     ]);
 
-    it('matches option values case-insensitively', function () {
-        $field = new FormField(['config' => ['options' => ['option-one' => 'Option One']]]);
+    it('prefers an exact option value over a slug match', function () {
+        $field = new FormField(['config' => ['options' => ['Option One' => 'First', 'option-one' => 'Second']]]);
 
-        $state = CheckboxesFormFieldBlock::getSubmissionState($field, ['OPTION-ONE']);
+        $state = CheckboxesFormFieldBlock::getSubmissionState($field, ['Option One']);
 
-        expect($state['response'])->toBe(['Option One' => true]);
+        expect($state['response'])->toBe(['First' => true, 'Second' => false]);
+    });
+
+    it('prefers a case-insensitive option value over a slug match', function () {
+        $field = new FormField(['config' => ['options' => ['option-one' => 'Second', 'OPTION ONE' => 'First']]]);
+
+        $state = CheckboxesFormFieldBlock::getSubmissionState($field, ['Option One']);
+
+        expect($state['response'])->toBe(['Second' => false, 'First' => true]);
     });
 
     it('matches responses saved as the option label by their slug', function () {

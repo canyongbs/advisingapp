@@ -58,12 +58,25 @@
                 class="fi-fo-key-value-table"
                 x-data="{
                     slugify(label) {
-                        return (label ?? '')
+                        const slug = (label ?? '')
                             .normalize('NFD')
                             .replace(/[\u0300-\u036f]/g, '')
                             .toLowerCase()
                             .replace(/[^\p{L}\p{N}]+/gu, '-')
                             .replace(/^-+|-+$/g, '')
+
+                        if (slug !== '' || (label ?? '').trim() === '') {
+                            return slug
+                        }
+
+                        // Symbol-only labels have no slug; a hash keeps their key stable and non-empty so the row is saved.
+                        let hash = 5381
+
+                        for (const char of label) {
+                            hash = ((hash * 33) ^ char.codePointAt(0)) >>> 0
+                        }
+
+                        return 'option-' + hash.toString(36)
                     },
                 }"
                 x-init="

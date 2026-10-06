@@ -31,9 +31,10 @@
     
     </COPYRIGHT>
 --}}
+@use(AdvisingApp\Form\Filament\Blocks\FormFieldBlock)
 
 @php
-    $optionsData = array_is_list($options) ? collect($options)->pluck('label') : $options;
+    $optionsData = FormFieldBlock::getOptionLabels($options);
 @endphp
 
 <x-form::blocks.field-wrapper :$label :$isRequired :description="$description ?? null">

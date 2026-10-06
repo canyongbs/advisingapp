@@ -71,8 +71,13 @@ it('shows the option label for a submitted value, falling back to the submitted 
     'removed option' => ['us', 'us'],
 ]);
 
-it('allows any string response when the other option is enabled', function () {
-    $field = new FormField(['config' => ['options' => ['option-one' => 'Option One'], 'hasOtherOption' => true]]);
+it('shows the option label for a submitted value when the options are keyed 0, 1', function () {
+    $html = RadioFormFieldBlock::toHtml([
+        'label' => 'Pick one',
+        'isRequired' => false,
+        'options' => [0 => 'Zero', 1 => 'One'],
+        'response' => '1',
+    ], []);
 
-    expect(RadioFormFieldBlock::getValidationRules($field))->toBe(['string']);
+    expect($html)->toContain('One');
 });

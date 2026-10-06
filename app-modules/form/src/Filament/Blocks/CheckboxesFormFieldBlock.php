@@ -125,15 +125,18 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
         }
 
         $responseArray = is_array($response) ? $response : [];
+        $optionValues = $options->keys()->all();
+
+        $resolvedValues = collect($responseArray)
+            ->map(fn ($val) => static::resolveOptionValue($optionValues, $val))
+            ->filter(fn ($optionValue) => $optionValue !== null);
 
         $result = $options
-            ->mapWithKeys(fn ($label, $key) => [
-                $label => collect($responseArray)->contains(fn ($val) => static::responseMatchesOption($val, $key)),
-            ])
+            ->mapWithKeys(fn ($label, $key) => [$label => $resolvedValues->containsStrict($key)])
             ->toArray();
 
         if (is_array($response)) {
-            $otherValues = array_filter($response, fn ($val) => ! $options->keys()->contains(fn ($key) => static::responseMatchesOption($val, $key)));
+            $otherValues = array_filter($response, fn ($val) => static::resolveOptionValue($optionValues, $val) === null);
 
             foreach ($otherValues as $otherValue) {
                 $result[$hasOtherOption ? 'Other: ' . $otherValue : $otherValue] = true;

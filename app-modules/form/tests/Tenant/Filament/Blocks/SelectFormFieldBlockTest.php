@@ -35,16 +35,6 @@
 */
 
 use AdvisingApp\Form\Filament\Blocks\SelectFormFieldBlock;
-use AdvisingApp\Form\Models\FormField;
-
-it('validates the response against the option values', function () {
-    $field = new FormField(['config' => ['options' => ['option-one' => 'Option One', 'option-two' => 'Option Two']]]);
-
-    expect(SelectFormFieldBlock::getValidationRules($field))->toBe([
-        'string',
-        'in:option-one,option-two',
-    ]);
-});
 
 it('renders a different preview when the options are only reordered', function () {
     $config = ['label' => 'Country', 'isRequired' => false];

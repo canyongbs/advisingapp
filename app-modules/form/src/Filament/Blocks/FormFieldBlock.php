@@ -45,6 +45,7 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 abstract class FormFieldBlock extends RichContentCustomBlock
@@ -131,12 +132,47 @@ abstract class FormFieldBlock extends RichContentCustomBlock
     }
 
     /**
-     * A submitted value matches an option when it equals the option's value, or its slug does, so values saved before option values were generated from labels still match.
+     * Resolves a submitted value to a single option value, preferring an exact match, then a case-insensitive one,
+     * and only then the slug, so values saved before option values were generated from labels still match.
+     *
+     * @param array<int, int|string> $optionValues
      */
-    public static function responseMatchesOption(string $response, int | string $optionValue): bool
+    public static function resolveOptionValue(array $optionValues, string $response): int | string | null
     {
-        return strcasecmp($response, (string) $optionValue) === 0
-            || static::slugifyOptionValue($response) === (string) $optionValue;
+        $slug = static::slugifyOptionValue($response);
+
+        $matchers = [
+            fn (string $value): bool => $value === $response,
+            fn (string $value): bool => strcasecmp($value, $response) === 0,
+            fn (string $value): bool => $value === $slug,
+        ];
+
+        foreach ($matchers as $matches) {
+            foreach ($optionValues as $optionValue) {
+                if ($matches((string) $optionValue)) {
+                    return $optionValue;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Normalizes stored options to a value => label map. Options are rows when their entries are arrays; sequential
+     * keys alone do not make a map a list of rows, because a map keyed 0, 1 is a valid set of option values.
+     *
+     * @param array<int|string, mixed> $options
+     *
+     * @return array<int|string, string>
+     */
+    public static function getOptionLabels(array $options): array
+    {
+        if (is_array(Arr::first($options))) {
+            return array_column($options, 'label', 'value');
+        }
+
+        return $options;
     }
 
     /**
@@ -144,17 +180,9 @@ abstract class FormFieldBlock extends RichContentCustomBlock
      */
     public static function getOptionLabel(array $options, string $response): ?string
     {
-        if (array_key_exists($response, $options)) {
-            return $options[$response];
-        }
+        $optionValue = static::resolveOptionValue(array_keys($options), $response);
 
-        foreach ($options as $value => $label) {
-            if (static::responseMatchesOption($response, $value)) {
-                return $label;
-            }
-        }
-
-        return null;
+        return $optionValue === null ? null : $options[$optionValue];
     }
 
     abstract public static function type(): string;
@@ -207,7 +235,7 @@ abstract class FormFieldBlock extends RichContentCustomBlock
         }
 
         return collect($options)
-            ->map(fn (mixed $label, int|string $value): array => ['value' => $value, 'label' => $label])
+            ->map(fn (mixed $label, int|string $value): array => ['value' => (string) $value, 'label' => $label])
             ->values()
             ->all();
     }

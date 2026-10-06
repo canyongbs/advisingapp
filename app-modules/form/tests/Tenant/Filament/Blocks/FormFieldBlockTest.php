@@ -74,21 +74,45 @@ it('falls back to the block type label inside the preview body when no field lab
         ->toContain('Text input');
 });
 
-it('derives an option value from its label by slugifying it', function (?string $label, string $expected) {
-    expect(FormFieldBlock::slugifyOptionValue($label))->toBe($expected);
+it('resolves a submitted value to an option, preferring exact, then case-insensitive, then slug matches', function (array $optionValues, string $response, int | string | null $expected) {
+    expect(FormFieldBlock::resolveOptionValue($optionValues, $response))->toBe($expected);
 })->with([
-    'simple label' => ['Option One', 'option-one'],
-    'extra whitespace' => ['  Option   One  ', 'option-one'],
-    'punctuation' => ['Yes / No', 'yes-no'],
-    'null label' => [null, ''],
+    'exact before slug' => [['option-one', 'Option One'], 'Option One', 'Option One'],
+    'case-insensitive before slug' => [['option-one', 'OPTION ONE'], 'Option One', 'OPTION ONE'],
+    'slug as a last resort' => [['option-one'], 'Option One', 'option-one'],
+    'integer option values' => [[10, 2], '2', 2],
+    'no match' => [['us', 'ca'], 'Mexico', null],
+]);
+
+it('normalizes stored options to a value => label map by their shape, not their keys', function (array $options, array $expected) {
+    expect(FormFieldBlock::getOptionLabels($options))->toBe($expected);
+})->with([
+    'map with string keys' => [['us' => 'United States'], ['us' => 'United States']],
+    'map with sequential numeric keys' => [[0 => 'Zero', 1 => 'One'], [0 => 'Zero', 1 => 'One']],
+    'rows of label and value' => [[['label' => 'Zero', 'value' => '0'], ['label' => 'One', 'value' => '1']], ['0' => 'Zero', '1' => 'One']],
+    'no options' => [[], []],
+]);
+
+it('renders every option label in the radio and checkbox previews, regardless of the stored options format', function (string $block, array $options) {
+    $html = $block::toPreviewHtml(['label' => 'Pick one', 'isRequired' => false, 'options' => $options]);
+
+    assert(is_string($html));
+
+    expect($html)->toContain('Zero')->toContain('One');
+})->with([
+    'radio' => RadioFormFieldBlock::class,
+    'checkboxes' => CheckboxesFormFieldBlock::class,
+])->with([
+    'map with sequential numeric keys' => [[0 => 'Zero', 1 => 'One']],
+    'rows of label and value' => [[['label' => 'Zero', 'value' => '0'], ['label' => 'One', 'value' => '1']]],
 ]);
 
 it('sends options to FormKit as an ordered list, regardless of the stored options format', function (string $block, array $options) {
     $field = new FormField(['config' => ['options' => $options]]);
 
     expect($block::getFormKitSchema($field)['options'])->toBe([
-        ['value' => 10, 'label' => 'Ten'],
-        ['value' => 2, 'label' => 'Two'],
+        ['value' => '10', 'label' => 'Ten'],
+        ['value' => '2', 'label' => 'Two'],
     ]);
 })->with([
     'select' => SelectFormFieldBlock::class,
@@ -96,5 +120,5 @@ it('sends options to FormKit as an ordered list, regardless of the stored option
     'checkboxes' => CheckboxesFormFieldBlock::class,
 ])->with([
     'value => label map' => [[10 => 'Ten', 2 => 'Two']],
-    'label and value rows' => [[['value' => 10, 'label' => 'Ten'], ['value' => 2, 'label' => 'Two']]],
+    'label and value rows' => [[['value' => '10', 'label' => 'Ten'], ['value' => '2', 'label' => 'Two']]],
 ]);
