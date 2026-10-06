@@ -34,63 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace App\Jobs;
+namespace App\Actions\QueueMonitoring;
 
 use App\Models\Tenant;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Database\DatabaseManager;
-use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Queue\Failed\DatabaseUuidFailedJobProvider;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Config;
-use Spatie\Multitenancy\Jobs\NotTenantAware;
+use Spatie\Multitenancy\Landlord;
 
-/**
- * Runs `queue:retry` against the failed_jobs table of either the landlord or one tenant. The command is used as is
- * because multitenancy makes a retried job's tenant current until the command finishes, which puts the job back in
- * its tenant's SQS message group.
- */
-class RetryFailedJob implements ShouldQueue, NotTenantAware
+class RetryFailedJobs
 {
-    use Queueable;
-
     /**
+     * Retries failed jobs from the given tenant's failed_jobs table, or the landlord's when no tenant is given.
+     * `queue:retry` makes each job's own tenant current while pushing it, which keeps it in that tenant's SQS message
+     * group.
+     *
      * @param  list<string>  $failedJobIds
      */
-    public function __construct(
-        public ?string $tenantId,
-        public array $failedJobIds,
-    ) {
-        $this->onQueue(config('queue.landlord_queue'));
-    }
-
-    public static function failedJobProvider(string $connection): DatabaseUuidFailedJobProvider
+    public function __invoke(array $failedJobIds, ?Tenant $tenant = null): void
     {
-        return new DatabaseUuidFailedJobProvider(app(DatabaseManager::class), $connection, Config::string('queue.failed.table'));
-    }
+        $retry = fn (): int => Artisan::call('queue:retry', ['id' => $failedJobIds]);
 
-    public function handle(): void
-    {
-        if ($this->tenantId === null) {
-            $this->retry('landlord');
+        if ($tenant === null) {
+            Landlord::execute($retry);
 
             return;
         }
 
-        Tenant::query()->findOrFail($this->tenantId)->execute(
-            fn () => $this->retry(Config::string('multitenancy.tenant_database_connection_name')),
-        );
-    }
-
-    private function retry(string $connection): void
-    {
-        // The framework's failed job provider is a singleton bound to the connection current when it was resolved.
-        app()->instance('queue.failer', self::failedJobProvider($connection));
-
-        try {
-            Artisan::call('queue:retry', ['id' => $this->failedJobIds]);
-        } finally {
-            app()->forgetInstance('queue.failer');
-        }
+        $tenant->execute($retry);
     }
 }

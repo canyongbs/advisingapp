@@ -34,9 +34,9 @@
 </COPYRIGHT>
 */
 
+use App\Actions\QueueMonitoring\RetryFailedJobs;
 use App\Jobs\LoadTestJob;
 use App\Jobs\PruneStaleCacheTags;
-use App\Jobs\RetryFailedJob;
 use App\Models\Tenant;
 use App\Queue\TenantFairSqsQueue;
 use Aws\Result;
@@ -82,7 +82,7 @@ function recordFailedJobRetriesInto(array &$sentMessages): void
  *
  * @param  array<int, array<string, mixed>>  $sentMessages
  */
-function failJob(object $job, string $databaseConnection, array &$sentMessages): string
+function failJob(object $job, array &$sentMessages): string
 {
     QueueFacade::connection('recording-sqs')->push($job);
 
@@ -90,7 +90,7 @@ function failJob(object $job, string $databaseConnection, array &$sentMessages):
 
     assert(is_string($payload));
 
-    RetryFailedJob::failedJobProvider($databaseConnection)->log('recording-sqs', 'default', $payload, new RuntimeException('Failed.'));
+    app('queue.failer')->log('recording-sqs', 'default', $payload, new RuntimeException('Failed.'));
 
     $failedJobId = json_decode($payload, true)['uuid'];
 
@@ -103,14 +103,33 @@ it('retries a landlord failed job and removes it from the landlord failed jobs',
     $sentMessages = [];
     recordFailedJobRetriesInto($sentMessages);
 
-    $failedJobId = failJob(new LoadTestJob(0), 'landlord', $sentMessages);
+    $failedJobId = failJob(new LoadTestJob(0), $sentMessages);
 
-    (new RetryFailedJob(null, [$failedJobId]))->handle();
+    app(RetryFailedJobs::class)([$failedJobId]);
 
     expect($sentMessages)->toHaveCount(1)
         ->and($sentMessages[0]['MessageGroupId'] ?? null)->toBeNull()
         ->and(json_decode($sentMessages[0]['MessageBody'], true)['uuid'])->toBe($failedJobId)
-        ->and(RetryFailedJob::failedJobProvider('landlord')->find($failedJobId))->toBeNull();
+        ->and(app('queue.failer')->find($failedJobId))->toBeNull();
+});
+
+it('retries landlord failed jobs from inside a tenant and leaves that tenant current', function () {
+    $sentMessages = [];
+    recordFailedJobRetriesInto($sentMessages);
+
+    $tenant = Tenant::query()->first();
+
+    $failedJobId = failJob(new LoadTestJob(0), $sentMessages);
+
+    $tenantAfterRetry = $tenant->execute(function () use ($failedJobId): ?Tenant {
+        app(RetryFailedJobs::class)([$failedJobId]);
+
+        return Tenant::current();
+    });
+
+    expect($sentMessages)->toHaveCount(1)
+        ->and(app('queue.failer')->find($failedJobId))->toBeNull()
+        ->and($tenantAfterRetry?->getKey())->toBe($tenant->getKey());
 });
 
 it("retries a tenant's failed job in the tenant's message group and removes it from the tenant's failed jobs", function () {
@@ -118,17 +137,16 @@ it("retries a tenant's failed job in the tenant's message group and removes it f
     recordFailedJobRetriesInto($sentMessages);
 
     $tenant = Tenant::query()->first();
-    $tenantConnection = config('multitenancy.tenant_database_connection_name');
 
-    $failedJobId = $tenant->execute(function () use ($tenantConnection, &$sentMessages): string {
-        return failJob(new PruneStaleCacheTags(), $tenantConnection, $sentMessages);
+    $failedJobId = $tenant->execute(function () use (&$sentMessages): string {
+        return failJob(new PruneStaleCacheTags(), $sentMessages);
     });
 
-    (new RetryFailedJob($tenant->getKey(), [$failedJobId]))->handle();
+    app(RetryFailedJobs::class)([$failedJobId], $tenant);
 
     expect($sentMessages)->toHaveCount(1)
         ->and($sentMessages[0]['MessageGroupId'])->toBe($tenant->getKey())
-        ->and($tenant->execute(fn (): ?object => RetryFailedJob::failedJobProvider($tenantConnection)->find($failedJobId)))->toBeNull()
+        ->and($tenant->execute(fn (): ?object => app('queue.failer')->find($failedJobId)))->toBeNull()
         ->and(Tenant::current())->toBeNull();
 });
 
@@ -136,7 +154,7 @@ it('skips failed jobs that no longer exist', function () {
     $sentMessages = [];
     recordFailedJobRetriesInto($sentMessages);
 
-    (new RetryFailedJob(null, [(string) Str::uuid()]))->handle();
+    app(RetryFailedJobs::class)([(string) Str::uuid()]);
 
     expect($sentMessages)->toBeEmpty();
 });
