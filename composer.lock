@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "9f102aaaca3a79f163d1a2c264f2d3cb",
+    "content-hash": "7b7f99c2ff492194262d62560f16c898",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -3670,68 +3670,6 @@
                 }
             ],
             "time": "2026-08-21T15:17:50+00:00"
-        },
-        {
-            "name": "defectivecode/laravel-sqs-extended",
-            "version": "2.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/DefectiveCode/laravel-sqs-extended.git",
-                "reference": "31548ae70a2ff78bef8a1d1c05aae4b541225fe6"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/DefectiveCode/laravel-sqs-extended/zipball/31548ae70a2ff78bef8a1d1c05aae4b541225fe6",
-                "reference": "31548ae70a2ff78bef8a1d1c05aae4b541225fe6",
-                "shasum": ""
-            },
-            "require": {
-                "aws/aws-sdk-php": "^3.368.0.0",
-                "illuminate/container": "^12.0 || ^13.0",
-                "illuminate/contracts": "^12.0 || ^13.0",
-                "illuminate/filesystem": "^12.0 || ^13.0",
-                "illuminate/queue": "^12.0 || ^13.0",
-                "illuminate/support": "^12.0 || ^13.0",
-                "php": "^8.4"
-            },
-            "require-dev": {
-                "laravel/pint": "^1.8",
-                "laravel/vapor-core": "^2.44",
-                "mockery/mockery": "^1.6",
-                "orchestra/testbench": "^10.0 || ^11.0",
-                "phpunit/phpunit": "^13.0"
-            },
-            "suggest": {
-                "laravel/vapor-core": "Required for SQS disk-based storage when using Laravel Vapor."
-            },
-            "type": "laravel",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "DefectiveCode\\LaravelSqsExtended\\SqsDiskServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "DefectiveCode\\LaravelSqsExtended\\": "src"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Corey McCormick",
-                    "email": "corey@defectivecode.com"
-                }
-            ],
-            "support": {
-                "issues": "https://github.com/DefectiveCode/laravel-sqs-extended/issues",
-                "source": "https://github.com/DefectiveCode/laravel-sqs-extended/tree/2.1.0"
-            },
-            "time": "2026-07-23T16:16:08+00:00"
         },
         {
             "name": "defstudio/filament-searchable-input",

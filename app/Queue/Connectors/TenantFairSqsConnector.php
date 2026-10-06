@@ -34,43 +34,35 @@
 </COPYRIGHT>
 */
 
-declare(strict_types = 1);
+namespace App\Queue\Connectors;
 
-namespace App\Overrides\LaravelSqsExtended;
-
+use App\Queue\TenantFairSqsQueue;
 use Aws\Sqs\SqsClient;
-use DefectiveCode\LaravelSqsExtended\SqsDiskConnector as BaseSqsDiskConnector;
-use Illuminate\Contracts\Queue\Queue;
+use Illuminate\Queue\Connectors\SqsConnector;
 use Illuminate\Support\Arr;
+use Override;
 
-class SqsDiskConnector extends BaseSqsDiskConnector
+class TenantFairSqsConnector extends SqsConnector
 {
     /**
-     * Establish a queue connection.
-     *
-     *
-     *
      * @param array<string, mixed> $config
-     *
-     * @return Queue
      */
-    public function connect(array $config)
+    #[Override]
+    public function connect(array $config): TenantFairSqsQueue
     {
-        $config = $this->getDefaultConfiguration($config);
+        $config = $this->withCredentials(
+            $this->getDefaultConfiguration($config)
+        );
 
-        if (! empty($config['key']) && ! empty($config['secret'])) {
-            $config['credentials'] = Arr::only($config, ['key', 'secret', 'token']);
-        }
-
-        return new SqsDiskQueue(
+        return new TenantFairSqsQueue(
             new SqsClient(
-                Arr::except($config, ['token'])
+                Arr::except($config, ['token', 'overflow', 'credential_cache'])
             ),
             $config['queue'],
-            $config['disk_options'],
             $config['prefix'] ?? '',
             $config['suffix'] ?? '',
             $config['after_commit'] ?? null,
+            $config['overflow'] ?? [],
         );
     }
 }

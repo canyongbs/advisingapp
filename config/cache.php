@@ -106,15 +106,6 @@ return [
             'lock_connection' => 'default',
             'prefix' => env('CACHE_PREFIX', '{advisingapp_landlord_cache}'),
         ],
-
-        // SQS overflow payloads are written in the dispatching (often tenant) context and read before a worker switches
-        // tenants, so they need a tenant-independent prefix. No {hash tag}, so the large payloads spread across slots.
-        'sqs-overflow' => [
-            'driver' => 'redis',
-            'connection' => 'cache',
-            'lock_connection' => 'default',
-            'prefix' => env('SQS_OVERFLOW_CACHE_PREFIX', 'advisingapp_sqs_overflow'),
-        ],
     ],
 
     /*

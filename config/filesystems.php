@@ -91,6 +91,21 @@ return [
             'http' => ['verify' => env('AWS_S3_VERIFY_SSL', true)],
         ],
 
+        // The landlord's SQS overflow payloads, and the base that App\Queue\SqsOverflowStorage builds each tenant's from.
+        // Unlike `s3`, it is never switched to a tenant.
+        'sqs-overflow' => [
+            'driver' => 's3',
+            'key' => env('AWS_S3_ACCESS_KEY_ID'),
+            'secret' => env('AWS_S3_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_S3_DEFAULT_REGION'),
+            'bucket' => env('AWS_S3_BUCKET'),
+            'endpoint' => env('AWS_S3_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_S3_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
+            'root' => env('AWS_S3_ROOT'),
+            'http' => ['verify' => env('AWS_S3_VERIFY_SSL', true)],
+        ],
+
         's3-public' => [
             'driver' => 's3',
             'key' => env('AWS_S3_ACCESS_KEY_ID'),

@@ -34,36 +34,31 @@
 </COPYRIGHT>
 */
 
-declare(strict_types = 1);
+use App\Models\Tenant;
+use App\Queue\TenantFairSqsQueue;
+use Illuminate\Queue\CallQueuedClosure;
+use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Queue;
 
-namespace App\Overrides\LaravelSqsExtended;
+it('resolves the `sqs` connection to the tenant fair SQS queue', function () {
+    expect(Queue::connection('sqs'))->toBeInstanceOf(TenantFairSqsQueue::class);
+});
 
-use DefectiveCode\LaravelSqsExtended\SqsDiskJob as PackageSqsDiskJob;
-use Override;
-use TypeError;
+it('stamps `pushedAt` on job payloads', function () {
+    $payload = null;
 
-class SqsDiskJob extends PackageSqsDiskJob
-{
-    /**
-     * Get the raw body string for the job.
-     *
-     * @return string
-     */
-    #[Override]
-    public function getRawBody()
-    {
-        try {
-            return parent::getRawBody();
-        } catch (TypeError $error) {
-            report($error);
+    Event::listen(JobProcessing::class, function (JobProcessing $event) use (&$payload) {
+        $payload = $event->job->payload();
+    });
 
-            /*
-             *  If we are unable to retrieve the raw body with this known error type,
-             *  we should remove the item from the queue.
-             */
-            $this->delete();
+    $job = CallQueuedClosure::create(static fn () => null);
 
-            throw $error;
-        }
-    }
-}
+    $pushStartedAt = microtime(true);
+
+    Tenant::query()->first()->execute(fn () => Queue::connection('sync')->push($job));
+
+    expect($payload['pushedAt'])->toBeFloat()
+        ->and($payload['pushedAt'])->toBeGreaterThanOrEqual($pushStartedAt)
+        ->and($payload['pushedAt'])->toBeLessThanOrEqual(microtime(true));
+});

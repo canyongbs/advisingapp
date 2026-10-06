@@ -36,22 +36,18 @@
 
 use App\Models\Tenant;
 
-it('does not re-prefix fixed-prefix cache stores when switching tenants', function (string $store) {
+it('switches the `s3` disk but not the `sqs-overflow` disk to the tenant', function () {
     Tenant::forgetCurrent();
 
-    cache()->store($store)->forget('prefix-cache-task-probe');
+    $landlordOverflowDisk = config('filesystems.disks.sqs-overflow');
 
-    expect(cache()->store($store)->get('prefix-cache-task-probe'))->toBeNull();
+    $tenant = Tenant::query()->first();
 
-    cache()->store($store)->put('prefix-cache-task-probe', 'landlord-value', 60);
+    [$tenantS3Bucket, $tenantOverflowDisk] = $tenant->execute(fn (): array => [
+        config('filesystems.disks.s3.bucket'),
+        config('filesystems.disks.sqs-overflow'),
+    ]);
 
-    $valueInTenantContext = Tenant::query()->first()->execute(
-        fn () => cache()->store($store)->get('prefix-cache-task-probe'),
-    );
-
-    expect($valueInTenantContext)->toBe('landlord-value');
-
-    cache()->store($store)->forget('prefix-cache-task-probe');
-})->with([
-    'landlord',
-]);
+    expect($tenantS3Bucket)->toBe($tenant->config->s3Filesystem->bucket)
+        ->and($tenantOverflowDisk)->toBe($landlordOverflowDisk);
+});

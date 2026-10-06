@@ -6522,24 +6522,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Models/User.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method App\\\\Overrides\\\\LaravelSqsExtended\\\\SqsDiskQueue\\:\\:pop\\(\\) should return Illuminate\\\\Contracts\\\\Queue\\\\Job\\|null but return statement is missing\\.$#',
-    'identifier' => 'return.missing',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Overrides/LaravelSqsExtended/SqsDiskQueue.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Overrides\\\\LaravelSqsExtended\\\\SqsDiskQueue\\:\\:pushRaw\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Overrides/LaravelSqsExtended/SqsDiskQueue.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Negated boolean expression is always false\\.$#',
-    'identifier' => 'booleanNot.alwaysFalse',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Overrides/LaravelSqsExtended/SqsDiskQueue.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$app of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 3,
