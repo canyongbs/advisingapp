@@ -36,10 +36,6 @@
 
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\MeetingCenter\Models\BookingGroup;
-use AdvisingApp\MeetingCenter\Models\Calendar;
-use AdvisingApp\MeetingCenter\Models\CalendarEvent;
-use App\Models\User;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -65,7 +61,6 @@ use Illuminate\Support\Str;
 //        );
 //    });
 //});
-
 
 test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements_table renames column and backfills source_type', function () {
     isolatedMigration(
