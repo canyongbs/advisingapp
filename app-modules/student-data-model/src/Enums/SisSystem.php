@@ -61,6 +61,14 @@ enum SisSystem: string implements HasLabel
         return self::tryFrom($value);
     }
 
+    public function hasTermAttributes(): bool
+    {
+        return match ($this) {
+            SisSystem::ThesisElements => true,
+            SisSystem::EllucianEthos => false,
+        };
+    }
+
     public function hasProgramsDivision(): bool
     {
         return match ($this) {

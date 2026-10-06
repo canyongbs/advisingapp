@@ -38,6 +38,7 @@ namespace AdvisingApp\StudentDataModel\Settings;
 
 use AdvisingApp\StudentDataModel\Enums\EnrollmentSemesterAutoImportDefaultOrder;
 use AdvisingApp\StudentDataModel\Enums\SisSystem;
+use App\Features\TermAttributesFeature;
 use Spatie\LaravelSettings\Settings;
 
 class StudentInformationSystemSettings extends Settings
@@ -53,5 +54,15 @@ class StudentInformationSystemSettings extends Settings
     public static function group(): string
     {
         return 'student_information_system';
+    }
+
+    /**
+     * Whether the tenant's SIS syncs term attributes (e.g. Thesis Elements Student Status records).
+     */
+    public function hasTermAttributes(): bool
+    {
+        return TermAttributesFeature::active()
+            && $this->is_enabled
+            && ($this->sis_system?->hasTermAttributes() ?? false);
     }
 }

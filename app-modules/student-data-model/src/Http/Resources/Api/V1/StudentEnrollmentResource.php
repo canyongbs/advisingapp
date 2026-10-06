@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Http\Resources\Api\V1;
 
 use AdvisingApp\StudentDataModel\Models\Enrollment;
+use App\Features\TermAttributesFeature;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -67,6 +68,7 @@ class StudentEnrollmentResource extends JsonResource
             'faculty_email' => $this->resource->faculty_email,
             'semester_code' => $this->resource->semester_code,
             'semester_name' => $this->resource->semester_name,
+            'sis_term_id' => $this->when(TermAttributesFeature::active(), fn () => $this->resource->sis_term_id),
             'start_date' => $this->resource->start_date,
             'end_date' => $this->resource->end_date,
         ];

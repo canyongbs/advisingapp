@@ -34,32 +34,37 @@
 </COPYRIGHT>
 */
 
-use App\Features\TermAttributesFeature;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+namespace AdvisingApp\StudentDataModel\Policies;
 
-return new class () extends Migration {
-    public function up(): void
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentTermAttribute;
+use App\Models\Authenticatable;
+use Illuminate\Auth\Access\Response;
+
+class StudentTermAttributePolicy
+{
+    public function before(Authenticatable $authenticatable): ?Response
     {
-        DB::transaction(function () {
-            Schema::table('enrollments', function (Blueprint $table) {
-                $table->string('sis_term_id')->nullable()->index();
-            });
+        if (! $authenticatable->hasLicense(Student::getLicenseType())) {
+            return Response::deny('You are not licensed for the Retention CRM.');
+        }
 
-            TermAttributesFeature::activate();
-        });
+        return null;
     }
 
-    public function down(): void
+    public function viewAny(Authenticatable $authenticatable): Response
     {
-        DB::transaction(function () {
-            TermAttributesFeature::deactivate();
-
-            Schema::table('enrollments', function (Blueprint $table) {
-                $table->dropColumn('sis_term_id');
-            });
-        });
+        return $authenticatable->canOrElse(
+            abilities: 'enrollment.view-any',
+            denyResponse: 'You do not have permission to view term attributes.'
+        );
     }
-};
+
+    public function view(Authenticatable $authenticatable, StudentTermAttribute $studentTermAttribute): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'enrollment.*.view',
+            denyResponse: 'You do not have permission to view this term attribute.'
+        );
+    }
+}

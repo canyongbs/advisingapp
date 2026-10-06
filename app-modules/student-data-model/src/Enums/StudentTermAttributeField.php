@@ -34,32 +34,37 @@
 </COPYRIGHT>
 */
 
-use App\Features\TermAttributesFeature;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+namespace AdvisingApp\StudentDataModel\Enums;
 
-return new class () extends Migration {
-    public function up(): void
+use Filament\Support\Contracts\HasLabel;
+
+/**
+ * The allow-list of `student_term_attributes` columns that can be filtered on.
+ * Values are column names, so user input must always be resolved through this enum before reaching a query.
+ */
+enum StudentTermAttributeField: string implements HasLabel
+{
+    case EnrollmentStatus = 'enrollment_status';
+
+    case AcademicStatus = 'academic_status';
+
+    case Campus = 'campus';
+
+    case CollegeLevel = 'college_level';
+
+    case Commuter = 'commuter';
+
+    case StudentRegistered = 'student_registered';
+
+    public function getLabel(): string
     {
-        DB::transaction(function () {
-            Schema::table('enrollments', function (Blueprint $table) {
-                $table->string('sis_term_id')->nullable()->index();
-            });
-
-            TermAttributesFeature::activate();
-        });
+        return match ($this) {
+            self::EnrollmentStatus => 'Enrollment Status',
+            self::AcademicStatus => 'Academic Status',
+            self::Campus => 'Campus',
+            self::CollegeLevel => 'College Level',
+            self::Commuter => 'Commuter',
+            self::StudentRegistered => 'Student Registered',
+        };
     }
-
-    public function down(): void
-    {
-        DB::transaction(function () {
-            TermAttributesFeature::deactivate();
-
-            Schema::table('enrollments', function (Blueprint $table) {
-                $table->dropColumn('sis_term_id');
-            });
-        });
-    }
-};
+}

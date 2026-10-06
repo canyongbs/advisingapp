@@ -34,32 +34,39 @@
 </COPYRIGHT>
 */
 
-use App\Features\TermAttributesFeature;
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
-use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
-use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
+namespace AdvisingApp\StudentDataModel\Filament\Filters;
 
-return new class () extends Migration {
-    public function up(): void
+use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use Filament\Forms\Components\Builder\Block;
+use Filament\QueryBuilder\Constraints\Constraint;
+
+/**
+ * Always registered so saved groups using it keep resolving, but it can only be added
+ * while the tenant's SIS syncs term attributes.
+ */
+class TermAttributeConstraint extends Constraint
+{
+    protected function setUp(): void
     {
-        DB::transaction(function () {
-            Schema::table('enrollments', function (Blueprint $table) {
-                $table->string('sis_term_id')->nullable()->index();
-            });
+        parent::setUp();
 
-            TermAttributesFeature::activate();
-        });
+        $this->icon('heroicon-m-calendar-days');
+
+        $this->label('Term Attribute');
+
+        $this->operators([
+            TermAttributeOperator::make(),
+        ]);
     }
 
-    public function down(): void
+    public function getBuilderBlock(): Block
     {
-        DB::transaction(function () {
-            TermAttributesFeature::deactivate();
+        $block = parent::getBuilderBlock();
 
-            Schema::table('enrollments', function (Blueprint $table) {
-                $table->dropColumn('sis_term_id');
-            });
-        });
+        if (! app(StudentInformationSystemSettings::class)->hasTermAttributes()) {
+            $block->maxItems(0);
+        }
+
+        return $block;
     }
-};
+}

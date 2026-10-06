@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\Tables;
 
 use AdvisingApp\Alert\Filament\Filters\AlertStatusConstraint;
+use AdvisingApp\StudentDataModel\Filament\Filters\TermAttributeConstraint;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -286,6 +287,7 @@ class StudentsTable
                 ->label('Enrollment Earned')
                 ->relationship('enrollments', 'unt_earned'),
             ...self::getEnrollmentTermConstraints(),
+            TermAttributeConstraint::make('termAttribute'),
         ];
     }
 
