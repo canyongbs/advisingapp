@@ -50,6 +50,7 @@ use AdvisingApp\Workflow\Jobs\DispatchExecuteWorkflowActionStepsForEachTenant;
 use App\Jobs\DispatchHealthChecksForEachTenant;
 use App\Jobs\DispatchModelPruningForEachTenant;
 use App\Jobs\DispatchStaleCacheTagPruningForEachTenant;
+use App\Jobs\PruneQueueMonitorJob;
 use Illuminate\Console\Scheduling\Event;
 use Illuminate\Contracts\Console\Kernel;
 use Illuminate\Support\Facades\Queue;
@@ -123,6 +124,7 @@ describe('schedule', function () {
         Queue::assertNotPushed(DispatchRefreshCalendarRefreshTokensForEachTenant::class);
         Queue::assertNotPushed(DispatchUpdateCurrentAiAssistantLinksForEachTenant::class);
         Queue::assertNotPushed(DispatchUpdateCurrentCustomerAdvisorLinksForEachTenant::class);
+        Queue::assertNotPushed(PruneQueueMonitorJob::class);
     });
 
     it('dispatches the fifteen-minute orchestrators on a fifteen-minute boundary', function () {
@@ -136,6 +138,7 @@ describe('schedule', function () {
 
         Queue::assertPushed(DispatchSyncCalendarsForEachTenant::class);
         Queue::assertPushed(DispatchUploadFilesToVectorStoresForEachTenant::class);
+        Queue::assertPushed(PruneQueueMonitorJob::class);
 
         Queue::assertNotPushed(DispatchStaleCacheTagPruningForEachTenant::class);
     });
@@ -187,4 +190,35 @@ describe('schedule', function () {
 
         @unlink($path);
     });
+
+    it('only publishes the queue scale signal when running on ECS', function (string $ecsAgentUri, bool $publishes) {
+        config(['app.ecs_agent_uri' => $ecsAgentUri]);
+
+        $scaleSignal = collect(app(Kernel::class)->resolveConsoleSchedule()->events())
+            ->first(fn (Event $event): bool => str_contains((string) $event->command, 'queue:autoscale:publish-scale-signal'));
+
+        assert($scaleSignal instanceof Event);
+
+        expect($scaleSignal->filtersPass(app()))->toBe($publishes);
+    })->with([
+        'on ECS' => ['http://169.254.170.2/api/task', true],
+        'elsewhere' => ['', false],
+    ]);
+
+    it('runs the queue commands in the background without overlapping', function (string $command) {
+        $event = collect(app(Kernel::class)->resolveConsoleSchedule()->events())
+            ->first(fn (Event $event): bool => str_contains("{$event->command} ", "{$command} "));
+
+        assert($event instanceof Event);
+
+        expect($event->runInBackground)->toBeTrue()
+            ->and($event->withoutOverlapping)->toBeTrue()
+            ->and($event->expiresAt)->toBe(5);
+    })->with([
+        'queue:autoscale:publish-scale-signal',
+        'queue-metrics:cleanup-stale-workers',
+        'queue-metrics:calculate',
+        'queue-metrics:record-trends',
+        'queue-metrics:calculate-baselines',
+    ]);
 });
