@@ -41,8 +41,6 @@ use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Actions\Action;
-use Filament\Support\Enums\Width;
 
 class SelectFormFieldBlock extends FormFieldBlock
 {
@@ -54,12 +52,6 @@ class SelectFormFieldBlock extends FormFieldBlock
     public static function getLabel(): string
     {
         return 'Drop Down';
-    }
-
-    public static function configureEditorAction(Action $action): Action
-    {
-        return parent::configureEditorAction($action)
-            ->modalWidth(Width::TwoExtraLarge);
     }
 
     public static function fields(): array

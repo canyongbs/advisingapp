@@ -74,12 +74,11 @@ it('falls back to the block type label inside the preview body when no field lab
         ->toContain('Text input');
 });
 
-it('resolves a submitted value to an option, preferring exact, then case-insensitive, then slug matches', function (array $optionValues, string $response, int | string | null $expected) {
+it('resolves a submitted value to an option, preferring an exact match over a case-insensitive one', function (array $optionValues, string $response, int | string | null $expected) {
     expect(FormFieldBlock::resolveOptionValue($optionValues, $response))->toBe($expected);
 })->with([
-    'exact before slug' => [['option-one', 'Option One'], 'Option One', 'Option One'],
-    'case-insensitive before slug' => [['option-one', 'OPTION ONE'], 'Option One', 'OPTION ONE'],
-    'slug as a last resort' => [['option-one'], 'Option One', 'option-one'],
+    'exact before case-insensitive' => [['OPTION ONE', 'Option One'], 'Option One', 'Option One'],
+    'case-insensitive' => [['OPTION ONE'], 'Option One', 'OPTION ONE'],
     'integer option values' => [[10, 2], '2', 2],
     'no match' => [['us', 'ca'], 'Mexico', null],
 ]);
@@ -91,20 +90,6 @@ it('normalizes stored options to a value => label map by their shape, not their 
     'map with sequential numeric keys' => [[0 => 'Zero', 1 => 'One'], [0 => 'Zero', 1 => 'One']],
     'rows of label and value' => [[['label' => 'Zero', 'value' => '0'], ['label' => 'One', 'value' => '1']], ['0' => 'Zero', '1' => 'One']],
     'no options' => [[], []],
-]);
-
-it('renders every option label in the radio and checkbox previews, regardless of the stored options format', function (string $block, array $options) {
-    $html = $block::toPreviewHtml(['label' => 'Pick one', 'isRequired' => false, 'options' => $options]);
-
-    assert(is_string($html));
-
-    expect($html)->toContain('Zero')->toContain('One');
-})->with([
-    'radio' => RadioFormFieldBlock::class,
-    'checkboxes' => CheckboxesFormFieldBlock::class,
-])->with([
-    'map with sequential numeric keys' => [[0 => 'Zero', 1 => 'One']],
-    'rows of label and value' => [[['label' => 'Zero', 'value' => '0'], ['label' => 'One', 'value' => '1']]],
 ]);
 
 it('sends options to FormKit as an ordered list, regardless of the stored options format', function (string $block, array $options) {

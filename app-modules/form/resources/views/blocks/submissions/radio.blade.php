@@ -43,9 +43,8 @@
         if (filled($response ?? null)) {
             $displayValue = FormFieldBlock::getOptionLabel($normalizedOptions, $response);
 
-            // Otherwise show the submitted value as-is, e.g. when its option has since been renamed
-            if ($displayValue === null) {
-                $displayValue = $hasOtherOption ? 'Other: ' . $response : $response;
+            if ($displayValue === null && $hasOtherOption) {
+                $displayValue = 'Other: ' . $response;
             }
         }
     @endphp

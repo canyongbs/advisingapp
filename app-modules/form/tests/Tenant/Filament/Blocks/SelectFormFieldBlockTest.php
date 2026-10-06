@@ -45,17 +45,13 @@ it('renders a different preview when the options are only reordered', function (
     expect($reordered)->not->toBe($original);
 });
 
-it('shows the option label for a submitted value, falling back to the submitted value when its option no longer exists', function (string $response, string $expected) {
+it('shows the option label for a submitted value', function () {
     $html = SelectFormFieldBlock::toHtml([
         'label' => 'Country',
         'isRequired' => false,
         'options' => ['united-states' => 'United States'],
-        'response' => $response,
+        'response' => 'united-states',
     ], []);
 
-    expect($html)->toContain($expected);
-})->with([
-    'current option' => ['united-states', 'United States'],
-    'value saved as the label' => ['United States', 'United States'],
-    'removed option' => ['us', 'us'],
-]);
+    expect($html)->toContain('United States');
+});

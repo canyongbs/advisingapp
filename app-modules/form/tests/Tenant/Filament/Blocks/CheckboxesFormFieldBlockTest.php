@@ -78,41 +78,6 @@ describe('submission state', function () {
         ],
     ]);
 
-    it('prefers an exact option value over a slug match', function () {
-        $field = new FormField(['config' => ['options' => ['Option One' => 'First', 'option-one' => 'Second']]]);
-
-        $state = CheckboxesFormFieldBlock::getSubmissionState($field, ['Option One']);
-
-        expect($state['response'])->toBe(['First' => true, 'Second' => false]);
-    });
-
-    it('prefers a case-insensitive option value over a slug match', function () {
-        $field = new FormField(['config' => ['options' => ['option-one' => 'Second', 'OPTION ONE' => 'First']]]);
-
-        $state = CheckboxesFormFieldBlock::getSubmissionState($field, ['Option One']);
-
-        expect($state['response'])->toBe(['Second' => false, 'First' => true]);
-    });
-
-    it('matches responses saved as the option label by their slug', function () {
-        $field = new FormField(['config' => ['options' => ['united-states' => 'United States']]]);
-
-        $state = CheckboxesFormFieldBlock::getSubmissionState($field, ['United States']);
-
-        expect($state['response'])->toBe(['United States' => true]);
-    });
-
-    it('still reports responses whose option no longer exists', function () {
-        $field = new FormField(['config' => ['options' => ['united-states' => 'United States']]]);
-
-        $state = CheckboxesFormFieldBlock::getSubmissionState($field, ['us']);
-
-        expect($state['response'])->toBe([
-            'United States' => false,
-            'us' => true,
-        ]);
-    });
-
     it('reports unmatched responses as other options when enabled', function () {
         $field = new FormField(['config' => [
             'options' => ['option-one' => 'Option One'],

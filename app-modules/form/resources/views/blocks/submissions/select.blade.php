@@ -34,7 +34,7 @@
 @use(AdvisingApp\Form\Filament\Blocks\FormFieldBlock)
 <x-form::blocks.field-wrapper class="py-3" :$label :$isRequired :description="$description ?? null">
     @if (filled($response ?? null))
-        {{ FormFieldBlock::getOptionLabel($options, $response) ?? $response }}
+        {{ FormFieldBlock::getOptionLabel($options, $response) }}
     @else
         <span class="text-gray-500">No response</span>
     @endif

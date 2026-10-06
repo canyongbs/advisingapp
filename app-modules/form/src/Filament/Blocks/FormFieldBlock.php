@@ -46,7 +46,6 @@ use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 
 abstract class FormFieldBlock extends RichContentCustomBlock
 {
@@ -123,28 +122,15 @@ abstract class FormFieldBlock extends RichContentCustomBlock
     }
 
     /**
-     * Derives an option's value from its label, replacing spaces (and any
-     * other non-alphanumeric separators) with hyphens.
-     */
-    public static function slugifyOptionValue(?string $label): string
-    {
-        return Str::slug($label ?? '');
-    }
-
-    /**
-     * Resolves a submitted value to a single option value, preferring an exact match, then a case-insensitive one,
-     * and only then the slug, so values saved before option values were generated from labels still match.
+     * Resolves a submitted value to a single option value, preferring an exact match over a case-insensitive one.
      *
      * @param array<int, int|string> $optionValues
      */
     public static function resolveOptionValue(array $optionValues, string $response): int | string | null
     {
-        $slug = static::slugifyOptionValue($response);
-
         $matchers = [
             fn (string $value): bool => $value === $response,
             fn (string $value): bool => strcasecmp($value, $response) === 0,
-            fn (string $value): bool => $value === $slug,
         ];
 
         foreach ($matchers as $matches) {

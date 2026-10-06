@@ -56,28 +56,17 @@ it('validates the response against the option values, regardless of the stored o
     ],
 ]);
 
-it('shows the option label for a submitted value, falling back to the submitted value when its option no longer exists', function (string $response, string $expected) {
+it('shows the option label for a submitted value, or the other response when enabled', function (bool $hasOtherOption, string $response, string $expected) {
     $html = RadioFormFieldBlock::toHtml([
         'label' => 'Country',
         'isRequired' => false,
         'options' => ['united-states' => 'United States'],
+        'hasOtherOption' => $hasOtherOption,
         'response' => $response,
     ], []);
 
     expect($html)->toContain($expected);
 })->with([
-    'current option' => ['united-states', 'United States'],
-    'value saved as the label' => ['United States', 'United States'],
-    'removed option' => ['us', 'us'],
+    'current option' => [false, 'united-states', 'United States'],
+    'other response' => [true, 'Mexico', 'Other: Mexico'],
 ]);
-
-it('shows the option label for a submitted value when the options are keyed 0, 1', function () {
-    $html = RadioFormFieldBlock::toHtml([
-        'label' => 'Pick one',
-        'isRequired' => false,
-        'options' => [0 => 'Zero', 1 => 'One'],
-        'response' => '1',
-    ], []);
-
-    expect($html)->toContain('One');
-});

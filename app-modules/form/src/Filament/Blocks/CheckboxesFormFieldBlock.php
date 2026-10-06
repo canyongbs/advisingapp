@@ -135,11 +135,11 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
             ->mapWithKeys(fn ($label, $key) => [$label => $resolvedValues->containsStrict($key)])
             ->toArray();
 
-        if (is_array($response)) {
+        if ($hasOtherOption && is_array($response)) {
             $otherValues = array_filter($response, fn ($val) => static::resolveOptionValue($optionValues, $val) === null);
 
             foreach ($otherValues as $otherValue) {
-                $result[$hasOtherOption ? 'Other: ' . $otherValue : $otherValue] = true;
+                $result['Other: ' . $otherValue] = true;
             }
         }
 
