@@ -34,29 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Database\Factories;
-
-use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Jobs\AiAssistants\FetchAiAssistantLinkParsingResults;
 use AdvisingApp\Ai\Models\AiAssistantLink;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use AdvisingApp\Ai\Settings\AiIntegrationsSettings;
+use Illuminate\Support\Facades\Http;
 
-/**
- * @extends Factory<AiAssistantLink>
- */
-class AiAssistantLinkFactory extends Factory
-{
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
-        return [
-            'ai_assistant_id' => AiAssistant::factory(),
-            'parsing_results' => $this->faker->paragraph,
-            'url' => $this->faker->url,
-            'is_keep_current_enabled' => true,
-        ];
-    }
-}
+it('refreshes existing parsing results when explicitly requested', function () {
+    Http::fake([
+        'https://r.jina.ai/*' => Http::response('fresh parsing results', 200),
+    ]);
+
+    $settings = app(AiIntegrationsSettings::class);
+    $settings->jina_deepsearch_v1_api_key = 'test-api-key';
+
+    $link = AiAssistantLink::factory()->create([
+        'parsing_results' => 'stale parsing results',
+    ]);
+
+    (new FetchAiAssistantLinkParsingResults($link, refreshExistingParsingResults: true))->handle();
+
+    $link->refresh();
+
+    expect($link->parsing_results)->toBe('fresh parsing results');
+});
+
+it('does not refresh existing parsing results when not explicitly requested', function () {
+    Http::fake([
+        'https://r.jina.ai/*' => Http::response('fresh parsing results', 200),
+    ]);
+
+    $settings = app(AiIntegrationsSettings::class);
+    $settings->jina_deepsearch_v1_api_key = 'test-api-key';
+
+    $link = AiAssistantLink::factory()->create([
+        'parsing_results' => 'stale parsing results',
+    ]);
+
+    (new FetchAiAssistantLinkParsingResults($link, refreshExistingParsingResults: false))->handle();
+
+    $link->refresh();
+
+    expect($link->parsing_results)->toBe('stale parsing results');
+});

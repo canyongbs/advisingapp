@@ -38,8 +38,10 @@ namespace AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages;
 
 use AdvisingApp\Ai\Filament\Resources\AiAssistants\AiAssistantResource;
 use AdvisingApp\Ai\Models\AiAssistantLink;
+use App\Features\AiAssistantKeepCurrentFeature;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Alignment;
@@ -83,6 +85,10 @@ class EditAiAssistantLinks extends EditRecord
                             ->required()
                             ->disabled(fn (?AiAssistantLink $record): bool => $record !== null)
                             ->url(),
+                        Toggle::make('is_keep_current_enabled')
+                            ->label('Keep Current')
+                            ->helperText('Select this option if you would like this AI advisor to check for updates on a monthly basis.')
+                            ->visible(fn (): bool => AiAssistantKeepCurrentFeature::active()),
                     ])
                     ->relationship()
                     ->hiddenLabel()

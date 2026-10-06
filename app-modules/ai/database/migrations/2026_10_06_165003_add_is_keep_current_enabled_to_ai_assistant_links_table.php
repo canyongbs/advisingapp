@@ -34,29 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Database\Factories;
+use App\Features\AiAssistantKeepCurrentFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\AiAssistantLink;
-use Illuminate\Database\Eloquent\Factories\Factory;
-
-/**
- * @extends Factory<AiAssistantLink>
- */
-class AiAssistantLinkFactory extends Factory
-{
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+return new class () extends Migration {
+    public function up(): void
     {
-        return [
-            'ai_assistant_id' => AiAssistant::factory(),
-            'parsing_results' => $this->faker->paragraph,
-            'url' => $this->faker->url,
-            'is_keep_current_enabled' => true,
-        ];
+        DB::transaction(function () {
+            Schema::table('ai_assistant_links', function (Blueprint $table) {
+                $table->boolean('is_keep_current_enabled')->default(false);
+            });
+
+            AiAssistantKeepCurrentFeature::activate();
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            AiAssistantKeepCurrentFeature::deactivate();
+
+            Schema::table('ai_assistant_links', function (Blueprint $table) {
+                $table->dropColumn('is_keep_current_enabled');
+            });
+        });
+    }
+};

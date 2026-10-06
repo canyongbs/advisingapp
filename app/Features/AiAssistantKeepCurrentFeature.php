@@ -34,29 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Database\Factories;
+namespace App\Features;
 
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\AiAssistantLink;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Support\AbstractFeatureFlag;
 
-/**
- * @extends Factory<AiAssistantLink>
- */
-class AiAssistantLinkFactory extends Factory
+class AiAssistantKeepCurrentFeature extends AbstractFeatureFlag
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    public function resolve(mixed $scope): mixed
     {
-        return [
-            'ai_assistant_id' => AiAssistant::factory(),
-            'parsing_results' => $this->faker->paragraph,
-            'url' => $this->faker->url,
-            'is_keep_current_enabled' => true,
-        ];
+        return false;
     }
 }

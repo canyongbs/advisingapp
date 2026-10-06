@@ -63,6 +63,7 @@ class AiAssistantLink extends BaseModel implements AiFile, Auditable
         'ai_assistant_id',
         'parsing_results',
         'url',
+        'is_keep_current_enabled',
     ];
 
     /**

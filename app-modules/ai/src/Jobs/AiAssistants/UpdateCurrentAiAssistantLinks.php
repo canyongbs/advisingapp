@@ -34,29 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Database\Factories;
+namespace AdvisingApp\Ai\Jobs\AiAssistants;
 
-use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Ai\Models\AiAssistantLink;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Features\AiAssistantKeepCurrentFeature;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Queue\InteractsWithQueue;
+use Spatie\Multitenancy\Jobs\TenantAware;
 
-/**
- * @extends Factory<AiAssistantLink>
- */
-class AiAssistantLinkFactory extends Factory
+class UpdateCurrentAiAssistantLinks implements ShouldQueue, TenantAware
 {
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+
+    public function handle(): void
     {
-        return [
-            'ai_assistant_id' => AiAssistant::factory(),
-            'parsing_results' => $this->faker->paragraph,
-            'url' => $this->faker->url,
-            'is_keep_current_enabled' => true,
-        ];
+        if (! AiAssistantKeepCurrentFeature::active()) {
+            return;
+        }
+
+        AiAssistantLink::query()
+            ->where('is_keep_current_enabled', true)
+            ->each(function (AiAssistantLink $link) {
+                dispatch(new FetchAiAssistantLinkParsingResults($link, refreshExistingParsingResults: true));
+            });
     }
 }

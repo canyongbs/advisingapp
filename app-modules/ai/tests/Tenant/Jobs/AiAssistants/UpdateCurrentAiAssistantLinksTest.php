@@ -34,29 +34,46 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Database\Factories;
-
-use AdvisingApp\Ai\Models\AiAssistant;
+use AdvisingApp\Ai\Jobs\AiAssistants\FetchAiAssistantLinkParsingResults;
+use AdvisingApp\Ai\Jobs\AiAssistants\UpdateCurrentAiAssistantLinks;
 use AdvisingApp\Ai\Models\AiAssistantLink;
-use Illuminate\Database\Eloquent\Factories\Factory;
+use App\Features\AiAssistantKeepCurrentFeature;
+use Illuminate\Support\Facades\Queue;
 
-/**
- * @extends Factory<AiAssistantLink>
- */
-class AiAssistantLinkFactory extends Factory
-{
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
-        return [
-            'ai_assistant_id' => AiAssistant::factory(),
-            'parsing_results' => $this->faker->paragraph,
-            'url' => $this->faker->url,
-            'is_keep_current_enabled' => true,
-        ];
-    }
-}
+it('dispatches FetchAiAssistantLinkParsingResults only for current links', function () {
+    Queue::fake();
+
+    $currentLink = AiAssistantLink::factory()->create([
+        'is_keep_current_enabled' => true,
+    ]);
+
+    $nonCurrentLink = AiAssistantLink::factory()->create([
+        'is_keep_current_enabled' => false,
+    ]);
+
+    (new UpdateCurrentAiAssistantLinks())->handle();
+
+    Queue::assertPushed(FetchAiAssistantLinkParsingResults::class, function (FetchAiAssistantLinkParsingResults $job) use ($currentLink) {
+        return $job->uniqueId() === $currentLink->id
+            && $job->refreshesExistingParsingResults();
+    });
+
+    Queue::assertNotPushed(FetchAiAssistantLinkParsingResults::class, function (FetchAiAssistantLinkParsingResults $job) use ($nonCurrentLink) {
+        return $job->uniqueId() === $nonCurrentLink->id;
+    });
+});
+
+//To Do: AiAssistantKeepCurrentFeature - Remove this test while feature flag cleanup
+it('does nothing while the feature is inactive', function () {
+    AiAssistantKeepCurrentFeature::deactivate();
+
+    Queue::fake();
+
+    AiAssistantLink::factory()->create([
+        'is_keep_current_enabled' => true,
+    ]);
+
+    (new UpdateCurrentAiAssistantLinks())->handle();
+
+    Queue::assertNotPushed(FetchAiAssistantLinkParsingResults::class);
+});
