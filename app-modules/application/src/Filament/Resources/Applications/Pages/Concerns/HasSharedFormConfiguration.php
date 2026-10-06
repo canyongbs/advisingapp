@@ -59,6 +59,9 @@ use Filament\Schemas\Components\Utilities\Get;
 
 trait HasSharedFormConfiguration
 {
+    /**
+     * @return array<int, \Filament\Schemas\Components\Component>
+     */
     public function fields(): array
     {
         return [

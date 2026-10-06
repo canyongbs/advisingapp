@@ -51,6 +51,9 @@ use Throwable;
 // Or we need to restrict creation of these states so that our `first()` logic to grab the desired state is always correct
 class ApplicationAdmissionActions
 {
+    /**
+     * @return array<int, Action>
+     */
     public static function get(): array
     {
         return [

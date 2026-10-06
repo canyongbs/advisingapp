@@ -51,6 +51,9 @@ class ApplicationSubmissionExport implements FromCollection, WithHeadings, WithM
         return $this->submissions->load(['fields', 'submissible.fields']);
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function headings(): array
     {
         $submissible = $this->submissions->first()?->submissible;
@@ -64,6 +67,9 @@ class ApplicationSubmissionExport implements FromCollection, WithHeadings, WithM
         ];
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function map($row): array
     {
         return [

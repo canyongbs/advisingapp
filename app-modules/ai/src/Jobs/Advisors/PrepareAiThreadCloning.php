@@ -115,6 +115,9 @@ class PrepareAiThreadCloning implements ShouldQueue
             ->dispatch();
     }
 
+    /**
+     * @return array<CloneAiThread>
+     */
     protected function generateSingleUserShareJobs(): array
     {
         return User::query()
