@@ -9,7 +9,7 @@ consulted: Kevin Ullyott, Dan Harrin
 
 ## Context and Problem Statement
 
-We are adding worker autoscaling and queue monitoring to Advising App using the same `cboxdk/laravel-queue-autoscale`, `cboxdk/laravel-queue-metrics`, and `cboxdk/laravel-queue-monitor` stack that Olympus runs today. Before building it, we have to decide what the queues themselves look like, because that decision shapes the driver, the infrastructure, and how tenants affect each other.
+We are adding worker autoscaling and queue monitoring to Advising App using the same `cboxdk/laravel-queue-autoscale`, `cboxdk/laravel-queue-metrics`, and `cboxdk/laravel-queue-monitor` stack. Before building it, we have to decide what the queues themselves look like, because that decision shapes the driver, the infrastructure, and how tenants affect each other.
 
 Advising App is multi-tenant (`spatie/laravel-multitenancy`). Today every tenant shares six static Amazon SQS standard queues, split by workload class:
 
@@ -22,7 +22,7 @@ Advising App is multi-tenant (`spatie/laravel-multitenancy`). Today every tenant
 | `meeting-center`         | Calendar sync                                                   |
 | `import-export`          | Bulk imports and exports                                        |
 
-Olympus moved from SQS to Redis during its autoscaling work so it could use dynamically named queues (one per SIS integration). That raised the question of whether Advising App should do the same, with one queue per tenant, either on Redis or as dynamically created SQS queues.
+The autoscaler supports dynamically named queues, which raised the question of whether Advising App should use one queue per tenant, either on Redis or as dynamically created SQS queues.
 
 The concern raised by the team is the **noisy neighbor**: if one tenant (or a few) pushes a large backlog onto a shared queue, do the other tenants' jobs, queued behind that backlog, wait too long to be processed?
 
@@ -41,7 +41,7 @@ The concern raised by the team is the **noisy neighbor**: if one tenant (or a fe
 1. Static shared SQS queues, unchanged (status quo, no fairness)
 2. **Static shared SQS standard queues with SQS fair queuing (`MessageGroupId` = tenant) plus autoscaling**
 3. Dynamic per-tenant SQS queues, created and deleted through the AWS SDK
-4. Redis queues with dynamic per-tenant queues (the Olympus approach, applied per tenant)
+4. Redis queues with dynamic per-tenant queues
 5. Static shared Redis queues
 6. SQS FIFO queues with `MessageGroupId` = tenant
 7. Application-level per-tenant concurrency limits on shared queues (job middleware)
@@ -137,19 +137,19 @@ Create a set of queues per tenant when the tenant is created (and for existing t
 - Good, because per-tenant queue depth is directly visible.
 - Bad, because a Laravel worker processes one queue (or a strict-priority list of queues), and the autoscaler spawns workers per queue. Every tenant queue with work needs at least one dedicated worker process (~250 MB each), so worker count and memory grow with _tenant count_, not work. Polling many queues from one worker in priority order would recreate starvation, and each empty SQS queue in the list costs a receive round trip.
 - Bad, because our scheduler fans out to every tenant every minute (engagement delivery, campaign actions, workflow steps, health checks, and more), so nearly every tenant queue has work every minute. That means either a permanent warm worker per tenant queue, or constant spawn/terminate churn with a wake-up delay (an evaluation cycle plus process boot) on every tenant's first job.
-- Bad, because the autoscaler's cluster leader reads depth for every queue every cycle, and Laravel's SQS driver issues three `GetQueueAttributes` calls per queue per read. With hundreds of tenants times several workload queues, that is thousands of sequential HTTP calls per 5-second cycle, which overruns the cycle and the leader lease. Olympus has already seen leadership flap from a slow cycle (caused by a slow Redis `SCAN`).
+- Bad, because the autoscaler's cluster leader reads depth for every queue every cycle, and Laravel's SQS driver issues three `GetQueueAttributes` calls per queue per read. With hundreds of tenants times several workload queues, that is thousands of sequential HTTP calls per 5-second cycle, which overruns the cycle and the leader lease, and a cycle that outlasts the lease makes leadership flap.
 - Bad, because queue infrastructure moves from IaC into application runtime: we would own creation, dead-letter queues, redrive policies, encryption, alarms, tagging, deletion (with SQS's 60-second name-reuse delay), tenant soft-delete semantics, and `sqs:CreateQueue`/`sqs:DeleteQueue` permissions on the application's credentials.
 - Bad, because migrating requires a feature-flagged cut-over where workers drain the old shared queues while new per-tenant queues come online, for every tenant.
 
 ### 4. Redis Queues with Dynamic Per-Tenant Queues
 
-The Olympus model, applied per tenant: hash-tagged Redis queue names (`{tenant-123}`) discovered by the autoscaler through wildcard patterns.
+One Redis queue per tenant (`tenant-123`), discovered by the autoscaler through wildcard patterns.
 
 - Good, because dynamic queue names cost nothing to create; the autoscaler supports glob patterns natively.
 - Good, because Redis is the autoscaler's best-supported driver: true oldest-job age, reserved and delayed-due counts.
 - Bad, because it has the same worker-per-queue problem as option 3: worker count grows with tenant count.
 - Bad, because ElastiCache Serverless always runs in cluster mode, so each queue must be hash-tagged into a single slot. Each queue is then bound by the per-slot ceiling (30K ECPUs/second for simple SET/GET; queue operations are Lua scripts that cost more per call), and cannot scale horizontally no matter how the cache scales.
-- Bad, because queue traffic is bursty and write-heavy and would compete with cache and session traffic for the same serverless scaling headroom. ElastiCache Serverless for Redis OSS can take 10 to 12 minutes to double its request rate, so a burst that outruns the ramp is throttled, along with the cache traffic on the same cache. Olympus has experienced failed writes and slow reads on its shared serverless cache.
+- Bad, because queue traffic is bursty and write-heavy and would compete with cache and session traffic for the same serverless scaling headroom. ElastiCache Serverless for Redis OSS can take 10 to 12 minutes to double its request rate, so a burst that outruns the ramp is throttled, along with the cache traffic on the same cache, showing up as failed writes and slow reads.
 - Bad, because an in-memory cache is a weaker durability guarantee for queued work than SQS.
 - Bad, because it is a full driver migration away from SQS.
 

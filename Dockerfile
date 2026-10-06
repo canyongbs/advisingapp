@@ -373,18 +373,12 @@ RUN /set-id www-data ${USER_ID}:${GROUP_ID} && \
     /set-file-permissions --owner ${USER_ID}:${GROUP_ID} --service worker && \
     rm /set-id /set-file-permissions
 
-ARG MULTIPLE_DEVELOPMENT_QUEUES=false
-
-RUN if [[ -z "$MULTIPLE_DEVELOPMENT_QUEUES" ]] ; then \
-    /generate-queues.sh "default" "\$SQS_QUEUE" \
+RUN /generate-queues.sh "default" "\$SQS_QUEUE" \
     && /generate-queues.sh "landlord" "\$LANDLORD_SQS_QUEUE" \
     && /generate-queues.sh "outbound-communication" "\$OUTBOUND_COMMUNICATION_QUEUE" \
     && /generate-queues.sh "audit" "\$AUDIT_QUEUE_QUEUE" \
     && /generate-queues.sh "meeting-center" "\$MEETING_CENTER_QUEUE" \
-    && /generate-queues.sh "import-export" "\$IMPORT_EXPORT_QUEUE" \
-    ; else \
-    /generate-queues.sh "default" "\$SQS_QUEUE" \
-    ; fi
+    && /generate-queues.sh "import-export" "\$IMPORT_EXPORT_QUEUE"
 
 RUN rm /generate-queues.sh
 

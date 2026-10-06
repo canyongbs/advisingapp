@@ -64,7 +64,7 @@ The average duration feeds directly into worker sizing in `cboxdk/laravel-queue-
     - Little's Law steady state: `workers = arrivalRate × avgJobTime`.
     - `BacklogDrainCalculator`: `workers = backlog / (timeUntilBreach / avgJobTime)` (or `backlog / (SLA / avgJobTime)` when age is unavailable).
 
-**When `pushedAt` is absent**, every duration is under 10 ms. The strategy rejects them and always uses the 2 s fallback, so real job durations never reach the autoscaler. Olympus runs this way today.
+**When `pushedAt` is absent**, every duration is under 10 ms. The strategy rejects them and always uses the 2 s fallback, so real job durations never reach the autoscaler.
 
 **When `pushedAt` is set at dispatch**, the duration includes queue wait. That creates a feedback loop:
 

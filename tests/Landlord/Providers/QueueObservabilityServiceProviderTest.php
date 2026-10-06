@@ -34,6 +34,49 @@
 </COPYRIGHT>
 */
 
-return [
-    'queue' => env('MEETING_CENTER_QUEUE', 'meeting-center'),
-];
+use App\Features\QueueMonitoringFeature;
+use App\Models\Tenant;
+use App\Providers\QueueObservabilityServiceProvider;
+use Cbox\LaravelQueueMonitor\Models\JobMonitor;
+
+it('records the current tenant on monitored jobs', function () {
+    $tenant = Tenant::query()->first();
+
+    $jobMonitor = $tenant->execute(fn (): JobMonitor => JobMonitor::factory()->create());
+
+    expect($jobMonitor->refresh()->getAttribute('tenant_id'))->toBe($tenant->getKey());
+});
+
+it('records no tenant on jobs monitored outside a tenant context', function () {
+    Tenant::forgetCurrent();
+
+    $jobMonitor = JobMonitor::factory()->create();
+
+    expect($jobMonitor->refresh()->getAttribute('tenant_id'))->toBeNull();
+});
+
+it('disables the queue monitor while `QueueMonitoringFeature` is inactive', function () {
+    QueueMonitoringFeature::deactivate();
+
+    config(['queue-monitor.enabled' => true]);
+
+    $provider = app()->getProvider(QueueObservabilityServiceProvider::class);
+
+    assert($provider instanceof QueueObservabilityServiceProvider);
+
+    $provider->boot();
+
+    expect(config('queue-monitor.enabled'))->toBeFalse();
+});
+
+it('leaves the queue monitor enabled once `QueueMonitoringFeature` is active', function () {
+    config(['queue-monitor.enabled' => true]);
+
+    $provider = app()->getProvider(QueueObservabilityServiceProvider::class);
+
+    assert($provider instanceof QueueObservabilityServiceProvider);
+
+    $provider->boot();
+
+    expect(config('queue-monitor.enabled'))->toBeTrue();
+});

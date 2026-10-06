@@ -34,6 +34,39 @@
 </COPYRIGHT>
 */
 
-return [
-    'queue' => env('MEETING_CENTER_QUEUE', 'meeting-center'),
-];
+use App\Models\Tenant;
+use App\Support\QueueAutoscale\LandlordFailureWindowStore;
+use Illuminate\Support\Str;
+
+it('shares job outcomes recorded in a tenant context with the autoscale manager outside it', function () {
+    $queue = 'landlord-failure-window-store-' . Str::random();
+    $store = new LandlordFailureWindowStore();
+
+    Tenant::forgetCurrent();
+
+    expect($store->currentWindow('sqs', $queue, 60))->toBe(['total' => 0, 'failures' => 0]);
+
+    Tenant::query()->first()->execute(function () use ($store, $queue) {
+        $store->recordOutcome('sqs', $queue, failed: true, windowSeconds: 60);
+        $store->recordOutcome('sqs', $queue, failed: false, windowSeconds: 60);
+    });
+
+    expect($store->currentWindow('sqs', $queue, 60))->toBe(['total' => 2, 'failures' => 1]);
+
+    $store->resetWindow('sqs', $queue, 60);
+
+    expect($store->currentWindow('sqs', $queue, 60))->toBe(['total' => 0, 'failures' => 0]);
+});
+
+it('shares the fuse state written in a tenant context with the autoscale manager outside it', function () {
+    $queue = 'landlord-failure-window-store-' . Str::random();
+    $store = new LandlordFailureWindowStore();
+
+    Tenant::forgetCurrent();
+
+    expect($store->readState('sqs', $queue))->toBeNull();
+
+    Tenant::query()->first()->execute(fn () => $store->writeState('sqs', $queue, 'tripped', 1234.5));
+
+    expect($store->readState('sqs', $queue))->toBe(['state' => 'tripped', 'changed_at' => 1234.5]);
+});

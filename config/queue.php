@@ -112,12 +112,12 @@ return [
             ],
         ],
 
-        // Local development only. Redis Cluster requires hash-tagged queue names ({default}) so each queue's keys share one slot,
+        // Local development only. On a cluster connection Laravel hash-tags each queue's keys (queues:{name}) itself,
         // and retry_after matches the 1200s visibility timeout of the SQS queues used in staging and production.
         'redis' => [
             'driver' => 'redis',
             'connection' => 'default',
-            'queue' => env('REDIS_QUEUE', env('SQS_QUEUE', '{default}')),
+            'queue' => env('REDIS_QUEUE', env('SQS_QUEUE', 'default')),
             'retry_after' => (int) env('REDIS_QUEUE_RETRY_AFTER', 1200),
             'block_for' => null,
             'after_commit' => false,
@@ -151,7 +151,7 @@ return [
 
     'landlord_queue' => env('LANDLORD_SQS_QUEUE', 'landlord'),
 
-    'outbound_communication_queue' => env('OUTBOUND_COMMUNICATION_QUEUE', env('SQS_QUEUE', 'default')),
+    'outbound_communication_queue' => env('OUTBOUND_COMMUNICATION_QUEUE', 'outbound-communication'),
 
-    'import_export_queue' => env('IMPORT_EXPORT_QUEUE', env('SQS_QUEUE', 'default')),
+    'import_export_queue' => env('IMPORT_EXPORT_QUEUE', 'import-export'),
 ];

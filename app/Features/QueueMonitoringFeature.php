@@ -34,6 +34,14 @@
 </COPYRIGHT>
 */
 
-return [
-    'queue' => env('MEETING_CENTER_QUEUE', 'meeting-center'),
-];
+namespace App\Features;
+
+use App\Support\LandlordAbstractFeatureFlag;
+
+class QueueMonitoringFeature extends LandlordAbstractFeatureFlag
+{
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
+    }
+}

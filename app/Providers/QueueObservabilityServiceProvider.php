@@ -34,6 +34,24 @@
 </COPYRIGHT>
 */
 
-return [
-    'queue' => env('MEETING_CENTER_QUEUE', 'meeting-center'),
-];
+namespace App\Providers;
+
+use App\Features\QueueMonitoringFeature;
+use App\Models\Tenant;
+use Cbox\LaravelQueueMonitor\Models\JobMonitor;
+use Illuminate\Support\ServiceProvider;
+
+class QueueObservabilityServiceProvider extends ServiceProvider
+{
+    public function boot(): void
+    {
+        // Must boot before the queue monitor's provider, which only registers its listeners while it is enabled.
+        if (! rescue(fn (): bool => QueueMonitoringFeature::active(), false, report: false)) {
+            config(['queue-monitor.enabled' => false]);
+        }
+
+        JobMonitor::creating(function (JobMonitor $jobMonitor): void {
+            $jobMonitor->setAttribute('tenant_id', $jobMonitor->getAttribute('tenant_id') ?? Tenant::current()?->getKey());
+        });
+    }
+}

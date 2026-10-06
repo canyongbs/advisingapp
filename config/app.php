@@ -43,8 +43,12 @@ use App\Providers\FilamentServiceProvider;
 use App\Providers\HealthServiceProvider;
 use App\Providers\MorphServiceProvider;
 use App\Providers\MultiConnectionParallelTestingServiceProvider;
+use App\Providers\QueueObservabilityServiceProvider;
 use App\Providers\QueueServiceProvider as ProvidersQueueServiceProvider;
 use App\Providers\RouteServiceProvider;
+use Cbox\LaravelQueueAutoscale\LaravelQueueAutoscaleServiceProvider;
+use Cbox\LaravelQueueMetrics\LaravelQueueMetricsServiceProvider;
+use Cbox\LaravelQueueMonitor\LaravelQueueMonitorServiceProvider;
 use Illuminate\Auth\AuthServiceProvider;
 use Illuminate\Auth\Passwords\PasswordResetServiceProvider;
 use Illuminate\Broadcasting\BroadcastServiceProvider;
@@ -246,6 +250,13 @@ return [
         QueueServiceProvider::class,
         ProvidersQueueServiceProvider::class,
         MultitenancyServiceProvider::class,
+        // The queue packages are not auto-discovered so their listeners register after multitenancy's, which makes a
+        // job's tenant current first. QueueObservabilityServiceProvider must boot before the queue monitor's.
+        // TODO: Cleanup Task (queue-monitoring): drop the second sentence above; only the feature flag check needs that order.
+        QueueObservabilityServiceProvider::class,
+        LaravelQueueAutoscaleServiceProvider::class,
+        LaravelQueueMetricsServiceProvider::class,
+        LaravelQueueMonitorServiceProvider::class,
         RedisServiceProvider::class,
         PasswordResetServiceProvider::class,
         SessionServiceProvider::class,

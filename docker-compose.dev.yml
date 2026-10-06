@@ -56,7 +56,6 @@ services:
             target: worker-development
             args:
                 TOTAL_QUEUE_WORKERS: '${TOTAL_QUEUE_WORKERS:-1}'
-                MULTIPLE_DEVELOPMENT_QUEUES: '${MULTIPLE_DEVELOPMENT_QUEUES:-false}'
                 USER_ID: '${PLS_USER_ID:-33}'
                 GROUP_ID: '${PLS_GROUP_ID:-33}'
         environment:
@@ -68,12 +67,12 @@ services:
             CACHE_EVENTS: false
             CACHE_ICONS: false
             CACHE_FILAMENT_COMPONENTS: false
-            SQS_QUEUE: '${SQS_QUEUE:-{default}}'
-            LANDLORD_SQS_QUEUE: '${LANDLORD_SQS_QUEUE:-{landlord}}'
-            OUTBOUND_COMMUNICATION_QUEUE: '${OUTBOUND_COMMUNICATION_QUEUE:-{outbound-communication}}'
-            AUDIT_QUEUE_QUEUE: '${AUDIT_QUEUE_QUEUE:-{audit}}'
-            MEETING_CENTER_QUEUE: '${MEETING_CENTER_QUEUE:-{meeting-center}}'
-            IMPORT_EXPORT_QUEUE: '${IMPORT_EXPORT_QUEUE:-{import-export}}'
+            SQS_QUEUE: '${SQS_QUEUE:-default}'
+            LANDLORD_SQS_QUEUE: '${LANDLORD_SQS_QUEUE:-landlord}'
+            OUTBOUND_COMMUNICATION_QUEUE: '${OUTBOUND_COMMUNICATION_QUEUE:-outbound-communication}'
+            AUDIT_QUEUE_QUEUE: '${AUDIT_QUEUE_QUEUE:-audit}'
+            MEETING_CENTER_QUEUE: '${MEETING_CENTER_QUEUE:-meeting-center}'
+            IMPORT_EXPORT_QUEUE: '${IMPORT_EXPORT_QUEUE:-import-export}'
             CREATE_STORAGE_SYMLINK: '${WORKER_CREATE_STORAGE_SYMLINK:-false}'
         extra_hosts:
             - 'host.docker.internal:host-gateway'

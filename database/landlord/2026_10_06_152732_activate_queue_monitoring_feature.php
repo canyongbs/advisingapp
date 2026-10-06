@@ -34,6 +34,17 @@
 </COPYRIGHT>
 */
 
-return [
-    'queue' => env('MEETING_CENTER_QUEUE', 'meeting-center'),
-];
+use App\Features\QueueMonitoringFeature;
+use Illuminate\Database\Migrations\Migration;
+
+return new class () extends Migration {
+    public function up(): void
+    {
+        QueueMonitoringFeature::activate();
+    }
+
+    public function down(): void
+    {
+        QueueMonitoringFeature::deactivate();
+    }
+};
