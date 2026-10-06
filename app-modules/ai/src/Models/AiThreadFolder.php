@@ -70,6 +70,9 @@ class AiThreadFolder extends BaseModel
         return $this->hasMany(AiThread::class, 'folder_id');
     }
 
+    /**
+     * @return array<int, string>
+     */
     public static function defaults(): array
     {
         return config('assistant.default_chat_folders');

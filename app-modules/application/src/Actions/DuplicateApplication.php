@@ -72,6 +72,11 @@ class DuplicateApplication
         return $stepMap;
     }
 
+    /**
+     * @param  array<string, string>  $stepMap
+     *
+     * @return array<string, string>
+     */
     private function replicateFields(array $stepMap): array
     {
         $fieldMap = [];
@@ -88,6 +93,9 @@ class DuplicateApplication
         return $fieldMap;
     }
 
+    /**
+     * @param  array<string, string>  $fieldMap
+     */
     private function updateStepContent(array $fieldMap): void
     {
         $this->replica->steps()->each(function (ApplicationStep $step) use ($fieldMap) {
