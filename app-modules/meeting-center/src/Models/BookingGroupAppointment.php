@@ -41,7 +41,6 @@ use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @mixin IdeHelperBookingGroupAppointment
@@ -54,7 +53,6 @@ class BookingGroupAppointment extends BaseModel
     protected $fillable = [
         'booking_group_id',
         'calendar_event_id',
-        'calendar_event_provider_uid',
         'name',
         'email',
         'starts_at',
@@ -73,16 +71,6 @@ class BookingGroupAppointment extends BaseModel
     public function bookingGroup(): BelongsTo
     {
         return $this->belongsTo(BookingGroup::class);
-    }
-
-    /**
-     * @return HasMany<CalendarEvent, $this>
-     */
-    // TODO: Cleanup Task (calendar-fault-tolerant): remove this relation and the
-    // calendar_event_provider_uid column once every tenant is on calendar_event_id.
-    public function calendarEvents(): HasMany
-    {
-        return $this->hasMany(CalendarEvent::class, 'provider_uid', 'calendar_event_provider_uid');
     }
 
     /**

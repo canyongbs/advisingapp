@@ -41,7 +41,6 @@ use AdvisingApp\MeetingCenter\Managers\CalendarManager;
 use AdvisingApp\MeetingCenter\Managers\Contracts\CalendarInterface;
 use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\CalendarEvent;
-use App\Features\CalendarFaultTolerantFeature;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
@@ -84,32 +83,6 @@ it('does not queue a provider sync when a calendar event is created quietly', fu
 
     CalendarEvent::factory()->make(['calendar_id' => $calendar->id])->saveQuietly();
 
-    Queue::assertNotPushed(SyncCalendarEventToProvider::class);
-});
-
-it('pushes a created event to the provider synchronously when the flag is inactive', function () use ($makeObserverCalendar) {
-    CalendarFaultTolerantFeature::deactivate();
-
-    $calendar = $makeObserverCalendar();
-
-    Queue::fake();
-
-    $driver = Mockery::mock(CalendarInterface::class);
-    $driver->shouldReceive('createEvent') // @phpstan-ignore method.notFound
-        ->once()
-        ->andReturnUsing(function (CalendarEvent $event): void {
-            $event->provider_id = 'legacy-provider-id';
-            $event->provider_uid = 'legacy-provider-uid';
-            $event->saveQuietly();
-        });
-
-    $manager = Mockery::mock(CalendarManager::class);
-    $manager->shouldReceive('driver')->andReturn($driver); // @phpstan-ignore method.notFound
-    app()->instance(CalendarManager::class, $manager);
-
-    $event = CalendarEvent::factory()->create(['calendar_id' => $calendar->id]);
-
-    expect($event->refresh()->provider_uid)->toBe('legacy-provider-uid');
     Queue::assertNotPushed(SyncCalendarEventToProvider::class);
 });
 
@@ -174,29 +147,6 @@ it('does not queue a provider update when a calendar event is updated quietly', 
     Queue::assertNotPushed(UpdateCalendarEventOnProvider::class);
 });
 
-it('pushes an updated event to the provider synchronously when the flag is inactive', function () use ($makeObserverCalendar) {
-    CalendarFaultTolerantFeature::deactivate();
-
-    $calendar = $makeObserverCalendar();
-    $event = CalendarEvent::factory()->createQuietly([
-        'calendar_id' => $calendar->id,
-        'provider_id' => 'synced-event',
-    ]);
-
-    Queue::fake();
-
-    $driver = Mockery::mock(CalendarInterface::class);
-    $driver->shouldReceive('updateEvent')->once(); // @phpstan-ignore method.notFound
-
-    $manager = Mockery::mock(CalendarManager::class);
-    $manager->shouldReceive('driver')->andReturn($driver); // @phpstan-ignore method.notFound
-    app()->instance(CalendarManager::class, $manager);
-
-    $event->update(['title' => 'Updated title']);
-
-    Queue::assertNotPushed(UpdateCalendarEventOnProvider::class);
-});
-
 it('queues an after-commit provider delete when a synced calendar event is deleted', function () use ($makeObserverCalendar) {
     $calendar = $makeObserverCalendar();
     $event = CalendarEvent::factory()->createQuietly([
@@ -224,29 +174,6 @@ it('queues an after-commit provider delete when a synced calendar event is delet
     DB::commit();
 
     expect($driverCalledAfterCommit)->toBeTrue();
-});
-
-it('deletes an event from the provider synchronously when the flag is inactive', function () use ($makeObserverCalendar) {
-    CalendarFaultTolerantFeature::deactivate();
-
-    $calendar = $makeObserverCalendar();
-    $event = CalendarEvent::factory()->createQuietly([
-        'calendar_id' => $calendar->id,
-        'provider_id' => 'synced-event',
-    ]);
-
-    Queue::fake();
-
-    $driver = Mockery::mock(CalendarInterface::class);
-    $driver->shouldReceive('deleteEvent')->once(); // @phpstan-ignore method.notFound
-
-    $manager = Mockery::mock(CalendarManager::class);
-    $manager->shouldReceive('driver')->andReturn($driver); // @phpstan-ignore method.notFound
-    app()->instance(CalendarManager::class, $manager);
-
-    $event->delete();
-
-    Queue::assertNotPushed(DeleteCalendarEventFromProvider::class);
 });
 
 it('does not queue a provider delete when a calendar event is deleted quietly', function () use ($makeObserverCalendar) {

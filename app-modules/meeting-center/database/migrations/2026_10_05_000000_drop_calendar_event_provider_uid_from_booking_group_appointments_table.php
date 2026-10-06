@@ -34,14 +34,27 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use App\Support\AbstractFeatureFlag;
-
-class CalendarFaultTolerantFeature extends AbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
+return new class () extends Migration {
+    public function up(): void
     {
-        return false;
+        DB::transaction(function () {
+            Schema::table('booking_group_appointments', function (Blueprint $table) {
+                $table->dropColumn('calendar_event_provider_uid');
+            });
+        });
     }
-}
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            Schema::table('booking_group_appointments', function (Blueprint $table) {
+                $table->string('calendar_event_provider_uid')->nullable();
+            });
+        });
+    }
+};

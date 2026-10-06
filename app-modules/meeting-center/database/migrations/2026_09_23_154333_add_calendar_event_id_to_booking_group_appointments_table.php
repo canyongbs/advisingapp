@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\CalendarFaultTolerantFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
@@ -77,16 +76,12 @@ return new class () extends Migration {
                 FROM matching_events
                 WHERE booking_group_appointments.id = matching_events.appointment_id
                 SQL);
-
-            CalendarFaultTolerantFeature::activate();
         });
     }
 
     public function down(): void
     {
         DB::transaction(function () {
-            CalendarFaultTolerantFeature::deactivate();
-
             Schema::table('booking_group_appointments', function (Blueprint $table) {
                 $table->dropConstrainedForeignId('calendar_event_id');
             });
