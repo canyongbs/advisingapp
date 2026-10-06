@@ -85,6 +85,7 @@ class Enrollment extends Model
         'faculty_email',
         'semester_code',
         'semester_name',
+        'sis_term_id',
         'start_date',
         'end_date',
     ];
@@ -101,5 +102,13 @@ class Enrollment extends Model
     public function student(): BelongsTo
     {
         return $this->belongsTo(Student::class, 'sisid', 'sisid');
+    }
+
+    /**
+     * @return BelongsTo<Term, $this>
+     */
+    public function term(): BelongsTo
+    {
+        return $this->belongsTo(Term::class, 'sis_term_id', 'sis_term_id');
     }
 }
