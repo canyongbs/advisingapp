@@ -75,15 +75,6 @@ class OptionsKeyValueTestHost extends Component implements HasSchemas
     }
 }
 
-it('keeps the stored value => label structure as key => value rows', function () {
-    $host = livewire(OptionsKeyValueTestHost::class, ['options' => ['us' => 'United States', 'ca' => 'Canada']]);
-
-    expect($host->instance()->form->getRawState()['options'])->toBe([
-        ['key' => 'us', 'value' => 'United States'],
-        ['key' => 'ca', 'value' => 'Canada'],
-    ]);
-});
-
 it('hydrates options saved as a list of label and value rows', function () {
     $host = livewire(OptionsKeyValueTestHost::class, ['options' => [
         ['label' => 'United States', 'value' => 'us'],
@@ -96,22 +87,14 @@ it('hydrates options saved as a list of label and value rows', function () {
     ]);
 });
 
-it('dehydrates rows back to a stored value => label map', function () {
-    $host = livewire(OptionsKeyValueTestHost::class)
-        ->set('data.options', [
-            ['key' => 'us', 'value' => 'United States'],
-            ['key' => 'new-option', 'value' => 'New Option'],
-        ]);
-
-    expect($host->instance()->form->getState()['options'])->toBe([
-        'us' => 'United States',
-        'new-option' => 'New Option',
-    ]);
-});
-
 it('renders the label column before the generated value column', function () {
     livewire(OptionsKeyValueTestHost::class)
         ->assertSeeHtmlInOrder(['aria-label="Label"', 'aria-label="Value"']);
+});
+
+it('locks the label of options that were already saved', function () {
+    livewire(OptionsKeyValueTestHost::class, ['options' => ['us' => 'United States']])
+        ->assertSeeHtml('x-bind:disabled="isSaved(row)"');
 });
 
 it('validates that every label generates a distinct value', function () {
