@@ -49,22 +49,20 @@ use Carbon\Carbon;
  *
  * @return array<string, int>
  */
-function cumulativeStudentsByMonth(array $pageFilters = ['startDate' => '2026-04-01', 'endDate' => '2026-06-30']): array
-{
+$cumulativeStudentsByMonth = function (array $pageFilters = ['startDate' => '2026-04-01', 'endDate' => '2026-06-30']): array {
     $widget = new StudentCumulativeCountLineChart();
     $widget->cacheTag = 'report-student';
     $widget->pageFilters = $pageFilters;
-
     $data = $widget->getData();
 
     return array_combine($data['labels'], $data['datasets'][0]['data']);
-}
+};
 
-it('returns correct cumulative student counts grouped by month within the given date range', function () {
+it('returns correct cumulative student counts grouped by month within the given date range', function () use ($cumulativeStudentsByMonth) {
     Student::factory()->count(5)->state(['created_at_source' => '2026-03-10'])->create();
     Student::factory()->count(5)->state(['created_at_source' => '2026-06-25'])->create();
 
-    expect(cumulativeStudentsByMonth(['startDate' => '2026-03-01', 'endDate' => '2026-06-30']))->toBe([
+    expect($cumulativeStudentsByMonth(['startDate' => '2026-03-01', 'endDate' => '2026-06-30']))->toBe([
         'Mar 2026' => 5,
         'Apr 2026' => 5,
         'May 2026' => 5,
@@ -72,7 +70,7 @@ it('returns correct cumulative student counts grouped by month within the given 
     ]);
 });
 
-it('returns correct cumulative student counts grouped by month based on group filters', function () {
+it('returns correct cumulative student counts grouped by month based on group filters', function () use ($cumulativeStudentsByMonth) {
     // With no date filter the chart defaults to the twelve months ending now, so "now" has
     // to be pinned for the series to be predictable.
     Carbon::setTestNow('2026-06-15');
@@ -112,7 +110,7 @@ it('returns correct cumulative student counts grouped by month based on group fi
     );
 
     // With the group filter only the Johns count.
-    expect(cumulativeStudentsByMonth(['populationGroup' => $group->getKey()]))->toBe([
+    expect($cumulativeStudentsByMonth(['populationGroup' => $group->getKey()]))->toBe([
         ...$emptyMonths,
         'Mar 2026' => 5,
         'Apr 2026' => 5,
@@ -121,7 +119,7 @@ it('returns correct cumulative student counts grouped by month based on group fi
     ]);
 
     // Without any filter the Does join in June.
-    expect(cumulativeStudentsByMonth([]))->toBe([
+    expect($cumulativeStudentsByMonth([]))->toBe([
         ...$emptyMonths,
         'Mar 2026' => 5,
         'Apr 2026' => 5,
@@ -130,25 +128,25 @@ it('returns correct cumulative student counts grouped by month based on group fi
     ]);
 });
 
-describe('archiving', function () {
-    it('drops an archived student from the month they were archived onwards', function () {
+describe('archiving', function () use ($cumulativeStudentsByMonth) {
+    it('drops an archived student from the month they were archived onwards', function () use ($cumulativeStudentsByMonth) {
         Student::factory()->count(2)->state(['created_at_source' => '2026-04-10'])->create();
 
         $archived = Student::factory()->create(['created_at_source' => '2026-04-10']);
         $archived->forceFill(['archived_at' => Carbon::parse('2026-05-20')])->save();
 
-        expect(cumulativeStudentsByMonth())->toBe([
+        expect($cumulativeStudentsByMonth())->toBe([
             'Apr 2026' => 3,
             'May 2026' => 2,
             'Jun 2026' => 2,
         ]);
     });
 
-    it('keeps counting a student archived after the reported period', function () {
+    it('keeps counting a student archived after the reported period', function () use ($cumulativeStudentsByMonth) {
         $archived = Student::factory()->create(['created_at_source' => '2026-04-10']);
         $archived->forceFill(['archived_at' => Carbon::parse('2026-08-20')])->save();
 
-        expect(cumulativeStudentsByMonth())->toBe([
+        expect($cumulativeStudentsByMonth())->toBe([
             'Apr 2026' => 1,
             'May 2026' => 1,
             'Jun 2026' => 1,
@@ -158,11 +156,11 @@ describe('archiving', function () {
     // Subtracting an archived student who was never added — because they were created before
     // the window the chart is showing — would drive the running total below the students it
     // actually counted, and the axis minimum would hide it rather than fix it.
-    it('does not subtract a student created before the reported period', function () {
+    it('does not subtract a student created before the reported period', function () use ($cumulativeStudentsByMonth) {
         $archived = Student::factory()->create(['created_at_source' => '2026-01-10']);
         $archived->forceFill(['archived_at' => Carbon::parse('2026-05-20')])->save();
 
-        expect(cumulativeStudentsByMonth())->toBe([
+        expect($cumulativeStudentsByMonth())->toBe([
             'Apr 2026' => 0,
             'May 2026' => 0,
             'Jun 2026' => 0,

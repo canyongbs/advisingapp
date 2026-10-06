@@ -97,7 +97,8 @@ class ListUsers extends ListRecords
                     ->state(fn (User $record): bool => $record->hasLicense(LicenseType::ConversationalAi))
                     ->boolean()
                     ->tooltip(fn (bool $state): string => $state ? 'Licensed' : 'Unlicensed')
-                    ->toggleable(),
+                    ->toggleable()
+                    ->visible(fn (): bool => LicenseType::ConversationalAi->isEnabled()),
                 IconColumn::make(LicenseType::RetentionCrm->value . '_enabled')
                     ->label('Retention')
                     ->state(fn (User $record): bool => $record->hasLicense(LicenseType::RetentionCrm))
@@ -255,12 +256,12 @@ class ListUsers extends ListRecords
                             '' => [
                                 'no_assigned_license' => 'No Assigned License',
                             ],
-                            'Licenses' => collect(LicenseType::cases())
+                            'Licenses' => collect(LicenseType::enabledCases())
                                 ->mapWithKeys(fn ($case) => [$case->value => $case->name])
                                 ->toArray(),
                         ]
                     )
-                    ->getSearchResultsUsing(fn (string $search): array => ['Licenses' => collect(LicenseType::cases())->filter(fn ($case) => str_contains(strtolower($case->name), strtolower($search)))->mapWithKeys(fn ($case) => [$case->value => $case->name])->toArray()])
+                    ->getSearchResultsUsing(fn (string $search): array => ['Licenses' => collect(LicenseType::enabledCases())->filter(fn ($case) => str_contains(strtolower($case->name), strtolower($search)))->mapWithKeys(fn ($case) => [$case->value => $case->name])->toArray()])
                     ->getOptionLabelsUsing(function (array $values): array {
                         $values = array_values(array_filter($values, filled(...)));
 
@@ -270,7 +271,7 @@ class ListUsers extends ListRecords
                             $labels['no_assigned_license'] = 'No Assigned License';
                         }
 
-                        $licenseLabelsByValue = collect(LicenseType::cases())
+                        $licenseLabelsByValue = collect(LicenseType::enabledCases())
                             ->mapWithKeys(fn (LicenseType $licenseType): array => [$licenseType->value => $licenseType->name]);
 
                         foreach ($values as $value) {
@@ -287,11 +288,16 @@ class ListUsers extends ListRecords
                                 return;
                             }
 
-                            $query->when(in_array('no_assigned_license', $data['values']), function (Builder $query) {
-                                $query->whereDoesntHave('licenses');
+                            $enabledLicenseTypeValues = array_map(
+                                fn (LicenseType $licenseType): string => $licenseType->value,
+                                LicenseType::enabledCases(),
+                            );
+
+                            $query->when(in_array('no_assigned_license', $data['values']), function (Builder $query) use ($enabledLicenseTypeValues) {
+                                $query->whereDoesntHave('licenses', fn (Builder $query) => $query->whereIn('type', $enabledLicenseTypeValues));
                             })
-                                ->{in_array('no_assigned_license', $data['values']) ? 'orWhereHas' : 'whereHas'}('licenses', function (Builder $query) use ($data) {
-                                    $query->whereIn('type', array_filter($data['values'], fn ($value) => $value !== 'no_assigned_license'));
+                                ->{in_array('no_assigned_license', $data['values']) ? 'orWhereHas' : 'whereHas'}('licenses', function (Builder $query) use ($data, $enabledLicenseTypeValues) {
+                                    $query->whereIn('type', array_intersect($data['values'], $enabledLicenseTypeValues));
                                 });
                         }
                     )

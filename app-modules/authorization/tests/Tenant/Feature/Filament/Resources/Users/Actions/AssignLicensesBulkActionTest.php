@@ -43,9 +43,12 @@ use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertDatabaseHas;
+use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
+use function Tests\setEnterpriseAiEnabled;
 
 /**
  * @param User|null $user
@@ -216,4 +219,51 @@ it('will not allow assigning more licenses than available', function () use ($se
             'recruitment_crm' => ['You do not have enough seats for ' . LicenseType::RecruitmentCrm->getLabel()],
         ])
         ->assertNotNotified();
+});
+
+describe('enterprise ai', function () use ($setUp) {
+    it('does not assign a `ConversationalAi` license while Enterprise AI is disabled', function () use ($setUp) {
+        ['records' => $records] = $setUp(licenseTypes: [LicenseType::ConversationalAi, LicenseType::RetentionCrm]);
+
+        setEnterpriseAiEnabled(false);
+
+        livewire(ListUsers::class)
+            ->callTableBulkAction(AssignLicensesBulkAction::class, $records, [
+                'replace' => false,
+                LicenseType::ConversationalAi->value => true,
+                LicenseType::RetentionCrm->value => true,
+            ])
+            ->assertHasNoTableBulkActionErrors()
+            ->assertNotified();
+
+        $records->each(function (User $record) {
+            assertDatabaseMissing('licenses', ['user_id' => $record->getKey(), 'type' => LicenseType::ConversationalAi]);
+            assertTrue($record->refresh()->hasLicense(LicenseType::RetentionCrm));
+        });
+    });
+
+    it('does not revoke existing `ConversationalAi` licenses when replacing while Enterprise AI is disabled', function () use ($setUp) {
+        ['records' => $records] = $setUp(licenseTypes: LicenseType::ConversationalAi);
+
+        $records->each(fn (User $record) => $record->grantLicense(LicenseType::ConversationalAi));
+
+        setEnterpriseAiEnabled(false);
+
+        livewire(ListUsers::class)
+            ->callTableBulkAction(AssignLicensesBulkAction::class, $records, [
+                'replace' => true,
+                LicenseType::RetentionCrm->value => false,
+                LicenseType::RecruitmentCrm->value => false,
+            ])
+            ->assertHasNoTableBulkActionErrors()
+            ->assertNotified();
+
+        $records->each(function (User $record) {
+            assertDatabaseHas('licenses', ['user_id' => $record->getKey(), 'type' => LicenseType::ConversationalAi, 'deleted_at' => null]);
+        });
+
+        setEnterpriseAiEnabled(true);
+
+        $records->each(fn (User $record) => assertTrue($record->refresh()->hasLicense(LicenseType::ConversationalAi)));
+    });
 });

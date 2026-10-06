@@ -51,19 +51,18 @@ use function Pest\Laravel\seed;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-function listApplicationsTestUser(): User
-{
+$listApplicationsTestUser = function (): User {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->onlineAdmissions = true;
     $settings->save();
 
     return User::factory()->licensed(LicenseType::cases())->create();
-}
+};
 
-it('the duplicate action is gated by the create permission', function () {
+it('the duplicate action is gated by the create permission', function () use ($listApplicationsTestUser) {
     seed(ApplicationSubmissionStateSeeder::class);
 
-    $user = listApplicationsTestUser();
+    $user = $listApplicationsTestUser();
     $user->givePermissionTo('application.view-any');
 
     actingAs($user);

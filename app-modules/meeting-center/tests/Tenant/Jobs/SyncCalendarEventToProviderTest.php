@@ -46,8 +46,7 @@ use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use App\Models\User;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 
-function createSyncCalendarEvent(): CalendarEvent
-{
+$createSyncCalendarEvent = function (): CalendarEvent {
     $calendar = Calendar::factory()
         ->for(User::factory())
         ->create([
@@ -58,10 +57,10 @@ function createSyncCalendarEvent(): CalendarEvent
     return CalendarEvent::factory()
         ->for($calendar)
         ->createQuietly();
-}
+};
 
-it('creates the event on the resolved provider driver', function () {
-    $event = createSyncCalendarEvent();
+it('creates the event on the resolved provider driver', function () use ($createSyncCalendarEvent) {
+    $event = $createSyncCalendarEvent();
 
     $driver = Mockery::mock(CalendarInterface::class);
     $driver->shouldReceive('createEvent') // @phpstan-ignore method.notFound
@@ -75,8 +74,8 @@ it('creates the event on the resolved provider driver', function () {
     (new SyncCalendarEventToProvider($event))->handle();
 });
 
-it('skips events that already have a provider id', function () {
-    $event = createSyncCalendarEvent();
+it('skips events that already have a provider id', function () use ($createSyncCalendarEvent) {
+    $event = $createSyncCalendarEvent();
     $event->provider_id = 'already-synced';
     $event->saveQuietly();
 
@@ -89,8 +88,8 @@ it('skips events that already have a provider id', function () {
     expect($event->refresh()->provider_id)->toBe('already-synced');
 });
 
-it('swallows a CouldNotRefreshToken failure', function () {
-    $event = createSyncCalendarEvent();
+it('swallows a CouldNotRefreshToken failure', function () use ($createSyncCalendarEvent) {
+    $event = $createSyncCalendarEvent();
 
     $driver = Mockery::mock(CalendarInterface::class);
     $driver->shouldReceive('createEvent')->once()->andThrow(new CouldNotRefreshToken()); // @phpstan-ignore method.notFound
@@ -104,8 +103,8 @@ it('swallows a CouldNotRefreshToken failure', function () {
     expect($event->refresh()->provider_id)->toBeNull();
 });
 
-it('releases the job when the provider is rate limited', function () {
-    $event = createSyncCalendarEvent();
+it('releases the job when the provider is rate limited', function () use ($createSyncCalendarEvent) {
+    $event = $createSyncCalendarEvent();
 
     $driver = Mockery::mock(CalendarInterface::class);
     $driver->shouldReceive('createEvent')->once()->andThrow(new MicrosoftGraphRateLimited(retryAfterSeconds: 45)); // @phpstan-ignore method.notFound
@@ -120,8 +119,8 @@ it('releases the job when the provider is rate limited', function () {
     $job->assertReleased(45);
 });
 
-it('rethrows MicrosoftGraphRateLimited without retryAfterSeconds', function () {
-    $event = createSyncCalendarEvent();
+it('rethrows MicrosoftGraphRateLimited without retryAfterSeconds', function () use ($createSyncCalendarEvent) {
+    $event = $createSyncCalendarEvent();
 
     $driver = Mockery::mock(CalendarInterface::class);
     $driver->shouldReceive('createEvent')->once()->andThrow(new MicrosoftGraphRateLimited()); // @phpstan-ignore method.notFound
@@ -134,8 +133,8 @@ it('rethrows MicrosoftGraphRateLimited without retryAfterSeconds', function () {
         ->toThrow(MicrosoftGraphRateLimited::class);
 });
 
-it('prevents overlaps with other provider jobs for the same event', function () {
-    $event = createSyncCalendarEvent();
+it('prevents overlaps with other provider jobs for the same event', function () use ($createSyncCalendarEvent) {
+    $event = $createSyncCalendarEvent();
 
     $middleware = (new SyncCalendarEventToProvider($event))->middleware();
 
@@ -150,8 +149,8 @@ it('prevents overlaps with other provider jobs for the same event', function () 
     expect((bool) $shareKey)->toBeTrue();
 });
 
-it('has maxExceptions of 3', function () {
-    $event = createSyncCalendarEvent();
+it('has maxExceptions of 3', function () use ($createSyncCalendarEvent) {
+    $event = $createSyncCalendarEvent();
 
     expect((new SyncCalendarEventToProvider($event))->maxExceptions)->toBe(3);
 });

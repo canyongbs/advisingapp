@@ -45,6 +45,7 @@ use function Pest\Livewire\livewire;
 use STS\FilamentImpersonate\Actions\Impersonate;
 
 use function Tests\asSuperAdmin;
+use function Tests\setEnterpriseAiEnabled;
 
 it('renders impersonate button for non super admin users when user is super admin', function () {
     asSuperAdmin();
@@ -128,4 +129,22 @@ it('allows user with permission to impersonate', function () {
 
     expect($second->isImpersonated())->toBeTrue();
     expect(auth()->id())->toBe($second->id);
+});
+
+describe('enterprise ai', function () {
+    it('hides the `ConversationalAi` license toggle while Enterprise AI is disabled', function () {
+        asSuperAdmin();
+
+        $user = User::factory()->create();
+
+        livewire(EditUser::class, ['record' => $user->getRouteKey()])
+            ->assertFormFieldExists('conversational_ai_enabled')
+            ->assertFormFieldExists('retention_crm_enabled');
+
+        setEnterpriseAiEnabled(false);
+
+        livewire(EditUser::class, ['record' => $user->getRouteKey()])
+            ->assertFormFieldDoesNotExist('conversational_ai_enabled')
+            ->assertFormFieldExists('retention_crm_enabled');
+    });
 });

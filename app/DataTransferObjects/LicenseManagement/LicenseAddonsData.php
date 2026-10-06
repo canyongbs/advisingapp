@@ -59,5 +59,7 @@ class LicenseAddonsData extends Data
         public bool $dataAdvisor = false,
         public bool $earlyAlert = false,
         public bool $publicProfiles = false,
+        // TODO: Cleanup Task (enterprise-ai): once Olympus always sends enterpriseAi, change this default to false.
+        public bool $enterpriseAi = true,
     ) {}
 }

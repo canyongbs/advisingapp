@@ -68,24 +68,24 @@ class AssignLicensesBulkAction extends BulkAction
             ->modalWidth(Width::Small)
             ->fillForm(fn (Collection $records): array => [
                 'records' => $records,
-                ...collect($this->licenseTypes)
+                ...collect($this->getEnabledLicenseTypes())
                     ->mapWithKeys(fn (LicenseType $licenseType): array => [$licenseType->value . '_count' => $licenseType->getAvailableSeats()]),
             ])
             ->form([
                 Checkbox::make('replace')
                     ->label('Replace existing licenses?')
                     ->afterStateUpdated(
-                        fn (Get $get, Set $set) => collect($this->licenseTypes)
+                        fn (Get $get, Set $set) => collect($this->getEnabledLicenseTypes())
                             ->each(fn (LicenseType $licenseType) => $this->getAfterStateUpdatedCallbackForLicenseType($licenseType)($get, $set))
                     )
                     ->live(),
-                ...collect($this->licenseTypes)
+                ...collect($this->getEnabledLicenseTypes())
                     ->map(fn (LicenseType $licenseType): Toggle => $this->getToggleForLicenseType($licenseType)),
             ])
             ->action(function (array $data, Collection $records) {
                 /** @var Collection <int, User> $records */
                 $records->each(function (User $record) use ($data) {
-                    collect($this->licenseTypes)->each(function (LicenseType $licenseType) use ($record, $data) {
+                    collect($this->getEnabledLicenseTypes())->each(function (LicenseType $licenseType) use ($record, $data) {
                         if ($data[$licenseType->value]) {
                             $record->grantLicense($licenseType);
                         } elseif ($data['replace'] && ! $data[$licenseType->value]) {
@@ -104,6 +104,17 @@ class AssignLicensesBulkAction extends BulkAction
     public static function getDefaultName(): ?string
     {
         return 'assign_licenses';
+    }
+
+    /**
+     * @return array<LicenseType>
+     */
+    private function getEnabledLicenseTypes(): array
+    {
+        return array_values(array_filter(
+            $this->licenseTypes,
+            fn (LicenseType $licenseType): bool => $licenseType->isEnabled(),
+        ));
     }
 
     private function getToggleForLicenseType(LicenseType $licenseType): Toggle

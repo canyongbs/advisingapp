@@ -36,6 +36,16 @@
 
 namespace App\Enums;
 
+use AdvisingApp\Ai\Filament\Exports\AssistantUtilizationExporter;
+use AdvisingApp\Ai\Filament\Exports\CustomerAdvisorCategoryExporter;
+use AdvisingApp\Ai\Filament\Exports\CustomerAdvisorQuestionExporter;
+use AdvisingApp\Ai\Filament\Exports\EmployeeAdvisorCategoryExporter;
+use AdvisingApp\Ai\Filament\Exports\EmployeeAdvisorQuestionExporter;
+use AdvisingApp\Ai\Filament\Imports\CustomerAdvisorCategoryImporter;
+use AdvisingApp\Ai\Filament\Imports\CustomerAdvisorQuestionImporter;
+use AdvisingApp\Ai\Filament\Imports\EmployeeAdvisorCategoryImporter;
+use AdvisingApp\Ai\Filament\Imports\EmployeeAdvisorQuestionImporter;
+use AdvisingApp\Report\Filament\Exports\ResearchAdvisorExporter;
 use App\Models\Authenticatable;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Gate;
@@ -72,6 +82,8 @@ enum Feature: string
 
     case PublicProfiles = 'public-profiles';
 
+    case EnterpriseAi = 'enterprise-ai';
+
     public function generateGate(): void
     {
         // If features are added that are not based on a License Addon we will need to update this
@@ -84,5 +96,76 @@ enum Feature: string
     public function getGateName(): string
     {
         return "feature-{$this->value}";
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getPermissionGroupNames(): array
+    {
+        return match ($this) {
+            Feature::EnterpriseAi => [
+                'Assistant',
+                'Assistant Chat Message Log',
+                'Assistant Custom',
+                'Customer Advisor',
+                'Customer Advisor Embed',
+                'Data Advisor',
+                'Prompt',
+                'Research Advisor',
+            ],
+            default => [],
+        };
+    }
+
+    /**
+     * The importers and exporters that belong to this feature.
+     * Their imports and exports are hidden from the Import/Export page, and cannot be downloaded, while the feature is disabled.
+     *
+     * @return array<class-string>
+     */
+    public function getImporterAndExporterClasses(): array
+    {
+        return match ($this) {
+            Feature::EnterpriseAi => [
+                CustomerAdvisorCategoryImporter::class,
+                CustomerAdvisorQuestionImporter::class,
+                EmployeeAdvisorCategoryImporter::class,
+                EmployeeAdvisorQuestionImporter::class,
+                AssistantUtilizationExporter::class,
+                CustomerAdvisorCategoryExporter::class,
+                CustomerAdvisorQuestionExporter::class,
+                EmployeeAdvisorCategoryExporter::class,
+                EmployeeAdvisorQuestionExporter::class,
+                ResearchAdvisorExporter::class,
+            ],
+            default => [],
+        };
+    }
+
+    /**
+     * @return array<class-string>
+     */
+    public static function getDisabledImporterAndExporterClasses(): array
+    {
+        return collect(Feature::cases())
+            ->reject(fn (Feature $feature): bool => Gate::check($feature->getGateName()))
+            ->flatMap(fn (Feature $feature): array => $feature->getImporterAndExporterClasses())
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    /**
+     * @return array<string>
+     */
+    public static function getDisabledPermissionGroupNames(): array
+    {
+        return collect(Feature::cases())
+            ->reject(fn (Feature $feature): bool => Gate::check($feature->getGateName()))
+            ->flatMap(fn (Feature $feature): array => $feature->getPermissionGroupNames())
+            ->unique()
+            ->values()
+            ->all();
     }
 }

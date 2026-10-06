@@ -58,6 +58,27 @@ use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 
+$customerCategoryImporter = function (User $user, CustomerAdvisor $advisor): CustomerAdvisorCategoryImporter {
+    $import = new Import();
+    $import->user()->associate($user);
+    $import->file_name = 'customer-categories.csv';
+    $import->file_path = 'imports/customer-categories.csv';
+    $import->importer = CustomerAdvisorCategoryImporter::class;
+    $import->total_rows = 1;
+    $import->save();
+
+    return app(CustomerAdvisorCategoryImporter::class, [
+        'import' => $import,
+        'columnMap' => [
+            'name' => 'name',
+            'description' => 'description',
+        ],
+        'options' => [
+            'customer_advisor_id' => $advisor->getKey(),
+        ],
+    ]);
+};
+
 test('Create Customer Advisor Category is gated with proper access control', function () {
     $settings = app(LicenseSettings::class);
 
@@ -343,29 +364,7 @@ test('Edit Customer Advisor Category validates the inputs', function (CustomerAd
         ]
     );
 
-function customerCategoryImporter(User $user, CustomerAdvisor $advisor): CustomerAdvisorCategoryImporter
-{
-    $import = new Import();
-    $import->user()->associate($user);
-    $import->file_name = 'customer-categories.csv';
-    $import->file_path = 'imports/customer-categories.csv';
-    $import->importer = CustomerAdvisorCategoryImporter::class;
-    $import->total_rows = 1;
-    $import->save();
-
-    return app(CustomerAdvisorCategoryImporter::class, [
-        'import' => $import,
-        'columnMap' => [
-            'name' => 'name',
-            'description' => 'description',
-        ],
-        'options' => [
-            'customer_advisor_id' => $advisor->getKey(),
-        ],
-    ]);
-}
-
-describe('import and export', function () {
+describe('import and export', function () use ($customerCategoryImporter) {
     beforeEach(function () {
         $settings = app(LicenseSettings::class);
 
@@ -433,7 +432,7 @@ describe('import and export', function () {
             ->not->toContain('Billing FAQs');
     });
 
-    it('imports customer advisor categories scoped to the selected advisor', function () {
+    it('imports customer advisor categories scoped to the selected advisor', function () use ($customerCategoryImporter) {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
         $advisor = CustomerAdvisor::factory()->create();
@@ -441,7 +440,7 @@ describe('import and export', function () {
 
         assertDatabaseMissing(CustomerAdvisorCategory::class, ['name' => 'Scholarships']);
 
-        customerCategoryImporter($user, $advisor)([
+        $customerCategoryImporter($user, $advisor)([
             'name' => 'Scholarships',
             'description' => 'Scholarship and aid guidance.',
         ]);
@@ -458,17 +457,17 @@ describe('import and export', function () {
         ]);
     });
 
-    it('validates required fields during customer advisor category import', function () {
+    it('validates required fields during customer advisor category import', function () use ($customerCategoryImporter) {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
         $advisor = CustomerAdvisor::factory()->create();
 
-        expect(fn () => customerCategoryImporter($user, $advisor)([
+        expect(fn () => $customerCategoryImporter($user, $advisor)([
             'name' => 'Housing',
             'description' => null,
         ]))->toThrow(ValidationException::class);
     });
 
-    it('validates customer advisor category import uniqueness case-insensitively and scoped per advisor', function () {
+    it('validates customer advisor category import uniqueness case-insensitively and scoped per advisor', function () use ($customerCategoryImporter) {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
         $advisor = CustomerAdvisor::factory()->create();
@@ -479,7 +478,7 @@ describe('import and export', function () {
             'name' => 'Sales',
         ])->create();
 
-        $importer = customerCategoryImporter($user, $advisor);
+        $importer = $customerCategoryImporter($user, $advisor);
 
         $importer([
             'name' => 'sales',
@@ -497,7 +496,7 @@ describe('import and export', function () {
         ]))->toThrow(ValidationException::class);
     });
 
-    it('imports a name freed by a soft deleted category', function () {
+    it('imports a name freed by a soft deleted category', function () use ($customerCategoryImporter) {
         $user = User::factory()->licensed(LicenseType::ConversationalAi)->create();
 
         $advisor = CustomerAdvisor::factory()->create();
@@ -509,7 +508,7 @@ describe('import and export', function () {
 
         $category->delete();
 
-        customerCategoryImporter($user, $advisor)([
+        $customerCategoryImporter($user, $advisor)([
             'name' => 'Admissions',
             'description' => 'Recreated after the original was soft deleted.',
         ]);

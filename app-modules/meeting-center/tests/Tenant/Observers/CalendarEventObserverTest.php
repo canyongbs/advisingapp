@@ -46,15 +46,14 @@ use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Queue;
 
-function makeObserverCalendar(): Calendar
-{
+$makeObserverCalendar = function (): Calendar {
     return Calendar::factory()
         ->for(User::factory())
         ->create(['provider_id' => 'observer-calendar']);
-}
+};
 
-it('queues an after-commit provider sync when a calendar event is created', function () {
-    $calendar = makeObserverCalendar();
+it('queues an after-commit provider sync when a calendar event is created', function () use ($makeObserverCalendar) {
+    $calendar = $makeObserverCalendar();
 
     $driverCalledAfterCommit = null;
     $driver = Mockery::mock(CalendarInterface::class);
@@ -78,8 +77,8 @@ it('queues an after-commit provider sync when a calendar event is created', func
     expect($driverCalledAfterCommit)->toBeTrue();
 });
 
-it('does not queue a provider sync when a calendar event is created quietly', function () {
-    $calendar = makeObserverCalendar();
+it('does not queue a provider sync when a calendar event is created quietly', function () use ($makeObserverCalendar) {
+    $calendar = $makeObserverCalendar();
 
     Queue::fake();
 
@@ -88,10 +87,10 @@ it('does not queue a provider sync when a calendar event is created quietly', fu
     Queue::assertNotPushed(SyncCalendarEventToProvider::class);
 });
 
-it('pushes a created event to the provider synchronously when the flag is inactive', function () {
+it('pushes a created event to the provider synchronously when the flag is inactive', function () use ($makeObserverCalendar) {
     CalendarFaultTolerantFeature::deactivate();
 
-    $calendar = makeObserverCalendar();
+    $calendar = $makeObserverCalendar();
 
     Queue::fake();
 
@@ -114,8 +113,8 @@ it('pushes a created event to the provider synchronously when the flag is inacti
     Queue::assertNotPushed(SyncCalendarEventToProvider::class);
 });
 
-it('does not push to the provider when the surrounding transaction rolls back', function () {
-    $calendar = makeObserverCalendar();
+it('does not push to the provider when the surrounding transaction rolls back', function () use ($makeObserverCalendar) {
+    $calendar = $makeObserverCalendar();
 
     $driver = Mockery::mock(CalendarInterface::class);
     $manager = Mockery::mock(CalendarManager::class);
@@ -134,8 +133,8 @@ it('does not push to the provider when the surrounding transaction rolls back', 
     expect(CalendarEvent::query()->count())->toBe(0);
 });
 
-it('queues an after-commit provider update when a calendar event is updated', function () {
-    $calendar = makeObserverCalendar();
+it('queues an after-commit provider update when a calendar event is updated', function () use ($makeObserverCalendar) {
+    $calendar = $makeObserverCalendar();
     $event = CalendarEvent::factory()->createQuietly([
         'calendar_id' => $calendar->id,
         'provider_id' => 'synced-event',
@@ -163,8 +162,8 @@ it('queues an after-commit provider update when a calendar event is updated', fu
     expect($driverCalledAfterCommit)->toBeTrue();
 });
 
-it('does not queue a provider update when a calendar event is updated quietly', function () {
-    $calendar = makeObserverCalendar();
+it('does not queue a provider update when a calendar event is updated quietly', function () use ($makeObserverCalendar) {
+    $calendar = $makeObserverCalendar();
 
     Queue::fake();
 
@@ -175,10 +174,10 @@ it('does not queue a provider update when a calendar event is updated quietly', 
     Queue::assertNotPushed(UpdateCalendarEventOnProvider::class);
 });
 
-it('pushes an updated event to the provider synchronously when the flag is inactive', function () {
+it('pushes an updated event to the provider synchronously when the flag is inactive', function () use ($makeObserverCalendar) {
     CalendarFaultTolerantFeature::deactivate();
 
-    $calendar = makeObserverCalendar();
+    $calendar = $makeObserverCalendar();
     $event = CalendarEvent::factory()->createQuietly([
         'calendar_id' => $calendar->id,
         'provider_id' => 'synced-event',
@@ -198,8 +197,8 @@ it('pushes an updated event to the provider synchronously when the flag is inact
     Queue::assertNotPushed(UpdateCalendarEventOnProvider::class);
 });
 
-it('queues an after-commit provider delete when a synced calendar event is deleted', function () {
-    $calendar = makeObserverCalendar();
+it('queues an after-commit provider delete when a synced calendar event is deleted', function () use ($makeObserverCalendar) {
+    $calendar = $makeObserverCalendar();
     $event = CalendarEvent::factory()->createQuietly([
         'calendar_id' => $calendar->id,
         'provider_id' => 'synced-event',
@@ -227,10 +226,10 @@ it('queues an after-commit provider delete when a synced calendar event is delet
     expect($driverCalledAfterCommit)->toBeTrue();
 });
 
-it('deletes an event from the provider synchronously when the flag is inactive', function () {
+it('deletes an event from the provider synchronously when the flag is inactive', function () use ($makeObserverCalendar) {
     CalendarFaultTolerantFeature::deactivate();
 
-    $calendar = makeObserverCalendar();
+    $calendar = $makeObserverCalendar();
     $event = CalendarEvent::factory()->createQuietly([
         'calendar_id' => $calendar->id,
         'provider_id' => 'synced-event',
@@ -250,8 +249,8 @@ it('deletes an event from the provider synchronously when the flag is inactive',
     Queue::assertNotPushed(DeleteCalendarEventFromProvider::class);
 });
 
-it('does not queue a provider delete when a calendar event is deleted quietly', function () {
-    $calendar = makeObserverCalendar();
+it('does not queue a provider delete when a calendar event is deleted quietly', function () use ($makeObserverCalendar) {
+    $calendar = $makeObserverCalendar();
 
     Queue::fake();
 
