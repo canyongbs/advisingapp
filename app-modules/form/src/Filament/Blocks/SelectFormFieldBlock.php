@@ -89,6 +89,17 @@ class SelectFormFieldBlock extends FormFieldBlock
         ];
     }
 
+    /**
+     * The editor ignores key order when comparing a block's config, so reordering options alone would leave a stale edit button.
+     * A hidden marker of the order changes the preview, which forces the block to refresh.
+     */
+    public static function toPreviewHtml(array $config): ?string
+    {
+        $order = e(json_encode(array_keys($config['options'] ?? [])));
+
+        return parent::toPreviewHtml($config) . "<span hidden data-options-order=\"{$order}\"></span>";
+    }
+
     protected static function renderedView(): string
     {
         return 'form::blocks.submissions.select';

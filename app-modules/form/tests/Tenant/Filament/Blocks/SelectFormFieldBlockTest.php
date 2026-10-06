@@ -46,6 +46,15 @@ it('validates the response against the option values', function () {
     ]);
 });
 
+it('renders a different preview when the options are only reordered', function () {
+    $config = ['label' => 'Country', 'isRequired' => false];
+
+    $original = SelectFormFieldBlock::toPreviewHtml([...$config, 'options' => ['us' => 'United States', 'ca' => 'Canada']]);
+    $reordered = SelectFormFieldBlock::toPreviewHtml([...$config, 'options' => ['ca' => 'Canada', 'us' => 'United States']]);
+
+    expect($reordered)->not->toBe($original);
+});
+
 it('shows the option label for a submitted value, falling back to the submitted value when its option no longer exists', function (string $response, string $expected) {
     $html = SelectFormFieldBlock::toHtml([
         'label' => 'Country',
