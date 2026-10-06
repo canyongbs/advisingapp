@@ -12,3 +12,4 @@ created: 2026-10-06
 ## Additional Cleanup
 
 - Search for `TODO: Cleanup Task (queue-monitoring)` and follow the instructions at each site.
+- Delete the queue autoscaling deployment runbook from the devops repository (`ecs/advisingapp/deploy-queue-autoscaling.md`, the `docker/devops` submodule) once the release is out in every environment.
