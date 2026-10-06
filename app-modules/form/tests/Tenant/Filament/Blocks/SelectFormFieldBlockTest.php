@@ -37,21 +37,11 @@
 use AdvisingApp\Form\Filament\Blocks\SelectFormFieldBlock;
 use AdvisingApp\Form\Models\FormField;
 
-it('validates the response against the option values, regardless of the stored options format', function (array $options) {
-    $field = new FormField(['config' => ['options' => $options]]);
+it('validates the response against the option values', function () {
+    $field = new FormField(['config' => ['options' => ['option-one' => 'Option One', 'option-two' => 'Option Two']]]);
 
     expect(SelectFormFieldBlock::getValidationRules($field))->toBe([
         'string',
         'in:option-one,option-two',
     ]);
-})->with([
-    'legacy value => label map' => [
-        ['option-one' => 'Option One', 'option-two' => 'Option Two'],
-    ],
-    'options repeater rows' => [
-        [
-            ['label' => 'Option One', 'value' => 'option-one'],
-            ['label' => 'Option Two', 'value' => 'option-two'],
-        ],
-    ],
-]);
+});

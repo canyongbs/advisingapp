@@ -85,7 +85,7 @@ class SelectFormFieldBlock extends FormFieldBlock
     {
         return [
             'string',
-            'in:' . static::normalizeOptions($field->config['options'])->keys()->join(','),
+            'in:' . collect($field->config['options'])->keys()->join(','),
         ];
     }
 

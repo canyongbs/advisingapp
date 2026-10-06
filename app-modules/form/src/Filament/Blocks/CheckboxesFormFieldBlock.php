@@ -99,16 +99,30 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
             return ['array'];
         }
 
+        /** @var array<int, array<string, string>>|array<string, string> */
+        $options = $field->config['options'];
+        $values = collect($options);
+
+        if (isset($options[0]) && is_array($options[0])) {
+            $values = $values->pluck('value');
+        } else {
+            $values = $values->keys();
+        }
+
         return [
             'array',
-            'in:' . static::normalizeOptions($field->config['options'])->keys()->join(','),
+            'in:' . $values->join(','),
         ];
     }
 
     public static function getSubmissionState(SubmissibleField $field, mixed $response): array
     {
         $hasOtherOption = $field->config['hasOtherOption'] ?? false;
-        $options = static::normalizeOptions($field->config['options']);
+        $options = collect($field->config['options']);
+
+        if (isset($field->config['options'][0]) && is_array($field->config['options'][0])) {
+            $options = $options->pluck('label', 'value');
+        }
 
         $responseArray = is_array($response) ? $response : [];
         $optionKeysLower = $options->keys()->map(fn ($key) => strtolower($key));

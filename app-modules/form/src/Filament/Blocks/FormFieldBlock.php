@@ -46,7 +46,6 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
 abstract class FormFieldBlock extends RichContentCustomBlock
@@ -187,36 +186,6 @@ abstract class FormFieldBlock extends RichContentCustomBlock
             'field' => $field,
             'response' => $response,
         ];
-    }
-
-    /**
-     * Normalizes an options config array into a value => label map, whether
-     * it was stored as a legacy value => label map, or as a list of
-     * ['label' => ..., 'value' => ...] rows produced by the options
-     * editor.
-     *
-     * @param array<int|string, mixed> $options
-     *
-     * @return Collection<string, string>
-     */
-    protected static function normalizeOptions(array $options): Collection
-    {
-        if (isset($options[0]) && is_array($options[0])) {
-            return collect($options)
-                ->mapWithKeys(function (array $option): array {
-                    assert(is_string($option['value']) || is_int($option['value']));
-                    assert(is_string($option['label']));
-
-                    return [(string) $option['value'] => $option['label']];
-                });
-        }
-
-        return collect($options)
-            ->mapWithKeys(function (mixed $label, int|string $value): array {
-                assert(is_string($label));
-
-                return [(string) $value => $label];
-            });
     }
 
     protected static function previewView(): string

@@ -99,9 +99,19 @@ class RadioFormFieldBlock extends FormFieldBlock
             return ['string'];
         }
 
+        /** @var array<int, array<string, string>>|array<string, string> */
+        $options = $field->config['options'];
+        $values = collect($options);
+
+        if (isset($options[0]) && is_array($options[0])) {
+            $values = $values->pluck('value');
+        } else {
+            $values = $values->keys();
+        }
+
         return [
             'string',
-            'in:' . static::normalizeOptions($field->config['options'])->keys()->join(','),
+            'in:' . $values->join(','),
         ];
     }
 
