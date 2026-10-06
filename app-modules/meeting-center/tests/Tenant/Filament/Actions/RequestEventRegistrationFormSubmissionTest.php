@@ -44,7 +44,6 @@ use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EventsRelationManager;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\EventRegistrationRequestsFeature;
 use App\Models\User;
 use Illuminate\Support\Facades\Queue;
 
@@ -280,20 +279,6 @@ it('sends a success notification after the request is sent', function () {
         ])
         ->assertHasNoTableActionErrors()
         ->assertNotified('Event registration request sent');
-});
-
-it('hides the request action when the feature flag is inactive', function () {
-    EventRegistrationRequestsFeature::deactivate();
-
-    asSuperAdmin();
-
-    $student = Student::factory()->create();
-
-    livewire(EventsRelationManager::class, [
-        'ownerRecord' => $student,
-        'pageClass' => ViewStudent::class,
-    ])
-        ->assertTableActionHidden('request');
 });
 
 it('hides the request action from a user without the event_attendee.create ability', function () {

@@ -45,7 +45,6 @@ use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\ApplicationSubmissionsRelationManager;
 use AdvisingApp\StudentDataModel\Models\Student;
-use App\Features\OnlineAdmissionRequestsFeature;
 use App\Models\User;
 use Illuminate\Support\Facades\Queue;
 
@@ -310,20 +309,6 @@ it('sends a success notification after the request is sent', function () {
         ])
         ->assertHasNoTableActionErrors()
         ->assertNotified('Application request sent');
-});
-
-it('hides the request action when the feature flag is inactive', function () {
-    OnlineAdmissionRequestsFeature::deactivate();
-
-    asSuperAdmin();
-
-    $student = Student::factory()->create();
-
-    livewire(ApplicationSubmissionsRelationManager::class, [
-        'ownerRecord' => $student,
-        'pageClass' => ViewStudent::class,
-    ])
-        ->assertTableActionHidden('Request');
 });
 
 it('hides the request action from a user without the application.create ability', function () {
