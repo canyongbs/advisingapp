@@ -43,7 +43,6 @@ use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
-use App\Features\StepDescriptionFeature;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
@@ -102,7 +101,7 @@ class EditEventRegistration extends EditRecord
                                 foreach ($steps as $key => $stepData) {
                                     $newStep = $newVersion->steps()->create([
                                         'label' => $stepData['label'] ?? 'Untitled Step',
-                                        ...(StepDescriptionFeature::active() ? ['description' => $stepData['description'] ?? null] : []),
+                                        'description' => $stepData['description'] ?? null,
                                         'sort' => $sort++,
                                     ]);
 
@@ -174,8 +173,7 @@ class EditEventRegistration extends EditRecord
                             Textarea::make('description')
                                 ->label('Step Description')
                                 ->string()
-                                ->columnSpanFull()
-                                ->visible(fn (): bool => StepDescriptionFeature::active()),
+                                ->columnSpanFull(),
                             $this->fieldBuilder(),
                         ])
                         ->addActionLabel('New step')

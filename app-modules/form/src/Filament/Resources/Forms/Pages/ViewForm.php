@@ -40,7 +40,6 @@ use AdvisingApp\Form\Actions\GenerateSubmissibleEmbedCode;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Models\Form;
-use App\Features\StepDescriptionFeature;
 use CanyonGBS\Common\Enums\Color as ColorEnum;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\Action;
@@ -130,8 +129,7 @@ class ViewForm extends ViewRecord
                         Textarea::make('description')
                             ->label('Step Description')
                             ->string()
-                            ->columnSpanFull()
-                            ->visible(fn (): bool => StepDescriptionFeature::active()),
+                            ->columnSpanFull(),
                         RichEditor::make('content')
                             ->json()
                             ->customBlocks(FormFieldBlockRegistry::get())
