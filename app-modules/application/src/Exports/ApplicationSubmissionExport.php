@@ -68,6 +68,8 @@ class ApplicationSubmissionExport implements FromCollection, WithHeadings, WithM
     }
 
     /**
+     * @param mixed $row
+     *
      * @return array<int, mixed>
      */
     public function map($row): array
