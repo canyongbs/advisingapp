@@ -40,7 +40,6 @@ use AdvisingApp\Application\Filament\Actions\RequestApplicationSubmission;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use App\Enums\Feature;
-use App\Features\OnlineAdmissionRequestsFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -94,8 +93,7 @@ class ApplicationSubmissionsRelationManager extends RelationManager
             ])
             ->headerActions([
                 RequestApplicationSubmission::make()
-                    ->slideOver()
-                    ->visible(fn (): bool => OnlineAdmissionRequestsFeature::active()),
+                    ->slideOver(),
             ])
             ->recordActions([
                 ViewAction::make()
