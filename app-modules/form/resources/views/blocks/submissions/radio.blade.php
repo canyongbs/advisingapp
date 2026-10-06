@@ -31,6 +31,7 @@
     
     </COPYRIGHT>
 --}}
+@use(AdvisingApp\Form\Filament\Blocks\FormFieldBlock)
 
 <x-form::blocks.field-wrapper class="py-3" :$label :$isRequired :description="$description ?? null">
     @php
@@ -44,22 +45,11 @@
         $displayValue = null;
 
         if (filled($response ?? null)) {
-            // Try exact match first
-            $displayValue = $normalizedOptions[$response] ?? null;
+            $displayValue = FormFieldBlock::getOptionLabel($normalizedOptions, $response);
 
-            // Fall back to case-insensitive match
+            // Otherwise show the submitted value as-is, e.g. when its option has since been renamed
             if ($displayValue === null) {
-                foreach ($normalizedOptions as $value => $optionLabel) {
-                    if (strcasecmp($value, $response) === 0) {
-                        $displayValue = $optionLabel;
-                        break;
-                    }
-                }
-            }
-
-            // If still no match and hasOtherOption, show as Other
-            if ($displayValue === null && $hasOtherOption) {
-                $displayValue = 'Other: ' . $response;
+                $displayValue = $hasOtherOption ? 'Other: ' . $response : $response;
             }
         }
     @endphp

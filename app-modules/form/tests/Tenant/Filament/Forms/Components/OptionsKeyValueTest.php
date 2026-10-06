@@ -114,12 +114,9 @@ it('renders the label column before the generated value column', function () {
         ->assertSeeHtmlInOrder(['aria-label="Label"', 'aria-label="Value"']);
 });
 
-it('validates that every label generates a distinct, non-empty value', function (array $rows) {
+it('validates that every label generates a distinct value', function () {
     livewire(OptionsKeyValueTestHost::class)
-        ->set('data.options', $rows)
+        ->set('data.options', [['key' => 'a-b', 'value' => 'A B'], ['key' => 'a-b', 'value' => 'A-B']])
         ->call('save')
         ->assertHasErrors(['data.options']);
-})->with([
-    'punctuation-only label' => [[['key' => '', 'value' => '!!!']]],
-    'labels that generate the same value' => [[['key' => 'a-b', 'value' => 'A B'], ['key' => 'a-b', 'value' => 'A-B']]],
-]);
+});

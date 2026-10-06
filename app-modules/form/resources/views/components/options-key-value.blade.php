@@ -32,7 +32,7 @@
     </COPYRIGHT>
 --}}
 {{--
-    Adapted from Filament's KeyValue embedded view and Alpine component. Each row's
+    Adapted from Filament's KeyValue embedded view, reusing its Alpine component. Each row's
     "key" is the stored option value and its "value" is the label, but the label
     column is rendered first and the key is generated from it in the browser.
 --}}
@@ -43,107 +43,34 @@
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field" label-tag="div" class="fi-fo-key-value-wrp">
     <x-filament::input.wrapper :valid="! $errors->has($getStatePath())" class="fi-fo-key-value">
         <div
-            x-data="{
-                state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$getStatePath()}')") }},
-
-                rows: [],
-
-                init() {
-                    this.updateRows()
-
-                    if (this.rows.length <= 0) {
-                        this.rows.push({ key: '', value: '' })
-                    } else {
-                        this.updateState()
-                    }
-
-                    this.$watch('state', (state, oldState) => {
-                        if (! Array.isArray(state)) {
-                            return
-                        }
-
-                        if (
-                            state.length === 0 &&
-                            Array.isArray(oldState) &&
-                            oldState.length === 0
-                        ) {
-                            return
-                        }
-
-                        this.updateRows()
-                    })
-                },
-
-                slugify(label) {
-                    return (label ?? '')
-                        .normalize('NFD')
-                        .replace(/[\u0300-\u036f]/g, '')
-                        .toLowerCase()
-                        .replace(/[^\p{L}\p{N}]+/gu, '-')
-                        .replace(/^-+|-+$/g, '')
-                },
-
-                addRow() {
-                    this.rows.push({ key: '', value: '' })
-
-                    this.updateState()
-                },
-
-                deleteRow(index) {
-                    this.rows.splice(index, 1)
-
-                    if (this.rows.length <= 0) {
-                        this.addRow()
-                    }
-
-                    this.updateState()
-                },
-
-                reorderRows(event) {
-                    const rows = Alpine.raw(this.rows)
-
-                    this.rows = []
-
-                    const reorderedRow = rows.splice(event.oldIndex, 1)[0]
-                    rows.splice(event.newIndex, 0, reorderedRow)
-
-                    this.$nextTick(() => {
-                        this.rows = rows
-
-                        this.updateState()
-                    })
-                },
-
-                updateRows() {
-                    const mergedRows = Alpine.raw(this.state).map((row) => ({
-                        key: row.key,
-                        value: row.value,
-                    }))
-
-                    this.rows.forEach((row) => {
-                        if (row.value === '' || row.value === null) {
-                            mergedRows.push({ key: '', value: '' })
-                        }
-                    })
-
-                    this.rows = mergedRows
-                },
-
-                updateState() {
-                    const state = this.rows
-                        .filter((row) => row.value !== '' && row.value !== null)
-                        .map((row) => ({ key: row.key, value: row.value }))
-
-                    if (JSON.stringify(this.state) !== JSON.stringify(state)) {
-                        this.state = state
-                    }
-                },
-            }"
+            x-load
+            x-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('key-value', 'filament/forms') }}"
+            x-data="keyValueFormComponent({
+                        state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$getStatePath()}')") }},
+                    })"
             wire:ignore
             wire:key="{{ $getLivewireKey() }}"
             {{ $getExtraAlpineAttributeBag()->class(['fi-fo-key-value-table-ctn']) }}
         >
-            <table aria-labelledby="{{ $id }}-label" id="{{ $id }}" class="fi-fo-key-value-table">
+            <table
+                aria-labelledby="{{ $id }}-label"
+                id="{{ $id }}"
+                class="fi-fo-key-value-table"
+                x-data="{
+                    slugify(label) {
+                        return (label ?? '')
+                            .normalize('NFD')
+                            .replace(/[\u0300-\u036f]/g, '')
+                            .toLowerCase()
+                            .replace(/[^\p{L}\p{N}]+/gu, '-')
+                            .replace(/^-+|-+$/g, '')
+                    },
+                }"
+                x-init="
+                    rows.forEach((row) => (row.key = slugify(row.value)))
+                    updateState()
+                "
+            >
                 <thead>
                     <tr>
                         <th scope="col" class="fi-has-action">

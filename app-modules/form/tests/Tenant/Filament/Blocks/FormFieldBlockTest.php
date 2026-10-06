@@ -34,13 +34,17 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Form\Filament\Blocks\CheckboxesFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableAddressFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableBirthdateFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableNameFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatablePhoneNumberFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\RadioFormFieldBlock;
+use AdvisingApp\Form\Filament\Blocks\SelectFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\TextInputFormFieldBlock;
+use AdvisingApp\Form\Models\FormField;
 use Filament\Actions\Action;
 
 it('configures editor actions as slide-overs', function (string $block): void {
@@ -77,4 +81,20 @@ it('derives an option value from its label by slugifying it', function (?string 
     'extra whitespace' => ['  Option   One  ', 'option-one'],
     'punctuation' => ['Yes / No', 'yes-no'],
     'null label' => [null, ''],
+]);
+
+it('sends options to FormKit as an ordered list, regardless of the stored options format', function (string $block, array $options) {
+    $field = new FormField(['config' => ['options' => $options]]);
+
+    expect($block::getFormKitSchema($field)['options'])->toBe([
+        ['value' => 10, 'label' => 'Ten'],
+        ['value' => 2, 'label' => 'Two'],
+    ]);
+})->with([
+    'select' => SelectFormFieldBlock::class,
+    'radio' => RadioFormFieldBlock::class,
+    'checkboxes' => CheckboxesFormFieldBlock::class,
+])->with([
+    'value => label map' => [[10 => 'Ten', 2 => 'Two']],
+    'label and value rows' => [[['value' => 10, 'label' => 'Ten'], ['value' => 2, 'label' => 'Two']]],
 ]);

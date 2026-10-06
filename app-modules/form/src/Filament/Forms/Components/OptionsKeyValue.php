@@ -36,10 +36,8 @@
 
 namespace AdvisingApp\Form\Filament\Forms\Components;
 
-use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
 use Closure;
 use Filament\Forms\Components\KeyValue;
-use Filament\Schemas\Components\StateCasts\KeyValueStateCast;
 
 /**
  * A "Label" / "Value" options editor for choice-style form fields (select,
@@ -47,7 +45,7 @@ use Filament\Schemas\Components\StateCasts\KeyValueStateCast;
  *
  * The state is a standard KeyValue state (option value => label), but the
  * label column is rendered first and the value is generated from the label
- * in the browser, so no network requests are needed to add or edit rows.
+ * in the browser.
  */
 class OptionsKeyValue extends KeyValue
 {
@@ -66,10 +64,13 @@ class OptionsKeyValue extends KeyValue
                 }
             })
             ->rule(fn (): Closure => function (string $attribute, mixed $value, Closure $fail): void {
-                $rows = collect(app(KeyValueStateCast::class)->set($value))
-                    ->filter(fn (array $row): bool => filled($row['value'] ?? null));
+                assert(is_array($value));
 
-                FormFieldBlock::validateOptionValues($rows->pluck('key')->all(), $fail);
+                $keys = array_column($value, 'key');
+
+                if (count($keys) !== count(array_unique($keys))) {
+                    $fail('Each option label must generate a distinct value. Labels such as "A B" and "A-B" generate the same value.');
+                }
             });
     }
 }

@@ -78,7 +78,7 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
                 'validationLabel' => $field->label,
                 'name' => $field->getKey(),
                 ...($field->is_required ? ['validation' => 'required'] : []),
-                'options' => $field->config['options'],
+                'options' => static::getFormKitOptions($field),
                 ...(! empty($field->config['description']) ? ['description' => $field->config['description']] : []),
             ];
         }
@@ -88,7 +88,7 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
             'label' => $field->label,
             'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
-            'options' => $field->config['options'],
+            'options' => static::getFormKitOptions($field),
             ...self::getDescriptionSectionsSchema($field, 'legend'),
         ];
     }
@@ -125,19 +125,18 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
         }
 
         $responseArray = is_array($response) ? $response : [];
-        $optionKeysLower = $options->keys()->map(fn ($key) => strtolower($key));
 
         $result = $options
             ->mapWithKeys(fn ($label, $key) => [
-                $label => collect($responseArray)->contains(fn ($val) => strcasecmp($val, $key) === 0),
+                $label => collect($responseArray)->contains(fn ($val) => static::responseMatchesOption($val, $key)),
             ])
             ->toArray();
 
-        if ($hasOtherOption && is_array($response)) {
-            $otherValues = array_filter($response, fn ($val) => ! $optionKeysLower->contains(strtolower($val)));
+        if (is_array($response)) {
+            $otherValues = array_filter($response, fn ($val) => ! $options->keys()->contains(fn ($key) => static::responseMatchesOption($val, $key)));
 
             foreach ($otherValues as $otherValue) {
-                $result['Other: ' . $otherValue] = true;
+                $result[$hasOtherOption ? 'Other: ' . $otherValue : $otherValue] = true;
             }
         }
 

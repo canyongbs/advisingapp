@@ -78,7 +78,7 @@ class RadioFormFieldBlock extends FormFieldBlock
                 'validationLabel' => $field->label,
                 'name' => $field->getKey(),
                 ...($field->is_required ? ['validation' => 'required'] : []),
-                'options' => $field->config['options'],
+                'options' => static::getFormKitOptions($field),
                 ...(! empty($field->config['description']) ? ['description' => $field->config['description']] : []),
             ];
         }
@@ -88,7 +88,7 @@ class RadioFormFieldBlock extends FormFieldBlock
             'label' => $field->label,
             'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
-            'options' => $field->config['options'],
+            'options' => static::getFormKitOptions($field),
             ...self::getDescriptionSectionsSchema($field, 'legend'),
         ];
     }

@@ -40,7 +40,6 @@ use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Closure;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;
@@ -132,26 +131,30 @@ abstract class FormFieldBlock extends RichContentCustomBlock
     }
 
     /**
-     * Slugging does not guarantee a usable value: a punctuation-only label
-     * produces an empty string, and distinct labels such as "A B" and "A-B"
-     * both produce "a-b". Since option values cannot be edited directly,
-     * this fails validation so the user can correct the labels instead.
-     *
-     * @param array<int|string, mixed> $values
+     * A submitted value matches an option when it equals the option's value, or its slug does, so values saved before option values were generated from labels still match.
      */
-    public static function validateOptionValues(array $values, Closure $fail): void
+    public static function responseMatchesOption(string $response, int | string $optionValue): bool
     {
-        $values = array_map(fn (mixed $value): string => is_scalar($value) ? (string) $value : '', array_values($values));
+        return strcasecmp($response, (string) $optionValue) === 0
+            || static::slugifyOptionValue($response) === (string) $optionValue;
+    }
 
-        if (in_array('', $values, true)) {
-            $fail('Each option label must contain at least one letter or number so a value can be generated.');
-
-            return;
+    /**
+     * @param array<int|string, string> $options
+     */
+    public static function getOptionLabel(array $options, string $response): ?string
+    {
+        if (array_key_exists($response, $options)) {
+            return $options[$response];
         }
 
-        if (count($values) !== count(array_unique($values))) {
-            $fail('Each option label must generate a distinct value. Labels such as "A B" and "A-B" generate the same value.');
+        foreach ($options as $value => $label) {
+            if (static::responseMatchesOption($response, $value)) {
+                return $label;
+            }
         }
+
+        return null;
     }
 
     abstract public static function type(): string;
@@ -186,6 +189,27 @@ abstract class FormFieldBlock extends RichContentCustomBlock
             'field' => $field,
             'response' => $response,
         ];
+    }
+
+    /**
+     * Sent to FormKit as a list because JavaScript reorders integer-like keys of an object, which would lose the editor's sort order.
+     *
+     * @return array<int|string, mixed>
+     */
+    protected static function getFormKitOptions(SubmissibleField $field): array
+    {
+        $options = $field->config['options'];
+
+        assert(is_array($options));
+
+        if (isset($options[0]) && is_array($options[0])) {
+            return $options;
+        }
+
+        return collect($options)
+            ->map(fn (mixed $label, int|string $value): array => ['value' => $value, 'label' => $label])
+            ->values()
+            ->all();
     }
 
     protected static function previewView(): string

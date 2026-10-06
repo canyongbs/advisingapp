@@ -45,3 +45,18 @@ it('validates the response against the option values', function () {
         'in:option-one,option-two',
     ]);
 });
+
+it('shows the option label for a submitted value, falling back to the submitted value when its option no longer exists', function (string $response, string $expected) {
+    $html = SelectFormFieldBlock::toHtml([
+        'label' => 'Country',
+        'isRequired' => false,
+        'options' => ['united-states' => 'United States'],
+        'response' => $response,
+    ], []);
+
+    expect($html)->toContain($expected);
+})->with([
+    'current option' => ['united-states', 'United States'],
+    'value saved as the label' => ['United States', 'United States'],
+    'removed option' => ['us', 'us'],
+]);
