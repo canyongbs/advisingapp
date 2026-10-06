@@ -34,16 +34,23 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Models\AiThread;
+use AdvisingApp\Ai\Models\PromptUse;
 use AdvisingApp\Alert\Actions\GenerateStudentAlertsView;
 use AdvisingApp\Alert\Configurations\AdultLearnerAlertConfiguration;
 use AdvisingApp\Alert\Models\AlertConfiguration;
 use AdvisingApp\Alert\Presets\AlertPreset;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Report\Enums\TrackedEventType;
+use AdvisingApp\Report\Models\TrackedEventCount;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Http\Controllers\UtilizationMetricsApiController;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 use function Pest\Laravel\getJson;
+use function Tests\setEnterpriseAiEnabled;
 
 /**
  * The metrics themselves are asserted by invoking the controller directly rather than over
@@ -54,26 +61,25 @@ use function Pest\Laravel\getJson;
  *
  * @return array<string, mixed>
  */
-function utilizationMetrics(): array
-{
+$utilizationMetrics = function (): array {
     $response = app(UtilizationMetricsApiController::class)(Request::create('/', 'GET'));
 
     return $response->getData(true)['data'];
-}
+};
 
-it('does not count archived students in the reported student records', function () {
+it('does not count archived students in the reported student records', function () use ($utilizationMetrics) {
     Student::factory()->count(3)->create();
 
-    expect(utilizationMetrics()['student_records'])->toBe(3);
+    expect($utilizationMetrics()['student_records'])->toBe(3);
 
     $archived = Student::factory()->count(2)->create();
     $archived->each(fn (Student $student) => $student->archive());
 
     expect(Student::query()->count())->toBe(5)
-        ->and(utilizationMetrics()['student_records'])->toBe(3);
+        ->and($utilizationMetrics()['student_records'])->toBe(3);
 });
 
-it('does not count alerts belonging to archived students', function () {
+it('does not count alerts belonging to archived students', function () use ($utilizationMetrics) {
     $minimumAge = 25;
 
     $configuration = AdultLearnerAlertConfiguration::factory()
@@ -97,17 +103,17 @@ it('does not count alerts belonging to archived students', function () {
 
     app(GenerateStudentAlertsView::class)->execute();
 
-    expect(utilizationMetrics()['alerts_by_alert_type'][AlertPreset::AdultLearner->value])->toBe(5);
+    expect($utilizationMetrics()['alerts_by_alert_type'][AlertPreset::AdultLearner->value])->toBe(5);
 
     $archived->each(fn (Student $student) => $student->archive());
 
-    expect(utilizationMetrics()['alerts_by_alert_type'][AlertPreset::AdultLearner->value])->toBe(3);
+    expect($utilizationMetrics()['alerts_by_alert_type'][AlertPreset::AdultLearner->value])->toBe(3);
 });
 
 // The enrollment-based alert presets only exclude deleted enrollments, so a soft-deleted
 // student with a live enrollment still reaches the `student_alerts` view. Every other student
 // metric reads through Eloquent and excludes them, so the alert counts must too.
-it('does not count alerts belonging to soft deleted students', function () {
+it('does not count alerts belonging to soft deleted students', function () use ($utilizationMetrics) {
     AlertConfiguration::factory()
         ->state(['preset' => AlertPreset::CourseWithdrawal])
         ->enabled()
@@ -122,20 +128,43 @@ it('does not count alerts belonging to soft deleted students', function () {
 
     app(GenerateStudentAlertsView::class)->execute();
 
-    expect(utilizationMetrics()['alerts_by_alert_type'][AlertPreset::CourseWithdrawal->value])->toBe(3);
+    expect($utilizationMetrics()['alerts_by_alert_type'][AlertPreset::CourseWithdrawal->value])->toBe(3);
 
     $deleted = $students->first();
     $deleted->delete();
 
     // The enrollment survives, so the student is still listed in the view.
     expect(Enrollment::query()->where('sisid', $deleted->getKey())->exists())->toBeTrue()
-        ->and(utilizationMetrics()['alerts_by_alert_type'][AlertPreset::CourseWithdrawal->value])->toBe(2);
+        ->and($utilizationMetrics()['alerts_by_alert_type'][AlertPreset::CourseWithdrawal->value])->toBe(2);
 });
 
-it('still reports alert types that have no alerts', function () {
-    expect(utilizationMetrics()['alerts_by_alert_type'])
+it('still reports alert types that have no alerts', function () use ($utilizationMetrics) {
+    expect($utilizationMetrics()['alerts_by_alert_type'])
         ->toHaveKey(AlertPreset::AdultLearner->value)
-        ->and(utilizationMetrics()['alerts_by_alert_type'][AlertPreset::AdultLearner->value])->toBe(0);
+        ->and($utilizationMetrics()['alerts_by_alert_type'][AlertPreset::AdultLearner->value])->toBe(0);
+});
+
+it('reports zero for the AI metrics while Enterprise AI is disabled', function () use ($utilizationMetrics) {
+    User::factory()->create()->grantLicense(LicenseType::ConversationalAi);
+    TrackedEventCount::factory()->state(['type' => TrackedEventType::AiExchange, 'count' => 7])->create();
+    AiThread::factory()->saved()->create();
+    PromptUse::factory()->create();
+
+    expect($utilizationMetrics())
+        ->ai_users->toBe(1)
+        ->ai_exchanges->toBe(7)
+        ->saved_ai_chats->toBe(1)
+        ->saved_prompts->toBe(1)
+        ->prompts_inserted->toBe(1);
+
+    setEnterpriseAiEnabled(false);
+
+    expect($utilizationMetrics())
+        ->ai_users->toBe(0)
+        ->ai_exchanges->toBe(0)
+        ->saved_ai_chats->toBe(0)
+        ->saved_prompts->toBe(0)
+        ->prompts_inserted->toBe(0);
 });
 
 describe('authorization', function () {

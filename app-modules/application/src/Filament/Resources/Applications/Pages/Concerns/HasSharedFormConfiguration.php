@@ -44,7 +44,6 @@ use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\Form\Rules\IsDomain;
 use App\Enums\FontWeight;
-use App\Features\StepDescriptionFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
@@ -138,8 +137,7 @@ trait HasSharedFormConfiguration
                     Textarea::make('description')
                         ->label('Step Description')
                         ->string()
-                        ->columnSpanFull()
-                        ->visible(fn (): bool => StepDescriptionFeature::active()),
+                        ->columnSpanFull(),
                     $this->fieldBuilder(),
                 ])
                 ->addActionLabel('New step')

@@ -50,17 +50,16 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-function listEventsTestUser(): User
-{
+$listEventsTestUser = function (): User {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->eventManagement = true;
     $settings->save();
 
     return User::factory()->licensed(LicenseType::cases())->create();
-}
+};
 
-it('the duplicate action is gated by the create permission', function () {
-    $user = listEventsTestUser();
+it('the duplicate action is gated by the create permission', function () use ($listEventsTestUser) {
+    $user = $listEventsTestUser();
     $user->givePermissionTo('event.view-any');
 
     actingAs($user);

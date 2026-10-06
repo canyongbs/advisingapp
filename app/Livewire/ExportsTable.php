@@ -36,6 +36,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\Feature;
 use App\Models\Export;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -59,7 +60,7 @@ class ExportsTable extends Component implements HasActions, HasForms, HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(Export::query()->with('user'))
+            ->query(Export::query()->with('user')->whereNotIn('exporter', Feature::getDisabledImporterAndExporterClasses()))
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('requestor')

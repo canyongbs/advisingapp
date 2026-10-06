@@ -45,8 +45,7 @@ use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertModelExists;
 use function Pest\Laravel\assertModelMissing;
 
-function unmatchedEmailFrom(string $address): UnmatchedInboundCommunication
-{
+$unmatchedEmailFrom = function (string $address): UnmatchedInboundCommunication {
     return UnmatchedInboundCommunication::factory()->create([
         'sender' => $address,
         'type' => EngagementResponseType::Email,
@@ -54,9 +53,9 @@ function unmatchedEmailFrom(string $address): UnmatchedInboundCommunication
         'body' => 'Replying to you.',
         'occurred_at' => now(),
     ]);
-}
+};
 
-it('matches an unmatched email to an active student', function () {
+it('matches an unmatched email to an active student', function () use ($unmatchedEmailFrom) {
     $student = Student::factory()->create();
 
     $address = StudentEmailAddress::factory()
@@ -64,7 +63,7 @@ it('matches an unmatched email to an active student', function () {
         ->create()
         ->address;
 
-    $communication = unmatchedEmailFrom($address);
+    $communication = $unmatchedEmailFrom($address);
 
     assertDatabaseCount(EngagementResponse::class, 0);
 
@@ -75,7 +74,7 @@ it('matches an unmatched email to an active student', function () {
     assertModelMissing($communication);
 });
 
-it('does not match an unmatched email to an archived student', function () {
+it('does not match an unmatched email to an archived student', function () use ($unmatchedEmailFrom) {
     $student = Student::factory()->create();
 
     $address = StudentEmailAddress::factory()
@@ -85,7 +84,7 @@ it('does not match an unmatched email to an archived student', function () {
 
     $student->archive();
 
-    $communication = unmatchedEmailFrom($address);
+    $communication = $unmatchedEmailFrom($address);
 
     app(UnmatchedInboundCommunicationsJob::class)->handle();
 

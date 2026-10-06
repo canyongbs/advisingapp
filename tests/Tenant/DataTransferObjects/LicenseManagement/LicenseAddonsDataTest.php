@@ -34,14 +34,17 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
 
-use App\Support\AbstractFeatureFlag;
+describe('enterprise ai', function () {
+    it('enables `enterpriseAi` when the addon is missing', function () {
+        expect(LicenseAddonsData::from(['onlineForms' => true])->enterpriseAi)->toBeTrue();
+    });
 
-class StepDescriptionFeature extends AbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
-    {
-        return false;
-    }
-}
+    it('keeps `enterpriseAi` as provided', function (bool $isEnterpriseAiEnabled) {
+        expect(LicenseAddonsData::from(['enterpriseAi' => $isEnterpriseAiEnabled])->enterpriseAi)->toBe($isEnterpriseAiEnabled);
+    })->with([
+        'disabled' => [false],
+        'enabled' => [true],
+    ]);
+});

@@ -45,17 +45,15 @@ use function Tests\asSuperAdmin;
 /**
  * @return array<string, string>
  */
-function enrolledTermConstraintOptions(string $name): array
-{
+$enrolledTermConstraintOptions = function (string $name): array {
     $constraint = collect(StudentsTable::getQueryBuilderConstraints())
         ->firstOrFail(fn (Constraint $constraint): bool => $constraint->getName() === $name);
-
     assert($constraint instanceof SelectConstraint);
 
     return $constraint->getOptions();
-}
+};
 
-it('does not offer enrolled terms that only archived students have', function () {
+it('does not offer enrolled terms that only archived students have', function () use ($enrolledTermConstraintOptions) {
     asSuperAdmin();
 
     $active = Student::factory()->create();
@@ -70,13 +68,13 @@ it('does not offer enrolled terms that only archived students have', function ()
         'start_date' => now()->subYear(),
     ]);
 
-    expect(enrolledTermConstraintOptions('firstEnrollmentTerm.semester_name'))
+    expect($enrolledTermConstraintOptions('firstEnrollmentTerm.semester_name'))
         ->toContain('Active Term')
         ->toContain('Archived Only Term');
 
     $archived->archive();
 
-    expect(enrolledTermConstraintOptions('firstEnrollmentTerm.semester_name'))
+    expect($enrolledTermConstraintOptions('firstEnrollmentTerm.semester_name'))
         ->toContain('Active Term')
         ->not->toContain('Archived Only Term');
 });

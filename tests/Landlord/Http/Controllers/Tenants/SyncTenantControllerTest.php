@@ -44,8 +44,10 @@ use App\Settings\TenantExpirationSettings;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Validation\ValidationException;
 
-function syncTenantControllerRequest(): SyncTenantRequest
-{
+/**
+ * @param array<string, mixed> $addons
+ */
+$syncTenantControllerRequest = function (array $addons = []): SyncTenantRequest {
     $request = SyncTenantRequest::create('/', 'POST', [
         'limits' => [
             'conversationalAiSeats' => 1,
@@ -58,7 +60,7 @@ function syncTenantControllerRequest(): SyncTenantRequest
             'employeeAdvisorsCount' => 1,
             'customerAdvisorsCount' => 1,
         ],
-        'addons' => [
+        'addons' => array_merge([
             'employeeAdvisors' => false,
             'customerAdvisors' => false,
             'onlineForms' => false,
@@ -74,7 +76,7 @@ function syncTenantControllerRequest(): SyncTenantRequest
             'dataAdvisor' => false,
             'earlyAlert' => false,
             'publicProfiles' => false,
-        ],
+        ], $addons),
         'subscription' => [
             'clientName' => 'Updated Client',
             'partnerName' => 'Updated Partner',
@@ -89,9 +91,9 @@ function syncTenantControllerRequest(): SyncTenantRequest
     $request->validateResolved();
 
     return $request;
-}
+};
 
-it('does not persist other sync changes when smart prompt validation fails', function () {
+it('does not persist other sync changes when smart prompt validation fails', function () use ($syncTenantControllerRequest) {
     Bus::fake();
 
     $tenant = Tenant::query()->firstOrFail();
@@ -110,7 +112,7 @@ it('does not persist other sync changes when smart prompt validation fails', fun
     assert($syncTenantSmartPrompts instanceof SyncTenantSmartPrompts);
 
     expect(fn () => app(SyncTenantController::class)(
-        syncTenantControllerRequest(),
+        $syncTenantControllerRequest(),
         $tenant,
         $syncTenantSmartPrompts,
     ))->toThrow(ValidationException::class);
@@ -119,4 +121,49 @@ it('does not persist other sync changes when smart prompt validation fails', fun
 
     expect($tenant->refresh()->subscription_status)->toBe(SubscriptionStatus::Active)
         ->and(app(TenantExpirationSettings::class)->period_2_banner_text)->toBe($originalBannerText);
+});
+
+describe('enterprise ai', function () use ($syncTenantControllerRequest) {
+    it('passes the `enterpriseAi` addon through to the tenant license data', function (array $addons, bool $isEnterpriseAiEnabled) use ($syncTenantControllerRequest) {
+        Bus::fake();
+
+        $tenant = Tenant::query()->firstOrFail();
+
+        $syncTenantSmartPrompts = Mockery::mock(SyncTenantSmartPrompts::class);
+        $syncTenantSmartPrompts
+            ->shouldReceive('execute')
+            ->once()
+            ->andReturn(fn () => null);
+        assert($syncTenantSmartPrompts instanceof SyncTenantSmartPrompts);
+
+        $response = app(SyncTenantController::class)(
+            $syncTenantControllerRequest($addons),
+            $tenant,
+            $syncTenantSmartPrompts,
+        );
+
+        expect($response->getStatusCode())->toBe(200);
+
+        Bus::assertDispatchedSync(
+            UpdateTenantLicenseData::class,
+            fn (UpdateTenantLicenseData $job): bool => $job->data->addons->enterpriseAi === $isEnterpriseAiEnabled,
+        );
+    })->with([
+        'omitted by a legacy payload' => [[], true],
+        'explicitly disabled' => [['enterpriseAi' => false], false],
+        'explicitly enabled' => [['enterpriseAi' => true], true],
+    ]);
+
+    it('rejects a null `enterpriseAi` addon', function () use ($syncTenantControllerRequest) {
+        $thrownException = null;
+
+        try {
+            $syncTenantControllerRequest(['enterpriseAi' => null]);
+        } catch (ValidationException $exception) {
+            $thrownException = $exception;
+        }
+
+        expect($thrownException)->toBeInstanceOf(ValidationException::class)
+            ->and($thrownException?->errors())->toHaveKey('addons.enterpriseAi');
+    });
 });

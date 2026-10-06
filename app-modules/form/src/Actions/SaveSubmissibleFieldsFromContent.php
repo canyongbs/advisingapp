@@ -39,7 +39,6 @@ namespace AdvisingApp\Form\Actions;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Form\Models\SubmissibleStep;
-use App\Features\StepDescriptionFeature;
 use Illuminate\Database\Eloquent\Builder;
 
 class SaveSubmissibleFieldsFromContent
@@ -53,7 +52,7 @@ class SaveSubmissibleFieldsFromContent
             foreach ($data['steps'] ?? [] as $stepData) {
                 $step = $submissible->steps()->create([
                     'label' => $stepData['label'] ?? 'Untitled Step',
-                    ...(StepDescriptionFeature::active() ? ['description' => $stepData['description'] ?? null] : []),
+                    'description' => $stepData['description'] ?? null,
                     'sort' => $sort++,
                 ]);
 

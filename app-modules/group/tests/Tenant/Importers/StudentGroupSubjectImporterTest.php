@@ -44,8 +44,7 @@ use Filament\Actions\Imports\ImportColumn;
 
 use function Tests\asSuperAdmin;
 
-function resolveStudentGroupSubject(Group $group, string $state): ?Student
-{
+$resolveStudentGroupSubject = function (Group $group, string $state): ?Student {
     $importer = new class (
         import: Import::create([
             'file_name' => 'students.csv',
@@ -64,52 +63,49 @@ function resolveStudentGroupSubject(Group $group, string $state): ?Student
             $this->record = $this->resolveRecord();
         }
     };
-
     $importer->primeRecord();
-
     $subject = collect($importer->getCachedColumns())
         ->firstOrFail(fn (ImportColumn $column): bool => $column->getName() === 'subject')
         ->resolveRelatedRecord($state);
-
     assert($subject === null || $subject instanceof Student);
 
     return $subject;
-}
+};
 
-it('resolves a student by their SIS ID', function () {
+it('resolves a student by their SIS ID', function () use ($resolveStudentGroupSubject) {
     asSuperAdmin();
 
     $group = Group::factory()->create(['model' => GroupModel::Student]);
     $student = Student::factory()->create();
 
-    expect(resolveStudentGroupSubject($group, $student->sisid)?->getKey())->toBe($student->getKey());
+    expect($resolveStudentGroupSubject($group, $student->sisid)?->getKey())->toBe($student->getKey());
 });
 
-it('resolves a student by their other ID', function () {
+it('resolves a student by their other ID', function () use ($resolveStudentGroupSubject) {
     asSuperAdmin();
 
     $group = Group::factory()->create(['model' => GroupModel::Student]);
     $student = Student::factory()->create(['otherid' => 'OTHER-1']);
 
-    expect(resolveStudentGroupSubject($group, 'OTHER-1')?->getKey())->toBe($student->getKey());
+    expect($resolveStudentGroupSubject($group, 'OTHER-1')?->getKey())->toBe($student->getKey());
 });
 
-it('does not resolve an archived student by their SIS ID', function () {
+it('does not resolve an archived student by their SIS ID', function () use ($resolveStudentGroupSubject) {
     asSuperAdmin();
 
     $group = Group::factory()->create(['model' => GroupModel::Student]);
     $student = Student::factory()->create();
     $student->archive();
 
-    expect(resolveStudentGroupSubject($group, $student->sisid))->toBeNull();
+    expect($resolveStudentGroupSubject($group, $student->sisid))->toBeNull();
 });
 
-it('does not resolve an archived student by their other ID', function () {
+it('does not resolve an archived student by their other ID', function () use ($resolveStudentGroupSubject) {
     asSuperAdmin();
 
     $group = Group::factory()->create(['model' => GroupModel::Student]);
     $student = Student::factory()->create(['otherid' => 'OTHER-2']);
     $student->archive();
 
-    expect(resolveStudentGroupSubject($group, 'OTHER-2'))->toBeNull();
+    expect($resolveStudentGroupSubject($group, 'OTHER-2'))->toBeNull();
 });
