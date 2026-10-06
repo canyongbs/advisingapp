@@ -1,0 +1,5 @@
+#!/command/with-contenv bash
+
+# s6 passes the exit code as $1 (256 when killed by a signal) and the signal as $2. A manager killed by the OOM killer
+# logs nothing itself, so this line is the only sign of its death in the container logs.
+echo "Queue autoscaler exited (exit_code=${1:-unknown} signal=${2:-none}); s6 is restarting it." >&2
