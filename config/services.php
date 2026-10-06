@@ -104,4 +104,11 @@ return [
         'secret' => env('AWS_GEO_PLACES_SECRET_ACCESS_KEY'),
         'region' => env('AWS_GEO_PLACES_REGION', 'us-west-2'),
     ],
+
+    // Leave key and secret blank so the SDK falls back to the ECS task role; they exist only for environments without one.
+    'cloudwatch' => [
+        'key' => env('AWS_CLOUDWATCH_ACCESS_KEY_ID') ?? '',
+        'secret' => env('AWS_CLOUDWATCH_SECRET_ACCESS_KEY') ?? '',
+        'region' => env('AWS_CLOUDWATCH_REGION', 'us-west-2'),
+    ],
 ];

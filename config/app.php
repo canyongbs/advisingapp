@@ -36,6 +36,7 @@
 
 use App\Providers\ApiServiceProvider;
 use App\Providers\AppServiceProvider;
+use App\Providers\EcsTaskProtectionServiceProvider;
 use App\Providers\EventServiceProvider;
 use App\Providers\Filament\AdminPanelProvider;
 use App\Providers\Filament\LandlordPanelProvider;
@@ -133,6 +134,14 @@ return [
     'force_https' => env('APP_FORCE_HTTPS', true),
 
     'asset_url' => env('ASSET_URL', '/'),
+
+    // Injected by ECS into every container; empty everywhere else, which disables task scale-in protection.
+    'ecs_agent_uri' => env('ECS_AGENT_URI', ''),
+
+    'queue-autoscale-metrics' => [
+        // ?: so a blank env value falls back to the default rather than publishing to an empty namespace.
+        'namespace' => env('QUEUE_AUTOSCALE_METRICS_NAMESPACE') ?: 'CanyonGBS/QueueAutoscale',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -257,6 +266,7 @@ return [
         LaravelQueueAutoscaleServiceProvider::class,
         LaravelQueueMetricsServiceProvider::class,
         LaravelQueueMonitorServiceProvider::class,
+        EcsTaskProtectionServiceProvider::class,
         RedisServiceProvider::class,
         PasswordResetServiceProvider::class,
         SessionServiceProvider::class,

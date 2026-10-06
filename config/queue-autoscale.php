@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use App\Support\QueueAutoscale\DefaultWorkerProfile;
 use App\Support\QueueAutoscale\LandlordFailureWindowStore;
 use Cbox\LaravelQueueAutoscale\Configuration\Profiles\BalancedProfile;
 use Cbox\LaravelQueueAutoscale\Fuse\ConfigurableFailureClassifier;
@@ -59,7 +60,7 @@ return [
     | for migration details from v2.
     |
     */
-    'sla_defaults' => BalancedProfile::class,
+    'sla_defaults' => DefaultWorkerProfile::class,
 
     /*
     |--------------------------------------------------------------------------

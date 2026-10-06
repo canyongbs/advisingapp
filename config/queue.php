@@ -154,4 +154,14 @@ return [
     'outbound_communication_queue' => env('OUTBOUND_COMMUNICATION_QUEUE', 'outbound-communication'),
 
     'import_export_queue' => env('IMPORT_EXPORT_QUEUE', 'import-export'),
+
+    // Every static queue, keyed by the label the queue monitoring page shows for it.
+    'queues' => [
+        'default' => env('SQS_QUEUE', 'default'),
+        'landlord' => env('LANDLORD_SQS_QUEUE', 'landlord'),
+        'outbound-communication' => env('OUTBOUND_COMMUNICATION_QUEUE', 'outbound-communication'),
+        'audit' => env('AUDIT_QUEUE_QUEUE', 'audit'),
+        'meeting-center' => env('MEETING_CENTER_QUEUE', 'meeting-center'),
+        'import-export' => env('IMPORT_EXPORT_QUEUE', 'import-export'),
+    ],
 ];

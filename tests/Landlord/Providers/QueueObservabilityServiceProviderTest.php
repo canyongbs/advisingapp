@@ -36,8 +36,63 @@
 
 use App\Features\QueueMonitoringFeature;
 use App\Models\Tenant;
+use App\Models\User;
 use App\Providers\QueueObservabilityServiceProvider;
+use App\Support\QueueAutoscale\WorkerCountHistory;
+use Cbox\LaravelQueueAutoscale\Events\ClusterSummaryPublished;
+use Cbox\LaravelQueueAutoscale\Events\ScalingDecisionMade;
+use Cbox\LaravelQueueAutoscale\Scaling\ScalingDecision;
+use Cbox\LaravelQueueMetrics\LaravelQueueMetrics;
+use Cbox\LaravelQueueMonitor\LaravelQueueMonitor;
 use Cbox\LaravelQueueMonitor\Models\JobMonitor;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Event;
+
+function bootQueueObservabilityServiceProvider(): void
+{
+    $provider = app()->getProvider(QueueObservabilityServiceProvider::class);
+
+    assert($provider instanceof QueueObservabilityServiceProvider);
+
+    $provider->boot();
+}
+
+function dispatchWorkerCountEvents(): void
+{
+    event(new ScalingDecisionMade(new ScalingDecision(
+        connection: 'sqs',
+        queue: 'host-share',
+        currentWorkers: 2,
+        targetWorkers: 2,
+        reason: 'hold',
+    )));
+
+    event(new ClusterSummaryPublished(
+        clusterId: 'test-cluster',
+        leaderId: 'leader-1',
+        summary: ['workloads' => [['name' => 'cluster-wide', 'current_workers' => 8]]],
+        publishedAt: now()->getTimestamp() * 1000,
+    ));
+}
+
+function requestFrom(?User $user): Request
+{
+    $request = Request::create('/');
+    $request->setUserResolver(fn (): ?User => $user);
+
+    return $request;
+}
+
+function userWithSuperAdmin(bool $isSuperAdmin): User
+{
+    $user = Mockery::mock(User::class);
+    $user->shouldReceive('isSuperAdmin')->andReturn($isSuperAdmin);
+
+    assert($user instanceof User);
+
+    return $user;
+}
 
 it('records the current tenant on monitored jobs', function () {
     $tenant = Tenant::query()->first();
@@ -80,3 +135,42 @@ it('leaves the queue monitor enabled once `QueueMonitoringFeature` is active', f
 
     expect(config('queue-monitor.enabled'))->toBeTrue();
 });
+
+describe('worker count sampling', function () {
+    beforeEach(function () {
+        config(['cache.stores.landlord' => ['driver' => 'array']]);
+        Cache::purge('landlord');
+
+        Event::forget(ScalingDecisionMade::class);
+        Event::forget(ClusterSummaryPublished::class);
+    });
+
+    it('samples the cluster-wide count from the cluster summary in cluster mode', function () {
+        config(['queue-autoscale.cluster.enabled' => true]);
+
+        bootQueueObservabilityServiceProvider();
+        dispatchWorkerCountEvents();
+
+        expect(app(WorkerCountHistory::class)->queues())->toBe(['cluster-wide']);
+    });
+
+    it('samples scaling decisions in single-host mode', function () {
+        config(['queue-autoscale.cluster.enabled' => false]);
+
+        bootQueueObservabilityServiceProvider();
+        dispatchWorkerCountEvents();
+
+        expect(app(WorkerCountHistory::class)->queues())->toBe(['host-share']);
+    });
+});
+
+it('only lets super admins through the queue package endpoints', function (Closure $user, bool $allowed) {
+    $request = requestFrom($user());
+
+    expect(LaravelQueueMonitor::check($request))->toBe($allowed)
+        ->and(app(LaravelQueueMetrics::class)->check($request))->toBe($allowed);
+})->with([
+    'a super admin' => [fn (): User => userWithSuperAdmin(true), true],
+    'any other user' => [fn (): User => userWithSuperAdmin(false), false],
+    'a guest' => [fn (): ?User => null, false],
+]);
