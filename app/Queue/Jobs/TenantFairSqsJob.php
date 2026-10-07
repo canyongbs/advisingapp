@@ -37,6 +37,8 @@
 namespace App\Queue\Jobs;
 
 use App\Queue\SqsOverflowStorage;
+use Aws\Sqs\SqsClient;
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Queue\Jobs\SqsJob;
 use Override;
@@ -44,6 +46,32 @@ use RuntimeException;
 
 class TenantFairSqsJob extends SqsJob
 {
+    /**
+     * @param array<string, mixed> $job
+     * @param array<string, mixed> $overflowStorage
+     */
+    public function __construct(
+        Container $container,
+        SqsClient $sqs,
+        array $job,
+        string $connectionName,
+        string $queueUrl,
+        array $overflowStorage,
+        private readonly string $queueName,
+    ) {
+        parent::__construct($container, $sqs, $job, $connectionName, $queueUrl, $overflowStorage);
+    }
+
+    /**
+     * The queue's name rather than SqsJob's URL, which everything that keys data by queue reads back by name.
+     * Revert once upstream is fixed: docs/explanations/oss-todo/cbox-queue-packages-queue-identity.md
+     */
+    #[Override]
+    public function getQueue(): string
+    {
+        return $this->queueName;
+    }
+
     /**
      * A message whose offloaded payload is gone can never be processed, so it is deleted rather than redelivered
      * until the queue's retention period expires.

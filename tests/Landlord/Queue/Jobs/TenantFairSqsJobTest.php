@@ -61,6 +61,7 @@ function tenantFairSqsJobWithBody(string $body, ?SqsClient $sqs = null): TenantF
         'sqs',
         'https://sqs.us-east-1.amazonaws.com/123456789012/default',
         config('queue.connections.sqs.overflow'),
+        'default',
     );
 }
 

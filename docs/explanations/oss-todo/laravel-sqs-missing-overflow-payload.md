@@ -124,7 +124,7 @@ return $this->cachedRawBody = $rawBody;
 
 1. Run `pls exec app composer update laravel/framework` to get a release that contains the fix. The constraint is `^13.0`, so no `composer.json` change is needed unless the fix only ships in a new major.
 2. **If the fix landed in `SqsQueue::pop()` (the preferred design):** `App\Queue\TenantFairSqsQueue::pop()` is a copy of the old `pop()` and does **not** inherit it.
-    - Re-copy the new upstream `pop()` body into our override, keeping `new TenantFairSqsJob(...)` in place of `new SqsJob(...)`.
+    - Re-copy the new upstream `pop()` body into our override, keeping `new TenantFairSqsJob(...)` in place of `new SqsJob(...)` and still passing it the queue name (`$queue ?? $this->default`) as well as the URL.
     - Then remove the guard.
     - Re-check this copy on every Laravel upgrade.
 3. **If the fix landed in `SqsJob::getRawBody()`:** our override already calls `parent::getRawBody()`, so the upstream exception passes through. Remove the guard.

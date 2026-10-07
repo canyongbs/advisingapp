@@ -84,7 +84,7 @@ class TenantFairSqsQueue extends SqsQueue
     public function pop($queue = null): ?TenantFairSqsJob
     {
         $response = $this->sqs->receiveMessage([
-            'QueueUrl' => $queue = $this->getQueue($queue),
+            'QueueUrl' => $queueUrl = $this->getQueue($queue),
             'AttributeNames' => ['ApproximateReceiveCount'],
         ]);
 
@@ -97,8 +97,9 @@ class TenantFairSqsQueue extends SqsQueue
             $this->sqs,
             $response['Messages'][0],
             $this->connectionName,
-            $queue,
+            $queueUrl,
             $this->overflowStorage,
+            $queue ?? $this->default,
         );
     }
 
