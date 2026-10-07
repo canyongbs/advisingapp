@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use Illuminate\Queue\RedisQueue;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Str;
@@ -46,7 +47,11 @@ it('pushes a batch onto the Redis cluster queue', function () {
         ->onQueue($queue)
         ->dispatch();
 
-    expect(Queue::connection('redis')->size($queue))->toBe(1);
+    $connection = Queue::connection('redis');
 
-    Queue::connection('redis')->clear($queue);
+    assert($connection instanceof RedisQueue);
+
+    expect($connection->size($queue))->toBe(1);
+
+    $connection->clear($queue);
 });
