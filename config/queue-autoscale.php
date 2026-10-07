@@ -168,8 +168,9 @@ return [
     |
     */
     'excluded' => [
-        // 'legacy-*',
-        // 'horizon-managed',
+        // Laravel's SyncJob reports this queue for every job run synchronously, so it is never a real workload.
+        // See docs/explanations/oss-todo/cbox-queue-packages-queue-identity.md
+        'sync',
     ],
 
     /*
