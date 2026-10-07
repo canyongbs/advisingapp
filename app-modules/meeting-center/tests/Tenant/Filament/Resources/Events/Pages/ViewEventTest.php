@@ -51,17 +51,15 @@ use function Tests\asSuperAdmin;
  *
  * @return User
  */
-function viewEventTestUser(array $permissions): User
-{
+$viewEventTestUser = function (array $permissions): User {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->eventManagement = true;
     $settings->save();
-
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo($permissions);
 
     return $user;
-}
+};
 
 it('archive action is always visible and labeled Archive', function () {
     asSuperAdmin();
@@ -94,9 +92,9 @@ it('archives an event with attendees', function () {
     expect($event->fresh()->isArchived())->toBeTrue();
 });
 
-describe('authorization', function () {
-    it('falls back to the overview tab when a view-only user requests an edit tab', function () {
-        $user = viewEventTestUser(['event.view-any', 'event.*.view']);
+describe('authorization', function () use ($viewEventTestUser) {
+    it('falls back to the overview tab when a view-only user requests an edit tab', function () use ($viewEventTestUser) {
+        $user = $viewEventTestUser(['event.view-any', 'event.*.view']);
         actingAs($user);
 
         $event = Event::factory()->create();
@@ -105,8 +103,8 @@ describe('authorization', function () {
             ->assertSet('activeTab', 'overview');
     });
 
-    it('allows a user with update access to open an edit tab without view access', function () {
-        $user = viewEventTestUser(['event.view-any', 'event.*.update']);
+    it('allows a user with update access to open an edit tab without view access', function () use ($viewEventTestUser) {
+        $user = $viewEventTestUser(['event.view-any', 'event.*.update']);
         actingAs($user);
 
         $event = Event::factory()->create();
@@ -116,8 +114,8 @@ describe('authorization', function () {
             ->assertSuccessful();
     });
 
-    it('allows a user with attendee access to open the attendees tab', function () {
-        $user = viewEventTestUser(['event.view-any', 'event_attendee.view-any']);
+    it('allows a user with attendee access to open the attendees tab', function () use ($viewEventTestUser) {
+        $user = $viewEventTestUser(['event.view-any', 'event_attendee.view-any']);
         actingAs($user);
 
         $event = Event::factory()->create();
@@ -127,8 +125,8 @@ describe('authorization', function () {
             ->assertSuccessful();
     });
 
-    it('denies access when a user cannot access any event tab', function () {
-        $user = viewEventTestUser(['event.view-any']);
+    it('denies access when a user cannot access any event tab', function () use ($viewEventTestUser) {
+        $user = $viewEventTestUser(['event.view-any']);
         actingAs($user);
 
         $event = Event::factory()->create();

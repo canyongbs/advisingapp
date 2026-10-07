@@ -49,17 +49,15 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-function eventAttendeesRelationManagerTestUser(): User
-{
+$eventAttendeesRelationManagerTestUser = function (): User {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->eventManagement = true;
     $settings->save();
-
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo(['event.view-any', 'event.*.view']);
 
     return $user;
-}
+};
 
 test('archive action is visible when attendee is not archived', function () {
     asSuperAdmin();
@@ -152,9 +150,9 @@ test('invite action dispatches attendee invitations for the owner event', functi
     });
 });
 
-describe('authorization', function () {
-    it('shows the Invite action with the `event_attendee.create` permission', function () {
-        $user = eventAttendeesRelationManagerTestUser();
+describe('authorization', function () use ($eventAttendeesRelationManagerTestUser) {
+    it('shows the Invite action with the `event_attendee.create` permission', function () use ($eventAttendeesRelationManagerTestUser) {
+        $user = $eventAttendeesRelationManagerTestUser();
         $user->givePermissionTo(['event_attendee.view-any', 'event_attendee.create']);
         actingAs($user);
 
@@ -164,8 +162,8 @@ describe('authorization', function () {
             ->assertActionVisible(TestAction::make('invite')->table());
     });
 
-    it('hides the Invite action without the `event_attendee.create` permission', function () {
-        $user = eventAttendeesRelationManagerTestUser();
+    it('hides the Invite action without the `event_attendee.create` permission', function () use ($eventAttendeesRelationManagerTestUser) {
+        $user = $eventAttendeesRelationManagerTestUser();
         $user->givePermissionTo('event_attendee.view-any');
         actingAs($user);
 
@@ -175,8 +173,8 @@ describe('authorization', function () {
             ->assertActionHidden(TestAction::make('invite')->table());
     });
 
-    it('denies direct access without the `event_attendee.view-any` permission', function () {
-        $user = eventAttendeesRelationManagerTestUser();
+    it('denies direct access without the `event_attendee.view-any` permission', function () use ($eventAttendeesRelationManagerTestUser) {
+        $user = $eventAttendeesRelationManagerTestUser();
         actingAs($user);
 
         $event = Event::factory()->create();

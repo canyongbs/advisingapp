@@ -45,17 +45,15 @@ use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-function eventDetailsManagerTestUser(): User
-{
+$eventDetailsManagerTestUser = function (): User {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->eventManagement = true;
     $settings->save();
-
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo(['event.view-any', 'event.*.view']);
 
     return $user;
-}
+};
 
 it('does not allow updating an event to a title matching another non-deleted event case-insensitively', function () {
     asSuperAdmin();
@@ -113,9 +111,9 @@ it('saves the eventRegistrationForm relationship fields alongside the event', fu
         ->rounding->toBe(Rounding::Full);
 });
 
-describe('authorization', function () {
-    it('denies direct access without the `event.*.update` permission', function () {
-        $user = eventDetailsManagerTestUser();
+describe('authorization', function () use ($eventDetailsManagerTestUser) {
+    it('denies direct access without the `event.*.update` permission', function () use ($eventDetailsManagerTestUser) {
+        $user = $eventDetailsManagerTestUser();
         actingAs($user);
 
         $event = Event::factory()->create();
