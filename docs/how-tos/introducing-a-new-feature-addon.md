@@ -44,6 +44,7 @@ This guide covers gating features behind addon toggles tied to the account subsc
     Additionally, a cleanup task should be created to make this new field required in the future, in both files. Using `sometimes` lets the field be omitted, which prevents issues if the app is updated before the external API. Do not use `nullable`: the DTO property is a non-nullable `bool`, so a `null` would pass validation and then fail when the DTO is built.
 
     `app/Console/Commands/CreateTenant.php` should also pass the new feature to the constructor of `LicenseAddonsData` in the `handle()` function:
+
     ```php
     use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
     use App\DataTransferObjects\LicenseManagement\LicenseData;
@@ -195,7 +196,7 @@ This guide covers gating features behind addon toggles tied to the account subsc
 
     ```php
     use App\Models\User;
-  
+
     use function Pest\Laravel\actingAs;
     use function Pest\Laravel\get;
     use function Tests\setExampleFeatureEnabled;
@@ -224,6 +225,7 @@ This guide covers gating features behind addon toggles tied to the account subsc
     ```
 
     Furthermore, new test cases should be added to `tests/Tenant/DataTransferObjects/LicenseManagement/LicenseAddonsDataTest.php`:
+
     ```php
     use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
 
@@ -242,6 +244,7 @@ This guide covers gating features behind addon toggles tied to the account subsc
     ```
 
     Calls to the constructor of `LicenseAddonsData` in `tests/TestCase.php` in the `createTenant()` and `refreshTenantTestingEnvironment()` functions should also be updated with the new feature:
+
     ```php
     new LicenseAddonsData(
         // ...
