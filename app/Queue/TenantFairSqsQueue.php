@@ -41,6 +41,7 @@ use App\Queue\Jobs\TenantFairSqsJob;
 use Illuminate\Queue\SqsQueue;
 use Illuminate\Support\Str;
 use Override;
+use RuntimeException;
 
 /**
  * Tags every job pushed from a tenant context with an SQS `MessageGroupId` of the tenant's id, so SQS fair queues
@@ -120,7 +121,9 @@ class TenantFairSqsQueue extends SqsQueue
 
         assert($tenantId === null || is_string($tenantId));
 
-        $this->container->make(SqsOverflowStorage::class)->store($tenantId)->put($pointer, $payload);
+        if (! $this->container->make(SqsOverflowStorage::class)->store($tenantId)->put($pointer, $payload)) {
+            throw new RuntimeException("The payload of SQS message [{$pointer}] could not be offloaded.");
+        }
 
         return json_encode([
             '@pointer' => $pointer,

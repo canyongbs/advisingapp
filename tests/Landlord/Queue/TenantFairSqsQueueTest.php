@@ -284,6 +284,30 @@ describe('overflow', function () {
             ->and(json_decode($sentMessages[1]['MessageBody'], true))->toHaveKey('uuid');
     });
 
+    it('fails the dispatch without sending the message when the payload cannot be stored', function () {
+        app()->instance(SqsOverflowStorage::class, new class () extends SqsOverflowStorage {
+            public function store(?string $tenantId): Repository
+            {
+                return Cache::repository(new class () extends ArrayStore {
+                    public function put($key, $value, $seconds)
+                    {
+                        return false;
+                    }
+                });
+            }
+        });
+
+        $sentMessages = [];
+        $queue = tenantFairSqsQueueRecordingInto($sentMessages);
+
+        $job = largeQueuedClosure();
+
+        expect(fn () => Tenant::query()->first()->execute(fn () => $queue->push($job)))
+            ->toThrow(RuntimeException::class, 'could not be offloaded');
+
+        expect($sentMessages)->toBeEmpty();
+    });
+
     it('reads a large tenant payload back from a landlord context and deletes it with the job', function () {
         $overflowStorage = fakeTenantFairSqsOverflowStorage();
 
