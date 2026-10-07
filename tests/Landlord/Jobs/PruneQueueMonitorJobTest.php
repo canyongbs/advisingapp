@@ -41,6 +41,12 @@ use Cbox\LaravelQueueMonitor\Enums\JobStatus;
 use Cbox\LaravelQueueMonitor\Models\JobMonitor;
 use Illuminate\Support\Facades\DB;
 
+beforeEach(function () {
+    // TODO: Cleanup Task (queue-monitoring): delete this beforeEach once the flag no longer forces the monitor off at boot.
+    // The provider decides this at boot, before parallel testing switches to this process's database.
+    config(['queue-monitor.enabled' => true]);
+});
+
 function jobMonitorAged(JobStatus $status, CarbonImmutable $at): JobMonitor
 {
     return JobMonitor::factory()->create([
