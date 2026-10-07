@@ -36,19 +36,24 @@
 
 namespace AdvisingApp\Form\Filament\Forms\Components;
 
+use AdvisingApp\Form\Filament\Forms\StateCasts\OptionsStateCast;
 use Closure;
 use Filament\Forms\Components\KeyValue;
+use Filament\Schemas\Components\StateCasts\KeyValueStateCast;
 
 /**
  * A "Label" / "Value" options editor for choice-style form fields (select,
  * radio, checkboxes).
  *
- * The state is a standard KeyValue state (option value => label), but the
+ * The state is stored as a standard KeyValue map (option value => label), or
+ * as explicit `{label, value}` rows when `asLabelValueRows()` is used. The
  * label column is rendered first and the value is generated from the label
  * in the browser.
  */
 class OptionsKeyValue extends KeyValue
 {
+    protected bool $asLabelValueRows = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -56,13 +61,6 @@ class OptionsKeyValue extends KeyValue
         $this
             ->view('form::components.options-key-value')
             ->reorderable()
-            ->afterStateHydrated(function (OptionsKeyValue $component): void {
-                $state = $component->getRawState();
-
-                if (is_array($state) && is_array($state[0] ?? null) && array_key_exists('label', $state[0])) {
-                    $component->state(collect($state)->pluck('label', 'value')->all());
-                }
-            })
             ->rule(fn (): Closure => function (string $attribute, mixed $value, Closure $fail): void {
                 assert(is_array($value));
 
@@ -72,5 +70,22 @@ class OptionsKeyValue extends KeyValue
                     $fail('Each option label must generate a distinct value. Labels such as "A B" and "A-B" generate the same value.');
                 }
             });
+    }
+
+    public function asLabelValueRows(bool $condition = true): static
+    {
+        $this->asLabelValueRows = $condition;
+
+        return $this;
+    }
+
+    public function getDefaultStateCasts(): array
+    {
+        $casts = array_filter(
+            parent::getDefaultStateCasts(),
+            fn (mixed $cast): bool => ! $cast instanceof KeyValueStateCast,
+        );
+
+        return [...$casts, new OptionsStateCast($this->asLabelValueRows)];
     }
 }

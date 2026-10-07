@@ -63,7 +63,8 @@ class RadioFormFieldBlock extends FormFieldBlock
         return [
             Checkbox::make('hasOtherOption')
                 ->label('Include Other'),
-            OptionsKeyValue::make('options'),
+            OptionsKeyValue::make('options')
+                ->asLabelValueRows(),
         ];
     }
 
