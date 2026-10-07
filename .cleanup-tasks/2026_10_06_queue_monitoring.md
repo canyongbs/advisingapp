@@ -9,6 +9,8 @@ created: 2026-10-06
 
 ## Temporary Migrations
 
+- database/landlord/2026_10_07_144054_tmp_restart_queue_workers_after_queue_monitoring_activation.php
+
 ## Additional Cleanup
 
 - Search for `TODO: Cleanup Task (queue-monitoring)` and follow the instructions at each site.
