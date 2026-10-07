@@ -144,6 +144,7 @@ class CreateTenant extends Command
                     mobileApps: true,
                     scheduleAndAppointments: true,
                     enterpriseAi: true,
+                    unifiedInbox: true,
                 ),
             ),
         );
