@@ -34,28 +34,49 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\Pages;
+namespace AdvisingApp\Application\Enums;
 
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
-use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\WorkflowResource;
-use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\EditWorkflow as BaseEditWorkflow;
-use AdvisingApp\Workflow\Models\Workflow;
-use Filament\Actions\DeleteAction;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationSubmissions;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationWorkflows;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\ViewApplication;
+use AdvisingApp\Application\Models\Application;
+use Filament\Support\Contracts\HasLabel;
 
-class EditWorkflow extends BaseEditWorkflow
+enum ApplicationTab: string implements HasLabel
 {
-    protected static string $resource = WorkflowResource::class;
+    case View = 'view';
 
-    protected function getHeaderActions(): array
+    case Edit = 'edit';
+
+    case Workflows = 'workflows';
+
+    case Submissions = 'submissions';
+
+    case Notifications = 'notifications';
+
+    public function canAccess(Application $record): bool
     {
-        return [
-            DeleteAction::make()
-                ->successRedirectUrl(function (Workflow $record) {
-                    return ApplicationResource::getUrl('view', [
-                        'tab' => 'workflows',
-                        'record' => $record->workflowTrigger->related_id,
-                    ]);
-                }),
-        ];
+        if ($record->isArchived() || ! ApplicationResource::canAccess()) {
+            return false;
+        }
+
+        return match ($this) {
+            self::View => ApplicationResource::canView($record),
+            self::Edit, self::Notifications => ApplicationResource::canEdit($record),
+            self::Workflows => ManageApplicationWorkflows::canViewForRecord($record, ViewApplication::class),
+            self::Submissions => ManageApplicationSubmissions::canViewForRecord($record, ViewApplication::class),
+        };
+    }
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::View => 'View',
+            self::Edit => 'Edit',
+            self::Workflows => 'Workflows',
+            self::Submissions => 'Submissions',
+            self::Notifications => 'Notifications',
+        };
     }
 }

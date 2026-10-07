@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
+use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Notifications\ApplicationSubmissionNotification;
@@ -63,6 +64,22 @@ it('links the author name to their student record', function () {
     $body = (new ApplicationSubmissionNotification($application, $submission))->toDatabase(User::factory()->create())['body'];
 
     expect($body)->toContain(StudentResource::getUrl('view', ['record' => $student]));
+});
+
+it('links application and submission details to their canonical tabs', function () {
+    asSuperAdmin();
+    $application = Application::factory()->create();
+    $submission = $application->submissions()->firstOrFail();
+
+    $body = (new ApplicationSubmissionNotification($application, $submission))->toDatabase(User::factory()->create())['body'];
+
+    expect($body)->toContain(ApplicationResource::getUrl('view', ['record' => $application, 'tab' => 'edit']))
+        ->and($body)->toContain(ApplicationResource::getUrl('view', [
+          'tab' => 'submissions',
+          'record' => $application,
+          'tableAction' => 'view',
+          'tableActionRecord' => $submission->id,
+      ]));
 });
 
 describe('archiving', function () {

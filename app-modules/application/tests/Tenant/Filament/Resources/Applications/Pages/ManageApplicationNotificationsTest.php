@@ -41,6 +41,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Livewire\Livewire;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Laravel\seed;
 use function Tests\asSuperAdmin;
 
@@ -72,6 +73,31 @@ test('can save notification users to an application', function () {
 
     expect($application->fresh()->notificationUsers)->toHaveCount(1);
     expect($application->fresh()->notificationUsers->first()->id)->toBe($userToNotify->id);
+});
+
+describe('authorization', function () {
+    it('denies direct notification component access to a view-only user', function () {
+        $user = User::factory()->licensed(LicenseType::cases())->create();
+        $user->givePermissionTo('application.view-any', 'application.*.view');
+        actingAs($user);
+        $application = Application::factory()->create();
+
+        Livewire::test(ManageApplicationNotifications::class, ['record' => $application->getKey()])->assertForbidden();
+    });
+
+    it('does not save settings after update permission is revoked', function () {
+        $user = User::factory()->licensed(LicenseType::cases())->create();
+        $user->givePermissionTo('application.view-any', 'application.*.update');
+        actingAs($user);
+        $application = Application::factory()->create(['notify_via_email' => false]);
+        $component = Livewire::test(ManageApplicationNotifications::class, ['record' => $application->getKey()])
+            ->fillForm(['notify_via_email' => true]);
+        $user->revokePermissionTo('application.*.update');
+
+        $component->call('save')->assertForbidden();
+
+        expect($application->fresh()->notify_via_email)->toBeFalse();
+    });
 });
 
 test('can enable notify_via_email and it persists', function () {

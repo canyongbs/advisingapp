@@ -50,7 +50,7 @@ use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\TextColumn;
@@ -59,19 +59,35 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ManageApplicationSubmissions extends ManageRelatedRecords
+class ManageApplicationSubmissions extends RelationManager
 {
-    protected static string $resource = ApplicationResource::class;
-
-    // TODO: Obsolete when there is no table, remove from Filament
     protected static string $relationship = 'submissions';
 
-    protected static ?string $navigationLabel = 'Submissions';
+    protected static ?string $title = 'Submissions';
 
-    protected static ?string $breadcrumb = 'Submissions';
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        return $ownerRecord instanceof Application
+            && ! $ownerRecord->isArchived()
+            && ApplicationResource::canAccess()
+            && parent::canViewForRecord($ownerRecord, $pageClass);
+    }
+
+    public function mount(): void
+    {
+        abort_unless(static::canViewForRecord($this->getOwnerRecord(), $this->getPageClass()), 403);
+
+        parent::mount();
+    }
+
+    public function isReadOnly(): bool
+    {
+        return false;
+    }
 
     public function getDefaultActiveTab(): string | int | null
     {
@@ -259,6 +275,7 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                         ->modalHeading('Archive Submissions')
                         ->modalSubmitActionLabel('Archive')
                         ->authorize(fn () => auth()->user()->can('deleteAny', ApplicationSubmission::class))
+                        ->authorizeIndividualRecords('archive')
                         ->action(function (Collection $records) use ($owner): void {
                             /** @phpstan-ignore argument.type */
                             $records->each(function (ApplicationSubmission $record): void {
@@ -281,13 +298,9 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
             ]);
     }
 
-    public static function getNavigationItems(array $urlParameters = []): array
+    public static function getBadge(Model $ownerRecord, string $pageClass): ?string
     {
-        $item = parent::getNavigationItems($urlParameters)[0];
-
-        $ownerRecord = $urlParameters['record'];
-
-        /** @var Application $ownerRecord */
+        assert($ownerRecord instanceof Application);
         $applicationSubmissionsCount = Cache::tags('{application-submission-count}')
             ->remember(
                 "application-submission-count-{$ownerRecord->root_id}",
@@ -303,8 +316,6 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                 },
             );
 
-        $item->badge((string) $applicationSubmissionsCount);
-
-        return [$item];
+        return (string) $applicationSubmissionsCount;
     }
 }

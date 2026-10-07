@@ -38,6 +38,7 @@ namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\WorkflowResource;
+use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerEvent;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
@@ -48,26 +49,42 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
-use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class ManageApplicationWorkflows extends ManageRelatedRecords
+class ManageApplicationWorkflows extends RelationManager
 {
-    protected static string $resource = ApplicationResource::class;
-
     protected static string $relationship = 'workflows';
 
     protected static ?string $relatedResource = WorkflowResource::class;
 
-    public static function getNavigationLabel(): string
+    protected static ?string $title = 'Workflows';
+
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        return 'Workflows';
+        return $ownerRecord instanceof Application
+            && ! $ownerRecord->isArchived()
+            && ApplicationResource::canAccess()
+            && parent::canViewForRecord($ownerRecord, $pageClass);
+    }
+
+    public function mount(): void
+    {
+        abort_unless(static::canViewForRecord($this->getOwnerRecord(), $this->getPageClass()), 403);
+
+        parent::mount();
+    }
+
+    public function isReadOnly(): bool
+    {
+        return false;
     }
 
     public function getDefaultActiveTab(): string | int | null
@@ -126,6 +143,7 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
     public function table(Table $table): Table
     {
         return $table
+            ->headerActions($this->getHeaderActions())
             ->recordTitleAttribute('id')
             ->columns([
                 TextColumn::make('name'),

@@ -39,29 +39,46 @@ namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 use AdvisingApp\Application\Actions\CreateApplicationVersion;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\Concerns\HasSharedFormConfiguration;
+use AdvisingApp\Application\Livewire\ApplicationFormManager;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Form\Actions\SaveSubmissibleFieldsFromContent;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Actions\Action;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class EditApplication extends EditRecord
+class EditApplication extends ApplicationFormManager
 {
     use HasSharedFormConfiguration;
-
-    protected static string $resource = ApplicationResource::class;
-
-    protected static ?string $navigationLabel = 'Edit';
 
     /** @var array<string, mixed>|null */
     protected ?array $versioningFormData = null;
 
+    public function save(): void
+    {
+        parent::save();
+
+        $this->redirect(ApplicationResource::getUrl('view', [
+            'record' => $this->record,
+            'tab' => 'edit',
+        ]));
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema
+            ->model($this->record)
+            ->statePath('data')
             ->components($this->fields());
+    }
+
+    public function archiveAction(): Action
+    {
+        return ArchiveAction::make()
+            ->record($this->record)
+            ->authorize(fn (): bool => ApplicationResource::canDelete($this->record))
+            ->successRedirectUrl(ApplicationResource::getUrl('index'));
     }
 
     protected function beforeSave(): void
@@ -71,7 +88,8 @@ class EditApplication extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        /** @var Application $record */
+        assert($record instanceof Application);
+
         return DB::transaction(function () use ($record, $data) {
             $newVersion = app(CreateApplicationVersion::class)->execute($record, $data);
 
@@ -85,31 +103,14 @@ class EditApplication extends EditRecord
         });
     }
 
-    protected function getRedirectUrl(): ?string
-    {
-        return ApplicationResource::getUrl('view', ['record' => $this->record]);
-    }
-
     protected function getFormActions(): array
     {
         return [
-            $this->getSaveFormAction()
-                ->label('Save')
-                ->formId('form'),
-            ArchiveAction::make(),
-            $this->getCancelFormAction()
-                ->url(fn () => ApplicationResource::getUrl('view', ['record' => $this->record])),
-        ];
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            $this->getSaveFormAction()
-                ->label('Save')
-                ->formId('form'),
-            ArchiveAction::make(),
-            $this->getCancelFormAction()
+            Action::make('save')->label('Save')->submit('save'),
+            $this->archiveAction(),
+            Action::make('cancel')
+                ->label('Cancel')
+                ->color('gray')
                 ->url(fn () => ApplicationResource::getUrl('view', ['record' => $this->record])),
         ];
     }
