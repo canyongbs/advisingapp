@@ -34,37 +34,20 @@
 </COPYRIGHT>
 */
 
-use App\Features\SesEventDeduplicationFeature;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
 use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
 use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
 return new class () extends Migration {
-    // CREATE INDEX CONCURRENTLY cannot run inside a transaction block.
-    public $withinTransaction = false;
-
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction (CREATE INDEX CONCURRENTLY cannot run inside a transaction)
     public function up(): void
     {
         Schema::table('email_message_events', function (Blueprint $table) {
             $table->string('sns_message_id')->nullable();
         });
-
-        // Every delivery of one SNS message (HTTP and SQS during the cutover, SQS redelivery, SNS retries) carries the same id.
-        // Built concurrently so the events table is not write-locked, and partial so rows without an id stay out of it.
-        DB::statement('CREATE UNIQUE INDEX CONCURRENTLY email_message_events_sns_message_id_unique ON email_message_events (sns_message_id) WHERE sns_message_id IS NOT NULL');
-
-        SesEventDeduplicationFeature::activate();
     }
 
-    // @phpstan-ignore Common.multipleMigrationChangesNotWrappedInTransaction (DROP INDEX CONCURRENTLY cannot run inside a transaction)
     public function down(): void
     {
-        SesEventDeduplicationFeature::deactivate();
-
-        DB::statement('DROP INDEX CONCURRENTLY email_message_events_sns_message_id_unique');
-
         Schema::table('email_message_events', function (Blueprint $table) {
             $table->dropColumn('sns_message_id');
         });
