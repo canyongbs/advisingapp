@@ -36,8 +36,9 @@
 
 namespace App\Providers;
 
-use App\Overrides\LaravelSqsExtended\SqsDiskConnector;
 use App\Queue\Connectors\TenantAwareBackgroundConnector;
+use App\Queue\Connectors\TenantFairSqsConnector;
+use Illuminate\Queue\Queue;
 use Illuminate\Support\ServiceProvider;
 
 class QueueServiceProvider extends ServiceProvider
@@ -45,7 +46,11 @@ class QueueServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $manager = $this->app->make('queue');
-        $manager->addConnector('canyongbs-sqs-disk', fn () => new SqsDiskConnector());
+        $manager->addConnector('tenant-fair-sqs', fn () => new TenantFairSqsConnector());
         $manager->addConnector('tenant-aware-background', fn () => new TenantAwareBackgroundConnector());
+
+        // Lets the queue autoscaler measure how long jobs wait for a worker; Laravel only sets `createdAt`, in whole seconds.
+        // It also inflates queue-metrics job durations until upstream is fixed: docs/explanations/oss-todo/cbox-queue-packages-pushed-at.md
+        Queue::createPayloadUsing(fn (): array => ['pushedAt' => microtime(true)]);
     }
 }

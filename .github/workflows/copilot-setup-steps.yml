@@ -36,14 +36,9 @@ jobs:
             DB_PASSWORD: root
             DB_DATABASE: testing_landlord
             REDIS_HOST: 127.0.0.1
+            REDIS_PORT: '7000'
 
         services:
-            cache:
-                image: redis:7.4.11@sha256:91d0f7e8c748ec7a4c2b4fb2c4f84edab794dd91d01e095e38dc906db9d684ab
-                ports:
-                    - 6379:6379
-                options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
             postgres:
                 image: postgres:15@sha256:6eb0add3b77c081df18aa518ce43df58fdcc40f2e6d868a6fd08038dc7acd425
                 ports:
@@ -59,6 +54,27 @@ jobs:
                     --health-retries 5
 
         steps:
+            # A real 3-master cluster (ports 7000-7002) matching the cluster-mode ElastiCache Serverless used in staging and production.
+            - name: Start Redis (3-master cluster)
+              run: |
+                  docker run -d --name redis --network host \
+                    redis:7.4.11@sha256:91d0f7e8c748ec7a4c2b4fb2c4f84edab794dd91d01e095e38dc906db9d684ab \
+                    sh -c '
+                      for port in 7000 7001 7002; do
+                        redis-server --daemonize yes --port "$port" --appendonly no --save "" \
+                          --cluster-enabled yes --cluster-config-file "nodes-$port.conf" --cluster-node-timeout 5000
+                      done
+                      for port in 7000 7001 7002; do
+                        until redis-cli -p "$port" ping | grep -q PONG; do sleep 1; done
+                      done
+                      redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 --cluster-replicas 0 --cluster-yes
+                      tail -f /dev/null
+                    '
+
+                  for port in 7000 7001 7002; do
+                    until docker exec redis redis-cli -p "$port" cluster info | grep -q 'cluster_state:ok'; do sleep 1; done
+                  done
+
             - name: Create tenant database
               run: psql -h 127.0.0.1 -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
               env:

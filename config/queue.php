@@ -85,21 +85,18 @@ return [
 
         /*
         |--------------------------------------------------------------------------
-        | SQS Disk Queue Configuration
+        | SQS Configuration
         |--------------------------------------------------------------------------
         |
+        | Jobs pushed from a tenant context carry an SQS MessageGroupId of the tenant's id (SQS fair queues).
         |
-        | always_store: Determines if all payloads should be stored on a disk regardless if they are over SQS's 256KB limit.
-        | cleanup:      Determines if the payload files should be removed from the disk once the job is processed. Leaveing the
-        |                 files behind can be useful to replay the queue jobs later for debugging reasons.
-        | disk:         The disk to save SQS payloads to.  This disk should be configured in your Laravel filesystems.php config file.
-        | prefix        The prefix (folder) to store the payloads with.  This is useful if you are sharing a disk with other SQS queues.
-        |                 Using a prefix allows for the queue:clear command to destroy the files separately from other sqs-disk backed queues
-        |                 sharing the same disk.
+        | overflow: Payloads of 1 MiB or more are stored under the dispatching tenant's S3 root (or the landlord's) by
+        |           App\Queue\SqsOverflowStorage, and a pointer is sent instead. flush_on_clear must stay false: with
+        |           no overflow store set, it would flush the default Redis cache.
         |
         */
         'sqs' => [
-            'driver' => 'canyongbs-sqs-disk',
+            'driver' => 'tenant-fair-sqs',
             'key' => env('AWS_SQS_ACCESS_KEY_ID'),
             'secret' => env('AWS_SQS_SECRET_ACCESS_KEY'),
             'prefix' => env('SQS_PREFIX', 'https://sqs.us-east-1.amazonaws.com/your-account-id'),
@@ -107,19 +104,21 @@ return [
             'suffix' => env('SQS_SUFFIX'),
             'region' => env('AWS_SQS_DEFAULT_REGION', 'us-east-1'),
             'after_commit' => false,
-            'disk_options' => [
-                'always_store' => false,
-                'cleanup' => true,
-                'disk' => env('FILESYSTEM_DISK', 'local'),
-                'prefix' => 'sqs-payloads',
+            'overflow' => [
+                'enabled' => true,
+                'always' => false,
+                'delete_after_processing' => true,
+                'flush_on_clear' => false,
             ],
         ],
 
+        // Local development only. On a cluster connection Laravel hash-tags each queue's keys (queues:{name}) itself,
+        // and retry_after matches the 1200s visibility timeout of the SQS queues used in staging and production.
         'redis' => [
             'driver' => 'redis',
-            'connection' => 'default',
-            'queue' => env('REDIS_QUEUE', 'default'),
-            'retry_after' => 90,
+            'connection' => 'queue',
+            'queue' => env('REDIS_QUEUE', env('SQS_QUEUE', 'default')),
+            'retry_after' => (int) env('REDIS_QUEUE_RETRY_AFTER', 1200),
             'block_for' => null,
             'after_commit' => false,
         ],
@@ -152,7 +151,17 @@ return [
 
     'landlord_queue' => env('LANDLORD_SQS_QUEUE', 'landlord'),
 
-    'outbound_communication_queue' => env('OUTBOUND_COMMUNICATION_QUEUE', env('SQS_QUEUE', 'default')),
+    'outbound_communication_queue' => env('OUTBOUND_COMMUNICATION_QUEUE', 'outbound-communication'),
 
-    'import_export_queue' => env('IMPORT_EXPORT_QUEUE', env('SQS_QUEUE', 'default')),
+    'import_export_queue' => env('IMPORT_EXPORT_QUEUE', 'import-export'),
+
+    // Every static queue, keyed by the label the queue monitoring page shows for it.
+    'queues' => [
+        'default' => env('SQS_QUEUE', 'default'),
+        'landlord' => env('LANDLORD_SQS_QUEUE', 'landlord'),
+        'outbound-communication' => env('OUTBOUND_COMMUNICATION_QUEUE', 'outbound-communication'),
+        'audit' => env('AUDIT_QUEUE_QUEUE', 'audit'),
+        'meeting-center' => env('MEETING_CENTER_QUEUE', 'meeting-center'),
+        'import-export' => env('IMPORT_EXPORT_QUEUE', 'import-export'),
+    ],
 ];

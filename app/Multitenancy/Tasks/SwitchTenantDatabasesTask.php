@@ -103,6 +103,7 @@ class SwitchTenantDatabasesTask implements SwitchTenantTask
 
         app()->forgetInstance(DatabaseBatchRepository::class);
         app()->forgetInstance(BatchRepository::class);
+        app()->forgetInstance('queue.failer');
     }
 
     public function forgetCurrent(): void
@@ -127,6 +128,7 @@ class SwitchTenantDatabasesTask implements SwitchTenantTask
 
         app()->forgetInstance(DatabaseBatchRepository::class);
         app()->forgetInstance(BatchRepository::class);
+        app()->forgetInstance('queue.failer');
     }
 
     public function ensureTenantConnectionIsValid(?string $tenantConnectionName): void

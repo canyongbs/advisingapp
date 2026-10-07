@@ -45,13 +45,16 @@ use AdvisingApp\Campaign\Jobs\DispatchExecuteCampaignActionsForEachTenant;
 use AdvisingApp\Engagement\Jobs\DispatchDeliverEngagementsForEachTenant;
 use AdvisingApp\Engagement\Jobs\DispatchUnmatchedInboundCommunicationsForEachTenant;
 use AdvisingApp\Engagement\Jobs\GatherAndDispatchSesS3InboundEmails;
+use AdvisingApp\IntegrationAwsSesEventHandling\Jobs\ConsumeSesEventsFromSqs;
 use AdvisingApp\IntegrationOpenAi\Jobs\DispatchUploadFilesToVectorStoresForEachTenant;
 use AdvisingApp\MeetingCenter\Jobs\DispatchRefreshCalendarRefreshTokensForEachTenant;
 use AdvisingApp\MeetingCenter\Jobs\DispatchSyncCalendarsForEachTenant;
 use AdvisingApp\Workflow\Jobs\DispatchExecuteWorkflowActionStepsForEachTenant;
+use App\Console\Commands\PublishQueueScaleSignalCommand;
 use App\Jobs\DispatchHealthChecksForEachTenant;
 use App\Jobs\DispatchModelPruningForEachTenant;
 use App\Jobs\DispatchStaleCacheTagPruningForEachTenant;
+use App\Jobs\PruneQueueMonitorJob;
 use App\Models\MonitoredScheduledTaskLogItem;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -73,6 +76,12 @@ class Kernel extends ConsoleKernel
             ->name('Gather and Dispatch SES S3 Inbound Emails')
             ->onOneServer()
             ->monitorName('Gather and Dispatch SES S3 Inbound Emails');
+
+        $schedule->job(new ConsumeSesEventsFromSqs())
+            ->everyMinute()
+            ->when(fn (): bool => filled(config('services.ses_events_queue.url')))
+            ->onOneServer()
+            ->monitorName('Consume SES Events From SQS');
 
         $schedule->job(new DispatchDeliverEngagementsForEachTenant())
             ->everyMinute()
@@ -158,6 +167,50 @@ class Kernel extends ConsoleKernel
             ->everyMinute()
             ->onOneServer()
             ->monitorName('Schedule Check Heartbeat');
+
+        // Feeds ECS scaling of the worker service, so it is only published from ECS.
+        $schedule->command(PublishQueueScaleSignalCommand::class)
+            ->everyMinute()
+            ->when(fn (): bool => filled(config('app.ecs_agent_uri')))
+            ->onOneServer()
+            ->withoutOverlapping(5)
+            ->runInBackground()
+            ->monitorName('Publish Queue Scale Signal');
+
+        $schedule->job(new PruneQueueMonitorJob())
+            ->everyFiveMinutes()
+            ->onOneServer()
+            ->monitorName('Prune Queue Monitor');
+
+        // The queue metrics package schedules these itself without onOneServer(), so its scheduling is turned off.
+        $schedule->command('queue-metrics:cleanup-stale-workers', ['--threshold' => config('queue-metrics.worker_heartbeat.stale_threshold')])
+            ->everyMinute()
+            ->onOneServer()
+            ->withoutOverlapping(5)
+            ->runInBackground()
+            ->monitorName('Queue Metrics Cleanup Stale Workers');
+
+        $schedule->command('queue-metrics:calculate')
+            ->everyMinute()
+            ->onOneServer()
+            ->withoutOverlapping(5)
+            ->runInBackground()
+            ->monitorName('Queue Metrics Calculate');
+
+        $schedule->command('queue-metrics:record-trends')
+            ->everyMinute()
+            ->onOneServer()
+            ->withoutOverlapping(5)
+            ->runInBackground()
+            ->monitorName('Queue Metrics Record Trends');
+
+        // The package's shortest baseline interval; it recalculates less often only once a baseline is confident.
+        $schedule->command('queue-metrics:calculate-baselines')
+            ->everyFiveMinutes()
+            ->onOneServer()
+            ->withoutOverlapping(5)
+            ->runInBackground()
+            ->monitorName('Queue Metrics Calculate Baselines');
 
         // Registered last so it only records once a full schedule run has been dispatched; per-node, so never onOneServer().
         $schedule->call(fn () => touch(storage_path('framework/schedule-heartbeat')))

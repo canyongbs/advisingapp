@@ -51,7 +51,7 @@ class SeedTenantDatabase implements ShouldQueue, NotTenantAware
     use UsedDuringNewTenantSetup;
     use Queueable;
 
-    public int $timeout = 1200;
+    public int $timeout = 1140;
 
     public function __construct(public Tenant $tenant) {}
 

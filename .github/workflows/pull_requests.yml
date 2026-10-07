@@ -176,17 +176,32 @@ jobs:
             DB_PASSWORD: root
             DB_DATABASE: testing_landlord
             REDIS_HOST: 127.0.0.1
+            REDIS_PORT: '7000'
 
         timeout-minutes: 15
 
-        services:
-            redis:
-                image: redis:7.4.11@sha256:91d0f7e8c748ec7a4c2b4fb2c4f84edab794dd91d01e095e38dc906db9d684ab
-                ports:
-                    - 6379:6379
-                options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
         steps:
+            # A real 3-master cluster (ports 7000-7002) so tests exercise the same cluster client and CROSSSLOT rules as ElastiCache Serverless.
+            - name: Start Redis (3-master cluster)
+              run: |
+                  docker run -d --name redis --network host \
+                    redis:7.4.11@sha256:91d0f7e8c748ec7a4c2b4fb2c4f84edab794dd91d01e095e38dc906db9d684ab \
+                    sh -c '
+                      for port in 7000 7001 7002; do
+                        redis-server --daemonize yes --port "$port" --appendonly no --save "" \
+                          --cluster-enabled yes --cluster-config-file "nodes-$port.conf" --cluster-node-timeout 5000
+                      done
+                      for port in 7000 7001 7002; do
+                        until redis-cli -p "$port" ping | grep -q PONG; do sleep 1; done
+                      done
+                      redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 --cluster-replicas 0 --cluster-yes
+                      tail -f /dev/null
+                    '
+
+                  for port in 7000 7001 7002; do
+                    until docker exec redis redis-cli -p "$port" cluster info | grep -q 'cluster_state:ok'; do sleep 1; done
+                  done
+
             - name: Start PostgreSQL
               run: |
                   docker run -d \
@@ -312,6 +327,8 @@ jobs:
             QUEUE_CONNECTION: sync
             AUDIT_QUEUE_CONNECTION: sync
             SESSION_DRIVER: array
+            REDIS_HOST: 127.0.0.1
+            REDIS_PORT: '7000'
 
         timeout-minutes: 15
 
@@ -335,6 +352,27 @@ jobs:
                     --health-retries 5
 
         steps:
+            # The landlord cache stores are always Redis, so setting up a tenant needs the cluster too.
+            - name: Start Redis (3-master cluster)
+              run: |
+                  docker run -d --name redis --network host \
+                    redis:7.4.11@sha256:91d0f7e8c748ec7a4c2b4fb2c4f84edab794dd91d01e095e38dc906db9d684ab \
+                    sh -c '
+                      for port in 7000 7001 7002; do
+                        redis-server --daemonize yes --port "$port" --appendonly no --save "" \
+                          --cluster-enabled yes --cluster-config-file "nodes-$port.conf" --cluster-node-timeout 5000
+                      done
+                      for port in 7000 7001 7002; do
+                        until redis-cli -p "$port" ping | grep -q PONG; do sleep 1; done
+                      done
+                      redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 --cluster-replicas 0 --cluster-yes
+                      tail -f /dev/null
+                    '
+
+                  for port in 7000 7001 7002; do
+                    until docker exec redis redis-cli -p "$port" cluster info | grep -q 'cluster_state:ok'; do sleep 1; done
+                  done
+
             - name: Setup cache environment
               id: extcache
               uses: shivammathur/cache-extensions@de3c642a5fce0ef91581a1c9831e229f525196d6 #1.15.1

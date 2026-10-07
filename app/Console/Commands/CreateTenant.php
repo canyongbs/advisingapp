@@ -159,7 +159,8 @@ class CreateTenant extends Command
             $queue = config('queue.landlord_queue');
 
             Artisan::call(
-                command: "queue:work --queue={$queue} --stop-when-empty",
+                // The default 128MB limit stops the worker before the setup batch finishes.
+                command: "queue:work --queue={$queue} --stop-when-empty --memory=512",
                 outputBuffer: $this->output,
             );
         }

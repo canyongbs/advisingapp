@@ -36,6 +36,7 @@
 
 use App\Providers\ApiServiceProvider;
 use App\Providers\AppServiceProvider;
+use App\Providers\EcsTaskProtectionServiceProvider;
 use App\Providers\EventServiceProvider;
 use App\Providers\Filament\AdminPanelProvider;
 use App\Providers\Filament\LandlordPanelProvider;
@@ -43,8 +44,12 @@ use App\Providers\FilamentServiceProvider;
 use App\Providers\HealthServiceProvider;
 use App\Providers\MorphServiceProvider;
 use App\Providers\MultiConnectionParallelTestingServiceProvider;
+use App\Providers\QueueObservabilityServiceProvider;
 use App\Providers\QueueServiceProvider as ProvidersQueueServiceProvider;
 use App\Providers\RouteServiceProvider;
+use Cbox\LaravelQueueAutoscale\LaravelQueueAutoscaleServiceProvider;
+use Cbox\LaravelQueueMetrics\LaravelQueueMetricsServiceProvider;
+use Cbox\LaravelQueueMonitor\LaravelQueueMonitorServiceProvider;
 use Illuminate\Auth\AuthServiceProvider;
 use Illuminate\Auth\Passwords\PasswordResetServiceProvider;
 use Illuminate\Broadcasting\BroadcastServiceProvider;
@@ -129,6 +134,14 @@ return [
     'force_https' => env('APP_FORCE_HTTPS', true),
 
     'asset_url' => env('ASSET_URL', '/'),
+
+    // Injected by ECS into every container; empty everywhere else, which disables task scale-in protection.
+    'ecs_agent_uri' => env('ECS_AGENT_URI', ''),
+
+    'queue-autoscale-metrics' => [
+        // ?: so a blank env value falls back to the default rather than publishing to an empty namespace.
+        'namespace' => env('QUEUE_AUTOSCALE_METRICS_NAMESPACE') ?: 'CanyonGBS/QueueAutoscale',
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -246,6 +259,14 @@ return [
         QueueServiceProvider::class,
         ProvidersQueueServiceProvider::class,
         MultitenancyServiceProvider::class,
+        // The queue packages are not auto-discovered so their listeners register after multitenancy's, which makes a
+        // job's tenant current first. QueueObservabilityServiceProvider must boot before the queue monitor's.
+        // TODO: Cleanup Task (queue-monitoring): drop the second sentence above; only the feature flag check needs that order.
+        QueueObservabilityServiceProvider::class,
+        LaravelQueueAutoscaleServiceProvider::class,
+        LaravelQueueMetricsServiceProvider::class,
+        LaravelQueueMonitorServiceProvider::class,
+        EcsTaskProtectionServiceProvider::class,
         RedisServiceProvider::class,
         PasswordResetServiceProvider::class,
         SessionServiceProvider::class,

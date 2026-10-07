@@ -210,7 +210,7 @@ return [
     'queue' => [
         'enable' => true,
         'connection' => env('AUDIT_QUEUE_CONNECTION', 'sync'),
-        'queue' => env('AUDIT_QUEUE_QUEUE', env('SQS_QUEUE', 'default')),
+        'queue' => env('AUDIT_QUEUE_QUEUE', 'audit'),
         'delay' => 0,
     ],
 

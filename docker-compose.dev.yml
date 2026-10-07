@@ -38,9 +38,16 @@ services:
         dns:
             - 172.16.1.1
         depends_on:
-            - advisingapp-redis
-            - advisingapp-mailpit
-            - advisingapp-pgsql
+            advisingapp-pgsql:
+                condition: service_started
+            advisingapp-mailpit:
+                condition: service_started
+            advisingapp-redis-1:
+                condition: service_healthy
+            advisingapp-redis-2:
+                condition: service_healthy
+            advisingapp-redis-3:
+                condition: service_healthy
 
     worker:
         build:
@@ -48,8 +55,6 @@ services:
             dockerfile: Dockerfile
             target: worker-development
             args:
-                TOTAL_QUEUE_WORKERS: '${TOTAL_QUEUE_WORKERS:-1}'
-                MULTIPLE_DEVELOPMENT_QUEUES: '${MULTIPLE_DEVELOPMENT_QUEUES:-false}'
                 USER_ID: '${PLS_USER_ID:-33}'
                 GROUP_ID: '${PLS_GROUP_ID:-33}'
         environment:
@@ -67,6 +72,8 @@ services:
             AUDIT_QUEUE_QUEUE: '${AUDIT_QUEUE_QUEUE:-audit}'
             MEETING_CENTER_QUEUE: '${MEETING_CENTER_QUEUE:-meeting-center}'
             IMPORT_EXPORT_QUEUE: '${IMPORT_EXPORT_QUEUE:-import-export}'
+            # Keeps the autoscaler from sizing the fleet to the host's memory, which on a laptop is dozens of workers.
+            QUEUE_AUTOSCALE_MAX_TOTAL_WORKERS: '${QUEUE_AUTOSCALE_MAX_TOTAL_WORKERS:-12}'
             CREATE_STORAGE_SYMLINK: '${WORKER_CREATE_STORAGE_SYMLINK:-false}'
         extra_hosts:
             - 'host.docker.internal:host-gateway'
@@ -76,9 +83,16 @@ services:
         networks:
             - cgbs-development
         depends_on:
-            - advisingapp-redis
-            - advisingapp-mailpit
-            - advisingapp-pgsql
+            advisingapp-pgsql:
+                condition: service_started
+            advisingapp-mailpit:
+                condition: service_started
+            advisingapp-redis-1:
+                condition: service_healthy
+            advisingapp-redis-2:
+                condition: service_healthy
+            advisingapp-redis-3:
+                condition: service_healthy
 
     scheduler:
         build:
@@ -106,20 +120,68 @@ services:
         networks:
             - cgbs-development
         depends_on:
-            - advisingapp-redis
-            - advisingapp-mailpit
-            - advisingapp-pgsql
+            advisingapp-pgsql:
+                condition: service_started
+            advisingapp-mailpit:
+                condition: service_started
+            advisingapp-redis-1:
+                condition: service_healthy
+            advisingapp-redis-2:
+                condition: service_healthy
+            advisingapp-redis-3:
+                condition: service_healthy
 
-    advisingapp-redis:
+    # A 3-master Redis Cluster so local development exercises the same cluster client, slot routing,
+    # and CROSSSLOT rules as ElastiCache Serverless. Node 1 also initializes the cluster.
+    advisingapp-redis-1:
         image: 'redis:7.4.9-alpine@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99'
+        entrypoint: ['sh', '/usr/local/bin/cluster-entrypoint.sh']
+        command: ['advisingapp-redis-1:6379', 'advisingapp-redis-2:6379', 'advisingapp-redis-3:6379']
         ports:
             - '${FORWARD_REDIS_PORT:-63791}:6379'
         volumes:
-            - 'advisingapp-redis:/data'
+            - 'advisingapp-redis-1:/data'
+            - './docker/redis/cluster-entrypoint.sh:/usr/local/bin/cluster-entrypoint.sh:ro'
+            - './docker/redis/cluster-init-entrypoint.sh:/usr/local/bin/cluster-init-entrypoint.sh:ro'
         networks:
             - cgbs-development
         healthcheck:
-            test: ['CMD', 'redis-cli', 'ping']
+            test:
+                ['CMD-SHELL', "test -f /tmp/redis-cluster-ready && redis-cli cluster info | grep -q 'cluster_state:ok'"]
+            interval: 5s
+            start_period: 120s
+            retries: 3
+            timeout: 5s
+
+    advisingapp-redis-2:
+        image: 'redis:7.4.9-alpine@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99'
+        entrypoint: ['sh', '/usr/local/bin/cluster-entrypoint.sh']
+        command: []
+        volumes:
+            - 'advisingapp-redis-2:/data'
+            - './docker/redis/cluster-entrypoint.sh:/usr/local/bin/cluster-entrypoint.sh:ro'
+        networks:
+            - cgbs-development
+        healthcheck:
+            test: ['CMD-SHELL', "redis-cli cluster info | grep -q 'cluster_state:ok'"]
+            interval: 5s
+            start_period: 120s
+            retries: 3
+            timeout: 5s
+
+    advisingapp-redis-3:
+        image: 'redis:7.4.9-alpine@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99'
+        entrypoint: ['sh', '/usr/local/bin/cluster-entrypoint.sh']
+        command: []
+        volumes:
+            - 'advisingapp-redis-3:/data'
+            - './docker/redis/cluster-entrypoint.sh:/usr/local/bin/cluster-entrypoint.sh:ro'
+        networks:
+            - cgbs-development
+        healthcheck:
+            test: ['CMD-SHELL', "redis-cli cluster info | grep -q 'cluster_state:ok'"]
+            interval: 5s
+            start_period: 120s
             retries: 3
             timeout: 5s
 
@@ -177,7 +239,11 @@ networks:
         external: true
 
 volumes:
-    advisingapp-redis:
+    advisingapp-redis-1:
+        driver: local
+    advisingapp-redis-2:
+        driver: local
+    advisingapp-redis-3:
         driver: local
     advisingapp-pgsql:
         driver: local

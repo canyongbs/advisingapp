@@ -57,7 +57,7 @@ class QueuePhoneNumberLookups implements ShouldBeUnique, ShouldQueue
 {
     use Queueable;
 
-    public int $timeout = 1800;
+    public int $timeout = 1140;
 
     public int $tries = 1;
 

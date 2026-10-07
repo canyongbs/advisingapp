@@ -97,6 +97,15 @@ return [
             'lock_connection' => 'default',
             'prefix' => env('CACHE_PREFIX', '{advisingapp_landlord_cache}') . ':health',
         ],
+
+        // PrefixCacheTask only re-prefixes the default store, so state shared between tenant contexts (workers, the queue
+        // autoscaler, and the queue monitoring dashboard) must use this store to read and write the same keys.
+        'landlord' => [
+            'driver' => 'redis',
+            'connection' => 'cache',
+            'lock_connection' => 'default',
+            'prefix' => env('CACHE_PREFIX', '{advisingapp_landlord_cache}'),
+        ],
     ],
 
     /*
