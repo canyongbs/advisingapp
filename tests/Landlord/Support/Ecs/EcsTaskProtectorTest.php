@@ -81,6 +81,18 @@ it('does not re-request protection while an existing window is still valid', fun
     Http::assertSentCount(1);
 });
 
+it('extends protection when a job could outlast the existing window', function () {
+    config(['app.ecs_agent_uri' => 'http://169.254.170.2/api/task']);
+    Http::fake(['*' => Http::response([], 200)]);
+
+    $protector = app(EcsTaskProtector::class);
+    $protector->protectForJobTimeout(100);
+    $protector->protectForJobTimeout(1140);
+
+    Http::assertSentCount(2);
+    Http::assertSent(fn (Request $request): bool => $request['ExpiresInMinutes'] === 24);
+});
+
 it('reports rejected protection requests without throwing', function () {
     Exceptions::fake();
     config(['app.ecs_agent_uri' => 'http://169.254.170.2/api/task']);

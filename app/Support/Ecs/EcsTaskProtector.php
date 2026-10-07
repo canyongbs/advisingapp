@@ -69,7 +69,7 @@ class EcsTaskProtector
             return;
         }
 
-        if (! $this->needsRefresh()) {
+        if (! $this->needsRefresh($jobTimeoutSeconds)) {
             return;
         }
 
@@ -85,12 +85,12 @@ class EcsTaskProtector
         return blank($uri) ? null : $uri;
     }
 
-    private function needsRefresh(): bool
+    private function needsRefresh(int $jobTimeoutSeconds): bool
     {
         $protectedUntil = $this->readProtectedUntil();
 
         return $protectedUntil === null
-            || $protectedUntil->subSeconds(self::REFRESH_BUFFER_SECONDS)->isPast();
+            || $protectedUntil->subSeconds(self::REFRESH_BUFFER_SECONDS)->isBefore(CarbonImmutable::now()->addSeconds($jobTimeoutSeconds));
     }
 
     private function request(string $agentUri, int $expiresInMinutes): void
