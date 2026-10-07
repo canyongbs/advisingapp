@@ -52,7 +52,7 @@ class GenerateSubmissibleValidator
     {
         $inputs = collect($this->request->all())
             ->dot()
-            ->filter();
+            ->filter(fn (mixed $value): bool => filled($value));
 
         $attributes = $inputs
             ->keys()

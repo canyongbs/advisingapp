@@ -36,15 +36,13 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
+use AdvisingApp\Form\Filament\Forms\Components\OptionsKeyValue;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Repeater\TableColumn;
-use Filament\Forms\Components\TextInput;
 use Filament\Support\Enums\Width;
 
 class CheckboxesFormFieldBlock extends FormFieldBlock
@@ -65,17 +63,7 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
         return [
             Checkbox::make('hasOtherOption')
                 ->label('Include Other'),
-            Repeater::make('options')
-                ->saveRelationshipsUsing(fn () => null)
-                ->table([
-                    TableColumn::make('Value'),
-                    TableColumn::make('Label'),
-                ])
-                ->schema([
-                    TextInput::make('value')->required(),
-                    TextInput::make('label')->required(),
-                ])
-                ->reorderable(),
+            OptionsKeyValue::make('options'),
         ];
     }
 
