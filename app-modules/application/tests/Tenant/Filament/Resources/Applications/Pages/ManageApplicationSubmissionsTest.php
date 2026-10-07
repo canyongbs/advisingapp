@@ -35,6 +35,7 @@
 */
 
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
+use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationSubmissions;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ViewApplication;
 use AdvisingApp\Application\Models\Application;
@@ -44,8 +45,10 @@ use Livewire\Livewire;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
@@ -375,7 +378,63 @@ test('archived submissions are visible when the withoutArchived filter is remove
         ->assertCanSeeTableRecords([$activeSubmission, $archivedSubmission]);
 });
 
+describe('submission deep links', function () {
+    it('initializes and opens the requested submission modal from a deep link', function (string $page) {
+        asSuperAdmin();
+        ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
+        $application = Application::factory()->create();
+        $submission = $application->submissions()->firstOrFail();
+        $submission->created_at = '2025-01-02 03:04:05';
+        $submission->save();
+        $query = ['tab' => 'submissions', 'tableAction' => 'view', 'tableActionRecord' => $submission->getKey()];
+        $response = get(ApplicationResource::getUrl($page, ['record' => $application, ...$query]));
+
+        if ($page === 'manage-submissions') {
+            $response->assertRedirect();
+            $location = $response->headers->get('Location');
+            assert(is_string($location));
+            $response = get($location);
+        }
+
+        $response->assertSuccessful()->assertSee('wire:init="mountAction(', false);
+        Livewire::withQueryParams($query);
+        $component = livewire(ManageApplicationSubmissions::class, [
+            'ownerRecord' => $application,
+            'pageClass' => ViewApplication::class,
+        ])->assertSeeHtml('wire:init="mountAction(');
+        $manager = $component->instance();
+        assert($manager instanceof ManageApplicationSubmissions);
+
+        $component
+            ->call('mountAction', $manager->defaultTableAction, $manager->defaultTableActionArguments ?? [], $manager->getDefaultTableActionUrlContext())
+            ->assertSet('mountedActions.0.name', 'view')
+            ->assertSet('mountedActions.0.context.recordKey', $submission->getKey())
+            ->assertSet('mountedActions.0.context.mountedFromUrl', true)
+            ->call('forceRender')
+            ->assertSee("Submission Details: {$submission->created_at}");
+    })->with(['canonical' => 'view', 'legacy' => 'manage-submissions']);
+});
+
 describe('authorization', function () {
+    it('does not open another application submission through a default table action', function () {
+        asSuperAdmin();
+        ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
+        $application = Application::factory()->create();
+        $foreignApplication = Application::factory()->create();
+        $submission = $foreignApplication->submissions()->firstOrFail();
+        Livewire::withQueryParams(['tableAction' => 'view', 'tableActionRecord' => $submission->getKey()]);
+        $component = livewire(ManageApplicationSubmissions::class, [
+            'ownerRecord' => $application,
+            'pageClass' => ViewApplication::class,
+        ]);
+        $manager = $component->instance();
+        assert($manager instanceof ManageApplicationSubmissions);
+
+        $component
+            ->call('mountAction', $manager->defaultTableAction, $manager->defaultTableActionArguments ?? [], $manager->getDefaultTableActionUrlContext())
+            ->assertSet('mountedActions', [])
+            ->assertDontSee("Submission Details: {$submission->created_at}");
+    });
     it('denies direct manager access without owner resource access', function () {
         actingAs(User::factory()->licensed(LicenseType::cases())->create());
         ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);

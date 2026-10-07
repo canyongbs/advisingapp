@@ -44,6 +44,8 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
@@ -121,6 +123,61 @@ it('persists edits to an existing wizard step\'s description onto the new applic
         ->and($application->steps()->first()->description)->toBe('Original description')
         ->and($component->get('record')->getKey())->toBe($newVersion->getKey());
 });
+
+it('persists uploaded rich editor images on the new application version', function (bool $isWizard) {
+    asSuperAdmin();
+    Storage::fake('s3-public');
+
+    $originalContent = ['type' => 'doc', 'content' => []];
+    $application = Application::factory()->create(['is_wizard' => $isWizard, 'content' => $originalContent]);
+    $application->submissions()->delete();
+    $originalOwner = $isWizard ? $application->steps()->create([
+        'label' => 'Image step',
+        'description' => 'Original description',
+        'content' => $originalContent,
+    ]) : $application;
+    $originalContent = $originalOwner->fresh()->content;
+    $component = livewire(EditApplication::class, ['record' => $application]);
+    $statePath = 'data.content';
+
+    if ($isWizard) {
+        $steps = $component->get('data.steps');
+        assert(is_array($steps));
+        $stepKey = array_key_first($steps);
+        $statePath = "data.steps.{$stepKey}.content";
+    }
+
+    expect($originalOwner->getMedia('content'))->toBeEmpty();
+
+    $component
+        ->set($statePath, [
+            'type' => 'doc',
+            'content' => [[
+                'type' => 'image',
+                'attrs' => ['id' => 'uploaded-image', 'src' => 'temporary-image.png'],
+            ]],
+        ])
+        ->set("componentFileAttachments.{$statePath}.uploaded-image", UploadedFile::fake()->image('image.png'))
+        ->call('save')
+        ->assertHasNoFormErrors()
+        ->assertNotified();
+
+    $newVersion = Application::query()
+        ->where('root_id', $application->root_id)
+        ->where('id', '!=', $application->id)
+        ->firstOrFail();
+    $newOwner = $isWizard ? $newVersion->steps()->firstOrFail() : $newVersion;
+    $newMedia = $newOwner->getFirstMedia('content');
+
+    expect($newMedia)->not->toBeNull();
+    assert($newMedia !== null);
+
+    expect(data_get($newOwner->content, 'content.0.attrs.id'))->toBe($newMedia->uuid)
+        ->and($newMedia->uuid)->not->toBe('uploaded-image')
+        ->and($newMedia->uuid)->not->toBe($originalOwner->getFirstMedia('content')?->uuid)
+        ->and($originalOwner->fresh()->content)->toBe($originalContent);
+    Storage::disk('s3-public')->assertExists($newMedia->getPathRelativeToRoot());
+})->with(['single-step' => false, 'wizard' => true]);
 
 it('archive action is always visible and labeled Archive', function () {
     asSuperAdmin();

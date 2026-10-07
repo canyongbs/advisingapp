@@ -65,6 +65,8 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class ManageApplicationSubmissions extends RelationManager
 {
+    protected string $view = 'application::filament.resources.applications.pages.manage-application-submissions';
+
     protected static string $relationship = 'submissions';
 
     protected static ?string $title = 'Submissions';

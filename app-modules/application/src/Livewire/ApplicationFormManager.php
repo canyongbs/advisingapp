@@ -85,9 +85,9 @@ abstract class ApplicationFormManager extends Component implements HasForms, Has
         $this->authorizeEdit();
 
         DB::transaction(function (): void {
-            $data = $this->form->getState(false);
-
-            $this->beforeSave();
+            $data = $this->form->getState(afterValidate: function (): void {
+                $this->beforeSave();
+            });
 
             $record = $this->handleRecordUpdate($this->record, $data);
             assert($record instanceof Application);
