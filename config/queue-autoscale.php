@@ -126,7 +126,8 @@ return [
         env('LANDLORD_SQS_QUEUE', 'landlord') => [
             'connection' => env('QUEUE_CONNECTION', 'sqs'),
             'sla' => ['target_seconds' => (int) env('QUEUE_AUTOSCALE_LANDLORD_SLA', 60)],
-            'workers' => ['min' => (int) env('QUEUE_AUTOSCALE_LANDLORD_MIN_WORKERS', 1), 'max' => (int) env('QUEUE_AUTOSCALE_LANDLORD_MAX_WORKERS', 150)],
+            // The SES events consumer holds one worker for most of every minute, so the orchestrators need a second.
+            'workers' => ['min' => (int) env('QUEUE_AUTOSCALE_LANDLORD_MIN_WORKERS', 2), 'max' => (int) env('QUEUE_AUTOSCALE_LANDLORD_MAX_WORKERS', 150)],
         ],
 
         env('OUTBOUND_COMMUNICATION_QUEUE', 'outbound-communication') => [
