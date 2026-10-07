@@ -43,6 +43,7 @@ use AdvisingApp\Campaign\Jobs\DispatchExecuteCampaignActionsForEachTenant;
 use AdvisingApp\Engagement\Jobs\DispatchDeliverEngagementsForEachTenant;
 use AdvisingApp\Engagement\Jobs\DispatchUnmatchedInboundCommunicationsForEachTenant;
 use AdvisingApp\Engagement\Jobs\GatherAndDispatchSesS3InboundEmails;
+use AdvisingApp\IntegrationAwsSesEventHandling\Jobs\ConsumeSesEventsFromSqs;
 use AdvisingApp\IntegrationOpenAi\Jobs\DispatchUploadFilesToVectorStoresForEachTenant;
 use AdvisingApp\MeetingCenter\Jobs\DispatchRefreshCalendarRefreshTokensForEachTenant;
 use AdvisingApp\MeetingCenter\Jobs\DispatchSyncCalendarsForEachTenant;
@@ -203,6 +204,20 @@ describe('schedule', function () {
     })->with([
         'on ECS' => ['http://169.254.170.2/api/task', true],
         'elsewhere' => ['', false],
+    ]);
+
+    it('only consumes SES events when their queue is configured', function (?string $queueUrl, bool $consumes) {
+        config(['services.ses_events_queue.url' => $queueUrl]);
+
+        $consumer = collect(app(Kernel::class)->resolveConsoleSchedule()->events())
+            ->first(fn (Event $event): bool => $event->description === ConsumeSesEventsFromSqs::class);
+
+        assert($consumer instanceof Event);
+
+        expect($consumer->filtersPass(app()))->toBe($consumes);
+    })->with([
+        'configured' => ['https://sqs.us-west-2.amazonaws.com/000000000000/ses-events', true],
+        'not configured' => [null, false],
     ]);
 
     it('runs the queue commands in the background without overlapping', function (string $command) {

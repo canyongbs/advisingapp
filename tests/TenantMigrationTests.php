@@ -36,6 +36,9 @@
 
 use AdvisingApp\Campaign\Models\CampaignAction;
 use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Notification\Enums\EmailMessageEventType;
+use AdvisingApp\Notification\Models\EmailMessage;
+use AdvisingApp\Notification\Models\EmailMessageEvent;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -125,6 +128,42 @@ test('2026_04_08_145038_rename_campaign_action_id_to_source_morph_on_engagements
 
             expect($withoutSource->source_id)->toBeNull(); /** @phpstan-ignore-line */
             expect($withoutSource->source_type)->toBeNull(); /** @phpstan-ignore-line */
+        }
+    );
+});
+
+test('2026_10_06_234840_tmp_backfill_ses_event_occurred_at_from_payload uses the SES send time for events without their own timestamp', function () {
+    isolatedMigration(
+        '2026_10_06_234840_tmp_backfill_ses_event_occurred_at_from_payload',
+        function () {
+            $emailMessage = EmailMessage::factory()->create();
+
+            $payload = ['mail' => ['timestamp' => '2026-01-02T03:04:05.000Z']];
+
+            $eventsWithoutTimestamps = collect([
+                EmailMessageEventType::Send,
+                EmailMessageEventType::Reject,
+                EmailMessageEventType::RenderingFailure,
+            ])->map(fn (EmailMessageEventType $type) => $emailMessage->events()->create([
+                'type' => $type,
+                'payload' => $payload,
+                'occurred_at' => now(),
+            ]));
+
+            $delivery = $emailMessage->events()->create([
+                'type' => EmailMessageEventType::Delivery,
+                'payload' => $payload,
+                'occurred_at' => '2026-05-06 07:08:09',
+            ]);
+
+            $migrate = Artisan::call('migrate', [
+                '--path' => 'database/migrations/2026_10_06_234840_tmp_backfill_ses_event_occurred_at_from_payload.php',
+            ]);
+
+            expect($migrate)->toBe(Command::SUCCESS)
+                ->and($eventsWithoutTimestamps->map(fn (EmailMessageEvent $event): string => $event->refresh()->occurred_at->toDateTimeString())->unique()->all())
+                ->toBe(['2026-01-02 03:04:05'])
+                ->and($delivery->refresh()->occurred_at->toDateTimeString())->toBe('2026-05-06 07:08:09');
         }
     );
 });

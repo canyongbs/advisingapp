@@ -34,19 +34,48 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAwsSesEventHandling\Events;
+namespace AdvisingApp\Webhook\Support;
 
-use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Cache\Repository;
+use Throwable;
 
-abstract class SesEvent
+/**
+ * Caches SNS signing certificates so validating each message does not fetch the certificate over HTTPS.
+ * AWS publishes a rotated certificate under a new URL, so keying by URL fetches it fresh.
+ */
+class CachedSnsCertificateFetcher
 {
-    use Dispatchable;
-    use SerializesModels;
-
     public function __construct(
-        public SesEventData $data,
-        public ?string $snsMessageId = null,
+        protected Repository $cache,
     ) {}
+
+    public function __invoke(string $certificateUrl): string|false
+    {
+        $key = "sns-signing-certificate:{$certificateUrl}";
+
+        $cachedCertificate = $this->cache->get($key);
+
+        if (is_string($cachedCertificate)) {
+            return $cachedCertificate;
+        }
+
+        // The validator treats false as an invalid signature. Failures are not cached, so the next message retries the fetch.
+        try {
+            $certificate = file_get_contents($certificateUrl, context: stream_context_create([
+                'http' => ['timeout' => 5],
+            ]));
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return false;
+        }
+
+        if ($certificate === false) {
+            return false;
+        }
+
+        $this->cache->put($key, $certificate, now()->addDay());
+
+        return $certificate;
+    }
 }

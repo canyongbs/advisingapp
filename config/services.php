@@ -57,6 +57,14 @@ return [
         'ses_s3_key_id' => env('AWS_KMS_SES_S3_KEY_ID'),
     ],
 
+    // The SQS queue SNS delivers SES events to. Leave key and secret blank so the SDK falls back to the ECS task role; they exist only for environments without one.
+    'ses_events_queue' => [
+        'url' => env('SES_EVENTS_QUEUE_URL'),
+        'region' => env('SES_EVENTS_QUEUE_REGION', 'us-west-2'),
+        'key' => env('SES_EVENTS_QUEUE_ACCESS_KEY_ID'),
+        'secret' => env('SES_EVENTS_QUEUE_SECRET_ACCESS_KEY'),
+    ],
+
     'azure' => [
         'client_id' => env('AZURE_CLIENT_ID'),
         'client_secret' => env('AZURE_CLIENT_SECRET'),

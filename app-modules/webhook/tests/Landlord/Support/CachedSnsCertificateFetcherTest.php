@@ -34,19 +34,38 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAwsSesEventHandling\Events;
+use AdvisingApp\Webhook\Support\CachedSnsCertificateFetcher;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Exceptions;
 
-use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
+it('returns a cached certificate without fetching it', function () {
+    $cache = Cache::store('array');
+    $cache->put('sns-signing-certificate:https://sns.us-west-2.amazonaws.com/certificate.pem', 'CERTIFICATE');
 
-abstract class SesEvent
-{
-    use Dispatchable;
-    use SerializesModels;
+    expect((new CachedSnsCertificateFetcher($cache))('https://sns.us-west-2.amazonaws.com/certificate.pem'))->toBe('CERTIFICATE');
+});
 
-    public function __construct(
-        public SesEventData $data,
-        public ?string $snsMessageId = null,
-    ) {}
-}
+it('fetches and caches a certificate it has not seen', function () {
+    $certificatePath = tempnam(sys_get_temp_dir(), 'sns');
+    file_put_contents($certificatePath, 'CERTIFICATE');
+
+    $cache = Cache::store('array');
+
+    expect((new CachedSnsCertificateFetcher($cache))($certificatePath))->toBe('CERTIFICATE')
+        ->and($cache->get("sns-signing-certificate:{$certificatePath}"))->toBe('CERTIFICATE');
+
+    unlink($certificatePath);
+});
+
+it('reports a failed fetch without caching it', function () {
+    Exceptions::fake();
+
+    $certificatePath = sys_get_temp_dir() . '/missing-sns-certificate.pem';
+
+    $cache = Cache::store('array');
+
+    expect((new CachedSnsCertificateFetcher($cache))($certificatePath))->toBeFalse()
+        ->and($cache->has("sns-signing-certificate:{$certificatePath}"))->toBeFalse();
+
+    Exceptions::assertReported(ErrorException::class);
+});

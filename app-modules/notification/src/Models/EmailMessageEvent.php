@@ -54,6 +54,7 @@ class EmailMessageEvent extends BaseModel
         'type',
         'payload',
         'occurred_at',
+        'sns_message_id',
     ];
 
     protected $casts = [

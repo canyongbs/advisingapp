@@ -38,8 +38,13 @@ namespace AdvisingApp\IntegrationAwsSesEventHandling\Listeners;
 
 use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Exceptions\CouldNotFindEmailMessageFromData;
+use AdvisingApp\Notification\Enums\EmailMessageEventType;
 use AdvisingApp\Notification\Models\EmailMessage;
+use App\Features\SesEventDeduplicationFeature;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Facades\DB;
 
 abstract class HandleSesEvent implements ShouldQueue
 {
@@ -50,5 +55,38 @@ abstract class HandleSesEvent implements ShouldQueue
         return EmailMessage::query()
             ->where('id', data_get($data->mail->tags, 'app_message_id'))
             ->first();
+    }
+
+    protected function recordEvent(SesEvent $event, EmailMessageEventType $type, mixed $occurredAt): void
+    {
+        $emailMessage = $this->getEmailMessageFromData($event->data);
+
+        if (is_null($emailMessage)) {
+            report(new CouldNotFindEmailMessageFromData($event->data));
+
+            return;
+        }
+
+        $attributes = [
+            'type' => $type,
+            'payload' => $event->data->toArray(),
+            'occurred_at' => $occurredAt,
+        ];
+
+        if (is_null($event->snsMessageId) || ! SesEventDeduplicationFeature::active()) {
+            $emailMessage->events()->create($attributes);
+
+            return;
+        }
+
+        try {
+            // The savepoint keeps a surrounding transaction usable when a repeated delivery hits the unique index.
+            DB::transaction(fn () => $emailMessage->events()->create([
+                ...$attributes,
+                'sns_message_id' => $event->snsMessageId,
+            ]));
+        } catch (UniqueConstraintViolationException) {
+            // Already recorded by an earlier delivery of the same SNS message.
+        }
     }
 }

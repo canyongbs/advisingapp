@@ -34,19 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAwsSesEventHandling\Events;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
 
-use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
+return new class () extends Migration {
+    /**
+     * These events used to be recorded at the time they were handled; use the SES send time from the payload instead so engagement statuses sort correctly.
+     */
+    public function up(): void
+    {
+        DB::transaction(function () {
+            DB::statement(<<<'SQL'
+                UPDATE email_message_events
+                SET occurred_at = (payload->'mail'->>'timestamp')::timestamptz AT TIME ZONE 'UTC'
+                WHERE type IN ('send', 'reject', 'rendering_failure')
+                    AND payload->'mail'->>'timestamp' IS NOT NULL
+                    AND occurred_at IS DISTINCT FROM ((payload->'mail'->>'timestamp')::timestamptz AT TIME ZONE 'UTC')
+                SQL);
+        });
+    }
 
-abstract class SesEvent
-{
-    use Dispatchable;
-    use SerializesModels;
-
-    public function __construct(
-        public SesEventData $data,
-        public ?string $snsMessageId = null,
-    ) {}
-}
+    /**
+     * Irreversible: the previous timestamps are overwritten.
+     */
+    public function down(): void {}
+};

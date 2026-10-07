@@ -34,19 +34,28 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAwsSesEventHandling\Events;
+namespace AdvisingApp\IntegrationAwsSesEventHandling\Exceptions;
 
 use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
+use Exception;
 
-abstract class SesEvent
+class CouldNotFindTenantFromData extends Exception
 {
-    use Dispatchable;
-    use SerializesModels;
-
     public function __construct(
-        public SesEventData $data,
-        public ?string $snsMessageId = null,
-    ) {}
+        protected SesEventData $data,
+    ) {
+        parent::__construct('Could not find a tenant from the given data.');
+    }
+
+    /**
+     * Get the exception's context information.
+     *
+     * @return array<string, mixed>
+     */
+    public function context(): array
+    {
+        return [
+            'event_data' => $this->data->toArray(),
+        ];
+    }
 }

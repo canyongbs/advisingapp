@@ -149,7 +149,7 @@ class ViewEngagement extends Page
                                             ->schema([
                                                 TextEntry::make('type')
                                                     ->state(fn (EmailMessageEvent | SmsMessageEvent $record): string => $record->type->getLabel()),
-                                                TextEntry::make('occured_at')
+                                                TextEntry::make('occurred_at')
                                                     ->dateTime()
                                                     ->state(fn (EmailMessageEvent| SmsMessageEvent $record): string => $record->occurred_at->format('Y-m-d H:i:s')),
                                             ])

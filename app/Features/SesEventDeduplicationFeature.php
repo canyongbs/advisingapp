@@ -34,19 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\IntegrationAwsSesEventHandling\Events;
+namespace App\Features;
 
-use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
+use App\Support\AbstractFeatureFlag;
 
-abstract class SesEvent
+class SesEventDeduplicationFeature extends AbstractFeatureFlag
 {
-    use Dispatchable;
-    use SerializesModels;
-
-    public function __construct(
-        public SesEventData $data,
-        public ?string $snsMessageId = null,
-    ) {}
+    public function resolve(mixed $scope): mixed
+    {
+        return false;
+    }
 }

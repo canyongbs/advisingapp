@@ -45,6 +45,7 @@ use AdvisingApp\Campaign\Jobs\DispatchExecuteCampaignActionsForEachTenant;
 use AdvisingApp\Engagement\Jobs\DispatchDeliverEngagementsForEachTenant;
 use AdvisingApp\Engagement\Jobs\DispatchUnmatchedInboundCommunicationsForEachTenant;
 use AdvisingApp\Engagement\Jobs\GatherAndDispatchSesS3InboundEmails;
+use AdvisingApp\IntegrationAwsSesEventHandling\Jobs\ConsumeSesEventsFromSqs;
 use AdvisingApp\IntegrationOpenAi\Jobs\DispatchUploadFilesToVectorStoresForEachTenant;
 use AdvisingApp\MeetingCenter\Jobs\DispatchRefreshCalendarRefreshTokensForEachTenant;
 use AdvisingApp\MeetingCenter\Jobs\DispatchSyncCalendarsForEachTenant;
@@ -75,6 +76,12 @@ class Kernel extends ConsoleKernel
             ->name('Gather and Dispatch SES S3 Inbound Emails')
             ->onOneServer()
             ->monitorName('Gather and Dispatch SES S3 Inbound Emails');
+
+        $schedule->job(new ConsumeSesEventsFromSqs())
+            ->everyMinute()
+            ->when(fn (): bool => filled(config('services.ses_events_queue.url')))
+            ->onOneServer()
+            ->monitorName('Consume SES Events From SQS');
 
         $schedule->job(new DispatchDeliverEngagementsForEachTenant())
             ->everyMinute()
