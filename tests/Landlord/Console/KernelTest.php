@@ -37,6 +37,7 @@
 use AdvisingApp\Ai\Jobs\DispatchAutomaticallyEndCustomerAdvisorsForEachTenant;
 use AdvisingApp\Ai\Jobs\DispatchDeleteUnsavedAiThreadsForEachTenant;
 use AdvisingApp\Ai\Jobs\DispatchFetchAiFilesParsingResultsForEachTenant;
+use AdvisingApp\Ai\Jobs\DispatchUpdateCurrentAiAssistantLinksForEachTenant;
 use AdvisingApp\Ai\Jobs\DispatchUpdateCurrentCustomerAdvisorLinksForEachTenant;
 use AdvisingApp\Campaign\Jobs\DispatchExecuteCampaignActionsForEachTenant;
 use AdvisingApp\Engagement\Jobs\DispatchDeliverEngagementsForEachTenant;
@@ -89,6 +90,7 @@ describe('schedule', function () {
         Queue::assertPushed(DispatchModelPruningForEachTenant::class);
         Queue::assertPushed(DispatchRefreshCalendarRefreshTokensForEachTenant::class);
 
+        Queue::assertNotPushed(DispatchUpdateCurrentAiAssistantLinksForEachTenant::class);
         Queue::assertNotPushed(DispatchUpdateCurrentCustomerAdvisorLinksForEachTenant::class);
     });
 
@@ -99,6 +101,7 @@ describe('schedule', function () {
 
         artisan('schedule:run');
 
+        Queue::assertPushed(DispatchUpdateCurrentAiAssistantLinksForEachTenant::class);
         Queue::assertPushed(DispatchUpdateCurrentCustomerAdvisorLinksForEachTenant::class);
     });
 
@@ -118,6 +121,7 @@ describe('schedule', function () {
         Queue::assertNotPushed(DispatchDeleteUnsavedAiThreadsForEachTenant::class);
         Queue::assertNotPushed(DispatchModelPruningForEachTenant::class);
         Queue::assertNotPushed(DispatchRefreshCalendarRefreshTokensForEachTenant::class);
+        Queue::assertNotPushed(DispatchUpdateCurrentAiAssistantLinksForEachTenant::class);
         Queue::assertNotPushed(DispatchUpdateCurrentCustomerAdvisorLinksForEachTenant::class);
     });
 

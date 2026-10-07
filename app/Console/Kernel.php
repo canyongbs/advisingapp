@@ -39,6 +39,7 @@ namespace App\Console;
 use AdvisingApp\Ai\Jobs\DispatchAutomaticallyEndCustomerAdvisorsForEachTenant;
 use AdvisingApp\Ai\Jobs\DispatchDeleteUnsavedAiThreadsForEachTenant;
 use AdvisingApp\Ai\Jobs\DispatchFetchAiFilesParsingResultsForEachTenant;
+use AdvisingApp\Ai\Jobs\DispatchUpdateCurrentAiAssistantLinksForEachTenant;
 use AdvisingApp\Ai\Jobs\DispatchUpdateCurrentCustomerAdvisorLinksForEachTenant;
 use AdvisingApp\Campaign\Jobs\DispatchExecuteCampaignActionsForEachTenant;
 use AdvisingApp\Engagement\Jobs\DispatchDeliverEngagementsForEachTenant;
@@ -137,6 +138,11 @@ class Kernel extends ConsoleKernel
             ->daily()
             ->onOneServer()
             ->monitorName('Dispatch Refresh Calendar Refresh Tokens For Each Tenant');
+
+        $schedule->job(new DispatchUpdateCurrentAiAssistantLinksForEachTenant())
+            ->monthlyOn(1, '0:0')
+            ->onOneServer()
+            ->monitorName('Dispatch Update Current AI Assistant Links For Each Tenant');
 
         $schedule->job(new DispatchUpdateCurrentCustomerAdvisorLinksForEachTenant())
             ->monthlyOn(1, '0:0')

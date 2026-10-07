@@ -34,29 +34,14 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Ai\Database\Factories;
+use AdvisingApp\Ai\Jobs\AiAssistants\UpdateCurrentAiAssistantLinks;
+use AdvisingApp\Ai\Jobs\DispatchUpdateCurrentAiAssistantLinksForEachTenant;
+use Illuminate\Support\Facades\Queue;
 
-use AdvisingApp\Ai\Models\AiAssistant;
-use AdvisingApp\Ai\Models\AiAssistantLink;
-use Illuminate\Database\Eloquent\Factories\Factory;
+it('dispatches `UpdateCurrentAiAssistantLinks` for each eligible tenant', function () {
+    Queue::fake();
 
-/**
- * @extends Factory<AiAssistantLink>
- */
-class AiAssistantLinkFactory extends Factory
-{
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
-    public function definition(): array
-    {
-        return [
-            'ai_assistant_id' => AiAssistant::factory(),
-            'parsing_results' => $this->faker->paragraph,
-            'url' => $this->faker->url,
-            'is_keep_current_enabled' => true,
-        ];
-    }
-}
+    (new DispatchUpdateCurrentAiAssistantLinksForEachTenant())->handle();
+
+    Queue::assertPushed(UpdateCurrentAiAssistantLinks::class, 1);
+});
