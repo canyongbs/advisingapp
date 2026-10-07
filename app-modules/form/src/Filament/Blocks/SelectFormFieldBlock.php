@@ -37,6 +37,7 @@
 namespace AdvisingApp\Form\Filament\Blocks;
 
 use AdvisingApp\Form\Filament\Forms\Components\OptionsKeyValue;
+use AdvisingApp\Form\Filament\Forms\StateCasts\OptionsStateCast;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
@@ -68,16 +69,23 @@ class SelectFormFieldBlock extends FormFieldBlock
             'label' => $field->label,
             'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
-            'options' => $field->config['options'],
+            'options' => (new OptionsStateCast())->get($field->config['options']),
             ...self::getDescriptionSectionsSchema($field),
         ];
     }
 
     public static function getValidationRules(SubmissibleField $field): array
     {
+        $options = $field->config['options'];
+        assert(is_array($options));
+
+        $values = isset($options[0]) && is_array($options[0])
+          ? collect($options)->pluck('value')
+          : collect($options)->keys();
+
         return [
             'string',
-            'in:' . collect($field->config['options'])->keys()->join(','),
+            'in:' . $values->join(','),
         ];
     }
 
@@ -87,7 +95,11 @@ class SelectFormFieldBlock extends FormFieldBlock
      */
     public static function toPreviewHtml(array $config): ?string
     {
-        $order = e(json_encode(array_keys($config['options'] ?? [])));
+        $options = $config['options'] ?? [];
+        $values = isset($options[0]) && is_array($options[0])
+          ? array_column($options, 'value')
+          : array_keys($options);
+        $order = e(json_encode($values));
 
         return parent::toPreviewHtml($config) . "<span hidden data-options-order=\"{$order}\"></span>";
     }

@@ -40,16 +40,13 @@ use Filament\Schemas\Components\StateCasts\Contracts\StateCast;
 
 /**
  * Converts between the editor's `[{key, value}]` rows (key = option value,
- * value = label) and the stored options, which are either a `value => label`
- * map or, when `$asRows` is set, explicit `[{label, value}]` rows.
+ * value = label) and stored `[{label, value}]` rows. Legacy `value => label`
+ * maps remain readable.
  *
- * Explicit rows are needed because PHP turns numeric keys such as "0" and "1"
- * into a list, which is indistinguishable from the `[{label, value}]` shape.
+ * Explicit rows preserve numeric option values when serialized to JSON.
  */
 class OptionsStateCast implements StateCast
 {
-    public function __construct(protected bool $asRows = false) {}
-
     /**
      * @return array<mixed, mixed>
      */
@@ -62,27 +59,19 @@ class OptionsStateCast implements StateCast
         }
 
         if (! is_array($rows[array_key_first($rows)])) {
-            return $this->asRows
-                ? $this->toLabelValueRows($rows)
-                : $rows;
+            return $this->toLabelValueRows($rows);
         }
 
         if ($this->isLabelValueRows($rows)) {
-            return $this->asRows
-                ? $rows
-                : array_column($rows, 'label', 'value');
+            return $rows;
         }
 
         $rows = array_filter($rows, fn (mixed $row): bool => is_array($row) && (string) ($row['key'] ?? '') !== '');
 
-        if ($this->asRows) {
-            return array_map(
-                fn (array $row): array => ['label' => $row['value'] ?? '', 'value' => (string) $row['key']],
-                array_values($rows),
-            );
-        }
-
-        return array_column($rows, 'value', 'key');
+        return array_map(
+            fn (array $row): array => ['label' => $row['value'] ?? '', 'value' => (string) $row['key']],
+            array_values($rows),
+        );
     }
 
     /**

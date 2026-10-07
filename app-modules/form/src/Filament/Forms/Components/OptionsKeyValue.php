@@ -45,15 +45,11 @@ use Filament\Schemas\Components\StateCasts\KeyValueStateCast;
  * A "Label" / "Value" options editor for choice-style form fields (select,
  * radio, checkboxes).
  *
- * The state is stored as a standard KeyValue map (option value => label), or
- * as explicit `{label, value}` rows when `asLabelValueRows()` is used. The
- * label column is rendered first and the value is generated from the label
- * in the browser.
+ * The state is stored as explicit `{label, value}` rows. The label column is
+ * rendered first and the value is generated from the label in the browser.
  */
 class OptionsKeyValue extends KeyValue
 {
-    protected bool $asLabelValueRows = false;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -64,19 +60,20 @@ class OptionsKeyValue extends KeyValue
             ->rule(fn (): Closure => function (string $attribute, mixed $value, Closure $fail): void {
                 assert(is_array($value));
 
+                foreach ($value as $option) {
+                    if (! is_array($option) || blank($option['key'] ?? null) || blank($option['value'] ?? null)) {
+                        $fail('Each option must have a label and a value.');
+
+                        return;
+                    }
+                }
+
                 $keys = array_column($value, 'key');
 
                 if (count($keys) !== count(array_unique($keys))) {
                     $fail('Each option label must generate a distinct value. Labels such as "A B" and "A-B" generate the same value.');
                 }
             });
-    }
-
-    public function asLabelValueRows(bool $condition = true): static
-    {
-        $this->asLabelValueRows = $condition;
-
-        return $this;
     }
 
     public function getDefaultStateCasts(): array
@@ -86,6 +83,6 @@ class OptionsKeyValue extends KeyValue
             fn (mixed $cast): bool => ! $cast instanceof KeyValueStateCast,
         );
 
-        return [...$casts, new OptionsStateCast($this->asLabelValueRows)];
+        return [...$casts, new OptionsStateCast()];
     }
 }

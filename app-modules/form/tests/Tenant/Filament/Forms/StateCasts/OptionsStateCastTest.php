@@ -46,37 +46,33 @@ $numericEditorRows = [
     ['key' => '1', 'value' => 'Yes'],
 ];
 
-describe('as a map', function () use ($numericRows, $numericEditorRows) {
-    it('stores editor rows as a value to label map', function () use ($numericEditorRows) {
-        expect((new OptionsStateCast())->get($numericEditorRows))->toBe([0 => 'No', 1 => 'Yes']);
-    });
-
-    it('ignores rows without a value', function () {
-        expect((new OptionsStateCast())->get([['key' => '', 'value' => 'Blank'], ['key' => 'a', 'value' => 'A']]))->toBe(['a' => 'A']);
-    });
-
-    it('hydrates a map into editor rows', function () {
-        expect((new OptionsStateCast())->set(['us' => 'United States']))->toBe([['key' => 'us', 'value' => 'United States']]);
-    });
-
-    it('hydrates legacy label and value rows into editor rows', function () use ($numericRows, $numericEditorRows) {
-        expect((new OptionsStateCast())->set($numericRows))->toBe($numericEditorRows);
-    });
+it('normalizes legacy numeric maps into label and value rows', function () use ($numericRows) {
+    expect((new OptionsStateCast())->get([0 => 'No', 1 => 'Yes']))->toBe($numericRows);
 });
 
-describe('as label and value rows', function () use ($numericRows, $numericEditorRows) {
-    it('stores editor rows as explicit label and value rows', function () use ($numericRows, $numericEditorRows) {
-        expect((new OptionsStateCast(asRows: true))->get($numericEditorRows))->toBe($numericRows);
-    });
+it('normalizes legacy string maps into label and value rows', function () {
+    expect((new OptionsStateCast())->get(['us' => 'United States']))->toBe([['label' => 'United States', 'value' => 'us']]);
+});
 
-    it('ignores rows without a value', function () {
-        expect((new OptionsStateCast(asRows: true))->get([['key' => '', 'value' => 'Blank'], ['key' => 'a', 'value' => 'A']]))
-            ->toBe([['label' => 'A', 'value' => 'a']]);
-    });
+it('hydrates a map into editor rows', function () {
+    expect((new OptionsStateCast())->set(['us' => 'United States']))->toBe([['key' => 'us', 'value' => 'United States']]);
+});
 
-    it('round trips numeric values', function () use ($numericRows) {
-        $cast = new OptionsStateCast(asRows: true);
+it('hydrates label and value rows into editor rows', function () use ($numericRows, $numericEditorRows) {
+    expect((new OptionsStateCast())->set($numericRows))->toBe($numericEditorRows);
+});
 
-        expect($cast->get($cast->set($numericRows)))->toBe($numericRows);
-    });
+it('stores editor rows as explicit label and value rows', function () use ($numericRows, $numericEditorRows) {
+    expect((new OptionsStateCast())->get($numericEditorRows))->toBe($numericRows);
+});
+
+it('ignores rows without a value', function () {
+    expect((new OptionsStateCast())->get([['key' => '', 'value' => 'Blank'], ['key' => 'a', 'value' => 'A']]))
+        ->toBe([['label' => 'A', 'value' => 'a']]);
+});
+
+it('round trips numeric values', function () use ($numericRows) {
+    $cast = new OptionsStateCast();
+
+    expect($cast->get($cast->set($numericRows)))->toBe($numericRows);
 });

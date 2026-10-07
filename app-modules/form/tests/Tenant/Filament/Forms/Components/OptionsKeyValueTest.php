@@ -49,8 +49,11 @@ class OptionsKeyValueTestHost extends Component implements HasSchemas
     /** @var array<string, mixed> */
     public array $data = [];
 
+    /** @var array<mixed, mixed> */
+    public array $savedOptions = [];
+
     /**
-     * @param array<string, string> $options
+        * @param array<mixed, mixed> $options
      */
     public function mount(array $options = []): void
     {
@@ -66,7 +69,9 @@ class OptionsKeyValueTestHost extends Component implements HasSchemas
 
     public function save(): void
     {
-        $this->getSchema('form')?->getState();
+        $state = $this->getSchema('form')?->getState();
+
+        $this->savedOptions = $state['options'] ?? [];
     }
 
     public function render(): string
@@ -87,6 +92,36 @@ it('hydrates options saved as a list of label and value rows', function () {
     ]);
 });
 
+it('saves legacy options as label and value rows without changing their values', function (array $options, array $expectedOptions) {
+    livewire(OptionsKeyValueTestHost::class, ['options' => $options])
+        ->assertSet('savedOptions', [])
+        ->call('save')
+        ->assertHasNoErrors()
+        ->assertSet('savedOptions', $expectedOptions);
+})->with([
+    'string values' => [
+        ['us' => 'United States', 'ca' => 'Canada'],
+        [
+            ['label' => 'United States', 'value' => 'us'],
+            ['label' => 'Canada', 'value' => 'ca'],
+        ],
+    ],
+    'numeric values including zero' => [
+        ['0%', '1%'],
+        [
+            ['label' => '0%', 'value' => '0'],
+            ['label' => '1%', 'value' => '1'],
+        ],
+    ],
+    'custom values unrelated to their labels' => [
+        ['LEGACY-ID-7' => 'Career planning', '01' => 'Academic advising'],
+        [
+            ['label' => 'Career planning', 'value' => 'LEGACY-ID-7'],
+            ['label' => 'Academic advising', 'value' => '01'],
+        ],
+    ],
+]);
+
 it('renders the label column before the generated value column', function () {
     livewire(OptionsKeyValueTestHost::class)
         ->assertSeeHtmlInOrder(['aria-label="Label"', 'aria-label="Value"']);
@@ -97,4 +132,25 @@ it('validates that every label generates a distinct value', function () {
         ->set('data.options', [['key' => 'a-b', 'value' => 'A B'], ['key' => 'a-b', 'value' => 'A-B']])
         ->call('save')
         ->assertHasErrors(['data.options']);
+});
+
+it('rejects incomplete options without discarding their editor state', function (array $options) {
+    livewire(OptionsKeyValueTestHost::class)
+        ->set('data.options', $options)
+        ->call('save')
+        ->assertHasErrors(['data.options'])
+        ->assertSee('Each option must have a label and a value.')
+        ->assertSet('data.options', $options);
+})->with([
+    'label required' => [[['key' => 'us', 'value' => '']]],
+    'label cannot be whitespace' => [[['key' => 'us', 'value' => '   ']]],
+    'value required' => [[['key' => '', 'value' => 'United States']]],
+]);
+
+it('saves zero as an option label and value', function () {
+    livewire(OptionsKeyValueTestHost::class)
+        ->set('data.options', [['key' => '0', 'value' => '0']])
+        ->call('save')
+        ->assertHasNoErrors()
+        ->assertSet('savedOptions', [['label' => '0', 'value' => '0']]);
 });

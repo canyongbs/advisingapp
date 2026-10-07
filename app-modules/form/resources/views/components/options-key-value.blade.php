@@ -48,6 +48,21 @@
             x-data="keyValueFormComponent({
                         state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$getStatePath()}')") }},
                     })"
+            x-init="
+                updateRows = function () {
+                    this.rows = Alpine.raw(this.state ?? []).map(({ key, value }) => ({
+                        key,
+                        value,
+                    }))
+                }
+                updateState = function () {
+                    const state = this.rows.map(({ key, value }) => ({ key, value }))
+
+                    if (JSON.stringify(this.state) !== JSON.stringify(state)) {
+                        this.state = state
+                    }
+                }
+            "
             wire:ignore
             wire:key="{{ $getLivewireKey() }}"
             {{ $getExtraAlpineAttributeBag()->class(['fi-fo-key-value-table-ctn']) }}
@@ -118,8 +133,10 @@
                                     aria-label="Label"
                                     type="text"
                                     x-model="row.value"
-                                    x-on:input="row.key = slugify(row.value)"
-                                    x-on:input.debounce.500ms="updateState"
+                                    x-on:input="
+                                        row.key = slugify(row.value)
+                                        updateState()
+                                    "
                                     class="fi-input"
                                 />
                             </td>
