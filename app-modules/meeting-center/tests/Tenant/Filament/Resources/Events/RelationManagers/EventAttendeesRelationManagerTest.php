@@ -34,12 +34,30 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ManageEventAttendees;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ViewEvent;
+use AdvisingApp\MeetingCenter\Filament\Resources\Events\RelationManagers\EventAttendeesRelationManager;
+use AdvisingApp\MeetingCenter\Jobs\CreateEventAttendees;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use App\Models\User;
+use App\Settings\LicenseSettings;
+use Filament\Actions\Testing\TestAction;
+use Illuminate\Support\Facades\Bus;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
+
+$eventAttendeesRelationManagerTestUser = function (): User {
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->eventManagement = true;
+    $settings->save();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo(['event.view-any', 'event.*.view']);
+
+    return $user;
+};
 
 test('archive action is visible when attendee is not archived', function () {
     asSuperAdmin();
@@ -47,7 +65,7 @@ test('archive action is visible when attendee is not archived', function () {
     $event = Event::factory()->create();
     $attendee = EventAttendee::factory()->create(['event_id' => $event->id]);
 
-    livewire(ManageEventAttendees::class, ['record' => $event->getRouteKey()])
+    livewire(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ViewEvent::class])
         ->assertTableActionVisible('archive', $attendee);
 });
 
@@ -59,7 +77,7 @@ test('archive action successfully archives an attendee', function () {
 
     expect($attendee->isArchived())->toBeFalse();
 
-    livewire(ManageEventAttendees::class, ['record' => $event->getRouteKey()])
+    livewire(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ViewEvent::class])
         ->callTableAction('archive', $attendee)
         ->assertNotified();
 
@@ -76,7 +94,7 @@ test('bulk archive action successfully archives multiple attendees', function ()
         expect($attendee->isArchived())->toBeFalse();
     });
 
-    livewire(ManageEventAttendees::class, ['record' => $event->getRouteKey()])
+    livewire(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ViewEvent::class])
         ->callTableBulkAction('archive', $attendees)
         ->assertNotified();
 
@@ -94,7 +112,7 @@ test('archived attendees are hidden by default', function () {
     $activeAttendee = EventAttendee::factory()->create(['event_id' => $event->id]);
     $archivedAttendee = EventAttendee::factory()->create(['event_id' => $event->id, 'archived_at' => now()]);
 
-    livewire(ManageEventAttendees::class, ['record' => $event->getRouteKey()])
+    livewire(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ViewEvent::class])
         ->loadTable()
         ->assertCanSeeTableRecords([$activeAttendee])
         ->assertCanNotSeeTableRecords([$archivedAttendee]);
@@ -109,8 +127,59 @@ test('archived attendees are visible when the withoutArchived filter is removed'
     $activeAttendee = EventAttendee::factory()->create(['event_id' => $event->id]);
     $archivedAttendee = EventAttendee::factory()->create(['event_id' => $event->id, 'archived_at' => now()]);
 
-    livewire(ManageEventAttendees::class, ['record' => $event->getRouteKey()])
+    livewire(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ViewEvent::class])
         ->loadTable()
         ->removeTableFilter('withoutArchived')
         ->assertCanSeeTableRecords([$activeAttendee, $archivedAttendee]);
+});
+
+test('invite action dispatches attendee invitations for the owner event', function () {
+    asSuperAdmin();
+    Bus::fake();
+
+    $event = Event::factory()->create();
+
+    livewire(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ViewEvent::class])
+        ->callAction(TestAction::make('invite')->table(), ['attendees' => ['invitee@example.com']])
+        ->assertNotified();
+
+    Bus::assertDispatched(CreateEventAttendees::class, function (CreateEventAttendees $job) use ($event): bool {
+        $dispatchedEvent = (new ReflectionProperty($job, 'event'))->getValue($job);
+
+        return $dispatchedEvent instanceof Event && $dispatchedEvent->is($event);
+    });
+});
+
+describe('authorization', function () use ($eventAttendeesRelationManagerTestUser) {
+    it('shows the Invite action with the `event_attendee.create` permission', function () use ($eventAttendeesRelationManagerTestUser) {
+        $user = $eventAttendeesRelationManagerTestUser();
+        $user->givePermissionTo(['event_attendee.view-any', 'event_attendee.create']);
+        actingAs($user);
+
+        $event = Event::factory()->create();
+
+        livewire(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ViewEvent::class])
+            ->assertActionVisible(TestAction::make('invite')->table());
+    });
+
+    it('hides the Invite action without the `event_attendee.create` permission', function () use ($eventAttendeesRelationManagerTestUser) {
+        $user = $eventAttendeesRelationManagerTestUser();
+        $user->givePermissionTo('event_attendee.view-any');
+        actingAs($user);
+
+        $event = Event::factory()->create();
+
+        livewire(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ViewEvent::class])
+            ->assertActionHidden(TestAction::make('invite')->table());
+    });
+
+    it('denies direct access without the `event_attendee.view-any` permission', function () use ($eventAttendeesRelationManagerTestUser) {
+        $user = $eventAttendeesRelationManagerTestUser();
+        actingAs($user);
+
+        $event = Event::factory()->create();
+
+        livewire(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ViewEvent::class])
+            ->assertForbidden();
+    });
 });

@@ -34,12 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
+namespace AdvisingApp\MeetingCenter\Livewire;
 
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\MeetingCenter\Actions\CreateEventRegistrationFormVersion;
-use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
-use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
@@ -49,7 +47,6 @@ use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\Contracts\CanEntangleWithSingularRelationships;
 use Filament\Schemas\Components\Fieldset;
@@ -59,12 +56,8 @@ use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Facades\DB;
 
-class EditEventRegistration extends EditRecord
+class EventRegistrationFormManager extends EventFormManager
 {
-    protected static string $resource = EventResource::class;
-
-    protected static ?string $navigationLabel = 'Registration Form';
-
     protected bool $registrationFormVersionedInCurrentSave = false;
 
     /** @var array<array-key, EventRegistrationFormStep> */
@@ -72,127 +65,128 @@ class EditEventRegistration extends EditRecord
 
     public function form(Schema $schema): Schema
     {
-        return $schema->components([
-            Fieldset::make('Registration Form')
-                ->relationship('eventRegistrationForm')
-                ->saveRelationshipsBeforeChildrenUsing(function (Component | CanEntangleWithSingularRelationships $component): void {
-                    $relationship = $component->getRelationship();
-                    $record = $component->getCachedExistingRecord();
-                    $data = $component->getChildComponentContainer()->getState(shouldCallHooksBefore: false);
+        return $schema
+            ->model($this->record)
+            ->statePath('data')
+            ->components([
+                Fieldset::make('Registration Form')
+                    ->relationship('eventRegistrationForm')
+                    ->saveRelationshipsBeforeChildrenUsing(function (Component | CanEntangleWithSingularRelationships $component): void {
+                        $relationship = $component->getRelationship();
+                        $record = $component->getCachedExistingRecord();
+                        $data = $component->getChildComponentContainer()->getState(shouldCallHooksBefore: false);
 
-                    if ($record instanceof EventRegistrationForm) {
-                        DB::transaction(function () use ($component, $record, $data): void {
-                            $newVersion = app(CreateEventRegistrationFormVersion::class)->execute($record, $data);
+                        if ($record instanceof EventRegistrationForm) {
+                            DB::transaction(function () use ($component, $record, $data): void {
+                                $newVersion = app(CreateEventRegistrationFormVersion::class)->execute($record, $data);
 
-                            if ($newVersion->is_wizard) {
-                                $sort = 1;
-                                $wizardStepVersionMap = [];
+                                if ($newVersion->is_wizard) {
+                                    $sort = 1;
+                                    $wizardStepVersionMap = [];
 
-                                $repeaterState = collect($component->getChildComponentContainer()->getComponents(withHidden: true, withActions: false))
-                                    ->first(fn ($component) => $component instanceof Repeater && $component->getName() === 'steps')
-                                    ?->getRawState();
+                                    $repeaterState = collect($component->getChildComponentContainer()->getComponents(withHidden: true, withActions: false))
+                                        ->first(fn ($component) => $component instanceof Repeater && $component->getName() === 'steps')
+                                        ?->getRawState();
 
-                                $steps = ! empty($repeaterState)
-                                    ? $repeaterState
-                                    : $record->steps()->orderBy('sort')->get()
-                                        ->mapWithKeys(fn (EventRegistrationFormStep $step) => [$step->id => ['label' => $step->label, 'description' => $step->description]])
-                                        ->all();
+                                    $steps = ! empty($repeaterState)
+                                        ? $repeaterState
+                                        : $record->steps()->orderBy('sort')->get()
+                                            ->mapWithKeys(fn (EventRegistrationFormStep $step) => [$step->id => ['label' => $step->label, 'description' => $step->description]])
+                                            ->all();
 
-                                foreach ($steps as $key => $stepData) {
-                                    $newStep = $newVersion->steps()->create([
-                                        'label' => $stepData['label'] ?? 'Untitled Step',
-                                        'description' => $stepData['description'] ?? null,
-                                        'sort' => $sort++,
-                                    ]);
+                                    foreach ($steps as $key => $stepData) {
+                                        $newStep = $newVersion->steps()->create([
+                                            'label' => $stepData['label'] ?? 'Untitled Step',
+                                            'description' => $stepData['description'] ?? null,
+                                            'sort' => $sort++,
+                                        ]);
 
-                                    $mapKey = str_starts_with((string) $key, 'record-') ? substr((string) $key, 7) : (string) $key;
-                                    $wizardStepVersionMap[$mapKey] = $newStep;
+                                        $mapKey = str_starts_with((string) $key, 'record-') ? substr((string) $key, 7) : (string) $key;
+                                        $wizardStepVersionMap[$mapKey] = $newStep;
 
-                                    if (! str_starts_with((string) $key, 'record-')) {
-                                        $stepContent = $stepData['content'] ?? null;
+                                        if (! str_starts_with((string) $key, 'record-')) {
+                                            $stepContent = $stepData['content'] ?? null;
 
-                                        if (is_string($stepContent)) {
-                                            $stepContent = json_decode($stepContent, true);
-                                        }
+                                            if (is_string($stepContent)) {
+                                                $stepContent = json_decode($stepContent, true);
+                                            }
 
-                                        if (is_array($stepContent) && ! empty($stepContent)) {
-                                            $stepContent['content'] = $this->saveFieldsFromComponents($newVersion, $stepContent['content'] ?? [], $newStep);
-                                            $newStep->content = $stepContent;
-                                            $newStep->save();
+                                            if (is_array($stepContent) && ! empty($stepContent)) {
+                                                $stepContent['content'] = $this->saveFieldsFromComponents($newVersion, $stepContent['content'] ?? [], $newStep);
+                                                $newStep->content = $stepContent;
+                                                $newStep->save();
+                                            }
                                         }
                                     }
+
+                                    $this->wizardStepVersionMap = $wizardStepVersionMap;
                                 }
 
-                                $this->wizardStepVersionMap = $wizardStepVersionMap;
-                            }
+                                $component->cachedExistingRecord($newVersion);
+                            });
 
-                            $component->cachedExistingRecord($newVersion);
-                        });
+                            $this->registrationFormVersionedInCurrentSave = ! empty($this->wizardStepVersionMap);
+                        } else {
+                            $data = $component->mutateRelationshipDataBeforeCreate($data);
 
-                        $this->registrationFormVersionedInCurrentSave = ! empty($this->wizardStepVersionMap);
-                    } else {
-                        $data = $component->mutateRelationshipDataBeforeCreate($data);
+                            $relatedModel = $component->getRelatedModel();
 
-                        $relatedModel = $component->getRelatedModel();
+                            $record = new $relatedModel();
+                            $record->fill($data);
 
-                        $record = new $relatedModel();
-                        $record->fill($data);
+                            $relationship->save($record);
 
-                        $relationship->save($record);
+                            $component->cachedExistingRecord($record);
+                        }
+                    })
+                    ->saveRelationshipsUsing(null)
+                    ->schema([
+                        Section::make('Options')
+                            ->schema([
+                                Toggle::make('is_wizard')
+                                    ->label('Multi-step form')
+                                    ->live()
+                                    ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
+                            ]),
+                        Section::make('Form Fields')
+                            ->schema([
+                                $this->fieldBuilder(),
+                            ])
+                            ->hidden(fn (Get $get) => $get('is_wizard'))
+                            ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
+                        Repeater::make('steps')
+                            ->schema([
+                                TextInput::make('label')
+                                    ->label('Step Title')
+                                    ->required()
+                                    ->string()
+                                    ->maxLength(255)
+                                    ->autocomplete(false)
+                                    ->columnSpanFull()
+                                    ->lazy(),
+                                Textarea::make('description')
+                                    ->label('Step Description')
+                                    ->string()
+                                    ->columnSpanFull(),
+                                $this->fieldBuilder(),
+                            ])
+                            ->addActionLabel('New step')
+                            ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
+                            ->visible(fn (Get $get) => $get('is_wizard'))
+                            ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists())
+                            ->relationship()
+                            ->orderColumn('sort')
+                            ->saveRelationshipsUsing(function (Repeater $component): void {
+                                if ($this->registrationFormVersionedInCurrentSave) {
+                                    return;
+                                }
 
-                        $component->cachedExistingRecord($record);
-                    }
-                })
-                ->saveRelationshipsUsing(null)
-                ->schema([
-                    Section::make('Options')
-                        ->schema([
-                            Toggle::make('is_wizard')
-                                ->label('Multi-step form')
-                                ->live()
-                                ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
-                        ]),
-
-                    Section::make('Form Fields')
-                        ->schema([
-                            $this->fieldBuilder(),
-                        ])
-                        ->hidden(fn (Get $get) => $get('is_wizard'))
-                        ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
-
-                    Repeater::make('steps')
-                        ->schema([
-                            TextInput::make('label')
-                                ->label('Step Title')
-                                ->required()
-                                ->string()
-                                ->maxLength(255)
-                                ->autocomplete(false)
-                                ->columnSpanFull()
-                                ->lazy(),
-                            Textarea::make('description')
-                                ->label('Step Description')
-                                ->string()
-                                ->columnSpanFull(),
-                            $this->fieldBuilder(),
-                        ])
-                        ->addActionLabel('New step')
-                        ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
-                        ->visible(fn (Get $get) => $get('is_wizard'))
-                        ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists())
-                        ->relationship()
-                        ->orderColumn('sort')
-                        ->saveRelationshipsUsing(function (Repeater $component): void {
-                            if ($this->registrationFormVersionedInCurrentSave) {
-                                return;
-                            }
-
-                            $component->saveToRelationship();
-                        })
-                        ->reorderable()
-                        ->columnSpanFull(),
-                ]),
-        ]);
+                                $component->saveToRelationship();
+                            })
+                            ->reorderable()
+                            ->columnSpanFull(),
+                    ]),
+            ]);
     }
 
     public function fieldBuilder(): RichEditor
@@ -266,23 +260,27 @@ class EditEventRegistration extends EditRecord
             }
 
             $componentAttributes = $component['attrs'] ?? [];
-            $config = $componentAttributes['config'] ?? [];
+            $blockId = $componentAttributes['id'] ?? null;
 
+            // A block without an id has no known field type to save as.
+            if (blank($blockId)) {
+                continue;
+            }
+
+            $config = $componentAttributes['config'] ?? [];
             $id = $config['fieldId'] ?? null;
             unset($config['fieldId']);
-
             $label = $config['label'] ?? null;
             unset($config['label']);
-
             $isRequired = $config['isRequired'] ?? null;
             unset($config['isRequired']);
 
-            /** @var EventRegistrationFormField $field */
             $field = $form->fields()->findOrNew($id);
+            assert($field instanceof EventRegistrationFormField);
             $field->step()->associate($eventRegistrationFormStep);
-            $field->label = $label ?? $componentAttributes['id'];
+            $field->label = $label ?? $blockId;
             $field->is_required = $isRequired ?? false;
-            $field->type = $componentAttributes['id'];
+            $field->type = $blockId;
             $field->config = $config;
             $field->save();
 
@@ -318,33 +316,28 @@ class EditEventRegistration extends EditRecord
         }
 
         $content['content'] = $this->saveFieldsFromComponents($form, $content['content'] ?? [], $step);
-
         $target->content = $content;
         $target->save();
-
         $component->state($content);
+    }
+
+    protected function attributesToSave(): array
+    {
+        return [];
     }
 
     protected function afterSave(): void
     {
-        $this->clearFormContentForWizard();
-        $this->registrationFormVersionedInCurrentSave = false;
-        $this->wizardStepVersionMap = [];
-    }
-
-    protected function clearFormContentForWizard(): void
-    {
-        $event = $this->getRecord();
-        assert($event instanceof Event);
-        $form = $event->eventRegistrationForm;
+        $form = $this->record->eventRegistrationForm;
 
         if ($form?->is_wizard) {
             $form->content = null;
             $form->save();
-
-            return;
+        } else {
+            $form?->steps()->delete();
         }
 
-        $form?->steps()->delete();
+        $this->registrationFormVersionedInCurrentSave = false;
+        $this->wizardStepVersionMap = [];
     }
 }

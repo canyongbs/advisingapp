@@ -34,13 +34,32 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ViewEvent;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
+use App\Models\User;
+use App\Settings\LicenseSettings;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
+
+/**
+ * @param array<int, string> $permissions
+ *
+ * @return User
+ */
+$viewEventTestUser = function (array $permissions): User {
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->eventManagement = true;
+    $settings->save();
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo($permissions);
+
+    return $user;
+};
 
 it('archive action is always visible and labeled Archive', function () {
     asSuperAdmin();
@@ -60,7 +79,7 @@ it('archive action is always visible and labeled Archive', function () {
         ->assertActionHasLabel('archive', 'Archive');
 });
 
-it('archive action archives the event and redirects to the index when the event has attendees', function () {
+it('archives an event with attendees', function () {
     asSuperAdmin();
 
     $event = Event::factory()->create(['starts_at' => now()->addWeek()]);
@@ -71,4 +90,48 @@ it('archive action archives the event and redirects to the index when the event 
         ->assertRedirect(EventResource::getUrl('index'));
 
     expect($event->fresh()->isArchived())->toBeTrue();
+});
+
+describe('authorization', function () use ($viewEventTestUser) {
+    it('falls back to the overview tab when a view-only user requests an edit tab', function () use ($viewEventTestUser) {
+        $user = $viewEventTestUser(['event.view-any', 'event.*.view']);
+        actingAs($user);
+
+        $event = Event::factory()->create();
+
+        livewire(ViewEvent::class, ['record' => $event->getRouteKey(), 'activeTab' => 'details'])
+            ->assertSet('activeTab', 'overview');
+    });
+
+    it('allows a user with update access to open an edit tab without view access', function () use ($viewEventTestUser) {
+        $user = $viewEventTestUser(['event.view-any', 'event.*.update']);
+        actingAs($user);
+
+        $event = Event::factory()->create();
+
+        livewire(ViewEvent::class, ['record' => $event->getRouteKey(), 'activeTab' => 'details'])
+            ->assertSet('activeTab', 'details')
+            ->assertSuccessful();
+    });
+
+    it('allows a user with attendee access to open the attendees tab', function () use ($viewEventTestUser) {
+        $user = $viewEventTestUser(['event.view-any', 'event_attendee.view-any']);
+        actingAs($user);
+
+        $event = Event::factory()->create();
+
+        livewire(ViewEvent::class, ['record' => $event->getRouteKey(), 'activeTab' => 'attendees'])
+            ->assertSet('activeTab', 'attendees')
+            ->assertSuccessful();
+    });
+
+    it('denies access when a user cannot access any event tab', function () use ($viewEventTestUser) {
+        $user = $viewEventTestUser(['event.view-any']);
+        actingAs($user);
+
+        $event = Event::factory()->create();
+
+        livewire(ViewEvent::class, ['record' => $event->getRouteKey()])
+            ->assertForbidden();
+    });
 });
