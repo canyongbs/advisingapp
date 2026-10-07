@@ -137,6 +137,7 @@ abstract class TestCase extends BaseTestCase
                         mobileApps: true,
                         scheduleAndAppointments: true,
                         enterpriseAi: true,
+                        unifiedInbox: true,
                     )
                 )
             ));
@@ -236,6 +237,7 @@ abstract class TestCase extends BaseTestCase
                     mobileApps: true,
                     scheduleAndAppointments: true,
                     enterpriseAi: true,
+                    unifiedInbox: true,
                 ),
             ),
             themeConfig: null,

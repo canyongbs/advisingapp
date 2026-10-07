@@ -65,6 +65,13 @@ function setEnterpriseAiEnabled(bool $isEnabled): void
     $licenseSettings->save();
 }
 
+function setUnifiedInboxEnabled(bool $isEnabled): void
+{
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->unifiedInbox = $isEnabled;
+    $settings->save();
+}
+
 function loadFixtureFromModule(string $module, string $file): mixed
 {
     $modulePath = resolve(ModulePath::class);

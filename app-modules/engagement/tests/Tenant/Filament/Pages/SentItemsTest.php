@@ -59,6 +59,11 @@ use Illuminate\Support\Facades\Queue;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
+use function Tests\setUnifiedInboxEnabled;
+
+beforeEach(function () {
+    setUnifiedInboxEnabled(true);
+});
 
 it('can activate the sent items tab within the unified inbox page', function () {
     asSuperAdmin();

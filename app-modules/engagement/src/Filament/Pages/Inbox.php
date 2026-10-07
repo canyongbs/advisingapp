@@ -42,6 +42,7 @@ use AdvisingApp\Engagement\Livewire\InboxTable;
 use AdvisingApp\Engagement\Livewire\SentItemsTable;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Engagement\Models\EngagementResponse;
+use App\Enums\Feature;
 use App\Enums\NavigationGroup;
 use App\Models\User;
 use Filament\Navigation\NavigationItem;
@@ -50,6 +51,7 @@ use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Url;
 use UnitEnum;
 
@@ -68,6 +70,10 @@ class Inbox extends Page
 
     public static function canAccess(): bool
     {
+        if (! Gate::check(Feature::UnifiedInbox->getGateName())) {
+            return false;
+        }
+
         $user = auth()->user();
 
         assert($user instanceof User);

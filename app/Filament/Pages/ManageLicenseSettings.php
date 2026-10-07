@@ -204,6 +204,8 @@ class ManageLicenseSettings extends SettingsPage
                                 ->label('Early Alert'),
                             Toggle::make('data.addons.publicProfiles')
                                 ->label('Public Profiles'),
+                            Toggle::make('data.addons.unifiedInbox')
+                                ->label('Unified Inbox'),
                         ]
                     ),
             ])

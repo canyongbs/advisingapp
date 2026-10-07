@@ -43,10 +43,28 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 
+use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
+use function Tests\setUnifiedInboxEnabled;
+
+beforeEach(function () {
+    setUnifiedInboxEnabled(true);
+});
 
 it('is gated with proper access control', function () {})->todo();
+
+it('requires the unified inbox feature addon to access', function () {
+    asSuperAdmin();
+
+    setUnifiedInboxEnabled(false);
+
+    get(Inbox::getUrl())->assertForbidden();
+
+    setUnifiedInboxEnabled(true);
+
+    get(Inbox::getUrl())->assertOk();
+});
 
 it('displays the correct details', function () {})->todo();
 

@@ -42,6 +42,11 @@ use AdvisingApp\Engagement\Models\HolisticEngagement;
 
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
+use function Tests\setUnifiedInboxEnabled;
+
+beforeEach(function () {
+    setUnifiedInboxEnabled(true);
+});
 
 it('can mark an engagement response as actioned and create an actioned note', function () {
     asSuperAdmin();

@@ -84,6 +84,8 @@ enum Feature: string
 
     case EnterpriseAi = 'enterprise-ai';
 
+    case UnifiedInbox = 'unified-inbox';
+
     public function generateGate(): void
     {
         // If features are added that are not based on a License Addon we will need to update this

@@ -48,3 +48,16 @@ describe('enterprise ai', function () {
         'enabled' => [true],
     ]);
 });
+
+describe('unified inbox', function () {
+    it('enables `unifiedInbox` when the addon is missing', function () {
+        expect(LicenseAddonsData::from(['onlineForms' => true])->unifiedInbox)->toBeTrue();
+    });
+
+    it('keeps `unifiedInbox` as provided', function (bool $isUnifiedInboxEnabled) {
+        expect(LicenseAddonsData::from(['unifiedInbox' => $isUnifiedInboxEnabled])->unifiedInbox)->toBe($isUnifiedInboxEnabled);
+    })->with([
+        'disabled' => [false],
+        'enabled' => [true],
+    ]);
+});

@@ -34,33 +34,23 @@
 </COPYRIGHT>
 */
 
-namespace App\DataTransferObjects\LicenseManagement;
+use AdvisingApp\Engagement\Filament\Pages\ViewEngagementResponse;
+use AdvisingApp\Engagement\Models\EngagementResponse;
 
-use Spatie\LaravelData\Attributes\MapInputName;
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
+use function Pest\Laravel\get;
+use function Tests\asSuperAdmin;
+use function Tests\setUnifiedInboxEnabled;
 
-#[MapInputName(SnakeCaseMapper::class)]
-class LicenseAddonsData extends Data
-{
-    public function __construct(
-        public bool $onlineForms = false,
-        public bool $onlineSurveys = false,
-        public bool $onlineAdmissions = false,
-        public bool $resourceHub = false,
-        public bool $supportPrograms = false,
-        public bool $eventManagement = false,
-        public bool $realtimeChat = false,
-        public bool $mobileApps = false,
-        public bool $scheduleAndAppointments = false,
-        public bool $employeeAdvisors = false,
-        public bool $researchAdvisor = false,
-        public bool $customerAdvisors = false,
-        public bool $dataAdvisor = false,
-        public bool $earlyAlert = false,
-        public bool $publicProfiles = false,
-        // TODO: Cleanup Task (enterprise-ai): once Olympus always sends enterpriseAi, change this default to false.
-        public bool $enterpriseAi = true,
-        public bool $unifiedInbox = true, // TODO: Unified Inbox Addon Cleanup - make this false. Note this can only happen once the corresponding Olympus ticket has been merged in
-    ) {}
-}
+it('requires the unified inbox feature addon to access', function () {
+    asSuperAdmin();
+
+    $engagementResponse = EngagementResponse::factory()->create();
+
+    setUnifiedInboxEnabled(false);
+
+    get(ViewEngagementResponse::getUrl([$engagementResponse]))->assertForbidden();
+
+    setUnifiedInboxEnabled(true);
+
+    get(ViewEngagementResponse::getUrl([$engagementResponse]))->assertOk();
+});
