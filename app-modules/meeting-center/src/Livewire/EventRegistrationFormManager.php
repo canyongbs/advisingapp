@@ -38,7 +38,6 @@ namespace AdvisingApp\MeetingCenter\Livewire;
 
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\MeetingCenter\Actions\CreateEventRegistrationFormVersion;
-use AdvisingApp\MeetingCenter\Livewire\EventFormManager;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
