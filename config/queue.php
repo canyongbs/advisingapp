@@ -116,7 +116,7 @@ return [
         // and retry_after matches the 1200s visibility timeout of the SQS queues used in staging and production.
         'redis' => [
             'driver' => 'redis',
-            'connection' => 'default',
+            'connection' => 'queue',
             'queue' => env('REDIS_QUEUE', env('SQS_QUEUE', 'default')),
             'retry_after' => (int) env('REDIS_QUEUE_RETRY_AFTER', 1200),
             'block_for' => null,

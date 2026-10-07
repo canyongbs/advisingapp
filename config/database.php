@@ -163,6 +163,9 @@ return [
             'cache' => [$redisClusterSeedNode],
 
             'session' => [$redisClusterSeedNode],
+
+            // Its own client: a bulk push runs in a MULTI, and listeners writing to another slot on the same client break the EXEC.
+            'queue' => [$redisClusterSeedNode],
         ],
     ],
 ];
