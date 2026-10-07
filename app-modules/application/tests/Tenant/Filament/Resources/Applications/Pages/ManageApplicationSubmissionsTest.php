@@ -45,6 +45,7 @@ use Livewire\Livewire;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
+use Illuminate\Support\Carbon;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -384,7 +385,7 @@ describe('submission deep links', function () {
         ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
         $application = Application::factory()->create();
         $submission = $application->submissions()->firstOrFail();
-        $submission->created_at = '2025-01-02 03:04:05';
+        $submission->created_at = Carbon::parse('2025-01-02 03:04:05');
         $submission->save();
         $query = ['tab' => 'submissions', 'tableAction' => 'view', 'tableActionRecord' => $submission->getKey()];
         $response = get(ApplicationResource::getUrl($page, ['record' => $application, ...$query]));
@@ -396,12 +397,26 @@ describe('submission deep links', function () {
             $response = get($location);
         }
 
-        $response->assertSuccessful()->assertSee('wire:init="mountAction(', false);
+        $response->assertSuccessful();
+        $getInitializer = static function (string $html): string {
+            $document = new DOMDocument();
+            $document->loadHTML($html, LIBXML_NOERROR | LIBXML_NOWARNING);
+            $initializers = (new DOMXPath($document))->query('//*[@class="fi-resource-relation-manager"]/following-sibling::div[@*[name()="wire:init"]]');
+            assert($initializers !== false);
+            expect($initializers->length)->toBe(1);
+            $initializer = $initializers->item(0);
+            assert($initializer instanceof DOMElement);
+
+            return $initializer->getAttribute('wire:init');
+        };
+        $initializer = $getInitializer($response->getContent());
+        expect($initializer)->toStartWith('mountAction(');
         Livewire::withQueryParams($query);
         $component = livewire(ManageApplicationSubmissions::class, [
             'ownerRecord' => $application,
             'pageClass' => ViewApplication::class,
-        ])->assertSeeHtml('wire:init="mountAction(');
+        ]);
+        expect($getInitializer($component->html()))->toBe($initializer);
         $manager = $component->instance();
         assert($manager instanceof ManageApplicationSubmissions);
 
@@ -409,9 +424,13 @@ describe('submission deep links', function () {
             ->call('mountAction', $manager->defaultTableAction, $manager->defaultTableActionArguments ?? [], $manager->getDefaultTableActionUrlContext())
             ->assertSet('mountedActions.0.name', 'view')
             ->assertSet('mountedActions.0.context.recordKey', $submission->getKey())
-            ->assertSet('mountedActions.0.context.mountedFromUrl', true)
-            ->call('forceRender')
-            ->assertSee("Submission Details: {$submission->created_at}");
+            ->assertSet('mountedActions.0.context.mountedFromUrl', true);
+
+        $manager = $component->instance();
+        assert($manager instanceof ManageApplicationSubmissions);
+        expect($manager->mountedActionShouldOpenModal())->toBeTrue()
+            ->and($manager->getMountedAction()?->getRecord()?->getKey())->toBe($submission->getKey())
+            ->and($manager->getMountedAction()?->getModalHeading())->toBe("Submission Details: {$submission->created_at}");
     })->with(['canonical' => 'view', 'legacy' => 'manage-submissions']);
 });
 
@@ -432,8 +451,11 @@ describe('authorization', function () {
 
         $component
             ->call('mountAction', $manager->defaultTableAction, $manager->defaultTableActionArguments ?? [], $manager->getDefaultTableActionUrlContext())
-            ->assertSet('mountedActions', [])
-            ->assertDontSee("Submission Details: {$submission->created_at}");
+            ->assertSet('mountedActions', []);
+
+        $manager = $component->instance();
+        assert($manager instanceof ManageApplicationSubmissions);
+        expect($manager->getMountedAction())->toBeNull();
     });
     it('denies direct manager access without owner resource access', function () {
         actingAs(User::factory()->licensed(LicenseType::cases())->create());
