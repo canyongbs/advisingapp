@@ -94,6 +94,7 @@ class TermAttributesRelationManager extends RelationManager
                     ->selectablePlaceholder(false)
                     ->searchable(),
             ], layout: FiltersLayout::AboveContent)
+            ->filtersFormColumns(2)
             ->deferFilters(false)
             ->paginated(false)
             ->emptyStateHeading('No term attributes');

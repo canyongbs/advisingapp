@@ -36,14 +36,8 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Filters;
 
-use AdvisingApp\StudentDataModel\Enums\StudentTermAttributeField;
-use AdvisingApp\StudentDataModel\Models\StudentTermAttribute;
-use AdvisingApp\StudentDataModel\Models\Term;
-use Filament\Forms\Components\Select;
 use Filament\QueryBuilder\Constraints\Operators\Operator;
 use Filament\Schemas\Components\Component;
-use Filament\Schemas\Components\Utilities\Get;
-use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
@@ -58,20 +52,18 @@ class TermAttributeOperator extends Operator
         $this->label(fn (): string => $this->isInverse() ? 'Is not' : 'Is');
 
         $this->summary(function (): string {
-            if (blank($this->getSettings())) {
+            $settings = $this->getSettings();
+
+            if (blank($settings)) {
                 return '';
             }
 
-            $termLabel = Term::query()
-                ->where('sis_term_id', $this->getStringSetting('sis_term_id'))
-                ->first()
-                ?->getDisplayName() ?? 'Unknown Term';
-
-            $attributeLabel = $this->resolveAttribute($this->getSettings()['attribute'] ?? null)?->getLabel() ?? 'Unknown Attribute';
-
-            $operatorLabel = $this->isInverse() ? 'is not' : 'is';
-
-            return "{$termLabel}: {$attributeLabel} {$operatorLabel} \"{$this->getStringSetting('value')}\"";
+            return TermAttributeFilter::getSummary(
+                $settings['sis_term_id'] ?? null,
+                $settings['attribute'] ?? null,
+                $settings['value'] ?? null,
+                (bool) $this->isInverse(),
+            );
         });
     }
 
@@ -80,32 +72,7 @@ class TermAttributeOperator extends Operator
      */
     public function getFormSchema(): array
     {
-        return [
-            Select::make('sis_term_id')
-                ->label('Term')
-                ->options(fn (): array => Term::query()
-                    ->whereIn('sis_term_id', StudentTermAttribute::query()->select('sis_term_id'))
-                    ->orderByRaw('start_date DESC NULLS LAST')
-                    ->get(['sis_term_id', 'name', 'start_date'])
-                    ->mapWithKeys(fn (Term $term): array => [$term->sis_term_id => $term->getDisplayName()])
-                    ->all())
-                ->searchable()
-                ->required()
-                ->live()
-                ->afterStateUpdated(fn (Set $set) => $set('value', null)),
-            Select::make('attribute')
-                ->label('Attribute')
-                ->options(StudentTermAttributeField::class)
-                ->searchable()
-                ->required()
-                ->live()
-                ->afterStateUpdated(fn (Set $set) => $set('value', null)),
-            Select::make('value')
-                ->label('Value')
-                ->options(fn (Get $get): array => $this->getValueOptions($get('sis_term_id'), $get('attribute')))
-                ->searchable()
-                ->required(),
-        ];
+        return TermAttributeFilter::getFormSchema();
     }
 
     /**
@@ -115,62 +82,14 @@ class TermAttributeOperator extends Operator
      */
     public function applyToBaseQuery(Builder $query): Builder
     {
-        $termId = $this->getStringSetting('sis_term_id');
-        $attribute = $this->getSettings()['attribute'] ?? null;
-        $value = $this->getStringSetting('value');
+        $settings = $this->getSettings() ?? [];
 
-        if (blank($termId) || blank($attribute) || blank($value)) {
-            return $query;
-        }
-
-        $field = $this->resolveAttribute($attribute);
-
-        // Only allow-listed columns may reach the query, so an unknown attribute matches no students.
-        if (! $field) {
-            return $query->whereRaw('1 = 0');
-        }
-
-        return $query->{$this->isInverse() ? 'whereDoesntHave' : 'whereHas'}(
-            'termAttributes',
-            fn (Builder $query) => $query
-                ->where('sis_term_id', $termId)
-                ->where($field->value, $value),
+        return TermAttributeFilter::applyToQuery(
+            $query,
+            $settings['sis_term_id'] ?? null,
+            $settings['attribute'] ?? null,
+            $settings['value'] ?? null,
+            (bool) $this->isInverse(),
         );
-    }
-
-    /**
-     * The distinct existing values of the attribute for the selected term.
-     *
-     * @return array<int|string, string>
-     */
-    protected function getValueOptions(mixed $termId, mixed $attribute): array
-    {
-        $field = $this->resolveAttribute($attribute);
-
-        if (blank($termId) || ! is_scalar($termId) || ! $field) {
-            return [];
-        }
-
-        return StudentTermAttribute::query()
-            ->where('sis_term_id', (string) $termId)
-            ->whereNotNull($field->value)
-            ->distinct()
-            ->orderBy($field->value)
-            ->pluck($field->value)
-            ->mapWithKeys(fn (string $value): array => [$value => $value])
-            ->all();
-    }
-
-    /**
-     * The attribute setting is an enum instance when read from the live table filter form
-     * (the select casts it), but a plain string when read from a group's saved filters.
-     */
-    protected function resolveAttribute(mixed $attribute): ?StudentTermAttributeField
-    {
-        if ($attribute instanceof StudentTermAttributeField) {
-            return $attribute;
-        }
-
-        return is_string($attribute) ? StudentTermAttributeField::tryFrom($attribute) : null;
     }
 }

@@ -58,6 +58,7 @@ class StudentEnrollmentRequestFactory extends RequestFactory
             'faculty_email' => $this->faker->safeEmail(),
             'semester_code' => $this->faker->optional(0.8)->numerify('42##'),
             'semester_name' => $this->faker->optional(0.8)->randomElement(['Fall 2006', 'Spring Cohort A 2006', 'Summer A 2006', 'Summer 2012']),
+            'sis_term_id' => $this->faker->optional(0.8)->numerify('###'),
             'start_date' => $this->faker->optional(0.8)->date('Y-m-d H:i:s'),
             'end_date' => $this->faker->optional(0.8)->date('Y-m-d H:i:s'),
         ], filled(...));
