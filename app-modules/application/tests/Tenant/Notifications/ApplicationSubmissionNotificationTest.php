@@ -75,11 +75,11 @@ it('links application and submission details to their canonical tabs', function 
 
     expect($body)->toContain(ApplicationResource::getUrl('view', ['record' => $application, 'tab' => 'edit']))
         ->and($body)->toContain(ApplicationResource::getUrl('view', [
-          'tab' => 'submissions',
-          'record' => $application,
-          'tableAction' => 'view',
-          'tableActionRecord' => $submission->id,
-      ]));
+            'tab' => 'submissions',
+            'record' => $application,
+            'tableAction' => 'view',
+            'tableActionRecord' => $submission->id,
+        ]));
 });
 
 describe('archiving', function () {
