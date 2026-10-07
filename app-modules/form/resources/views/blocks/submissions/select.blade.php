@@ -31,11 +31,10 @@
     
     </COPYRIGHT>
 --}}
-@use(AdvisingApp\Form\Filament\Blocks\FormFieldBlock)
 <x-form::blocks.field-wrapper class="py-3" :$label :$isRequired :description="$description ?? null">
-    @if (filled($response ?? null))
-        {{ FormFieldBlock::getOptionLabel($options, $response) }}
-    @else
+    {{ $options[$response ?? null] ?? null }}
+
+    @if (blank($response ?? null))
         <span class="text-gray-500">No response</span>
     @endif
 </x-form::blocks.field-wrapper>

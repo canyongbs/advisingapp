@@ -44,14 +44,3 @@ it('renders a different preview when the options are only reordered', function (
 
     expect($reordered)->not->toBe($original);
 });
-
-it('shows the option label for a submitted value', function () {
-    $html = SelectFormFieldBlock::toHtml([
-        'label' => 'Country',
-        'isRequired' => false,
-        'options' => ['united-states' => 'United States'],
-        'response' => 'united-states',
-    ], []);
-
-    expect($html)->toContain('United States');
-});

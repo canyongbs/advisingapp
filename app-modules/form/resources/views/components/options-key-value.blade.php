@@ -35,7 +35,6 @@
     Adapted from Filament's KeyValue embedded view, reusing its Alpine component. Each row's
     "key" is the stored option value and its "value" is the label, but the label
     column is rendered first and the key is generated from it in the browser.
-    Options that were already saved are read-only so their stored values never change.
 --}}
 @php
     $id = $getId();
@@ -58,10 +57,6 @@
                 id="{{ $id }}"
                 class="fi-fo-key-value-table"
                 x-data="{
-                    savedOptions: {},
-                    isSaved(row) {
-                        return Object.hasOwn(this.savedOptions, row.key) && this.savedOptions[row.key] === row.value
-                    },
                     slugify(label) {
                         const slug = (label ?? '')
                             .normalize('NFD')
@@ -84,7 +79,6 @@
                         return 'option-' + hash.toString(36)
                     },
                 }"
-                x-init="rows.forEach((row) => row.key !== '' && (savedOptions[row.key] = row.value))"
             >
                 <thead>
                     <tr>
@@ -124,7 +118,6 @@
                                     aria-label="Label"
                                     type="text"
                                     x-model="row.value"
-                                    x-bind:disabled="isSaved(row)"
                                     x-on:input="row.key = slugify(row.value)"
                                     x-on:input.debounce.500ms="updateState"
                                     class="fi-input"

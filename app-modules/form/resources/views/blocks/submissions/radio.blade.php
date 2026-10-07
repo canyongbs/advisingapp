@@ -31,18 +31,33 @@
     
     </COPYRIGHT>
 --}}
-@use(AdvisingApp\Form\Filament\Blocks\FormFieldBlock)
 
 <x-form::blocks.field-wrapper class="py-3" :$label :$isRequired :description="$description ?? null">
     @php
-        $normalizedOptions = FormFieldBlock::getOptionLabels($options);
+        $normalizedOptions = array_is_list($options)
+            ? collect($options)
+                ->pluck('label', 'value')
+                ->all()
+            : $options;
 
         $hasOtherOption = $hasOtherOption ?? false;
         $displayValue = null;
 
         if (filled($response ?? null)) {
-            $displayValue = FormFieldBlock::getOptionLabel($normalizedOptions, $response);
+            // Try exact match first
+            $displayValue = $normalizedOptions[$response] ?? null;
 
+            // Fall back to case-insensitive match
+            if ($displayValue === null) {
+                foreach ($normalizedOptions as $value => $optionLabel) {
+                    if (strcasecmp($value, $response) === 0) {
+                        $displayValue = $optionLabel;
+                        break;
+                    }
+                }
+            }
+
+            // If still no match and hasOtherOption, show as Other
             if ($displayValue === null && $hasOtherOption) {
                 $displayValue = 'Other: ' . $response;
             }

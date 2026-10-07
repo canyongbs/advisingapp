@@ -78,7 +78,7 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
                 'validationLabel' => $field->label,
                 'name' => $field->getKey(),
                 ...($field->is_required ? ['validation' => 'required'] : []),
-                'options' => static::getFormKitOptions($field),
+                'options' => $field->config['options'],
                 ...(! empty($field->config['description']) ? ['description' => $field->config['description']] : []),
             ];
         }
@@ -88,7 +88,7 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
             'label' => $field->label,
             'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
-            'options' => static::getFormKitOptions($field),
+            'options' => $field->config['options'],
             ...self::getDescriptionSectionsSchema($field, 'legend'),
         ];
     }
@@ -125,18 +125,16 @@ class CheckboxesFormFieldBlock extends FormFieldBlock
         }
 
         $responseArray = is_array($response) ? $response : [];
-        $optionValues = $options->keys()->all();
-
-        $resolvedValues = collect($responseArray)
-            ->map(fn ($val) => static::resolveOptionValue($optionValues, $val))
-            ->filter(fn ($optionValue) => $optionValue !== null);
+        $optionKeysLower = $options->keys()->map(fn ($key) => strtolower($key));
 
         $result = $options
-            ->mapWithKeys(fn ($label, $key) => [$label => $resolvedValues->containsStrict($key)])
+            ->mapWithKeys(fn ($label, $key) => [
+                $label => collect($responseArray)->contains(fn ($val) => strcasecmp($val, $key) === 0),
+            ])
             ->toArray();
 
         if ($hasOtherOption && is_array($response)) {
-            $otherValues = array_filter($response, fn ($val) => static::resolveOptionValue($optionValues, $val) === null);
+            $otherValues = array_filter($response, fn ($val) => ! $optionKeysLower->contains(strtolower($val)));
 
             foreach ($otherValues as $otherValue) {
                 $result['Other: ' . $otherValue] = true;

@@ -45,7 +45,6 @@ use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\RichEditor\RichContentCustomBlock;
 use Filament\Forms\Components\TextInput;
-use Illuminate\Support\Arr;
 
 abstract class FormFieldBlock extends RichContentCustomBlock
 {
@@ -121,56 +120,6 @@ abstract class FormFieldBlock extends RichContentCustomBlock
         return [];
     }
 
-    /**
-     * Resolves a submitted value to a single option value, preferring an exact match over a case-insensitive one.
-     *
-     * @param array<int, int|string> $optionValues
-     */
-    public static function resolveOptionValue(array $optionValues, string $response): int | string | null
-    {
-        $matchers = [
-            fn (string $value): bool => $value === $response,
-            fn (string $value): bool => strcasecmp($value, $response) === 0,
-        ];
-
-        foreach ($matchers as $matches) {
-            foreach ($optionValues as $optionValue) {
-                if ($matches((string) $optionValue)) {
-                    return $optionValue;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Normalizes stored options to a value => label map. Options are rows when their entries are arrays; sequential
-     * keys alone do not make a map a list of rows, because a map keyed 0, 1 is a valid set of option values.
-     *
-     * @param array<int|string, mixed> $options
-     *
-     * @return array<int|string, string>
-     */
-    public static function getOptionLabels(array $options): array
-    {
-        if (is_array(Arr::first($options))) {
-            return array_column($options, 'label', 'value');
-        }
-
-        return $options;
-    }
-
-    /**
-     * @param array<int|string, string> $options
-     */
-    public static function getOptionLabel(array $options, string $response): ?string
-    {
-        $optionValue = static::resolveOptionValue(array_keys($options), $response);
-
-        return $optionValue === null ? null : $options[$optionValue];
-    }
-
     abstract public static function type(): string;
 
     /**
@@ -203,27 +152,6 @@ abstract class FormFieldBlock extends RichContentCustomBlock
             'field' => $field,
             'response' => $response,
         ];
-    }
-
-    /**
-     * Sent to FormKit as a list because JavaScript reorders integer-like keys of an object, which would lose the editor's sort order.
-     *
-     * @return array<int|string, mixed>
-     */
-    protected static function getFormKitOptions(SubmissibleField $field): array
-    {
-        $options = $field->config['options'];
-
-        assert(is_array($options));
-
-        if (isset($options[0]) && is_array($options[0])) {
-            return $options;
-        }
-
-        return collect($options)
-            ->map(fn (mixed $label, int|string $value): array => ['value' => (string) $value, 'label' => $label])
-            ->values()
-            ->all();
     }
 
     protected static function previewView(): string

@@ -34,17 +34,13 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Form\Filament\Blocks\CheckboxesFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableAddressFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableBirthdateFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableEmailFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatableNameFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\EducatablePhoneNumberFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\RadioFormFieldBlock;
-use AdvisingApp\Form\Filament\Blocks\SelectFormFieldBlock;
 use AdvisingApp\Form\Filament\Blocks\TextInputFormFieldBlock;
-use AdvisingApp\Form\Models\FormField;
 use Filament\Actions\Action;
 
 it('configures editor actions as slide-overs', function (string $block): void {
@@ -73,37 +69,3 @@ it('falls back to the block type label inside the preview body when no field lab
     expect(TextInputFormFieldBlock::toPreviewHtml([]))
         ->toContain('Text input');
 });
-
-it('resolves a submitted value to an option, preferring an exact match over a case-insensitive one', function (array $optionValues, string $response, int | string | null $expected) {
-    expect(FormFieldBlock::resolveOptionValue($optionValues, $response))->toBe($expected);
-})->with([
-    'exact before case-insensitive' => [['OPTION ONE', 'Option One'], 'Option One', 'Option One'],
-    'case-insensitive' => [['OPTION ONE'], 'Option One', 'OPTION ONE'],
-    'integer option values' => [[10, 2], '2', 2],
-    'no match' => [['us', 'ca'], 'Mexico', null],
-]);
-
-it('normalizes stored options to a value => label map by their shape, not their keys', function (array $options, array $expected) {
-    expect(FormFieldBlock::getOptionLabels($options))->toBe($expected);
-})->with([
-    'map with string keys' => [['us' => 'United States'], ['us' => 'United States']],
-    'map with sequential numeric keys' => [[0 => 'Zero', 1 => 'One'], [0 => 'Zero', 1 => 'One']],
-    'rows of label and value' => [[['label' => 'Zero', 'value' => '0'], ['label' => 'One', 'value' => '1']], ['0' => 'Zero', '1' => 'One']],
-    'no options' => [[], []],
-]);
-
-it('sends options to FormKit as an ordered list, regardless of the stored options format', function (string $block, array $options) {
-    $field = new FormField(['config' => ['options' => $options]]);
-
-    expect($block::getFormKitSchema($field)['options'])->toBe([
-        ['value' => '10', 'label' => 'Ten'],
-        ['value' => '2', 'label' => 'Two'],
-    ]);
-})->with([
-    'select' => SelectFormFieldBlock::class,
-    'radio' => RadioFormFieldBlock::class,
-    'checkboxes' => CheckboxesFormFieldBlock::class,
-])->with([
-    'value => label map' => [[10 => 'Ten', 2 => 'Two']],
-    'label and value rows' => [[['value' => '10', 'label' => 'Ten'], ['value' => '2', 'label' => 'Two']]],
-]);

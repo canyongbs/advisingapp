@@ -68,7 +68,7 @@ class SelectFormFieldBlock extends FormFieldBlock
             'label' => $field->label,
             'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
-            'options' => static::getFormKitOptions($field),
+            'options' => $field->config['options'],
             ...self::getDescriptionSectionsSchema($field),
         ];
     }
