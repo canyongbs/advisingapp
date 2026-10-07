@@ -37,10 +37,16 @@
 use AdvisingApp\Concern\Enums\SystemConcernStatusClassification;
 use AdvisingApp\Concern\Models\Concern;
 use AdvisingApp\Concern\Models\ConcernStatus;
+use AdvisingApp\StudentDataModel\Enums\SisSystem;
+use AdvisingApp\StudentDataModel\Enums\StudentTermAttributeField;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentTermAttribute;
+use AdvisingApp\StudentDataModel\Models\Term;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use App\Features\TermAttributesFeature;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Actions\ArchiveBulkAction;
 use Filament\Actions\CreateAction;
@@ -346,5 +352,78 @@ describe('filter options', function () {
 
                 return true;
             });
+    });
+});
+
+describe('term attribute filter', function () {
+    beforeEach(function () {
+        asSuperAdmin();
+
+        $sisSettings = app(StudentInformationSystemSettings::class);
+        $sisSettings->is_enabled = true;
+        $sisSettings->sis_system = SisSystem::ThesisElements;
+        $sisSettings->save();
+    });
+
+    it('filters students by term, attribute and value', function () {
+        $term = Term::factory()->create();
+        $otherTerm = Term::factory()->create();
+
+        $matching = Student::factory()->create();
+        StudentTermAttribute::factory()->for($matching)->create(['sis_term_id' => $term->sis_term_id, 'campus' => 'Main']);
+
+        $differentValue = Student::factory()->create();
+        StudentTermAttribute::factory()->for($differentValue)->create(['sis_term_id' => $term->sis_term_id, 'campus' => 'Online']);
+
+        $differentTerm = Student::factory()->create();
+        StudentTermAttribute::factory()->for($differentTerm)->create(['sis_term_id' => $otherTerm->sis_term_id, 'campus' => 'Main']);
+
+        livewire(ListStudents::class)
+            ->assertCanSeeTableRecords([$matching, $differentValue, $differentTerm])
+            ->filterTable('termAttribute', [
+                'sis_term_id' => $term->sis_term_id,
+                'attribute' => StudentTermAttributeField::Campus->value,
+                'value' => 'Main',
+            ])
+            ->assertCanSeeTableRecords([$matching])
+            ->assertCanNotSeeTableRecords([$differentValue, $differentTerm]);
+    });
+
+    it('enables the attribute and value fields once the previous fields are selected', function () {
+        $term = Term::factory()->create();
+
+        livewire(ListStudents::class)
+            ->assertFormFieldDisabled('termAttribute.attribute', 'tableFiltersForm')
+            ->assertFormFieldDisabled('termAttribute.value', 'tableFiltersForm')
+            ->set('tableFilters.termAttribute.sis_term_id', $term->sis_term_id)
+            ->assertFormFieldEnabled('termAttribute.attribute', 'tableFiltersForm')
+            ->assertFormFieldDisabled('termAttribute.value', 'tableFiltersForm')
+            ->set('tableFilters.termAttribute.attribute', StudentTermAttributeField::Campus->value)
+            ->assertFormFieldEnabled('termAttribute.value', 'tableFiltersForm');
+    });
+
+    it('is available for tenants using Thesis Elements', function () {
+        livewire(ListStudents::class)
+            ->assertTableFilterVisible('termAttribute');
+    });
+
+    it('is not available for tenants not using Thesis Elements', function (bool $isEnabled, ?SisSystem $sisSystem) {
+        $sisSettings = app(StudentInformationSystemSettings::class);
+        $sisSettings->is_enabled = $isEnabled;
+        $sisSettings->sis_system = $sisSystem;
+        $sisSettings->save();
+
+        livewire(ListStudents::class)
+            ->assertTableFilterHidden('termAttribute');
+    })->with([
+        'Ellucian Ethos' => [true, SisSystem::EllucianEthos],
+        'SIS disabled' => [false, SisSystem::ThesisElements],
+    ]);
+
+    it('is not available while `TermAttributesFeature` is inactive', function () {
+        TermAttributesFeature::deactivate();
+
+        livewire(ListStudents::class)
+            ->assertTableFilterHidden('termAttribute');
     });
 });

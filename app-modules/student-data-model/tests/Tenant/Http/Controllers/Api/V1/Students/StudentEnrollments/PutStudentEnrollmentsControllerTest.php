@@ -37,6 +37,7 @@
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use AdvisingApp\StudentDataModel\Tests\Tenant\Http\Controllers\Api\V1\Students\StudentEnrollments\RequestFactories\StudentEnrollmentRequestFactory;
+use App\Features\TermAttributesFeature;
 use App\Models\SystemUser;
 use Carbon\Carbon;
 use Laravel\Sanctum\Sanctum;
@@ -161,6 +162,11 @@ it('creates a student program', function () {
     if (isset($createStudentEnrollmentRequestData['enrollments'][0]['semester_name'])) {
         expect($response['data'][0]['semester_name'])
             ->toBe($createStudentEnrollmentRequestData['enrollments'][0]['semester_name']);
+    }
+
+    if (isset($createStudentEnrollmentRequestData['enrollments'][0]['sis_term_id'])) {
+        expect($response['data'][0]['sis_term_id'])
+            ->toBe($createStudentEnrollmentRequestData['enrollments'][0]['sis_term_id']);
     }
 
     expect(Carbon::parse($response['data'][0]['last_upd_dt_stmp'])->toDateTimeString())
@@ -321,6 +327,16 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
             'enrollments.0.semester_name',
             'The enrollments.0.semester_name must be a string.',
         ],
+        '`enrollments.*.sis_term_id` max' => [
+            ['enrollments' => [['sis_term_id' => str_repeat('a', 256)]]],
+            'enrollments.0.sis_term_id',
+            'The enrollments.0.sis_term_id may not be greater than 255 characters.',
+        ],
+        '`enrollments.*.sis_term_id` must be a string' => [
+            ['enrollments' => [['sis_term_id' => 267]]],
+            'enrollments.0.sis_term_id',
+            'The enrollments.0.sis_term_id must be a string.',
+        ],
         '`start_date` is a valid date' => [
             ['enrollments' => [['start_date' => 'not-a-date']]],
             'enrollments.0.start_date',
@@ -342,3 +358,23 @@ it('validates', function (array $requestAttributes, string $invalidAttribute, st
             'The enrollments.0.end_date does not match the format Y-m-d H:i:s.',
         ],
     ]);
+
+it('ignores the `sis_term_id` while `TermAttributesFeature` is inactive', function () {
+    $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
+    $studentConfigurationSettings->is_enabled = true;
+    $studentConfigurationSettings->save();
+
+    $student = Student::factory()->create();
+
+    $user = SystemUser::factory()->create();
+    $user->givePermissionTo(['student.view-any', 'enrollment.view-any', 'enrollment.create', 'enrollment.*.update', 'enrollment.*.delete']);
+    Sanctum::actingAs($user, ['api']);
+
+    TermAttributesFeature::deactivate();
+
+    putJson(route('api.v1.students.enrollments.put', ['student' => $student], false), [
+        'enrollments' => [StudentEnrollmentRequestFactory::new()->create(['sis_term_id' => '267'])],
+    ])->assertOk();
+
+    expect($student->enrollments()->sole()->sis_term_id)->toBeNull();
+});

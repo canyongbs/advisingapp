@@ -34,62 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Filters;
+use AdvisingApp\StudentDataModel\Enums\SisSystem;
+use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use App\Features\TermAttributesFeature;
 
-use Filament\QueryBuilder\Constraints\Operators\Operator;
-use Filament\Schemas\Components\Component;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+describe('term attributes', function () {
+    it('reports whether the SIS syncs term attributes', function (bool $isEnabled, ?SisSystem $sisSystem, bool $hasTermAttributes) {
+        $settings = app(StudentInformationSystemSettings::class);
+        $settings->is_enabled = $isEnabled;
+        $settings->sis_system = $sisSystem;
+        $settings->save();
 
-class TermAttributeOperator extends Operator
-{
-    protected function setUp(): void
-    {
-        parent::setUp();
+        expect($settings->hasTermAttributes())->toBe($hasTermAttributes);
+    })->with([
+        'enabled Thesis Elements' => [true, SisSystem::ThesisElements, true],
+        'enabled Ellucian Ethos' => [true, SisSystem::EllucianEthos, false],
+        'disabled Thesis Elements' => [false, SisSystem::ThesisElements, false],
+        'enabled without an SIS system' => [true, null, false],
+    ]);
 
-        $this->name('termAttribute');
+    it('does not report term attributes while `TermAttributesFeature` is inactive', function () {
+        $settings = app(StudentInformationSystemSettings::class);
+        $settings->is_enabled = true;
+        $settings->sis_system = SisSystem::ThesisElements;
+        $settings->save();
 
-        $this->label(fn (): string => $this->isInverse() ? 'Is not' : 'Is');
+        TermAttributesFeature::deactivate();
 
-        $this->summary(function (): string {
-            $settings = $this->getSettings();
-
-            if (blank($settings)) {
-                return '';
-            }
-
-            return TermAttributeFilter::getSummary(
-                $settings['sis_term_id'] ?? null,
-                $settings['attribute'] ?? null,
-                $settings['value'] ?? null,
-                (bool) $this->isInverse(),
-            );
-        });
-    }
-
-    /**
-     * @return array<Component>
-     */
-    public function getFormSchema(): array
-    {
-        return TermAttributeFilter::getFormSchema();
-    }
-
-    /**
-     * @param Builder<Model> $query
-     *
-     * @return Builder<Model>
-     */
-    public function applyToBaseQuery(Builder $query): Builder
-    {
-        $settings = $this->getSettings() ?? [];
-
-        return TermAttributeFilter::applyToQuery(
-            $query,
-            $settings['sis_term_id'] ?? null,
-            $settings['attribute'] ?? null,
-            $settings['value'] ?? null,
-            (bool) $this->isInverse(),
-        );
-    }
-}
+        expect($settings->hasTermAttributes())->toBeFalse();
+    });
+});

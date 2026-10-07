@@ -34,62 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Filters;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentTermAttribute;
+use AdvisingApp\StudentDataModel\Models\Term;
+use Illuminate\Database\UniqueConstraintViolationException;
 
-use Filament\QueryBuilder\Constraints\Operators\Operator;
-use Filament\Schemas\Components\Component;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+use function Tests\asSuperAdmin;
 
-class TermAttributeOperator extends Operator
-{
-    protected function setUp(): void
-    {
-        parent::setUp();
+it('belongs to a student by `sisid`', function () {
+    asSuperAdmin();
 
-        $this->name('termAttribute');
+    $student = Student::factory()->create();
+    $termAttribute = StudentTermAttribute::factory()->for($student)->create();
 
-        $this->label(fn (): string => $this->isInverse() ? 'Is not' : 'Is');
+    expect($termAttribute->student->getKey())->toBe($student->getKey());
+});
 
-        $this->summary(function (): string {
-            $settings = $this->getSettings();
+it('belongs to a term by `sis_term_id`', function () {
+    $term = Term::factory()->create();
+    $termAttribute = StudentTermAttribute::factory()->create(['sis_term_id' => $term->sis_term_id]);
 
-            if (blank($settings)) {
-                return '';
-            }
+    expect($termAttribute->term->sis_term_id)->toBe($term->sis_term_id);
+});
 
-            return TermAttributeFilter::getSummary(
-                $settings['sis_term_id'] ?? null,
-                $settings['attribute'] ?? null,
-                $settings['value'] ?? null,
-                (bool) $this->isInverse(),
-            );
-        });
-    }
+it('does not allow two records for the same student and term', function () {
+    $termAttribute = StudentTermAttribute::factory()->create();
 
-    /**
-     * @return array<Component>
-     */
-    public function getFormSchema(): array
-    {
-        return TermAttributeFilter::getFormSchema();
-    }
-
-    /**
-     * @param Builder<Model> $query
-     *
-     * @return Builder<Model>
-     */
-    public function applyToBaseQuery(Builder $query): Builder
-    {
-        $settings = $this->getSettings() ?? [];
-
-        return TermAttributeFilter::applyToQuery(
-            $query,
-            $settings['sis_term_id'] ?? null,
-            $settings['attribute'] ?? null,
-            $settings['value'] ?? null,
-            (bool) $this->isInverse(),
-        );
-    }
-}
+    StudentTermAttribute::factory()->create([
+        'sisid' => $termAttribute->sisid,
+        'sis_term_id' => $termAttribute->sis_term_id,
+    ]);
+})->throws(UniqueConstraintViolationException::class);

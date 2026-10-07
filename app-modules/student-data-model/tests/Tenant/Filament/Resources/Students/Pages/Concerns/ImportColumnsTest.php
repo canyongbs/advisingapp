@@ -34,62 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Filters;
+use AdvisingApp\StudentDataModel\Filament\Imports\EnrollmentImporter;
+use App\Features\TermAttributesFeature;
+use Filament\Actions\Imports\ImportColumn;
 
-use Filament\QueryBuilder\Constraints\Operators\Operator;
-use Filament\Schemas\Components\Component;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+describe('enrollment columns', function () {
+    it('includes the `sis_term_id` column', function () {
+        expect(collect(EnrollmentImporter::getEnrollmentColumns())->map(fn (ImportColumn $column): string => $column->getName()))
+            ->toContain('sis_term_id');
+    });
 
-class TermAttributeOperator extends Operator
-{
-    protected function setUp(): void
-    {
-        parent::setUp();
+    it('does not include the `sis_term_id` column while `TermAttributesFeature` is inactive', function () {
+        TermAttributesFeature::deactivate();
 
-        $this->name('termAttribute');
-
-        $this->label(fn (): string => $this->isInverse() ? 'Is not' : 'Is');
-
-        $this->summary(function (): string {
-            $settings = $this->getSettings();
-
-            if (blank($settings)) {
-                return '';
-            }
-
-            return TermAttributeFilter::getSummary(
-                $settings['sis_term_id'] ?? null,
-                $settings['attribute'] ?? null,
-                $settings['value'] ?? null,
-                (bool) $this->isInverse(),
-            );
-        });
-    }
-
-    /**
-     * @return array<Component>
-     */
-    public function getFormSchema(): array
-    {
-        return TermAttributeFilter::getFormSchema();
-    }
-
-    /**
-     * @param Builder<Model> $query
-     *
-     * @return Builder<Model>
-     */
-    public function applyToBaseQuery(Builder $query): Builder
-    {
-        $settings = $this->getSettings() ?? [];
-
-        return TermAttributeFilter::applyToQuery(
-            $query,
-            $settings['sis_term_id'] ?? null,
-            $settings['attribute'] ?? null,
-            $settings['value'] ?? null,
-            (bool) $this->isInverse(),
-        );
-    }
-}
+        expect(collect(EnrollmentImporter::getEnrollmentColumns())->map(fn (ImportColumn $column): string => $column->getName()))
+            ->not->toContain('sis_term_id');
+    });
+});

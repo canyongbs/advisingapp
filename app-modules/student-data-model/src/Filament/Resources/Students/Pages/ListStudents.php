@@ -48,6 +48,7 @@ use AdvisingApp\Interaction\Filament\Actions\BulkCreateInteractionAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeBulkAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
 use AdvisingApp\StudentDataModel\Filament\Actions\StudentTagsBulkAction;
+use AdvisingApp\StudentDataModel\Filament\Filters\TermAttributeFilter;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -183,6 +184,7 @@ class ListStudents extends ListRecords
                     ),
                 TernaryFilter::make('firstgen')
                     ->label('First Generation'),
+                TermAttributeFilter::make(),
             ], layout: FiltersLayout::BeforeContent)
             ->recordActions([
                 ViewAction::make()

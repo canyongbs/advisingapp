@@ -34,62 +34,18 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Filament\Filters;
+use AdvisingApp\StudentDataModel\Models\Enrollment;
+use AdvisingApp\StudentDataModel\Models\Term;
 
-use Filament\QueryBuilder\Constraints\Operators\Operator;
-use Filament\Schemas\Components\Component;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
+it('belongs to a term by `sis_term_id`', function () {
+    $term = Term::factory()->create();
+    $enrollment = Enrollment::factory()->create(['sis_term_id' => $term->sis_term_id]);
 
-class TermAttributeOperator extends Operator
-{
-    protected function setUp(): void
-    {
-        parent::setUp();
+    expect($enrollment->term->sis_term_id)->toBe($term->sis_term_id);
+});
 
-        $this->name('termAttribute');
+it('has no term when `sis_term_id` is not set', function () {
+    $enrollment = Enrollment::factory()->create(['sis_term_id' => null]);
 
-        $this->label(fn (): string => $this->isInverse() ? 'Is not' : 'Is');
-
-        $this->summary(function (): string {
-            $settings = $this->getSettings();
-
-            if (blank($settings)) {
-                return '';
-            }
-
-            return TermAttributeFilter::getSummary(
-                $settings['sis_term_id'] ?? null,
-                $settings['attribute'] ?? null,
-                $settings['value'] ?? null,
-                (bool) $this->isInverse(),
-            );
-        });
-    }
-
-    /**
-     * @return array<Component>
-     */
-    public function getFormSchema(): array
-    {
-        return TermAttributeFilter::getFormSchema();
-    }
-
-    /**
-     * @param Builder<Model> $query
-     *
-     * @return Builder<Model>
-     */
-    public function applyToBaseQuery(Builder $query): Builder
-    {
-        $settings = $this->getSettings() ?? [];
-
-        return TermAttributeFilter::applyToQuery(
-            $query,
-            $settings['sis_term_id'] ?? null,
-            $settings['attribute'] ?? null,
-            $settings['value'] ?? null,
-            (bool) $this->isInverse(),
-        );
-    }
-}
+    expect($enrollment->term)->toBeNull();
+});
