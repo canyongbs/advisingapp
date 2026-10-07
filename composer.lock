@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7b7f99c2ff492194262d62560f16c898",
+    "content-hash": "aa2de75c124997c932ef1e2ad25475cc",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -12473,16 +12473,16 @@
         },
         {
             "name": "saade/filament-fullcalendar",
-            "version": "v4.0.0-beta7",
+            "version": "v4.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/saade/filament-fullcalendar.git",
-                "reference": "191d69b9d568a9fdfd3f3586428d8cf5a940fd50"
+                "reference": "c5fcded0cf45680d46add3b16ffdaaeffd87b3bb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/saade/filament-fullcalendar/zipball/191d69b9d568a9fdfd3f3586428d8cf5a940fd50",
-                "reference": "191d69b9d568a9fdfd3f3586428d8cf5a940fd50",
+                "url": "https://api.github.com/repos/saade/filament-fullcalendar/zipball/c5fcded0cf45680d46add3b16ffdaaeffd87b3bb",
+                "reference": "c5fcded0cf45680d46add3b16ffdaaeffd87b3bb",
                 "shasum": ""
             },
             "require": {
@@ -12493,7 +12493,9 @@
             },
             "require-dev": {
                 "nunomaduro/collision": "^7.0|^8.0",
-                "nunomaduro/larastan": "^2.0",
+                "nunomaduro/larastan": "^3.12",
+                "orchestra/testbench": "^9.0|^10.0|^11.0",
+                "pestphp/pest": "^3.0|^4.0",
                 "phpstan/extension-installer": "^1.1",
                 "phpstan/phpstan-deprecation-rules": "^1.0|^2.0",
                 "phpstan/phpstan-phpunit": "^1.0|^2.0",
@@ -12529,13 +12531,18 @@
             "description": "The Most Popular JavaScript Calendar integrated with Filament 💛",
             "homepage": "https://github.com/saade/filament-fullcalendar",
             "keywords": [
+                "calendar",
+                "filament",
                 "filament-fullcalendar",
+                "filament-plugin",
+                "fullcalendar",
                 "laravel",
-                "saade"
+                "saade",
+                "scheduler"
             ],
             "support": {
                 "issues": "https://github.com/saade/filament-fullcalendar/issues",
-                "source": "https://github.com/saade/filament-fullcalendar/tree/v4.0.0-beta7"
+                "source": "https://github.com/saade/filament-fullcalendar/tree/v4.0.1"
             },
             "funding": [
                 {
@@ -12543,7 +12550,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-04-14T23:35:46+00:00"
+            "time": "2026-10-06T17:34:06+00:00"
         },
         {
             "name": "scrivo/highlight.php",
@@ -24287,9 +24294,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "saade/filament-fullcalendar": 10
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
