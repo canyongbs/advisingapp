@@ -4,19 +4,19 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "aa2de75c124997c932ef1e2ad25475cc",
+    "content-hash": "0d7c7a2024932d3a9e6ff5e527009a59",
     "packages": [
         {
             "name": "ably/ably-php",
             "version": "1.1.12",
             "source": {
                 "type": "git",
-                "url": "https://github.com/ably/ably-php.git",
+                "url": "https://github.com/ably/ably-pubsub-php.git",
                 "reference": "63cec0ddc8d140b8ba8007f70015dceb80babfda"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ably/ably-php/zipball/63cec0ddc8d140b8ba8007f70015dceb80babfda",
+                "url": "https://api.github.com/repos/ably/ably-pubsub-php/zipball/63cec0ddc8d140b8ba8007f70015dceb80babfda",
                 "reference": "63cec0ddc8d140b8ba8007f70015dceb80babfda",
                 "shasum": ""
             },
