@@ -38,6 +38,8 @@ namespace AdvisingApp\MeetingCenter\Livewire;
 
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Models\Event;
+use Filament\Actions\Concerns\InteractsWithActions;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
@@ -50,8 +52,9 @@ use Livewire\Component;
 /**
  * @property-read Schema $form
  */
-abstract class EventFormManager extends Component implements HasForms
+abstract class EventFormManager extends Component implements HasForms, HasActions
 {
+    use InteractsWithActions;
     use InteractsWithForms;
     use RestrictsFileUploadsToSchemaComponents;
 

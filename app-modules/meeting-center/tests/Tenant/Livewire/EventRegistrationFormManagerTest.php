@@ -41,6 +41,7 @@ use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
 use App\Settings\LicenseSettings;
+use Filament\Actions\Testing\TestAction;
 
 use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
@@ -133,6 +134,32 @@ it('the event registration form relationship resolves to the latest non-archived
     expect($currentForm)->not->toBeNull();
     expect($currentForm->id)->not->toBe($originalId);
     expect($currentForm->archived_at)->toBeNull();
+});
+
+it('can add a new step to a multi-step registration form', function () use ($editEventRegistrationTestSetup) {
+    $editEventRegistrationTestSetup();
+
+    asSuperAdmin();
+
+    $event = Event::factory()->create();
+    $form = $event->eventRegistrationForm;
+
+    $form->steps()->delete();
+    $form->submissions()->delete();
+    $form->is_wizard = true;
+    $form->content = null;
+    $form->save();
+
+    $component = livewire(EventRegistrationFormManager::class, ['record' => $event]);
+
+    $stepsBefore = count(data_get($component->instance()->form->getRawState(), 'eventRegistrationForm.steps', []));
+
+    $component
+        ->callAction(TestAction::make('add')->schemaComponent('eventRegistrationForm.steps'))
+        ->assertHasNoErrors();
+
+    expect(data_get($component->instance()->form->getRawState(), 'eventRegistrationForm.steps', []))
+        ->toHaveCount($stepsBefore + 1);
 });
 
 it('persists edits to an existing wizard step\'s description onto the new event registration form version', function () use ($editEventRegistrationTestSetup) {

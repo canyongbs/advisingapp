@@ -39,4 +39,6 @@
             <x-filament::button type="submit">Save</x-filament::button>
         </div>
     </form>
+
+    <x-filament-actions::modals />
 </div>
