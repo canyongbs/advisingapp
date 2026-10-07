@@ -69,7 +69,7 @@ class QueueOverviewTable extends TableWidget
             ->records(fn (): array => $this->queues())
             ->paginated(false)
             ->columns([
-                TextColumn::make('label')
+                TextColumn::make('name')
                     ->label('Queue'),
                 TextColumn::make('pending')
                     ->numeric(),
@@ -116,7 +116,6 @@ class QueueOverviewTable extends TableWidget
 
             $queues[$queue] = [
                 'name' => $queue,
-                'label' => $knownQueues->label($queue),
                 'pending' => $depth->pendingJobs,
                 'reserved' => $depth->reservedJobs,
                 'delayed' => $depth->delayedJobs,

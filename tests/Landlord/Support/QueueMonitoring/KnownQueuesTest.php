@@ -43,8 +43,8 @@ beforeEach(function () {
     Cache::purge('landlord');
 
     config(['queue.queues' => [
-        'default' => 'advisingapp-default',
-        'landlord' => 'advisingapp-landlord',
+        'advisingapp-default',
+        'advisingapp-landlord',
     ]]);
 });
 
@@ -57,12 +57,4 @@ it('unions the configured queues with recently sampled queues', function () {
         'advisingapp-landlord',
         'ad-hoc',
     ]);
-});
-
-it('labels a configured queue with its config key', function () {
-    expect(app(KnownQueues::class)->label('advisingapp-landlord'))->toBe('landlord');
-});
-
-it('labels every other queue with its raw name', function () {
-    expect(app(KnownQueues::class)->label('ad-hoc'))->toBe('ad-hoc');
 });
