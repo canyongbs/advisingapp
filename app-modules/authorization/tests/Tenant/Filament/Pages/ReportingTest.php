@@ -72,7 +72,6 @@ it('always lists reports that require no license or addon', function () {
     $settings->data->limits->recruitmentCrmSeats = 0;
     $settings->data->addons->customerAdvisors = false;
     $settings->data->addons->employeeAdvisors = false;
-    $settings->data->addons->researchAdvisor = false;
     $settings->save();
 
     $user = User::factory()->create();
@@ -91,7 +90,6 @@ it('only lists a report when the required licenses and addons are enabled for th
     $settings->data->limits->recruitmentCrmSeats = 0;
     $settings->data->addons->customerAdvisors = false;
     $settings->data->addons->employeeAdvisors = false;
-    $settings->data->addons->researchAdvisor = false;
     $settings->save();
 
     $user = User::factory()->create();
@@ -129,13 +127,6 @@ it('only lists a report when the required licenses and addons are enabled for th
     ReportAccessKey::InstitutionalAdvisorReport->value => [
         fn (LicenseSettings $settings) => $settings->data->limits->conversationalAiSeats = 10,
         ReportAccessKey::InstitutionalAdvisorReport,
-    ],
-    ReportAccessKey::ResearchAdvisorReport->value => [
-        function (LicenseSettings $settings) {
-            $settings->data->limits->conversationalAiSeats = 10;
-            $settings->data->addons->researchAdvisor = true;
-        },
-        ReportAccessKey::ResearchAdvisorReport,
     ],
     ReportAccessKey::StudentActionCenter->value => [
         fn (LicenseSettings $settings) => $settings->data->limits->retentionCrmSeats = 10,

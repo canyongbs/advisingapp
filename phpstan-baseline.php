@@ -3354,18 +3354,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/integration-google-recaptcha/src/Settings/GoogleRecaptchaSettings.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Action class "AdvisingApp\\\\IntegrationOpenAi\\\\Actions\\\\DeleteResearchRequestExternalResources" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
-    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Actions/DeleteResearchRequestExternalResources.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Action class "AdvisingApp\\\\IntegrationOpenAi\\\\Actions\\\\DeleteResearchRequestExternalResources" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
-    'identifier' => 'Common.actionClassMustBeInvokable',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/integration-open-ai/src/Actions/DeleteResearchRequestExternalResources.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
     'identifier' => 'Common.noStrtolower',
     'count' => 1,
@@ -5212,42 +5200,6 @@ $ignoreErrors[] = [
     'identifier' => 'arguments.count',
     'count' => 6,
     'path' => __DIR__ . '/app-modules/report/tests/Tenant/Unit/UniqueLogin/UsersLoginCountTableTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Action class "AdvisingApp\\\\Research\\\\Actions\\\\GenerateResearchQuestion" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
-    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/research/src/Actions/GenerateResearchQuestion.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Action class "AdvisingApp\\\\Research\\\\Actions\\\\GenerateResearchQuestion" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
-    'identifier' => 'Common.actionClassMustBeInvokable',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/research/src/Actions/GenerateResearchQuestion.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Action class "AdvisingApp\\\\Research\\\\Actions\\\\StartResearch" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
-    'identifier' => 'Common.actionClassHasDisallowedPublicMethod',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/research/src/Actions/StartResearch.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Action class "AdvisingApp\\\\Research\\\\Actions\\\\StartResearch" must define a public "__invoke" method\\. Action classes should be accessed via invocation and keep other behavior in private/protected helpers\\.$#',
-    'identifier' => 'Common.actionClassMustBeInvokable',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/research/src/Actions/StartResearch.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method name "getRequestsWithoutAFolder" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.methodNameNotCamelCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/research/src/Filament/Pages/ManageResearchRequests.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property name "requestsWithoutAFolder" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.propertyNameNotCamelCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/research/src/Filament/Pages/ManageResearchRequests.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Action class "AdvisingApp\\\\ResourceHub\\\\Actions\\\\GenerateTableOfContents" defines disallowed public method "execute"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',

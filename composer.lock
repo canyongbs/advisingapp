@@ -1942,41 +1942,6 @@
             }
         },
         {
-            "name": "canyon-gbs/research",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/research",
-                "reference": "dfdc0727711d8c024d5c4635d0efcc6c24fbe055"
-            },
-            "require": {
-                "filament/filament": "^4.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\Research\\Providers\\ResearchServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\Research\\": "src/",
-                    "AdvisingApp\\Research\\Tests\\": "tests/",
-                    "AdvisingApp\\Research\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\Research\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
             "name": "canyon-gbs/stock-media",
             "version": "1.0",
             "dist": {

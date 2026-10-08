@@ -53,7 +53,6 @@ use AdvisingApp\Ai\Models\CustomerAdvisorCategory;
 use AdvisingApp\Ai\Models\CustomerAdvisorFile;
 use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
-use AdvisingApp\Ai\Models\DataAdvisor;
 use AdvisingApp\Ai\Models\EmployeeAdvisorCategory;
 use AdvisingApp\Ai\Models\EmployeeAdvisorQuestion;
 use AdvisingApp\Ai\Models\Prompt;
@@ -103,7 +102,6 @@ class AiServiceProvider extends ServiceProvider
             'customer_advisor_file' => CustomerAdvisorFile::class,
             'customer_advisor_link' => CustomerAdvisorLink::class,
             'customer_advisor_question' => CustomerAdvisorQuestion::class,
-            'data_advisor' => DataAdvisor::class,
             'employee_advisor_category' => EmployeeAdvisorCategory::class,
             'employee_advisor_question' => EmployeeAdvisorQuestion::class,
         ]);
