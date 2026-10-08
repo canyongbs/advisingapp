@@ -243,7 +243,7 @@ This guide covers gating features behind addon toggles tied to the account subsc
     });
     ```
 
-    Calls to the constructor of `LicenseAddonsData` in `tests/TestCase.php` in the `createTenant()` and `refreshTenantTestingEnvironment()` functions should also be updated with the new feature:
+    Calls to the constructor of `LicenseAddonsData` in `tests/TestCase.php` in the `createTenant()` function should also be updated with the new feature:
 
     ```php
     new LicenseAddonsData(
