@@ -66,12 +66,6 @@ beforeEach(function () {
     setUnifiedInboxEnabled(true);
 });
 
-beforeEach(function () {
-    $settings = app(LicenseSettings::class);
-    $settings->data->addons->unifiedInbox = true;
-    $settings->save();
-});
-
 it('can activate the sent items tab within the unified inbox page', function () {
     asSuperAdmin();
 
