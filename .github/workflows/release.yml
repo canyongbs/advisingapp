@@ -16,7 +16,7 @@ env:
 jobs:
     build-web:
         name: Build Web Image
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
         environment: production
         outputs:
             image: ${{ steps.build-image.outputs.image }}
@@ -80,7 +80,7 @@ jobs:
 
     deploy-web:
         name: Deploy Web Service
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
         needs: [build-web, deploy-worker]
         environment: production
 
@@ -145,7 +145,7 @@ jobs:
 
     build-worker:
         name: Build Worker Image
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
         environment: production
         outputs:
             image: ${{ steps.build-image.outputs.image }}
@@ -209,7 +209,7 @@ jobs:
 
     deploy-worker:
         name: Deploy Worker Service
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
         needs: [build-worker]
         environment: production
 
@@ -274,7 +274,7 @@ jobs:
 
     build-scheduler:
         name: Build Scheduler Image
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
         outputs:
             image: ${{ steps.build-image.outputs.image }}
         environment: production
@@ -338,7 +338,7 @@ jobs:
 
     deploy-scheduler:
         name: Deploy Scheduler Service
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
         needs: [build-scheduler, deploy-worker]
         environment: production
 
@@ -403,7 +403,7 @@ jobs:
 
     build-release-automation:
         name: Build Release Automation Image
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
         outputs:
             image: ${{ steps.build-image.outputs.image }}
         environment: production
@@ -468,7 +468,7 @@ jobs:
     deploy-release-automation:
         name: Deploy and Run Release Automation Service
         needs: [deploy-web, deploy-worker, deploy-scheduler, build-release-automation]
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
         environment: production
 
         steps:
