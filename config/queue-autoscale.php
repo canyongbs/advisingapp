@@ -338,7 +338,8 @@ return [
     */
     'limits' => [
         'max_cpu_percent' => 85,
-        'max_memory_percent' => 85,
+        // Workers start in batches, each filling its own ~90 MB OPcache; at 85% a batch tipped tasks into OOM kills.
+        'max_memory_percent' => 70,
         // Workers sit at ~250 MB RSS; a lower estimate lets the cluster leader assign more workers than a task can hold.
         'worker_memory_mb_estimate' => 256,
         'worker_cpu_core_estimate' => 0.2,
