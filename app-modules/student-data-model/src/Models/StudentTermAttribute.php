@@ -57,7 +57,7 @@ class StudentTermAttribute extends Model
     /**
      * This Model has a primary key that is auto generated as a v4 UUID by Postgres.
      * We do so so that we can do things like view, edit, and delete a specific record in the UI / API.
-     * This ID should NEVER be used for relationships as these records do not belong to our system, our reset during syncs, and are not truly unique.
+     * This ID should NEVER be used for relationships as these records do not belong to our system, are reset during syncs, and are not truly unique.
      */
     protected $primaryKey = 'id';
 
