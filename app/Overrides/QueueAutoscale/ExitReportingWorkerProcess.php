@@ -38,6 +38,7 @@ namespace App\Overrides\QueueAutoscale;
 
 use Cbox\LaravelQueueAutoscale\Configuration\AutoscaleConfiguration;
 use Cbox\LaravelQueueAutoscale\Workers\WorkerProcess;
+use Illuminate\Queue\Worker;
 use Illuminate\Support\Facades\Log;
 use Override;
 
@@ -69,7 +70,7 @@ class ExitReportingWorkerProcess extends WorkerProcess
         $exitCode = $this->process->getExitCode();
         $wasSignaled = $this->process->hasBeenSignaled();
 
-        if ($this->isTerminating() && ($exitCode === 0) && (! $wasSignaled)) {
+        if ((! $wasSignaled) && $this->isGracefulStop($exitCode)) {
             return;
         }
 
@@ -83,5 +84,14 @@ class ExitReportingWorkerProcess extends WorkerProcess
             'termination_requested' => $this->isTerminating(),
             'uptime_seconds' => $this->uptimeSeconds(),
         ]);
+    }
+
+    /**
+     * The codes `queue:work` exits with after finishing its current job: 0 for every stop reason (a requested stop,
+     * `--max-time`, a restart signal), and its own code when it reached its memory limit.
+     */
+    private function isGracefulStop(?int $exitCode): bool
+    {
+        return in_array($exitCode, [Worker::EXIT_SUCCESS, Worker::$memoryExceededExitCode ?? Worker::EXIT_MEMORY_LIMIT], true);
     }
 }

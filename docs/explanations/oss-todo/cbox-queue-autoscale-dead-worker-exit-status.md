@@ -52,14 +52,14 @@ Log::channel(AutoscaleConfiguration::logChannel())->warning('Removed dead worker
 Notes for the implementation:
 
 - Only call `getTermSignal()` when `hasBeenSignaled()` is true. It throws on PHP builds with `--enable-sigchild` when no signal is known.
-- Consider logging requested, clean exits (`termination_requested` and exit code `0`) at `info` or `debug` instead of `warning`. They are the normal scale-down path and far outnumber the rest; keeping the unexpected exits at `warning` makes them stand out.
+- Consider logging graceful stops at `info` or `debug` instead of `warning`. `queue:work` finishes its current job and exits `0` for every stop reason, including ones the manager did not request (`--max-time`, a restart signal), and `Worker::EXIT_MEMORY_LIMIT` at its memory limit. Those far outnumber the rest, so `termination_requested` alone is not enough to tell them apart: an unrequested `--max-time` exit would warn for every worker each lifetime. Keeping only signalled exits and other exit codes at `warning` makes them stand out.
 - A `WorkerExited` event carrying the same fields would let applications alert on it without parsing logs. Optional.
 
 ## Tests
 
 - A worker that exits on its own with a non-zero code is logged with that `exit_code`, `term_signal` `null` and `termination_requested` `false`.
 - A worker killed with `SIGKILL` is logged with `term_signal` `9`.
-- A worker whose termination was requested and that exited with `0` is logged as a requested, clean exit.
+- A worker that exits `0` on its own (for example at `--max-time`), or after a requested stop, is logged as a graceful stop.
 
 ---
 

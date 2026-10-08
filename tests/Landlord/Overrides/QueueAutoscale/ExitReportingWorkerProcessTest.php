@@ -36,6 +36,7 @@
 
 use App\Overrides\QueueAutoscale\ExitReportingWorkerProcess;
 use Illuminate\Log\Events\MessageLogged;
+use Illuminate\Queue\Worker;
 use Illuminate\Support\Facades\Event;
 use Symfony\Component\Process\Process;
 
@@ -101,26 +102,34 @@ it('logs the signal that killed a worker', function () {
 });
 
 it('logs a worker that exited with an error after its termination was requested', function () {
-    $worker = exitReportingWorkerRunning([PHP_BINARY, '-r', 'exit(12);']);
+    $worker = exitReportingWorkerRunning([PHP_BINARY, '-r', 'exit(1);']);
     $worker->markTerminationRequested(now(), 60);
     $worker->process->wait();
 
     expect($worker->isDead())->toBeTrue()
         ->and(workerExitLogs())->toHaveCount(1)
         ->and(workerExitLogs()[0]->context)->toMatchArray([
-            'exit_code' => 12,
+            'exit_code' => 1,
             'termination_requested' => true,
         ]);
 });
 
-it('does not log a worker that exited cleanly after its termination was requested', function () {
-    $worker = exitReportingWorkerRunning([PHP_BINARY, '-r', 'exit(0);']);
-    $worker->markTerminationRequested(now(), 60);
+it('does not log a worker that stopped gracefully', function (int $exitCode, bool $wasTerminationRequested) {
+    $worker = exitReportingWorkerRunning([PHP_BINARY, '-r', "exit({$exitCode});"]);
+
+    if ($wasTerminationRequested) {
+        $worker->markTerminationRequested(now(), 60);
+    }
+
     $worker->process->wait();
 
     expect($worker->isDead())->toBeTrue()
         ->and(workerExitLogs())->toBeEmpty();
-});
+})->with([
+    'on request' => [Worker::EXIT_SUCCESS, true],
+    'on its own, such as at --max-time' => [Worker::EXIT_SUCCESS, false],
+    'at its memory limit' => [Worker::EXIT_MEMORY_LIMIT, false],
+]);
 
 it('logs a dead worker only once', function () {
     $worker = exitReportingWorkerRunning([PHP_BINARY, '-r', 'exit(3);']);
