@@ -37,11 +37,13 @@
 use App\Features\QueueMonitoringFeature;
 use App\Models\Tenant;
 use App\Models\User;
+use App\Overrides\QueueAutoscale\ExitReportingWorkerSpawner;
 use App\Providers\QueueObservabilityServiceProvider;
 use App\Support\QueueAutoscale\WorkerCountHistory;
 use Cbox\LaravelQueueAutoscale\Events\ClusterSummaryPublished;
 use Cbox\LaravelQueueAutoscale\Events\ScalingDecisionMade;
 use Cbox\LaravelQueueAutoscale\Scaling\ScalingDecision;
+use Cbox\LaravelQueueAutoscale\Workers\WorkerSpawner;
 use Cbox\LaravelQueueMetrics\LaravelQueueMetrics;
 use Cbox\LaravelQueueMonitor\LaravelQueueMonitor;
 use Cbox\LaravelQueueMonitor\Models\JobMonitor;
@@ -134,6 +136,10 @@ it('leaves the queue monitor enabled once `QueueMonitoringFeature` is active', f
     $provider->boot();
 
     expect(config('queue-monitor.enabled'))->toBeTrue();
+});
+
+it('replaces the autoscale worker spawner with one whose workers report how they exit', function () {
+    expect(app(WorkerSpawner::class))->toBeInstanceOf(ExitReportingWorkerSpawner::class);
 });
 
 describe('worker count sampling', function () {

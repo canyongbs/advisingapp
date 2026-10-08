@@ -41,10 +41,12 @@ use App\Listeners\RecordWorkerCountSample;
 use App\Models\Authenticatable;
 use App\Models\Tenant;
 use App\Overrides\Laravel\PostgresBatchRepository;
+use App\Overrides\QueueAutoscale\ExitReportingWorkerSpawner;
 use Aws\CloudWatch\CloudWatchClient;
 use Cbox\LaravelQueueAutoscale\Configuration\AutoscaleConfiguration;
 use Cbox\LaravelQueueAutoscale\Events\ClusterSummaryPublished;
 use Cbox\LaravelQueueAutoscale\Events\ScalingDecisionMade;
+use Cbox\LaravelQueueAutoscale\Workers\WorkerSpawner;
 use Cbox\LaravelQueueMetrics\LaravelQueueMetrics;
 use Cbox\LaravelQueueMonitor\LaravelQueueMonitor;
 use Cbox\LaravelQueueMonitor\Models\JobMonitor;
@@ -78,6 +80,9 @@ class QueueObservabilityServiceProvider extends ServiceProvider
 
             return new CloudWatchClient($config);
         });
+
+        // The autoscale package registers after this provider and would overwrite a plain binding, so extend.
+        $this->app->extend(WorkerSpawner::class, fn (WorkerSpawner $spawner, Application $app): WorkerSpawner => $app->make(ExitReportingWorkerSpawner::class));
 
         // BusServiceProvider is deferred and would overwrite a plain binding, so extend at resolve time. That also
         // follows SwitchTenantDatabasesTask, which forgets the instance when it switches the batching connection.
