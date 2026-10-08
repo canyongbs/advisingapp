@@ -160,7 +160,16 @@ jobs:
         name: Test
         strategy:
             matrix:
-                testsuite: [Landlord, Tenant]
+                include:
+                    - testsuite: Landlord
+                    - testsuite: Tenant
+                      shard: 1/4
+                    - testsuite: Tenant
+                      shard: 2/4
+                    - testsuite: Tenant
+                      shard: 3/4
+                    - testsuite: Tenant
+                      shard: 4/4
 
         runs-on: ubuntu-22.04
 
@@ -306,7 +315,14 @@ jobs:
             - name: Execute tests (Unit and Feature tests) via PHPUnit
               env:
                   TESTSUITE: ${{ matrix.testsuite }}
-              run: php artisan test --configuration phpunit-ci.xml --parallel --testsuite=${TESTSUITE}
+                  SHARD: ${{ matrix.shard }}
+              run: |
+                  args=(--configuration phpunit-ci.xml --parallel --testsuite="${TESTSUITE}")
+                  if [[ -n "${SHARD}" ]]; then
+                      filter=$(php .github/scripts/shard-tests.php "${SHARD}" --configuration=phpunit-ci.xml --testsuite="${TESTSUITE}")
+                      args+=(--filter="${filter}")
+                  fi
+                  php artisan test "${args[@]}"
 
     lint:
         name: Lint
