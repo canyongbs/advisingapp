@@ -45,7 +45,6 @@ use AdvisingApp\Ai\Filament\Imports\CustomerAdvisorCategoryImporter;
 use AdvisingApp\Ai\Filament\Imports\CustomerAdvisorQuestionImporter;
 use AdvisingApp\Ai\Filament\Imports\EmployeeAdvisorCategoryImporter;
 use AdvisingApp\Ai\Filament\Imports\EmployeeAdvisorQuestionImporter;
-use AdvisingApp\Report\Filament\Exports\ResearchAdvisorExporter;
 use App\Models\Authenticatable;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Gate;
@@ -64,19 +63,11 @@ enum Feature: string
 
     case EventManagement = 'event-management';
 
-    case RealtimeChat = 'realtime-chat';
-
-    case MobileApps = 'mobile-apps';
-
     case ScheduleAndAppointments = 'schedule-and-appointments';
 
     case EmployeeAdvisors = 'employee-advisors';
 
-    case ResearchAdvisor = 'research-advisor';
-
     case CustomerAdvisors = 'customer-advisors';
-
-    case DataAdvisor = 'data-advisor';
 
     case EarlyAlert = 'early-alert';
 
@@ -112,9 +103,7 @@ enum Feature: string
                 'Assistant Custom',
                 'Customer Advisor',
                 'Customer Advisor Embed',
-                'Data Advisor',
                 'Prompt',
-                'Research Advisor',
             ],
             default => [],
         };
@@ -139,7 +128,6 @@ enum Feature: string
                 CustomerAdvisorQuestionExporter::class,
                 EmployeeAdvisorCategoryExporter::class,
                 EmployeeAdvisorQuestionExporter::class,
-                ResearchAdvisorExporter::class,
             ],
             default => [],
         };

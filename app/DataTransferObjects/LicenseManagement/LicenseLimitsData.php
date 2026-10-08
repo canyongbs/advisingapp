@@ -48,7 +48,6 @@ class LicenseLimitsData extends Data
         public int $conversationalAiSeats = 0,
         public int $employeeAdvisorsCount = 0,
         public int $customerAdvisorsCount = 0,
-        public int $dataAdvisorsCount = 0,
         public int $retentionCrmSeats = 0,
         public int $recruitmentCrmSeats = 0,
         public int $emails = 0,

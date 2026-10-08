@@ -53,7 +53,6 @@
         "canyon-gbs/group": "*",
         "canyon-gbs/integration-open-ai": "*",
         "canyon-gbs/multifactor-authentication": "*",
-        "canyon-gbs/research": "*",
         "canyon-gbs/stock-media": "*",
         "canyon-gbs/workflow": "*",
         "canyongbs/common": "^2.42.0",

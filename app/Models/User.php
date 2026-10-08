@@ -61,8 +61,6 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Models\TrackedEvent;
 use AdvisingApp\Report\Models\TrackedEventCount;
-use AdvisingApp\Research\Models\ResearchRequest;
-use AdvisingApp\Research\Models\ResearchRequestFolder;
 use AdvisingApp\ResourceHub\Models\ManagerResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\StudentDataModel\Models\Student;
@@ -449,22 +447,6 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
     {
         return $this->morphMany(TrackedEventCount::class, 'related_to')
             ->where('type', TrackedEventType::UserLogin);
-    }
-
-    /**
-     * @return HasMany<ResearchRequest, $this>
-     */
-    public function researchRequests(): HasMany
-    {
-        return $this->hasMany(ResearchRequest::class);
-    }
-
-    /**
-     * @return HasMany<ResearchRequestFolder, $this>
-     */
-    public function researchRequestFolders(): HasMany
-    {
-        return $this->hasMany(ResearchRequestFolder::class);
     }
 
     public function canAccessPanel(Panel $panel): bool

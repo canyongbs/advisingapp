@@ -47,7 +47,6 @@ use AdvisingApp\Report\Filament\Pages\ProspectMessagesDetailReport;
 use AdvisingApp\Report\Filament\Pages\ProspectMessagesOverviewReport;
 use AdvisingApp\Report\Filament\Pages\ProspectReport;
 use AdvisingApp\Report\Filament\Pages\ProspectTaskManagement;
-use AdvisingApp\Report\Filament\Pages\ResearchAdvisorReport;
 use AdvisingApp\Report\Filament\Pages\StudentDeliverabilityReport;
 use AdvisingApp\Report\Filament\Pages\StudentInteractionReport;
 use AdvisingApp\Report\Filament\Pages\StudentMessagesDetailReport;
@@ -68,7 +67,6 @@ enum ReportAccessKey: string
     case CustomerAdvisorReport = 'customer-advisor-report';
     case EmployeeAdvisorReport = 'employee-advisor-report';
     case InstitutionalAdvisorReport = 'institutional-advisor-report';
-    case ResearchAdvisorReport = 'research-advisor-report';
     case StudentActionCenter = 'student-action-center';
     case Students = 'students';
     case StudentDeliverabilityReport = 'student-deliverability-report';
@@ -94,7 +92,6 @@ enum ReportAccessKey: string
             self::CustomerAdvisorReport => CustomerAdvisorReport::class,
             self::EmployeeAdvisorReport => EmployeeAdvisorReport::class,
             self::InstitutionalAdvisorReport => InstitutionalAdvisorReport::class,
-            self::ResearchAdvisorReport => ResearchAdvisorReport::class,
             self::StudentActionCenter => RetentionCrmDashboard::class,
             self::Students => Students::class,
             self::StudentDeliverabilityReport => StudentDeliverabilityReport::class,
@@ -119,7 +116,6 @@ enum ReportAccessKey: string
             self::CustomerAdvisorReport => 'Customer Advisor',
             self::EmployeeAdvisorReport => 'Employee Advisor',
             self::InstitutionalAdvisorReport => 'Institutional Advisor',
-            self::ResearchAdvisorReport => 'Research Advisor',
             self::StudentActionCenter => 'Action Center (Students)',
             self::Students => 'Students (Overview)',
             self::StudentDeliverabilityReport => 'Deliverability (Students)',
@@ -143,8 +139,7 @@ enum ReportAccessKey: string
             self::ArtificialIntelligence,
             self::CustomerAdvisorReport,
             self::EmployeeAdvisorReport,
-            self::InstitutionalAdvisorReport,
-            self::ResearchAdvisorReport => 'Enterprise AI',
+            self::InstitutionalAdvisorReport => 'Enterprise AI',
 
             self::StudentActionCenter,
             self::Students,
@@ -193,8 +188,6 @@ enum ReportAccessKey: string
             self::CustomerAdvisorReport => LicenseType::ConversationalAi->isLicensable() && $addons->customerAdvisors,
 
             self::EmployeeAdvisorReport => LicenseType::ConversationalAi->isLicensable() && $addons->employeeAdvisors,
-
-            self::ResearchAdvisorReport => LicenseType::ConversationalAi->isLicensable() && $addons->researchAdvisor,
 
             self::UserLoginActivity => true,
         };

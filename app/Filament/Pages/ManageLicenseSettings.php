@@ -123,14 +123,6 @@ class ManageLicenseSettings extends SettingsPage
                                 ->disabled(fn (Get $get): bool => ! $get('data.addons.customerAdvisors'))
                                 ->visible($isEnterpriseAiEnabled)
                                 ->dehydratedWhenHidden(),
-                            TextInput::make('data.limits.dataAdvisorsCount')
-                                ->label('Data Advisors')
-                                ->numeric()
-                                ->minValue(0)
-                                ->required()
-                                ->disabled(fn (Get $get): bool => ! $get('data.addons.dataAdvisor'))
-                                ->visible($isEnterpriseAiEnabled)
-                                ->dehydratedWhenHidden(),
                             TextInput::make('data.limits.retentionCrmSeats')
                                 ->label('Student Success / Retention Seats')
                                 ->numeric()
@@ -172,10 +164,6 @@ class ManageLicenseSettings extends SettingsPage
                                 ->label('Support Programs'),
                             Toggle::make('data.addons.eventManagement')
                                 ->label('Event Management'),
-                            Toggle::make('data.addons.realtimeChat')
-                                ->label('Realtime Chat'),
-                            Toggle::make('data.addons.mobileApps')
-                                ->label('Mobile Apps'),
                             Toggle::make('data.addons.scheduleAndAppointments')
                                 ->label('My Appointments'),
                             Toggle::make('data.addons.enterpriseAi')
@@ -186,17 +174,8 @@ class ManageLicenseSettings extends SettingsPage
                                 ->live()
                                 ->visible($isEnterpriseAiEnabled)
                                 ->dehydratedWhenHidden(),
-                            Toggle::make('data.addons.researchAdvisor')
-                                ->label('Research Advisors')
-                                ->visible($isEnterpriseAiEnabled)
-                                ->dehydratedWhenHidden(),
                             Toggle::make('data.addons.customerAdvisors')
                                 ->label('Customer Advisors')
-                                ->live()
-                                ->visible($isEnterpriseAiEnabled)
-                                ->dehydratedWhenHidden(),
-                            Toggle::make('data.addons.dataAdvisor')
-                                ->label('Data Advisors')
                                 ->live()
                                 ->visible($isEnterpriseAiEnabled)
                                 ->dehydratedWhenHidden(),

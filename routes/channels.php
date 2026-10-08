@@ -37,7 +37,6 @@
 use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Prospect\Models\Prospect;
-use AdvisingApp\Research\Models\ResearchRequest;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Support\Facades\Broadcast;
@@ -55,14 +54,6 @@ use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel('App.Models.User.{id}', function (User $user, string $id): bool {
     return $user->id === $id;
-});
-
-Broadcast::channel('research-request-{researchRequestId}', function (User $user, string $researchRequestId): bool {
-    return ResearchRequest::find($researchRequestId)?->user()->is($user) ?? false;
-});
-
-Broadcast::channel('user-research-requests-{userId}', function (User $user, string $userId): bool {
-    return User::find($userId)?->is($user) ?? false;
 });
 
 Broadcast::channel('advisor-thread-{threadId}', function (User $user, string $threadId): bool {
