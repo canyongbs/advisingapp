@@ -49,12 +49,6 @@ beforeEach(function () {
     setUnifiedInboxEnabled(true);
 });
 
-beforeEach(function () {
-    $settings = app(LicenseSettings::class);
-    $settings->data->addons->unifiedInbox = true;
-    $settings->save();
-});
-
 it('can mark an engagement response as actioned and create an actioned note', function () {
     asSuperAdmin();
     $record = EngagementResponse::factory()->email()->create(['status' => EngagementResponseStatus::New]);

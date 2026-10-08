@@ -53,12 +53,6 @@ beforeEach(function () {
     setUnifiedInboxEnabled(true);
 });
 
-beforeEach(function () {
-    $settings = app(LicenseSettings::class);
-    $settings->data->addons->unifiedInbox = true;
-    $settings->save();
-});
-
 it('is gated with proper access control', function () {})->todo();
 
 it('requires the unified inbox feature addon to access', function () {
