@@ -316,10 +316,10 @@ jobs:
               run: |
                   args=(--configuration phpunit-ci.xml --parallel --testsuite="${TESTSUITE}")
                   if [[ -n "${SHARD}" ]]; then
-                      filter=$(php .github/scripts/shard-tests.php "${SHARD}" --configuration=phpunit-ci.xml --testsuite="${TESTSUITE}")
-                      args+=(--filter="${filter}")
+                      args+=(--shard="${SHARD}")
                   fi
-                  php artisan test "${args[@]}"
+                  # Called directly as `artisan test` breaks `--shard` by forwarding its `--runner` to Pest's test listing.
+                  vendor/bin/pest "${args[@]}"
 
     lint:
         name: Lint
