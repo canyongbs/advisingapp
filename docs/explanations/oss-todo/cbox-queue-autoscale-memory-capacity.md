@@ -2,7 +2,7 @@
 
 This document tracks contributions to how the autoscaler decides how many workers a host can hold in memory. Together they let it over-pack hosts until the kernel OOM-killed workers.
 
-- **Part 1:** the per-worker memory cost comes from job metrics, not from the worker processes the manager runs. PR Opened: _not yet_
+- **Part 1:** the measured per-worker memory cost misses a worker's boot peak, and always wins over configured estimates. PR Opened: _not yet_
 - **Part 2:** capacity is read from memory in use right now, so workers that are still booting look free, and a batch of them overshoots. PR Opened: _not yet_
 - **Part 3:** headroom mixes host and cgroup scopes, and counts usage twice. PR Opened: _not yet_
 - **Part 4:** nothing reacts to the kernel OOM-killing workers. PR Opened: _not yet_
@@ -32,7 +32,7 @@ None of this showed in AWS metrics: ECS `MemoryUtilization` and Container Insigh
 
 ---
 
-## Part 1: measure the cost of the workers the manager runs
+## Part 1: include the boot peak, and let a configured estimate act as a floor
 
 ### Affected code
 
@@ -41,18 +41,23 @@ None of this showed in AWS metrics: ECS `MemoryUtilization` and Container Insigh
 
 ### Summary
 
-A job's memory reading is not a worker's footprint. It misses what the process holds regardless of the job: its OPcache segment, JIT buffer, framework boot state and boot peak. Because the measured value wins over configuration, an operator who knows workers cost ~250 MB and configures that cannot override it.
+`JobMetricsCollector` records the worker process's peak RSS while the job ran, falling back to PHP's own peak heap usage when process metrics are unavailable. On Linux, RSS includes the resident pages of the worker's OPcache and JIT segments and its framework state, so the steady-state footprint is largely captured. Two gaps remain:
+
+- It is only sampled while a job runs, so it misses the boot peak: a new worker compiles the whole app into its own OPcache before it takes its first job. That is when the newest workers were killed.
+- The measured value always wins, so an operator who knows workers need ~250 MB cannot set that as a floor.
+
+(RSS also counts shared library pages in full for every worker, which overstates the cost slightly; that errs safe.)
 
 ### Suggested fix
 
-The manager already knows every worker's PID. On Linux, read `/proc/<pid>/smaps_rollup` for each live worker and use `Pss`: it counts private memory and the worker's own shared-memory segment in full, and splits genuinely shared pages (libraries, the binary) fairly across processes. Use a high percentile (for example p90) of live workers' PSS as the per-worker cost, and expose it in the capacity details so it is visible.
-
-Where `/proc` is unavailable (macOS, BSD, Windows), fall back to the configured estimate as today. Consider letting an explicit per-queue `resources.memory_mb` win over measurement, since it is a deliberate operator choice.
+- Include the boot peak. The manager already knows every worker's PID; on Linux, `VmHWM` in `/proc/<pid>/status` is the process's peak RSS since it started, boot included. Use a high percentile (for example p90) of live workers' `VmHWM` alongside the per-job value, and expose the result in the capacity details. Where `/proc` is unavailable (macOS, BSD, Windows), keep today's behaviour.
+- Treat a configured estimate as a floor: use `max(measured, configured)` rather than letting measurement replace it.
 
 ### Tests
 
-- With fake `smaps_rollup` files for three worker PIDs, the per-worker cost is their p90 PSS.
-- Without `/proc`, the configured estimate is used.
+- With fake `/proc/<pid>/status` files for three worker PIDs whose `VmHWM` exceeds the per-job value, the per-worker cost is their p90 `VmHWM`.
+- A configured estimate above the measured value is used.
+- Without `/proc`, behaviour is unchanged.
 
 ---
 
@@ -123,11 +128,14 @@ When the kernel OOM-kills workers, the manager only sees dead workers and freed 
 
 ### Suggested fix
 
-Track `oomKillCount` between cycles. When it rises, lower this host's worker ceiling to the current count for a cooldown period and log a warning naming the cause. Workers that die from SIGKILL without a termination request (see `cbox-queue-autoscale-dead-worker-exit-status.md`) are the same signal from the worker side, and work where the counter is not readable.
+Track `oomKillCount` between cycles. When it rises, lower this host's worker ceiling to the current count for a cooldown period and log a warning naming the cause.
+
+Only enter the cooldown when the counter confirms an OOM kill. A worker dying from SIGKILL without a termination request is not enough on its own: `queue:work` also SIGKILLs itself when a job exceeds `--timeout`, and an ECS or operator kill has the same exit status. Where the counter is not readable, log such exits as SIGKILLs of unknown cause (see `cbox-queue-autoscale-dead-worker-exit-status.md`) rather than reducing capacity.
 
 ### Tests
 
 - With the OOM counter rising between two cycles, the host's capacity is held at its current worker count for the cooldown.
+- An unrequested SIGKILL with the counter unchanged does not reduce capacity.
 
 ---
 
