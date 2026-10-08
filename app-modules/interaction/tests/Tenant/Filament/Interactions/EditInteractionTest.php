@@ -41,9 +41,9 @@ use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Forms\Components\Select;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('EditInteraction is gated with proper access control', function () {
@@ -80,7 +80,7 @@ describe('archived students', function () {
         $archived = Student::factory()->create();
         $archived->archive();
 
-        livewire(EditInteraction::class, ['record' => $interaction->getRouteKey()])
+        Livewire::test(EditInteraction::class, ['record' => $interaction->getRouteKey()])
             ->assertSchemaComponentExists(
                 'interactable_id',
                 checkComponentUsing: function (Select $field) use ($student, $archived): bool {
@@ -102,7 +102,7 @@ describe('archived students', function () {
 
         $archived->archive();
 
-        livewire(EditInteraction::class, ['record' => $interaction->getRouteKey()])
+        Livewire::test(EditInteraction::class, ['record' => $interaction->getRouteKey()])
             ->assertSchemaComponentExists(
                 'interactable_id',
                 checkComponentUsing: function (Select $field): bool {
@@ -121,7 +121,7 @@ describe('archived students', function () {
 
         $archived->archive();
 
-        livewire(EditInteraction::class, ['record' => $interaction->getRouteKey()])
+        Livewire::test(EditInteraction::class, ['record' => $interaction->getRouteKey()])
             ->call('save')
             ->assertHasNoFormErrors(['interactable_id']);
     });

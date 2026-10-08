@@ -41,9 +41,9 @@ use AdvisingApp\Prospect\Models\Prospect;
 use App\Enums\CareTeamRoleType;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('ListProspectCareTeamRole is gated with proper access control', function () {
@@ -76,7 +76,7 @@ test('The correct details are displayed on the ListProspectCareTeamRole page', f
 
     asSuperAdmin();
 
-    $component = livewire(ListProspectCareTeamRoles::class)
+    $component = Livewire::test(ListProspectCareTeamRoles::class)
         ->set('tableRecordsPerPage', 3);
 
     $component
@@ -111,13 +111,13 @@ test('the delete bulk action is gated by the delete permission', function () {
 
     actingAs($user);
 
-    livewire(ListProspectCareTeamRoles::class)
+    Livewire::test(ListProspectCareTeamRoles::class)
         ->assertOk()
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 
     $user->givePermissionTo('settings.*.delete');
 
-    livewire(ListProspectCareTeamRoles::class)
+    Livewire::test(ListProspectCareTeamRoles::class)
         ->assertOk()
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

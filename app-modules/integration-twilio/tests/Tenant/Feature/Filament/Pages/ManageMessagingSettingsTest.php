@@ -40,8 +40,8 @@ use AdvisingApp\Notification\Enums\SmsMessagingProvider;
 use AdvisingApp\StudentDataModel\Jobs\QueuePhoneNumberLookups;
 use App\Models\User;
 use Illuminate\Support\Facades\Bus;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('triggers a phone number lookup scan when messaging is turned on', function () {
@@ -57,7 +57,7 @@ it('triggers a phone number lookup scan when messaging is turned on', function (
 
     Bus::fake([QueuePhoneNumberLookups::class]);
 
-    livewire(ManageMessagingSettings::class)
+    Livewire::test(ManageMessagingSettings::class)
         ->fillForm(['is_enabled' => true])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -77,7 +77,7 @@ it('does not trigger a scan when messaging was already enabled', function () {
 
     Bus::fake([QueuePhoneNumberLookups::class]);
 
-    livewire(ManageMessagingSettings::class)
+    Livewire::test(ManageMessagingSettings::class)
         ->call('save')
         ->assertHasNoFormErrors();
 

@@ -40,8 +40,8 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can bulk subscribe students without removing the prior subscriptions', function () {
@@ -61,7 +61,7 @@ it('can bulk subscribe students without removing the prior subscriptions', funct
         expect($student->subscriptions()->where('user_id', $user->getKey())->exists())->toBeTrue();
     });
 
-    livewire(ListStudents::class)
+    Livewire::test(ListStudents::class)
         ->callTableBulkAction('bulkSubscription', $students, [
             'user_ids' => [$anotherUser->getKey()],
             'remove_prior' => false,
@@ -91,7 +91,7 @@ it('can bulk subscribe students and remove the prior subscriptions', function ()
         expect($student->subscriptions()->where('user_id', $user->getKey())->exists())->toBeTrue();
     });
 
-    livewire(ListStudents::class)
+    Livewire::test(ListStudents::class)
         ->callTableBulkAction('bulkSubscription', $students, [
             'user_ids' => [$anotherUser->getKey()],
             'remove_prior' => true,
@@ -121,7 +121,7 @@ it('can bulk subscribe prospects without removing the prior subscriptions', func
         expect($prospect->subscriptions()->where('user_id', $user->getKey())->exists())->toBeTrue();
     });
 
-    livewire(ListProspects::class)
+    Livewire::test(ListProspects::class)
         ->callTableBulkAction('bulkSubscription', $prospects, [
             'user_ids' => [$anotherUser->getKey()],
             'remove_prior' => false,
@@ -151,7 +151,7 @@ it('can bulk subscribe prospects and remove the prior subscriptions', function (
         expect($prospect->subscriptions()->where('user_id', $user->getKey())->exists())->toBeTrue();
     });
 
-    livewire(ListProspects::class)
+    Livewire::test(ListProspects::class)
         ->callTableBulkAction('bulkSubscription', $prospects, [
             'user_ids' => [$anotherUser->getKey()],
             'remove_prior' => true,

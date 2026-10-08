@@ -48,8 +48,8 @@ use App\Models\User;
 use Filament\Forms\Components\TableSelect\Livewire\TableSelectLivewireComponent;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Queue;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('requires form_id to submit the request', function () {
@@ -59,7 +59,7 @@ it('requires form_id to submit the request', function () {
 
     $student = Student::factory()->create();
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -79,7 +79,7 @@ it('can request a form submission via email', function () {
     $student = Student::factory()->create();
     $form = Form::factory()->create(['is_authenticated' => true]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -110,7 +110,7 @@ it('can request a form submission via sms', function () {
     $student = Student::factory()->create();
     $form = Form::factory()->create(['is_authenticated' => true]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -135,7 +135,7 @@ it('defaults request_method to email', function () {
     $student = Student::factory()->create();
     $form = Form::factory()->create(['is_authenticated' => true]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -158,7 +158,7 @@ it('allows request_note to be optional', function () {
     $student = Student::factory()->create();
     $form = Form::factory()->create(['is_authenticated' => true]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -203,7 +203,7 @@ it('rejects a form_id belonging to a form without authentication enabled', funct
     $student = Student::factory()->create();
     $unauthenticatedForm = Form::factory()->create(['is_authenticated' => false]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -223,7 +223,7 @@ it('rejects a form_id belonging to an archived form', function () {
     $archivedForm = Form::factory()->create(['is_authenticated' => true]);
     $archivedForm->archive();
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -255,7 +255,7 @@ it('reuses an existing requested submission for the same form instead of creatin
     $existingSubmission->requester()->associate($user);
     $existingSubmission->save();
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -290,7 +290,7 @@ it('creates a new submission when existing one is already submitted', function (
         'submitted_at' => now(),
     ]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -319,7 +319,7 @@ it('creates a new submission when existing one is canceled', function () {
         'canceled_at' => now(),
     ]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -341,7 +341,7 @@ it('associates the current authenticated user as the requester', function () {
     $student = Student::factory()->create();
     $form = Form::factory()->create(['is_authenticated' => true]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -365,7 +365,7 @@ it('dispatches the delivery job after creating the submission', function () {
     $student = Student::factory()->create();
     $form = Form::factory()->create(['is_authenticated' => true]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -386,7 +386,7 @@ it('dispatches the sms delivery job when sms method is selected', function () {
     $student = Student::factory()->create();
     $form = Form::factory()->create(['is_authenticated' => true]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -407,7 +407,7 @@ it('sends a success notification after the request is sent', function () {
     $student = Student::factory()->create();
     $form = Form::factory()->create(['is_authenticated' => true]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])

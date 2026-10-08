@@ -39,9 +39,9 @@ use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ListBooking
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\Team\Models\Department;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('The correct details are displayed on the ListBookingGroups page', function () {
@@ -51,7 +51,7 @@ test('The correct details are displayed on the ListBookingGroups page', function
 
     asSuperAdmin();
 
-    livewire(ListBookingGroups::class)
+    Livewire::test(ListBookingGroups::class)
         ->assertSuccessful()
         ->assertCountTableRecords(10)
         ->assertTableColumnExists('name');
@@ -85,7 +85,7 @@ test('ListBookingGroups page displays correct member count', function () {
 
     asSuperAdmin();
 
-    livewire(ListBookingGroups::class)
+    Livewire::test(ListBookingGroups::class)
         ->assertSuccessful()
         ->assertTableColumnExists('members_count')
         ->assertSee('4');
@@ -94,7 +94,7 @@ test('ListBookingGroups page displays correct member count', function () {
     $bookingGroup->departments()->detach($department->id);
     $bookingGroup->refresh();
 
-    livewire(ListBookingGroups::class)
+    Livewire::test(ListBookingGroups::class)
         ->assertSuccessful()
         ->assertTableColumnExists('members_count')
         ->assertSee('0');

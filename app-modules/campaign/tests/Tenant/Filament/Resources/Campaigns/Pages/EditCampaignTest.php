@@ -46,9 +46,9 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Filament\Forms\Components\Select;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 use Spatie\Permission\PermissionRegistrar;
 
@@ -67,13 +67,13 @@ test('archive action is visible on edit page', function () {
     // Without delete permission, archive action should be hidden
     actingAs($user);
 
-    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertActionHidden('archive');
 
     // Add campaign delete permission — now archive should be visible
     $user->givePermissionTo('campaign.*.delete');
 
-    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertActionVisible('archive');
 });
 
@@ -82,7 +82,7 @@ test('archive action shows disable and archive label for enabled campaigns', fun
 
     $campaign = Campaign::factory()->enabled()->create();
 
-    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertActionHasLabel('archive', 'Disable and Archive');
 });
 
@@ -91,7 +91,7 @@ test('archive action shows archive label for disabled campaigns', function () {
 
     $campaign = Campaign::factory()->disabled()->create();
 
-    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertActionHasLabel('archive', 'Archive');
 });
 
@@ -103,7 +103,7 @@ test('archive action disables and archives enabled campaigns', function () {
     expect($campaign->enabled)->toBeTrue()
         ->and($campaign->isArchived())->toBeFalse();
 
-    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->callAction('archive');
 
     $campaign = $campaign->fresh();
@@ -120,7 +120,7 @@ test('archive action archives disabled campaigns', function () {
     expect($campaign->enabled)->toBeFalse()
         ->and($campaign->isArchived())->toBeFalse();
 
-    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->callAction('archive');
 
     $campaign = $campaign->fresh();
@@ -134,7 +134,7 @@ test('archive action redirects to index after archiving', function () {
 
     $campaign = Campaign::factory()->enabled()->create();
 
-    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->callAction('archive')
         ->assertRedirect(ListCampaigns::getUrl());
 });
@@ -153,7 +153,7 @@ test('population group select offers every group of the appropriate type once th
     $campaign = Campaign::factory()->enabled()->create();
     $otherUsersGroup = Group::factory()->create(['model' => $campaign->group->model]);
 
-    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertFormFieldExists(
             'segment_id',
             function (Select $field) use ($otherUsersGroup, $campaign) {
@@ -180,7 +180,7 @@ test('group ownership and population type are pre-selected to match a group the 
     $group = Group::factory()->prospect()->create(['user_id' => $user->id]);
     $campaign = Campaign::factory()->enabled()->create(['segment_id' => $group->id]);
 
-    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertSchemaStateSet([
             'population_type' => GroupModel::Prospect->value,
             'group_ownership' => GroupOwnership::Mine->value,
@@ -204,7 +204,7 @@ test('group ownership is pre-selected to My Department\'s Groups when the group 
 
     actingAs($user);
 
-    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertSchemaStateSet([
             'population_type' => GroupModel::Student->value,
             'group_ownership' => GroupOwnership::Department->value,
@@ -224,7 +224,7 @@ test('group ownership is pre-selected to All Groups when the group is neither th
 
     $campaign = Campaign::factory()->enabled()->create();
 
-    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertSchemaStateSet([
             'group_ownership' => GroupOwnership::All->value,
         ]);
@@ -235,7 +235,7 @@ test('population type cannot be changed when editing an existing campaign', func
 
     $campaign = Campaign::factory()->enabled()->create();
 
-    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertFormFieldDisabled('population_type');
 });
 
@@ -247,7 +247,7 @@ test('rejects a segment_id that does not match the campaign\'s original populati
 
     $prospectGroup = Group::factory()->prospect()->create();
 
-    livewire(EditCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(EditCampaign::class, ['record' => $campaign->getRouteKey()])
         ->fillForm([
             'population_type' => GroupModel::Prospect->value,
             'segment_id' => $prospectGroup->getKey(),

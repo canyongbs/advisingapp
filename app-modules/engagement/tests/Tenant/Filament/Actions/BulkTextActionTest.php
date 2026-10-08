@@ -42,9 +42,9 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Facades\Queue;
+use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseCount;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can create a bulk SMS Engagement properly for students', function () {
@@ -58,7 +58,7 @@ it('can create a bulk SMS Engagement properly for students', function () {
 
     $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $faker->paragraph()]]]]];
 
-    livewire(ListStudents::class)
+    Livewire::test(ListStudents::class)
         ->mountTableBulkAction('send_text', $students->pluck('sisid')->toArray())
         ->setTableBulkActionData([
             'body' => $body,
@@ -86,7 +86,7 @@ it('can create a bulk SMS Engagement properly for prospects', function () {
 
     $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $faker->paragraph()]]]]];
 
-    livewire(ListProspects::class)
+    Livewire::test(ListProspects::class)
         ->mountTableBulkAction('send_text', $prospects->pluck('id')->toArray())
         ->setTableBulkActionData([
             'body' => $body,

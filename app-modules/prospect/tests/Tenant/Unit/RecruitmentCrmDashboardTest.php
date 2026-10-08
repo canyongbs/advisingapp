@@ -49,10 +49,10 @@ use AdvisingApp\Task\Enums\TaskStatus;
 use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Department;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 
 it('renders all prospects correctly in the recruitment dashboard for the All tab', function () {
     $allProspects = Prospect::factory()->has(
@@ -94,7 +94,7 @@ it('renders all prospects correctly in the recruitment dashboard for the All tab
     $openTasksStat = $stats[2];
     expect($openTasksStat->getValue())->toEqual($allProspects->count());
 
-    livewire(ProspectsActionCenterWidget::class, ['activeTab' => ActionCenterTab::All->value])
+    Livewire::test(ProspectsActionCenterWidget::class, ['activeTab' => ActionCenterTab::All->value])
         ->assertSuccessful()
         ->assertCanSeeTableRecords($allRelevantProspects);
 });
@@ -124,7 +124,7 @@ it('renders subscribed prospects correctly in the recruitment dashboard for the 
     $openTasksStat = $stats[2];
     expect($openTasksStat->getValue())->toEqual($prospectsWithSubscription->count());
 
-    livewire(ProspectsActionCenterWidget::class, ['activeTab' => ActionCenterTab::Subscribed->value])
+    Livewire::test(ProspectsActionCenterWidget::class, ['activeTab' => ActionCenterTab::Subscribed->value])
         ->assertSuccessful()
         ->assertCanSeeTableRecords($prospectsWithSubscription);
 });
@@ -157,7 +157,7 @@ it('renders care team prospects correctly in the recruitment dashboard for the C
     $openTasksStat = $stats[2];
     expect($openTasksStat->getValue())->toEqual($prospectsWithCareTeam->count());
 
-    livewire(ProspectsActionCenterWidget::class, ['activeTab' => ActionCenterTab::CareTeam->value])
+    Livewire::test(ProspectsActionCenterWidget::class, ['activeTab' => ActionCenterTab::CareTeam->value])
         ->assertSuccessful()
         ->assertCanSeeTableRecords($prospectsWithCareTeam);
 });

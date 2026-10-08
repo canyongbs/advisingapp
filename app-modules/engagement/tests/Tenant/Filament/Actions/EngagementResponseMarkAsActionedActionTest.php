@@ -39,8 +39,8 @@ use AdvisingApp\Engagement\Filament\Actions\EngagementResponseMarkAsActionedActi
 use AdvisingApp\Engagement\Filament\Pages\ViewEngagementResponse;
 use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Engagement\Models\HolisticEngagement;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 use function Tests\setUnifiedInboxEnabled;
 
@@ -52,7 +52,7 @@ it('can mark an engagement response as actioned and create an actioned note', fu
     asSuperAdmin();
     $record = EngagementResponse::factory()->email()->create(['status' => EngagementResponseStatus::New]);
 
-    livewire(ViewEngagementResponse::class, ['record' => $record])
+    Livewire::test(ViewEngagementResponse::class, ['record' => $record])
         ->callAction('markAsActioned', data: ['note' => 'This is a test call.'])
         ->assertHasNoActionErrors();
 
@@ -67,7 +67,7 @@ it('can send a success notification after marking an email as actioned', functio
     asSuperAdmin();
     $record = EngagementResponse::factory()->email()->create(['status' => EngagementResponseStatus::New]);
 
-    livewire(ViewEngagementResponse::class, ['record' => $record])
+    Livewire::test(ViewEngagementResponse::class, ['record' => $record])
         ->callAction('markAsActioned', data: ['note' => 'Resolved via email.'])
         ->assertNotified('Email marked as actioned');
 });
@@ -76,7 +76,7 @@ it('can send a success notification after marking a text message as actioned', f
     asSuperAdmin();
     $record = EngagementResponse::factory()->sms()->create(['status' => EngagementResponseStatus::New]);
 
-    livewire(ViewEngagementResponse::class, ['record' => $record])
+    Livewire::test(ViewEngagementResponse::class, ['record' => $record])
         ->callAction('markAsActioned', data: ['note' => 'Resolved via text.'])
         ->assertNotified('Text marked as actioned');
 });
@@ -85,7 +85,7 @@ it('can require the note field to be filled', function () {
     asSuperAdmin();
     $record = EngagementResponse::factory()->email()->create(['status' => EngagementResponseStatus::New]);
 
-    livewire(ViewEngagementResponse::class, ['record' => $record])
+    Livewire::test(ViewEngagementResponse::class, ['record' => $record])
         ->callAction('markAsActioned', data: ['note' => ''])
         ->assertHasActionErrors(['note' => 'required']);
 
@@ -99,7 +99,7 @@ it('can not change status when note validation fails', function () {
     asSuperAdmin();
     $record = EngagementResponse::factory()->email()->create(['status' => EngagementResponseStatus::New]);
 
-    livewire(ViewEngagementResponse::class, ['record' => $record])
+    Livewire::test(ViewEngagementResponse::class, ['record' => $record])
         ->callAction('markAsActioned', data: [])
         ->assertHasActionErrors(['note' => 'required']);
 

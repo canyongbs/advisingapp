@@ -41,8 +41,8 @@ use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\RelationManagers\PermissionsRelationManager;
 use App\Models\User;
 use Filament\Forms\Components\Select;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
 
@@ -59,12 +59,12 @@ describe('enterprise ai', function () {
         $aiPermission = Permission::query()->where('name', 'prompt.view-any')->where('guard_name', 'web')->firstOrFail();
         $otherPermission = Permission::query()->where('name', 'user.view-any')->where('guard_name', 'web')->firstOrFail();
 
-        livewire(PermissionsRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+        Livewire::test(PermissionsRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
             ->assertCanSeeTableRecords([$aiPermission, $otherPermission]);
 
         setEnterpriseAiEnabled(false);
 
-        livewire(PermissionsRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+        Livewire::test(PermissionsRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
             ->assertCanSeeTableRecords([$otherPermission])
             ->assertCanNotSeeTableRecords([$aiPermission]);
     });
@@ -79,7 +79,7 @@ describe('enterprise ai', function () {
         $searchGroupFilterOptions = function (string $search) use ($user): array {
             $results = [];
 
-            livewire(PermissionsRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
+            Livewire::test(PermissionsRelationManager::class, ['ownerRecord' => $user, 'pageClass' => EditUser::class])
                 ->assertFormFieldExists('group.values', 'tableFiltersForm', function (Select $field) use ($search, &$results): bool {
                     $results = $field->getSearchResults($search);
 

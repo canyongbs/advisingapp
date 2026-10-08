@@ -39,8 +39,8 @@ use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\EditForm;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('archive action is always visible and labeled Archive', function () {
@@ -55,11 +55,11 @@ it('archive action is always visible and labeled Archive', function () {
 
     $formWithoutSubmissions = Form::factory()->create();
 
-    livewire(EditForm::class, ['record' => $formWithSubmissions->getRouteKey()])
+    Livewire::test(EditForm::class, ['record' => $formWithSubmissions->getRouteKey()])
         ->assertActionVisible('archive')
         ->assertActionHasLabel('archive', 'Archive');
 
-    livewire(EditForm::class, ['record' => $formWithoutSubmissions->getRouteKey()])
+    Livewire::test(EditForm::class, ['record' => $formWithoutSubmissions->getRouteKey()])
         ->assertActionVisible('archive')
         ->assertActionHasLabel('archive', 'Archive');
 });
@@ -74,7 +74,7 @@ it('archive action archives the form and redirects to the index when the form ha
         'submitted_at' => now(),
     ]);
 
-    livewire(EditForm::class, ['record' => $form->getRouteKey()])
+    Livewire::test(EditForm::class, ['record' => $form->getRouteKey()])
         ->callAction('archive')
         ->assertRedirect(FormResource::getUrl('index'));
 
@@ -87,7 +87,7 @@ it('does not allow updating a form to a name matching another non-archived form 
     Form::factory()->create(['name' => 'Other Form']);
     $form = Form::factory()->create(['name' => 'Editable Form']);
 
-    livewire(EditForm::class, ['record' => $form->getRouteKey()])
+    Livewire::test(EditForm::class, ['record' => $form->getRouteKey()])
         ->fillForm(['name' => 'other form'])
         ->call('save')
         ->assertHasFormErrors(['name' => 'unique']);
@@ -101,7 +101,7 @@ it('allows updating a form to a name freed up by an archived form case-insensiti
 
     $form = Form::factory()->create(['name' => 'Editable Form']);
 
-    livewire(EditForm::class, ['record' => $form->getRouteKey()])
+    Livewire::test(EditForm::class, ['record' => $form->getRouteKey()])
         ->fillForm(['name' => 'reusable name'])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -112,7 +112,7 @@ it('exposes the mapped block types to the fields rich editor for the custom bloc
 
     $form = Form::factory()->create();
 
-    livewire(EditForm::class, ['record' => $form->getRouteKey()])
+    Livewire::test(EditForm::class, ['record' => $form->getRouteKey()])
         ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });
 
@@ -127,7 +127,7 @@ it('persists edits to an existing wizard step\'s description onto the new form v
         'content' => ['type' => 'doc', 'content' => []],
     ]);
 
-    $component = livewire(EditForm::class, ['record' => $form->getRouteKey()]);
+    $component = Livewire::test(EditForm::class, ['record' => $form->getRouteKey()]);
 
     $formData = $component->get('data');
     $stepKey = array_key_first($formData['steps']);

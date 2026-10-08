@@ -37,8 +37,8 @@
 use App\Filament\Widgets\QueueMonitoring\QueueWorkerCountChart;
 use App\Support\QueueAutoscale\WorkerCountHistory;
 use Illuminate\Support\Facades\Cache;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 beforeEach(function () {
@@ -56,7 +56,7 @@ it('charts each known queue under its name', function () {
 
     asSuperAdmin();
 
-    $chart = livewire(QueueWorkerCountChart::class)->instance();
+    $chart = Livewire::test(QueueWorkerCountChart::class)->instance();
 
     $data = (fn (): array => $this->getData())->call($chart);
 

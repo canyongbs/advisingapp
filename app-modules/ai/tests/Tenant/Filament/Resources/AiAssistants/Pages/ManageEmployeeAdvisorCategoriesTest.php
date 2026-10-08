@@ -51,11 +51,11 @@ use Filament\Actions\ImportAction;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 
 $employeeCategoryImporter = function (User $user, AiAssistant $assistant): EmployeeAdvisorCategoryImporter {
@@ -98,7 +98,7 @@ test('creating an employee advisor category is gated with proper access control'
         )
         ->assertForbidden();
 
-    livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
+    Livewire::test(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
         ->assertForbidden();
 
     $user->givePermissionTo(['assistant_custom.view-any', 'assistant_custom.*.view', 'assistant_custom.create']);
@@ -124,7 +124,7 @@ test('can create an employee advisor category', function () {
 
     $undoRepeaterFake = Repeater::fake();
 
-    livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
+    Livewire::test(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
         ->callTableAction('create', data: ['categories' => [$categoryData->toArray()]])
         ->assertHasNoTableActionErrors();
 
@@ -152,7 +152,7 @@ test('can create multiple employee advisor categories at once', function () {
 
     $undoRepeaterFake = Repeater::fake();
 
-    livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
+    Livewire::test(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
         ->callTableAction('create', data: ['categories' => [$firstCategory->toArray(), $secondCategory->toArray()]])
         ->assertHasNoTableActionErrors();
 
@@ -178,7 +178,7 @@ test('creating duplicate employee advisor category names in the same batch is re
 
     $undoRepeaterFake = Repeater::fake();
 
-    livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
+    Livewire::test(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
         ->callTableAction('create', data: ['categories' => [$firstCategory->toArray(), $secondCategory->toArray()]])
         ->assertHasTableActionErrors(['categories.1.name' => 'The name field has a duplicate value.']);
 
@@ -200,7 +200,7 @@ test('creating an employee advisor category validates the inputs', function (Emp
 
     $undoRepeaterFake = Repeater::fake();
 
-    livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
+    Livewire::test(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
         ->callTableAction('create', data: ['categories' => [$categoryData->toArray()]])
         ->assertHasTableActionErrors(collect($errors)->mapWithKeys(fn (string $rule, string $field) => ["categories.0.{$field}" => $rule])->toArray());
 
@@ -253,7 +253,7 @@ test('can edit an employee advisor category', function () {
 
     actingAs($user);
 
-    livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
+    Livewire::test(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
         ->callTableAction('edit', record: $category->getKey(), data: $request->toArray())
         ->assertHasNoTableActionErrors();
 
@@ -287,7 +287,7 @@ test('editing an employee advisor category validates the inputs', function (Empl
 
     actingAs($user);
 
-    livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
+    Livewire::test(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
         ->callTableAction('edit', record: $category->getKey(), data: $request)
         ->assertHasTableActionErrors($errors);
 })
@@ -333,7 +333,7 @@ describe('import and export', function () use ($employeeCategoryImporter) {
 
         actingAs($user);
 
-        livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
+        Livewire::test(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
             ->assertTableActionVisible(ImportAction::class)
             ->assertTableActionVisible(ExportAction::class);
     });
@@ -364,7 +364,7 @@ describe('import and export', function () use ($employeeCategoryImporter) {
 
         actingAs($user);
 
-        livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
+        Livewire::test(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
             ->callTableAction(ExportAction::class)
             ->assertNotified();
 
@@ -469,7 +469,7 @@ describe('authorization', function () {
 
         actingAs($user);
 
-        livewire(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
+        Livewire::test(ManageEmployeeAdvisorCategories::class, ['record' => $assistant->getKey()])
             ->assertTableActionHidden(ImportAction::class)
             ->assertTableActionVisible(ExportAction::class);
     });

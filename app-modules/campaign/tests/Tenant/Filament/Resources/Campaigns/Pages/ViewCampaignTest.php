@@ -42,9 +42,9 @@ use AdvisingApp\Campaign\Filament\Resources\Campaigns\Pages\ViewCampaign;
 use AdvisingApp\Campaign\Models\Campaign;
 use AdvisingApp\Campaign\Models\CampaignAction;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('archive action is visible on view page', function () {
@@ -57,12 +57,12 @@ test('archive action is visible on view page', function () {
 
     actingAs($user);
 
-    livewire(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertActionHidden('archive');
 
     $user->givePermissionTo('campaign.*.delete');
 
-    livewire(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertActionVisible('archive');
 });
 
@@ -71,7 +71,7 @@ test('archive action shows disable and archive label for enabled campaigns', fun
 
     $campaign = Campaign::factory()->enabled()->create();
 
-    livewire(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertActionHasLabel('archive', 'Disable and Archive');
 });
 
@@ -80,7 +80,7 @@ test('archive action shows archive label for disabled campaigns', function () {
 
     $campaign = Campaign::factory()->disabled()->create();
 
-    livewire(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertActionHasLabel('archive', 'Archive');
 });
 
@@ -92,7 +92,7 @@ test('archive action disables and archives enabled campaigns', function () {
     expect($campaign->enabled)->toBeTrue()
         ->and($campaign->isArchived())->toBeFalse();
 
-    livewire(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
         ->callAction('archive');
 
     $campaign = $campaign->fresh();
@@ -109,7 +109,7 @@ test('archive action archives disabled campaigns', function () {
     expect($campaign->enabled)->toBeFalse()
         ->and($campaign->isArchived())->toBeFalse();
 
-    livewire(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
         ->callAction('archive');
 
     $campaign = $campaign->fresh();
@@ -123,7 +123,7 @@ test('archive action redirects to index after archiving', function () {
 
     $campaign = Campaign::factory()->enabled()->create();
 
-    livewire(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
         ->callAction('archive')
         ->assertRedirect(ListCampaigns::getUrl());
 });
@@ -135,7 +135,7 @@ test('edit action is hidden for completed campaigns', function () {
 
     expect($campaign->hasBeenExecuted())->toBeTrue();
 
-    livewire(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
         ->assertActionHidden('edit')
         ->assertActionVisible('archive');
 });
@@ -148,7 +148,7 @@ test('archive action successfully archives completed campaigns', function () {
     expect($campaign->hasBeenExecuted())->toBeTrue()
         ->and($campaign->isArchived())->toBeFalse();
 
-    livewire(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
+    Livewire::test(ViewCampaign::class, ['record' => $campaign->getRouteKey()])
         ->callAction('archive');
 
     $campaign = $campaign->fresh();

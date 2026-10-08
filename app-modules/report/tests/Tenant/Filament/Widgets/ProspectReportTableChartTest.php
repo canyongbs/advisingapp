@@ -38,9 +38,9 @@ use AdvisingApp\Report\Filament\Widgets\ProspectReportTableChart;
 use App\Models\User;
 use Filament\Actions\ExportAction;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 it('displays only prospects added within the selected date range', function () {
     $startDate = now()->subDays(10);
@@ -63,7 +63,7 @@ it('displays only prospects added within the selected date range', function () {
         'endDate' => $endDate->toDateString(),
     ];
 
-    livewire(ProspectReportTableChart::class, [
+    Livewire::test(ProspectReportTableChart::class, [
         'cacheTag' => 'prospect-report-cache',
         'pageFilters' => $filters,
     ])
@@ -75,7 +75,7 @@ it('displays only prospects added within the selected date range', function () {
 });
 
 it('has an export action', function () {
-    livewire(ProspectReportTableChart::class, [
+    Livewire::test(ProspectReportTableChart::class, [
         'cacheTag' => 'prospect-report-cache',
         'filters' => [],
     ])->assertTableActionExists(ExportAction::class);
@@ -90,7 +90,7 @@ it('can start an export, sending a notification', function () {
 
     Prospect::factory()->count($count)->for($user, 'createdBy')->create();
 
-    livewire(ProspectReportTableChart::class, [
+    Livewire::test(ProspectReportTableChart::class, [
         'cacheTag' => 'prospect-report-cache',
         'filters' => [],
     ])

@@ -40,9 +40,9 @@ use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 $manageFormSubmissionsTestUser = function (): User {
@@ -59,7 +59,7 @@ test('archive action is visible when submission is not archived', function () {
     $form = Form::factory()->create();
     $submission = FormSubmission::factory()->create(['form_id' => $form->id]);
 
-    livewire(ManageFormSubmissions::class, ['record' => $form->getRouteKey()])
+    Livewire::test(ManageFormSubmissions::class, ['record' => $form->getRouteKey()])
         ->assertTableActionVisible('archive', $submission);
 });
 
@@ -71,7 +71,7 @@ test('archive action successfully archives a submission', function () {
 
     expect($submission->isArchived())->toBeFalse();
 
-    livewire(ManageFormSubmissions::class, ['record' => $form->getRouteKey()])
+    Livewire::test(ManageFormSubmissions::class, ['record' => $form->getRouteKey()])
         ->callTableAction('archive', $submission)
         ->assertNotified();
 
@@ -93,7 +93,7 @@ test('bulk archive action successfully archives multiple submissions', function 
         expect($submission->isArchived())->toBeFalse();
     });
 
-    livewire(ManageFormSubmissions::class, ['record' => $form->getRouteKey()])
+    Livewire::test(ManageFormSubmissions::class, ['record' => $form->getRouteKey()])
         ->callTableBulkAction('archive', $submissions)
         ->assertNotified();
 
@@ -109,7 +109,7 @@ test('archived submissions are hidden by default', function () {
     $activeSubmission = FormSubmission::factory()->create(['form_id' => $form->id]);
     $archivedSubmission = FormSubmission::factory()->create(['form_id' => $form->id, 'archived_at' => now()]);
 
-    livewire(ManageFormSubmissions::class, ['record' => $form->getRouteKey()])
+    Livewire::test(ManageFormSubmissions::class, ['record' => $form->getRouteKey()])
         ->assertCanSeeTableRecords([$activeSubmission])
         ->assertCanNotSeeTableRecords([$archivedSubmission]);
 });
@@ -121,7 +121,7 @@ test('archived submissions are visible when the withoutArchived filter is remove
     $activeSubmission = FormSubmission::factory()->create(['form_id' => $form->id]);
     $archivedSubmission = FormSubmission::factory()->create(['form_id' => $form->id, 'archived_at' => now()]);
 
-    livewire(ManageFormSubmissions::class, ['record' => $form->getRouteKey()])
+    Livewire::test(ManageFormSubmissions::class, ['record' => $form->getRouteKey()])
         ->removeTableFilter('withoutArchived')
         ->assertCanSeeTableRecords([$activeSubmission, $archivedSubmission]);
 });

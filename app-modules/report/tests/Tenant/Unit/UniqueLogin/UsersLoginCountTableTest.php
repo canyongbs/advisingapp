@@ -36,8 +36,7 @@
 
 use AdvisingApp\Report\Filament\Widgets\UsersLoginCountTable;
 use App\Models\User;
-
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can filter users based they have ever logged in or not', function () {
     $loggedUsers = User::factory()->count(3)->create([
@@ -48,7 +47,7 @@ it('can filter users based they have ever logged in or not', function () {
         'first_login_at' => null,
     ]);
 
-    livewire(UsersLoginCountTable::class, ['cacheTag' => 'report-users'])
+    Livewire::test(UsersLoginCountTable::class, ['cacheTag' => 'report-users'])
         ->filterTable('has_logged_in', 'logged_in')
         ->assertCanSeeTableRecords($loggedUsers)
         ->assertCanNotSeeTableRecords($notLoggedUsers)
@@ -66,7 +65,7 @@ it('can filter users to get users who first logged in between selected dates', f
         'first_login_at' => now()->subMonth(2),
     ]);
 
-    livewire(UsersLoginCountTable::class, ['cacheTag' => 'report-users'])
+    Livewire::test(UsersLoginCountTable::class, ['cacheTag' => 'report-users'])
         ->filterTable('first_login_at', [
             'first_logged_in_from' => now()->subDays(1)->toDateString(),
             'first_logged_in_until' => now()->toDateString(),
@@ -90,7 +89,7 @@ it('can filter users to get users who last logged in between selected dates', fu
         'last_logged_in_at' => now()->subMonth(2),
     ]);
 
-    livewire(UsersLoginCountTable::class, ['cacheTag' => 'report-users'])
+    Livewire::test(UsersLoginCountTable::class, ['cacheTag' => 'report-users'])
         ->filterTable('last_logged_in_at', [
             'last_logged_in_from' => now()->subDays(1)->toDateString(),
             'last_logged_in_until' => now()->toDateString(),

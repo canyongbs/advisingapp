@@ -45,10 +45,10 @@ use AdvisingApp\Prospect\Tests\Tenant\Prospect\RequestFactories\EditProspectRequ
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Forms\Components\Select;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\seed;
-use function Pest\Livewire\livewire;
 
 // TODO: Write EditProspect page tests
 //test('A successful action on the EditProspect page', function () {});
@@ -69,7 +69,7 @@ test('EditProspect is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    livewire(EditProspect::class, [
+    Livewire::test(EditProspect::class, [
         'record' => $prospect->getRouteKey(),
     ])
         ->assertForbidden();
@@ -87,7 +87,7 @@ test('EditProspect is gated with proper access control', function () {
     // TODO: Finish these tests to ensure changes are allowed
     $request = collect(EditProspectRequestFactory::new()->create());
 
-    livewire(EditProspect::class, [
+    Livewire::test(EditProspect::class, [
         'record' => $prospect->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -116,7 +116,7 @@ test('convert action visible when prospect is not converted to student', functio
 
     actingAs($user);
 
-    livewire(EditProspect::class, [
+    Livewire::test(EditProspect::class, [
         'record' => $prospect->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -136,7 +136,7 @@ test('edit page is forbidden when prospect is converted to student', function ()
 
     actingAs($user);
 
-    livewire(EditProspect::class, [
+    Livewire::test(EditProspect::class, [
         'record' => $prospect->getRouteKey(),
     ])
         ->assertForbidden();
@@ -160,7 +160,7 @@ test('convert prospect to student', function () {
     $student = Student::factory()
         ->create();
 
-    livewire(EditProspect::class, [
+    Livewire::test(EditProspect::class, [
         'record' => $prospect->getRouteKey(),
     ])
         ->callAction(
@@ -203,7 +203,7 @@ test('the convert action does not attach an archived student even when their id 
     $student = Student::factory()->create();
     $student->archive();
 
-    livewire(EditProspect::class, [
+    Livewire::test(EditProspect::class, [
         'record' => $prospect->getRouteKey(),
     ])
         ->callAction(
@@ -235,7 +235,7 @@ test('the convert action does not offer archived students', function () {
     $archived = Student::factory()->create();
     $archived->archive();
 
-    livewire(EditProspect::class, ['record' => $prospect->getRouteKey()])
+    Livewire::test(EditProspect::class, ['record' => $prospect->getRouteKey()])
         ->mountAction(ConvertToStudent::class)
         ->assertSchemaComponentExists('student_id', checkComponentUsing: function (Select $field) use ($active, $archived): bool {
             $sisids = array_map(strval(...), array_keys($field->getSearchResults('')));

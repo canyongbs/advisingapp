@@ -36,8 +36,8 @@
 
 use App\Filament\Pages\ManageLicenseSettings;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 beforeEach(function () {
@@ -48,7 +48,7 @@ beforeEach(function () {
 
 describe('enterprise ai', function () {
     it('shows the AI fields only while Enterprise AI is enabled', function (string $field) {
-        livewire(ManageLicenseSettings::class)
+        Livewire::test(ManageLicenseSettings::class)
             ->assertFormFieldVisible($field)
             ->fillForm(['data.addons.enterpriseAi' => false])
             ->assertFormFieldHidden($field);
@@ -69,7 +69,7 @@ describe('enterprise ai', function () {
         $licenseSettings->data->addons->researchAdvisor = true;
         $licenseSettings->save();
 
-        livewire(ManageLicenseSettings::class)
+        Livewire::test(ManageLicenseSettings::class)
             ->fillForm(['data.addons.enterpriseAi' => false])
             ->call('save')
             ->assertHasNoFormErrors();

@@ -46,9 +46,9 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\Ev
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Support\Facades\Queue;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('requires event_id to submit the request', function () {
@@ -58,7 +58,7 @@ it('requires event_id to submit the request', function () {
 
     $student = Student::factory()->create();
 
-    livewire(EventsRelationManager::class, [
+    Livewire::test(EventsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -77,7 +77,7 @@ it('can request an event registration via email', function () {
     $student = Student::factory()->create();
     $event = Event::factory()->create();
 
-    livewire(EventsRelationManager::class, [
+    Livewire::test(EventsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -112,7 +112,7 @@ it('allows request_note to be optional', function () {
     $student = Student::factory()->create();
     $event = Event::factory()->create();
 
-    livewire(EventsRelationManager::class, [
+    Livewire::test(EventsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -155,7 +155,7 @@ it('reuses an existing attendee and requested submission for the same event inst
     $existingSubmission->author()->associate($existingAttendee);
     $existingSubmission->save();
 
-    livewire(EventsRelationManager::class, [
+    Livewire::test(EventsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -201,7 +201,7 @@ it('creates a new submission when the existing one is already submitted', functi
     $submitted->author()->associate($attendee);
     $submitted->save();
 
-    livewire(EventsRelationManager::class, [
+    Livewire::test(EventsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -222,7 +222,7 @@ it('associates the current authenticated user as the requester', function () {
     $student = Student::factory()->create();
     $event = Event::factory()->create();
 
-    livewire(EventsRelationManager::class, [
+    Livewire::test(EventsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -250,7 +250,7 @@ it('dispatches the delivery job after creating the submission', function () {
     $student = Student::factory()->create();
     $event = Event::factory()->create();
 
-    livewire(EventsRelationManager::class, [
+    Livewire::test(EventsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -270,7 +270,7 @@ it('sends a success notification after the request is sent', function () {
     $student = Student::factory()->create();
     $event = Event::factory()->create();
 
-    livewire(EventsRelationManager::class, [
+    Livewire::test(EventsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -291,7 +291,7 @@ it('hides the request action from a user without the event_attendee.create abili
 
     $student = Student::factory()->create();
 
-    livewire(EventsRelationManager::class, [
+    Livewire::test(EventsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -312,7 +312,7 @@ it('allows a user with the event_attendee.create ability to request an event reg
     $student = Student::factory()->create();
     $event = Event::factory()->create();
 
-    livewire(EventsRelationManager::class, [
+    Livewire::test(EventsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])

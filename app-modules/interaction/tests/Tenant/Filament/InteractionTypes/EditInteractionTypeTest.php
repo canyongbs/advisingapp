@@ -40,9 +40,9 @@ use AdvisingApp\Interaction\Filament\Resources\InteractionTypes\Pages\EditIntera
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionType;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('EditInteractionType is gated with proper access control', function () {
@@ -71,6 +71,6 @@ test('it cannot delete instances used by an interaction', function () {
 
     Interaction::factory()->for($type, 'type')->create();
 
-    livewire(EditInteractionType::class, ['record' => $type->id])
+    Livewire::test(EditInteractionType::class, ['record' => $type->id])
         ->assertActionHidden('delete');
 });

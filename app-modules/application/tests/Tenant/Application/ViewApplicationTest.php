@@ -40,9 +40,9 @@ use AdvisingApp\Application\Filament\Resources\Applications\Pages\ViewApplicatio
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
+use Livewire\Livewire;
 
 use function Pest\Laravel\seed;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('archive action is always visible and labeled Archive', function () {
@@ -59,11 +59,11 @@ it('archive action is always visible and labeled Archive', function () {
     $applicationWithoutSubmissions = Application::factory()->create();
     $applicationWithoutSubmissions->submissions()->delete();
 
-    livewire(ViewApplication::class, ['record' => $applicationWithSubmissions->getRouteKey()])
+    Livewire::test(ViewApplication::class, ['record' => $applicationWithSubmissions->getRouteKey()])
         ->assertActionVisible('archive')
         ->assertActionHasLabel('archive', 'Archive');
 
-    livewire(ViewApplication::class, ['record' => $applicationWithoutSubmissions->getRouteKey()])
+    Livewire::test(ViewApplication::class, ['record' => $applicationWithoutSubmissions->getRouteKey()])
         ->assertActionVisible('archive')
         ->assertActionHasLabel('archive', 'Archive');
 });
@@ -79,7 +79,7 @@ it('archive action archives the application and redirects to the index when the 
         'application_id' => $application->id,
     ]);
 
-    livewire(ViewApplication::class, ['record' => $application->getRouteKey()])
+    Livewire::test(ViewApplication::class, ['record' => $application->getRouteKey()])
         ->callAction('archive')
         ->assertRedirect(ApplicationResource::getUrl('index'));
 
@@ -93,6 +93,6 @@ it('exposes the mapped block types to the read-only fields rich editor for the c
 
     $application = Application::factory()->create();
 
-    livewire(ViewApplication::class, ['record' => $application->getRouteKey()])
+    Livewire::test(ViewApplication::class, ['record' => $application->getRouteKey()])
         ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });

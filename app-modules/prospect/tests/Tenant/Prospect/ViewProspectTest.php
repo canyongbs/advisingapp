@@ -54,10 +54,10 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\In
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\seed;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 // TODO: Write ViewProspectSource page test
@@ -99,7 +99,7 @@ test('convert action visible when prospect is not converted to student', functio
 
     actingAs($user);
 
-    livewire(ViewProspect::class, [
+    Livewire::test(ViewProspect::class, [
         'record' => $prospect->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -120,7 +120,7 @@ test('disassociate student action visible when prospect is converted to student'
 
     actingAs($user);
 
-    livewire(ViewProspect::class, [
+    Livewire::test(ViewProspect::class, [
         'record' => $prospect->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -147,7 +147,7 @@ test('convert prospect to student', function () {
     $student = Student::factory()
         ->create();
 
-    livewire(ViewProspect::class, [
+    Livewire::test(ViewProspect::class, [
         'record' => $prospect->getKey(),
     ])
         ->callAction(
@@ -189,7 +189,7 @@ test('disassociate student from prospect', function () {
         ->for(Student::factory(), 'student')
         ->create();
 
-    livewire(ViewProspect::class, [
+    Livewire::test(ViewProspect::class, [
         'record' => $prospect->getRouteKey(),
     ])
         ->callAction(
@@ -248,7 +248,7 @@ test('can see prospect converted to student badge on', function (string $pages) 
         ->for(Student::factory(), 'student')
         ->create();
 
-    livewire($pages, [
+    Livewire::test($pages, [
         'record' => $prospect->getRouteKey(),
     ])
         ->assertSeeHtml('data-identifier="prospect_converted_to_student"');
@@ -273,7 +273,7 @@ test('renders the EngagementsRelationManager based on proper access', function (
 
     $relationManager = EngagementsRelationManager::class;
 
-    livewire(ViewProspect::class, [
+    Livewire::test(ViewProspect::class, [
         'record' => $prospect->getKey(),
     ])
         ->assertOk()
@@ -281,7 +281,7 @@ test('renders the EngagementsRelationManager based on proper access', function (
 
     $user->givePermissionTo('engagement.view-any');
 
-    livewire(ViewProspect::class, [
+    Livewire::test(ViewProspect::class, [
         'record' => $prospect->getKey(),
     ])
         ->assertOk()
@@ -289,7 +289,7 @@ test('renders the EngagementsRelationManager based on proper access', function (
 
     $user->revokePermissionTo('engagement.view-any');
 
-    livewire(ViewProspect::class, [
+    Livewire::test(ViewProspect::class, [
         'record' => $prospect->getKey(),
     ])
         ->assertOk()
@@ -297,7 +297,7 @@ test('renders the EngagementsRelationManager based on proper access', function (
 
     $user->givePermissionTo('engagement_response.view-any');
 
-    livewire(ViewProspect::class, [
+    Livewire::test(ViewProspect::class, [
         'record' => $prospect->getKey(),
     ])
         ->assertOk()
@@ -305,7 +305,7 @@ test('renders the EngagementsRelationManager based on proper access', function (
 
     $user->givePermissionTo('engagement.view-any');
 
-    livewire(ViewProspect::class, [
+    Livewire::test(ViewProspect::class, [
         'record' => $prospect->getKey(),
     ])
         ->assertOk()
@@ -324,7 +324,7 @@ test('renders the InteractionsRelationManager based on proper access', function 
 
     $relationManager = InteractionsRelationManager::class;
 
-    livewire(ViewProspect::class, [
+    Livewire::test(ViewProspect::class, [
         'record' => $prospect->getKey(),
     ])
         ->assertOk()
@@ -332,7 +332,7 @@ test('renders the InteractionsRelationManager based on proper access', function 
 
     $user->givePermissionTo('interaction.view-any');
 
-    livewire(ViewProspect::class, [
+    Livewire::test(ViewProspect::class, [
         'record' => $prospect->getKey(),
     ])
         ->assertOk()
@@ -351,7 +351,7 @@ test('renders the EngagementFilesRelationManager based on proper access', functi
 
     $relationManager = EngagementFilesRelationManager::class;
 
-    livewire(ViewProspect::class, [
+    Livewire::test(ViewProspect::class, [
         'record' => $prospect->getKey(),
     ])
         ->assertOk()
@@ -359,7 +359,7 @@ test('renders the EngagementFilesRelationManager based on proper access', functi
 
     $user->givePermissionTo('engagement_file.view-any');
 
-    livewire(ViewProspect::class, [
+    Livewire::test(ViewProspect::class, [
         'record' => $prospect->getKey(),
     ])
         ->assertOk()
@@ -379,7 +379,7 @@ test('renders the FormSubmissionsRelationManager based on Feature access', funct
 
     $relationManager = FormSubmissionsRelationManager::class;
 
-    livewire(ViewProspect::class, [
+    Livewire::test(ViewProspect::class, [
         'record' => $prospect->getKey(),
     ])
         ->assertOk()
@@ -389,7 +389,7 @@ test('renders the FormSubmissionsRelationManager based on Feature access', funct
 
     $licenseSettings->save();
 
-    livewire(ViewProspect::class, [
+    Livewire::test(ViewProspect::class, [
         'record' => $prospect->getKey(),
     ])
         ->assertOk()
@@ -409,7 +409,7 @@ test('renders the EventsRelationManager based on Feature access', function () {
 
     $relationManager = EventsRelationManager::class;
 
-    livewire(ViewProspect::class, [
+    Livewire::test(ViewProspect::class, [
         'record' => $prospect->getKey(),
     ])
         ->assertOk()
@@ -419,7 +419,7 @@ test('renders the EventsRelationManager based on Feature access', function () {
 
     $licenseSettings->save();
 
-    livewire(ViewProspect::class, [
+    Livewire::test(ViewProspect::class, [
         'record' => $prospect->getKey(),
     ])
         ->assertOk()
@@ -439,7 +439,7 @@ test('renders the ApplicationSubmissionsRelationManager based on Feature access'
 
     $relationManager = ApplicationSubmissionsRelationManager::class;
 
-    livewire(ViewProspect::class, [
+    Livewire::test(ViewProspect::class, [
         'record' => $prospect->getKey(),
     ])
         ->assertOk()
@@ -449,7 +449,7 @@ test('renders the ApplicationSubmissionsRelationManager based on Feature access'
 
     $licenseSettings->save();
 
-    livewire(ViewProspect::class, [
+    Livewire::test(ViewProspect::class, [
         'record' => $prospect->getKey(),
     ])
         ->assertOk()

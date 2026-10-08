@@ -38,8 +38,8 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageFormNotifications;
 use AdvisingApp\Form\Models\Form;
 use App\Models\User;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('can save notification users to a form', function () {
@@ -48,7 +48,7 @@ test('can save notification users to a form', function () {
     $form = Form::factory()->create();
     $userToNotify = User::factory()->licensed(LicenseType::cases())->create();
 
-    livewire(ManageFormNotifications::class, ['record' => $form->getKey()])
+    Livewire::test(ManageFormNotifications::class, ['record' => $form->getKey()])
         ->fillForm([
             'notification_users' => [$userToNotify->getKey()],
         ])
@@ -64,7 +64,7 @@ test('can enable notify_via_email and it persists', function () {
 
     $form = Form::factory()->create(['notify_via_email' => false]);
 
-    livewire(ManageFormNotifications::class, ['record' => $form->getKey()])
+    Livewire::test(ManageFormNotifications::class, ['record' => $form->getKey()])
         ->fillForm(['notify_via_email' => true])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -77,7 +77,7 @@ test('can enable notify_via_app and it persists', function () {
 
     $form = Form::factory()->create(['notify_via_app' => false]);
 
-    livewire(ManageFormNotifications::class, ['record' => $form->getKey()])
+    Livewire::test(ManageFormNotifications::class, ['record' => $form->getKey()])
         ->fillForm(['notify_via_app' => true])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -90,12 +90,12 @@ test('notify_to_care_team toggle is only visible when form is authenticated', fu
 
     $form = Form::factory()->create(['is_authenticated' => false]);
 
-    livewire(ManageFormNotifications::class, ['record' => $form->getKey()])
+    Livewire::test(ManageFormNotifications::class, ['record' => $form->getKey()])
         ->assertFormFieldIsHidden('notify_to_care_team');
 
     $form->update(['is_authenticated' => true]);
 
-    livewire(ManageFormNotifications::class, ['record' => $form->getKey()])
+    Livewire::test(ManageFormNotifications::class, ['record' => $form->getKey()])
         ->assertFormFieldIsVisible('notify_to_care_team');
 });
 
@@ -104,12 +104,12 @@ test('notify_to_subscribers toggle is only visible when form is authenticated', 
 
     $form = Form::factory()->create(['is_authenticated' => false]);
 
-    livewire(ManageFormNotifications::class, ['record' => $form->getKey()])
+    Livewire::test(ManageFormNotifications::class, ['record' => $form->getKey()])
         ->assertFormFieldIsHidden('notify_to_subscribers');
 
     $form->update(['is_authenticated' => true]);
 
-    livewire(ManageFormNotifications::class, ['record' => $form->getKey()])
+    Livewire::test(ManageFormNotifications::class, ['record' => $form->getKey()])
         ->assertFormFieldIsVisible('notify_to_subscribers');
 });
 
@@ -121,7 +121,7 @@ test('can enable notify_to_care_team on an authenticated form', function () {
         'notify_to_care_team' => false,
     ]);
 
-    livewire(ManageFormNotifications::class, ['record' => $form->getKey()])
+    Livewire::test(ManageFormNotifications::class, ['record' => $form->getKey()])
         ->fillForm(['notify_to_care_team' => true])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -137,7 +137,7 @@ test('can enable notify_to_subscribers on an authenticated form', function () {
         'notify_to_subscribers' => false,
     ]);
 
-    livewire(ManageFormNotifications::class, ['record' => $form->getKey()])
+    Livewire::test(ManageFormNotifications::class, ['record' => $form->getKey()])
         ->fillForm(['notify_to_subscribers' => true])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -151,7 +151,7 @@ test('can save all notification settings together on an authenticated form', fun
     $form = Form::factory()->create(['is_authenticated' => true]);
     $userToNotify = User::factory()->licensed(LicenseType::cases())->create();
 
-    livewire(ManageFormNotifications::class, ['record' => $form->getKey()])
+    Livewire::test(ManageFormNotifications::class, ['record' => $form->getKey()])
         ->fillForm([
             'notification_users' => [$userToNotify->getKey()],
             'notify_to_care_team' => true,

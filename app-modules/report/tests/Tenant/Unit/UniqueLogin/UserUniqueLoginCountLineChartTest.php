@@ -37,8 +37,7 @@
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Filament\Widgets\UserUniqueLoginCountLineChart;
 use App\Models\User;
-
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 beforeEach()->skip('Skipping these tests as there are currently issues with these tests or the underlying functionality having to do with overflow dates that needs to be resolved');
 
@@ -46,7 +45,7 @@ it('checks users with tracked_event_type unique-login count in line chart', func
     User::factory()->count(5)->hasLogins(['type' => TrackedEventType::UserLogin, 'occurred_at' => now()->subMonths(1)])->create();
     User::factory()->count(3)->hasLogins(['type' => TrackedEventType::UserLogin, 'occurred_at' => now()->subMonths(6)])->create();
 
-    $widgetInstance = livewire(UserUniqueLoginCountLineChart::class, ['cacheTag' => 'report-users'])->instance();
+    $widgetInstance = Livewire::test(UserUniqueLoginCountLineChart::class, ['cacheTag' => 'report-users'])->instance();
     $invadedWidget = invade($widgetInstance);
 
     expect($invadedWidget->getData()['datasets'][0]['data'])->toMatchSnapshot();

@@ -40,9 +40,9 @@ use AdvisingApp\MeetingCenter\Livewire\EventDetailsManager;
 use AdvisingApp\MeetingCenter\Models\Event;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 $eventDetailsManagerTestUser = function (): User {
@@ -61,7 +61,7 @@ it('does not allow updating an event to a title matching another non-deleted eve
     Event::factory()->create(['title' => 'Other Event']);
     $event = Event::factory()->create(['title' => 'Editable Event']);
 
-    livewire(EventDetailsManager::class, ['record' => $event])
+    Livewire::test(EventDetailsManager::class, ['record' => $event])
         ->fillForm(['title' => 'other event'])
         ->call('save')
         ->assertHasFormErrors(['title' => 'unique']);
@@ -75,7 +75,7 @@ it('allows updating an event to a title freed up by a soft-deleted event case-in
 
     $event = Event::factory()->create(['title' => 'Editable Event']);
 
-    livewire(EventDetailsManager::class, ['record' => $event])
+    Livewire::test(EventDetailsManager::class, ['record' => $event])
         ->fillForm(['title' => 'reusable title'])
         ->call('save')
         ->assertHasNoFormErrors(['title']);
@@ -92,7 +92,7 @@ it('saves the eventRegistrationForm relationship fields alongside the event', fu
         'rounding' => Rounding::None,
     ]);
 
-    livewire(EventDetailsManager::class, ['record' => $event])
+    Livewire::test(EventDetailsManager::class, ['record' => $event])
         ->fillForm([
             'eventRegistrationForm' => [
                 'embed_enabled' => true,
@@ -118,7 +118,7 @@ describe('authorization', function () use ($eventDetailsManagerTestUser) {
 
         $event = Event::factory()->create();
 
-        livewire(EventDetailsManager::class, ['record' => $event])
+        Livewire::test(EventDetailsManager::class, ['record' => $event])
             ->assertForbidden();
     });
 });

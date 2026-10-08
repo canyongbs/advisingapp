@@ -43,9 +43,9 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudentAl
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     $settings = app(LicenseSettings::class);
@@ -64,7 +64,7 @@ it('requires proper access', function () {
 
     actingAs($user);
 
-    livewire(ViewStudentAlerts::class, [
+    Livewire::test(ViewStudentAlerts::class, [
         'record' => $student->getKey(),
     ])
         ->assertForbidden();
@@ -72,7 +72,7 @@ it('requires proper access', function () {
     $settings->data->addons->earlyAlert = true;
     $settings->save();
 
-    livewire(ViewStudentAlerts::class, [
+    Livewire::test(ViewStudentAlerts::class, [
         'record' => $student->getKey(),
     ])
         ->assertForbidden();
@@ -81,7 +81,7 @@ it('requires proper access', function () {
     $user->givePermissionTo('student.*.view');
     $user->givePermissionTo('student.*.view');
 
-    livewire(ViewStudentAlerts::class, [
+    Livewire::test(ViewStudentAlerts::class, [
         'record' => $student->getKey(),
     ])
         ->assertOk();
@@ -118,7 +118,7 @@ it('renders active alerts as table rows', function () {
 
     app(GenerateStudentAlertsView::class)->execute();
 
-    livewire(ViewStudentAlerts::class, [
+    Livewire::test(ViewStudentAlerts::class, [
         'record' => $student->getKey(),
     ])
         ->assertCanSeeTableRecords([$alertConfig])
@@ -164,7 +164,7 @@ it('renders inactive alerts as table rows', function () {
 
     app(GenerateStudentAlertsView::class)->execute();
 
-    livewire(ViewStudentAlerts::class, [
+    Livewire::test(ViewStudentAlerts::class, [
         'record' => $student->getKey(),
     ])
         ->assertCanNotSeeTableRecords([$alertConfig])
@@ -208,7 +208,7 @@ it('renders disabled alerts as table rows', function () {
 
     app(GenerateStudentAlertsView::class)->execute();
 
-    livewire(ViewStudentAlerts::class, [
+    Livewire::test(ViewStudentAlerts::class, [
         'record' => $student->getKey(),
     ])
         ->assertCanNotSeeTableRecords([$alertConfig])

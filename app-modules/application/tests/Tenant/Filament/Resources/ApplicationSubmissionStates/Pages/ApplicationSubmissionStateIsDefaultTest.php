@@ -40,9 +40,9 @@ use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages\EditApplicationSubmissionState;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('can create a submission state with is_default set to true', function () {
@@ -53,7 +53,7 @@ test('can create a submission state with is_default set to true', function () {
         'is_default' => true,
     ]);
 
-    livewire(CreateApplicationSubmissionState::class)
+    Livewire::test(CreateApplicationSubmissionState::class)
         ->fillForm($state->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
@@ -77,7 +77,7 @@ test('creating a state with is_default true clears the previous default', functi
         'is_default' => true,
     ]);
 
-    livewire(CreateApplicationSubmissionState::class)
+    Livewire::test(CreateApplicationSubmissionState::class)
         ->fillForm($newDefault->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
@@ -103,7 +103,7 @@ test('editing a state to set is_default true clears the previous default', funct
         'is_default' => false,
     ]);
 
-    livewire(EditApplicationSubmissionState::class, ['record' => $anotherState->getRouteKey()])
+    Livewire::test(EditApplicationSubmissionState::class, ['record' => $anotherState->getRouteKey()])
         ->fillForm(['is_default' => true])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -130,7 +130,7 @@ test('getDefaultActiveTab returns the default state id when one exists', functio
 
     $application = Application::factory()->create();
 
-    $component = livewire(ManageApplicationSubmissions::class, ['record' => $application->getRouteKey()])
+    $component = Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getRouteKey()])
         ->instance();
 
     expect($component->getDefaultActiveTab())->toBe($defaultState->id);
@@ -143,7 +143,7 @@ test('getDefaultActiveTab returns all when no default state is set', function ()
 
     $application = Application::factory()->create();
 
-    $component = livewire(ManageApplicationSubmissions::class, ['record' => $application->getRouteKey()])
+    $component = Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getRouteKey()])
         ->instance();
 
     expect($component->getDefaultActiveTab())->toBe('all');
@@ -152,7 +152,7 @@ test('getDefaultActiveTab returns all when no default state is set', function ()
 test('is_default toggle is visible on create form', function () {
     asSuperAdmin();
 
-    livewire(CreateApplicationSubmissionState::class)
+    Livewire::test(CreateApplicationSubmissionState::class)
         ->assertFormFieldExists('is_default');
 });
 
@@ -163,6 +163,6 @@ test('is_default toggle is visible on edit form', function () {
         'classification' => ApplicationSubmissionStateClassification::Received,
     ]);
 
-    livewire(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
+    Livewire::test(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
         ->assertFormFieldExists('is_default');
 });

@@ -41,10 +41,10 @@ use AdvisingApp\CareTeam\Tests\Tenant\RequestFactories\EditCareTeamRoleRequestFa
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Enums\CareTeamRoleType;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertEquals;
 use function Tests\asSuperAdmin;
 
@@ -60,7 +60,7 @@ test('EditProspectCareTeamRole is gated with proper access control', function ()
             ])
         )->assertForbidden();
 
-    livewire(EditProspectCareTeamRole::class, [
+    Livewire::test(EditProspectCareTeamRole::class, [
         'record' => $careTeamRole->getRouteKey(),
     ])
         ->assertForbidden();
@@ -76,7 +76,7 @@ test('EditProspectCareTeamRole is gated with proper access control', function ()
             ])
         )->assertForbidden();
 
-    livewire(EditProspectCareTeamRole::class, [
+    Livewire::test(EditProspectCareTeamRole::class, [
         'record' => $careTeamRole->getRouteKey(),
     ])
         ->assertForbidden();
@@ -91,7 +91,7 @@ test('EditProspectCareTeamRole is gated with proper access control', function ()
             ])
         )->assertSuccessful();
 
-    livewire(EditProspectCareTeamRole::class, [
+    Livewire::test(EditProspectCareTeamRole::class, [
         'record' => $careTeamRole->getRouteKey(),
     ])
         ->assertSuccessful();
@@ -110,7 +110,7 @@ test('A successful action on the EditProspectCareTeamRole page', function () {
 
     $editRequest = EditCareTeamRoleRequestFactory::new()->state(['type' => CareTeamRoleType::Prospect])->create();
 
-    livewire(EditProspectCareTeamRole::class, [
+    Livewire::test(EditProspectCareTeamRole::class, [
         'record' => $careTeamRole->getRouteKey(),
     ])
         ->set('data', $editRequest)
@@ -127,7 +127,7 @@ test('EditProspectCareTeamRole requires valid data', function (EditCareTeamRoleR
 
     $editRequest = EditCareTeamRoleRequestFactory::new($data)->create();
 
-    livewire(EditProspectCareTeamRole::class, [
+    Livewire::test(EditProspectCareTeamRole::class, [
         'record' => $careTeamRole->getRouteKey(),
     ])
         ->set('data', $editRequest)

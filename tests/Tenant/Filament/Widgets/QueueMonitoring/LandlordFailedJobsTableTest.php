@@ -39,8 +39,8 @@ use App\Filament\Widgets\QueueMonitoring\LandlordFailedJobsTable;
 use App\Models\FailedJob;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Support\Str;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 function landlordFailedJobOn(?string $connection = null): FailedJob
@@ -61,7 +61,7 @@ it("lists only the landlord's failed jobs", function () {
     $landlordFailedJob = landlordFailedJobOn('landlord');
     landlordFailedJobOn();
 
-    livewire(LandlordFailedJobsTable::class)
+    Livewire::test(LandlordFailedJobsTable::class)
         ->assertCanSeeTableRecords([$landlordFailedJob])
         ->assertCountTableRecords(1);
 });
@@ -75,7 +75,7 @@ it("retries a failed job in the landlord's context", function () {
     $retryFailedJobs->shouldReceive('__invoke')->once()->with([$failedJob->uuid], null);
     app()->instance(RetryFailedJobs::class, $retryFailedJobs);
 
-    livewire(LandlordFailedJobsTable::class)
+    Livewire::test(LandlordFailedJobsTable::class)
         ->callAction(TestAction::make('retry')->table($failedJob))
         ->assertNotified('Job queued for retry.');
 });
@@ -87,7 +87,7 @@ it("forgets a failed job from the landlord's failed jobs", function () {
 
     expect(FailedJob::on('landlord')->whereKey($failedJob->getKey())->exists())->toBeTrue();
 
-    livewire(LandlordFailedJobsTable::class)
+    Livewire::test(LandlordFailedJobsTable::class)
         ->callAction(TestAction::make('forget')->table($failedJob))
         ->assertNotified('Failed job removed.');
 

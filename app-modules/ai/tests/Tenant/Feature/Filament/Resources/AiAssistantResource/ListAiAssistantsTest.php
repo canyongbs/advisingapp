@@ -38,11 +38,11 @@ use AdvisingApp\Ai\Filament\Resources\AiAssistants\Pages\ListAiAssistants;
 use AdvisingApp\Ai\Models\AiAssistant;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 
 /** @var array<LicenseType> $licenses */
 $licenses = [
@@ -115,7 +115,7 @@ it('can list records', function () use ($licenses, $permissions) {
 
     assertDatabaseCount(AiAssistant::class, $records->count());
 
-    livewire(ListAiAssistants::class)
+    Livewire::test(ListAiAssistants::class)
         ->assertSuccessful()
         ->assertCountTableRecords($records->count())
         ->assertCanSeeTableRecords($records);

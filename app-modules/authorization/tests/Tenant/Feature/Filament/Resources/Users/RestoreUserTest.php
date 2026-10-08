@@ -40,9 +40,9 @@ use App\Models\User;
 use Filament\Actions\RestoreAction;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\TrashedFilter;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertNotInstanceOf;
 use function Tests\asSuperAdmin;
 
@@ -52,7 +52,7 @@ it('show trashed filter only if user has user restore permission', function () {
     $user->givePermissionTo('user.view-any', 'user.*.view', 'user.*.restore');
     actingAs($user);
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->assertTableFilterExists(TrashedFilter::class);
 });
 
@@ -64,7 +64,7 @@ it('do not show trashed filter if user does not has restore permission', functio
 
     assertNotInstanceOf(
         BaseFilter::class,
-        livewire(ListUsers::class)->instance()->getTable()->getFilter(TrashedFilter::class),
+        Livewire::test(ListUsers::class)->instance()->getTable()->getFilter(TrashedFilter::class),
         sprintf('Failed asserting that a table filter with name [%s] does not exist on the [%s] component.', TrashedFilter::class, ListUsers::class)
     );
 });
@@ -79,7 +79,7 @@ it('do not show soft deleted users when filter is not selected', function () {
     $nonDeletedUserRecords = User::get();
     $softDeletedUserRecords = User::onlyTrashed()->get();
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->removeTableFilters()
         ->assertCanSeeTableRecords($nonDeletedUserRecords)
         ->assertCanNotSeeTableRecords($softDeletedUserRecords);
@@ -93,7 +93,7 @@ it('can see soft deleted, non soft deleted records and status column only if the
     $softDeletedUser = $users->first();
     $softDeletedUser->delete();
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->filterTable(TrashedFilter::class)
         ->assertTableColumnExists('deleted_at')
         ->assertCanSeeTableRecords($users);
@@ -112,7 +112,7 @@ it('Show restore action only if user has permission to restore user', function (
     $softDeletedUser->delete();
     $softDeletedUserRecords = User::onlyTrashed()->get();
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->filterTable(TrashedFilter::class, 0)
         ->assertCanSeeTableRecords($softDeletedUserRecords)
         ->assertTableActionExists(RestoreAction::class);
@@ -127,7 +127,7 @@ it('check if restore feature works as expected', function () {
     $softDeletedUserRecord = User::onlyTrashed()->get();
     $trashedUserRecord = User::onlyTrashed()->first();
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->filterTable(TrashedFilter::class, 0)
         ->assertCanSeeTableRecords($softDeletedUserRecord)
         ->callTableAction(RestoreAction::class, $trashedUserRecord);
@@ -142,7 +142,7 @@ it('check if email EmailNotInUseOrSoftDeleted validations works properly while c
     // Soft-delete the user
     $user->delete();
 
-    livewire(CreateUser::class)
+    Livewire::test(CreateUser::class)
         ->fillForm([
             'name' => 'Tester',
             'email' => $user->email,
@@ -155,7 +155,7 @@ it('check if email EmailNotInUseOrSoftDeleted validations works properly while c
     asSuperAdmin();
     $first = User::factory()->create();
 
-    livewire(CreateUser::class)
+    Livewire::test(CreateUser::class)
         ->fillForm([
             'name' => 'Tester',
             'email' => $first->email,
@@ -172,7 +172,7 @@ it('check if email EmailNotInUseOrSoftDeleted validations works properly while e
     // Soft-delete the user
     $first->delete();
 
-    livewire(EditUser::class, [
+    Livewire::test(EditUser::class, [
         'record' => $second->getRouteKey(),
     ])
         ->fillForm([
@@ -187,7 +187,7 @@ it('check if email EmailNotInUseOrSoftDeleted validations works properly while e
     $first = User::factory()->create();
     $second = User::factory()->create();
 
-    livewire(EditUser::class, [
+    Livewire::test(EditUser::class, [
         'record' => $second->getRouteKey(),
     ])
         ->fillForm([

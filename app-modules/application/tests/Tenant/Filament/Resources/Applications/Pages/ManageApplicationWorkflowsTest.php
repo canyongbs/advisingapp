@@ -49,12 +49,12 @@ use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Laravel\get;
 use function Pest\Laravel\seed;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 beforeEach(function () {
@@ -68,7 +68,7 @@ test('can successfully create a new workflow for an application through manage w
     $user = User::first();
     expect(WorkflowTrigger::count())->toBe(0);
 
-    livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
         ->callAction('create');
 
     expect(Workflow::count())->toBe(1);
@@ -95,12 +95,12 @@ test('creates multiple workflows for the same application without conflicts', fu
 
     expect(Workflow::count())->toBe(0);
 
-    livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
         ->callAction('create');
 
     expect(Workflow::count())->toBe(1);
 
-    livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
         ->callAction('create');
 
     expect(Workflow::count())->toBe(2);
@@ -125,7 +125,7 @@ test('application workflow creation is gated with proper access control', functi
 
     actingAs($user);
 
-    livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
         ->assertForbidden();
 
     expect(Workflow::count())->toBe(0);
@@ -134,7 +134,7 @@ test('application workflow creation is gated with proper access control', functi
     $user->givePermissionTo('application.view-any');
     $user->givePermissionTo('application.*.update');
 
-    livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
         ->callAction('create');
 
     expect(Workflow::count())->toBe(1);
@@ -167,7 +167,7 @@ test('can successfully edit workflow name through edit workflow page', function 
     $faker = fake();
     $newWorkflowName = $faker->sentence(3);
 
-    livewire(ApplicationNestedEditWorkflow::class, [
+    Livewire::test(ApplicationNestedEditWorkflow::class, [
         'parentRecord' => $application,
         'record' => $oldWorkflow->getRouteKey(),
     ])
@@ -199,7 +199,7 @@ test('can enable workflow through edit workflow page', function () {
         ->state(['is_enabled' => false])
         ->create();
 
-    livewire(ApplicationNestedEditWorkflow::class, [
+    Livewire::test(ApplicationNestedEditWorkflow::class, [
         'parentRecord' => $application,
         'record' => $workflow->getRouteKey(),
     ])
@@ -231,7 +231,7 @@ test('can disable workflow through edit workflow page', function () {
         ->state(['is_enabled' => true])
         ->create();
 
-    livewire(ApplicationNestedEditWorkflow::class, [
+    Livewire::test(ApplicationNestedEditWorkflow::class, [
         'parentRecord' => $application,
         'record' => $workflow->getRouteKey(),
     ])
@@ -262,7 +262,7 @@ test('validates workflow name is required when editing', function () {
         )
         ->create();
 
-    livewire(ApplicationNestedEditWorkflow::class, [
+    Livewire::test(ApplicationNestedEditWorkflow::class, [
         'parentRecord' => $application,
         'record' => $workflow->getRouteKey(),
     ])
@@ -292,7 +292,7 @@ test('validates workflow name has maximum length when editing', function () {
 
     $longName = str_repeat('a', 256);
 
-    livewire(ApplicationNestedEditWorkflow::class, [
+    Livewire::test(ApplicationNestedEditWorkflow::class, [
         'parentRecord' => $application,
         'record' => $workflow->getRouteKey(),
     ])
@@ -327,7 +327,7 @@ test('workflow editing succeeds with proper permissions', function () {
 
     actingAs($user);
 
-    livewire(ApplicationNestedEditWorkflow::class, [
+    Livewire::test(ApplicationNestedEditWorkflow::class, [
         'parentRecord' => $application,
         'record' => $oldWorkflow->getRouteKey(),
     ])
@@ -365,7 +365,7 @@ test('workflow deletion succeeds with proper permissions', function () {
 
     actingAs($user);
 
-    livewire(ApplicationNestedEditWorkflow::class, [
+    Livewire::test(ApplicationNestedEditWorkflow::class, [
         'parentRecord' => $application,
         'record' => $workflow->getRouteKey(),
     ])
@@ -387,7 +387,7 @@ test('create action persists Stage and Trigger event from form data', function (
         ->where('classification', ApplicationSubmissionStateClassification::Review)
         ->firstOrFail();
 
-    livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
         ->callAction('create', [
             'sub_related_id' => $reviewState->id,
             'event' => WorkflowTriggerEvent::Exit->value,
@@ -410,7 +410,7 @@ test('create action defaults Stage to first non-archived state when no tab is ac
         ->oldest('id')
         ->firstOrFail();
 
-    livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
         ->callAction('create');
 
     $workflowTrigger = WorkflowTrigger::firstOrFail();
@@ -431,7 +431,7 @@ test('tabs render one per non-archived submission state plus All', function () {
         ->pluck('id')
         ->all();
 
-    $tabs = livewire(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
+    $tabs = Livewire::test(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
         ->instance()
         ->getTabs();
 

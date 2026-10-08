@@ -37,9 +37,9 @@
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\EditApplication;
 use AdvisingApp\Application\Models\Application;
+use Livewire\Livewire;
 
 use function Pest\Laravel\seed;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 beforeEach(function () {
@@ -62,7 +62,7 @@ it('persists edits to an existing wizard step\'s description onto the new applic
         'content' => ['type' => 'doc', 'content' => []],
     ]);
 
-    $component = livewire(EditApplication::class, ['record' => $application->getRouteKey()]);
+    $component = Livewire::test(EditApplication::class, ['record' => $application->getRouteKey()]);
 
     $formData = $component->get('data');
     $stepKey = array_key_first($formData['steps']);

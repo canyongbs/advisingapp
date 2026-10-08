@@ -46,8 +46,8 @@ use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Config;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can edit a non-confidential task campaign journey step without error', function () {
@@ -78,7 +78,7 @@ it('can edit a non-confidential task campaign journey step without error', funct
             ],
         ]);
 
-    livewire(CampaignActionsRelationManager::class, [
+    Livewire::test(CampaignActionsRelationManager::class, [
         'ownerRecord' => $campaign,
         'pageClass' => ViewCampaign::class,
     ])
@@ -132,7 +132,7 @@ it('can edit a confidential task campaign journey step and persist confidential 
     $updatedTitle = 'Updated Title';
     $updatedDescription = 'This is an updated description.';
 
-    livewire(CampaignActionsRelationManager::class, [
+    Livewire::test(CampaignActionsRelationManager::class, [
         'ownerRecord' => $campaign,
         'pageClass' => ViewCampaign::class,
     ])
@@ -185,7 +185,7 @@ it('assigned_to UserSelect shows all users when filter_admins_from_selection con
             ],
         ]);
 
-    livewire(CampaignActionsRelationManager::class, [
+    Livewire::test(CampaignActionsRelationManager::class, [
         'ownerRecord' => $campaign,
         'pageClass' => ViewCampaign::class,
     ])
@@ -221,7 +221,7 @@ it('confidential_task_users select does not show admin users in options by defau
             ],
         ]);
 
-    livewire(CampaignActionsRelationManager::class, [
+    Livewire::test(CampaignActionsRelationManager::class, [
         'ownerRecord' => $campaign,
         'pageClass' => ViewCampaign::class,
     ])

@@ -43,9 +43,9 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EngagementsRelationManager;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Tables\Filters\SelectFilter;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 // The Messages tab is powered by a single relation manager shared by the student and
 // prospect profiles, so every case below runs against both owners.
@@ -81,7 +81,7 @@ describe('filters', function () use ($createMessagesTabOwner, $actingAsUserWithM
 
         $actingAsUserWithMessagesTabAccess($owner);
 
-        livewire(EngagementsRelationManager::class, [
+        Livewire::test(EngagementsRelationManager::class, [
             'ownerRecord' => $owner,
             'pageClass' => $pageClass,
         ])
@@ -124,7 +124,7 @@ describe('filters', function () use ($createMessagesTabOwner, $actingAsUserWithM
                 'sender_type' => $owner->getMorphClass(),
             ]);
 
-        livewire(EngagementsRelationManager::class, [
+        Livewire::test(EngagementsRelationManager::class, [
             'ownerRecord' => $owner,
             'pageClass' => $pageClass,
         ])
@@ -162,7 +162,7 @@ describe('filters', function () use ($createMessagesTabOwner, $actingAsUserWithM
                 'sender_type' => $owner->getMorphClass(),
             ]);
 
-        livewire(EngagementsRelationManager::class, [
+        Livewire::test(EngagementsRelationManager::class, [
             'ownerRecord' => $owner,
             'pageClass' => $pageClass,
         ])
@@ -189,7 +189,7 @@ describe('filters', function () use ($createMessagesTabOwner, $actingAsUserWithM
                 'sender_type' => $owner->getMorphClass(),
             ]);
 
-        livewire(EngagementsRelationManager::class, [
+        Livewire::test(EngagementsRelationManager::class, [
             'ownerRecord' => $owner,
             'pageClass' => $pageClass,
         ])

@@ -41,11 +41,11 @@ use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Support\Collection;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
 use function Tests\setEnterpriseAiEnabled;
@@ -96,7 +96,7 @@ $setUp = function (
 it('will assign licenses to users', function (LicenseType $licenseType) use ($setUp) {
     ['records' => $records, 'licenseTypes' => $licenseTypes] = $setUp(licenseTypes: $licenseType);
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->assertSuccessful()
         ->assertCountTableRecords($records->count())
         ->callTableBulkAction(AssignLicensesBulkAction::class, $records, [
@@ -124,7 +124,7 @@ it('will replace existing licenses', function () use ($setUp) {
         });
     });
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->assertSuccessful()
         ->assertCountTableRecords($records->count())
         ->callTableBulkAction(AssignLicensesBulkAction::class, $records, [
@@ -153,7 +153,7 @@ it('it will not revoke existing licenses if not replacing', function () use ($se
         });
     });
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->assertSuccessful()
         ->assertCountTableRecords($records->count())
         ->callTableBulkAction(AssignLicensesBulkAction::class, $records, [
@@ -180,7 +180,7 @@ it('will revoke licenses if replacing', function () use ($setUp) {
         });
     });
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->assertSuccessful()
         ->assertCountTableRecords($records->count())
         ->callTableBulkAction(AssignLicensesBulkAction::class, $records, [
@@ -206,7 +206,7 @@ it('will not allow assigning more licenses than available', function () use ($se
     $licenseSettings->data->limits->recruitmentCrmSeats = 1;
     $licenseSettings->save();
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->assertSuccessful()
         ->assertCountTableRecords($records->count())
         ->callTableBulkAction(AssignLicensesBulkAction::class, $records, [
@@ -227,7 +227,7 @@ describe('enterprise ai', function () use ($setUp) {
 
         setEnterpriseAiEnabled(false);
 
-        livewire(ListUsers::class)
+        Livewire::test(ListUsers::class)
             ->callTableBulkAction(AssignLicensesBulkAction::class, $records, [
                 'replace' => false,
                 LicenseType::ConversationalAi->value => true,
@@ -249,7 +249,7 @@ describe('enterprise ai', function () use ($setUp) {
 
         setEnterpriseAiEnabled(false);
 
-        livewire(ListUsers::class)
+        Livewire::test(ListUsers::class)
             ->callTableBulkAction(AssignLicensesBulkAction::class, $records, [
                 'replace' => true,
                 LicenseType::RetentionCrm->value => false,

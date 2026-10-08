@@ -55,11 +55,11 @@ use Filament\Forms\Components\Repeater;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 
 beforeEach(function () {
@@ -81,7 +81,7 @@ test('creating an employee advisor question is gated with proper access control'
         )
         ->assertForbidden();
 
-    livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
+    Livewire::test(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
         ->assertForbidden();
 
     $user->givePermissionTo([
@@ -115,7 +115,7 @@ test('can create an employee advisor question', function () {
 
     $undoRepeaterFake = Repeater::fake();
 
-    livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
+    Livewire::test(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
         ->callTableAction('create', data: ['questions' => [$questionData->toArray()]])
         ->assertHasNoTableActionErrors();
 
@@ -147,7 +147,7 @@ test('can create multiple employee advisor questions at once', function () {
 
     $undoRepeaterFake = Repeater::fake();
 
-    livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
+    Livewire::test(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
         ->callTableAction('create', data: ['questions' => [$firstQuestion->toArray(), $secondQuestion->toArray()]])
         ->assertHasNoTableActionErrors();
 
@@ -176,7 +176,7 @@ test('creating an employee advisor question validates the inputs', function (Emp
 
     $undoRepeaterFake = Repeater::fake();
 
-    livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
+    Livewire::test(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
         ->callTableAction('create', data: ['questions' => [$questionData->toArray()]])
         ->assertHasTableActionErrors(collect($errors)->mapWithKeys(fn (string $rule, string $field) => ["questions.0.{$field}" => $rule])->toArray());
 
@@ -236,7 +236,7 @@ test('can edit an employee advisor question', function () {
 
     actingAs($user);
 
-    livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
+    Livewire::test(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
         ->callTableAction('edit', record: $question->getKey(), data: $request->toArray())
         ->assertHasNoTableActionErrors();
 
@@ -267,7 +267,7 @@ test('editing an employee advisor question validates the inputs', function (Empl
 
     actingAs($user);
 
-    livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
+    Livewire::test(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
         ->callTableAction('edit', record: $question->getKey(), data: $request)
         ->assertHasTableActionErrors($errors);
 })
@@ -337,7 +337,7 @@ describe('export', function () {
 
         actingAs($user);
 
-        livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
+        Livewire::test(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
             ->callAction(TestAction::make(ExportAction::class)->table())
             ->assertNotified();
 
@@ -436,7 +436,7 @@ describe('import', function () {
             "question,answer,category\nWhat is the password reset process?,Go to login and click forgot password.,Knowledge Base\n",
         );
 
-        livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
+        Livewire::test(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
             ->callAction(TestAction::make(ImportAction::class)->table(), data: [
                 'file' => $csv,
                 'columnMap' => [
@@ -545,7 +545,7 @@ describe('authorization', function () {
 
         actingAs($user);
 
-        livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
+        Livewire::test(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
             ->assertActionVisible(TestAction::make(ExportAction::class)->table())
             ->assertActionVisible(TestAction::make(ImportAction::class)->table());
     });
@@ -558,7 +558,7 @@ describe('authorization', function () {
 
         actingAs($user);
 
-        livewire(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
+        Livewire::test(ManageEmployeeAdvisorQuestions::class, ['record' => $assistant->getKey()])
             ->assertActionVisible(TestAction::make(ExportAction::class)->table())
             ->assertActionHidden(TestAction::make(ImportAction::class)->table());
     });

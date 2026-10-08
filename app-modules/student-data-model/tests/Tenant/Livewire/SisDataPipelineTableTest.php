@@ -36,8 +36,8 @@
 
 use AdvisingApp\StudentDataModel\Livewire\SisDataPipelineTable;
 use Illuminate\Support\Facades\Http;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('The SIS data pipeline table can be rendered', function () {
@@ -47,7 +47,7 @@ test('The SIS data pipeline table can be rendered', function () {
         'integrations/*/sis-sync-pipeline-data' => Http::response(['data' => []], 200),
     ]);
 
-    livewire(SisDataPipelineTable::class)
+    Livewire::test(SisDataPipelineTable::class)
         ->assertSuccessful();
 });
 
@@ -58,7 +58,7 @@ test('The SIS data pipeline table displays empty state when no pipeline data exi
         'integrations/*/sis-sync-pipeline-data' => Http::response(['data' => []], 200),
     ]);
 
-    livewire(SisDataPipelineTable::class)
+    Livewire::test(SisDataPipelineTable::class)
         ->assertSuccessful()
         ->assertSee('A sync has not been run yet');
 });
@@ -93,7 +93,7 @@ test('The SIS data pipeline table displays correct success and failure counts', 
         'integrations/*/sis-sync-pipeline-data' => Http::response(['data' => $mockData], 200),
     ]);
 
-    $component = livewire(SisDataPipelineTable::class);
+    $component = Livewire::test(SisDataPipelineTable::class);
 
     $component
         ->assertSuccessful()
@@ -132,7 +132,7 @@ test('The SIS data pipeline table calculates percentages correctly for the origi
         'integrations/*/sis-sync-pipeline-data' => Http::response(['data' => $mockData], 200),
     ]);
 
-    $component = livewire(SisDataPipelineTable::class);
+    $component = Livewire::test(SisDataPipelineTable::class);
 
     $component
         ->assertSuccessful()
@@ -152,7 +152,7 @@ test('The SIS data pipeline table handles API errors gracefully', function () {
         'integrations/*/sis-sync-pipeline-data' => Http::response([], 500),
     ]);
 
-    livewire(SisDataPipelineTable::class)
+    Livewire::test(SisDataPipelineTable::class)
         ->assertSuccessful()
         ->assertSee('A sync has not been run yet');
 });
@@ -182,7 +182,7 @@ test('The SIS data pipeline table displays different pipeline types and triggers
         'integrations/*/sis-sync-pipeline-data' => Http::response(['data' => $mockData], 200),
     ]);
 
-    $component = livewire(SisDataPipelineTable::class);
+    $component = Livewire::test(SisDataPipelineTable::class);
 
     $component
         ->assertSuccessful()
@@ -229,7 +229,7 @@ test('The SIS data pipeline table handles multiple pipeline records with differe
         ], 200),
     ]);
 
-    $component = livewire(SisDataPipelineTable::class);
+    $component = Livewire::test(SisDataPipelineTable::class);
 
     $component->assertSuccessful();
 

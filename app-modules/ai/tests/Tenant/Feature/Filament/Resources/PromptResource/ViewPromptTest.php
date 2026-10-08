@@ -38,12 +38,12 @@ use AdvisingApp\Ai\Filament\Resources\Prompts\Pages\ViewPrompt;
 use AdvisingApp\Ai\Filament\Resources\Prompts\PromptResource;
 use AdvisingApp\Ai\Models\Prompt;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 
 /** @var array<LicenseType> $licenses */
 $licenses = [
@@ -110,7 +110,7 @@ it('can view a record', function () use ($licenses, $permissions) {
 
     assertDatabaseHas(Prompt::class, $record->attributesToArray());
 
-    livewire(ViewPrompt::class, [
+    Livewire::test(ViewPrompt::class, [
         'record' => $record->getRouteKey(),
     ])
         ->assertSuccessful();

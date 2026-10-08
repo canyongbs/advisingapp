@@ -43,9 +43,9 @@ use AdvisingApp\Interaction\Filament\Resources\InteractionStatuses\Pages\ListInt
 use AdvisingApp\Interaction\Settings\InteractionManagementSettings;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     $settings = app(InteractionManagementSettings::class);
@@ -73,7 +73,7 @@ it('disables initiative setting from the initiatives list page', function () {
 
     actingAs($user);
 
-    livewire(ListInteractionInitiatives::class)
+    Livewire::test(ListInteractionInitiatives::class)
         ->assertFormSet([
             'is_initiative_enabled' => true,
             'is_initiative_required' => true,
@@ -95,7 +95,7 @@ it('makes driver optional from the drivers list page', function () {
 
     actingAs($user);
 
-    livewire(ListInteractionDrivers::class)
+    Livewire::test(ListInteractionDrivers::class)
         ->fillForm([
             'is_driver_required' => false,
         ])
@@ -113,13 +113,13 @@ it('persists settings across different list pages', function () {
 
     actingAs($user);
 
-    livewire(ListInteractionRelations::class)
+    Livewire::test(ListInteractionRelations::class)
         ->fillForm([
             'is_relation_enabled' => false,
             'is_relation_required' => false,
         ]);
 
-    livewire(ListInteractionStatuses::class)
+    Livewire::test(ListInteractionStatuses::class)
         ->assertFormSet([
             'is_relation_enabled' => false,
             'is_relation_required' => false,
@@ -179,7 +179,7 @@ foreach ($fieldTypes as $fieldType => $fieldName) {
 
         actingAs($user);
 
-        livewire(CreateInteraction::class)
+        Livewire::test(CreateInteraction::class)
             ->assertFormFieldIsHidden($fieldName);
     });
 
@@ -198,7 +198,7 @@ foreach ($fieldTypes as $fieldType => $fieldName) {
 
         actingAs($user);
 
-        livewire(CreateInteraction::class)
+        Livewire::test(CreateInteraction::class)
             ->fillForm([
                 'interactable_type' => Student::class,
                 'interactable_id' => $student->getKey(),

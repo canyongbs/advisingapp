@@ -40,9 +40,9 @@ use AdvisingApp\Ai\Models\CustomerAdvisor;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 test('List Customer Advisors is gated with proper access control', function () {
     $settings = app(LicenseSettings::class);
@@ -87,7 +87,7 @@ it('render Customer Advisors default to without archived', function () {
         'archived_at' => now(),
     ])->create();
 
-    livewire(ListCustomerAdvisors::class)
+    Livewire::test(ListCustomerAdvisors::class)
         ->assertCanSeeTableRecords($customerAdvisors)
         ->assertCanNotSeeTableRecords($archivedCustomerAdvisors);
 });
@@ -113,7 +113,7 @@ it('filter Customer Advisors with archived', function () {
         'archived_at' => now(),
     ])->create();
 
-    livewire(ListCustomerAdvisors::class)
+    Livewire::test(ListCustomerAdvisors::class)
         ->assertCanSeeTableRecords($customerAdvisors)
         ->assertCanNotSeeTableRecords($archivedCustomerAdvisors)
         ->removeTableFilter('withoutArchived')

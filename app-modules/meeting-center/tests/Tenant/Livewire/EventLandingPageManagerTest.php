@@ -38,8 +38,8 @@ use AdvisingApp\MeetingCenter\Livewire\EventLandingPageManager;
 use AdvisingApp\MeetingCenter\Models\Event;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('saves the rich description and hero image onto the event', function () {
@@ -53,7 +53,7 @@ it('saves the rich description and hero image onto the event', function () {
 
     $description = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Join us for this event.']]]]];
 
-    livewire(EventLandingPageManager::class, ['record' => $event])
+    Livewire::test(EventLandingPageManager::class, ['record' => $event])
         ->fillForm([
             'description' => $description,
             'hero_image' => UploadedFile::fake()->image('hero.png'),

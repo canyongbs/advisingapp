@@ -40,10 +40,10 @@ use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Tests\Tenant\ResourceHubArticle\RequestFactories\CreateResourceHubArticleRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function Tests\asSuperAdmin;
 
@@ -61,18 +61,18 @@ test('CreateResourceHubArticle is gated with proper access control', function ()
 
     $user->givePermissionTo('resource_hub_article.view-any');
 
-    livewire(ListResourceHubArticles::class)
+    Livewire::test(ListResourceHubArticles::class)
         ->assertSuccessful()
         ->assertActionDisabled('create');
 
     $user->givePermissionTo('resource_hub_article.create');
 
-    livewire(ListResourceHubArticles::class)
+    Livewire::test(ListResourceHubArticles::class)
         ->assertActionEnabled('create');
 
     $request = collect(CreateResourceHubArticleRequestFactory::new()->create());
 
-    livewire(ListResourceHubArticles::class)
+    Livewire::test(ListResourceHubArticles::class)
         ->callAction('create', $request->toArray())
         ->assertHasNoActionErrors();
 
@@ -97,19 +97,19 @@ test('CreateResourceHubArticle is gated with proper feature access control', fun
     $user->givePermissionTo('resource_hub_article.view-any');
     $user->givePermissionTo('resource_hub_article.create');
 
-    livewire(ListResourceHubArticles::class)
+    Livewire::test(ListResourceHubArticles::class)
         ->assertForbidden();
 
     $settings->data->addons->resourceHub = true;
 
     $settings->save();
 
-    livewire(ListResourceHubArticles::class)
+    Livewire::test(ListResourceHubArticles::class)
         ->assertSuccessful();
 
     $request = collect(CreateResourceHubArticleRequestFactory::new()->create());
 
-    livewire(ListResourceHubArticles::class)
+    Livewire::test(ListResourceHubArticles::class)
         ->callAction('create', $request->toArray())
         ->assertHasNoActionErrors();
 
@@ -129,11 +129,11 @@ test('CreateResourceHubArticle does not allow for duplicate article titles of no
 
     $article->delete();
 
-    livewire(ListResourceHubArticles::class)
+    Livewire::test(ListResourceHubArticles::class)
         ->callAction('create', $request1->toArray())
         ->assertHasNoFormErrors();
 
-    livewire(ListResourceHubArticles::class)
+    Livewire::test(ListResourceHubArticles::class)
         ->callAction('create', $request2->toArray())
         ->assertHasFormErrors(['title' => 'unique']);
 });

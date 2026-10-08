@@ -39,10 +39,10 @@ use App\Models\User;
 use App\Settings\CollegeBrandingSettings;
 use CanyonGBS\Common\Enums\Color;
 use Filament\Actions\Testing\TestAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 
 it('requires proper permissions to access', function () {
     $user = User::factory()->create();
@@ -64,7 +64,7 @@ it('disables the form without the `settings.*.update` permission', function () {
     $user->givePermissionTo('settings.view-any');
     actingAs($user);
 
-    livewire(ManageCollegeBrandingSettings::class)
+    Livewire::test(ManageCollegeBrandingSettings::class)
         ->assertFormFieldDisabled('is_enabled')
         ->assertFormFieldDisabled('dismissible')
         ->assertFormFieldDisabled('college_text')
@@ -72,7 +72,7 @@ it('disables the form without the `settings.*.update` permission', function () {
 
     $user->givePermissionTo('settings.*.update');
 
-    livewire(ManageCollegeBrandingSettings::class)
+    Livewire::test(ManageCollegeBrandingSettings::class)
         ->assertFormFieldEnabled('is_enabled')
         ->assertFormFieldEnabled('dismissible')
         ->assertFormFieldEnabled('college_text')
@@ -85,12 +85,12 @@ it('hides the `save` action without the `settings.*.update` permission', functio
     $user->givePermissionTo('settings.view-any');
     actingAs($user);
 
-    livewire(ManageCollegeBrandingSettings::class)
+    Livewire::test(ManageCollegeBrandingSettings::class)
         ->assertActionDoesNotExist(TestAction::make('save')->schemaComponent('form-actions', schema: 'content'));
 
     $user->givePermissionTo('settings.*.update');
 
-    livewire(ManageCollegeBrandingSettings::class)
+    Livewire::test(ManageCollegeBrandingSettings::class)
         ->assertActionVisible(TestAction::make('save')->schemaComponent('form-actions', schema: 'content'));
 });
 
@@ -107,7 +107,7 @@ it('requires proper permissions to update settings', function () {
     $settings->color = Color::Blue;
     $settings->save();
 
-    livewire(ManageCollegeBrandingSettings::class)
+    Livewire::test(ManageCollegeBrandingSettings::class)
         ->fillForm([
             'is_enabled' => true,
             'dismissible' => false,
@@ -123,7 +123,7 @@ it('requires proper permissions to update settings', function () {
 
     $user->givePermissionTo('settings.*.update');
 
-    livewire(ManageCollegeBrandingSettings::class)
+    Livewire::test(ManageCollegeBrandingSettings::class)
         ->fillForm([
             'is_enabled' => true,
             'dismissible' => false,

@@ -39,8 +39,8 @@ use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ViewForm;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('archive action is always visible and labeled Archive', function () {
@@ -55,11 +55,11 @@ it('archive action is always visible and labeled Archive', function () {
 
     $formWithoutSubmissions = Form::factory()->create();
 
-    livewire(ViewForm::class, ['record' => $formWithSubmissions->getRouteKey()])
+    Livewire::test(ViewForm::class, ['record' => $formWithSubmissions->getRouteKey()])
         ->assertActionVisible('archive')
         ->assertActionHasLabel('archive', 'Archive');
 
-    livewire(ViewForm::class, ['record' => $formWithoutSubmissions->getRouteKey()])
+    Livewire::test(ViewForm::class, ['record' => $formWithoutSubmissions->getRouteKey()])
         ->assertActionVisible('archive')
         ->assertActionHasLabel('archive', 'Archive');
 });
@@ -74,7 +74,7 @@ it('archive action archives the form and redirects to the index when the form ha
         'submitted_at' => now(),
     ]);
 
-    livewire(ViewForm::class, ['record' => $form->getRouteKey()])
+    Livewire::test(ViewForm::class, ['record' => $form->getRouteKey()])
         ->callAction('archive')
         ->assertRedirect(FormResource::getUrl('index'));
 
@@ -86,6 +86,6 @@ it('exposes the mapped block types to the read-only fields rich editor for the c
 
     $form = Form::factory()->create();
 
-    livewire(ViewForm::class, ['record' => $form->getRouteKey()])
+    Livewire::test(ViewForm::class, ['record' => $form->getRouteKey()])
         ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });

@@ -41,9 +41,9 @@ use AdvisingApp\Survey\Models\SurveySubmission;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\DeleteBulkAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 $listSurveysTestUser = function (): User {
@@ -60,12 +60,12 @@ it('the delete bulk action is gated by the delete permission', function () use (
 
     actingAs($user);
 
-    livewire(ListSurveys::class)
+    Livewire::test(ListSurveys::class)
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 
     $user->givePermissionTo('survey.*.delete');
 
-    livewire(ListSurveys::class)
+    Livewire::test(ListSurveys::class)
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
@@ -77,12 +77,12 @@ it('the duplicate action is gated by the create permission', function () use ($l
 
     $survey = Survey::factory()->create();
 
-    livewire(ListSurveys::class)
+    Livewire::test(ListSurveys::class)
         ->assertTableActionHidden('Duplicate', $survey);
 
     $user->givePermissionTo('survey.create');
 
-    livewire(ListSurveys::class)
+    Livewire::test(ListSurveys::class)
         ->assertTableActionVisible('Duplicate', $survey);
 });
 
@@ -95,7 +95,7 @@ it('can duplicate a survey its steps and its fields', function () {
     expect(Survey::count())->toBe(1);
 
     // And we duplicate it
-    livewire(ListSurveys::class)
+    Livewire::test(ListSurveys::class)
         ->assertStatus(200)
         ->callTableAction('Duplicate', $survey);
 
@@ -118,7 +118,7 @@ it('will not duplicate survey submissions if they exist', function () {
     $submissionCount = $survey->submissions()->count();
 
     // And we duplicate it
-    livewire(ListSurveys::class)
+    Livewire::test(ListSurveys::class)
         ->assertStatus(200)
         ->callTableAction('Duplicate', $survey);
 
@@ -136,7 +136,7 @@ it('prevents duplicating a survey to a case-insensitive duplicate name', functio
     $survey = Survey::factory()->create();
     Survey::factory()->create(['name' => 'Taken Name']);
 
-    livewire(ListSurveys::class)
+    Livewire::test(ListSurveys::class)
         ->assertStatus(200)
         ->callTableAction('Duplicate', $survey, data: ['name' => 'taken name'])
         ->assertHasTableActionErrors(['name' => 'unique']);

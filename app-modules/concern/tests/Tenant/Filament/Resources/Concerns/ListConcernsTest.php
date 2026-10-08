@@ -41,10 +41,10 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteBulkAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('hides the delete bulk action for users without the delete permission', function () {
@@ -53,7 +53,7 @@ it('hides the delete bulk action for users without the delete permission', funct
 
     actingAs($user);
 
-    livewire(ListConcerns::class)
+    Livewire::test(ListConcerns::class)
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 });
 
@@ -64,7 +64,7 @@ it('shows the delete bulk action for users with the delete permission', function
 
     actingAs($user);
 
-    livewire(ListConcerns::class)
+    Livewire::test(ListConcerns::class)
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
@@ -74,7 +74,7 @@ it('does not create a concern for an archived student even when their id is subm
     $archived = Student::factory()->create();
     $archived->archive();
 
-    livewire(ListConcerns::class)
+    Livewire::test(ListConcerns::class)
         ->callAction(CreateAction::class, data: [
             'concern_type' => $archived->getMorphClass(),
             'concern_id' => $archived->getKey(),

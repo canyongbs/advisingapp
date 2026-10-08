@@ -40,8 +40,8 @@ use App\Models\FailedJob;
 use App\Models\Tenant;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Support\Str;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 function tenantFailedJobOn(?string $connection = null): FailedJob
@@ -62,7 +62,7 @@ it("lists only the current tenant's failed jobs under the tenant's name", functi
     $tenantFailedJob = tenantFailedJobOn();
     $landlordFailedJob = tenantFailedJobOn('landlord');
 
-    $component = livewire(TenantFailedJobsTable::class)
+    $component = Livewire::test(TenantFailedJobsTable::class)
         ->assertCanSeeTableRecords([$tenantFailedJob])
         ->assertTableColumnStateSet('display_name', 'App\\Jobs\\ExampleJob', record: $tenantFailedJob)
         ->assertTableColumnFormattedStateSet('exception', 'RuntimeException: Failed.', record: $tenantFailedJob)
@@ -83,7 +83,7 @@ it("retries a failed job in the current tenant's context", function () {
         ->withArgs(fn (array $failedJobIds, ?Tenant $tenant): bool => $failedJobIds === [$failedJob->uuid] && $tenant?->is(Tenant::current()));
     app()->instance(RetryFailedJobs::class, $retryFailedJobs);
 
-    livewire(TenantFailedJobsTable::class)
+    Livewire::test(TenantFailedJobsTable::class)
         ->callAction(TestAction::make('retry')->table($failedJob))
         ->assertNotified('Job queued for retry.');
 });
@@ -100,7 +100,7 @@ it('retries the selected failed jobs together', function () {
             && $tenant?->is(Tenant::current()));
     app()->instance(RetryFailedJobs::class, $retryFailedJobs);
 
-    livewire(TenantFailedJobsTable::class)
+    Livewire::test(TenantFailedJobsTable::class)
         ->selectTableRecords($failedJobs)
         ->callAction(TestAction::make('retry')->table()->bulk())
         ->assertNotified('2 jobs queued for retry.');
@@ -113,7 +113,7 @@ it("forgets a failed job from the current tenant's failed jobs", function () {
 
     expect(FailedJob::query()->whereKey($failedJob->getKey())->exists())->toBeTrue();
 
-    livewire(TenantFailedJobsTable::class)
+    Livewire::test(TenantFailedJobsTable::class)
         ->callAction(TestAction::make('forget')->table($failedJob))
         ->assertNotified('Failed job removed.');
 
@@ -125,7 +125,7 @@ it('shows the full exception in the failed job details', function () {
 
     $failedJob = tenantFailedJobOn();
 
-    livewire(TenantFailedJobsTable::class)
+    Livewire::test(TenantFailedJobsTable::class)
         ->mountAction(TestAction::make('details')->table($failedJob))
         ->assertMountedActionModalSee([$failedJob->uuid, '#0 stack trace']);
 });

@@ -47,10 +47,10 @@ use App\DataTransferObjects\AutocompletedAddress;
 use App\Models\User;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Arr;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 
 // TODO: Write CreateProspect page tests
@@ -68,7 +68,7 @@ test('CreateProspect is gated with proper access control', function () {
             ProspectResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateProspect::class)
+    Livewire::test(CreateProspect::class)
         ->assertForbidden();
 
     $user->givePermissionTo('prospect.view-any');
@@ -85,7 +85,7 @@ test('CreateProspect is gated with proper access control', function () {
 
     $undoRepeaterFake = Repeater::fake();
 
-    livewire(CreateProspect::class)
+    Livewire::test(CreateProspect::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
@@ -116,7 +116,7 @@ it('selecting an address in the AddressInput sets the address fields', function 
     $user->givePermissionTo('prospect.create');
     actingAs($user);
 
-    $component = livewire(CreateProspect::class);
+    $component = Livewire::test(CreateProspect::class);
 
     $addresses = $component->get('data.addresses');
     $itemUuid = array_key_first($addresses);
@@ -157,7 +157,7 @@ it('can create a prospect with an address', function () {
     $uuid = (string) str()->uuid();
     $undoRepeaterFake = Repeater::fake();
 
-    livewire(CreateProspect::class)
+    Livewire::test(CreateProspect::class)
         ->fillForm([
             'status_id' => ProspectStatus::factory()->create()->id,
             'source_id' => ProspectSource::factory()->create()->id,

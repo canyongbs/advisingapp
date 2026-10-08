@@ -39,13 +39,13 @@ use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Forms\Components\Select;
+use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseCount;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 $assertStudentRecipientSelect = function (Closure $assertUsing): void {
-    livewire(ViewBasicNeedsProgram::class, ['record' => BasicNeedsProgram::factory()->create()->getKey()])
+    Livewire::test(ViewBasicNeedsProgram::class, ['record' => BasicNeedsProgram::factory()->create()->getKey()])
         ->mountAction('send_email')
         ->fillForm(['recipient_type' => 'student'])
         ->assertSchemaComponentExists('recipient_id', checkComponentUsing: function (Select $field) use ($assertUsing): bool {
@@ -106,7 +106,7 @@ it('accepts an active student as the submitted recipient', function () {
 
     $student = Student::factory()->create();
 
-    livewire(ViewBasicNeedsProgram::class, ['record' => BasicNeedsProgram::factory()->create()->getKey()])
+    Livewire::test(ViewBasicNeedsProgram::class, ['record' => BasicNeedsProgram::factory()->create()->getKey()])
         ->mountAction('send_email')
         ->fillForm(['recipient_type' => 'student', 'recipient_id' => $student->getKey()])
         ->callMountedAction()
@@ -119,7 +119,7 @@ it('does not send to an archived student even when their id is submitted', funct
     $student = Student::factory()->create();
     $student->archive();
 
-    livewire(ViewBasicNeedsProgram::class, ['record' => BasicNeedsProgram::factory()->create()->getKey()])
+    Livewire::test(ViewBasicNeedsProgram::class, ['record' => BasicNeedsProgram::factory()->create()->getKey()])
         ->mountAction('send_email')
         ->fillForm(['recipient_type' => 'student', 'recipient_id' => $student->getKey()])
         ->callMountedAction()

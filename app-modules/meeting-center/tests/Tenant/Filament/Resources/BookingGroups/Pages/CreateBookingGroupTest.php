@@ -44,11 +44,11 @@ use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\Config;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can render with proper permission', function () {
@@ -77,7 +77,7 @@ it('validates the inputs', function (CreateBookingGroupRequestFactory $data, arr
 
     $user = User::factory()->create();
 
-    livewire(CreateBookingGroup::class)
+    Livewire::test(CreateBookingGroup::class)
         ->fillForm($request)
         ->call('create')
         ->assertHasFormErrors($errors);
@@ -135,7 +135,7 @@ it('can create a booking group with users and departments', function () {
         'meeting_owner_id' => $meetingOwner->id,
     ])->create();
 
-    livewire(CreateBookingGroup::class)
+    Livewire::test(CreateBookingGroup::class)
         ->fillForm($request)
         ->call('create')
         ->assertHasNoFormErrors()
@@ -171,7 +171,7 @@ it('tracks created_by user correctly', function () {
         'meeting_owner_id' => $meetingOwner->id,
     ])->create();
 
-    livewire(CreateBookingGroup::class)
+    Livewire::test(CreateBookingGroup::class)
         ->fillForm($request)
         ->call('create')
         ->assertHasNoFormErrors();
@@ -196,7 +196,7 @@ it('validates meeting owner must be in the group', function () {
         'meeting_owner_id' => $meetingOwner->id,
     ])->create();
 
-    livewire(CreateBookingGroup::class)
+    Livewire::test(CreateBookingGroup::class)
         ->fillForm($request)
         ->call('create')
         ->assertHasFormErrors(['meeting_owner_id']);
@@ -212,7 +212,7 @@ it('validates meeting owner must have a connected calendar', function () {
         'meeting_owner_id' => $meetingOwner->id,
     ])->create();
 
-    livewire(CreateBookingGroup::class)
+    Livewire::test(CreateBookingGroup::class)
         ->fillForm($request)
         ->call('create')
         ->assertHasFormErrors(['meeting_owner_id']);
@@ -225,7 +225,7 @@ it('users UserSelect does not show admin users in options by default on CreateBo
     $adminUser = User::factory()->create();
     $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
-    livewire(CreateBookingGroup::class)
+    Livewire::test(CreateBookingGroup::class)
         ->assertSuccessful()
         ->assertFormFieldExists('users', checkFieldUsing: function (UserSelect $field) use ($regularUser, $adminUser): bool {
             return ! empty($field->getSearchResults($regularUser->name))
@@ -241,7 +241,7 @@ it('users UserSelect shows all users when filter_admins_from_selection config is
     $adminUser = User::factory()->create();
     $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
-    livewire(CreateBookingGroup::class)
+    Livewire::test(CreateBookingGroup::class)
         ->assertSuccessful()
         ->assertFormFieldExists('users', checkFieldUsing: function (UserSelect $field) use ($adminUser): bool {
             return ! empty($field->getSearchResults($adminUser->name));

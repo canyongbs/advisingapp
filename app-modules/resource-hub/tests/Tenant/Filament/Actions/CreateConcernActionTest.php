@@ -39,9 +39,9 @@ use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\ViewRes
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Tests\Tenant\Filament\Actions\RequestFactories\CreateConcernActionRequestFactory;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can create a concern properly', function () {
@@ -51,7 +51,7 @@ it('can create a concern properly', function () {
 
     $data = CreateConcernActionRequestFactory::new()->create();
 
-    livewire(ViewResourceHubArticle::class, ['record' => $resourceHubArticle->getKey()])
+    Livewire::test(ViewResourceHubArticle::class, ['record' => $resourceHubArticle->getKey()])
         ->callAction('raiseConcern', [
             'description' => $data['description'],
         ]);
@@ -71,14 +71,14 @@ it('renders the raise concern action based on proper access', function () {
 
     actingAs($user);
 
-    livewire(ViewResourceHubArticle::class, ['record' => $resourceHubArticle->getKey()])
+    Livewire::test(ViewResourceHubArticle::class, ['record' => $resourceHubArticle->getKey()])
         ->assertForbidden();
 
     $user->givePermissionTo('resource_hub_article.view-any');
 
     $user->refresh();
 
-    livewire(ViewResourceHubArticle::class, ['record' => $resourceHubArticle->getKey()])
+    Livewire::test(ViewResourceHubArticle::class, ['record' => $resourceHubArticle->getKey()])
         ->assertOk()
         ->assertActionVisible('raiseConcern');
 });

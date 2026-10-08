@@ -41,10 +41,10 @@ use AdvisingApp\CareTeam\Tests\Tenant\RequestFactories\CreateCareTeamRoleRequest
 use AdvisingApp\Prospect\Models\Prospect;
 use App\Enums\CareTeamRoleType;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertFalse;
 use function Tests\asSuperAdmin;
@@ -57,7 +57,7 @@ test('CreateProspectCareTeamRole is gated with proper access control', function 
             ProspectCareTeamRoleResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateProspectCareTeamRole::class)
+    Livewire::test(CreateProspectCareTeamRole::class)
         ->assertForbidden();
 
     $user->grantLicense(Prospect::getLicenseType());
@@ -69,7 +69,7 @@ test('CreateProspectCareTeamRole is gated with proper access control', function 
             ProspectCareTeamRoleResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateProspectCareTeamRole::class)
+    Livewire::test(CreateProspectCareTeamRole::class)
         ->assertForbidden();
 
     $user->givePermissionTo('settings.view-any');
@@ -80,7 +80,7 @@ test('CreateProspectCareTeamRole is gated with proper access control', function 
             ProspectCareTeamRoleResource::getUrl('create')
         )->assertSuccessful();
 
-    livewire(CreateProspectCareTeamRole::class)
+    Livewire::test(CreateProspectCareTeamRole::class)
         ->assertSuccessful();
 });
 
@@ -93,7 +93,7 @@ test('A successful action on the CreateProspectCareTeamRole page', function () {
 
     $createRequest = CreateCareTeamRoleRequestFactory::new()->state(['type' => CareTeamRoleType::Prospect])->create();
 
-    livewire(CreateProspectCareTeamRole::class)
+    Livewire::test(CreateProspectCareTeamRole::class)
         ->set('data', $createRequest)
         ->call('create')
         ->assertHasNoFormErrors();
@@ -108,7 +108,7 @@ test('CreateProspectCareTeamRole requires valid data', function (CreateCareTeamR
 
     $createRequest = CreateCareTeamRoleRequestFactory::new($data)->create();
 
-    livewire(CreateProspectCareTeamRole::class)
+    Livewire::test(CreateProspectCareTeamRole::class)
         ->set('data', $createRequest)
         ->call('create')
         ->assertHasFormErrors($errors);
@@ -132,7 +132,7 @@ test('Creating a default care team role will make all other care team roles not 
 
     $createRequest = CreateCareTeamRoleRequestFactory::new()->state(['is_default' => true, 'type' => CareTeamRoleType::Prospect])->create();
 
-    livewire(CreateProspectCareTeamRole::class)
+    Livewire::test(CreateProspectCareTeamRole::class)
         ->set('data', $createRequest)
         ->call('create')
         ->assertHasNoFormErrors();
