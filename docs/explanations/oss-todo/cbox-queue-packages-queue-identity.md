@@ -155,11 +155,11 @@ No Advising App change. We have no workaround for it: the Part 2 workaround alre
 Revert the `getQueue()` override, so we no longer carry it:
 
 1. In `App\Queue\Jobs\TenantFairSqsJob`, remove the constructor and the `getQueue()` override, and the `SqsClient` and `Container` imports they added.
-2. In `App\Queue\TenantFairSqsQueue::pop()`, pass the queue URL as the job's queue again and drop the extra queue-name argument, matching upstream `SqsQueue::pop()`.
+2. In `App\Queue\TenantFairSqsQueue::pop()`, pass the queue URL as the job's queue again and drop the extra queue-name argument, the `$queueName` variable and the `enum_value` import, matching upstream `SqsQueue::pop()`.
 3. Update the tests:
     - `tests/Landlord/Queue/Jobs/TenantFairSqsJobTest.php`: remove the queue-name argument from `tenantFairSqsJobWithBody()`.
-    - `tests/Landlord/Queue/TenantFairSqsQueueTest.php`: remove "names a popped job by its queue but deletes and releases it through the queue URL", and the `changeMessageVisibility` recording added to `tenantFairSqsQueueRecordingInto()` for it.
-4. In `docs/explanations/oss-todo/laravel-sqs-missing-overflow-payload.md`, remove "and still passing it the queue name (`$queue ?? $this->default`) as well as the URL" from the note about re-copying `pop()`.
+    - `tests/Landlord/Queue/TenantFairSqsQueueTest.php`: remove "names a popped job by its queue but deletes and releases it through the queue URL", the `TenantFairSqsQueueTestQueue` enum it uses, and the `changeMessageVisibility` recording added to `tenantFairSqsQueueRecordingInto()` for it.
+4. In `docs/explanations/oss-todo/laravel-sqs-missing-overflow-payload.md`, remove "and still passing it the queue name (`enum_value($queue) ?: $this->default`) as well as the URL" from the note about re-copying `pop()`.
 5. Check on dev (SQS) that the queue monitoring page shows throughput and p95 pickup for each queue, and that no `https` queue appears.
 
 After the revert, `failed_jobs.queue` for new failures, Sentry's `queue` tag and worker log lines go back to showing the queue URL. That is expected and harmless: `queue:retry` resolves a URL as well as a name.

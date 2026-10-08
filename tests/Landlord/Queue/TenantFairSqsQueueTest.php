@@ -379,7 +379,12 @@ it('pops messages as tenant fair SQS jobs', function () {
     expect($queue->pop())->toBeInstanceOf(TenantFairSqsJob::class);
 });
 
-it('names a popped job by its queue but deletes and releases it through the queue URL', function (?string $poppedQueue, string $expectedName, string $expectedUrl) {
+enum TenantFairSqsQueueTestQueue: string
+{
+    case Audit = 'audit';
+}
+
+it('names a popped job by its queue but deletes and releases it through the queue URL', function (UnitEnum|string|null $poppedQueue, string $expectedName, string $expectedUrl) {
     $sentMessages = [];
     $deletedMessages = [];
     $releasedMessages = [];
@@ -399,7 +404,9 @@ it('names a popped job by its queue but deletes and releases it through the queu
         ->and($deletedMessages[0]['QueueUrl'])->toBe($expectedUrl);
 })->with([
     'the default queue' => [null, 'default', 'https://sqs.us-east-1.amazonaws.com/123456789012/default'],
+    'an empty queue name' => ['', 'default', 'https://sqs.us-east-1.amazonaws.com/123456789012/default'],
     'a named queue' => ['audit', 'audit', 'https://sqs.us-east-1.amazonaws.com/123456789012/audit'],
+    'a queue enum' => [TenantFairSqsQueueTestQueue::Audit, 'audit', 'https://sqs.us-east-1.amazonaws.com/123456789012/audit'],
 ]);
 
 it('pops nothing when the queue is empty', function () {
