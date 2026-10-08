@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use App\Models\Media;
 use CanyonGBS\Common\Database\Migrations\Concerns\CanModifyPermissions;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -93,6 +94,10 @@ return new class () extends SettingsMigration {
             collect($this->guards)
                 ->each(fn (string $guard) => $this->deletePermissions(array_keys($this->permissions), $guard));
 
+            DB::table('permission_groups')
+                ->whereIn('name', array_values(array_unique($this->permissions)))
+                ->delete();
+
             $this->migrator->deleteIfExists('ai_research_assistant.discovery_model');
             $this->migrator->deleteIfExists('ai_research_assistant.research_model');
             $this->migrator->deleteIfExists('ai_research_assistant.context');
@@ -118,8 +123,6 @@ return new class () extends SettingsMigration {
             Schema::drop('research_request_folders');
             Schema::drop('data_advisors');
 
-            DB::table('media')->where('model_type', 'research_request')->delete();
-
             DB::table('audits')->where('auditable_type', 'data_advisor')->delete();
 
             DB::table('report_user_accesses')->where('report_key', 'research-advisor-report')->delete();
@@ -128,6 +131,12 @@ return new class () extends SettingsMigration {
             DB::table('exports')
                 ->where('exporter', 'AdvisingApp\\Report\\Filament\\Exports\\ResearchAdvisorExporter')
                 ->delete();
+
+            // Last, so a failure above rolls back before any files are removed from storage.
+            Media::query()
+                ->where('model_type', 'research_request')
+                ->lazyById()
+                ->each(fn (Media $media) => $media->delete());
         });
     }
 
@@ -222,12 +231,17 @@ return new class () extends SettingsMigration {
 
             Schema::create('open_ai_research_request_vector_stores', function (Blueprint $table) {
                 $table->uuid('id')->primary();
-                $table->foreignUuid('research_request_id')->constrained()->cascadeOnDelete();
+                $table->foreignUuid('research_request_id');
                 $table->text('deployment_hash');
                 $table->dateTime('ready_until')->nullable();
                 $table->string('vector_store_id')->nullable();
                 $table->timestamps();
                 $table->softDeletes();
+
+                $table->foreign('research_request_id', 'open_ai_rr_vs_research_request_id_fk')
+                    ->references('id')
+                    ->on('research_requests')
+                    ->cascadeOnDelete();
             });
         });
     }
