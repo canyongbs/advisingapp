@@ -54,7 +54,6 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentEmailAddress;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use App\Models\User;
-use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Queue;
 
 use function Pest\Laravel\assertDatabaseCount;

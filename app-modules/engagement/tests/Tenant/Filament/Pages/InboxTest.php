@@ -42,7 +42,6 @@ use AdvisingApp\Engagement\Models\EngagementResponse;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
-use App\Settings\LicenseSettings;
 
 use function Pest\Laravel\get;
 use function Pest\Livewire\livewire;
