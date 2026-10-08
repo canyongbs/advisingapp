@@ -7,6 +7,11 @@ on:
 
 permissions: {}
 
+env:
+    php-extensions: gd, gmp, redis, mailparse
+    php-extensions-key: ext-cache-20250820
+    php-version: '8.4'
+
 concurrency:
     group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
     cancel-in-progress: true
@@ -20,16 +25,6 @@ jobs:
             contents: read
 
         timeout-minutes: 15
-
-        env:
-            php-extensions: gd, gmp, redis, mailparse
-            php-extensions-key: ext-cache-20250820
-            php-version: '8.4'
-
-        outputs:
-            php-extensions: ${{ env.php-extensions }}
-            php-extensions-key: ${{ env.php-extensions-key }}
-            php-version: ${{ env.php-version }}
 
         steps:
             - name: Generate GitHub App Token
@@ -176,8 +171,6 @@ jobs:
         permissions:
             contents: read
 
-        needs: [prep-and-code-consistency]
-
         env:
             DB_PORT: 5432
             DB_HOST: 127.0.0.1
@@ -219,12 +212,16 @@ jobs:
                     -e POSTGRES_DB=${DB_DATABASE} \
                     -e POSTGRES_USER=${DB_USERNAME} \
                     -e POSTGRES_PASSWORD=${DB_PASSWORD} \
-                    --health-cmd pg_isready \
-                    --health-interval 10s \
+                    --tmpfs /var/lib/postgresql/data \
+                    --health-cmd 'pg_isready -h 127.0.0.1' \
+                    --health-interval 1s \
                     --health-timeout 5s \
-                    --health-retries 5 \
+                    --health-retries 30 \
                     postgres:15@sha256:1b92e7a80c021647bf70f5d3eb66066a998e4f5cf43c07bb9dc9f729782cf88e \
-                    -c max_locks_per_transaction=256
+                    -c max_locks_per_transaction=256 \
+                    -c fsync=off \
+                    -c synchronous_commit=off \
+                    -c full_page_writes=off
 
             - name: Wait for PostgreSQL
               run: |
@@ -241,22 +238,22 @@ jobs:
               id: extcache
               uses: shivammathur/cache-extensions@22e24453af1bf3851994136f122ce065ab828a74 #1.15.2
               with:
-                  php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
-                  extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
-                  key: ${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
+                  php-version: ${{ env.php-version }}
+                  extensions: ${{ env.php-extensions }}
+                  key: ${{ env.php-extensions-key }}
 
             - name: Cache extensions
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
                   path: ${{ steps.extcache.outputs.dir }}
-                  key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
-                  restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
+                  key: ${{ runner.os }}-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
+                  restore-keys: ${{ runner.os }}-phpext-${{ env.php-version }}
 
             - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
               with:
-                  php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
+                  php-version: ${{ env.php-version }}
                   coverage: none
-                  extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
+                  extensions: ${{ env.php-extensions }}
 
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
@@ -331,8 +328,6 @@ jobs:
         permissions:
             contents: read
 
-        needs: [prep-and-code-consistency]
-
         env:
             DB_PORT: 5432
             DB_HOST: 127.0.0.1
@@ -393,22 +388,22 @@ jobs:
               id: extcache
               uses: shivammathur/cache-extensions@22e24453af1bf3851994136f122ce065ab828a74 #1.15.2
               with:
-                  php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
-                  extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
-                  key: ${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
+                  php-version: ${{ env.php-version }}
+                  extensions: ${{ env.php-extensions }}
+                  key: ${{ env.php-extensions-key }}
 
             - name: Cache extensions
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
                   path: ${{ steps.extcache.outputs.dir }}
-                  key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
-                  restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
+                  key: ${{ runner.os }}-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
+                  restore-keys: ${{ runner.os }}-phpext-${{ env.php-version }}
 
             - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
               with:
-                  php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
+                  php-version: ${{ env.php-version }}
                   coverage: none
-                  extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
+                  extensions: ${{ env.php-extensions }}
 
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
