@@ -45,6 +45,7 @@ use Override;
 
 /**
  * Hands the manager workers that log how they exited. The manager builds its pool from what this returns.
+ * Revert once upstream logs it: docs/explanations/oss-todo/cbox-queue-autoscale-dead-worker-exit-status.md
  */
 readonly class ExitReportingWorkerSpawner extends WorkerSpawner
 {

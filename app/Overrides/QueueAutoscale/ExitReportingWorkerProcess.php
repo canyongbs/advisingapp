@@ -43,6 +43,7 @@ use Override;
 
 /**
  * Logs how a worker exited when the manager finds it dead; the package only logs the PID ("Removed dead worker").
+ * Revert once upstream logs it: docs/explanations/oss-todo/cbox-queue-autoscale-dead-worker-exit-status.md
  */
 class ExitReportingWorkerProcess extends WorkerProcess
 {
