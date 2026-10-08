@@ -146,8 +146,5 @@ it('has the notification rate limiting applied properly for sms batched engageme
 
     $limits = $limiter($job);
 
-    expect($limits)
-        ->toHaveCount(1)
-        ->and($limits[0])
-        ->toBeInstanceOf(Unlimited::class);
+    expect($limits)->toBeInstanceOf(Unlimited::class);
 });
