@@ -45,13 +45,9 @@ class QueueFilter
     {
         // Known queues rather than a DISTINCT over the monitor table, which holds a row per job attempt.
         return SelectFilter::make('queue')
-            ->options(function (): array {
-                $knownQueues = app(KnownQueues::class);
-
-                return collect($knownQueues->names())
-                    ->mapWithKeys(fn (string $queue): array => [$queue => $knownQueues->label($queue)])
-                    ->sort()
-                    ->all();
-            });
+            ->options(fn (): array => collect(app(KnownQueues::class)->names())
+                ->mapWithKeys(fn (string $queue): array => [$queue => $queue])
+                ->sort()
+                ->all());
     }
 }

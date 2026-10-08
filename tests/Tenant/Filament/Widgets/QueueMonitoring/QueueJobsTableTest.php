@@ -110,7 +110,7 @@ it('filters jobs by tenant', function () {
 });
 
 it('filters jobs by a known queue', function () {
-    config(['queue.queues' => ['default' => 'advisingapp-default']]);
+    config(['queue.queues' => ['advisingapp-default']]);
     app(WorkerCountHistory::class)->record('ad-hoc', 1);
 
     asSuperAdmin();

@@ -52,7 +52,7 @@ beforeEach(function () {
     config(['cache.stores.landlord' => ['driver' => 'array']]);
     Cache::purge('landlord');
 
-    config(['queue.queues' => ['default' => 'advisingapp-default']]);
+    config(['queue.queues' => ['advisingapp-default']]);
 
     // The queue metrics facade resolves this service from the container, so a stand-in avoids a live metrics store.
     app()->instance(QueueMetricsQueryService::class, new class () {
@@ -91,7 +91,7 @@ it('shows the depth, metrics, provisioned workers and p95 pickup time of each kn
 
     livewire(QueueOverviewTable::class)
         ->assertCanSeeTableRecords(['advisingapp-default'])
-        ->assertTableColumnStateSet('label', 'default', record: 'advisingapp-default')
+        ->assertTableColumnStateSet('name', 'advisingapp-default', record: 'advisingapp-default')
         ->assertTableColumnStateSet('pending', 7, record: 'advisingapp-default')
         ->assertTableColumnStateSet('reserved', 2, record: 'advisingapp-default')
         ->assertTableColumnStateSet('delayed', 1, record: 'advisingapp-default')
@@ -122,7 +122,7 @@ describe('flush action', function () {
 
         livewire(QueueOverviewTable::class)
             ->callAction(TestAction::make('flush')->table('advisingapp-default'))
-            ->assertNotified('Flushed default: 42 jobs deleted.');
+            ->assertNotified('Flushed advisingapp-default: 42 jobs deleted.');
 
         expect($clearableQueue->cleared)->toBe(['advisingapp-default']);
     });

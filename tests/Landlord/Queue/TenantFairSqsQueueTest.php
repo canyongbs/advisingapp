@@ -54,8 +54,9 @@ use Illuminate\Support\Facades\Storage;
  *
  * @param array<int, array<string, mixed>> $sentMessages
  * @param array<int, array<string, mixed>> $deletedMessages
+ * @param array<int, array<string, mixed>> $releasedMessages
  */
-function tenantFairSqsQueueRecordingInto(array &$sentMessages, array &$deletedMessages = []): QueueContract
+function tenantFairSqsQueueRecordingInto(array &$sentMessages, array &$deletedMessages = [], array &$releasedMessages = []): QueueContract
 {
     $sqs = Mockery::mock(SqsClient::class);
 
@@ -93,6 +94,12 @@ function tenantFairSqsQueueRecordingInto(array &$sentMessages, array &$deletedMe
 
     $sqs->shouldReceive('deleteMessage')->andReturnUsing(function (array $message) use (&$deletedMessages): Result {
         $deletedMessages[] = $message;
+
+        return new Result([]);
+    });
+
+    $sqs->shouldReceive('changeMessageVisibility')->andReturnUsing(function (array $message) use (&$releasedMessages): Result {
+        $releasedMessages[] = $message;
 
         return new Result([]);
     });
@@ -371,6 +378,36 @@ it('pops messages as tenant fair SQS jobs', function () {
 
     expect($queue->pop())->toBeInstanceOf(TenantFairSqsJob::class);
 });
+
+enum TenantFairSqsQueueTestQueue: string
+{
+    case Audit = 'audit';
+}
+
+it('names a popped job by its queue but deletes and releases it through the queue URL', function (UnitEnum|string|null $poppedQueue, string $expectedName, string $expectedUrl) {
+    $sentMessages = [];
+    $deletedMessages = [];
+    $releasedMessages = [];
+    $queue = tenantFairSqsQueueRecordingInto($sentMessages, $deletedMessages, $releasedMessages);
+
+    $queue->push(CallQueuedClosure::create(static fn () => null));
+
+    $job = $queue->pop($poppedQueue);
+
+    assert($job instanceof TenantFairSqsJob);
+
+    $job->release();
+    $job->delete();
+
+    expect($job->getQueue())->toBe($expectedName)
+        ->and($releasedMessages[0]['QueueUrl'])->toBe($expectedUrl)
+        ->and($deletedMessages[0]['QueueUrl'])->toBe($expectedUrl);
+})->with([
+    'the default queue' => [null, 'default', 'https://sqs.us-east-1.amazonaws.com/123456789012/default'],
+    'an empty queue name' => ['', 'default', 'https://sqs.us-east-1.amazonaws.com/123456789012/default'],
+    'a named queue' => ['audit', 'audit', 'https://sqs.us-east-1.amazonaws.com/123456789012/audit'],
+    'a queue enum' => [TenantFairSqsQueueTestQueue::Audit, 'audit', 'https://sqs.us-east-1.amazonaws.com/123456789012/audit'],
+]);
 
 it('pops nothing when the queue is empty', function () {
     $sentMessages = [];

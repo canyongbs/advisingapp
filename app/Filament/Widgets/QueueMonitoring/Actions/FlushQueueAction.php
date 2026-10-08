@@ -53,7 +53,7 @@ class FlushQueueAction
             ->icon(Heroicon::Trash)
             ->color('danger')
             ->requiresConfirmation()
-            ->modalHeading(fn (array $record): string => "Flush the {$record['label']} queue?")
+            ->modalHeading(fn (array $record): string => "Flush the {$record['name']} queue?")
             ->modalDescription(fn (array $record): string => sprintf(
                 'Permanently deletes every job on %s for every tenant: %s pending, %s reserved, and %s delayed. Jobs a worker is already running may still finish. This cannot be undone.',
                 $record['name'],
@@ -83,7 +83,7 @@ class FlushQueueAction
                 ]);
 
                 Notification::make()
-                    ->title("Flushed {$record['label']}: " . number_format($cleared) . ' jobs deleted.')
+                    ->title("Flushed {$record['name']}: " . number_format($cleared) . ' jobs deleted.')
                     ->success()
                     ->send();
             });

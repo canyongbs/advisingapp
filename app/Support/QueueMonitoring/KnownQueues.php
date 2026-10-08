@@ -41,7 +41,7 @@ use Illuminate\Support\Facades\Config;
 
 /**
  * The queues shown on the queue monitoring page: the configured queues, plus any other queue the autoscaler has
- * sampled recently. Configured queues are labeled by their config key, so they read the same in every environment.
+ * sampled recently.
  */
 class KnownQueues
 {
@@ -55,35 +55,16 @@ class KnownQueues
     public function names(): array
     {
         return array_values(array_unique([
-            ...array_values($this->configured()),
+            ...$this->configured(),
             ...$this->workerCountHistory->queues(),
         ]));
     }
 
-    public function label(string $queue): string
-    {
-        $configuredLabel = array_search($queue, $this->configured(), true);
-
-        if (is_string($configuredLabel)) {
-            return $configuredLabel;
-        }
-
-        return $queue;
-    }
-
     /**
-     * @return array<string, string>
+     * @return list<string>
      */
     private function configured(): array
     {
-        $configured = [];
-
-        foreach (Config::array('queue.queues', []) as $label => $queue) {
-            if (is_string($label) && is_string($queue)) {
-                $configured[$label] = $queue;
-            }
-        }
-
-        return $configured;
+        return array_values(array_filter(Config::array('queue.queues', []), is_string(...)));
     }
 }

@@ -45,10 +45,10 @@ beforeEach(function () {
     config(['cache.stores.landlord' => ['driver' => 'array']]);
     Cache::purge('landlord');
 
-    config(['queue.queues' => ['default' => 'advisingapp-default']]);
+    config(['queue.queues' => ['advisingapp-default']]);
 });
 
-it('charts each known queue under its label', function () {
+it('charts each known queue under its name', function () {
     $now = now()->getTimestamp();
 
     app(WorkerCountHistory::class)->record('advisingapp-default', 3, $now - 60);
@@ -60,7 +60,7 @@ it('charts each known queue under its label', function () {
 
     $data = (fn (): array => $this->getData())->call($chart);
 
-    expect(array_column($data['datasets'], 'label'))->toBe(['default', 'ad-hoc'])
+    expect(array_column($data['datasets'], 'label'))->toBe(['advisingapp-default', 'ad-hoc'])
         ->and(array_column($data['datasets'], 'data'))->toBe([[3, null], [null, 1]])
         ->and($data['labels'])->toHaveCount(2);
 });

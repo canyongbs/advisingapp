@@ -39,9 +39,13 @@ namespace App\Queue;
 use App\Models\Tenant;
 use App\Queue\Jobs\TenantFairSqsJob;
 use Illuminate\Queue\SqsQueue;
+
+use function Illuminate\Support\enum_value;
+
 use Illuminate\Support\Str;
 use Override;
 use RuntimeException;
+use UnitEnum;
 
 /**
  * Tags every job pushed from a tenant context with an SQS `MessageGroupId` of the tenant's id, so SQS fair queues
@@ -78,13 +82,15 @@ class TenantFairSqsQueue extends SqsQueue
     }
 
     /**
-     * @param string|null $queue
+     * @param UnitEnum|string|null $queue
      */
     #[Override]
     public function pop($queue = null): ?TenantFairSqsJob
     {
+        $queueName = enum_value($queue) ?: $this->default;
+
         $response = $this->sqs->receiveMessage([
-            'QueueUrl' => $queue = $this->getQueue($queue),
+            'QueueUrl' => $queueUrl = $this->getQueue($queueName),
             'AttributeNames' => ['ApproximateReceiveCount'],
         ]);
 
@@ -97,8 +103,9 @@ class TenantFairSqsQueue extends SqsQueue
             $this->sqs,
             $response['Messages'][0],
             $this->connectionName,
-            $queue,
+            $queueUrl,
             $this->overflowStorage,
+            $queueName,
         );
     }
 

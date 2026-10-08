@@ -79,7 +79,7 @@ class QueueWorkerCountChart extends ChartWidget
             $color = $this->colorFor($queue);
 
             $datasets[] = [
-                'label' => $knownQueues->label($queue),
+                'label' => $queue,
                 'data' => $counts,
                 'borderColor' => $color,
                 'backgroundColor' => $color,
