@@ -48,13 +48,13 @@ it('executes concern workflow step successfully', function () {
     $student = Student::factory()->create();
 
     $workflowTrigger = WorkflowTrigger::factory()->create([
-        'created_by_type' => User::class,
+        'created_by_type' => $user->getMorphClass(),
         'created_by_id' => $user->id,
     ]);
 
     $workflowRun = WorkflowRun::factory()->create([
         'workflow_trigger_id' => $workflowTrigger->id,
-        'related_type' => Student::class,
+        'related_type' => $student->getMorphClass(),
         'related_id' => $student->getKey(),
     ]);
 

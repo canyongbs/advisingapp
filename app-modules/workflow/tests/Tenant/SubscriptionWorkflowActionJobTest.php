@@ -55,7 +55,7 @@ it('will execute appropriately on each educatable in the group', function (array
     $user = User::factory()->create();
 
     $workflowTrigger = WorkflowTrigger::factory()->create([
-        'created_by_type' => User::class,
+        'created_by_type' => $user->getMorphClass(),
         'created_by_id' => $user->id,
     ]);
 
