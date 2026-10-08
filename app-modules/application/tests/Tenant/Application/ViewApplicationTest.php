@@ -130,6 +130,31 @@ it('exposes the mapped block types to the read-only fields rich editor for the c
         ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });
 
+it('retains editable form components when switching application tabs', function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+    asSuperAdmin();
+    $application = Application::factory()->create();
+    $component = livewire(ViewApplication::class, ['record' => $application->getKey()]);
+    $formChildren = data_get($component->__get('snapshot'), 'memo.children');
+    assert(is_array($formChildren));
+    expect($formChildren)->toHaveCount(2);
+
+    foreach (['edit', 'workflows', 'submissions', 'notifications', 'view', 'edit'] as $tab) {
+        $component->set('activeTab', $tab)->assertSet('activeTab', $tab);
+        $children = data_get($component->__get('snapshot'), 'memo.children');
+        assert(is_array($children));
+
+        expect(array_intersect_key($children, $formChildren))->toBe($formChildren);
+
+        $document = new DOMDocument();
+        $document->loadHTML($component->html(), LIBXML_NOERROR | LIBXML_NOWARNING);
+        $activePanels = (new DOMXPath($document))->query('//*[@role="tabpanel" and contains(concat(" ", normalize-space(@class), " "), " fi-active ")]');
+        assert($activePanels !== false);
+
+        expect($activePanels->length)->toBe(1);
+    }
+});
+
 describe('authorization', function () {
     it('does not expose former View or Edit actions to management-only users', function () {
         seed(ApplicationSubmissionStateSeeder::class);
