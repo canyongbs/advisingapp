@@ -39,29 +39,49 @@ namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 use AdvisingApp\Application\Actions\CreateApplicationVersion;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\Concerns\HasSharedFormConfiguration;
+use AdvisingApp\Application\Livewire\ApplicationFormManager;
 use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationStep;
 use AdvisingApp\Form\Actions\SaveSubmissibleFieldsFromContent;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
-use Filament\Resources\Pages\EditRecord;
+use Filament\Actions\Action;
+use Filament\Forms\Components\Repeater;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class EditApplication extends EditRecord
+class EditApplication extends ApplicationFormManager
 {
     use HasSharedFormConfiguration;
-
-    protected static string $resource = ApplicationResource::class;
-
-    protected static ?string $navigationLabel = 'Edit';
 
     /** @var array<string, mixed>|null */
     protected ?array $versioningFormData = null;
 
+    public function save(): void
+    {
+        parent::save();
+
+        $this->redirect(ApplicationResource::getUrl('view', [
+            'record' => $this->record,
+            'tab' => 'edit',
+        ]));
+    }
+
     public function form(Schema $schema): Schema
     {
         return $schema
+            ->model($this->record)
+            ->statePath('data')
             ->components($this->fields());
+    }
+
+    public function archiveAction(): Action
+    {
+        return ArchiveAction::make()
+            ->record($this->record)
+            ->authorize(fn (): bool => ApplicationResource::canDelete($this->record))
+            ->successRedirectUrl(ApplicationResource::getUrl('index'));
     }
 
     protected function beforeSave(): void
@@ -71,7 +91,8 @@ class EditApplication extends EditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
-        /** @var Application $record */
+        assert($record instanceof Application);
+
         return DB::transaction(function () use ($record, $data) {
             $newVersion = app(CreateApplicationVersion::class)->execute($record, $data);
 
@@ -85,31 +106,48 @@ class EditApplication extends EditRecord
         });
     }
 
-    protected function getRedirectUrl(): ?string
+    protected function saveRelationships(): void
     {
-        return ApplicationResource::getUrl('view', ['record' => $this->record]);
+        $this->data = $this->versioningFormData ?? [];
+        $this->data['content'] = $this->record->content;
+
+        if ($this->record->is_wizard) {
+            $oldStepKeys = array_keys($this->data['steps'] ?? []);
+            $oldAttachments = $this->componentFileAttachments['data']['steps'] ?? [];
+            $this->data['steps'] = [];
+            $this->componentFileAttachments['data']['steps'] = [];
+
+            foreach ($this->record->steps->sortBy('sort')->values() as $index => $step) {
+                assert($step instanceof ApplicationStep);
+                $newKey = "record-{$step->getKey()}";
+                $this->data['steps'][$newKey] = $step->attributesToArray();
+                $oldKey = $oldStepKeys[$index] ?? null;
+
+                if ($oldKey !== null && isset($oldAttachments[$oldKey])) {
+                    $this->componentFileAttachments['data']['steps'][$newKey] = $oldAttachments[$oldKey];
+                }
+            }
+
+            $repeater = $this->form->getComponent(
+                fn (Component $component): bool => $component instanceof Repeater && $component->getName() === 'steps',
+                withActions: false,
+                withHidden: true,
+            );
+            assert($repeater instanceof Repeater);
+            $repeater->clearCachedExistingRecords();
+        }
+
+        parent::saveRelationships();
     }
 
     protected function getFormActions(): array
     {
         return [
-            $this->getSaveFormAction()
-                ->label('Save')
-                ->formId('form'),
-            ArchiveAction::make(),
-            $this->getCancelFormAction()
-                ->url(fn () => ApplicationResource::getUrl('view', ['record' => $this->record])),
-        ];
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            $this->getSaveFormAction()
-                ->label('Save')
-                ->formId('form'),
-            ArchiveAction::make(),
-            $this->getCancelFormAction()
+            Action::make('save')->label('Save')->submit('save'),
+            $this->archiveAction(),
+            Action::make('cancel')
+                ->label('Cancel')
+                ->color('gray')
                 ->url(fn () => ApplicationResource::getUrl('view', ['record' => $this->record])),
         ];
     }
@@ -144,15 +182,21 @@ class EditApplication extends EditRecord
 
     private function copyStepMedia(Application $oldVersion, Application $newVersion): void
     {
-        $oldSteps = $oldVersion->steps()->orderBy('sort')->get();
-        $newSteps = $newVersion->steps()->orderBy('sort')->get();
+        $oldSteps = $oldVersion->steps()->get()->keyBy('id');
+        $newSteps = $newVersion->steps->sortBy('sort')->values();
+        $submittedStepKeys = array_keys($this->versioningFormData['steps'] ?? []);
 
-        foreach ($oldSteps as $index => $oldStep) {
-            $newStep = $newSteps[$index] ?? null;
+        foreach ($newSteps as $index => $newStep) {
+            $submittedKey = $submittedStepKeys[$index] ?? null;
+            $oldStep = is_string($submittedKey) && str_starts_with($submittedKey, 'record-')
+                ? $oldSteps->get(substr($submittedKey, strlen('record-')))
+                : null;
 
-            if (! $newStep) {
+            if (! $oldStep) {
                 continue;
             }
+
+            assert($newStep instanceof ApplicationStep);
 
             $media = $oldStep->getMedia('content');
 

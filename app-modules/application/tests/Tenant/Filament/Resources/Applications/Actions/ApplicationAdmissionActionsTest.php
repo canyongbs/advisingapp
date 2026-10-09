@@ -37,14 +37,18 @@
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Filament\Resources\Applications\Actions\ApplicationAdmissionActions;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationSubmissions;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\ViewApplication;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Select;
 use Livewire\Livewire;
 
+use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
 test('update_submission_state action is labeled Update State', function () {
@@ -70,7 +74,7 @@ test('update_submission_state action is visible when submission state has allowe
         'state_id' => $receivedState->id,
     ]);
 
-    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationSubmissions::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
         ->mountAction(TestAction::make('view')->table($submission))
         ->assertActionVisible('update_submission_state');
 });
@@ -89,7 +93,7 @@ test('update_submission_state action is not visible when submission state has no
         'state_id' => $admitState->id,
     ]);
 
-    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationSubmissions::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
         ->mountAction(TestAction::make('view')->table($submission))
         ->assertActionHidden('update_submission_state');
 });
@@ -112,7 +116,7 @@ test('calling the update_submission_state action transitions the submission to t
         'state_id' => $receivedState->id,
     ]);
 
-    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationSubmissions::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
         ->mountAction(TestAction::make('view')->table($submission))
         ->callAction('update_submission_state', data: ['state_id' => $reviewState->id]);
 
@@ -140,7 +144,7 @@ test('state dropdown excludes archived states that are not the currently selecte
     // @phpstan-ignore method.notFound
     $reviewState->archive();
 
-    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationSubmissions::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
         ->mountAction(TestAction::make('view')->table($submission))
         ->mountAction('update_submission_state')
         ->assertFormFieldExists('state_id', checkFieldUsing: function (Select $field) use ($receivedState, $reviewState) {
@@ -167,7 +171,7 @@ test('state dropdown pre-selects the current submission state by default', funct
         'state_id' => $receivedState->id,
     ]);
 
-    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationSubmissions::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
         ->mountAction(TestAction::make('view')->table($submission))
         ->mountAction('update_submission_state')
         ->assertSchemaStateSet(['state_id' => $submission->state_id]);
@@ -192,10 +196,34 @@ test('calling the update_submission_state action with a disallowed transition st
         'state_id' => $receivedState->id,
     ]);
 
-    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationSubmissions::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
         ->mountAction(TestAction::make('view')->table($submission))
         ->callAction('update_submission_state', data: ['state_id' => $admitState->id]);
 
     // The state machine rejects the disallowed transition, so the state must remain unchanged
     expect($submission->fresh()->state_id)->toBe($receivedState->id);
+});
+
+describe('authorization', function () {
+    it('does not transition a submission through direct actions for a view-only user', function () {
+        $user = User::factory()->licensed(LicenseType::cases())->create();
+        $user->givePermissionTo('application.view-any', 'application.*.view');
+        actingAs($user);
+        $receivedState = ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
+        $reviewState = ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Review]);
+        $application = Application::factory()->create();
+        $submission = $application->submissions()->firstOrFail();
+        expect($submission->state_id)->toBe($receivedState->id);
+
+        Livewire::test(ManageApplicationSubmissions::class, [
+            'ownerRecord' => $application,
+            'pageClass' => ViewApplication::class,
+        ])
+            ->mountAction(TestAction::make('view')->table($submission))
+            ->assertActionHidden('update_submission_state')
+            ->call('mountAction', 'update_submission_state')
+            ->call('callMountedAction', ['state_id' => $reviewState->id]);
+
+        expect($submission->fresh()->state_id)->toBe($receivedState->id);
+    });
 });

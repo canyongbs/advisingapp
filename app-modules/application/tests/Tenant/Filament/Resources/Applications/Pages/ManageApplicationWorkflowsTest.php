@@ -38,6 +38,7 @@ use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationWorkflows;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\ViewApplication;
 use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\Pages\EditWorkflow as ApplicationNestedEditWorkflow;
 use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\WorkflowResource;
 use AdvisingApp\Application\Models\Application;
@@ -68,8 +69,8 @@ test('can successfully create a new workflow for an application through manage w
     $user = User::first();
     expect(WorkflowTrigger::count())->toBe(0);
 
-    Livewire::test(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
-        ->callAction('create');
+    Livewire::test(ManageApplicationWorkflows::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
+        ->callTableAction('create');
 
     expect(Workflow::count())->toBe(1);
     expect(WorkflowTrigger::count())->toBe(1);
@@ -95,13 +96,13 @@ test('creates multiple workflows for the same application without conflicts', fu
 
     expect(Workflow::count())->toBe(0);
 
-    Livewire::test(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
-        ->callAction('create');
+    Livewire::test(ManageApplicationWorkflows::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
+        ->callTableAction('create');
 
     expect(Workflow::count())->toBe(1);
 
-    Livewire::test(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
-        ->callAction('create');
+    Livewire::test(ManageApplicationWorkflows::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
+        ->callTableAction('create');
 
     expect(Workflow::count())->toBe(2);
 
@@ -125,7 +126,7 @@ test('application workflow creation is gated with proper access control', functi
 
     actingAs($user);
 
-    Livewire::test(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationWorkflows::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
         ->assertForbidden();
 
     expect(Workflow::count())->toBe(0);
@@ -134,8 +135,8 @@ test('application workflow creation is gated with proper access control', functi
     $user->givePermissionTo('application.view-any');
     $user->givePermissionTo('application.*.update');
 
-    Livewire::test(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
-        ->callAction('create');
+    Livewire::test(ManageApplicationWorkflows::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
+        ->callTableAction('create');
 
     expect(Workflow::count())->toBe(1);
     expect(WorkflowTrigger::count())->toBe(1);
@@ -387,8 +388,8 @@ test('create action persists Stage and Trigger event from form data', function (
         ->where('classification', ApplicationSubmissionStateClassification::Review)
         ->firstOrFail();
 
-    Livewire::test(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
-        ->callAction('create', [
+    Livewire::test(ManageApplicationWorkflows::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
+        ->callTableAction('create', null, [
             'sub_related_id' => $reviewState->id,
             'event' => WorkflowTriggerEvent::Exit->value,
         ]);
@@ -410,8 +411,8 @@ test('create action defaults Stage to first non-archived state when no tab is ac
         ->oldest('id')
         ->firstOrFail();
 
-    Livewire::test(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
-        ->callAction('create');
+    Livewire::test(ManageApplicationWorkflows::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
+        ->callTableAction('create');
 
     $workflowTrigger = WorkflowTrigger::firstOrFail();
     expect($workflowTrigger->sub_related_type)->toBe($firstState->getMorphClass());
@@ -431,7 +432,7 @@ test('tabs render one per non-archived submission state plus All', function () {
         ->pluck('id')
         ->all();
 
-    $tabs = Livewire::test(ManageApplicationWorkflows::class, ['record' => $application->getKey()])
+    $tabs = Livewire::test(ManageApplicationWorkflows::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
         ->instance()
         ->getTabs();
 
@@ -465,7 +466,7 @@ test('manage application workflows page links to nested workflow edit route', fu
         'record' => $workflow,
     ]);
 
-    get(ApplicationResource::getUrl('manage-application-workflows', ['record' => $application]))
+    get(ApplicationResource::getUrl('view', ['record' => $application, 'tab' => 'workflows']))
         ->assertOk()
         ->assertSee($nestedEditUrl, false);
 });
@@ -499,4 +500,25 @@ test('nested application workflow edit route is scoped to owner application', fu
         'application' => $otherApplication,
         'record' => $workflow,
     ]))->assertNotFound();
+});
+
+describe('authorization', function () {
+    it('does not create workflows through direct actions for a view-only user', function () {
+        $user = User::factory()->licensed(LicenseType::cases())->create();
+        $user->givePermissionTo('application.view-any', 'application.*.view');
+        actingAs($user);
+        $application = Application::factory()->create();
+        expect(Workflow::query()->count())->toBe(0);
+
+        Livewire::test(ManageApplicationWorkflows::class, [
+            'ownerRecord' => $application,
+            'pageClass' => ViewApplication::class,
+        ])
+            ->assertTableActionHidden('create')
+            ->call('mountAction', 'create', [], ['table' => true])
+            ->call('callMountedAction');
+
+        expect(Workflow::query()->count())->toBe(0)
+            ->and(WorkflowTrigger::query()->count())->toBe(0);
+    });
 });

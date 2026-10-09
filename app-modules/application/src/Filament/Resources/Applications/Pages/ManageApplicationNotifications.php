@@ -36,24 +36,21 @@
 
 namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 
-use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
+use AdvisingApp\Application\Livewire\ApplicationFormManager;
+use AdvisingApp\Application\Models\Application;
 use App\Filament\Forms\Components\UserSelect;
 use Filament\Forms\Components\Toggle;
-use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Model;
 
-class ManageApplicationNotifications extends EditRecord
+class ManageApplicationNotifications extends ApplicationFormManager
 {
-    protected static string $resource = ApplicationResource::class;
-
-    protected static ?string $navigationLabel = 'Notifications';
-
-    protected static ?string $breadcrumb = 'Notifications';
-
     public function form(Schema $schema): Schema
     {
         return $schema
+            ->model($this->record)
+            ->statePath('data')
             ->components([
                 Section::make('')
                     ->schema([
@@ -73,5 +70,20 @@ class ManageApplicationNotifications extends EditRecord
                             ->label('Notify via Email'),
                     ]),
             ]);
+    }
+
+    protected function handleRecordUpdate(Model $record, array $data): Model
+    {
+        assert($record instanceof Application);
+
+        $record->notify_to_care_team = $data['notify_to_care_team'];
+        $record->notify_to_subscribers = $data['notify_to_subscribers'];
+        $record->notify_via_app = $data['notify_via_app'];
+        $record->notify_via_email = $data['notify_via_email'];
+        $record->save();
+
+        $this->form->saveRelationships();
+
+        return $record;
     }
 }
