@@ -56,17 +56,14 @@ describe('enterprise ai', function () {
         'Artificial Intelligence Seats' => 'data.limits.conversationalAiSeats',
         'Employee Advisors count' => 'data.limits.employeeAdvisorsCount',
         'Customer Advisors count' => 'data.limits.customerAdvisorsCount',
-        'Data Advisors count' => 'data.limits.dataAdvisorsCount',
         'Employee Advisors toggle' => 'data.addons.employeeAdvisors',
-        'Research Advisors toggle' => 'data.addons.researchAdvisor',
         'Customer Advisors toggle' => 'data.addons.customerAdvisors',
-        'Data Advisors toggle' => 'data.addons.dataAdvisor',
     ]);
 
     it('keeps the AI values when saved while Enterprise AI is disabled', function () {
         $licenseSettings = app(LicenseSettings::class);
         $licenseSettings->data->limits->conversationalAiSeats = 75;
-        $licenseSettings->data->addons->researchAdvisor = true;
+        $licenseSettings->data->addons->customerAdvisors = true;
         $licenseSettings->save();
 
         livewire(ManageLicenseSettings::class)
@@ -78,6 +75,6 @@ describe('enterprise ai', function () {
 
         expect($licenseSettings->data->addons->enterpriseAi)->toBeFalse()
             ->and($licenseSettings->data->limits->conversationalAiSeats)->toBe(75)
-            ->and($licenseSettings->data->addons->researchAdvisor)->toBeTrue();
+            ->and($licenseSettings->data->addons->customerAdvisors)->toBeTrue();
     });
 });

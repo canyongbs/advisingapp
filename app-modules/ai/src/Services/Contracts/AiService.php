@@ -39,9 +39,7 @@ namespace AdvisingApp\Ai\Services\Contracts;
 use AdvisingApp\Ai\Enums\AiReasoningEffort;
 use AdvisingApp\Ai\Models\AiMessage;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
-use AdvisingApp\Research\Models\ResearchRequest;
 use Closure;
-use Generator;
 use Illuminate\Database\Eloquent\Model;
 use Prism\Prism\Contracts\Message;
 
@@ -104,27 +102,6 @@ interface AiService
      * @param array<AiFile> $files
      */
     public function areFilesReady(array $files, ?Model $context = null): bool;
-
-    public function isResearchRequestReady(ResearchRequest $researchRequest): bool;
-
-    public function afterResearchRequestSearchQueriesParsed(ResearchRequest $researchRequest): void;
-
-    public function deleteResearchRequestExternalResources(ResearchRequest $researchRequest): void;
-
-    /**
-     * @return array<string>
-     */
-    public function getResearchRequestRequestSearchQueries(ResearchRequest $researchRequest, string $prompt, string $content): array;
-
-    /**
-     * @return array{response: array<mixed>, nextRequestOptions: array<string, mixed>}
-     */
-    public function getResearchRequestRequestOutline(ResearchRequest $researchRequest, string $prompt, string $content): array;
-
-    /**
-     * @param array<string, mixed> $options
-     */
-    public function getResearchRequestRequestSection(ResearchRequest $researchRequest, string $prompt, string $content, array $options, Closure $nextRequestOptions): Generator;
 
     public function hasImageGeneration(): bool;
 }
