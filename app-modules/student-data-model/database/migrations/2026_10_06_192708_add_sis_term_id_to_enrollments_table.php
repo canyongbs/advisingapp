@@ -34,32 +34,32 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\DataTransferObjects;
+use App\Features\TermAttributesFeature;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use Spatie\LaravelData\Attributes\MapName;
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
-use Spatie\LaravelData\Optional;
+return new class () extends Migration {
+    public function up(): void
+    {
+        DB::transaction(function () {
+            Schema::table('enrollments', function (Blueprint $table) {
+                $table->string('sis_term_id')->nullable()->index();
+            });
 
-#[MapName(SnakeCaseMapper::class)]
-class StudentEnrollmentData extends Data
-{
-    public function __construct(
-        public string | Optional | null $division,
-        public string | Optional | null $classNbr,
-        public string | Optional | null $crseGradeOff,
-        public int | Optional | null $untTaken,
-        public int | Optional | null $untEarned,
-        public string | Optional | null $lastUpdDtStmp,
-        public string | Optional | null $section,
-        public string | Optional | null $name,
-        public string | Optional | null $department,
-        public string | Optional | null $facultyName,
-        public string | Optional | null $facultyEmail,
-        public string | Optional | null $semesterCode,
-        public string | Optional | null $semesterName,
-        public string | Optional | null $sisTermId,
-        public string | Optional | null $startDate,
-        public string | Optional | null $endDate,
-    ) {}
-}
+            TermAttributesFeature::activate();
+        });
+    }
+
+    public function down(): void
+    {
+        DB::transaction(function () {
+            TermAttributesFeature::deactivate();
+
+            Schema::table('enrollments', function (Blueprint $table) {
+                $table->dropColumn('sis_term_id');
+            });
+        });
+    }
+};

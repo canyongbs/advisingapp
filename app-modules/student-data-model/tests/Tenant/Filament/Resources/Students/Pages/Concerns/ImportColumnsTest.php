@@ -34,32 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\DataTransferObjects;
+use AdvisingApp\StudentDataModel\Filament\Imports\EnrollmentImporter;
+use App\Features\TermAttributesFeature;
+use Filament\Actions\Imports\ImportColumn;
 
-use Spatie\LaravelData\Attributes\MapName;
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
-use Spatie\LaravelData\Optional;
+describe('enrollment columns', function () {
+    it('includes the `sis_term_id` column', function () {
+        expect(collect(EnrollmentImporter::getEnrollmentColumns())->map(fn (ImportColumn $column): string => $column->getName()))
+            ->toContain('sis_term_id');
+    });
 
-#[MapName(SnakeCaseMapper::class)]
-class StudentEnrollmentData extends Data
-{
-    public function __construct(
-        public string | Optional | null $division,
-        public string | Optional | null $classNbr,
-        public string | Optional | null $crseGradeOff,
-        public int | Optional | null $untTaken,
-        public int | Optional | null $untEarned,
-        public string | Optional | null $lastUpdDtStmp,
-        public string | Optional | null $section,
-        public string | Optional | null $name,
-        public string | Optional | null $department,
-        public string | Optional | null $facultyName,
-        public string | Optional | null $facultyEmail,
-        public string | Optional | null $semesterCode,
-        public string | Optional | null $semesterName,
-        public string | Optional | null $sisTermId,
-        public string | Optional | null $startDate,
-        public string | Optional | null $endDate,
-    ) {}
-}
+    it('does not include the `sis_term_id` column while `TermAttributesFeature` is inactive', function () {
+        TermAttributesFeature::deactivate();
+
+        expect(collect(EnrollmentImporter::getEnrollmentColumns())->map(fn (ImportColumn $column): string => $column->getName()))
+            ->not->toContain('sis_term_id');
+    });
+});

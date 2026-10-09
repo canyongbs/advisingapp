@@ -34,32 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\DataTransferObjects;
+namespace AdvisingApp\StudentDataModel\Policies;
 
-use Spatie\LaravelData\Attributes\MapName;
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
-use Spatie\LaravelData\Optional;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentTermAttribute;
+use App\Models\Authenticatable;
+use Illuminate\Auth\Access\Response;
 
-#[MapName(SnakeCaseMapper::class)]
-class StudentEnrollmentData extends Data
+class StudentTermAttributePolicy
 {
-    public function __construct(
-        public string | Optional | null $division,
-        public string | Optional | null $classNbr,
-        public string | Optional | null $crseGradeOff,
-        public int | Optional | null $untTaken,
-        public int | Optional | null $untEarned,
-        public string | Optional | null $lastUpdDtStmp,
-        public string | Optional | null $section,
-        public string | Optional | null $name,
-        public string | Optional | null $department,
-        public string | Optional | null $facultyName,
-        public string | Optional | null $facultyEmail,
-        public string | Optional | null $semesterCode,
-        public string | Optional | null $semesterName,
-        public string | Optional | null $sisTermId,
-        public string | Optional | null $startDate,
-        public string | Optional | null $endDate,
-    ) {}
+    public function before(Authenticatable $authenticatable): ?Response
+    {
+        if (! $authenticatable->hasLicense(Student::getLicenseType())) {
+            return Response::deny('You are not licensed for the Retention CRM.');
+        }
+
+        return null;
+    }
+
+    public function viewAny(Authenticatable $authenticatable): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'enrollment.view-any',
+            denyResponse: 'You do not have permission to view term attributes.'
+        );
+    }
+
+    public function view(Authenticatable $authenticatable, StudentTermAttribute $studentTermAttribute): Response
+    {
+        return $authenticatable->canOrElse(
+            abilities: 'enrollment.*.view',
+            denyResponse: 'You do not have permission to view this term attribute.'
+        );
+    }
 }

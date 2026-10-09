@@ -34,32 +34,26 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\DataTransferObjects;
+namespace AdvisingApp\StudentDataModel\Database\Factories;
 
-use Spatie\LaravelData\Attributes\MapName;
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
-use Spatie\LaravelData\Optional;
+use AdvisingApp\StudentDataModel\Models\Term;
+use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-#[MapName(SnakeCaseMapper::class)]
-class StudentEnrollmentData extends Data
+/**
+ * @extends Factory<Term>
+ */
+class TermFactory extends Factory
 {
-    public function __construct(
-        public string | Optional | null $division,
-        public string | Optional | null $classNbr,
-        public string | Optional | null $crseGradeOff,
-        public int | Optional | null $untTaken,
-        public int | Optional | null $untEarned,
-        public string | Optional | null $lastUpdDtStmp,
-        public string | Optional | null $section,
-        public string | Optional | null $name,
-        public string | Optional | null $department,
-        public string | Optional | null $facultyName,
-        public string | Optional | null $facultyEmail,
-        public string | Optional | null $semesterCode,
-        public string | Optional | null $semesterName,
-        public string | Optional | null $sisTermId,
-        public string | Optional | null $startDate,
-        public string | Optional | null $endDate,
-    ) {}
+    public function definition(): array
+    {
+        return [
+            'sis_term_id' => (string) $this->faker->unique()->numberBetween(1, 999999),
+            'name' => $this->faker->randomElement(['FA', 'SP', 'SU']) . '-' . $this->faker->numerify('##'),
+            'code' => $this->faker->bothify('?##R'),
+            'start_date' => $this->faker->dateTimeBetween('-5 years'),
+            'end_date' => fn (array $attributes): ?CarbonImmutable => CarbonImmutable::make($attributes['start_date'])?->addMonths(4),
+            'is_active' => $this->faker->boolean(90),
+        ];
+    }
 }

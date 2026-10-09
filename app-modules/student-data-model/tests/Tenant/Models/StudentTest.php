@@ -35,9 +35,22 @@
 */
 
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentTermAttribute;
 use Illuminate\Support\Carbon;
 
 use function Tests\asSuperAdmin;
+
+it('links term attributes by `sisid`', function () {
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+    $termAttributes = StudentTermAttribute::factory()->count(2)->for($student)->create();
+    $otherTermAttribute = StudentTermAttribute::factory()->create();
+
+    expect($student->termAttributes->pluck('sis_term_id')->all())
+        ->toEqualCanonicalizing($termAttributes->pluck('sis_term_id')->all())
+        ->not->toContain($otherTermAttribute->sis_term_id);
+});
 
 describe('archiving', function () {
     it('archives a student', function () {

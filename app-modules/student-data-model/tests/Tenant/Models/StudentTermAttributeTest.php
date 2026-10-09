@@ -34,32 +34,34 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\DataTransferObjects;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentTermAttribute;
+use AdvisingApp\StudentDataModel\Models\Term;
+use Illuminate\Database\UniqueConstraintViolationException;
 
-use Spatie\LaravelData\Attributes\MapName;
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
-use Spatie\LaravelData\Optional;
+use function Tests\asSuperAdmin;
 
-#[MapName(SnakeCaseMapper::class)]
-class StudentEnrollmentData extends Data
-{
-    public function __construct(
-        public string | Optional | null $division,
-        public string | Optional | null $classNbr,
-        public string | Optional | null $crseGradeOff,
-        public int | Optional | null $untTaken,
-        public int | Optional | null $untEarned,
-        public string | Optional | null $lastUpdDtStmp,
-        public string | Optional | null $section,
-        public string | Optional | null $name,
-        public string | Optional | null $department,
-        public string | Optional | null $facultyName,
-        public string | Optional | null $facultyEmail,
-        public string | Optional | null $semesterCode,
-        public string | Optional | null $semesterName,
-        public string | Optional | null $sisTermId,
-        public string | Optional | null $startDate,
-        public string | Optional | null $endDate,
-    ) {}
-}
+it('belongs to a student by `sisid`', function () {
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+    $termAttribute = StudentTermAttribute::factory()->for($student)->create();
+
+    expect($termAttribute->student->getKey())->toBe($student->getKey());
+});
+
+it('belongs to a term by `sis_term_id`', function () {
+    $term = Term::factory()->create();
+    $termAttribute = StudentTermAttribute::factory()->create(['sis_term_id' => $term->sis_term_id]);
+
+    expect($termAttribute->term->sis_term_id)->toBe($term->sis_term_id);
+});
+
+it('does not allow two records for the same student and term', function () {
+    $termAttribute = StudentTermAttribute::factory()->create();
+
+    StudentTermAttribute::factory()->create([
+        'sisid' => $termAttribute->sisid,
+        'sis_term_id' => $termAttribute->sis_term_id,
+    ]);
+})->throws(UniqueConstraintViolationException::class);

@@ -37,6 +37,7 @@
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\Concerns;
 
 use AdvisingApp\StudentDataModel\Models\Program;
+use App\Features\TermAttributesFeature;
 use Filament\Actions\Imports\ImportColumn;
 
 trait ImportColumns
@@ -291,6 +292,16 @@ trait ImportColumns
                     'string',
                     'max:255',
                 ]),
+            ...(TermAttributesFeature::active() ? [
+                ImportColumn::make('sis_term_id')
+                    ->label('SIS term ID')
+                    ->example('267')
+                    ->rules([
+                        'nullable',
+                        'string',
+                        'max:255',
+                    ]),
+            ] : []),
             ImportColumn::make('start_date')
                 ->label('Start date')
                 ->example('2001-09-30 19:55:54')

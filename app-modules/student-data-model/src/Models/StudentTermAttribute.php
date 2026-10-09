@@ -34,35 +34,63 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\Settings;
+namespace AdvisingApp\StudentDataModel\Models;
 
-use AdvisingApp\StudentDataModel\Enums\EnrollmentSemesterAutoImportDefaultOrder;
-use AdvisingApp\StudentDataModel\Enums\SisSystem;
-use App\Features\TermAttributesFeature;
-use Spatie\LaravelSettings\Settings;
+use AdvisingApp\StudentDataModel\Database\Factories\StudentTermAttributeFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Spatie\Multitenancy\Models\Concerns\UsesTenantConnection;
 
-class StudentInformationSystemSettings extends Settings
+/**
+ * @mixin IdeHelperStudentTermAttribute
+ */
+class StudentTermAttribute extends Model
 {
-    public bool $is_enabled = false;
+    /** @use HasFactory<StudentTermAttributeFactory> */
+    use HasFactory;
 
-    public ?SisSystem $sis_system = null;
+    use UsesTenantConnection;
 
-    public bool $is_enrollment_semester_auto_import_enabled = false;
+    protected $table = 'student_term_attributes';
 
-    public EnrollmentSemesterAutoImportDefaultOrder $enrollment_semester_auto_import_default_order = EnrollmentSemesterAutoImportDefaultOrder::First;
+    /**
+     * This Model has a primary key that is auto generated as a v4 UUID by Postgres.
+     * We do so so that we can do things like view, edit, and delete a specific record in the UI / API.
+     * This ID should NEVER be used for relationships as these records do not belong to our system, are reset during syncs, and are not truly unique.
+     */
+    protected $primaryKey = 'id';
 
-    public static function group(): string
+    public $incrementing = false;
+
+    protected $keyType = 'string';
+
+    public $timestamps = false;
+
+    protected $fillable = [
+        'sisid',
+        'sis_term_id',
+        'enrollment_status',
+        'academic_status',
+        'campus',
+        'college_level',
+        'commuter',
+        'student_registered',
+    ];
+
+    /**
+     * @return BelongsTo<Student, $this>
+     */
+    public function student(): BelongsTo
     {
-        return 'student_information_system';
+        return $this->belongsTo(Student::class, 'sisid', 'sisid');
     }
 
     /**
-     * Whether the tenant's SIS syncs term attributes (e.g. Thesis Elements Student Status records).
+     * @return BelongsTo<Term, $this>
      */
-    public function hasTermAttributes(): bool
+    public function term(): BelongsTo
     {
-        return TermAttributesFeature::active()
-            && $this->is_enabled
-            && ($this->sis_system?->hasTermAttributes() ?? false);
+        return $this->belongsTo(Term::class, 'sis_term_id', 'sis_term_id');
     }
 }

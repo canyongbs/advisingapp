@@ -34,32 +34,62 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\DataTransferObjects;
+namespace AdvisingApp\StudentDataModel\Filament\Filters;
 
-use Spatie\LaravelData\Attributes\MapName;
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
-use Spatie\LaravelData\Optional;
+use Filament\QueryBuilder\Constraints\Operators\Operator;
+use Filament\Schemas\Components\Component;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
-#[MapName(SnakeCaseMapper::class)]
-class StudentEnrollmentData extends Data
+class TermAttributeOperator extends Operator
 {
-    public function __construct(
-        public string | Optional | null $division,
-        public string | Optional | null $classNbr,
-        public string | Optional | null $crseGradeOff,
-        public int | Optional | null $untTaken,
-        public int | Optional | null $untEarned,
-        public string | Optional | null $lastUpdDtStmp,
-        public string | Optional | null $section,
-        public string | Optional | null $name,
-        public string | Optional | null $department,
-        public string | Optional | null $facultyName,
-        public string | Optional | null $facultyEmail,
-        public string | Optional | null $semesterCode,
-        public string | Optional | null $semesterName,
-        public string | Optional | null $sisTermId,
-        public string | Optional | null $startDate,
-        public string | Optional | null $endDate,
-    ) {}
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->name('termAttribute');
+
+        $this->label(fn (): string => $this->isInverse() ? 'Is not' : 'Is');
+
+        $this->summary(function (): string {
+            $settings = $this->getSettings();
+
+            if (blank($settings)) {
+                return '';
+            }
+
+            return TermAttributeFilter::getSummary(
+                $settings['sis_term_id'] ?? null,
+                $settings['attribute'] ?? null,
+                $settings['value'] ?? null,
+                (bool) $this->isInverse(),
+            );
+        });
+    }
+
+    /**
+     * @return array<Component>
+     */
+    public function getFormSchema(): array
+    {
+        return TermAttributeFilter::getFormSchema();
+    }
+
+    /**
+     * @param Builder<Model> $query
+     *
+     * @return Builder<Model>
+     */
+    public function applyToBaseQuery(Builder $query): Builder
+    {
+        $settings = $this->getSettings() ?? [];
+
+        return TermAttributeFilter::applyToQuery(
+            $query,
+            $settings['sis_term_id'] ?? null,
+            $settings['attribute'] ?? null,
+            $settings['value'] ?? null,
+            (bool) $this->isInverse(),
+        );
+    }
 }

@@ -34,32 +34,35 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\DataTransferObjects;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Support\Facades\DB;
+use Tpetry\PostgresqlEnhanced\Schema\Blueprint;
+use Tpetry\PostgresqlEnhanced\Support\Facades\Schema;
 
-use Spatie\LaravelData\Attributes\MapName;
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
-use Spatie\LaravelData\Optional;
+return new class () extends Migration {
+    public function up(): void
+    {
+        Schema::create('student_term_attributes', function (Blueprint $table) {
+            $table->uuid('id')
+                ->default(DB::raw('gen_random_uuid()'))
+                ->primary();
 
-#[MapName(SnakeCaseMapper::class)]
-class StudentEnrollmentData extends Data
-{
-    public function __construct(
-        public string | Optional | null $division,
-        public string | Optional | null $classNbr,
-        public string | Optional | null $crseGradeOff,
-        public int | Optional | null $untTaken,
-        public int | Optional | null $untEarned,
-        public string | Optional | null $lastUpdDtStmp,
-        public string | Optional | null $section,
-        public string | Optional | null $name,
-        public string | Optional | null $department,
-        public string | Optional | null $facultyName,
-        public string | Optional | null $facultyEmail,
-        public string | Optional | null $semesterCode,
-        public string | Optional | null $semesterName,
-        public string | Optional | null $sisTermId,
-        public string | Optional | null $startDate,
-        public string | Optional | null $endDate,
-    ) {}
-}
+            $table->string('sisid');
+            $table->string('sis_term_id');
+            $table->string('enrollment_status')->nullable();
+            $table->string('academic_status')->nullable();
+            $table->string('campus')->nullable();
+            $table->string('college_level')->nullable();
+            $table->string('commuter')->nullable();
+            $table->string('student_registered')->nullable();
+
+            $table->unique(['sisid', 'sis_term_id']);
+            $table->index('sis_term_id');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('student_term_attributes');
+    }
+};

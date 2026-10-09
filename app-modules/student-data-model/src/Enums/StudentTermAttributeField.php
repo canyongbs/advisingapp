@@ -34,32 +34,37 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\DataTransferObjects;
+namespace AdvisingApp\StudentDataModel\Enums;
 
-use Spatie\LaravelData\Attributes\MapName;
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
-use Spatie\LaravelData\Optional;
+use Filament\Support\Contracts\HasLabel;
 
-#[MapName(SnakeCaseMapper::class)]
-class StudentEnrollmentData extends Data
+/**
+ * The allow-list of `student_term_attributes` columns that can be filtered on.
+ * Values are column names, so user input must always be resolved through this enum before reaching a query.
+ */
+enum StudentTermAttributeField: string implements HasLabel
 {
-    public function __construct(
-        public string | Optional | null $division,
-        public string | Optional | null $classNbr,
-        public string | Optional | null $crseGradeOff,
-        public int | Optional | null $untTaken,
-        public int | Optional | null $untEarned,
-        public string | Optional | null $lastUpdDtStmp,
-        public string | Optional | null $section,
-        public string | Optional | null $name,
-        public string | Optional | null $department,
-        public string | Optional | null $facultyName,
-        public string | Optional | null $facultyEmail,
-        public string | Optional | null $semesterCode,
-        public string | Optional | null $semesterName,
-        public string | Optional | null $sisTermId,
-        public string | Optional | null $startDate,
-        public string | Optional | null $endDate,
-    ) {}
+    case EnrollmentStatus = 'enrollment_status';
+
+    case AcademicStatus = 'academic_status';
+
+    case Campus = 'campus';
+
+    case CollegeLevel = 'college_level';
+
+    case Commuter = 'commuter';
+
+    case StudentRegistered = 'student_registered';
+
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::EnrollmentStatus => 'Enrollment Status',
+            self::AcademicStatus => 'Academic Status',
+            self::Campus => 'Campus',
+            self::CollegeLevel => 'College Level',
+            self::Commuter => 'Commuter',
+            self::StudentRegistered => 'Student Registered',
+        };
+    }
 }

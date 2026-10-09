@@ -52,6 +52,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\Ev
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\FormSubmissionsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\InteractionsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\ProgramsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\TermAttributesRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
@@ -160,6 +161,37 @@ it('renders the EnrollmentsRelationManager based on proper access', function () 
         ->assertDontSeeLivewire($relationManager);
 
     $user->givePermissionTo('enrollment.view-any');
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertOk()
+        ->assertSeeLivewire($relationManager);
+});
+
+it('renders the TermAttributesRelationManager based on proper access', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    $student = Student::factory()->create();
+
+    $user->givePermissionTo('student.view-any');
+    $user->givePermissionTo('student.*.view');
+    $user->givePermissionTo('enrollment.view-any');
+
+    actingAs($user);
+
+    $relationManager = TermAttributesRelationManager::class;
+
+    livewire(ViewStudent::class, [
+        'record' => $student->getKey(),
+    ])
+        ->assertOk()
+        ->assertDontSeeLivewire($relationManager);
+
+    $sisSettings = app(StudentInformationSystemSettings::class);
+    $sisSettings->is_enabled = true;
+    $sisSettings->sis_system = SisSystem::ThesisElements;
+    $sisSettings->save();
 
     livewire(ViewStudent::class, [
         'record' => $student->getKey(),

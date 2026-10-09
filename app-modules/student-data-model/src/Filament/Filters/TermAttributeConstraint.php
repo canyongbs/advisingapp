@@ -34,32 +34,39 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\DataTransferObjects;
+namespace AdvisingApp\StudentDataModel\Filament\Filters;
 
-use Spatie\LaravelData\Attributes\MapName;
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
-use Spatie\LaravelData\Optional;
+use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use Filament\Forms\Components\Builder\Block;
+use Filament\QueryBuilder\Constraints\Constraint;
 
-#[MapName(SnakeCaseMapper::class)]
-class StudentEnrollmentData extends Data
+/**
+ * Always registered so saved groups using it keep resolving, but it can only be added
+ * while the tenant's SIS syncs term attributes.
+ */
+class TermAttributeConstraint extends Constraint
 {
-    public function __construct(
-        public string | Optional | null $division,
-        public string | Optional | null $classNbr,
-        public string | Optional | null $crseGradeOff,
-        public int | Optional | null $untTaken,
-        public int | Optional | null $untEarned,
-        public string | Optional | null $lastUpdDtStmp,
-        public string | Optional | null $section,
-        public string | Optional | null $name,
-        public string | Optional | null $department,
-        public string | Optional | null $facultyName,
-        public string | Optional | null $facultyEmail,
-        public string | Optional | null $semesterCode,
-        public string | Optional | null $semesterName,
-        public string | Optional | null $sisTermId,
-        public string | Optional | null $startDate,
-        public string | Optional | null $endDate,
-    ) {}
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->icon('heroicon-m-calendar-days');
+
+        $this->label('Term Attribute');
+
+        $this->operators([
+            TermAttributeOperator::make(),
+        ]);
+    }
+
+    public function getBuilderBlock(): Block
+    {
+        $block = parent::getBuilderBlock();
+
+        if (! app(StudentInformationSystemSettings::class)->hasTermAttributes()) {
+            $block->maxItems(0);
+        }
+
+        return $block;
+    }
 }

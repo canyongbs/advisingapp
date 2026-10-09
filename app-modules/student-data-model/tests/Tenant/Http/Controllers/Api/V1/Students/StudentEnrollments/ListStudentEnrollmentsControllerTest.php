@@ -36,6 +36,7 @@
 
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\TermAttributesFeature;
 use App\Models\SystemUser;
 use Laravel\Sanctum\Sanctum;
 
@@ -128,6 +129,7 @@ it('can filter student enrollments by all attributes', function (string $request
     '`faculty_email`' => ['faculty_email', 'smith@edu.in', ['faculty_email' => 'smith@edu.in'], ['faculty_email' => 'johnson@edu.in'], 'faculty_email', 'smith@edu.in'],
     '`semester_code`' => ['semester_code', '4201', ['semester_code' => '4201'], ['semester_code' => '4202'], 'semester_code', '4201'],
     '`semester_name`' => ['semester_name', 'Fall 2006', ['semester_name' => 'Fall 2006'], ['semester_name' => 'Spring Cohort A 2006'], 'semester_name', 'Fall 2006'],
+    '`sis_term_id` exactly' => ['sis_term_id', '267', ['sis_term_id' => '267'], ['sis_term_id' => '2671'], 'sis_term_id', '267'],
     '`start_date`' => ['start_date', '2024-10-01T00:00:00.000000Z', ['start_date' => '2024-10-01T00:00:00.000000Z'], ['start_date' => '2024-10-12T19:05:00.000000Z'], 'start_date', '2024-10-01T00:00:00.000000Z'],
     '`end_date`' => ['end_date', '2024-10-10T00:00:00.000000Z', ['end_date' => '2024-10-10T00:00:00.000000Z'], ['end_date' => '2024-10-20T19:05:00.000000Z'], 'end_date', '2024-10-10T00:00:00.000000Z'],
 ]);
@@ -147,6 +149,7 @@ dataset('sorts', [
     '`faculty_email`' => ['faculty_email', ['faculty_email' => 'johnson@example.com'], ['faculty_email' => 'smith@example.com'], 'faculty_email', 'johnson@example.com', 'smith@example.com'],
     '`semester_code`' => ['semester_code', ['semester_code' => '4201'], ['semester_code' => '4202'], 'semester_code', '4201', '4202'],
     '`semester_name`' => ['semester_name', ['semester_name' => 'Fall 2006'], ['semester_name' => 'Spring Cohort A 2006'], 'semester_name', 'Fall 2006', 'Spring Cohort A 2006'],
+    '`sis_term_id`' => ['sis_term_id', ['sis_term_id' => '267'], ['sis_term_id' => '268'], 'sis_term_id', '267', '268'],
     '`start_date`' => ['start_date', ['start_date' => '2024-10-02T00:00:00.000000Z'], ['start_date' => '2024-10-15T00:00:00.000000Z'], 'start_date', '2024-10-02T00:00:00.000000Z', '2024-10-15T00:00:00.000000Z'],
     '`end_date`' => ['end_date', ['end_date' => '2024-10-02T00:00:00.000000Z'], ['end_date' => '2024-10-03T00:00:00.000000Z'], 'end_date', '2024-10-02T00:00:00.000000Z', '2024-10-03T00:00:00.000000Z'],
 ]);
@@ -188,3 +191,35 @@ it('can sort student enrollments by all attributes descending', function (string
     expect($response['data'][1][$responseKey])
         ->toBe($responseFirstValue);
 })->with('sorts');
+
+describe('while `TermAttributesFeature` is inactive', function () {
+    it('does not return the `sis_term_id`', function () {
+        $user = SystemUser::factory()->create();
+        $user->givePermissionTo(['student.view-any', 'student.*.view', 'enrollment.view-any']);
+        Sanctum::actingAs($user, ['api']);
+
+        $student = Student::factory()->create();
+
+        Enrollment::factory()->for($student, 'student')->create(['sis_term_id' => '267']);
+
+        TermAttributesFeature::deactivate();
+
+        $response = getJson(route('api.v1.students.enrollments.index', ['student' => $student], false));
+        $response->assertOk();
+
+        expect($response['data'][0])->not->toHaveKey('sis_term_id');
+    });
+
+    it('does not allow filtering by `sis_term_id`', function () {
+        $user = SystemUser::factory()->create();
+        $user->givePermissionTo(['student.view-any', 'student.*.view', 'enrollment.view-any']);
+        Sanctum::actingAs($user, ['api']);
+
+        $student = Student::factory()->create();
+
+        TermAttributesFeature::deactivate();
+
+        getJson(route('api.v1.students.enrollments.index', ['student' => $student, 'filter' => ['sis_term_id' => '267']], false))
+            ->assertBadRequest();
+    });
+});

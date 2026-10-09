@@ -34,32 +34,33 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\DataTransferObjects;
+use AdvisingApp\StudentDataModel\Enums\SisSystem;
+use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use App\Features\TermAttributesFeature;
 
-use Spatie\LaravelData\Attributes\MapName;
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
-use Spatie\LaravelData\Optional;
+describe('term attributes', function () {
+    it('reports whether the SIS syncs term attributes', function (bool $isEnabled, ?SisSystem $sisSystem, bool $hasTermAttributes) {
+        $settings = app(StudentInformationSystemSettings::class);
+        $settings->is_enabled = $isEnabled;
+        $settings->sis_system = $sisSystem;
+        $settings->save();
 
-#[MapName(SnakeCaseMapper::class)]
-class StudentEnrollmentData extends Data
-{
-    public function __construct(
-        public string | Optional | null $division,
-        public string | Optional | null $classNbr,
-        public string | Optional | null $crseGradeOff,
-        public int | Optional | null $untTaken,
-        public int | Optional | null $untEarned,
-        public string | Optional | null $lastUpdDtStmp,
-        public string | Optional | null $section,
-        public string | Optional | null $name,
-        public string | Optional | null $department,
-        public string | Optional | null $facultyName,
-        public string | Optional | null $facultyEmail,
-        public string | Optional | null $semesterCode,
-        public string | Optional | null $semesterName,
-        public string | Optional | null $sisTermId,
-        public string | Optional | null $startDate,
-        public string | Optional | null $endDate,
-    ) {}
-}
+        expect($settings->hasTermAttributes())->toBe($hasTermAttributes);
+    })->with([
+        'enabled Thesis Elements' => [true, SisSystem::ThesisElements, true],
+        'enabled Ellucian Ethos' => [true, SisSystem::EllucianEthos, false],
+        'disabled Thesis Elements' => [false, SisSystem::ThesisElements, false],
+        'enabled without an SIS system' => [true, null, false],
+    ]);
+
+    it('does not report term attributes while `TermAttributesFeature` is inactive', function () {
+        $settings = app(StudentInformationSystemSettings::class);
+        $settings->is_enabled = true;
+        $settings->sis_system = SisSystem::ThesisElements;
+        $settings->save();
+
+        TermAttributesFeature::deactivate();
+
+        expect($settings->hasTermAttributes())->toBeFalse();
+    });
+});

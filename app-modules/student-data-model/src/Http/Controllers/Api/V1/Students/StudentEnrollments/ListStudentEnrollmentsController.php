@@ -39,6 +39,7 @@ namespace AdvisingApp\StudentDataModel\Http\Controllers\Api\V1\Students\StudentE
 use AdvisingApp\StudentDataModel\Http\Resources\Api\V1\StudentEnrollmentResource;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\TermAttributesFeature;
 use Dedoc\Scramble\Attributes\Example;
 use Dedoc\Scramble\Attributes\Group;
 use Dedoc\Scramble\Attributes\QueryParameter;
@@ -78,6 +79,7 @@ class ListStudentEnrollmentsController
     #[QueryParameter('filter[faculty_email]', description: 'Filter the results where the enrollment\'s Faculty email contains the provided string.', type: 'string')]
     #[QueryParameter('filter[semester_code]', description: 'Filter the results where the enrollment\'s Semester code contains the provided string.', type: 'string')]
     #[QueryParameter('filter[semester_name]', description: 'Filter the results where the enrollment\'s Semester name contains the provided string.', type: 'string')]
+    #[QueryParameter('filter[sis_term_id]', description: 'Filter the results where the enrollment\'s SIS term ID matches the provided string.', type: 'string')]
     #[QueryParameter('filter[start_date]', description: 'Filter the results where the program\'s Start Date matches the provided date using comparison operators. Supported: =, <, <=, >, >=. Format: YYYY-MM-DD H:i:s.', type: 'datetime')]
     #[QueryParameter('filter[end_date]', description: 'Filter the results where the program\'s End Date matches the provided date using comparison operators. Supported: =, <, <=, >, >=. Format: YYYY-MM-DD H:i:s.', type: 'datetime')]
     #[QueryParameter('sort', description: 'Control the order of students\'s enrollments that are returned in the response. Ascending order is used by default, prepend the sort with `-` to sort descending.', type: 'string', default: 'sisid', examples: [
@@ -94,6 +96,7 @@ class ListStudentEnrollmentsController
         'faculty_email' => new Example('faculty_email'),
         'semester_code' => new Example('semester_code'),
         'semester_name' => new Example('semester_name'),
+        'sis_term_id' => new Example('sis_term_id'),
         'start_date' => new Example('start_date'),
         'end_date' => new Example('end_date'),
     ])]
@@ -118,6 +121,7 @@ class ListStudentEnrollmentsController
                 AllowedFilter::partial('faculty_email'),
                 AllowedFilter::partial('semester_code'),
                 AllowedFilter::partial('semester_name'),
+                ...(TermAttributesFeature::active() ? [AllowedFilter::exact('sis_term_id')] : []),
                 AllowedFilter::operator('start_date', FilterOperator::DYNAMIC),
                 AllowedFilter::operator('end_date', FilterOperator::DYNAMIC),
             ])
@@ -135,6 +139,7 @@ class ListStudentEnrollmentsController
                 AllowedSort::field('faculty_email'),
                 AllowedSort::field('semester_code'),
                 AllowedSort::field('semester_name'),
+                ...(TermAttributesFeature::active() ? [AllowedSort::field('sis_term_id')] : []),
                 AllowedSort::field('start_date'),
                 AllowedSort::field('end_date'),
             ])

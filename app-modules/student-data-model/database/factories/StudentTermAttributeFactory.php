@@ -34,32 +34,29 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\StudentDataModel\DataTransferObjects;
+namespace AdvisingApp\StudentDataModel\Database\Factories;
 
-use Spatie\LaravelData\Attributes\MapName;
-use Spatie\LaravelData\Data;
-use Spatie\LaravelData\Mappers\SnakeCaseMapper;
-use Spatie\LaravelData\Optional;
+use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Models\StudentTermAttribute;
+use AdvisingApp\StudentDataModel\Models\Term;
+use Illuminate\Database\Eloquent\Factories\Factory;
 
-#[MapName(SnakeCaseMapper::class)]
-class StudentEnrollmentData extends Data
+/**
+ * @extends Factory<StudentTermAttribute>
+ */
+class StudentTermAttributeFactory extends Factory
 {
-    public function __construct(
-        public string | Optional | null $division,
-        public string | Optional | null $classNbr,
-        public string | Optional | null $crseGradeOff,
-        public int | Optional | null $untTaken,
-        public int | Optional | null $untEarned,
-        public string | Optional | null $lastUpdDtStmp,
-        public string | Optional | null $section,
-        public string | Optional | null $name,
-        public string | Optional | null $department,
-        public string | Optional | null $facultyName,
-        public string | Optional | null $facultyEmail,
-        public string | Optional | null $semesterCode,
-        public string | Optional | null $semesterName,
-        public string | Optional | null $sisTermId,
-        public string | Optional | null $startDate,
-        public string | Optional | null $endDate,
-    ) {}
+    public function definition(): array
+    {
+        return [
+            'sisid' => Student::factory(),
+            'sis_term_id' => fn (): string => Term::factory()->create()->sis_term_id,
+            'enrollment_status' => $this->faker->randomElement(['CONTINUING', '1ST TIME FRESHMAN', 'RETURNING']),
+            'academic_status' => $this->faker->optional(0.5)->randomElement(['GOOD STANDING', 'ACADEMIC PROBATION']),
+            'campus' => $this->faker->randomElement(['Main', 'Online']),
+            'college_level' => $this->faker->optional(0.5)->randomElement(['Freshman', 'Sophomore', 'Junior', 'Senior']),
+            'commuter' => $this->faker->randomElement(['Commuter', 'Resident']),
+            'student_registered' => $this->faker->randomElement(['Yes', 'No']),
+        ];
+    }
 }
