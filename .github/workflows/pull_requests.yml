@@ -321,6 +321,116 @@ jobs:
                   # Called directly as `artisan test` breaks `--shard` by forwarding its `--runner` to Pest's test listing.
                   vendor/bin/pest "${args[@]}"
 
+    shard-coverage:
+        name: Shard Coverage
+        runs-on: ubuntu-24.04
+
+        permissions:
+            contents: read
+
+        env:
+            # Keep in sync with the Tenant shards in the test matrix.
+            TENANT_SHARDS: 4
+
+        timeout-minutes: 10
+
+        steps:
+            - name: Setup cache environment
+              id: extcache
+              uses: shivammathur/cache-extensions@de3c642a5fce0ef91581a1c9831e229f525196d6 #1.15.1
+              with:
+                  php-version: ${{ env.php-version }}
+                  extensions: ${{ env.php-extensions }}
+                  key: ${{ env.php-extensions-key }}
+
+            - name: Cache extensions
+              uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+              with:
+                  path: ${{ steps.extcache.outputs.dir }}
+                  key: ${{ runner.os }}-24.04-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
+                  restore-keys: ${{ runner.os }}-24.04-phpext-${{ env.php-version }}
+
+            - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
+              with:
+                  php-version: ${{ env.php-version }}
+                  coverage: none
+                  extensions: ${{ env.php-extensions }}
+
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
+
+            - name: Copy .env
+              run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+            - name: Cache dependencies
+              id: cache-composer
+              uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+              with:
+                  path: vendor
+                  key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
+
+            - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
+              name: Install Dependencies
+              run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+              shell: bash
+
+            - name: Check the Tenant shards run every Tenant test exactly once
+              shell: bash
+              run: |
+                  list_tests() {
+                      vendor/bin/pest --configuration phpunit-ci.xml --testsuite=Tenant --list-tests "$@" \
+                          | grep -E '^ - ' | sed -E 's/[. ]+$//' | sort
+                  }
+
+                  list_tests > all.txt
+                  : > sharded.txt
+                  for shard in $(seq 1 "${TENANT_SHARDS}"); do
+                      list_tests --shard="${shard}/${TENANT_SHARDS}" >> sharded.txt
+                  done
+                  sort -o sharded.txt sharded.txt
+
+                  missing=$(comm -23 all.txt sharded.txt)
+                  duplicated=$(uniq -d sharded.txt)
+
+                  echo "Tenant suite: $(wc -l < all.txt) tests; across ${TENANT_SHARDS} shards: $(wc -l < sharded.txt)."
+
+                  # Pest can also miss whole files (e.g. `<file>./...</file>` entries), so compare against the files on disk too.
+                  suite_files=$(php -r '
+                      $files = [];
+                      $suite = simplexml_load_file("phpunit-ci.xml")->xpath("//testsuite[@name=\"Tenant\"]")[0];
+                      foreach ($suite->directory as $directory) {
+                          foreach (glob((string) $directory, GLOB_ONLYDIR) as $path) {
+                              foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $file) {
+                                  if (str_ends_with($file->getPathname(), (string) ($directory["suffix"] ?? "Test.php"))) {
+                                      $files[$file->getRealPath()] = true;
+                                  }
+                              }
+                          }
+                      }
+                      foreach ($suite->file as $file) {
+                          $files[realpath((string) $file)] = true;
+                      }
+                      echo count($files);
+                  ')
+                  listed_classes=$(sed -E 's/^ - (P\\)?([^:]+)::.*/\2/' all.txt | sort -u | wc -l)
+
+                  echo "Tenant test files on disk: ${suite_files}; test classes listed by Pest: ${listed_classes}."
+
+                  if [[ "${suite_files}" -ne "${listed_classes}" ]]; then
+                      echo "::error::Pest lists ${listed_classes} Tenant test classes but the Tenant suite has ${suite_files} test files, so some files' tests run in no shard."
+                      exit 1
+                  fi
+
+                  if [[ -n "${missing}" || -n "${duplicated}" ]]; then
+                      echo "::error::The Tenant shards do not run every Tenant test exactly once."
+                      echo "Missing from every shard:"
+                      echo "${missing}"
+                      echo "Run by more than one shard:"
+                      echo "${duplicated}"
+                      exit 1
+                  fi
+
     lint:
         name: Lint
         runs-on: ubuntu-24.04
