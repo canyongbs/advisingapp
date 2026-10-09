@@ -28,7 +28,7 @@
         "resolve-url-loader": "^5.0.0",
         "tailwindcss": "^4.0.0",
         "tippy.js": "^6.3.7",
-        "vite": "^8.3.1",
+        "vite": "^8.3.2",
         "vue-filepond": "^7.0.4"
     },
     "devDependencies": {
@@ -68,7 +68,7 @@
         "vue": "^3.5.43",
         "vue-router": "^4.2.5",
         "vue-signature-pad": "^3.0.2",
-        "vue-tsc": "^3.3.11"
+        "vue-tsc": "^3.3.12"
     },
     "allowScripts": {
         "vue-demi@0.14.10": true,
