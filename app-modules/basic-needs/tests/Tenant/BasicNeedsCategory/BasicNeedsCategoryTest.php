@@ -45,12 +45,12 @@ use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 
 it('can render list page', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
@@ -74,7 +74,7 @@ it('can render data in list page', function () {
 
     $basicNeedsCategories = BasicNeedsCategory::factory()->count(10)->create();
 
-    livewire(ListBasicNeedsCategories::class)
+    Livewire::test(ListBasicNeedsCategories::class)
         ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($basicNeedsCategories);
 });
@@ -105,7 +105,7 @@ it('can validate input on create page', function () {
     $user->givePermissionTo('settings.view-any');
     $user->givePermissionTo('settings.create');
 
-    livewire(CreateBasicNeedsCategory::class)
+    Livewire::test(CreateBasicNeedsCategory::class)
         ->fillForm([
             'name' => null,
         ])
@@ -123,7 +123,7 @@ it('can create basic needs catgory', function () {
 
     $basicNeedsCategory = BasicNeedsCategory::factory()->make();
 
-    livewire(CreateBasicNeedsCategory::class)
+    Livewire::test(CreateBasicNeedsCategory::class)
         ->fillForm([
             'name' => $basicNeedsCategory->name,
             'description' => $basicNeedsCategory->description,
@@ -168,7 +168,7 @@ it('can retrieve data', function () {
     $user->givePermissionTo('settings.view-any');
     $user->givePermissionTo('settings.*.update');
 
-    livewire(EditBasicNeedsCategory::class, [
+    Livewire::test(EditBasicNeedsCategory::class, [
         'record' => $basicNeedsCategory->getRouteKey(),
     ])
         ->assertFormSet([
@@ -190,7 +190,7 @@ it('can validate input on edit page', function () {
     $user->givePermissionTo('settings.view-any');
     $user->givePermissionTo('settings.*.update');
 
-    livewire(EditBasicNeedsCategory::class, [
+    Livewire::test(EditBasicNeedsCategory::class, [
         'record' => $basicNeedsCategory->getRouteKey(),
     ])
         ->fillForm([
@@ -214,7 +214,7 @@ it('can save basic needs category', function () {
     $user->givePermissionTo('settings.view-any');
     $user->givePermissionTo('settings.*.update');
 
-    livewire(EditBasicNeedsCategory::class, [
+    Livewire::test(EditBasicNeedsCategory::class, [
         'record' => $oldBasicNeedsCategory->getRouteKey(),
     ])
         ->fillForm([
@@ -261,7 +261,7 @@ it('can delete basic needs category', function () {
     $user->givePermissionTo('settings.*.update');
     $user->givePermissionTo('settings.*.delete');
 
-    livewire(EditBasicNeedsCategory::class, [
+    Livewire::test(EditBasicNeedsCategory::class, [
         'record' => $basicNeedsCategory->getRouteKey(),
     ])
         ->assertActionExists(DeleteAction::class)
@@ -284,7 +284,7 @@ it('can bulk delete basic needs categories', function () {
     $user->givePermissionTo('settings.*.update');
     $user->givePermissionTo('settings.*.delete');
 
-    livewire(ListBasicNeedsCategories::class)
+    Livewire::test(ListBasicNeedsCategories::class)
         ->set('tableRecordsPerPage', 10)
         ->callTableBulkAction(DeleteBulkAction::class, $basicNeedsCategories);
 

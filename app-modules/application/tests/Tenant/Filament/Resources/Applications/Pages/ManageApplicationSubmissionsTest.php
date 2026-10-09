@@ -39,8 +39,8 @@ use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicat
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('tabs are generated for each state', function () {
@@ -56,7 +56,7 @@ test('tabs are generated for each state', function () {
 
     $application = Application::factory()->create();
 
-    $tabs = livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $tabs = Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
         ->instance()
         ->getTabs();
 
@@ -82,7 +82,7 @@ test('tab label includes Archived when the state for that classification is arch
     // @phpstan-ignore method.notFound
     $receivedState->archive();
 
-    $tabs = livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $tabs = Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
         ->instance()
         ->getTabs();
 
@@ -107,7 +107,7 @@ test('default active tab is the state with is_default true', function () {
 
     $application = Application::factory()->create();
 
-    $defaultTab = livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $defaultTab = Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
         ->instance()
         ->getDefaultActiveTab();
 
@@ -130,7 +130,7 @@ test('default active tab falls back to all when the default state is archived an
     // @phpstan-ignore method.notFound
     $defaultState->archive();
 
-    $defaultTab = livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $defaultTab = Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
         ->instance()
         ->getDefaultActiveTab();
 
@@ -152,7 +152,7 @@ test('default tab falls back to all when no state has is_default true', function
 
     $application = Application::factory()->create();
 
-    $defaultTab = livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $defaultTab = Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
         ->instance()
         ->getDefaultActiveTab();
 
@@ -175,7 +175,7 @@ test('archived state that has submissions still appears as a tab', function () {
     // @phpstan-ignore method.notFound
     $receivedState->archive();
 
-    $tabs = livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $tabs = Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
         ->instance()
         ->getTabs();
 
@@ -195,7 +195,7 @@ test('multiple states with the same classification each get their own tab', func
 
     $application = Application::factory()->create();
 
-    $tabs = livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $tabs = Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
         ->instance()
         ->getTabs();
 
@@ -229,7 +229,7 @@ test('switching tabs filters the table to only show submissions for that state',
     $reviewSubmission->state()->associate($reviewState);
     $reviewSubmission->saveQuietly();
 
-    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
         ->set('activeTab', $receivedState->id)
         ->assertCanSeeTableRecords([$receivedSubmission])
         ->assertCanNotSeeTableRecords([$reviewSubmission])
@@ -264,7 +264,7 @@ test('all tab shows submissions from all states', function () {
     $reviewSubmission->state()->associate($reviewState);
     $reviewSubmission->saveQuietly();
 
-    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
         ->set('activeTab', 'all')
         ->assertCanSeeTableRecords([$receivedSubmission, $reviewSubmission]);
 });
@@ -279,7 +279,7 @@ test('archive action is visible when submission is not archived', function () {
     $application = Application::factory()->create();
     $submission = ApplicationSubmission::factory()->create(['application_id' => $application->id]);
 
-    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
         ->assertTableActionVisible('archive', $submission);
 });
 
@@ -295,7 +295,7 @@ test('archive action successfully archives a submission', function () {
 
     expect($submission->isArchived())->toBeFalse();
 
-    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
         ->callTableAction('archive', $submission)
         ->assertNotified();
 
@@ -318,7 +318,7 @@ test('bulk archive action successfully archives multiple submissions', function 
         expect($submission->isArchived())->toBeFalse();
     });
 
-    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
         ->callTableBulkAction('archive', $submissions)
         ->assertNotified();
 
@@ -343,7 +343,7 @@ test('archived submissions are hidden by default', function () {
         'archived_at' => now(),
     ]);
 
-    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
         ->assertCanSeeTableRecords([$activeSubmission])
         ->assertCanNotSeeTableRecords([$archivedSubmission]);
 });
@@ -364,7 +364,7 @@ test('archived submissions are visible when the withoutArchived filter is remove
         'archived_at' => now(),
     ]);
 
-    livewire(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
         ->removeTableFilter('withoutArchived')
         ->assertCanSeeTableRecords([$activeSubmission, $archivedSubmission]);
 });

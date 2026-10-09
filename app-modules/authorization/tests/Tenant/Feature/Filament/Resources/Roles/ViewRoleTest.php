@@ -38,8 +38,8 @@ use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\ViewRole;
 use AdvisingApp\Authorization\Models\Role;
 use App\Enums\Feature;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
 
@@ -52,7 +52,7 @@ describe('enterprise ai', function () {
         $getAvailablePermissionGroupNames = function () use ($role): array {
             $availablePermissionGroupNames = [];
 
-            livewire(ViewRole::class, ['record' => $role->getRouteKey()])
+            Livewire::test(ViewRole::class, ['record' => $role->getRouteKey()])
                 ->assertFormFieldExists('permissions', function (PermissionsMatrix $field) use (&$availablePermissionGroupNames): bool {
                     $availablePermissionGroupNames = array_keys($field->getAvailablePermissions());
 

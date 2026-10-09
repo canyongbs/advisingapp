@@ -42,9 +42,9 @@ use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Actions\AttachAction;
 use Filament\Forms\Components\Select;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 it('A non-super admin user cannot assign the super admin role.', function () {
     $loggedInUser = User::factory()->licensed(LicenseType::cases())->create();
@@ -71,7 +71,7 @@ it('A non-super admin user cannot assign the super admin role.', function () {
 
     $superAdminRole = Role::query()->where('name', Authenticatable::SUPER_ADMIN_ROLE)->firstOrFail();
 
-    livewire(RolesRelationManager::class, [
+    Livewire::test(RolesRelationManager::class, [
         'ownerRecord' => $user,
         'pageClass' => EditUser::class,
     ])
@@ -97,7 +97,7 @@ it('allows user which has sass global admin role to assign sass global admin rol
             ])
         )->assertSuccessful();
 
-    livewire(RolesRelationManager::class, [
+    Livewire::test(RolesRelationManager::class, [
         'ownerRecord' => $secondUser,
         'pageClass' => EditUser::class,
     ])
@@ -140,7 +140,7 @@ it('does not display the Saas Global Admin role if the user is not itself a Saas
             ])
         )->assertSuccessful();
 
-    livewire(RolesRelationManager::class, [
+    Livewire::test(RolesRelationManager::class, [
         'ownerRecord' => $secondUser,
         'pageClass' => EditUser::class,
     ])

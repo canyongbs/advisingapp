@@ -38,8 +38,8 @@ use AdvisingApp\ResourceHub\Enums\ConcernStatus;
 use AdvisingApp\ResourceHub\Filament\Widgets\ResourceHubArticleConcernsTable;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('returns all new concerns for a given resource hub article by default', function () {
@@ -65,7 +65,7 @@ it('returns all new concerns for a given resource hub article by default', funct
         ->for($resourceHubArticle, 'resourceHubArticle')
         ->create();
 
-    livewire(ResourceHubArticleConcernsTable::class, ['record' => $resourceHubArticle])
+    Livewire::test(ResourceHubArticleConcernsTable::class, ['record' => $resourceHubArticle])
         ->assertCanSeeTableRecords($newConcerns)
         ->assertCanNotSeeTableRecords($archivedConcerns->merge($resolvedConcerns));
 });
@@ -93,7 +93,7 @@ it('can filter concerns by status', function () {
         ->for($resourceHubArticle, 'resourceHubArticle')
         ->create();
 
-    livewire(ResourceHubArticleConcernsTable::class, ['record' => $resourceHubArticle])
+    Livewire::test(ResourceHubArticleConcernsTable::class, ['record' => $resourceHubArticle])
         ->filterTable('status', ConcernStatus::Archived->value)
         ->assertCanSeeTableRecords($archivedConcerns)
         ->assertCanNotSeeTableRecords($newConcerns->merge($resolvedConcerns))
@@ -107,7 +107,7 @@ it('can change the status of a concern properly', function () {
 
     $concern = ResourceHubArticleConcern::factory()->create(['status' => ConcernStatus::New]);
 
-    livewire(ResourceHubArticleConcernsTable::class, ['record' => $concern->resourceHubArticle])
+    Livewire::test(ResourceHubArticleConcernsTable::class, ['record' => $concern->resourceHubArticle])
         ->callTableAction('changeConcernStatus', $concern->getKey(), ['status' => ConcernStatus::Resolved])
         ->assertHasNoErrors();
 

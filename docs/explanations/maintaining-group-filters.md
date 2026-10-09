@@ -43,7 +43,7 @@ For a real-world example, see the migration `2026_02_10_161725_tmp_data_remove_s
 
 ## Testing the Data Migration
 
-Data migration tests are written in `tests/TenantMigrationTests.php` using the `isolatedMigration` helper. A test should:
+Data migration tests are written in `tests/TenantMigrations/TenantMigrationsTest.php` using the `isolatedMigration` helper. A test should:
 
 1. Create Groups with filters that include the obsolete constraint types (both at the top level and nested inside `or` groups).
 2. Create edge-case Groups (e.g., with `null` filters or empty filters).

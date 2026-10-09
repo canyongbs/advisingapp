@@ -39,10 +39,10 @@ use AdvisingApp\Authorization\Filament\Pages\Auth\ConfirmOneTimeLoginCode;
 use AdvisingApp\Authorization\Models\OneTimeLoginCode;
 use App\Models\User;
 use Filament\Facades\Filament;
+use Livewire\Livewire;
 
 use function Pest\Laravel\assertAuthenticatedAs;
 use function Pest\Laravel\assertGuest;
-use function Pest\Livewire\livewire;
 
 $startOneTimeLoginFor = function (User $user): void {
     session()->put(ConfirmOneTimeLoginCode::SESSION_KEY, [
@@ -51,7 +51,7 @@ $startOneTimeLoginFor = function (User $user): void {
 };
 
 it('redirects to the login page when no login is in progress', function () {
-    livewire(ConfirmOneTimeLoginCode::class)
+    Livewire::test(ConfirmOneTimeLoginCode::class)
         ->assertRedirect(route('filament.admin.auth.login'));
 });
 
@@ -60,7 +60,7 @@ it('renders when a login is in progress', function () use ($startOneTimeLoginFor
 
     $startOneTimeLoginFor($user);
 
-    livewire(ConfirmOneTimeLoginCode::class)
+    Livewire::test(ConfirmOneTimeLoginCode::class)
         ->assertOk()
         ->assertNoRedirect();
 });
@@ -74,7 +74,7 @@ it('authenticates an internal user with a valid code and sends them to set a pas
 
     assertGuest();
 
-    livewire(ConfirmOneTimeLoginCode::class)
+    Livewire::test(ConfirmOneTimeLoginCode::class)
         ->fillForm(['code' => $code])
         ->call('authenticate')
         ->assertHasNoFormErrors()
@@ -90,7 +90,7 @@ it('lands an external user on the home page', function () use ($startOneTimeLogi
 
     $startOneTimeLoginFor($user);
 
-    livewire(ConfirmOneTimeLoginCode::class)
+    Livewire::test(ConfirmOneTimeLoginCode::class)
         ->fillForm(['code' => $code])
         ->call('authenticate')
         ->assertRedirect(Filament::getPanel('admin')->getUrl());
@@ -105,7 +105,7 @@ it('soft deletes the code once it has been used so it cannot be reused', functio
 
     $startOneTimeLoginFor($user);
 
-    livewire(ConfirmOneTimeLoginCode::class)
+    Livewire::test(ConfirmOneTimeLoginCode::class)
         ->fillForm(['code' => $code])
         ->call('authenticate')
         ->assertHasNoFormErrors();
@@ -124,7 +124,7 @@ it('does not authenticate when the code has already been used', function () use 
 
     $startOneTimeLoginFor($user);
 
-    livewire(ConfirmOneTimeLoginCode::class)
+    Livewire::test(ConfirmOneTimeLoginCode::class)
         ->fillForm(['code' => $code])
         ->call('authenticate')
         ->assertNotified('Invalid code')
@@ -140,7 +140,7 @@ it('does not authenticate with an expired code', function () use ($startOneTimeL
 
     $startOneTimeLoginFor($user);
 
-    livewire(ConfirmOneTimeLoginCode::class)
+    Livewire::test(ConfirmOneTimeLoginCode::class)
         ->fillForm(['code' => $code])
         ->call('authenticate')
         ->assertNotified('Invalid code')
@@ -158,7 +158,7 @@ it('does not authenticate with an incorrect code', function () use ($startOneTim
 
     $startOneTimeLoginFor($user);
 
-    livewire(ConfirmOneTimeLoginCode::class)
+    Livewire::test(ConfirmOneTimeLoginCode::class)
         ->fillForm(['code' => $wrongCode])
         ->call('authenticate')
         ->assertNotified('Invalid code')
@@ -177,7 +177,7 @@ it('does not consume a code belonging to another user', function () use ($startO
 
     $startOneTimeLoginFor($user);
 
-    livewire(ConfirmOneTimeLoginCode::class)
+    Livewire::test(ConfirmOneTimeLoginCode::class)
         ->fillForm(['code' => $otherCode])
         ->call('authenticate')
         ->assertNotified('Invalid code')
@@ -195,7 +195,7 @@ it('forgets the login session data after authenticating', function () use ($star
 
     $startOneTimeLoginFor($user);
 
-    livewire(ConfirmOneTimeLoginCode::class)
+    Livewire::test(ConfirmOneTimeLoginCode::class)
         ->fillForm(['code' => $code])
         ->call('authenticate')
         ->assertHasNoFormErrors();
@@ -208,7 +208,7 @@ it('validates the code', function (?string $code, array $errors) use ($startOneT
 
     $startOneTimeLoginFor($user);
 
-    livewire(ConfirmOneTimeLoginCode::class)
+    Livewire::test(ConfirmOneTimeLoginCode::class)
         ->fillForm(['code' => $code])
         ->call('authenticate')
         ->assertHasFormErrors($errors)
@@ -228,7 +228,7 @@ it('rate limits repeated attempts', function () use ($startOneTimeLoginFor) {
 
     $startOneTimeLoginFor($user);
 
-    $component = livewire(ConfirmOneTimeLoginCode::class);
+    $component = Livewire::test(ConfirmOneTimeLoginCode::class);
 
     foreach (range(1, 5) as $attempt) {
         $component

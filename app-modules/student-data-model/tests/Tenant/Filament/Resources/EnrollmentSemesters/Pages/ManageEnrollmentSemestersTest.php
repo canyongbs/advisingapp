@@ -41,11 +41,11 @@ use AdvisingApp\StudentDataModel\Models\EnrollmentSemester;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
 use Illuminate\Database\Eloquent\Factories\Sequence;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('the page is gated with proper access control', function () {
@@ -71,26 +71,26 @@ test('the delete bulk action is gated by the delete permission', function () {
 
     actingAs($user);
 
-    livewire(ManageEnrollmentSemesters::class)
+    Livewire::test(ManageEnrollmentSemesters::class)
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 
     $user->givePermissionTo('settings.*.delete');
 
-    livewire(ManageEnrollmentSemesters::class)
+    Livewire::test(ManageEnrollmentSemesters::class)
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
 test('it enables the sync button when appropriate', function () {
     asSuperAdmin();
 
-    livewire(ManageEnrollmentSemesters::class)
+    Livewire::test(ManageEnrollmentSemesters::class)
         ->assertActionDisabled('syncAll');
 
     $count = random_int(1, 10);
 
     Enrollment::factory($count)->sequence(fn (Sequence $seq) => ['semester_name' => "Name {$seq->index}"])->create();
 
-    livewire(ManageEnrollmentSemesters::class)
+    Livewire::test(ManageEnrollmentSemesters::class)
         ->assertActionEnabled('syncAll');
 });
 
@@ -103,7 +103,7 @@ test('it can successfully sync all semesters', function () {
 
     assertDatabaseCount(EnrollmentSemester::class, 0);
 
-    livewire(ManageEnrollmentSemesters::class)
+    Livewire::test(ManageEnrollmentSemesters::class)
         ->callAction('syncAll')
         ->assertSuccessful()
         ->assertNotified();
@@ -120,7 +120,7 @@ test('it will add new semesters without removing old ones', function () {
 
     Enrollment::factory($count)->sequence(fn (Sequence $seq) => ['semester_name' => "Name {$seq->index}"])->create();
 
-    livewire(ManageEnrollmentSemesters::class)
+    Livewire::test(ManageEnrollmentSemesters::class)
         ->callAction('syncAll')
         ->assertSuccessful()
         ->assertNotified();
@@ -133,7 +133,7 @@ test('it will only add unique semesters', function () {
 
     Enrollment::factory(2, ['semester_name' => 'test semester'])->create();
 
-    livewire(ManageEnrollmentSemesters::class)
+    Livewire::test(ManageEnrollmentSemesters::class)
         ->callAction('syncAll')
         ->assertSuccessful()
         ->assertNotified();
@@ -150,7 +150,7 @@ test('it will not add semesters that are already ordered', function () {
 
     Enrollment::factory(['semester_name' => 'test semester 2'])->create();
 
-    livewire(ManageEnrollmentSemesters::class)
+    Livewire::test(ManageEnrollmentSemesters::class)
         ->callAction('syncAll')
         ->assertSuccessful()
         ->assertNotified();
@@ -168,7 +168,7 @@ test('the mapping column shows mapped when an enrollment with a matching semeste
 
     Enrollment::factory(['semester_name' => 'Fall 2024'])->create();
 
-    livewire(ManageEnrollmentSemesters::class)
+    Livewire::test(ManageEnrollmentSemesters::class)
         ->assertTableColumnStateSet('is_mapped', true, record: $semester);
 });
 
@@ -177,7 +177,7 @@ test('the mapping column shows unmapped when no enrollment with a matching semes
 
     $semester = EnrollmentSemester::factory(['name' => 'Fall 2024'])->create();
 
-    livewire(ManageEnrollmentSemesters::class)
+    Livewire::test(ManageEnrollmentSemesters::class)
         ->assertTableColumnStateSet('is_mapped', false, record: $semester);
 });
 
@@ -188,6 +188,6 @@ test('the mapping column shows unmapped when only soft-deleted enrollments with 
 
     Enrollment::factory(['semester_name' => 'Fall 2024', 'deleted_at' => now()])->create();
 
-    livewire(ManageEnrollmentSemesters::class)
+    Livewire::test(ManageEnrollmentSemesters::class)
         ->assertTableColumnStateSet('is_mapped', false, record: $semester);
 });

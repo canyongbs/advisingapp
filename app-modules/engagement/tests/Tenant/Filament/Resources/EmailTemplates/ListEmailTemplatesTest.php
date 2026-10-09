@@ -38,9 +38,9 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Engagement\Filament\Resources\EmailTemplates\Pages\ListEmailTemplates;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 it('hides the delete bulk action for users without the delete permission', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -48,7 +48,7 @@ it('hides the delete bulk action for users without the delete permission', funct
 
     actingAs($user);
 
-    livewire(ListEmailTemplates::class)
+    Livewire::test(ListEmailTemplates::class)
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 });
 
@@ -59,6 +59,6 @@ it('shows the delete bulk action for users with the delete permission', function
 
     actingAs($user);
 
-    livewire(ListEmailTemplates::class)
+    Livewire::test(ListEmailTemplates::class)
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

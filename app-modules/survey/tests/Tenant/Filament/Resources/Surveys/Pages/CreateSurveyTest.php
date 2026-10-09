@@ -37,9 +37,9 @@
 use AdvisingApp\Survey\Filament\Resources\Surveys\Pages\CreateSurvey;
 use AdvisingApp\Survey\Models\Survey;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 beforeEach(function () {
@@ -51,7 +51,7 @@ beforeEach(function () {
 });
 
 it('can create a survey', function () {
-    livewire(CreateSurvey::class)
+    Livewire::test(CreateSurvey::class)
         ->fillForm(['name' => 'My Survey'])
         ->call('create')
         ->assertHasNoFormErrors();
@@ -62,7 +62,7 @@ it('can create a survey', function () {
 it('prevents creating a survey with a case-insensitively duplicate name', function () {
     Survey::factory()->create(['name' => 'Existing Survey']);
 
-    livewire(CreateSurvey::class)
+    Livewire::test(CreateSurvey::class)
         ->fillForm(['name' => 'existing survey'])
         ->call('create')
         ->assertHasFormErrors(['name' => 'unique']);
@@ -71,7 +71,7 @@ it('prevents creating a survey with a case-insensitively duplicate name', functi
 it('allows reusing the name of a soft-deleted survey', function () {
     Survey::factory()->create(['name' => 'Reusable Name'])->delete();
 
-    livewire(CreateSurvey::class)
+    Livewire::test(CreateSurvey::class)
         ->fillForm(['name' => 'reusable name'])
         ->call('create')
         ->assertHasNoFormErrors();

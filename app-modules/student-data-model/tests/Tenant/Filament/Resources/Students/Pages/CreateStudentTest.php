@@ -40,16 +40,16 @@ use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\DataTransferObjects\AutocompletedAddress;
 use App\Models\User;
 use Filament\Forms\Components\Repeater;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 it('requires proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     actingAs($user);
 
-    livewire(CreateStudent::class)
+    Livewire::test(CreateStudent::class)
         ->assertForbidden();
 
     $studentSettings = app(ManageStudentConfigurationSettings::class);
@@ -59,7 +59,7 @@ it('requires proper access', function () {
     $user->givePermissionTo('student.view-any');
     $user->givePermissionTo('student.create');
 
-    livewire(CreateStudent::class)
+    Livewire::test(CreateStudent::class)
         ->assertOk();
 });
 
@@ -74,7 +74,7 @@ it('selecting an address in the AddressInput sets the address fields', function 
     $user->givePermissionTo('student.create');
     actingAs($user);
 
-    $component = livewire(CreateStudent::class);
+    $component = Livewire::test(CreateStudent::class);
 
     $addresses = $component->get('data.addresses');
     $itemUuid = array_key_first($addresses);
@@ -119,7 +119,7 @@ it('can create a student with an address', function () {
     $uuid = (string) str()->uuid();
     $undoRepeaterFake = Repeater::fake();
 
-    livewire(CreateStudent::class)
+    Livewire::test(CreateStudent::class)
         ->fillForm([
             'sisid' => '12345678',
             'first' => 'John',

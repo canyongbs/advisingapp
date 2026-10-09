@@ -42,9 +42,9 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Facades\Queue;
+use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseCount;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can create a bulk Email Engagement properly for students', function () {
@@ -59,7 +59,7 @@ it('can create a bulk Email Engagement properly for students', function () {
     $subject = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $faker->sentence()]]]]];
     $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $faker->paragraph()]]]]];
 
-    livewire(ListStudents::class)
+    Livewire::test(ListStudents::class)
         ->mountTableBulkAction('send_email', $students->pluck('sisid')->toArray())
         ->setTableBulkActionData([
             'subject' => $subject,
@@ -90,7 +90,7 @@ it('can create a bulk Email Engagement properly for prospects', function () {
     $subject = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $faker->sentence()]]]]];
     $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $faker->paragraph()]]]]];
 
-    livewire(ListProspects::class)
+    Livewire::test(ListProspects::class)
         ->mountTableBulkAction('send_email', $prospects->pluck('id')->toArray())
         ->setTableBulkActionData([
             'subject' => $subject,

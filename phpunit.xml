@@ -10,7 +10,7 @@
         <testsuite name="Tenant">
             <directory suffix="Test.php">./tests/Tenant</directory>
             <directory suffix="Test.php">./app-modules/*/tests/Tenant</directory>
-            <file>./tests/TenantMigrationTests.php</file>
+            <directory suffix="Test.php">./tests/TenantMigrations</directory>
         </testsuite>
         <testsuite name="Modules">
             <directory suffix="Test.php">./app-modules/*/tests</directory>

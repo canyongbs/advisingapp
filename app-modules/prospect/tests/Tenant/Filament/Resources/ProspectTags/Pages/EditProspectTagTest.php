@@ -37,8 +37,8 @@
 use AdvisingApp\Prospect\Filament\Resources\ProspectTags\Pages\EditProspectTag;
 use App\Enums\TagType;
 use App\Models\Tag;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('EditProspectTag does not allow for duplicate names of non-deleted prospect tags case insensitively', function () {
@@ -50,12 +50,12 @@ test('EditProspectTag does not allow for duplicate names of non-deleted prospect
 
     $deletedTag->delete();
 
-    livewire(EditProspectTag::class, ['record' => $tag->getRouteKey()])
+    Livewire::test(EditProspectTag::class, ['record' => $tag->getRouteKey()])
         ->fillForm(['name' => 'prospect tag'])
         ->call('save')
         ->assertHasNoFormErrors();
 
-    livewire(EditProspectTag::class, ['record' => $tag->getRouteKey()])
+    Livewire::test(EditProspectTag::class, ['record' => $tag->getRouteKey()])
         ->fillForm(['name' => 'OTHER Prospect tag'])
         ->call('save')
         ->assertHasFormErrors(['name' => 'unique']);
@@ -68,7 +68,7 @@ test('EditProspectTag does allow for non-duplicate names of non-deleted prospect
     $deletedTag = Tag::factory(['name' => 'Prospect Tag 2', 'type' => TagType::Prospect])->create();
     $deletedTag->delete();
 
-    livewire(EditProspectTag::class, ['record' => $tag->getRouteKey()])
+    Livewire::test(EditProspectTag::class, ['record' => $tag->getRouteKey()])
         ->fillForm(['name' => 'Prospect Tag 2'])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -80,7 +80,7 @@ test('EditProspectTag does allow for duplicate names of student tags', function 
     Tag::factory(['name' => 'Tag', 'type' => TagType::Student])->create();
     $tag = Tag::factory(['name' => 'Prospect Tag', 'type' => TagType::Prospect])->create();
 
-    livewire(EditProspectTag::class, ['record' => $tag->getRouteKey()])
+    Livewire::test(EditProspectTag::class, ['record' => $tag->getRouteKey()])
         ->fillForm(['name' => 'Tag'])
         ->call('save')
         ->assertHasNoFormErrors();

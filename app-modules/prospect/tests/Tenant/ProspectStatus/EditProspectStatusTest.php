@@ -40,10 +40,10 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Tests\Tenant\ProspectStatus\RequestFactories\EditProspectStatusRequestFactory;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertEquals;
 use function Tests\asSuperAdmin;
 
@@ -60,7 +60,7 @@ test('A successful action on the EditProspectStatus page', function () {
 
     $editRequest = EditProspectStatusRequestFactory::new()->create();
 
-    livewire(EditProspectStatus::class, [
+    Livewire::test(EditProspectStatus::class, [
         'record' => $prospectStatus->getRouteKey(),
     ])
         ->assertFormSet([
@@ -83,7 +83,7 @@ test('EditProspectStatus requires valid data', function (EditProspectStatusReque
 
     $prospectStatus = ProspectStatus::factory()->create();
 
-    livewire(EditProspectStatus::class, [
+    Livewire::test(EditProspectStatus::class, [
         'record' => $prospectStatus->getRouteKey(),
     ])
         ->assertFormSet([
@@ -119,7 +119,7 @@ test('EditProspectStatus is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    livewire(EditProspectStatus::class, [
+    Livewire::test(EditProspectStatus::class, [
         'record' => $prospectStatus->getRouteKey(),
     ])
         ->assertForbidden();
@@ -136,7 +136,7 @@ test('EditProspectStatus is gated with proper access control', function () {
 
     $request = collect(EditProspectStatusRequestFactory::new()->create());
 
-    livewire(EditProspectStatus::class, [
+    Livewire::test(EditProspectStatus::class, [
         'record' => $prospectStatus->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -158,7 +158,7 @@ test('EditProspectStatus is gated with proper system protection access control',
             ])
         )->assertForbidden();
 
-    livewire(EditProspectStatus::class, [
+    Livewire::test(EditProspectStatus::class, [
         'record' => $prospectStatus->getRouteKey(),
     ])
         ->assertForbidden();
@@ -174,7 +174,7 @@ test('EditProspectStatus is gated with proper system protection access control',
 
     $request = collect(EditProspectStatusRequestFactory::new()->create());
 
-    livewire(EditProspectStatus::class, [
+    Livewire::test(EditProspectStatus::class, [
         'record' => $prospectStatus->getRouteKey(),
     ])
         ->fillForm($request->toArray())

@@ -38,8 +38,8 @@ use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\CreateRole;
 use AdvisingApp\Authorization\Models\Role;
 use App\Enums\Feature;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
 
@@ -49,13 +49,13 @@ test('CreateRole does not allow duplicate role names case insensitively within a
     Role::factory()->create(['name' => 'Support Team', 'guard_name' => 'web']);
 
     // The same name under a different guard is allowed.
-    livewire(CreateRole::class)
+    Livewire::test(CreateRole::class)
         ->fillForm(['name' => 'support team', 'guard_name' => 'api'])
         ->call('create')
         ->assertHasNoFormErrors();
 
     // A case-insensitive duplicate under the same guard is rejected.
-    livewire(CreateRole::class)
+    Livewire::test(CreateRole::class)
         ->fillForm(['name' => 'SUPPORT team', 'guard_name' => 'web'])
         ->call('create')
         ->assertHasFormErrors(['name' => 'unique']);
@@ -68,7 +68,7 @@ describe('enterprise ai', function () {
         $getAvailablePermissionGroupNames = function (): array {
             $availablePermissionGroupNames = [];
 
-            livewire(CreateRole::class)
+            Livewire::test(CreateRole::class)
                 ->fillForm(['guard_name' => 'web'])
                 ->assertFormFieldExists('permissions', function (PermissionsMatrix $field) use (&$availablePermissionGroupNames): bool {
                     $availablePermissionGroupNames = array_keys($field->getAvailablePermissions());

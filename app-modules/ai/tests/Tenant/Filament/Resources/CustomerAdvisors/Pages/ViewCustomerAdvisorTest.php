@@ -41,9 +41,9 @@ use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('View Customer Advisor is gated with proper access control', function () {
@@ -92,7 +92,7 @@ test('archive action visible when Customer Advisor is not archived', function ()
 
     actingAs($user);
 
-    livewire(ViewCustomerAdvisor::class, [
+    Livewire::test(ViewCustomerAdvisor::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -119,7 +119,7 @@ test('restore action visible when Customer Advisor is archived', function () {
 
     actingAs($user);
 
-    livewire(ViewCustomerAdvisor::class, [
+    Livewire::test(ViewCustomerAdvisor::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -142,7 +142,7 @@ test('generated instructions are escaped to prevent XSS', function () {
 
     asSuperAdmin();
 
-    livewire(ViewCustomerAdvisor::class, [
+    Livewire::test(ViewCustomerAdvisor::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->assertSuccessful()

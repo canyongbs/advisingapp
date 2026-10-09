@@ -39,9 +39,9 @@ use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicat
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\seed;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 beforeEach(function () {
@@ -53,7 +53,7 @@ test('page is accessible to super admin when ApplicationsNotificationFeature is 
 
     $application = Application::factory()->create();
 
-    livewire(ManageApplicationNotifications::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationNotifications::class, ['record' => $application->getKey()])
         ->assertStatus(200);
 });
 
@@ -63,7 +63,7 @@ test('can save notification users to an application', function () {
     $application = Application::factory()->create();
     $userToNotify = User::factory()->licensed(LicenseType::cases())->create();
 
-    livewire(ManageApplicationNotifications::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationNotifications::class, ['record' => $application->getKey()])
         ->fillForm([
             'notification_users' => [$userToNotify->getKey()],
         ])
@@ -79,7 +79,7 @@ test('can enable notify_via_email and it persists', function () {
 
     $application = Application::factory()->create(['notify_via_email' => false]);
 
-    livewire(ManageApplicationNotifications::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationNotifications::class, ['record' => $application->getKey()])
         ->fillForm(['notify_via_email' => true])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -92,7 +92,7 @@ test('can enable notify_via_app and it persists', function () {
 
     $application = Application::factory()->create(['notify_via_app' => false]);
 
-    livewire(ManageApplicationNotifications::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationNotifications::class, ['record' => $application->getKey()])
         ->fillForm(['notify_via_app' => true])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -105,7 +105,7 @@ test('can enable notify_to_care_team and it persists', function () {
 
     $application = Application::factory()->create(['notify_to_care_team' => false]);
 
-    livewire(ManageApplicationNotifications::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationNotifications::class, ['record' => $application->getKey()])
         ->fillForm(['notify_to_care_team' => true])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -118,7 +118,7 @@ test('can enable notify_to_subscribers and it persists', function () {
 
     $application = Application::factory()->create(['notify_to_subscribers' => false]);
 
-    livewire(ManageApplicationNotifications::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationNotifications::class, ['record' => $application->getKey()])
         ->fillForm(['notify_to_subscribers' => true])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -132,7 +132,7 @@ test('can save all notification settings together', function () {
     $application = Application::factory()->create();
     $userToNotify = User::factory()->licensed(LicenseType::cases())->create();
 
-    livewire(ManageApplicationNotifications::class, ['record' => $application->getKey()])
+    Livewire::test(ManageApplicationNotifications::class, ['record' => $application->getKey()])
         ->fillForm([
             'notification_users' => [$userToNotify->getKey()],
             'notify_to_care_team' => true,

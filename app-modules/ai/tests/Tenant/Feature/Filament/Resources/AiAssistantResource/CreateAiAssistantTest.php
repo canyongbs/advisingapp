@@ -45,13 +45,13 @@ use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -127,7 +127,7 @@ it('can create a record', function () use ($licenses, $permissions) {
 
     $request = collect(CreateAiAssistantRequestFactory::new()->create());
 
-    livewire(CreateAiAssistant::class)
+    Livewire::test(CreateAiAssistant::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors()
@@ -168,7 +168,7 @@ it('validates the inputs', function (CreateAiAssistantRequestFactory $data, arra
 
     $request = collect(CreateAiAssistantRequestFactory::new($data)->create());
 
-    livewire(CreateAiAssistant::class)
+    Livewire::test(CreateAiAssistant::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasFormErrors($errors);
@@ -238,7 +238,7 @@ it('ai_assistant_confidential_users UserSelect does not show admin users in opti
     $adminUser = User::factory()->create();
     $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
-    livewire(CreateAiAssistant::class)
+    Livewire::test(CreateAiAssistant::class)
         ->assertSuccessful()
         ->assertFormFieldExists('ai_assistant_confidential_users', checkFieldUsing: function (UserSelect $field) use ($regularUser, $adminUser): bool {
             return ! empty($field->getSearchResults($regularUser->name))
@@ -261,7 +261,7 @@ it('ai_assistant_confidential_users UserSelect shows all users when filter_admin
     $adminUser = User::factory()->create();
     $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
-    livewire(CreateAiAssistant::class)
+    Livewire::test(CreateAiAssistant::class)
         ->assertSuccessful()
         ->assertFormFieldExists('ai_assistant_confidential_users', checkFieldUsing: function (UserSelect $field) use ($adminUser): bool {
             return ! empty($field->getSearchResults($adminUser->name));

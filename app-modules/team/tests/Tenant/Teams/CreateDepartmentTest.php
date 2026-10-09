@@ -38,10 +38,10 @@ use AdvisingApp\Team\Filament\Resources\Departments\DepartmentResource;
 use AdvisingApp\Team\Filament\Resources\Departments\Pages\CreateDepartment;
 use AdvisingApp\Team\Models\Department;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function Tests\asSuperAdmin;
 
@@ -55,7 +55,7 @@ test('CreateDepartment is gated with proper access control', function () {
             DepartmentResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateDepartment::class)
+    Livewire::test(CreateDepartment::class)
         ->assertForbidden();
 
     $user->givePermissionTo('department.view-any');
@@ -68,7 +68,7 @@ test('CreateDepartment is gated with proper access control', function () {
 
     $request = Department::factory()->make();
 
-    livewire(CreateDepartment::class)
+    Livewire::test(CreateDepartment::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
@@ -83,12 +83,12 @@ test('CreateDepartment does not allow for duplicate names of non-deleted departm
 
     Department::factory(['name' => 'department', 'deleted_at' => now()])->create();
 
-    livewire(CreateDepartment::class)
+    Livewire::test(CreateDepartment::class)
         ->fillForm(['name' => 'Department', 'description' => 'test'])
         ->call('create')
         ->assertHasNoFormErrors();
 
-    livewire(CreateDepartment::class)
+    Livewire::test(CreateDepartment::class)
         ->fillForm(['name' => 'DEPARTMENT', 'description' => 'test'])
         ->call('create')
         ->assertHasFormErrors(['name' => 'unique']);

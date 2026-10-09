@@ -39,9 +39,9 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Models\User;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can render the manage student care team page', function () {
@@ -49,7 +49,7 @@ it('can render the manage student care team page', function () {
 
     $student = Student::factory()->create();
 
-    livewire(ManageStudentCareTeam::class, ['record' => $student->getKey()])
+    Livewire::test(ManageStudentCareTeam::class, ['record' => $student->getKey()])
         ->assertOk();
 });
 
@@ -65,7 +65,7 @@ it('renders the `ArchiveAction` in the student header', function () {
 
     $student = Student::factory()->create();
 
-    livewire(ManageStudentCareTeam::class, ['record' => $student->getKey()])
+    Livewire::test(ManageStudentCareTeam::class, ['record' => $student->getKey()])
         ->assertOk()
         ->assertActionVisible(ArchiveAction::class);
 });
@@ -81,7 +81,7 @@ it('archives the student from the student header', function () {
 
     expect($student->archived_at)->toBeNull();
 
-    livewire(ManageStudentCareTeam::class, ['record' => $student->getKey()])
+    Livewire::test(ManageStudentCareTeam::class, ['record' => $student->getKey()])
         ->callAction(ArchiveAction::class);
 
     expect($student->refresh()->archived_at)->not->toBeNull();
@@ -94,7 +94,7 @@ describe('authorization', function () {
 
         actingAs($user);
 
-        livewire(ManageStudentCareTeam::class, ['record' => $student->getKey()])
+        Livewire::test(ManageStudentCareTeam::class, ['record' => $student->getKey()])
             ->assertForbidden();
 
         $user->givePermissionTo('student.view-any');
@@ -104,7 +104,7 @@ describe('authorization', function () {
         $user->givePermissionTo('care_team.view-any');
         $user->givePermissionTo('care_team.*.view');
 
-        livewire(ManageStudentCareTeam::class, ['record' => $student->getKey()])
+        Livewire::test(ManageStudentCareTeam::class, ['record' => $student->getKey()])
             ->assertOk();
     });
 });

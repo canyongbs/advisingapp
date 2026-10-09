@@ -40,8 +40,8 @@ use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('can load edit page for a submission state', function () {
@@ -51,7 +51,7 @@ test('can load edit page for a submission state', function () {
         'classification' => ApplicationSubmissionStateClassification::Received,
     ]);
 
-    livewire(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
+    Livewire::test(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
         ->assertSuccessful();
 });
 
@@ -62,7 +62,7 @@ test('view action is available on edit page', function () {
         'classification' => ApplicationSubmissionStateClassification::Received,
     ]);
 
-    livewire(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
+    Livewire::test(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
         ->assertActionExists('view');
 });
 
@@ -73,7 +73,7 @@ test('archive action is visible on edit page when state is not archived', functi
         'classification' => ApplicationSubmissionStateClassification::Received,
     ]);
 
-    livewire(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
+    Livewire::test(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
         ->assertActionVisible('archive');
 });
 
@@ -87,7 +87,7 @@ test('archive action is hidden on edit page when state is already archived', fun
     // @phpstan-ignore method.notFound
     $state->archive();
 
-    livewire(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
+    Livewire::test(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
         ->assertActionHidden('archive');
 });
 
@@ -98,7 +98,7 @@ test('archive action archives the state and redirects to index', function () {
         'classification' => ApplicationSubmissionStateClassification::Received,
     ]);
 
-    livewire(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
+    Livewire::test(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
         ->callAction('archive');
 
     expect($state->fresh()->isArchived())->toBeTrue();
@@ -111,7 +111,7 @@ test('delete action is visible when state has no associated submissions', functi
         'classification' => ApplicationSubmissionStateClassification::Deny,
     ]);
 
-    livewire(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
+    Livewire::test(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
         ->assertActionVisible(DeleteAction::class);
 });
 
@@ -124,7 +124,7 @@ test('delete action is hidden when state has associated submissions', function (
 
     ApplicationSubmission::factory()->create(['state_id' => $state->id]);
 
-    livewire(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
+    Livewire::test(EditApplicationSubmissionState::class, ['record' => $state->getRouteKey()])
         ->assertActionHidden(DeleteAction::class);
 });
 

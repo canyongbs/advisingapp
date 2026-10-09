@@ -38,8 +38,8 @@ use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\EditRole;
 use AdvisingApp\Authorization\Models\Role;
 use App\Enums\Feature;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
 
@@ -50,13 +50,13 @@ test('EditRole does not allow duplicate role names case insensitively within a g
     Role::factory()->create(['name' => 'Second Role', 'guard_name' => 'web']);
 
     // Editing a role to its own name in a different case is allowed (record is ignored).
-    livewire(EditRole::class, ['record' => $role->getRouteKey()])
+    Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
         ->fillForm(['name' => 'first role'])
         ->call('save')
         ->assertHasNoFormErrors();
 
     // Colliding with another role's name case-insensitively is rejected.
-    livewire(EditRole::class, ['record' => $role->getRouteKey()])
+    Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
         ->fillForm(['name' => 'SECOND role'])
         ->call('save')
         ->assertHasFormErrors(['name' => 'unique']);
@@ -71,7 +71,7 @@ describe('enterprise ai', function () {
         $getAvailablePermissionGroupNames = function () use ($role): array {
             $availablePermissionGroupNames = [];
 
-            livewire(EditRole::class, ['record' => $role->getRouteKey()])
+            Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
                 ->assertFormFieldExists('permissions', function (PermissionsMatrix $field) use (&$availablePermissionGroupNames): bool {
                     $availablePermissionGroupNames = array_keys($field->getAvailablePermissions());
 
@@ -100,7 +100,7 @@ describe('enterprise ai', function () {
 
         setEnterpriseAiEnabled(false);
 
-        livewire(EditRole::class, ['record' => $role->getRouteKey()])
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
             ->fillForm(['name' => 'Renamed Advisors'])
             ->call('save')
             ->assertHasNoFormErrors();

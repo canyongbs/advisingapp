@@ -42,10 +42,10 @@ use App\Models\User;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\Action;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 describe('archiving', function () {
@@ -61,7 +61,7 @@ describe('archiving', function () {
 
         expect($student->archived_at)->toBeNull();
 
-        livewire(EditStudent::class, ['record' => $student->getKey()])
+        Livewire::test(EditStudent::class, ['record' => $student->getKey()])
             ->callAction(ArchiveAction::class);
 
         $student->refresh();
@@ -83,12 +83,12 @@ describe('archiving', function () {
 
         $student = Student::factory()->create();
 
-        livewire(EditStudent::class, ['record' => $student->getKey()])
+        Livewire::test(EditStudent::class, ['record' => $student->getKey()])
             ->assertActionVisible(ArchiveAction::class);
 
         $student->archive();
 
-        expect(fn () => livewire(EditStudent::class, ['record' => $student->getKey()]))
+        expect(fn () => Livewire::test(EditStudent::class, ['record' => $student->getKey()]))
             ->toThrow(ModelNotFoundException::class);
     });
 
@@ -101,7 +101,7 @@ describe('archiving', function () {
 
         $student = Student::factory()->create();
 
-        livewire(EditStudent::class, ['record' => $student->getKey()])
+        Livewire::test(EditStudent::class, ['record' => $student->getKey()])
             ->assertActionExists(ArchiveAction::class, checkActionUsing: fn (Action $action): bool => str_contains(
                 (string) $action->getModalDescription(),
                 'They will no longer appear in student lists, searches, population groups or reports',
@@ -130,12 +130,12 @@ describe('authorization', function () {
 
         $user->revokePermissionTo('student.*.delete');
 
-        livewire(EditStudent::class, ['record' => $student->getKey()])
+        Livewire::test(EditStudent::class, ['record' => $student->getKey()])
             ->assertActionHidden(ArchiveAction::class);
 
         $user->givePermissionTo('student.*.delete');
 
-        livewire(EditStudent::class, ['record' => $student->getKey()])
+        Livewire::test(EditStudent::class, ['record' => $student->getKey()])
             ->assertActionVisible(ArchiveAction::class);
     });
 });

@@ -51,11 +51,11 @@ use Filament\Actions\ImportAction;
 use Filament\Forms\Components\Repeater;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 
 $customerCategoryImporter = function (User $user, CustomerAdvisor $advisor): CustomerAdvisorCategoryImporter {
@@ -98,7 +98,7 @@ test('Create Customer Advisor Category is gated with proper access control', fun
         )
         ->assertForbidden();
 
-    livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
+    Livewire::test(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
         ->assertForbidden();
 
     $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
@@ -130,7 +130,7 @@ test('can create Customer Advisor Category', function () {
 
     $undoRepeaterFake = Repeater::fake();
 
-    livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
+    Livewire::test(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
         ->callTableAction('create', data: ['categories' => [$customerAdvisorCategory->toArray()]])
         ->assertHasNoTableActionErrors();
 
@@ -164,7 +164,7 @@ test('can create multiple Customer Advisor Categories at once', function () {
 
     $undoRepeaterFake = Repeater::fake();
 
-    livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
+    Livewire::test(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
         ->callTableAction('create', data: ['categories' => [$firstCategory->toArray(), $secondCategory->toArray()]])
         ->assertHasNoTableActionErrors();
 
@@ -196,7 +196,7 @@ test('creating duplicate Customer Advisor Category names in the same batch is re
 
     $undoRepeaterFake = Repeater::fake();
 
-    livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
+    Livewire::test(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
         ->callTableAction('create', data: ['categories' => [$firstCategory->toArray(), $secondCategory->toArray()]])
         ->assertHasTableActionErrors(['categories.1.name' => 'The name field has a duplicate value.']);
 
@@ -224,7 +224,7 @@ test('Create Customer Advisor Category validates the inputs', function (Customer
         )
         ->assertForbidden();
 
-    livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
+    Livewire::test(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
         ->assertForbidden();
 
     $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.*.view', 'customer_advisor.create']);
@@ -240,7 +240,7 @@ test('Create Customer Advisor Category validates the inputs', function (Customer
 
     $undoRepeaterFake = Repeater::fake();
 
-    livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
+    Livewire::test(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
         ->callTableAction('create', data: ['categories' => [$customerAdvisorCategory->toArray()]])
         ->assertHasTableActionErrors(collect($errors)->mapWithKeys(fn (string $rule, string $field) => ["categories.0.{$field}" => $rule])->toArray());
 
@@ -293,7 +293,7 @@ test('can edit Customer Advisor Category', function () {
 
     actingAs($user);
 
-    livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
+    Livewire::test(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
         ->callTableAction('edit', record: $customerAdvisorCategory->getKey(), data: $request->toArray())
         ->assertHasNoTableActionErrors();
 
@@ -327,7 +327,7 @@ test('Edit Customer Advisor Category validates the inputs', function (CustomerAd
 
     actingAs($user);
 
-    livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
+    Livewire::test(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
         ->callTableAction('edit', record: $customerAdvisorCategory->getKey(), data: $request)
         ->assertHasTableActionErrors($errors);
 })
@@ -381,7 +381,7 @@ describe('import and export', function () use ($customerCategoryImporter) {
 
         actingAs($user);
 
-        livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
+        Livewire::test(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
             ->assertTableActionVisible(ImportAction::class)
             ->assertTableActionVisible(ExportAction::class);
     });
@@ -412,7 +412,7 @@ describe('import and export', function () use ($customerCategoryImporter) {
 
         actingAs($user);
 
-        livewire(ManageCategories::class, ['record' => $advisor->getKey()])
+        Livewire::test(ManageCategories::class, ['record' => $advisor->getKey()])
             ->callTableAction(ExportAction::class)
             ->assertNotified();
 
@@ -539,7 +539,7 @@ describe('authorization', function () {
 
         actingAs($user);
 
-        livewire(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
+        Livewire::test(ManageCategories::class, ['record' => $customerAdvisor->getKey()])
             ->assertTableActionHidden(ImportAction::class)
             ->assertTableActionVisible(ExportAction::class);
     });

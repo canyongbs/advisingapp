@@ -37,10 +37,10 @@
 use App\Filament\Resources\Users\Pages\EditUser;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 
 use STS\FilamentImpersonate\Actions\Impersonate;
 
@@ -52,7 +52,7 @@ it('renders impersonate button for non super admin users when user is super admi
 
     $user = User::factory()->create();
 
-    $component = livewire(EditUser::class, [
+    $component = Livewire::test(EditUser::class, [
         'record' => $user->getRouteKey(),
     ]);
 
@@ -74,7 +74,7 @@ it('does not render super admin profile for regular user', function () {
     actingAs($user);
 
     // Attempt to load the EditUser component with the super admin's route key
-    livewire(EditUser::class, ['record' => $superAdmin->getRouteKey()])
+    Livewire::test(EditUser::class, ['record' => $superAdmin->getRouteKey()])
         ->assertStatus(404);
 })->throws(ModelNotFoundException::class);
 
@@ -85,7 +85,7 @@ it('does not render impersonate button for super admin users at all', function (
     $user = User::factory()->create();
     asSuperAdmin($user);
 
-    $component = livewire(EditUser::class, [
+    $component = Livewire::test(EditUser::class, [
         'record' => $superAdmin->getRouteKey(),
     ]);
 
@@ -100,7 +100,7 @@ it('allows super admin user to impersonate', function () {
 
     $user = User::factory()->create();
 
-    $component = livewire(EditUser::class, [
+    $component = Livewire::test(EditUser::class, [
         'record' => $user->getRouteKey(),
     ]);
 
@@ -119,7 +119,7 @@ it('allows user with permission to impersonate', function () {
 
     $second = User::factory()->create();
 
-    $component = livewire(EditUser::class, [
+    $component = Livewire::test(EditUser::class, [
         'record' => $second->getRouteKey(),
     ]);
 
@@ -137,13 +137,13 @@ describe('enterprise ai', function () {
 
         $user = User::factory()->create();
 
-        livewire(EditUser::class, ['record' => $user->getRouteKey()])
+        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
             ->assertFormFieldExists('conversational_ai_enabled')
             ->assertFormFieldExists('retention_crm_enabled');
 
         setEnterpriseAiEnabled(false);
 
-        livewire(EditUser::class, ['record' => $user->getRouteKey()])
+        Livewire::test(EditUser::class, ['record' => $user->getRouteKey()])
             ->assertFormFieldDoesNotExist('conversational_ai_enabled')
             ->assertFormFieldExists('retention_crm_enabled');
     });

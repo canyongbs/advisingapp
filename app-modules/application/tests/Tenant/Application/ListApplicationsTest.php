@@ -45,10 +45,10 @@ use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\seed;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 $listApplicationsTestUser = function (): User {
@@ -69,12 +69,12 @@ it('the duplicate action is gated by the create permission', function () use ($l
 
     $application = Application::factory()->create();
 
-    livewire(ListApplications::class)
+    Livewire::test(ListApplications::class)
         ->assertTableActionHidden('Duplicate', $application);
 
     $user->givePermissionTo('application.create');
 
-    livewire(ListApplications::class)
+    Livewire::test(ListApplications::class)
         ->assertTableActionVisible('Duplicate', $application);
 });
 
@@ -138,7 +138,7 @@ test('submissions count displays the correct count for an application', function
 
     expect($expectedCount)->toBeGreaterThan(0);
 
-    livewire(ListApplications::class)
+    Livewire::test(ListApplications::class)
         ->assertTableColumnStateSet('submissions_count', $expectedCount, $application);
 });
 
@@ -158,7 +158,7 @@ test('submissions count includes submissions across all versions', function () {
 
     $archivedCount = $archivedVersion->submissions()->count();
 
-    livewire(ListApplications::class)
+    Livewire::test(ListApplications::class)
         ->assertTableColumnStateSet('submissions_count', $existingCount + $archivedCount, $application);
 });
 
@@ -173,7 +173,7 @@ test('submissions count does not include submissions from unrelated applications
 
     $unrelatedApplication = Application::factory()->create();
 
-    livewire(ListApplications::class)
+    Livewire::test(ListApplications::class)
         ->assertTableColumnStateSet('submissions_count', $expectedCount, $application);
 });
 
@@ -192,7 +192,7 @@ test('submissions count does not include archived submissions', function () {
 
     $expectedCount = $totalSubmissions - (int) ($totalSubmissions / 2);
 
-    livewire(ListApplications::class)
+    Livewire::test(ListApplications::class)
         ->assertTableColumnStateSet('submissions_count', $expectedCount, $application);
 });
 
@@ -212,7 +212,7 @@ it('archive bulk action archives all selected applications', function () {
 
     $records = collect([$applicationWithSubmissions, $applicationWithoutSubmissions]);
 
-    livewire(ListApplications::class)
+    Livewire::test(ListApplications::class)
         ->selectTableRecords($records->pluck('id')->all())
         ->callAction(TestAction::make('archive')->table()->bulk())
         ->assertNotified();
@@ -233,7 +233,7 @@ describe('duplication', function () {
 
         expect(Application::count())->toBe(1);
 
-        livewire(ListApplications::class)
+        Livewire::test(ListApplications::class)
             ->callAction(TestAction::make('Duplicate')->table($application))
             ->assertHasNoFormErrors();
 
@@ -252,7 +252,7 @@ describe('duplication', function () {
 
         expect($submissionCount)->toBeGreaterThan(0);
 
-        livewire(ListApplications::class)
+        Livewire::test(ListApplications::class)
             ->callAction(TestAction::make('Duplicate')->table($application))
             ->assertHasNoFormErrors();
 
@@ -265,7 +265,7 @@ describe('duplication', function () {
     it('gives a duplicated application its own version tree rather than sharing the original', function () {
         $application = Application::factory()->create();
 
-        livewire(ListApplications::class)
+        Livewire::test(ListApplications::class)
             ->callAction(TestAction::make('Duplicate')->table($application))
             ->assertHasNoFormErrors();
 
@@ -284,13 +284,13 @@ describe('duplication', function () {
 
         expect($submissionCount)->toBeGreaterThan(0);
 
-        livewire(ListApplications::class)
+        Livewire::test(ListApplications::class)
             ->callAction(TestAction::make('Duplicate')->table($application))
             ->assertHasNoFormErrors();
 
         $duplicatedApplication = Application::query()->whereKeyNot($application->getKey())->firstOrFail();
 
-        livewire(ListApplications::class)
+        Livewire::test(ListApplications::class)
             ->assertTableColumnStateSet('submissions_count', $submissionCount, record: $application)
             ->assertTableColumnStateSet('submissions_count', 0, record: $duplicatedApplication);
     });
@@ -309,7 +309,7 @@ describe('duplication', function () {
         $stepImage = $step->addMedia(UploadedFile::fake()->image('step.png'))->toMediaCollection('content', 's3-public');
         $step->update(['content' => ['type' => 'doc', 'content' => [['type' => 'image', 'attrs' => ['id' => $stepImage->uuid]]]]]);
 
-        livewire(ListApplications::class)
+        Livewire::test(ListApplications::class)
             ->callAction(TestAction::make('Duplicate')->table($application))
             ->assertHasNoFormErrors();
 

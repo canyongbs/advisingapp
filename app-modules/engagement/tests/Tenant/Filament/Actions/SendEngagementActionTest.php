@@ -42,8 +42,8 @@ use AdvisingApp\StudentDataModel\Models\BouncedPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentPhoneNumber;
 use Illuminate\Support\Facades\Queue;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can create an Email Engagement properly', function () {
@@ -59,7 +59,7 @@ it('can create an Email Engagement properly', function () {
     $subject = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $faker->sentence()]]]]];
     $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $faker->paragraph()]]]]];
 
-    livewire(ViewStudent::class, [
+    Livewire::test(ViewStudent::class, [
         'record' => $student->getKey(),
     ])
         ->mountAction('engage')
@@ -96,7 +96,7 @@ it('can create an SMS Engagement properly', function () {
 
     $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $faker->paragraph()]]]]];
 
-    livewire(ViewStudent::class, [
+    Livewire::test(ViewStudent::class, [
         'record' => $student->getKey(),
     ])
         ->mountAction('engage')
@@ -130,7 +130,7 @@ it('shows no-contact-info message when student has no valid email or sms', funct
 
     expect($student->hasAnyValidContactRoute())->toBeFalse();
 
-    livewire(ViewStudent::class, [
+    Livewire::test(ViewStudent::class, [
         'record' => $student->getKey(),
     ])
         ->assertActionDisabled('engage');
@@ -165,7 +165,7 @@ it('disables channel options when student has bounced email and no phone', funct
 
     expect($student->hasAnyValidContactRoute())->toBeFalse();
 
-    livewire(ViewStudent::class, [
+    Livewire::test(ViewStudent::class, [
         'record' => $student->getKey(),
     ])
         ->assertActionDisabled('engage');
@@ -205,7 +205,7 @@ it('excludes bounced phones from sms channel options', function () {
     expect($student->canReceiveSms())->toBeFalse();
     expect($student->hasAnyValidContactRoute())->toBeFalse();
 
-    livewire(ViewStudent::class, [
+    Livewire::test(ViewStudent::class, [
         'record' => $student->getKey(),
     ])
         ->assertActionDisabled('engage');
@@ -232,7 +232,7 @@ it('enables action when student has no valid email but valid sms', function () {
     expect($student->hasValidEmail())->toBeFalse();
     expect($student->hasValidSms())->toBeTrue();
 
-    livewire(ViewStudent::class, [
+    Livewire::test(ViewStudent::class, [
         'record' => $student->getKey(),
     ])
         ->assertActionEnabled('engage');

@@ -1,0 +1,151 @@
+name: Set up test environment
+description: Starts Redis and PostgreSQL, installs PHP, Composer and npm dependencies, and warms the Laravel caches for running the test suites.
+
+inputs:
+    php-version:
+        description: PHP version to install.
+        required: true
+    php-extensions:
+        description: PHP extensions to install.
+        required: true
+    php-extensions-key:
+        description: Cache key for the compiled PHP extensions.
+        required: true
+
+runs:
+    using: composite
+    steps:
+        # A real 3-master cluster (ports 7000-7002) so tests exercise the same cluster client and CROSSSLOT rules as ElastiCache Serverless.
+        - name: Start Redis (3-master cluster)
+          shell: bash
+          run: |
+              docker run -d --name redis --network host \
+                redis:7.4.11@sha256:91d0f7e8c748ec7a4c2b4fb2c4f84edab794dd91d01e095e38dc906db9d684ab \
+                sh -c '
+                  for port in 7000 7001 7002; do
+                    redis-server --daemonize yes --port "$port" --appendonly no --save "" \
+                      --cluster-enabled yes --cluster-config-file "nodes-$port.conf" --cluster-node-timeout 5000
+                  done
+                  for port in 7000 7001 7002; do
+                    until redis-cli -p "$port" ping | grep -q PONG; do sleep 1; done
+                  done
+                  redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 --cluster-replicas 0 --cluster-yes
+                  tail -f /dev/null
+                '
+
+              for port in 7000 7001 7002; do
+                until docker exec redis redis-cli -p "$port" cluster info | grep -q 'cluster_state:ok'; do sleep 1; done
+              done
+
+        - name: Start PostgreSQL
+          shell: bash
+          run: |
+              docker run -d \
+                --name postgres \
+                -p 5432:5432 \
+                -e POSTGRES_DB="${DB_DATABASE}" \
+                -e POSTGRES_USER="${DB_USERNAME}" \
+                -e POSTGRES_PASSWORD="${DB_PASSWORD}" \
+                --tmpfs /var/lib/postgresql/data \
+                --health-cmd 'pg_isready -h 127.0.0.1' \
+                --health-interval 1s \
+                --health-timeout 5s \
+                --health-retries 30 \
+                postgres:15@sha256:6eb0add3b77c081df18aa518ce43df58fdcc40f2e6d868a6fd08038dc7acd425 \
+                -c max_locks_per_transaction=256 \
+                -c fsync=off \
+                -c synchronous_commit=off \
+                -c full_page_writes=off
+
+        - name: Wait for PostgreSQL
+          shell: bash
+          run: |
+              until docker inspect --format='{{.State.Health.Status}}' postgres | grep -q healthy; do
+                sleep 2
+              done
+
+        - name: Create tenant database
+          shell: bash
+          run: PGPASSWORD="${DB_PASSWORD}" psql -h 127.0.0.1 -d "${DB_DATABASE}" -U "${DB_USERNAME}" -c 'CREATE DATABASE testing_tenant;'
+
+        - name: Setup cache environment
+          id: extcache
+          uses: shivammathur/cache-extensions@22e24453af1bf3851994136f122ce065ab828a74 #1.15.2
+          with:
+              php-version: ${{ inputs.php-version }}
+              extensions: ${{ inputs.php-extensions }}
+              key: ${{ inputs.php-extensions-key }}
+
+        - name: Cache extensions
+          uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+          with:
+              path: ${{ steps.extcache.outputs.dir }}
+              key: ${{ runner.os }}-24.04-phpext-${{ inputs.php-version }}-${{ inputs.php-extensions-key }}
+              restore-keys: ${{ runner.os }}-24.04-phpext-${{ inputs.php-version }}
+
+        - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
+          with:
+              php-version: ${{ inputs.php-version }}
+              coverage: none
+              extensions: ${{ inputs.php-extensions }}
+
+        - name: Copy .env
+          shell: bash
+          run: php -r "file_exists('.env') || copy('.env.example', '.env');"
+
+        - name: Cache dependencies
+          id: cache-composer
+          uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+          with:
+              path: vendor
+              key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock', 'app-modules/**/composer.lock') }}
+
+        - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
+          name: Install Dependencies
+          shell: bash
+          run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+
+        - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+          with:
+              node-version-file: '.nvmrc'
+              cache: 'npm'
+
+        - name: Install npm dependencies
+          shell: bash
+          run: npm install
+
+        - name: Build Assets
+          shell: bash
+          run: npm run build
+
+        - name: Generate key
+          shell: bash
+          run: php artisan key:generate
+
+        - name: Cache Modular Modules
+          shell: bash
+          run: php artisan modules:cache --env=testing
+
+        - name: Cache Routes
+          shell: bash
+          run: php artisan route:cache --env=testing
+
+        - name: Cache Views
+          shell: bash
+          run: php artisan view:cache --env=testing
+
+        - name: Cache Events
+          shell: bash
+          run: php artisan event:cache --env=testing
+
+        - name: Cache Icons
+          shell: bash
+          run: php artisan icons:cache --env=testing
+
+        - name: Cache Filament Components
+          shell: bash
+          run: php artisan filament:cache-components --env=testing
+
+        - name: Check route integrity
+          shell: bash
+          run: php artisan route:list

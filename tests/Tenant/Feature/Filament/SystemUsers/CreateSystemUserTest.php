@@ -36,8 +36,8 @@
 
 use App\Filament\Resources\SystemUsers\Pages\CreateSystemUser;
 use App\Models\SystemUser;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('CreateSystemUser does not allow for duplicate names of non-deleted system users case insensitively', function () {
@@ -46,12 +46,12 @@ test('CreateSystemUser does not allow for duplicate names of non-deleted system 
     $systemUser = SystemUser::factory(['name' => 'System User'])->create();
     $systemUser->delete();
 
-    livewire(CreateSystemUser::class)
+    Livewire::test(CreateSystemUser::class)
         ->fillForm(['name' => 'system USER'])
         ->call('create')
         ->assertHasNoFormErrors();
 
-    livewire(CreateSystemUser::class)
+    Livewire::test(CreateSystemUser::class)
         ->fillForm(['name' => 'system user'])
         ->call('create')
         ->assertHasFormErrors(['name' => 'unique']);

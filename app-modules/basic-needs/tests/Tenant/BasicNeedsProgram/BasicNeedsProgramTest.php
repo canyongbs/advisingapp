@@ -46,12 +46,12 @@ use App\Settings\LicenseSettings;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Tables\Filters\SelectFilter;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 
 it('can render list page', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
@@ -76,7 +76,7 @@ it('can render data in list page', function () {
 
     $basicNeedsPrograms = BasicNeedsProgram::factory()->count(10)->create();
 
-    livewire(ListBasicNeedsPrograms::class)
+    Livewire::test(ListBasicNeedsPrograms::class)
         ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($basicNeedsPrograms);
 });
@@ -107,7 +107,7 @@ it('can validate input on create page', function () {
     $user->givePermissionTo('support_program.view-any');
     $user->givePermissionTo('support_program.create');
 
-    livewire(CreateBasicNeedsProgram::class)
+    Livewire::test(CreateBasicNeedsProgram::class)
         ->fillForm([
             'name' => null,
             'basic_needs_category_id' => null,
@@ -126,7 +126,7 @@ it('can create basic needs program', function () {
 
     $newBasicNeedsProgram = BasicNeedsProgram::factory()->make();
 
-    livewire(CreateBasicNeedsProgram::class)
+    Livewire::test(CreateBasicNeedsProgram::class)
         ->fillForm([
             'name' => $newBasicNeedsProgram->name,
             'description' => $newBasicNeedsProgram->description,
@@ -187,7 +187,7 @@ it('can retrieve data', function () {
     $user->givePermissionTo('support_program.view-any');
     $user->givePermissionTo('support_program.*.update');
 
-    livewire(EditBasicNeedsProgram::class, [
+    Livewire::test(EditBasicNeedsProgram::class, [
         'record' => $basicNeedsProgram->getRouteKey(),
     ])
         ->assertFormSet([
@@ -217,7 +217,7 @@ it('can validate input on edit page', function () {
     $user->givePermissionTo('support_program.view-any');
     $user->givePermissionTo('support_program.*.update');
 
-    livewire(EditBasicNeedsProgram::class, [
+    Livewire::test(EditBasicNeedsProgram::class, [
         'record' => $basicNeedsProgram->getRouteKey(),
     ])
         ->fillForm([
@@ -242,7 +242,7 @@ it('can save basic needs program', function () {
     $user->givePermissionTo('support_program.view-any');
     $user->givePermissionTo('support_program.*.update');
 
-    livewire(EditBasicNeedsProgram::class, [
+    Livewire::test(EditBasicNeedsProgram::class, [
         'record' => $oldBasicNeedsProgram->getRouteKey(),
     ])
         ->fillForm([
@@ -305,7 +305,7 @@ it('can delete basic needs program', function () {
     $user->givePermissionTo('support_program.*.update');
     $user->givePermissionTo('support_program.*.delete');
 
-    livewire(EditBasicNeedsProgram::class, [
+    Livewire::test(EditBasicNeedsProgram::class, [
         'record' => $basicNeedsProgram->getRouteKey(),
     ])
         ->assertActionExists(DeleteAction::class)
@@ -328,7 +328,7 @@ it('can bulk delete basic needs programs', function () {
     $user->givePermissionTo('support_program.*.update');
     $user->givePermissionTo('support_program.*.delete');
 
-    livewire(ListBasicNeedsPrograms::class)
+    Livewire::test(ListBasicNeedsPrograms::class)
         ->set('tableRecordsPerPage', 10)
         ->callTableBulkAction(DeleteBulkAction::class, $basicNeedsPrograms);
 
@@ -343,7 +343,7 @@ it('hides the delete bulk action for users without the delete permission', funct
 
     actingAs($user);
 
-    livewire(ListBasicNeedsPrograms::class)
+    Livewire::test(ListBasicNeedsPrograms::class)
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 });
 
@@ -354,7 +354,7 @@ it('shows the delete bulk action for users with the delete permission', function
 
     actingAs($user);
 
-    livewire(ListBasicNeedsPrograms::class)
+    Livewire::test(ListBasicNeedsPrograms::class)
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
@@ -370,7 +370,7 @@ it('can filter basic needs program by `program category`', function () {
 
     $user->givePermissionTo('support_program.view-any');
 
-    livewire(ListBasicNeedsPrograms::class)
+    Livewire::test(ListBasicNeedsPrograms::class)
         ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($basicNeedsPrograms)
         ->filterTable('basic_category_id', $basicNeedsCategoryId)
@@ -417,7 +417,7 @@ it('can filter support programs by contact person', function () {
 
     $user->givePermissionTo('support_program.view-any');
 
-    livewire(ListBasicNeedsPrograms::class)
+    Livewire::test(ListBasicNeedsPrograms::class)
         ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($basicNeedsPrograms)
         ->filterTable('contact_person', $contactPerson)
@@ -433,7 +433,7 @@ it('loads only distinct contact persons as initial filter options', function () 
     BasicNeedsProgram::factory()->count(3)->create(['contact_person' => 'Duplicate Name']);
     BasicNeedsProgram::factory()->count(2)->create(['contact_person' => 'Other Name']);
 
-    livewire(ListBasicNeedsPrograms::class)
+    Livewire::test(ListBasicNeedsPrograms::class)
         ->assertTableFilterExists('contact_person', function (SelectFilter $filter): bool {
             $options = $filter->getFormField()->getOptions();
 
@@ -453,7 +453,7 @@ it('returns server-side search results for contact persons beyond the initial 40
     $searchTarget = 'ZZZ Searchable Contact';
     BasicNeedsProgram::factory()->create(['contact_person' => $searchTarget]);
 
-    livewire(ListBasicNeedsPrograms::class)
+    Livewire::test(ListBasicNeedsPrograms::class)
         ->assertTableFilterExists('contact_person', function (SelectFilter $filter) use ($searchTarget): bool {
             $field = $filter->getFormField();
             $initialOptions = $field->getOptions();

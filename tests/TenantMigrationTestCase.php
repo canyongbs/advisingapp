@@ -64,7 +64,7 @@ abstract class TenantMigrationTestCase extends TestCase
         $this->afterRefreshingDatabase();
 
         $this->beforeApplicationDestroyed(function () {
-            $this->refreshTenantTestingEnvironment();
+            $this->restoreTenantTestingEnvironment();
         });
     }
 

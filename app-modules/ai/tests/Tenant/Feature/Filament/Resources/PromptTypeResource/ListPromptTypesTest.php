@@ -39,11 +39,11 @@ use AdvisingApp\Ai\Filament\Resources\PromptTypes\PromptTypeResource;
 use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use Filament\Actions\DeleteBulkAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 
 /** @var array<LicenseType> $licenses */
 $licenses = [
@@ -96,7 +96,7 @@ it('can list records', function () use ($licenses, $permissions) {
 
     assertDatabaseCount(PromptType::class, $records->count());
 
-    livewire(ListPromptTypes::class)
+    Livewire::test(ListPromptTypes::class)
         ->set('tableRecordsPerPage', 10)
         ->assertSuccessful()
         ->assertCountTableRecords($records->count())
@@ -111,7 +111,7 @@ it('hides the bulk delete action from a user without the delete permission', fun
 
     PromptType::factory()->count(2)->create();
 
-    livewire(ListPromptTypes::class)
+    Livewire::test(ListPromptTypes::class)
         ->assertSuccessful()
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 });
@@ -124,7 +124,7 @@ it('shows the bulk delete action to a user with the delete permission', function
 
     PromptType::factory()->count(2)->create();
 
-    livewire(ListPromptTypes::class)
+    Livewire::test(ListPromptTypes::class)
         ->assertSuccessful()
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

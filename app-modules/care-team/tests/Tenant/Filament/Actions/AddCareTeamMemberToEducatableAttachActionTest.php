@@ -45,9 +45,9 @@ use App\Enums\CareTeamRoleType;
 use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Repeater;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can attach users without a care team role to a student', function () {
@@ -58,7 +58,7 @@ it('can attach users without a care team role to a student', function () {
     $user1 = User::factory()->licensed(LicenseType::cases())->create();
     $user2 = User::factory()->licensed(LicenseType::cases())->create();
 
-    livewire(ManageStudentCareTeam::class, ['record' => $student->getKey()])
+    Livewire::test(ManageStudentCareTeam::class, ['record' => $student->getKey()])
         ->mountAction(TestAction::make('attach')->table())
         ->fillForm([
             'careTeams' => [
@@ -90,7 +90,7 @@ it('can attach users without a care team role to a prospect', function () {
     $user1 = User::factory()->licensed(LicenseType::cases())->create();
     $user2 = User::factory()->licensed(LicenseType::cases())->create();
 
-    livewire(ManageProspectCareTeam::class, ['record' => $prospect->getKey()])
+    Livewire::test(ManageProspectCareTeam::class, ['record' => $prospect->getKey()])
         ->mountAction(TestAction::make('attach')->table())
         ->fillForm([
             'careTeams' => [
@@ -124,7 +124,7 @@ it('can attach users with care team roles to a student', function () {
     $careTeamRole1 = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Student]);
     $careTeamRole2 = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Student]);
 
-    livewire(ManageStudentCareTeam::class, ['record' => $student->getKey()])
+    Livewire::test(ManageStudentCareTeam::class, ['record' => $student->getKey()])
         ->mountAction(TestAction::make('attach')->table())
         ->fillForm([
             'careTeams' => [
@@ -160,7 +160,7 @@ it('can attach users with care team roles to a prospect', function () {
     $careTeamRole1 = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Prospect]);
     $careTeamRole2 = CareTeamRole::factory()->create(['type' => CareTeamRoleType::Prospect]);
 
-    livewire(ManageProspectCareTeam::class, ['record' => $prospect->getKey()])
+    Livewire::test(ManageProspectCareTeam::class, ['record' => $prospect->getKey()])
         ->mountAction(TestAction::make('attach')->table())
         ->fillForm([
             'careTeams' => [
@@ -197,11 +197,11 @@ it('gates the care team attach action behind the care_team.create permission', f
     actingAs($user);
 
     // Can reach the care team page (view + care_team.view-any) but cannot add members without create.
-    livewire(ManageStudentCareTeam::class, ['record' => $student->getKey()])
+    Livewire::test(ManageStudentCareTeam::class, ['record' => $student->getKey()])
         ->assertActionHidden(TestAction::make('attach')->table());
 
     $user->givePermissionTo('care_team.create');
 
-    livewire(ManageStudentCareTeam::class, ['record' => $student->getKey()])
+    Livewire::test(ManageStudentCareTeam::class, ['record' => $student->getKey()])
         ->assertActionVisible(TestAction::make('attach')->table());
 });

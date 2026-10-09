@@ -40,9 +40,9 @@ use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubCategories\ResourceHub
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\DeleteBulkAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 // TODO: Write ListResourceHubCategory tests
 //test('The correct details are displayed on the ListResourceHubCategory page', function () {});
@@ -130,13 +130,13 @@ test('The DeleteBulkAction is hidden without the delete permission and visible w
 
     actingAs($user);
 
-    livewire(ListResourceHubCategories::class)
+    Livewire::test(ListResourceHubCategories::class)
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 
     $user->givePermissionTo('settings.*.delete');
 
     actingAs($user);
 
-    livewire(ListResourceHubCategories::class)
+    Livewire::test(ListResourceHubCategories::class)
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

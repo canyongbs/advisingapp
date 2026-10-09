@@ -45,8 +45,8 @@ use Carbon\Carbon;
 use Filament\Actions\ExportAction;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('returns top engaged students based on engagements within the given date range', function () {
@@ -83,7 +83,7 @@ it('returns top engaged students based on engagements within the given date rang
         'endDate' => $endDate->toDateString(),
     ];
 
-    livewire(MostEngagedStudentsTable::class, [
+    Livewire::test(MostEngagedStudentsTable::class, [
         'cacheTag' => 'report-student-engagement',
         'pageFilters' => $filters,
     ])
@@ -138,7 +138,7 @@ it('returns top engaged students engagements based on group filter', function ()
         'populationGroup' => $group->getKey(),
     ];
 
-    livewire(MostEngagedStudentsTable::class, [
+    Livewire::test(MostEngagedStudentsTable::class, [
         'cacheTag' => 'report-student-engagement',
         'pageFilters' => $filters,
     ])
@@ -148,7 +148,7 @@ it('returns top engaged students engagements based on group filter', function ()
         ->assertCanNotSeeTableRecords(collect([$student2]));
 
     // without filter
-    livewire(MostEngagedStudentsTable::class, [
+    Livewire::test(MostEngagedStudentsTable::class, [
         'cacheTag' => 'report-student-engagement',
         'filters' => [],
     ])
@@ -159,7 +159,7 @@ it('returns top engaged students engagements based on group filter', function ()
 });
 
 it('has an export action', function () {
-    livewire(MostEngagedStudentsTable::class, [
+    Livewire::test(MostEngagedStudentsTable::class, [
         'cacheTag' => 'report-student-messages-overview',
         'filters' => [],
     ])->assertTableActionExists(ExportAction::class);
@@ -191,7 +191,7 @@ it('can start an export, sending a notification', function () {
         'channel' => NotificationChannel::Email,
     ])->create();
 
-    livewire(MostEngagedStudentsTable::class, [
+    Livewire::test(MostEngagedStudentsTable::class, [
         'cacheTag' => 'report-student-engagement',
         'filters' => [],
     ])
@@ -205,7 +205,7 @@ it('does not list archived students', function () {
     $archived = Student::factory()->create();
     $archived->archive();
 
-    livewire(MostEngagedStudentsTable::class, [
+    Livewire::test(MostEngagedStudentsTable::class, [
         'cacheTag' => 'report-students',
         'pageFilters' => [],
     ])
@@ -235,7 +235,7 @@ it('lists a student archived after the reported period without linking to them',
         'created_at' => Carbon::parse('2026-03-10'),
     ])->create();
 
-    livewire(MostEngagedStudentsTable::class, [
+    Livewire::test(MostEngagedStudentsTable::class, [
         'cacheTag' => 'report-students',
         'pageFilters' => [
             'startDate' => '2026-03-01',

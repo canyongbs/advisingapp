@@ -47,9 +47,9 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\Ap
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Illuminate\Support\Facades\Queue;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 beforeEach(function () {
@@ -65,7 +65,7 @@ it('requires application_id to submit the request', function () {
 
     $student = Student::factory()->create();
 
-    livewire(ApplicationSubmissionsRelationManager::class, [
+    Livewire::test(ApplicationSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -85,7 +85,7 @@ it('can request an application submission via email', function () {
     $student = Student::factory()->create();
     $application = Application::factory()->create();
 
-    livewire(ApplicationSubmissionsRelationManager::class, [
+    Livewire::test(ApplicationSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -115,7 +115,7 @@ it('defaults request_method to email', function () {
     $student = Student::factory()->create();
     $application = Application::factory()->create();
 
-    livewire(ApplicationSubmissionsRelationManager::class, [
+    Livewire::test(ApplicationSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -138,7 +138,7 @@ it('allows request_note to be optional', function () {
     $student = Student::factory()->create();
     $application = Application::factory()->create();
 
-    livewire(ApplicationSubmissionsRelationManager::class, [
+    Livewire::test(ApplicationSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -176,7 +176,7 @@ it('reuses an existing requested submission for the same application instead of 
     $existingSubmission->requester()->associate($user);
     $existingSubmission->save();
 
-    livewire(ApplicationSubmissionsRelationManager::class, [
+    Livewire::test(ApplicationSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -211,7 +211,7 @@ it('creates a new submission when existing one is already submitted', function (
         'submitted_at' => now(),
     ]);
 
-    livewire(ApplicationSubmissionsRelationManager::class, [
+    Livewire::test(ApplicationSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -233,7 +233,7 @@ it('associates the current authenticated user as the requester', function () {
     $student = Student::factory()->create();
     $application = Application::factory()->create();
 
-    livewire(ApplicationSubmissionsRelationManager::class, [
+    Livewire::test(ApplicationSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -257,7 +257,7 @@ it('dispatches the delivery job after creating the submission', function () {
     $student = Student::factory()->create();
     $application = Application::factory()->create();
 
-    livewire(ApplicationSubmissionsRelationManager::class, [
+    Livewire::test(ApplicationSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -278,7 +278,7 @@ it('dispatches the sms delivery job when sms method is selected', function () {
     $student = Student::factory()->create();
     $application = Application::factory()->create();
 
-    livewire(ApplicationSubmissionsRelationManager::class, [
+    Livewire::test(ApplicationSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -299,7 +299,7 @@ it('sends a success notification after the request is sent', function () {
     $student = Student::factory()->create();
     $application = Application::factory()->create();
 
-    livewire(ApplicationSubmissionsRelationManager::class, [
+    Livewire::test(ApplicationSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -320,7 +320,7 @@ it('hides the request action from a user without the application.create ability'
 
     $student = Student::factory()->create();
 
-    livewire(ApplicationSubmissionsRelationManager::class, [
+    Livewire::test(ApplicationSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -340,7 +340,7 @@ it('allows a user with the application.create ability to request an application 
     $student = Student::factory()->create();
     $application = Application::factory()->create();
 
-    livewire(ApplicationSubmissionsRelationManager::class, [
+    Livewire::test(ApplicationSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])

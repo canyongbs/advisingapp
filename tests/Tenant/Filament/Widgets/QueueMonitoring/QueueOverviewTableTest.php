@@ -44,8 +44,8 @@ use Filament\Actions\Testing\TestAction;
 use Illuminate\Contracts\Queue\ClearableQueue;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Queue;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 beforeEach(function () {
@@ -89,7 +89,7 @@ it('shows the depth, metrics, provisioned workers and p95 pickup time of each kn
 
     asSuperAdmin();
 
-    livewire(QueueOverviewTable::class)
+    Livewire::test(QueueOverviewTable::class)
         ->assertCanSeeTableRecords(['advisingapp-default'])
         ->assertTableColumnStateSet('name', 'advisingapp-default', record: 'advisingapp-default')
         ->assertTableColumnStateSet('pending', 7, record: 'advisingapp-default')
@@ -120,7 +120,7 @@ describe('flush action', function () {
 
         Queue::partialMock()->shouldReceive('connection')->with(config('queue.default'))->andReturn($clearableQueue);
 
-        livewire(QueueOverviewTable::class)
+        Livewire::test(QueueOverviewTable::class)
             ->callAction(TestAction::make('flush')->table('advisingapp-default'))
             ->assertNotified('Flushed advisingapp-default: 42 jobs deleted.');
 
@@ -132,7 +132,7 @@ describe('flush action', function () {
 
         Queue::partialMock()->shouldReceive('connection')->with(config('queue.default'))->andReturn(new stdClass());
 
-        livewire(QueueOverviewTable::class)
+        Livewire::test(QueueOverviewTable::class)
             ->callAction(TestAction::make('flush')->table('advisingapp-default'))
             ->assertNotified('This queue driver does not support flushing.');
     });

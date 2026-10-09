@@ -41,10 +41,10 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ListStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Str;
+use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('shows the form and validation', function (BulkCreateConcernActionRequestFactory $data, array $errors) {
@@ -54,7 +54,7 @@ it('shows the form and validation', function (BulkCreateConcernActionRequestFact
 
     $request = BulkCreateConcernActionRequestFactory::new($data)->create();
 
-    livewire(ListStudents::class)
+    Livewire::test(ListStudents::class)
         ->mountTableBulkAction('createConcern', [$student->getKey()])
         ->setTableBulkActionData($request)
         ->callMountedTableBulkAction()
@@ -99,7 +99,7 @@ it('can successfully create bulk concern with student', function () {
 
     $request = BulkCreateConcernActionRequestFactory::new()->create();
 
-    livewire(ListStudents::class)
+    Livewire::test(ListStudents::class)
         ->mountTableBulkAction('createConcern', [$student->getKey()])
         ->setTableBulkActionData([
             ...$request,
@@ -125,7 +125,7 @@ it('can successfully create bulk concern with prospect', function () {
 
     $request = BulkCreateConcernActionRequestFactory::new()->create();
 
-    livewire(ListProspects::class)
+    Livewire::test(ListProspects::class)
         ->mountTableBulkAction('createConcern', [$prospect->getKey()])
         ->setTableBulkActionData($request)
         ->callMountedTableBulkAction()

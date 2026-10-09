@@ -53,7 +53,7 @@ it('can be sent', function () {
 
     Concern::factory()->create([
         'concern_id' => $student->sisid,
-        'concern_type' => Student::class,
+        'concern_type' => $student->getMorphClass(),
     ]);
 
     Notification::assertSentTo(

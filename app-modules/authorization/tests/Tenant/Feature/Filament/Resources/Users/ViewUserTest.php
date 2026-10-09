@@ -38,10 +38,10 @@ use App\Filament\Resources\Users\Pages\EditUser;
 use App\Filament\Resources\Users\Pages\ViewUser;
 use App\Models\User;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 
 use STS\FilamentImpersonate\Actions\Impersonate;
 
@@ -52,7 +52,7 @@ it('renders impersonate button for non super admin users when user is super admi
 
     $user = User::factory()->create();
 
-    livewire(ViewUser::class, [
+    Livewire::test(ViewUser::class, [
         'record' => $user->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -66,7 +66,7 @@ it('does not render impersonate button for super admin users at all', function (
     $user = User::factory()->create();
     asSuperAdmin($user);
 
-    livewire(ViewUser::class, [
+    Livewire::test(ViewUser::class, [
         'record' => $superAdmin->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -86,7 +86,7 @@ it('does not render super admin profile for regular user', function () {
     actingAs($user);
 
     // Attempt to load the EditUser component with the super admin's route key
-    livewire(ViewUser::class, ['record' => $superAdmin->getRouteKey()])
+    Livewire::test(ViewUser::class, ['record' => $superAdmin->getRouteKey()])
         ->assertStatus(404);
 })->throws(ModelNotFoundException::class);
 
@@ -96,7 +96,7 @@ it('allows super admin user to impersonate', function () {
 
     $user = User::factory()->create();
 
-    livewire(ViewUser::class, [
+    Livewire::test(ViewUser::class, [
         'record' => $user->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -111,7 +111,7 @@ it('does not display the mfa_status for an external User', function () {
 
     asSuperAdmin();
 
-    livewire(ViewUser::class, [
+    Livewire::test(ViewUser::class, [
         'record' => $user->getRouteKey(),
     ])
         ->assertDontSeeHtml('data-identifier="mfa-enabled"')
@@ -124,7 +124,7 @@ it('displays the proper mfa_status for an internal User without MFA enabled', fu
 
     asSuperAdmin();
 
-    livewire(ViewUser::class, [
+    Livewire::test(ViewUser::class, [
         'record' => $user->getRouteKey(),
     ])
         ->assertSeeHtml('data-identifier="mfa-disabled"');
@@ -137,7 +137,7 @@ it('displays the proper mfa_status for an internal User with MFA enabled but not
 
     asSuperAdmin();
 
-    livewire(ViewUser::class, [
+    Livewire::test(ViewUser::class, [
         'record' => $user->getRouteKey(),
     ])
         ->assertSeeHtml('data-identifier="mfa-not-confirmed"');
@@ -152,7 +152,7 @@ it('displays the proper mfa_status for an internal User with MFA enabled and con
 
     asSuperAdmin();
 
-    livewire(ViewUser::class, [
+    Livewire::test(ViewUser::class, [
         'record' => $user->getRouteKey(),
     ])
         ->assertSeeHtml('data-identifier="mfa-enabled"');
@@ -163,7 +163,7 @@ it('does not display the mfa_reset Action if the user is external', function () 
 
     asSuperAdmin();
 
-    livewire(ViewUser::class, [
+    Livewire::test(ViewUser::class, [
         'record' => $user->getRouteKey(),
     ])
         ->assertActionHidden('mfa_reset');
@@ -180,7 +180,7 @@ it('does not display the mfa_reset Action if the authed user does not have the p
     $actingAsUser->givePermissionTo('user.view-any', 'user.*.view');
     actingAs($actingAsUser);
 
-    livewire(ViewUser::class, [
+    Livewire::test(ViewUser::class, [
         'record' => $user->getRouteKey(),
     ])
         ->assertActionHidden('mfa_reset');
@@ -191,7 +191,7 @@ it('does not display the mfa_reset Action if the user is internal but has not en
 
     asSuperAdmin();
 
-    livewire(ViewUser::class, [
+    Livewire::test(ViewUser::class, [
         'record' => $user->getRouteKey(),
     ])
         ->assertActionHidden('mfa_reset');
@@ -202,7 +202,7 @@ it('displays the mfa_reset Action if the user is internal, has MFA enabled and/o
     $actingAsUser->givePermissionTo('user.view-any', 'user.*.view', 'user.*.update');
     actingAs($actingAsUser);
 
-    livewire(ViewUser::class, [
+    Livewire::test(ViewUser::class, [
         'record' => $user->getRouteKey(),
     ])
         ->assertActionVisible('mfa_reset');
@@ -242,7 +242,7 @@ it('resets the users MFA when the mfa_reset Action is triggered', function () {
 
     asSuperAdmin();
 
-    livewire(ViewUser::class, [
+    Livewire::test(ViewUser::class, [
         'record' => $user->getRouteKey(),
     ])
         ->callAction('mfa_reset');

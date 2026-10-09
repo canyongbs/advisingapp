@@ -41,8 +41,8 @@ use App\Models\SystemUser;
 use Filament\Actions\AttachAction;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Select;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 use function Tests\setEnterpriseAiEnabled;
 
@@ -56,12 +56,12 @@ describe('enterprise ai', function () {
         $aiPermission = Permission::query()->where('name', 'prompt.view-any')->where('guard_name', 'api')->firstOrFail();
         $otherPermission = Permission::query()->where('name', 'user.view-any')->where('guard_name', 'api')->firstOrFail();
 
-        livewire(PermissionsRelationManager::class, ['ownerRecord' => $systemUser, 'pageClass' => EditSystemUser::class])
+        Livewire::test(PermissionsRelationManager::class, ['ownerRecord' => $systemUser, 'pageClass' => EditSystemUser::class])
             ->assertCanSeeTableRecords([$aiPermission, $otherPermission]);
 
         setEnterpriseAiEnabled(false);
 
-        livewire(PermissionsRelationManager::class, ['ownerRecord' => $systemUser, 'pageClass' => EditSystemUser::class])
+        Livewire::test(PermissionsRelationManager::class, ['ownerRecord' => $systemUser, 'pageClass' => EditSystemUser::class])
             ->assertCanSeeTableRecords([$otherPermission])
             ->assertCanNotSeeTableRecords([$aiPermission]);
     });
@@ -77,7 +77,7 @@ describe('enterprise ai', function () {
         $searchAttachOptions = function (string $search) use ($systemUser): array {
             $results = [];
 
-            livewire(PermissionsRelationManager::class, ['ownerRecord' => $systemUser, 'pageClass' => EditSystemUser::class])
+            Livewire::test(PermissionsRelationManager::class, ['ownerRecord' => $systemUser, 'pageClass' => EditSystemUser::class])
                 ->mountAction(TestAction::make(AttachAction::class)->table())
                 ->assertFormFieldExists('recordId', 'mountedActionSchema0', function (Select $field) use ($search, &$results): bool {
                     $results = $field->getSearchResults($search);

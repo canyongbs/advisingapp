@@ -37,8 +37,8 @@
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentTags\Pages\EditStudentTag;
 use App\Enums\TagType;
 use App\Models\Tag;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('EditStudentTag does not allow for duplicate names of non-deleted student tags case insensitively', function () {
@@ -50,12 +50,12 @@ test('EditStudentTag does not allow for duplicate names of non-deleted student t
 
     $deletedTag->delete();
 
-    livewire(EditStudentTag::class, ['record' => $tag->getRouteKey()])
+    Livewire::test(EditStudentTag::class, ['record' => $tag->getRouteKey()])
         ->fillForm(['name' => 'student tag'])
         ->call('save')
         ->assertHasNoFormErrors();
 
-    livewire(EditStudentTag::class, ['record' => $tag->getRouteKey()])
+    Livewire::test(EditStudentTag::class, ['record' => $tag->getRouteKey()])
         ->fillForm(['name' => 'OTHER Student tag'])
         ->call('save')
         ->assertHasFormErrors(['name' => 'unique']);
@@ -68,7 +68,7 @@ test('EditStudentTag does allow for non-duplicate names of non-deleted student t
     $deletedTag = Tag::factory(['name' => 'Student Tag 2', 'type' => TagType::Student])->create();
     $deletedTag->delete();
 
-    livewire(EditStudentTag::class, ['record' => $tag->getRouteKey()])
+    Livewire::test(EditStudentTag::class, ['record' => $tag->getRouteKey()])
         ->fillForm(['name' => 'Student Tag 2'])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -80,7 +80,7 @@ test('EditStudentTag does allow for duplicate names of prospect tags', function 
     Tag::factory(['name' => 'Tag', 'type' => TagType::Prospect])->create();
     $tag = Tag::factory(['name' => 'Student Tag', 'type' => TagType::Student])->create();
 
-    livewire(EditStudentTag::class, ['record' => $tag->getRouteKey()])
+    Livewire::test(EditStudentTag::class, ['record' => $tag->getRouteKey()])
         ->fillForm(['name' => 'Tag'])
         ->call('save')
         ->assertHasNoFormErrors();

@@ -45,11 +45,11 @@ use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('can successfully create a new workflow for a form through manage workflows page', function () {
@@ -59,7 +59,7 @@ test('can successfully create a new workflow for a form through manage workflows
     $user = User::first();
     expect(WorkflowTrigger::count())->toBe(0);
 
-    livewire(ManageFormWorkflows::class, ['record' => $form->getKey()])
+    Livewire::test(ManageFormWorkflows::class, ['record' => $form->getKey()])
         ->callAction('create');
 
     expect(Workflow::count())->toBe(1);
@@ -86,12 +86,12 @@ test('creates multiple workflows for the same form without conflicts', function 
 
     expect(Workflow::count())->toBe(0);
 
-    livewire(ManageFormWorkflows::class, ['record' => $form->getKey()])
+    Livewire::test(ManageFormWorkflows::class, ['record' => $form->getKey()])
         ->callAction('create');
 
     expect(Workflow::count())->toBe(1);
 
-    livewire(ManageFormWorkflows::class, ['record' => $form->getKey()])
+    Livewire::test(ManageFormWorkflows::class, ['record' => $form->getKey()])
         ->callAction('create');
 
     expect(Workflow::count())->toBe(2);
@@ -116,7 +116,7 @@ test('form workflow creation is gated with proper access control', function () {
 
     actingAs($user);
 
-    livewire(ManageFormWorkflows::class, ['record' => $form->getKey()])
+    Livewire::test(ManageFormWorkflows::class, ['record' => $form->getKey()])
         ->assertForbidden();
 
     expect(Workflow::count())->toBe(0);
@@ -125,7 +125,7 @@ test('form workflow creation is gated with proper access control', function () {
     $user->givePermissionTo('form.view-any');
     $user->givePermissionTo('form.*.update');
 
-    livewire(ManageFormWorkflows::class, ['record' => $form->getKey()])
+    Livewire::test(ManageFormWorkflows::class, ['record' => $form->getKey()])
         ->callAction('create');
 
     expect(Workflow::count())->toBe(1);
@@ -141,7 +141,7 @@ test('creates workflow in disabled state by default for safety', function () {
 
     $form = Form::factory()->create();
 
-    livewire(ManageFormWorkflows::class, ['record' => $form->getKey()])
+    Livewire::test(ManageFormWorkflows::class, ['record' => $form->getKey()])
         ->callAction('create');
 
     $workflow = Workflow::first();
@@ -170,7 +170,7 @@ test('form workflow editing succeeds with proper permissions', function () {
 
     actingAs($user);
 
-    livewire(FormNestedEditWorkflow::class, [
+    Livewire::test(FormNestedEditWorkflow::class, [
         'parentRecord' => $form,
         'record' => $oldWorkflow->getRouteKey(),
     ])
@@ -200,7 +200,7 @@ test('can successfully edit workflow name for a form workflow', function () {
     $faker = fake();
     $newWorkflowName = $faker->sentence(3);
 
-    livewire(FormNestedEditWorkflow::class, [
+    Livewire::test(FormNestedEditWorkflow::class, [
         'parentRecord' => $form,
         'record' => $oldWorkflow->getRouteKey(),
     ])
@@ -228,7 +228,7 @@ test('can successfully enable and disable workflow for form', function () {
         ->state(['is_enabled' => false])
         ->create();
 
-    livewire(FormNestedEditWorkflow::class, [
+    Livewire::test(FormNestedEditWorkflow::class, [
         'parentRecord' => $form,
         'record' => $workflow->getRouteKey(),
     ])
@@ -238,7 +238,7 @@ test('can successfully enable and disable workflow for form', function () {
     $workflow->refresh();
     expect($workflow->is_enabled)->toBeTrue();
 
-    livewire(FormNestedEditWorkflow::class, [
+    Livewire::test(FormNestedEditWorkflow::class, [
         'parentRecord' => $form,
         'record' => $workflow->getRouteKey(),
     ])
@@ -263,7 +263,7 @@ test('validates required workflow name during edit', function () {
         )
         ->create();
 
-    livewire(FormNestedEditWorkflow::class, [
+    Livewire::test(FormNestedEditWorkflow::class, [
         'parentRecord' => $form,
         'record' => $workflow->getRouteKey(),
     ])
@@ -291,7 +291,7 @@ test('validates workflow name maximum length during edit', function () {
 
     $longName = str_repeat('a', 256);
 
-    livewire(FormNestedEditWorkflow::class, [
+    Livewire::test(FormNestedEditWorkflow::class, [
         'parentRecord' => $form,
         'record' => $workflow->getRouteKey(),
     ])
@@ -324,7 +324,7 @@ test('form workflow deletion succeeds with proper permissions', function () {
 
     actingAs($user);
 
-    livewire(FormNestedEditWorkflow::class, [
+    Livewire::test(FormNestedEditWorkflow::class, [
         'parentRecord' => $form,
         'record' => $workflow->getRouteKey(),
     ])

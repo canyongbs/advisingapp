@@ -41,9 +41,9 @@ use AdvisingApp\Group\Importers\ProspectGroupSubjectImporter;
 use AdvisingApp\Group\Importers\StudentGroupSubjectImporter;
 use AdvisingApp\Group\Models\Group;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('CreateGroup is gated with proper access control', function () {
@@ -77,14 +77,14 @@ test('CreateGroup does not allow duplicate group names case insensitively, ignor
     $group = Group::factory()->create(['name' => 'Group Name']);
     $group->delete();
 
-    livewire(CreateGroup::class)
+    Livewire::test(CreateGroup::class)
         ->fillForm(['name' => 'group name'])
         ->call('create')
         ->assertHasNoFormErrors(['name']);
 
     Group::factory()->create(['name' => 'Existing Group']);
 
-    livewire(CreateGroup::class)
+    Livewire::test(CreateGroup::class)
         ->fillForm(['name' => 'existing group'])
         ->call('create')
         ->assertHasFormErrors(['name' => 'unique']);

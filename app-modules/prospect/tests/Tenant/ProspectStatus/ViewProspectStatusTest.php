@@ -39,9 +39,9 @@ use AdvisingApp\Prospect\Filament\Resources\ProspectStatuses\ProspectStatusResou
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('The correct details are displayed on the ViewProspectStatus page', function () {
@@ -95,7 +95,7 @@ it('displays the edit action and not the lock when the prospect status is not sy
 
     asSuperAdmin();
 
-    livewire(ViewProspectStatus::class, [
+    Livewire::test(ViewProspectStatus::class, [
         'record' => $prospectStatus->getRouteKey(),
     ])
         ->assertDontSeeHtml('data-identifier="prospect_status_system_protected"')
@@ -110,7 +110,7 @@ it('displays the lock icon rather than the edit action when the prospect status 
 
     asSuperAdmin();
 
-    livewire(ViewProspectStatus::class, [
+    Livewire::test(ViewProspectStatus::class, [
         'record' => $prospectStatus->getRouteKey(),
     ])
         ->assertSeeHtml('data-identifier="prospect_status_system_protected"')

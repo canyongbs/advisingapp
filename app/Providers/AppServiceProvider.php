@@ -190,17 +190,15 @@ class AppServiceProvider extends ServiceProvider
                 default => throw new Exception('Invalid job type'),
             };
 
-            return collect($channels)->map(function (string|NotificationChannel $channel) {
-                if ($channel instanceof NotificationChannel) {
-                    $channel = $channel->value;
-                }
+            // Unlimited channels are left out: RateLimitedWithRedis treats a per-key Limit::none() as exhausted on x86_64.
+            $limits = collect($channels)
+                ->map(fn (string|NotificationChannel $channel): string => $channel instanceof NotificationChannel ? $channel->value : $channel)
+                ->filter(fn (string $channel): bool => in_array($channel, ['mail', 'email']))
+                ->map(fn (): Limit => Limit::perSecond(14)->by('mail'))
+                ->values()
+                ->all();
 
-                return match ($channel) {
-                    'mail', 'email' => Limit::perSecond(14)->by('mail'),
-                    default => Limit::none()->by($channel),
-                };
-            })
-                ->toArray();
+            return $limits ?: Limit::none();
         });
     }
 }

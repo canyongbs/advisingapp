@@ -41,9 +41,9 @@ use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 /**
@@ -70,11 +70,11 @@ it('archive action is always visible and labeled Archive', function () {
     $eventWithoutAttendees = Event::factory()->create(['starts_at' => now()->addWeek()]);
     $eventWithoutAttendees->attendees()->delete();
 
-    livewire(ViewEvent::class, ['record' => $eventWithAttendees->getRouteKey()])
+    Livewire::test(ViewEvent::class, ['record' => $eventWithAttendees->getRouteKey()])
         ->assertActionVisible('archive')
         ->assertActionHasLabel('archive', 'Archive');
 
-    livewire(ViewEvent::class, ['record' => $eventWithoutAttendees->getRouteKey()])
+    Livewire::test(ViewEvent::class, ['record' => $eventWithoutAttendees->getRouteKey()])
         ->assertActionVisible('archive')
         ->assertActionHasLabel('archive', 'Archive');
 });
@@ -85,7 +85,7 @@ it('archives an event with attendees', function () {
     $event = Event::factory()->create(['starts_at' => now()->addWeek()]);
     EventAttendee::factory()->create(['event_id' => $event->id]);
 
-    livewire(ViewEvent::class, ['record' => $event->getRouteKey()])
+    Livewire::test(ViewEvent::class, ['record' => $event->getRouteKey()])
         ->callAction('archive')
         ->assertRedirect(EventResource::getUrl('index'));
 
@@ -99,7 +99,7 @@ describe('authorization', function () use ($viewEventTestUser) {
 
         $event = Event::factory()->create();
 
-        livewire(ViewEvent::class, ['record' => $event->getRouteKey(), 'activeTab' => 'details'])
+        Livewire::test(ViewEvent::class, ['record' => $event->getRouteKey(), 'activeTab' => 'details'])
             ->assertSet('activeTab', 'overview');
     });
 
@@ -109,7 +109,7 @@ describe('authorization', function () use ($viewEventTestUser) {
 
         $event = Event::factory()->create();
 
-        livewire(ViewEvent::class, ['record' => $event->getRouteKey(), 'activeTab' => 'details'])
+        Livewire::test(ViewEvent::class, ['record' => $event->getRouteKey(), 'activeTab' => 'details'])
             ->assertSet('activeTab', 'details')
             ->assertSuccessful();
     });
@@ -120,7 +120,7 @@ describe('authorization', function () use ($viewEventTestUser) {
 
         $event = Event::factory()->create();
 
-        livewire(ViewEvent::class, ['record' => $event->getRouteKey(), 'activeTab' => 'attendees'])
+        Livewire::test(ViewEvent::class, ['record' => $event->getRouteKey(), 'activeTab' => 'attendees'])
             ->assertSet('activeTab', 'attendees')
             ->assertSuccessful();
     });
@@ -131,7 +131,7 @@ describe('authorization', function () use ($viewEventTestUser) {
 
         $event = Event::factory()->create();
 
-        livewire(ViewEvent::class, ['record' => $event->getRouteKey()])
+        Livewire::test(ViewEvent::class, ['record' => $event->getRouteKey()])
             ->assertForbidden();
     });
 });

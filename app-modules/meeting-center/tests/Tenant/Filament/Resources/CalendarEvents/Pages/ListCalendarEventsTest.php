@@ -43,10 +43,10 @@ use App\Filament\Pages\ConnectedAccounts;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\DeleteBulkAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 
 $listCalendarEventsTestUser = function (): User {
     $settings = app(LicenseSettings::class);
@@ -62,12 +62,12 @@ it('the delete bulk action is gated by the delete permission', function () use (
 
     actingAs($user);
 
-    livewire(ListCalendarEvents::class)
+    Livewire::test(ListCalendarEvents::class)
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 
     $user->givePermissionTo('calendar_event.*.delete');
 
-    livewire(ListCalendarEvents::class)
+    Livewire::test(ListCalendarEvents::class)
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 

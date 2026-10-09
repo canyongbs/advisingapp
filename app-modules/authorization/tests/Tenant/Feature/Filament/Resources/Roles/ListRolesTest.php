@@ -37,8 +37,8 @@
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\ListRoles;
 use AdvisingApp\Authorization\Models\Role;
 use Filament\Actions\Testing\TestAction;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('duplicateRole action does not allow duplicate role names case insensitively within a guard', function () {
@@ -47,11 +47,11 @@ test('duplicateRole action does not allow duplicate role names case insensitivel
     $role = Role::factory()->create(['name' => 'Original Role', 'guard_name' => 'web']);
     Role::factory()->create(['name' => 'Taken Role', 'guard_name' => 'web']);
 
-    livewire(ListRoles::class)
+    Livewire::test(ListRoles::class)
         ->callAction(TestAction::make('duplicateRole')->table($role), data: ['name' => 'taken ROLE'])
         ->assertHasActionErrors(['name' => 'unique']);
 
-    livewire(ListRoles::class)
+    Livewire::test(ListRoles::class)
         ->callAction(TestAction::make('duplicateRole')->table($role), data: ['name' => 'Fresh Role'])
         ->assertHasNoActionErrors();
 

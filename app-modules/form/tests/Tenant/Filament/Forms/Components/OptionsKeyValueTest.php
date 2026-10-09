@@ -39,8 +39,7 @@ use Filament\Schemas\Concerns\InteractsWithSchemas;
 use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Livewire\Component;
-
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 class OptionsKeyValueTestHost extends Component implements HasSchemas
 {
@@ -81,7 +80,7 @@ class OptionsKeyValueTestHost extends Component implements HasSchemas
 }
 
 it('hydrates options saved as a list of label and value rows', function () {
-    $host = livewire(OptionsKeyValueTestHost::class, ['options' => [
+    $host = Livewire::test(OptionsKeyValueTestHost::class, ['options' => [
         ['label' => 'United States', 'value' => 'us'],
         ['label' => 'Canada', 'value' => 'ca'],
     ]]);
@@ -93,7 +92,7 @@ it('hydrates options saved as a list of label and value rows', function () {
 });
 
 it('saves legacy options as label and value rows without changing their values', function (array $options, array $expectedOptions) {
-    livewire(OptionsKeyValueTestHost::class, ['options' => $options])
+    Livewire::test(OptionsKeyValueTestHost::class, ['options' => $options])
         ->assertSet('savedOptions', [])
         ->call('save')
         ->assertHasNoErrors()
@@ -123,19 +122,19 @@ it('saves legacy options as label and value rows without changing their values',
 ]);
 
 it('renders the label column before the generated value column', function () {
-    livewire(OptionsKeyValueTestHost::class)
+    Livewire::test(OptionsKeyValueTestHost::class)
         ->assertSeeHtmlInOrder(['aria-label="Label"', 'aria-label="Value"']);
 });
 
 it('validates that every label generates a distinct value', function () {
-    livewire(OptionsKeyValueTestHost::class)
+    Livewire::test(OptionsKeyValueTestHost::class)
         ->set('data.options', [['key' => 'a-b', 'value' => 'A B'], ['key' => 'a-b', 'value' => 'A-B']])
         ->call('save')
         ->assertHasErrors(['data.options']);
 });
 
 it('rejects incomplete options without discarding their editor state', function (array $options) {
-    livewire(OptionsKeyValueTestHost::class)
+    Livewire::test(OptionsKeyValueTestHost::class)
         ->set('data.options', $options)
         ->call('save')
         ->assertHasErrors(['data.options'])
@@ -148,7 +147,7 @@ it('rejects incomplete options without discarding their editor state', function 
 ]);
 
 it('saves zero as an option label and value', function () {
-    livewire(OptionsKeyValueTestHost::class)
+    Livewire::test(OptionsKeyValueTestHost::class)
         ->set('data.options', [['key' => '0', 'value' => '0']])
         ->call('save')
         ->assertHasNoErrors()

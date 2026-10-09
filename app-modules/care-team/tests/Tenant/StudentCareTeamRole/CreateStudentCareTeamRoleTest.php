@@ -41,10 +41,10 @@ use AdvisingApp\CareTeam\Tests\Tenant\RequestFactories\CreateCareTeamRoleRequest
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertFalse;
 use function Tests\asSuperAdmin;
@@ -57,7 +57,7 @@ test('CreateStudentCareTeamRole is gated with proper access control', function (
             StudentCareTeamRoleResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateStudentCareTeamRole::class)
+    Livewire::test(CreateStudentCareTeamRole::class)
         ->assertForbidden();
 
     $user->givePermissionTo('settings.view-any');
@@ -68,7 +68,7 @@ test('CreateStudentCareTeamRole is gated with proper access control', function (
             StudentCareTeamRoleResource::getUrl('create')
         )->assertSuccessful();
 
-    livewire(CreateStudentCareTeamRole::class)
+    Livewire::test(CreateStudentCareTeamRole::class)
         ->assertSuccessful();
 });
 
@@ -81,7 +81,7 @@ test('A successful action on the CreateStudentCareTeamRole page', function () {
 
     $createRequest = CreateCareTeamRoleRequestFactory::new()->state(['type' => CareTeamRoleType::Student])->create();
 
-    livewire(CreateStudentCareTeamRole::class)
+    Livewire::test(CreateStudentCareTeamRole::class)
         ->set('data', $createRequest)
         ->call('create')
         ->assertHasNoFormErrors();
@@ -96,7 +96,7 @@ test('CreateStudentCareTeamRole requires valid data', function (CreateCareTeamRo
 
     $createRequest = CreateCareTeamRoleRequestFactory::new($data)->create();
 
-    livewire(CreateStudentCareTeamRole::class)
+    Livewire::test(CreateStudentCareTeamRole::class)
         ->set('data', $createRequest)
         ->call('create')
         ->assertHasFormErrors($errors);
@@ -120,7 +120,7 @@ test('Creating a default care team role will make all other care team roles not 
 
     $createRequest = CreateCareTeamRoleRequestFactory::new()->state(['is_default' => true, 'type' => CareTeamRoleType::Student])->create();
 
-    livewire(CreateStudentCareTeamRole::class)
+    Livewire::test(CreateStudentCareTeamRole::class)
         ->set('data', $createRequest)
         ->call('create')
         ->assertHasNoFormErrors();

@@ -38,8 +38,8 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EnrollmentsRelationManager;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can filter by name search', function (): void {
@@ -58,7 +58,7 @@ it('can filter by name search', function (): void {
         ->has($searchableEnrollment, 'enrollments')
         ->create();
 
-    livewire(EnrollmentsRelationManager::class, [
+    Livewire::test(EnrollmentsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])

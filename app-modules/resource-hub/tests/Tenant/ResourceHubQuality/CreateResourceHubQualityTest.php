@@ -41,10 +41,10 @@ use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Tests\Tenant\ResourceHubQuality\RequestFactories\CreateResourceHubQualityRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function Tests\asSuperAdmin;
 
@@ -63,7 +63,7 @@ test('CreateResourceHubQuality is gated with proper access control', function ()
             ResourceHubQualityResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateResourceHubQuality::class)
+    Livewire::test(CreateResourceHubQuality::class)
         ->assertForbidden();
 
     $user->givePermissionTo('settings.view-any');
@@ -76,7 +76,7 @@ test('CreateResourceHubQuality is gated with proper access control', function ()
 
     $request = collect(CreateResourceHubQualityRequestFactory::new()->create());
 
-    livewire(CreateResourceHubQuality::class)
+    Livewire::test(CreateResourceHubQuality::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
@@ -103,7 +103,7 @@ test('CreateResourceHubQuality is gated with proper feature ccess control', func
             ResourceHubQualityResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateResourceHubQuality::class)
+    Livewire::test(CreateResourceHubQuality::class)
         ->assertForbidden();
 
     $settings->data->addons->resourceHub = true;
@@ -117,7 +117,7 @@ test('CreateResourceHubQuality is gated with proper feature ccess control', func
 
     $request = collect(CreateResourceHubQualityRequestFactory::new()->create());
 
-    livewire(CreateResourceHubQuality::class)
+    Livewire::test(CreateResourceHubQuality::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
@@ -136,12 +136,12 @@ test('CreateResourceHubQuality does not allow for duplicate names of non-deleted
 
     $quality->delete();
 
-    livewire(CreateResourceHubQuality::class)
+    Livewire::test(CreateResourceHubQuality::class)
         ->fillForm($request1->toArray())
         ->call('create')
         ->assertHasNoActionErrors();
 
-    livewire(CreateResourceHubQuality::class)
+    Livewire::test(CreateResourceHubQuality::class)
         ->fillForm($request2->toArray())
         ->call('create')
         ->assertHasFormErrors(['name' => 'unique']);

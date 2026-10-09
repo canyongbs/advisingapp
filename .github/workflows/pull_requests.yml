@@ -7,6 +7,11 @@ on:
 
 permissions: {}
 
+env:
+    php-extensions: gd, gmp, redis, mailparse
+    php-extensions-key: ext-cache-20250820
+    php-version: '8.4'
+
 concurrency:
     group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
     cancel-in-progress: true
@@ -14,22 +19,12 @@ concurrency:
 jobs:
     prep-and-code-consistency:
         name: Prep and Code Consistency
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
 
         permissions:
             contents: read
 
         timeout-minutes: 15
-
-        env:
-            php-extensions: gd, gmp, redis, mailparse
-            php-extensions-key: ext-cache-20250820
-            php-version: '8.4'
-
-        outputs:
-            php-extensions: ${{ env.php-extensions }}
-            php-extensions-key: ${{ env.php-extensions-key }}
-            php-version: ${{ env.php-version }}
 
         steps:
             - name: Generate GitHub App Token
@@ -67,8 +62,8 @@ jobs:
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
                   path: ${{ steps.extcache.outputs.dir }}
-                  key: ${{ runner.os }}-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
-                  restore-keys: ${{ runner.os }}-phpext-${{ env.php-version }}
+                  key: ${{ runner.os }}-24.04-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
+                  restore-keys: ${{ runner.os }}-24.04-phpext-${{ env.php-version }}
 
             - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
               with:
@@ -156,18 +151,48 @@ jobs:
                       exit 1
                   fi
 
+    shard-timings:
+        name: Resolve Shard Timings
+        runs-on: ubuntu-24.04
+
+        permissions: {}
+
+        timeout-minutes: 5
+
+        # Resolved once so every shard splits the suite with the same timings, even if newer ones are saved mid-run.
+        outputs:
+            cache-key: ${{ steps.lookup.outputs.cache-matched-key }}
+
+        steps:
+            - name: Find the latest Tenant shard timings
+              id: lookup
+              uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+              with:
+                  path: tests/.pest/shards.json
+                  key: tenant-shard-timings-
+                  restore-keys: tenant-shard-timings-
+                  lookup-only: true
+
     test:
         name: Test
+        needs: [shard-timings]
         strategy:
             matrix:
-                testsuite: [Landlord, Tenant]
+                include:
+                    - testsuite: Landlord
+                    - testsuite: Tenant
+                      shard: 1/4
+                    - testsuite: Tenant
+                      shard: 2/4
+                    - testsuite: Tenant
+                      shard: 3/4
+                    - testsuite: Tenant
+                      shard: 4/4
 
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
 
         permissions:
             contents: read
-
-        needs: [prep-and-code-consistency]
 
         env:
             DB_PORT: 5432
@@ -181,79 +206,85 @@ jobs:
         timeout-minutes: 15
 
         steps:
-            # A real 3-master cluster (ports 7000-7002) so tests exercise the same cluster client and CROSSSLOT rules as ElastiCache Serverless.
-            - name: Start Redis (3-master cluster)
-              run: |
-                  docker run -d --name redis --network host \
-                    redis:7.4.11@sha256:91d0f7e8c748ec7a4c2b4fb2c4f84edab794dd91d01e095e38dc906db9d684ab \
-                    sh -c '
-                      for port in 7000 7001 7002; do
-                        redis-server --daemonize yes --port "$port" --appendonly no --save "" \
-                          --cluster-enabled yes --cluster-config-file "nodes-$port.conf" --cluster-node-timeout 5000
-                      done
-                      for port in 7000 7001 7002; do
-                        until redis-cli -p "$port" ping | grep -q PONG; do sleep 1; done
-                      done
-                      redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 --cluster-replicas 0 --cluster-yes
-                      tail -f /dev/null
-                    '
-
-                  for port in 7000 7001 7002; do
-                    until docker exec redis redis-cli -p "$port" cluster info | grep -q 'cluster_state:ok'; do sleep 1; done
-                  done
-
-            - name: Start PostgreSQL
-              run: |
-                  docker run -d \
-                    --name postgres \
-                    -p 5432:5432 \
-                    -e POSTGRES_DB=${DB_DATABASE} \
-                    -e POSTGRES_USER=${DB_USERNAME} \
-                    -e POSTGRES_PASSWORD=${DB_PASSWORD} \
-                    --health-cmd pg_isready \
-                    --health-interval 10s \
-                    --health-timeout 5s \
-                    --health-retries 5 \
-                    postgres:15@sha256:1b92e7a80c021647bf70f5d3eb66066a998e4f5cf43c07bb9dc9f729782cf88e \
-                    -c max_locks_per_transaction=256
-
-            - name: Wait for PostgreSQL
-              run: |
-                  until docker inspect --format='{{.State.Health.Status}}' postgres | grep -q healthy; do
-                    sleep 2
-                  done
-
-            - name: Create tenant database
-              run: psql -h 127.0.0.1 -d ${DB_DATABASE} -U ${DB_USERNAME} -c 'CREATE DATABASE testing_tenant;'
-              env:
-                  PGPASSWORD: ${{ env.DB_PASSWORD }}
-
-            - name: Setup cache environment
-              id: extcache
-              uses: shivammathur/cache-extensions@22e24453af1bf3851994136f122ce065ab828a74 #1.15.2
-              with:
-                  php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
-                  extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
-                  key: ${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
-
-            - name: Cache extensions
-              uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
-              with:
-                  path: ${{ steps.extcache.outputs.dir }}
-                  key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
-                  restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
-
-            - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
-              with:
-                  php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
-                  coverage: none
-                  extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
-
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
                   fetch-depth: 0
                   fetch-tags: true
                   persist-credentials: false
+
+            - uses: ./.github/actions/setup-test-environment # zizmor: ignore[self-repository]
+              with:
+                  php-version: ${{ env.php-version }}
+                  php-extensions: ${{ env.php-extensions }}
+                  php-extensions-key: ${{ env.php-extensions-key }}
+
+            - name: Restore Tenant shard timings
+              if: ${{ matrix.shard && needs.shard-timings.outputs.cache-key }}
+              uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+              with:
+                  path: tests/.pest/shards.json
+                  key: ${{ needs.shard-timings.outputs.cache-key }}
+                  fail-on-cache-miss: true
+
+            - name: Execute tests (Unit and Feature tests) via PHPUnit
+              env:
+                  TESTSUITE: ${{ matrix.testsuite }}
+                  SHARD: ${{ matrix.shard }}
+              run: |
+                  args=(--configuration phpunit-ci.xml --parallel --testsuite="${TESTSUITE}")
+                  if [[ -n "${SHARD}" ]]; then
+                      args+=(--shard="${SHARD}")
+                  fi
+                  # Called directly as `artisan test` breaks `--shard` by forwarding its `--runner` to Pest's test listing.
+                  vendor/bin/pest "${args[@]}"
+
+    shard-coverage:
+        name: Shard Coverage
+        needs: [shard-timings]
+        runs-on: ubuntu-24.04
+
+        permissions:
+            contents: read
+
+        env:
+            # Keep in sync with the Tenant shards in the test matrix.
+            TENANT_SHARDS: 4
+
+        timeout-minutes: 10
+
+        steps:
+            - name: Setup cache environment
+              id: extcache
+              uses: shivammathur/cache-extensions@22e24453af1bf3851994136f122ce065ab828a74 #1.15.2
+              with:
+                  php-version: ${{ env.php-version }}
+                  extensions: ${{ env.php-extensions }}
+                  key: ${{ env.php-extensions-key }}
+
+            - name: Cache extensions
+              uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+              with:
+                  path: ${{ steps.extcache.outputs.dir }}
+                  key: ${{ runner.os }}-24.04-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
+                  restore-keys: ${{ runner.os }}-24.04-phpext-${{ env.php-version }}
+
+            - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
+              with:
+                  php-version: ${{ env.php-version }}
+                  coverage: none
+                  extensions: ${{ env.php-extensions }}
+
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  persist-credentials: false
+
+            - name: Restore Tenant shard timings
+              if: ${{ needs.shard-timings.outputs.cache-key }}
+              uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+              with:
+                  path: tests/.pest/shards.json
+                  key: ${{ needs.shard-timings.outputs.cache-key }}
+                  fail-on-cache-miss: true
 
             - name: Copy .env
               run: php -r "file_exists('.env') || copy('.env.example', '.env');"
@@ -270,52 +301,69 @@ jobs:
               run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
               shell: bash
 
-            - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
-              with:
-                  node-version-file: '.nvmrc'
-                  cache: 'npm'
-            - run: npm install
+            - name: Check the Tenant shards run every Tenant test exactly once
+              shell: bash
+              run: |
+                  list_tests() {
+                      vendor/bin/pest --configuration phpunit-ci.xml --testsuite=Tenant --list-tests "$@" \
+                          | grep -E '^ - ' | sed -E 's/[. ]+$//' | sort
+                  }
 
-            - name: Build Assets
-              run: npm run build
+                  list_tests > all.txt
+                  : > sharded.txt
+                  for shard in $(seq 1 "${TENANT_SHARDS}"); do
+                      list_tests --shard="${shard}/${TENANT_SHARDS}" >> sharded.txt
+                  done
+                  sort -o sharded.txt sharded.txt
 
-            - name: Generate key
-              run: php artisan key:generate
+                  missing=$(comm -23 all.txt sharded.txt)
+                  duplicated=$(uniq -d sharded.txt)
 
-            - name: Cache Modular Modules
-              run: php artisan modules:cache --env=testing
+                  echo "Tenant suite: $(wc -l < all.txt) tests; across ${TENANT_SHARDS} shards: $(wc -l < sharded.txt)."
 
-            - name: Cache Routes
-              run: php artisan route:cache --env=testing
+                  # Pest can also miss whole files (e.g. `<file>./...</file>` entries), so compare against the files on disk too.
+                  # shellcheck disable=SC2016
+                  suite_files=$(php -r '
+                      $files = [];
+                      $suite = simplexml_load_file("phpunit-ci.xml")->xpath("//testsuite[@name=\"Tenant\"]")[0];
+                      foreach ($suite->directory as $directory) {
+                          foreach (glob((string) $directory, GLOB_ONLYDIR) as $path) {
+                              foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS)) as $file) {
+                                  if (str_ends_with($file->getPathname(), (string) ($directory["suffix"] ?? "Test.php"))) {
+                                      $files[$file->getRealPath()] = true;
+                                  }
+                              }
+                          }
+                      }
+                      foreach ($suite->file as $file) {
+                          $files[realpath((string) $file)] = true;
+                      }
+                      echo count($files);
+                  ')
+                  listed_classes=$(sed -E 's/^ - (P\\)?([^:]+)::.*/\2/' all.txt | sort -u | wc -l)
 
-            - name: Cache Views
-              run: php artisan view:cache --env=testing
+                  echo "Tenant test files on disk: ${suite_files}; test classes listed by Pest: ${listed_classes}."
 
-            - name: Cache Events
-              run: php artisan event:cache --env=testing
+                  if [[ "${suite_files}" -ne "${listed_classes}" ]]; then
+                      echo "::error::Pest lists ${listed_classes} Tenant test classes but the Tenant suite has ${suite_files} test files, so some files' tests run in no shard."
+                      exit 1
+                  fi
 
-            - name: Cache Icons
-              run: php artisan icons:cache --env=testing
-
-            - name: Cache Filament Components
-              run: php artisan filament:cache-components --env=testing
-
-            - name: Check route integrity
-              run: php artisan route:list
-
-            - name: Execute tests (Unit and Feature tests) via PHPUnit
-              env:
-                  TESTSUITE: ${{ matrix.testsuite }}
-              run: php artisan test --configuration phpunit-ci.xml --parallel --testsuite=${TESTSUITE}
+                  if [[ -n "${missing}" || -n "${duplicated}" ]]; then
+                      echo "::error::The Tenant shards do not run every Tenant test exactly once."
+                      echo "Missing from every shard:"
+                      echo "${missing}"
+                      echo "Run by more than one shard:"
+                      echo "${duplicated}"
+                      exit 1
+                  fi
 
     lint:
         name: Lint
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
 
         permissions:
             contents: read
-
-        needs: [prep-and-code-consistency]
 
         env:
             DB_PORT: 5432
@@ -377,22 +425,22 @@ jobs:
               id: extcache
               uses: shivammathur/cache-extensions@22e24453af1bf3851994136f122ce065ab828a74 #1.15.2
               with:
-                  php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
-                  extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
-                  key: ${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
+                  php-version: ${{ env.php-version }}
+                  extensions: ${{ env.php-extensions }}
+                  key: ${{ env.php-extensions-key }}
 
             - name: Cache extensions
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
                   path: ${{ steps.extcache.outputs.dir }}
-                  key: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}-${{ needs.prep-and-code-consistency.outputs.php-extensions-key }}
-                  restore-keys: ${{ runner.os }}-phpext-${{ needs.prep-and-code-consistency.outputs.php-version }}
+                  key: ${{ runner.os }}-24.04-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
+                  restore-keys: ${{ runner.os }}-24.04-phpext-${{ env.php-version }}
 
             - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
               with:
-                  php-version: ${{ needs.prep-and-code-consistency.outputs.php-version }}
+                  php-version: ${{ env.php-version }}
                   coverage: none
-                  extensions: ${{ needs.prep-and-code-consistency.outputs.php-extensions }}
+                  extensions: ${{ env.php-extensions }}
 
             - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
               with:
@@ -447,7 +495,7 @@ jobs:
 
     request-copilot-review:
         name: Request Copilot Review
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
 
         permissions: {}
 
@@ -505,7 +553,7 @@ jobs:
 
     renovate-config-validator:
         name: Renovate Config Validator
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
 
         permissions:
             contents: read

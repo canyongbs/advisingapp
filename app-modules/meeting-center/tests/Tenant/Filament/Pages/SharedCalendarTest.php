@@ -43,10 +43,10 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Filament\Tables\Columns\TextColumn;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('`SharedCalendar` page can be rendered', function () {
@@ -73,7 +73,7 @@ test('`SharedCalendar` is gated with proper access control', function () {
 test('`SharedCalendar` page has the correct table columns', function () {
     asSuperAdmin();
 
-    livewire(SharedCalendar::class)
+    Livewire::test(SharedCalendar::class)
         ->assertSuccessful()
         ->assertTableColumnExists('name')
         ->assertTableColumnExists('email')
@@ -100,7 +100,7 @@ test('`SharedCalendar` table defaults to hiding past appointments', function () 
         ->for($group, 'bookingGroup')
         ->create();
 
-    livewire(SharedCalendar::class)
+    Livewire::test(SharedCalendar::class)
         ->assertSuccessful()
         ->assertCountTableRecords(1)
         ->assertCanSeeTableRecords([$futureAppointment])
@@ -120,7 +120,7 @@ test('`SharedCalendar` labels and links an appointment booked by an active stude
             'ends_at' => now()->addDay()->addHour(),
         ]);
 
-    livewire(SharedCalendar::class)
+    Livewire::test(SharedCalendar::class)
         ->set('data', [
             'groupFilter' => 'selected',
             'selectedGroupIds' => [],
@@ -150,7 +150,7 @@ test('`SharedCalendar` still labels an appointment booked by an archived student
 
     $student->archive();
 
-    livewire(SharedCalendar::class)
+    Livewire::test(SharedCalendar::class)
         ->set('data', [
             'groupFilter' => 'selected',
             'selectedGroupIds' => [],
@@ -182,7 +182,7 @@ test('`SharedCalendar` table shows past appointments when Hide Past is disabled'
         ->for($group, 'bookingGroup')
         ->create();
 
-    livewire(SharedCalendar::class)
+    Livewire::test(SharedCalendar::class)
         ->set('data', [
             'groupFilter' => 'my_groups',
             'selectedGroupIds' => [],
@@ -210,7 +210,7 @@ test("`SharedCalendar` 'My Groups' filter only shows appointments from the user'
         ->for($otherGroup, 'bookingGroup')
         ->create(['starts_at' => now()->addDay(), 'ends_at' => now()->addDay()->addHour()]);
 
-    livewire(SharedCalendar::class)
+    Livewire::test(SharedCalendar::class)
         ->set('data', [
             'groupFilter' => 'my_groups',
             'selectedGroupIds' => [],
@@ -240,7 +240,7 @@ test("`SharedCalendar` 'My Groups' filter includes appointments from groups link
         ->for($otherGroup, 'bookingGroup')
         ->create(['starts_at' => now()->addDay(), 'ends_at' => now()->addDay()->addHour()]);
 
-    livewire(SharedCalendar::class)
+    Livewire::test(SharedCalendar::class)
         ->set('data', [
             'groupFilter' => 'my_groups',
             'selectedGroupIds' => [],
@@ -272,7 +272,7 @@ test("`SharedCalendar` 'Selected Groups' filter shows appointments from the spec
         ->for($groupC, 'bookingGroup')
         ->create(['starts_at' => now()->addDay(), 'ends_at' => now()->addDay()->addHour()]);
 
-    livewire(SharedCalendar::class)
+    Livewire::test(SharedCalendar::class)
         ->set('data', [
             'groupFilter' => 'selected',
             'selectedGroupIds' => [$groupA->id, $groupB->id],
@@ -292,7 +292,7 @@ test("`SharedCalendar` 'Selected Groups' filter with no groups selected shows al
 
     asSuperAdmin();
 
-    livewire(SharedCalendar::class)
+    Livewire::test(SharedCalendar::class)
         ->set('data', [
             'groupFilter' => 'selected',
             'selectedGroupIds' => [],

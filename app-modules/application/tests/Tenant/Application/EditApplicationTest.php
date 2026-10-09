@@ -43,10 +43,10 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\seed;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 // TODO: Write EditApplication tests
@@ -70,7 +70,7 @@ test('EditApplication is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    livewire(EditApplication::class, [
+    Livewire::test(EditApplication::class, [
         'record' => $application->getRouteKey(),
     ])
         ->assertForbidden();
@@ -111,7 +111,7 @@ test('EditApplication is gated with proper feature access control', function () 
             ])
         )->assertForbidden();
 
-    livewire(EditApplication::class, [
+    Livewire::test(EditApplication::class, [
         'record' => $application->getRouteKey(),
     ])
         ->assertForbidden();
@@ -144,11 +144,11 @@ it('archive action is always visible and labeled Archive', function () {
     $applicationWithoutSubmissions = Application::factory()->create();
     $applicationWithoutSubmissions->submissions()->delete();
 
-    livewire(EditApplication::class, ['record' => $applicationWithSubmissions->getRouteKey()])
+    Livewire::test(EditApplication::class, ['record' => $applicationWithSubmissions->getRouteKey()])
         ->assertActionVisible('archive')
         ->assertActionHasLabel('archive', 'Archive');
 
-    livewire(EditApplication::class, ['record' => $applicationWithoutSubmissions->getRouteKey()])
+    Livewire::test(EditApplication::class, ['record' => $applicationWithoutSubmissions->getRouteKey()])
         ->assertActionVisible('archive')
         ->assertActionHasLabel('archive', 'Archive');
 });
@@ -160,7 +160,7 @@ it('archive action archives the application and redirects to the index when the 
 
     $application = Application::factory()->create();
 
-    livewire(EditApplication::class, ['record' => $application->getRouteKey()])
+    Livewire::test(EditApplication::class, ['record' => $application->getRouteKey()])
         ->callAction('archive')
         ->assertRedirect(ApplicationResource::getUrl('index'));
 
@@ -174,6 +174,6 @@ it('exposes the mapped block types to the fields rich editor for the custom bloc
 
     $application = Application::factory()->create();
 
-    livewire(EditApplication::class, ['record' => $application->getRouteKey()])
+    Livewire::test(EditApplication::class, ['record' => $application->getRouteKey()])
         ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });

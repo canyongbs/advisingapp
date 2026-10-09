@@ -61,7 +61,7 @@ abstract class LandlordTestCase extends TestCase
         $this->afterRefreshingDatabase();
 
         $this->beforeApplicationDestroyed(function () {
-            $this->refreshTenantTestingEnvironment();
+            $this->restoreTenantTestingEnvironment();
         });
     }
 

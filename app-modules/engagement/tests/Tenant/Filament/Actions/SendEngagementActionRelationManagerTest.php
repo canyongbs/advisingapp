@@ -41,8 +41,8 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\En
 use AdvisingApp\StudentDataModel\Models\BouncedEmailAddress;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Illuminate\Support\Facades\Queue;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can create an Email Engagement properly', function () {
@@ -58,7 +58,7 @@ it('can create an Email Engagement properly', function () {
     $subject = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $faker->sentence()]]]]];
     $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $faker->paragraph()]]]]];
 
-    livewire(EngagementsRelationManager::class, [
+    Livewire::test(EngagementsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -96,7 +96,7 @@ it('can create an SMS Engagement properly', function () {
 
     $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $faker->paragraph()]]]]];
 
-    livewire(EngagementsRelationManager::class, [
+    Livewire::test(EngagementsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -129,7 +129,7 @@ it('disables new action when student has no valid email or sms', function () {
     $student->save();
     $student->refresh();
 
-    livewire(EngagementsRelationManager::class, [
+    Livewire::test(EngagementsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -142,7 +142,7 @@ it('enables new action when student has valid email', function () {
     /** @var Student $student */
     $student = Student::factory()->create();
 
-    livewire(EngagementsRelationManager::class, [
+    Livewire::test(EngagementsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -170,7 +170,7 @@ it('disables new action when student email is bounced and phone unavailable', fu
     $student->save();
     $student->refresh();
 
-    livewire(EngagementsRelationManager::class, [
+    Livewire::test(EngagementsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -196,7 +196,7 @@ it('shows enabled action when bounced email but valid sms exists', function () {
     ]);
 
     // Phone remains valid
-    livewire(EngagementsRelationManager::class, [
+    Livewire::test(EngagementsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])

@@ -43,12 +43,12 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -69,7 +69,7 @@ test('Create Customer Advisor is gated with proper access control', function () 
             CustomerAdvisorResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateCustomerAdvisor::class)
+    Livewire::test(CreateCustomerAdvisor::class)
         ->assertForbidden();
 
     $user->givePermissionTo(['customer_advisor.view-any', 'customer_advisor.create']);
@@ -99,7 +99,7 @@ test('can create Customer Advisor', function () {
 
     $customerAdvisor = collect(CustomerAdvisorRequestFactory::new()->create());
 
-    livewire(CreateCustomerAdvisor::class)
+    Livewire::test(CreateCustomerAdvisor::class)
         ->fillForm($customerAdvisor->except(['model'])->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
@@ -137,7 +137,7 @@ test('Create Customer Advisor validates the inputs', function (CustomerAdvisorRe
 
     $request = collect(CustomerAdvisorRequestFactory::new($data)->create());
 
-    livewire(CreateCustomerAdvisor::class)
+    Livewire::test(CreateCustomerAdvisor::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasFormErrors($errors);

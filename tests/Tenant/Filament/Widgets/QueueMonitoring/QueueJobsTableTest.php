@@ -39,8 +39,8 @@ use App\Models\Tenant;
 use App\Support\QueueAutoscale\WorkerCountHistory;
 use Cbox\LaravelQueueMonitor\Models\JobMonitor;
 use Illuminate\Support\Facades\Cache;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 beforeEach(function () {
@@ -53,7 +53,7 @@ it('lists monitored jobs', function () {
 
     $jobs = JobMonitor::factory()->count(3)->create();
 
-    livewire(QueueJobsTable::class)
+    Livewire::test(QueueJobsTable::class)
         ->assertCanSeeTableRecords($jobs);
 });
 
@@ -63,7 +63,7 @@ it('hides jobs from before the last day until the date filter is cleared', funct
     $recentJob = JobMonitor::factory()->create(['created_at' => now()->subHour()]);
     $oldJob = JobMonitor::factory()->create(['created_at' => now()->subDays(2)]);
 
-    livewire(QueueJobsTable::class)
+    Livewire::test(QueueJobsTable::class)
         ->assertCanSeeTableRecords([$recentJob])
         ->assertCanNotSeeTableRecords([$oldJob])
         ->filterTable('createdAfter', ['value' => null])
@@ -75,7 +75,7 @@ it('falls back to the job class when a job has no display name', function () {
 
     $job = JobMonitor::factory()->create(['display_name' => null, 'job_class' => 'App\\Jobs\\ExampleJob']);
 
-    livewire(QueueJobsTable::class)
+    Livewire::test(QueueJobsTable::class)
         ->assertTableColumnStateSet('display_name', 'App\\Jobs\\ExampleJob', record: $job);
 });
 
@@ -87,7 +87,7 @@ it('shows the tenant each job ran for', function () {
     $tenantJob = JobMonitor::factory()->create();
     $landlordJob = tap(JobMonitor::factory()->create(), fn (JobMonitor $job) => $job->forceFill(['tenant_id' => null])->save());
 
-    livewire(QueueJobsTable::class)
+    Livewire::test(QueueJobsTable::class)
         ->assertTableColumnStateSet('tenant_id', $tenant->name, record: $tenantJob)
         ->assertTableColumnStateSet('tenant_id', 'Landlord', record: $landlordJob);
 });
@@ -100,7 +100,7 @@ it('filters jobs by tenant', function () {
     $tenantJob = JobMonitor::factory()->create();
     $landlordJob = tap(JobMonitor::factory()->create(), fn (JobMonitor $job) => $job->forceFill(['tenant_id' => null])->save());
 
-    livewire(QueueJobsTable::class)
+    Livewire::test(QueueJobsTable::class)
         ->filterTable('tenant', $tenant->getKey())
         ->assertCanSeeTableRecords([$tenantJob])
         ->assertCanNotSeeTableRecords([$landlordJob])
@@ -118,7 +118,7 @@ it('filters jobs by a known queue', function () {
     $adHocJob = JobMonitor::factory()->create(['queue' => 'ad-hoc']);
     $defaultJob = JobMonitor::factory()->create(['queue' => 'advisingapp-default']);
 
-    livewire(QueueJobsTable::class)
+    Livewire::test(QueueJobsTable::class)
         ->filterTable('queue', 'ad-hoc')
         ->assertCanSeeTableRecords([$adHocJob])
         ->assertCanNotSeeTableRecords([$defaultJob]);

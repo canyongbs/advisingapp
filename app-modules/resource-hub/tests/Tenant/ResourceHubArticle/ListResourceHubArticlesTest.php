@@ -42,10 +42,10 @@ use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ReplicateAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 use function Tests\Helpers\testResourceRequiresPermissionForAccess;
 
 // TODO: Write ListResourceHubArticles tests
@@ -124,14 +124,14 @@ test('The DeleteBulkAction is hidden without the delete permission and visible w
 
     actingAs($user);
 
-    livewire(ListResourceHubArticles::class)
+    Livewire::test(ListResourceHubArticles::class)
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 
     $user->givePermissionTo('resource_hub_article.*.delete');
 
     actingAs($user);
 
-    livewire(ListResourceHubArticles::class)
+    Livewire::test(ListResourceHubArticles::class)
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
 
@@ -144,13 +144,13 @@ test('The Duplicate (ReplicateAction) row action is hidden without the create pe
 
     $record = ResourceHubArticle::factory()->create();
 
-    livewire(ListResourceHubArticles::class)
+    Livewire::test(ListResourceHubArticles::class)
         ->assertTableActionHidden(ReplicateAction::class, $record);
 
     $user->givePermissionTo('resource_hub_article.create');
 
     actingAs($user);
 
-    livewire(ListResourceHubArticles::class)
+    Livewire::test(ListResourceHubArticles::class)
         ->assertTableActionVisible(ReplicateAction::class, $record);
 });

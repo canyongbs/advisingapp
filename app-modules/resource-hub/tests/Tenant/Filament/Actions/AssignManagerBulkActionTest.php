@@ -39,9 +39,9 @@ use AdvisingApp\ResourceHub\Filament\Resources\ResourceHubArticles\Pages\ListRes
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use App\Models\User;
 use Filament\Actions\Testing\TestAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can bulk assign managers to articles', function () {
@@ -51,7 +51,7 @@ it('can bulk assign managers to articles', function () {
 
     $articles = ResourceHubArticle::factory(5)->create();
 
-    livewire(ListResourceHubArticles::class)
+    Livewire::test(ListResourceHubArticles::class)
         ->selectTableRecords($articles->pluck('id')->toArray())
         ->callAction(
             TestAction::make('bulkManagers')->table()->bulk(),
@@ -79,7 +79,7 @@ it('can bulk assign managers to articles without removing previously assigned ma
         $article->managers()->attach($oldManager->id);
     });
 
-    livewire(ListResourceHubArticles::class)
+    Livewire::test(ListResourceHubArticles::class)
         ->selectTableRecords($articles->pluck('id')->toArray())
         ->callAction(
             TestAction::make('bulkManagers')->table()->bulk(),
@@ -107,7 +107,7 @@ it('can bulk assign managers to articles with removing previously assigned manag
         $article->managers()->attach($oldManager->id);
     });
 
-    livewire(ListResourceHubArticles::class)
+    Livewire::test(ListResourceHubArticles::class)
         ->selectTableRecords($articles->pluck('id')->toArray())
         ->callAction(
             TestAction::make('bulkManagers')->table()->bulk(),
@@ -131,7 +131,7 @@ it('renders the bulk assign managers action based on proper access', function ()
 
     actingAs($user);
 
-    livewire(ListResourceHubArticles::class)
+    Livewire::test(ListResourceHubArticles::class)
         ->assertOk()
         ->assertTableBulkActionHidden('bulkManagers');
 
@@ -139,7 +139,7 @@ it('renders the bulk assign managers action based on proper access', function ()
 
     $user->refresh();
 
-    livewire(ListResourceHubArticles::class)
+    Livewire::test(ListResourceHubArticles::class)
         ->assertOk()
         ->assertTableBulkActionVisible('bulkManagers');
 });
