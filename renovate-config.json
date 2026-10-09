@@ -58,10 +58,10 @@
         },
         {
             "customType": "regex",
-            "description": "Docker images in GitHub Actions workflows",
-            "managerFilePatterns": ["/^\\.github/workflows/.+\\.yml$/"],
+            "description": "Docker images in GitHub Actions workflows and composite actions",
+            "managerFilePatterns": ["/^\\.github/(workflows|actions)/.+\\.ya?ml$/"],
             "matchStrings": [
-                "image:\\s*(?<depName>[^:\\s]+):(?<currentValue>[^@\\s]+)@(?<currentDigest>sha256:[a-f0-9]+)"
+                "(?<depName>[a-z0-9][a-z0-9._/-]*):(?<currentValue>[a-zA-Z0-9][\\w.-]*)@(?<currentDigest>sha256:[a-f0-9]{64})"
             ],
             "datasourceTemplate": "docker",
             "versioningTemplate": "docker"
