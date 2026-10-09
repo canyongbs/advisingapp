@@ -212,7 +212,7 @@ jobs:
                   fetch-tags: true
                   persist-credentials: false
 
-            - uses: $/.github/actions/setup-test-environment
+            - uses: ./.github/actions/setup-test-environment # zizmor: ignore[self-repository]
               with:
                   php-version: ${{ env.php-version }}
                   php-extensions: ${{ env.php-extensions }}
