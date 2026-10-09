@@ -4,15 +4,15 @@ This document tracks contributions to how the autoscaler decides how many worker
 
 - **Part 1:** the measured per-worker memory cost misses a worker's boot peak, and always wins over configured estimates. PR Opened: _not yet_
 - **Part 2:** capacity is read from memory in use right now, so workers that are still booting look free, and a batch of them overshoots. PR Opened: _not yet_
-- **Part 3:** headroom mixes host and cgroup scopes, and counts usage twice. PR Opened: _not yet_
+- **Part 3:** the memory limit and used percentage come from different scopes, so in a container without its own memory limit the autoscaler sizes against the whole VM. This was the root cause. PR Opened: _not yet_
 - **Part 4:** nothing reacts to the kernel OOM-killing workers. PR Opened: _not yet_
 
-Part 2 is the most important and needs no OS-specific code. The parts are independent and can land in any order. Advising App works around the problem with configuration; see [Consuming-app cleanup](#consuming-app-cleanup-after-these-ship).
+Part 3 is the one that caused the incident and the one Advising App overrides; see [Consuming-app cleanup](#consuming-app-cleanup-after-these-ship). Parts 1, 2 and 4 make capacity safer near the limit and are independent improvements.
 
 ## Environment where reproduced
 
 - Laravel `13.30.1`, PHP `8.4` with OPcache enabled for the CLI (`opcache.enable_cli=1`) and, at first, the tracing JIT (64 MB buffer).
-- Amazon ECS Fargate worker tasks, 4 vCPU / 8 GB, with no container-level memory limit (the limit is the task's). Cluster mode on Redis Cluster.
+- Amazon ECS Fargate worker tasks, 4 vCPU / 8 GB (also seen at 2 vCPU / 4 GB), with no container-level memory limit (the limit was the task's). Cgroup v1. Cluster mode on Redis Cluster.
 - Packages: `cboxdk/laravel-queue-autoscale` `4.3.1`, `cboxdk/laravel-queue-metrics` `3.4.0`, `cboxdk/system-metrics` `3.0.2`.
 
 ## How it showed up
@@ -29,6 +29,17 @@ What each worker actually costs, measured with `/proc/<pid>/status` on an idle `
 With OPcache on in the CLI, every worker is a separate process with its own shared-memory segment, so that ~90 MB is per worker, not shared. A busy worker with the tracing JIT also fills up to its JIT buffer size on top.
 
 None of this showed in AWS metrics: ECS `MemoryUtilization` and Container Insights `MemoryUtilized` subtract page cache, which includes shared memory, so the task read about 3.25 GB of 8 GB while it was being OOM-killed. That is an AWS monitoring gap, not a package bug, but it means the package cannot lean on the platform to notice.
+
+Lowering `limits.max_memory_percent` from 85 to 70 and turning off the JIT changed nothing: the same task held the same ~44-worker ceiling. Reading what the autoscaler sees inside a running worker (ECS Exec) explained why:
+
+| Reading                                          | Value                                                                                    |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| `/proc/meminfo` `MemTotal` (the Fargate microVM) | ~15.7 GB, for an 8 GB task                                                               |
+| Container cgroup (v1) `memory.limit_in_bytes`    | unlimited; the 8 GB limit is on the task's parent cgroup, which the container cannot see |
+| `SystemMetrics::limits()`                        | `source=cgroup_v1 limit_mb=15691`                                                        |
+| `SystemMetrics::memory()->usedPercentage()`      | 7.9% at ~700 MB used                                                                     |
+
+So the autoscaler sized every task against ~15.7 GB while the kernel enforced 8 GB, and `max_memory_percent` was a percentage of the wrong number.
 
 ---
 
@@ -96,6 +107,7 @@ Both are OS-independent.
 ### Summary
 
 - `SystemMetrics::memory()` reads `/proc/meminfo` on Linux, which is host or VM-wide, while `limits()` prefers the container's cgroup. The two can describe different scopes.
+- When the container's cgroup has no memory limit, `limits()` falls back to `/proc/meminfo` for the total too. On Amazon ECS Fargate the limit is set on the task's parent cgroup, invisible from inside the container, and `/proc/meminfo` describes a microVM about twice the task's size. The autoscaler therefore sizes against roughly double the real limit. The same happens wherever a parent cgroup carries the limit (Kubernetes pod-level limits, systemd slices).
 - `availableMemoryBytes()` is the limit minus current usage, i.e. free memory, but `calculateMaxWorkers()` multiplies it by the remaining percentage as if it were the total, so usage is subtracted twice. This errs conservative, but it makes the result hard to reason about.
 - On a systemd host, a cgroup is always present but usually unlimited; pairing the host total with only that service's usage leaves out every other process on the machine.
 
@@ -103,15 +115,21 @@ Both are OS-independent.
 
 Headroom is the smaller of:
 
-- the cgroup's spare memory (`memory.max` minus usage), only when a cgroup memory limit is actually set, with usage counted as Kubernetes counts its eviction working set (`memory.current` minus `inactive_file`);
+- the cgroup's spare memory (`memory.max` or `memory.limit_in_bytes`, minus usage), only when a cgroup memory limit is actually set, with usage counted as Kubernetes counts its eviction working set (usage minus `inactive_file`);
 - the host's `MemAvailable`.
 
-Use that one headroom figure, not a total times a percentage. This is correct on bare metal, VMs, Docker, Kubernetes, ECS and systemd. `max_memory_percent` then applies to the limit used for the headroom.
+Use that one headroom figure, not a total times a percentage, and take the used percentage from the same scope. This is correct on bare metal, VMs, Docker, Kubernetes, ECS and systemd. `max_memory_percent` then applies to the limit used for the headroom.
+
+A process cannot see a limit set on a parent cgroup, so also:
+
+- document that containers need their own memory limit (on ECS, the container definition's `memory`), not only a task or pod limit;
+- optionally accept an explicit limit in configuration (for example `limits.memory_limit_mb`) for platforms where that is not possible.
 
 ### Tests
 
-- Containerized with a limit: headroom follows the cgroup.
+- Containerized with a limit: headroom and used percentage follow the cgroup.
 - Cgroup present without a limit: headroom follows the host's `MemAvailable`.
+- An explicit configured limit wins over both.
 - No double subtraction: at 50% usage and a 70% ceiling, 20% of the limit is available.
 
 ---
@@ -143,17 +161,21 @@ Only enter the cooldown when the counter confirms an OOM kill. A worker dying fr
 
 > **Implementing the upstream fixes? Ignore this section.** It lists Advising App changes to make **after** the fixes are released and we upgrade. They are not part of the package changes.
 
-Advising App works around this with configuration, not code:
+Advising App works around Part 3 in two places:
 
-- `config/queue-autoscale.php`: `limits.max_memory_percent` lowered from 85 to 70, with a comment explaining the OPcache headroom.
-- Worker task definitions (devops submodule): `PHP_OPCACHE_JIT` `disable` and `PHP_OPCACHE_JIT_BUFFER_SIZE` `0`.
+- Worker task definitions (devops submodule): the `worker` container has its own `"memory"` limit, equal to the task's, so the container's cgroup shows the real limit. **This is permanent**: no package can see a limit set only on the task's parent cgroup.
+- `App\Overrides\SystemMetrics\ContainerMemoryMetricsSource`, registered with `SystemMetricsConfig::setMemoryMetricsSource()` in `App\Providers\QueueObservabilityServiceProvider::register()`. It makes `SystemMetrics::memory()` report the container's cgroup usage and limit when one is set, so the used percentage is of the same limit as the capacity.
 
-Once Parts 1 and 2 ship (Parts 3 and 4 are improvements, not prerequisites):
+Once Part 3 ships (Parts 1, 2 and 4 need no Advising App changes):
 
-1. Bump the exact pin of `cboxdk/laravel-queue-autoscale` in `composer.json`, then run `pls exec app composer update cboxdk/laravel-queue-autoscale`. If the fix needs a newer `cboxdk/system-metrics`, update it as well.
-2. Run the dev load test (`php artisan queue:loadtest AdvisingApp 3000 --duration=10` from a scheduler task) and confirm there are no `Worker exited unexpectedly` lines with `term_signal` `9` and no `MaxAttemptsExceededException` failures about 20 minutes later.
-3. Then decide whether to raise `limits.max_memory_percent` back toward 85. If you do, remove the OPcache comment above it, and repeat the load test.
-4. Leave the JIT disabled for workers. It was turned off on its own merits (I/O-bound jobs, frequent worker restarts), not only as a workaround; only re-enable it for a queue whose jobs measurably benefit.
+1. Bump the exact pin of `cboxdk/laravel-queue-autoscale` in `composer.json`, then run `pls exec app composer update cboxdk/laravel-queue-autoscale`. If the fix is in `cboxdk/system-metrics`, update that as well.
+2. Delete `app/Overrides/SystemMetrics/ContainerMemoryMetricsSource.php` and the now-empty `app/Overrides/SystemMetrics` directory.
+3. In `App\Providers\QueueObservabilityServiceProvider::register()`, remove the `SystemMetricsConfig::setMemoryMetricsSource(...)` call and the `ContainerMemoryMetricsSource` and `SystemMetricsConfig` imports.
+4. Update the tests:
+    - Delete `tests/Landlord/Overrides/SystemMetrics/ContainerMemoryMetricsSourceTest.php` and the now-empty directory.
+    - In `tests/Landlord/Providers/QueueObservabilityServiceProviderTest.php`, remove "measures memory against the container limit for the autoscaler" and the `ContainerMemoryMetricsSource` and `SystemMetricsConfig` imports.
+5. Keep the worker container's `"memory"` limit in the task definitions.
+6. Run the dev load test (`php artisan queue:loadtest AdvisingApp 3000 --duration=10` from a scheduler task) and confirm there are no `Worker exited unexpectedly` lines with `term_signal` `9` and no `MaxAttemptsExceededException` failures about 20 minutes later.
 
 ### Then
 
