@@ -131,6 +131,25 @@ it('does not log a worker that stopped gracefully', function (int $exitCode, boo
     'at its memory limit' => [Worker::EXIT_MEMORY_LIMIT, false],
 ]);
 
+it('treats a custom memory limit exit code as the graceful one', function () {
+    $originalExitCode = Worker::$memoryExceededExitCode;
+    Worker::$memoryExceededExitCode = 99;
+
+    try {
+        $customCodeWorker = exitReportingWorkerRunning([PHP_BINARY, '-r', 'exit(99);']);
+        $defaultCodeWorker = exitReportingWorkerRunning([PHP_BINARY, '-r', 'exit(' . Worker::EXIT_MEMORY_LIMIT . ');']);
+        $customCodeWorker->process->wait();
+        $defaultCodeWorker->process->wait();
+
+        expect($customCodeWorker->isDead())->toBeTrue()
+            ->and($defaultCodeWorker->isDead())->toBeTrue()
+            ->and(workerExitLogs())->toHaveCount(1)
+            ->and(workerExitLogs()[0]->context['exit_code'])->toBe(Worker::EXIT_MEMORY_LIMIT);
+    } finally {
+        Worker::$memoryExceededExitCode = $originalExitCode;
+    }
+});
+
 it('logs a dead worker only once', function () {
     $worker = exitReportingWorkerRunning([PHP_BINARY, '-r', 'exit(3);']);
     $worker->process->wait();
