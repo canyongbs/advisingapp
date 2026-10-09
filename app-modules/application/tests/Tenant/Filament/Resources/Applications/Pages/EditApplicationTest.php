@@ -124,23 +124,32 @@ it('persists edits to an existing wizard step\'s description onto the new applic
         ->and($component->get('record')->getKey())->toBe($newVersion->getKey());
 });
 
-it('persists uploaded rich editor images on the new application version', function (bool $isWizard) {
+it('persists uploaded rich editor images on the new application version', function (bool $isWizard, bool $isNewStep) {
     asSuperAdmin();
     Storage::fake('s3-public');
 
     $originalContent = ['type' => 'doc', 'content' => []];
     $application = Application::factory()->create(['is_wizard' => $isWizard, 'content' => $originalContent]);
     $application->submissions()->delete();
-    $originalOwner = $isWizard ? $application->steps()->create([
+    $originalOwner = $isWizard && ! $isNewStep ? $application->steps()->create([
         'label' => 'Image step',
         'description' => 'Original description',
         'content' => $originalContent,
     ]) : $application;
     $originalContent = $originalOwner->fresh()->content;
-    $component = livewire(EditApplication::class, ['record' => $application]);
+    $persistedApplication = $application->fresh();
+    expect($persistedApplication->wasRecentlyCreated)->toBeFalse();
+    $component = livewire(EditApplication::class, ['record' => $persistedApplication]);
     $statePath = 'data.content';
 
-    if ($isWizard) {
+    if ($isNewStep) {
+        $component->set('data.steps.new-step', [
+            'label' => 'Uploaded image step',
+            'description' => 'New step description',
+            'content' => ['type' => 'doc', 'content' => []],
+        ]);
+        $statePath = 'data.steps.new-step.content';
+    } elseif ($isWizard) {
         $steps = $component->get('data.steps');
         assert(is_array($steps));
         $stepKey = array_key_first($steps);
@@ -177,7 +186,11 @@ it('persists uploaded rich editor images on the new application version', functi
         ->and($newMedia->uuid)->not->toBe($originalOwner->getFirstMedia('content')?->uuid)
         ->and($originalOwner->fresh()->content)->toBe($originalContent);
     Storage::disk('s3-public')->assertExists($newMedia->getPathRelativeToRoot());
-})->with(['single-step' => false, 'wizard' => true]);
+})->with([
+    'single-step' => [false, false],
+    'existing wizard step' => [true, false],
+    'new wizard step' => [true, true],
+]);
 
 it('archive action is always visible and labeled Archive', function () {
     asSuperAdmin();
