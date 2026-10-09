@@ -93,7 +93,11 @@ abstract class ApplicationFormManager extends Component implements HasForms, Has
             assert($record instanceof Application);
             $this->record = $record;
 
-            $this->form->model($record)->fill($record->attributesToArray());
+            $this->form->model($record);
+
+            $this->saveRelationships();
+
+            $this->form->fill($record->attributesToArray());
 
             $this->afterSave();
         });
@@ -136,6 +140,11 @@ abstract class ApplicationFormManager extends Component implements HasForms, Has
     abstract protected function handleRecordUpdate(Model $record, array $data): Model;
 
     protected function beforeSave(): void {}
+
+    protected function saveRelationships(): void
+    {
+        $this->form->saveRelationships();
+    }
 
     protected function afterSave(): void {}
 }

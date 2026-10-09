@@ -124,18 +124,19 @@ it('persists edits to an existing wizard step\'s description onto the new applic
         ->and($component->get('record')->getKey())->toBe($newVersion->getKey());
 });
 
-it('persists uploaded rich editor images on the new application version', function (bool $isWizard, bool $isNewStep) {
+it('persists uploaded rich editor images on the new application version', function (bool $isWizard, bool $isNewStep, bool $hasExistingStep = false) {
     asSuperAdmin();
-    Storage::fake('s3-public');
+    $disk = Storage::fake('s3-public');
 
     $originalContent = ['type' => 'doc', 'content' => []];
     $application = Application::factory()->create(['is_wizard' => $isWizard, 'content' => $originalContent]);
     $application->submissions()->delete();
-    $originalOwner = $isWizard && ! $isNewStep ? $application->steps()->create([
+    $originalOwner = $isWizard && (! $isNewStep || $hasExistingStep) ? $application->steps()->create([
         'label' => 'Image step',
         'description' => 'Original description',
         'content' => $originalContent,
     ]) : $application;
+    $originalStepIds = $application->steps()->pluck('id')->all();
     $originalContent = $originalOwner->fresh()->content;
     $persistedApplication = $application->fresh();
     expect($persistedApplication->wasRecentlyCreated)->toBeFalse();
@@ -149,6 +150,12 @@ it('persists uploaded rich editor images on the new application version', functi
             'content' => ['type' => 'doc', 'content' => []],
         ]);
         $statePath = 'data.steps.new-step.content';
+
+        if ($hasExistingStep) {
+            $steps = $component->get('data.steps');
+            assert(is_array($steps));
+            $component->set('data.steps', ['new-step' => $steps['new-step'], ...$steps]);
+        }
     } elseif ($isWizard) {
         $steps = $component->get('data.steps');
         assert(is_array($steps));
@@ -175,7 +182,7 @@ it('persists uploaded rich editor images on the new application version', functi
         ->where('root_id', $application->root_id)
         ->where('id', '!=', $application->id)
         ->firstOrFail();
-    $newOwner = $isWizard ? $newVersion->steps()->firstOrFail() : $newVersion;
+    $newOwner = $isWizard ? $newVersion->steps()->orderBy('sort')->firstOrFail() : $newVersion;
     $newMedia = $newOwner->getFirstMedia('content');
 
     expect($newMedia)->not->toBeNull();
@@ -184,12 +191,15 @@ it('persists uploaded rich editor images on the new application version', functi
     expect(data_get($newOwner->content, 'content.0.attrs.id'))->toBe($newMedia->uuid)
         ->and($newMedia->uuid)->not->toBe('uploaded-image')
         ->and($newMedia->uuid)->not->toBe($originalOwner->getFirstMedia('content')?->uuid)
-        ->and($originalOwner->fresh()->content)->toBe($originalContent);
-    Storage::disk('s3-public')->assertExists($newMedia->getPathRelativeToRoot());
+        ->and($originalOwner->fresh()->content)->toBe($originalContent)
+        ->and($application->steps()->pluck('id')->all())->toBe($originalStepIds)
+        ->and($newVersion->steps()->count())->toBe($isWizard ? ($hasExistingStep ? 2 : 1) : 0);
+    $disk->assertExists($newMedia->getPathRelativeToRoot());
 })->with([
     'single-step' => [false, false],
     'existing wizard step' => [true, false],
     'new wizard step' => [true, true],
+    'new wizard step reordered before an existing step' => [true, true, true],
 ]);
 
 it('archive action is always visible and labeled Archive', function () {

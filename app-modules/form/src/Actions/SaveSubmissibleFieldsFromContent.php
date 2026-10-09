@@ -48,6 +48,7 @@ class SaveSubmissibleFieldsFromContent
     {
         if ($submissible->is_wizard) {
             $sort = 1;
+            $steps = $submissible->steps()->getRelated()->newCollection();
 
             foreach ($data['steps'] ?? [] as $stepData) {
                 $step = $submissible->steps()->create([
@@ -70,8 +71,10 @@ class SaveSubmissibleFieldsFromContent
 
                 $step->content = $content;
                 $step->save();
+                $steps->push($step);
             }
 
+            $submissible->setRelation('steps', $steps);
             $submissible->content = null;
             $submissible->save();
         } else {

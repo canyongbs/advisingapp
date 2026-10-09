@@ -41,9 +41,12 @@ use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\Concerns\HasSharedFormConfiguration;
 use AdvisingApp\Application\Livewire\ApplicationFormManager;
 use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationStep;
 use AdvisingApp\Form\Actions\SaveSubmissibleFieldsFromContent;
 use CanyonGBS\Common\Filament\Actions\ArchiveAction;
 use Filament\Actions\Action;
+use Filament\Forms\Components\Repeater;
+use Filament\Schemas\Components\Component;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
@@ -103,6 +106,40 @@ class EditApplication extends ApplicationFormManager
         });
     }
 
+    protected function saveRelationships(): void
+    {
+        $this->data = $this->versioningFormData ?? [];
+        $this->data['content'] = $this->record->content;
+
+        if ($this->record->is_wizard) {
+            $oldStepKeys = array_keys($this->data['steps'] ?? []);
+            $oldAttachments = $this->componentFileAttachments['data']['steps'] ?? [];
+            $this->data['steps'] = [];
+            $this->componentFileAttachments['data']['steps'] = [];
+
+            foreach ($this->record->steps->sortBy('sort')->values() as $index => $step) {
+                assert($step instanceof ApplicationStep);
+                $newKey = "record-{$step->getKey()}";
+                $this->data['steps'][$newKey] = $step->attributesToArray();
+                $oldKey = $oldStepKeys[$index] ?? null;
+
+                if ($oldKey !== null && isset($oldAttachments[$oldKey])) {
+                    $this->componentFileAttachments['data']['steps'][$newKey] = $oldAttachments[$oldKey];
+                }
+            }
+
+            $repeater = $this->form->getComponent(
+                fn (Component $component): bool => $component instanceof Repeater && $component->getName() === 'steps',
+                withActions: false,
+                withHidden: true,
+            );
+            assert($repeater instanceof Repeater);
+            $repeater->clearCachedExistingRecords();
+        }
+
+        parent::saveRelationships();
+    }
+
     protected function getFormActions(): array
     {
         return [
@@ -146,7 +183,7 @@ class EditApplication extends ApplicationFormManager
     private function copyStepMedia(Application $oldVersion, Application $newVersion): void
     {
         $oldSteps = $oldVersion->steps()->orderBy('sort')->get();
-        $newSteps = $newVersion->steps()->orderBy('sort')->get();
+        $newSteps = $newVersion->steps->sortBy('sort')->values();
 
         foreach ($oldSteps as $index => $oldStep) {
             $newStep = $newSteps[$index] ?? null;
@@ -154,6 +191,8 @@ class EditApplication extends ApplicationFormManager
             if (! $newStep) {
                 continue;
             }
+
+            assert($newStep instanceof ApplicationStep);
 
             $media = $oldStep->getMedia('content');
 
