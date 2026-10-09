@@ -39,6 +39,7 @@ use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\EditApplication;
 use AdvisingApp\Application\Models\Application;
 use Livewire\Livewire;
+use AdvisingApp\Application\Models\ApplicationStep;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
@@ -140,7 +141,7 @@ it('persists uploaded rich editor images on the new application version', functi
     $originalContent = $originalOwner->fresh()->content;
     $persistedApplication = $application->fresh();
     expect($persistedApplication->wasRecentlyCreated)->toBeFalse();
-    $component = livewire(EditApplication::class, ['record' => $persistedApplication]);
+    $component = Livewire::test(EditApplication::class, ['record' => $persistedApplication]);
     $statePath = 'data.content';
 
     if ($isNewStep) {
@@ -201,6 +202,90 @@ it('persists uploaded rich editor images on the new application version', functi
     'new wizard step' => [true, true],
     'new wizard step reordered before an existing step' => [true, true, true],
 ]);
+
+it('keeps existing wizard images on their original steps when changing the step order', function (string $change) {
+    asSuperAdmin();
+    $disk = Storage::fake('s3-public');
+    $application = Application::factory()->create(['is_wizard' => true]);
+    $application->submissions()->delete();
+    $originalMediaUuids = [];
+    $originalStepIds = [];
+    $fileNames = ['First step' => 'first.png', 'Second step' => 'second.png'];
+
+    foreach ($fileNames as $label => $fileName) {
+        $step = $application->steps()->create([
+            'label' => $label,
+            'sort' => count($originalStepIds) + 1,
+        ]);
+        assert($step instanceof ApplicationStep);
+        $media = $step->addMedia(UploadedFile::fake()->image($fileName))->toMediaCollection('content', 's3-public');
+        $step->content = [
+            'type' => 'doc',
+            'content' => [[
+                'type' => 'image',
+                'attrs' => ['id' => $media->uuid, 'src' => $media->getUrl()],
+            ]],
+        ];
+        $step->save();
+        $originalMediaUuids[$label] = $media->uuid;
+        $originalStepIds[] = $step->getKey();
+    }
+
+    $component = Livewire::test(EditApplication::class, ['record' => $application->fresh()]);
+    $formData = $component->get('data');
+    assert(is_array($formData));
+    $steps = $formData['steps'];
+    assert(is_array($steps));
+
+    $formData['steps'] = match ($change) {
+        'reorder' => array_reverse($steps, preserve_keys: true),
+        'insert' => [
+            'new-step' => [
+                'label' => 'New step',
+                'description' => 'No image',
+                'content' => ['type' => 'doc', 'content' => []],
+            ],
+            ...$steps,
+        ],
+        'delete' => array_diff_key($steps, ["record-{$originalStepIds[0]}" => true]),
+    };
+    $expectedLabels = match ($change) {
+        'reorder' => ['Second step', 'First step'],
+        'insert' => ['New step', 'First step', 'Second step'],
+        'delete' => ['Second step'],
+    };
+
+    $component->set('data.steps', $formData['steps'])->call('save')->assertHasNoFormErrors()->assertNotified();
+
+    $newVersion = Application::query()->where('root_id', $application->root_id)->whereKeyNot($application->getKey())->firstOrFail();
+    $newSteps = $newVersion->steps()->orderBy('sort')->get();
+    expect($newSteps->pluck('label')->all())->toBe($expectedLabels);
+
+    foreach ($newSteps as $step) {
+        assert($step instanceof ApplicationStep);
+
+        if ($step->label === 'New step') {
+            expect($step->getMedia('content'))->toBeEmpty();
+
+            continue;
+        }
+
+        expect($step->getMedia('content')->pluck('file_name')->all())->toBe([$fileNames[$step->label]]);
+        $media = $step->getFirstMedia('content');
+        assert($media !== null);
+        expect(data_get($step->content, 'content.0.attrs.id'))->toBe($media->uuid)
+            ->and($media->uuid)->not->toBe($originalMediaUuids[$step->label]);
+        $disk->assertExists($media->getPathRelativeToRoot());
+    }
+
+    expect($application->steps()->orderBy('sort')->pluck('id')->all())->toBe($originalStepIds);
+
+    foreach ($application->steps()->get() as $step) {
+        assert($step instanceof ApplicationStep);
+        expect(data_get($step->content, 'content.0.attrs.id'))->toBe($originalMediaUuids[$step->label])
+            ->and($step->getFirstMedia('content')?->uuid)->toBe($originalMediaUuids[$step->label]);
+    }
+})->with(['reorder', 'insert', 'delete']);
 
 it('archive action is always visible and labeled Archive', function () {
     asSuperAdmin();

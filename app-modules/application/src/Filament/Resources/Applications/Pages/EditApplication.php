@@ -182,13 +182,17 @@ class EditApplication extends ApplicationFormManager
 
     private function copyStepMedia(Application $oldVersion, Application $newVersion): void
     {
-        $oldSteps = $oldVersion->steps()->orderBy('sort')->get();
+        $oldSteps = $oldVersion->steps()->get()->keyBy('id');
         $newSteps = $newVersion->steps->sortBy('sort')->values();
+        $submittedStepKeys = array_keys($this->versioningFormData['steps'] ?? []);
 
-        foreach ($oldSteps as $index => $oldStep) {
-            $newStep = $newSteps[$index] ?? null;
+        foreach ($newSteps as $index => $newStep) {
+            $submittedKey = $submittedStepKeys[$index] ?? null;
+            $oldStep = is_string($submittedKey) && str_starts_with($submittedKey, 'record-')
+                ? $oldSteps->get(substr($submittedKey, strlen('record-')))
+                : null;
 
-            if (! $newStep) {
+            if (! $oldStep) {
                 continue;
             }
 
