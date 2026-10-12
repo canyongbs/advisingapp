@@ -93,7 +93,7 @@ it('persists edits to an existing wizard step\'s description onto the new applic
         'content' => ['type' => 'doc', 'content' => []],
     ]);
 
-    $component = Livewire::test(EditApplication::class, ['record' => $application->getRouteKey()]);
+    $component = Livewire::test(EditApplication::class, ['record' => $application]);
 
     $formData = $component->get('data');
     $stepKey = array_key_first($formData['steps']);
