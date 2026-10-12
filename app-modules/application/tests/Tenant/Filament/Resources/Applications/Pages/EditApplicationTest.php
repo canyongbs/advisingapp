@@ -38,7 +38,6 @@ use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\EditApplication;
 use AdvisingApp\Application\Models\Application;
-use AdvisingApp\Application\Models\ApplicationStep;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
@@ -219,7 +218,7 @@ it('keeps existing wizard images on their original steps when changing the step 
             'label' => $label,
             'sort' => count($originalStepIds) + 1,
         ]);
-        
+
         $media = $step->addMedia(UploadedFile::fake()->image($fileName))->toMediaCollection('content', 's3-public');
         $step->content = [
             'type' => 'doc',
@@ -264,7 +263,6 @@ it('keeps existing wizard images on their original steps when changing the step 
     expect($newSteps->pluck('label')->all())->toBe($expectedLabels);
 
     foreach ($newSteps as $step) {
-
         if ($step->label === 'New step') {
             expect($step->getMedia('content'))->toBeEmpty();
 
