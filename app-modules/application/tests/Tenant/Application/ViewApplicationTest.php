@@ -148,10 +148,34 @@ it('retains editable form components when switching application tabs', function 
 
         $document = new DOMDocument();
         $document->loadHTML($component->html(), LIBXML_NOERROR | LIBXML_NOWARNING);
-        $activePanels = (new DOMXPath($document))->query('//*[@role="tabpanel" and contains(concat(" ", normalize-space(@class), " "), " fi-active ")]');
+        $xpath = new DOMXPath($document);
+        $activePanels = $xpath->query('//*[@role="tabpanel" and contains(concat(" ", normalize-space(@class), " "), " fi-active ")]');
         assert($activePanels !== false);
 
         expect($activePanels->length)->toBe(1);
+
+        $persistentPanels = $xpath->query('//*[@role="tabpanel" and @tabindex="0" and contains(concat(" ", normalize-space(@class), " "), " fi-sc-tabs-tab ")]');
+        assert($persistentPanels !== false);
+        expect($persistentPanels->length)->toBe(2);
+
+        foreach ($persistentPanels as $panel) {
+            assert($panel instanceof DOMElement);
+            $panelId = $panel->getAttribute('id');
+            $tabId = $panel->getAttribute('aria-labelledby');
+
+            expect($panelId)->not->toBeEmpty()
+                ->and($tabId)->not->toBeEmpty()->not->toBe($panelId);
+
+            $matchingPanels = $xpath->query('//*[@id="' . $panelId . '"]');
+            $tabButtons = $xpath->query('//*[@role="tab" and @id="' . $tabId . '"]');
+            assert($matchingPanels !== false && $tabButtons !== false);
+            expect($matchingPanels->length)->toBe(1)
+                ->and($tabButtons->length)->toBe(1);
+
+            $tabButton = $tabButtons->item(0);
+            assert($tabButton instanceof DOMElement);
+            expect($tabButton->getAttribute('aria-controls'))->toBe($panelId);
+        }
     }
 });
 

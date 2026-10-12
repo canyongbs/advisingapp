@@ -82,8 +82,6 @@ class ManageApplicationNotifications extends ApplicationFormManager
         $record->notify_via_email = $data['notify_via_email'];
         $record->save();
 
-        $this->form->saveRelationships();
-
         return $record;
     }
 }

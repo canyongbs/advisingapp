@@ -45,6 +45,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Concerns\RestrictsFileUploadsToSchemaComponents;
 use Filament\Schemas\Schema;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
@@ -59,6 +60,7 @@ abstract class ApplicationFormManager extends Component implements HasForms, Has
 {
     use InteractsWithForms;
     use InteractsWithActions;
+    use RestrictsFileUploadsToSchemaComponents;
 
     /**
      * @var array<string, mixed>|null
