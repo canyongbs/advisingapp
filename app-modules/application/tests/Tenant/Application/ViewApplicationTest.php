@@ -134,7 +134,7 @@ it('retains editable form components when switching application tabs', function 
     seed(ApplicationSubmissionStateSeeder::class);
     asSuperAdmin();
     $application = Application::factory()->create();
-    $component = livewire(ViewApplication::class, ['record' => $application->getKey()]);
+    $component = Livewire::test(ViewApplication::class, ['record' => $application->getKey()]);
     $formChildren = data_get($component->__get('snapshot'), 'memo.children');
     assert(is_array($formChildren));
     expect($formChildren)->toHaveCount(2);
@@ -163,7 +163,7 @@ describe('authorization', function () {
         actingAs($user);
         $application = Application::factory()->create();
 
-        livewire(ViewApplication::class, ['record' => $application->getKey()])
+        Livewire::test(ViewApplication::class, ['record' => $application->getKey()])
             ->assertSet('activeTab', 'workflows')
             ->assertActionHidden('preview')
             ->assertActionHidden('archive')
@@ -179,7 +179,7 @@ describe('authorization', function () {
         actingAs($user);
         $application = Application::factory()->create();
 
-        livewire(ViewApplication::class, ['record' => $application->getKey()])
+        Livewire::test(ViewApplication::class, ['record' => $application->getKey()])
             ->set('activeTab', $tab)
             ->assertSet('activeTab', 'view')
             ->assertDontSeeLivewire(EditApplication::class)
@@ -195,7 +195,7 @@ describe('authorization', function () {
         actingAs($user);
         $application = Application::factory()->create();
 
-        livewire(ViewApplication::class, ['record' => $application->getKey()])
+        Livewire::test(ViewApplication::class, ['record' => $application->getKey()])
             ->assertDontSee(app(ComponentRegistry::class)->getName(ManageApplicationSubmissions::class), stripInitialData: false)
             ->assertDontSee(app(ComponentRegistry::class)->getName(ManageApplicationWorkflows::class), stripInitialData: false)
             ->set('activeTab', $tab)
@@ -214,7 +214,7 @@ describe('authorization', function () {
         actingAs($user);
         $application = Application::factory()->create();
 
-        livewire(ViewApplication::class, ['record' => $application->getKey()])
+        Livewire::test(ViewApplication::class, ['record' => $application->getKey()])
             ->assertSet('activeTab', 'edit')
             ->assertSeeLivewire(EditApplication::class)
             ->assertActionHidden('preview')

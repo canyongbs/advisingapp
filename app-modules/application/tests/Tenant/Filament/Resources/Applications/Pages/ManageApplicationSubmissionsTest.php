@@ -41,8 +41,6 @@ use AdvisingApp\Application\Filament\Resources\Applications\Pages\ViewApplicatio
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
-use Livewire\Livewire;
-
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use Illuminate\Support\Carbon;
@@ -50,7 +48,6 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('tabs are generated for each state', function () {
@@ -412,7 +409,7 @@ describe('submission deep links', function () {
         $initializer = $getInitializer($response->getContent());
         expect($initializer)->toStartWith('mountAction(');
         Livewire::withQueryParams($query);
-        $component = livewire(ManageApplicationSubmissions::class, [
+        $component = Livewire::test(ManageApplicationSubmissions::class, [
             'ownerRecord' => $application,
             'pageClass' => ViewApplication::class,
         ]);
@@ -442,7 +439,7 @@ describe('authorization', function () {
         $foreignApplication = Application::factory()->create();
         $submission = $foreignApplication->submissions()->firstOrFail();
         Livewire::withQueryParams(['tableAction' => 'view', 'tableActionRecord' => $submission->getKey()]);
-        $component = livewire(ManageApplicationSubmissions::class, [
+        $component = Livewire::test(ManageApplicationSubmissions::class, [
             'ownerRecord' => $application,
             'pageClass' => ViewApplication::class,
         ]);
