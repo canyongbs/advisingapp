@@ -204,6 +204,8 @@ it('persists uploaded rich editor images on the new application version', functi
 ]);
 
 it('keeps existing wizard images on their original steps when changing the step order', function (string $change) {
+    assert(in_array($change, ['reorder', 'insert', 'delete'], true));
+
     asSuperAdmin();
     $disk = Storage::fake('s3-public');
     $application = Application::factory()->create(['is_wizard' => true]);
@@ -217,7 +219,7 @@ it('keeps existing wizard images on their original steps when changing the step 
             'label' => $label,
             'sort' => count($originalStepIds) + 1,
         ]);
-        assert($step instanceof ApplicationStep);
+        
         $media = $step->addMedia(UploadedFile::fake()->image($fileName))->toMediaCollection('content', 's3-public');
         $step->content = [
             'type' => 'doc',
@@ -262,7 +264,6 @@ it('keeps existing wizard images on their original steps when changing the step 
     expect($newSteps->pluck('label')->all())->toBe($expectedLabels);
 
     foreach ($newSteps as $step) {
-        assert($step instanceof ApplicationStep);
 
         if ($step->label === 'New step') {
             expect($step->getMedia('content'))->toBeEmpty();
@@ -281,7 +282,6 @@ it('keeps existing wizard images on their original steps when changing the step 
     expect($application->steps()->orderBy('sort')->pluck('id')->all())->toBe($originalStepIds);
 
     foreach ($application->steps()->get() as $step) {
-        assert($step instanceof ApplicationStep);
         expect(data_get($step->content, 'content.0.attrs.id'))->toBe($originalMediaUuids[$step->label])
             ->and($step->getFirstMedia('content')?->uuid)->toBe($originalMediaUuids[$step->label]);
     }
