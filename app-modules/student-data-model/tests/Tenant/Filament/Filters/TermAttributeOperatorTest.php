@@ -44,8 +44,8 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\StudentDataModel\Models\StudentTermAttribute;
 use AdvisingApp\StudentDataModel\Models\Term;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 beforeEach(function () {
@@ -112,7 +112,7 @@ it('filters the group builder by term, attribute and value', function () use ($t
         'filters' => $termAttributeFilters($term->sis_term_id, 'campus', 'Main'),
     ]);
 
-    livewire(EditGroup::class, ['record' => $group->getRouteKey()])
+    Livewire::test(EditGroup::class, ['record' => $group->getRouteKey()])
         ->assertCanSeeTableRecords([$matching])
         ->assertCanNotSeeTableRecords([$differentValue, $differentTerm, $withoutTermAttributes]);
 });
@@ -124,7 +124,7 @@ it('excludes the matching students from the group builder with the `is not` oper
         'filters' => $termAttributeFilters($term->sis_term_id, 'campus', 'Main', isInverse: true),
     ]);
 
-    livewire(EditGroup::class, ['record' => $group->getRouteKey()])
+    Livewire::test(EditGroup::class, ['record' => $group->getRouteKey()])
         ->assertCanSeeTableRecords([$differentValue, $differentTerm, $withoutTermAttributes])
         ->assertCanNotSeeTableRecords([$matching]);
 });

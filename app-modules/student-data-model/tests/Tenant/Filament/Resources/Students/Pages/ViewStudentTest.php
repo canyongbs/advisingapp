@@ -182,7 +182,7 @@ it('renders the TermAttributesRelationManager based on proper access', function 
 
     $relationManager = TermAttributesRelationManager::class;
 
-    livewire(ViewStudent::class, [
+    Livewire::test(ViewStudent::class, [
         'record' => $student->getKey(),
     ])
         ->assertOk()
@@ -193,7 +193,7 @@ it('renders the TermAttributesRelationManager based on proper access', function 
     $sisSettings->sis_system = SisSystem::ThesisElements;
     $sisSettings->save();
 
-    livewire(ViewStudent::class, [
+    Livewire::test(ViewStudent::class, [
         'record' => $student->getKey(),
     ])
         ->assertOk()

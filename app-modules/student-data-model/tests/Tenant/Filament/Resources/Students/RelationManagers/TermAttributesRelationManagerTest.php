@@ -44,9 +44,9 @@ use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use App\Features\TermAttributesFeature;
 use App\Models\User;
 use Filament\Tables\Filters\SelectFilter;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 beforeEach(function () {
@@ -70,7 +70,7 @@ it('shows the attributes for the latest term by default', function () use ($crea
     $olderTermAttribute = $createTermAttribute($student, Term::factory()->create(['start_date' => '2020-01-01']));
     $latestTermAttribute = $createTermAttribute($student, Term::factory()->create(['start_date' => '2021-08-23']));
 
-    livewire(TermAttributesRelationManager::class, [
+    Livewire::test(TermAttributesRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -86,7 +86,7 @@ it('shows the attributes for the selected term', function () use ($createTermAtt
     $olderTermAttribute = $createTermAttribute($student, $olderTerm);
     $latestTermAttribute = $createTermAttribute($student, Term::factory()->create(['start_date' => '2021-08-23']));
 
-    livewire(TermAttributesRelationManager::class, [
+    Livewire::test(TermAttributesRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -111,7 +111,7 @@ it('only offers the terms the student has attributes for, latest first', functio
 
     Term::factory()->create(['start_date' => '2023-01-10']);
 
-    $filter = livewire(TermAttributesRelationManager::class, [
+    $filter = Livewire::test(TermAttributesRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -130,7 +130,7 @@ it('only offers the terms the student has attributes for, latest first', functio
 it('shows no term attributes when the student has none', function () {
     StudentTermAttribute::factory()->create();
 
-    livewire(TermAttributesRelationManager::class, [
+    Livewire::test(TermAttributesRelationManager::class, [
         'ownerRecord' => Student::factory()->create(),
         'pageClass' => ViewStudent::class,
     ])

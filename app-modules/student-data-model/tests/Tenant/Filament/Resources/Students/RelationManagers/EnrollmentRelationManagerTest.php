@@ -45,7 +45,6 @@ use Filament\Actions\Testing\TestAction;
 use Filament\Actions\ViewAction;
 use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can filter by name search', function (): void {
@@ -86,7 +85,7 @@ describe('sis term id', function () {
     it('can create an enrollment with a `sis_term_id`', function () {
         $student = Student::factory()->create();
 
-        livewire(EnrollmentsRelationManager::class, [
+        Livewire::test(EnrollmentsRelationManager::class, [
             'ownerRecord' => $student,
             'pageClass' => ViewStudent::class,
         ])
@@ -103,7 +102,7 @@ describe('sis term id', function () {
 
         TermAttributesFeature::deactivate();
 
-        livewire(EnrollmentsRelationManager::class, [
+        Livewire::test(EnrollmentsRelationManager::class, [
             'ownerRecord' => $student,
             'pageClass' => ViewStudent::class,
         ])
@@ -118,7 +117,7 @@ describe('sis term id', function () {
     it('shows the `sis_term_id` when viewing an enrollment', function () {
         $student = Student::factory()->has(Enrollment::factory(['sis_term_id' => '267']), 'enrollments')->create();
 
-        livewire(EnrollmentsRelationManager::class, [
+        Livewire::test(EnrollmentsRelationManager::class, [
             'ownerRecord' => $student,
             'pageClass' => ViewStudent::class,
         ])
@@ -131,7 +130,7 @@ describe('sis term id', function () {
 
         TermAttributesFeature::deactivate();
 
-        livewire(EnrollmentsRelationManager::class, [
+        Livewire::test(EnrollmentsRelationManager::class, [
             'ownerRecord' => $student,
             'pageClass' => ViewStudent::class,
         ])

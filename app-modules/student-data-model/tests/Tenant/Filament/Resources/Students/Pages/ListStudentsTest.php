@@ -378,7 +378,7 @@ describe('term attribute filter', function () {
         $differentTerm = Student::factory()->create();
         StudentTermAttribute::factory()->for($differentTerm)->create(['sis_term_id' => $otherTerm->sis_term_id, 'campus' => 'Main']);
 
-        livewire(ListStudents::class)
+        Livewire::test(ListStudents::class)
             ->assertCanSeeTableRecords([$matching, $differentValue, $differentTerm])
             ->filterTable('termAttribute', [
                 'sis_term_id' => $term->sis_term_id,
@@ -392,7 +392,7 @@ describe('term attribute filter', function () {
     it('enables the attribute and value fields once the previous fields are selected', function () {
         $term = Term::factory()->create();
 
-        livewire(ListStudents::class)
+        Livewire::test(ListStudents::class)
             ->assertFormFieldDisabled('termAttribute.attribute', 'tableFiltersForm')
             ->assertFormFieldDisabled('termAttribute.value', 'tableFiltersForm')
             ->set('tableFilters.termAttribute.sis_term_id', $term->sis_term_id)
@@ -403,7 +403,7 @@ describe('term attribute filter', function () {
     });
 
     it('is available for tenants using Thesis Elements', function () {
-        livewire(ListStudents::class)
+        Livewire::test(ListStudents::class)
             ->assertTableFilterVisible('termAttribute');
     });
 
@@ -413,7 +413,7 @@ describe('term attribute filter', function () {
         $sisSettings->sis_system = $sisSystem;
         $sisSettings->save();
 
-        livewire(ListStudents::class)
+        Livewire::test(ListStudents::class)
             ->assertTableFilterHidden('termAttribute');
     })->with([
         'Ellucian Ethos' => [true, SisSystem::EllucianEthos],
@@ -423,7 +423,7 @@ describe('term attribute filter', function () {
     it('is not available while `TermAttributesFeature` is inactive', function () {
         TermAttributesFeature::deactivate();
 
-        livewire(ListStudents::class)
+        Livewire::test(ListStudents::class)
             ->assertTableFilterHidden('termAttribute');
     });
 });
