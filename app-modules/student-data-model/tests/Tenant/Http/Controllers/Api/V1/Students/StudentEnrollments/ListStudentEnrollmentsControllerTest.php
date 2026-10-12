@@ -222,4 +222,20 @@ describe('while `TermAttributesFeature` is inactive', function () {
         getJson(route('api.v1.students.enrollments.index', ['student' => $student, 'filter' => ['sis_term_id' => '267']], false))
             ->assertBadRequest();
     });
+
+    it('does not allow sorting by `sis_term_id`', function (string $sort) {
+        $user = SystemUser::factory()->create();
+        $user->givePermissionTo(['student.view-any', 'student.*.view', 'enrollment.view-any']);
+        Sanctum::actingAs($user, ['api']);
+
+        $student = Student::factory()->create();
+
+        TermAttributesFeature::deactivate();
+
+        getJson(route('api.v1.students.enrollments.index', ['student' => $student, 'sort' => $sort], false))
+            ->assertBadRequest();
+    })->with([
+        'ascending' => ['sis_term_id'],
+        'descending' => ['-sis_term_id'],
+    ]);
 });
