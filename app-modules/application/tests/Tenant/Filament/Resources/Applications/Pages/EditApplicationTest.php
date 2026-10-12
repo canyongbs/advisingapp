@@ -38,7 +38,6 @@ use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\EditApplication;
 use AdvisingApp\Application\Models\Application;
-use Livewire\Livewire;
 use AdvisingApp\Application\Models\ApplicationStep;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Authorization\Enums\LicenseType;
@@ -47,6 +46,7 @@ use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;

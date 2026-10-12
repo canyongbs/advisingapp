@@ -45,9 +45,9 @@ use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
-use Livewire\Livewire;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 use Livewire\Mechanisms\ComponentRegistry;
 
 use function Pest\Laravel\actingAs;
