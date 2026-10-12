@@ -130,52 +130,43 @@ it('exposes the mapped block types to the read-only fields rich editor for the c
         ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });
 
-it('retains editable form components when switching application tabs', function () {
+it('renders only the active form component when switching application tabs', function () {
     seed(ApplicationSubmissionStateSeeder::class);
     asSuperAdmin();
     $application = Application::factory()->create();
     $component = Livewire::test(ViewApplication::class, ['record' => $application->getKey()]);
-    $formChildren = data_get($component->__get('snapshot'), 'memo.children');
-    assert(is_array($formChildren));
-    expect($formChildren)->toHaveCount(2);
+    $children = data_get($component->__get('snapshot'), 'memo.children');
+    assert(is_array($children));
+    expect($children)->toBeEmpty();
 
     foreach (['edit', 'workflows', 'submissions', 'notifications', 'view', 'edit'] as $tab) {
         $component->set('activeTab', $tab)->assertSet('activeTab', $tab);
-        $children = data_get($component->__get('snapshot'), 'memo.children');
-        assert(is_array($children));
-
-        expect(array_intersect_key($children, $formChildren))->toBe($formChildren);
 
         $document = new DOMDocument();
         $document->loadHTML($component->html(), LIBXML_NOERROR | LIBXML_NOWARNING);
         $xpath = new DOMXPath($document);
+        $embeddedComponents = $xpath->query('//*[@*[name()="wire:snapshot"]]');
+        assert($embeddedComponents !== false);
+        $componentNames = [];
+
+        foreach ($embeddedComponents as $embeddedComponent) {
+            assert($embeddedComponent instanceof DOMElement);
+            $snapshot = json_decode($embeddedComponent->getAttribute('wire:snapshot'), true, flags: JSON_THROW_ON_ERROR);
+            assert(is_array($snapshot));
+            $componentNames[] = data_get($snapshot, 'memo.name');
+        }
+
+        expect(in_array(app(ComponentRegistry::class)->getName(EditApplication::class), $componentNames, true))->toBe($tab === 'edit')
+            ->and(in_array(app(ComponentRegistry::class)->getName(ManageApplicationNotifications::class), $componentNames, true))->toBe($tab === 'notifications');
+
         $activePanels = $xpath->query('//*[@role="tabpanel" and contains(concat(" ", normalize-space(@class), " "), " fi-active ")]');
         assert($activePanels !== false);
 
         expect($activePanels->length)->toBe(1);
 
-        $persistentPanels = $xpath->query('//*[@role="tabpanel" and @tabindex="0" and contains(concat(" ", normalize-space(@class), " "), " fi-sc-tabs-tab ")]');
-        assert($persistentPanels !== false);
-        expect($persistentPanels->length)->toBe(2);
-
-        foreach ($persistentPanels as $panel) {
-            assert($panel instanceof DOMElement);
-            $panelId = $panel->getAttribute('id');
-            $tabId = $panel->getAttribute('aria-labelledby');
-
-            expect($panelId)->not->toBeEmpty()
-                ->and($tabId)->not->toBeEmpty()->not->toBe($panelId);
-
-            $matchingPanels = $xpath->query('//*[@id="' . $panelId . '"]');
-            $tabButtons = $xpath->query('//*[@role="tab" and @id="' . $tabId . '"]');
-            assert($matchingPanels !== false && $tabButtons !== false);
-            expect($matchingPanels->length)->toBe(1)
-                ->and($tabButtons->length)->toBe(1);
-
-            $tabButton = $tabButtons->item(0);
-            assert($tabButton instanceof DOMElement);
-            expect($tabButton->getAttribute('aria-controls'))->toBe($panelId);
-        }
+        $panels = $xpath->query('//*[@role="tabpanel" and contains(concat(" ", normalize-space(@class), " "), " fi-sc-tabs-tab ")]');
+        assert($panels !== false);
+        expect($panels->length)->toBe(1);
     }
 });
 

@@ -107,11 +107,6 @@ class ViewApplication extends ViewRecord
                             ->visible(fn (): bool => $this->isTabVisible(ApplicationTab::View))
                             ->schema(fn (): array => $this->isTabVisible(ApplicationTab::View) ? $this->viewFormSchema() : []),
                         ApplicationTab::Edit->value => Tab::make(ApplicationTab::Edit->getLabel())
-                            ->view('application::filament.resources.applications.pages.persistent-form-tab')
-                            ->extraAttributes(fn (Tab $component): array => [
-                                'id' => $component->getLivewireKey() . '-tab',
-                                'aria-controls' => $component->getLivewireKey() . '-panel',
-                            ])
                             ->visible(fn (): bool => $this->isTabVisible(ApplicationTab::Edit))
                             ->schema(fn (): array => $this->isTabVisible(ApplicationTab::Edit) ? [
                                 Livewire::make(EditApplication::class, [
@@ -126,11 +121,6 @@ class ViewApplication extends ViewRecord
                             ->badge(fn (): ?string => $this->isTabVisible(ApplicationTab::Submissions) ? ManageApplicationSubmissions::getBadge($this->getRecord(), static::class) : null)
                             ->schema(fn (): array => $this->relationManagerSchema(ApplicationTab::Submissions, ManageApplicationSubmissions::class)),
                         ApplicationTab::Notifications->value => Tab::make(ApplicationTab::Notifications->getLabel())
-                            ->view('application::filament.resources.applications.pages.persistent-form-tab')
-                            ->extraAttributes(fn (Tab $component): array => [
-                                'id' => $component->getLivewireKey() . '-tab',
-                                'aria-controls' => $component->getLivewireKey() . '-panel',
-                            ])
                             ->visible(fn (): bool => $this->isTabVisible(ApplicationTab::Notifications))
                             ->schema(fn (): array => $this->isTabVisible(ApplicationTab::Notifications) ? [
                                 Livewire::make(ManageApplicationNotifications::class, ['record' => $this->getRecord()])
