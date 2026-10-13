@@ -1,0 +1,12 @@
+#!/command/with-contenv bash
+
+set -e
+
+if [ ! -f "$WEBUSER_HOME/artisan" ]; then
+  echo "Skipping worker drain watcher because we could not detect a Laravel install..."
+  exec tail -f /dev/null
+fi
+
+cd "$WEBUSER_HOME"
+
+exec php "$WEBUSER_HOME/artisan" ecs:worker-drain-watch

@@ -58,6 +58,23 @@ it('sends the jobs in the given message group', function () {
     Queue::assertPushed(LoadTestJob::class, 2);
 });
 
+it('gives each job a timeout just beyond its sleep', function () {
+    Queue::fake();
+
+    artisan('queue:loadtest', ['queue' => 'default', 'count' => 1, '--duration' => 120])->assertSuccessful();
+
+    Queue::assertPushed(LoadTestJob::class, fn (LoadTestJob $job): bool => $job->timeout === 150);
+});
+
+it('dispatches jobs without a timeout of their own', function () {
+    Queue::fake();
+
+    artisan('queue:loadtest', ['queue' => 'default', 'count' => 2, '--duration' => 120, '--without-timeout' => true])->assertSuccessful();
+
+    Queue::assertPushed(LoadTestJob::class, fn (LoadTestJob $job): bool => $job->timeout === null);
+    Queue::assertPushed(LoadTestJob::class, 2);
+});
+
 it('refuses to run in production', function () {
     Queue::fake();
 

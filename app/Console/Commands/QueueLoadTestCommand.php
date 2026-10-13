@@ -45,7 +45,8 @@ class QueueLoadTestCommand extends Command
         {queue : The queue name to dispatch onto}
         {count : Number of synthetic jobs to dispatch}
         {--duration=2 : Seconds each job sleeps}
-        {--group= : The SQS message group to send the jobs in, to simulate a noisy or quiet tenant}';
+        {--group= : The SQS message group to send the jobs in, to simulate a noisy or quiet tenant}
+        {--without-timeout : Dispatch jobs with no timeout of their own, so they run under the worker timeout}';
 
     protected $description = 'Dispatch synthetic sleep-only jobs to exercise queue autoscaling. Refuses to run in production.';
 
@@ -61,6 +62,7 @@ class QueueLoadTestCommand extends Command
         $count = (int) $this->argument('count');
         $duration = (int) $this->option('duration');
         $group = $this->option('group');
+        $withTimeout = ! $this->option('without-timeout');
 
         if ($count < 1 || $duration < 0) {
             $this->error('count must be positive and duration must not be negative.');
@@ -70,8 +72,8 @@ class QueueLoadTestCommand extends Command
 
         $this->info("Dispatching {$count} job(s) sleeping {$duration}s each onto [{$queue}]...");
 
-        $this->withProgressBar(range(1, $count), function () use ($duration, $queue, $group): void {
-            $job = (new LoadTestJob($duration))->onQueue($queue);
+        $this->withProgressBar(range(1, $count), function () use ($duration, $queue, $group, $withTimeout): void {
+            $job = (new LoadTestJob($duration, $withTimeout))->onQueue($queue);
 
             if (filled($group)) {
                 $job->onGroup($group);
