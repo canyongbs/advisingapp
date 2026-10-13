@@ -47,6 +47,8 @@ class SubscriptionBlock extends CampaignActionBlock
     {
         parent::setUp();
 
+        $this->label('Follow');
+
         $this->schema($this->generateFields());
     }
 
