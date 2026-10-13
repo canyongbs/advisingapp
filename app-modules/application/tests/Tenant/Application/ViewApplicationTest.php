@@ -220,7 +220,7 @@ describe('authorization', function () {
             $labels[] = trim((string) preg_replace('/\s+/', ' ', $tab->textContent));
         }
 
-        $hasTab = fn(string $name): bool => collect($labels)->contains(fn(string $label): bool => str_starts_with($label, $name));
+        $hasTab = fn (string $name): bool => collect($labels)->contains(fn (string $label): bool => str_starts_with($label, $name));
 
         foreach ($visible as $name) {
             expect($hasTab($name))->toBeTrue("Expected the {$name} tab to be listed.");
