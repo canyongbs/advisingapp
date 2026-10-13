@@ -145,6 +145,20 @@ it('describes the service deployments and its desired and running counts', funct
         ]);
 });
 
+it('fails rather than describe a service without a primary deployment', function () use ($clientFor, $respond) {
+    $aws = new MockHandler();
+
+    $respond($aws, new ArrayObject(), 'DescribeServices', ['services' => [[
+        'desiredCount' => 2,
+        'runningCount' => 2,
+        'deployments' => [
+            ['id' => 'ecs-svc/111', 'status' => 'ACTIVE'],
+        ],
+    ]]]);
+
+    $clientFor($aws)->describeService(new EcsTaskIdentity('task-a', 'cluster-arn', 'advisingapp-worker-dev-service', 'ecs-svc/111'));
+})->throws(UnexpectedValueException::class);
+
 it('lists every task the service is keeping running', function () use ($clientFor, $respond) {
     $aws = new MockHandler();
     $calls = new ArrayObject();

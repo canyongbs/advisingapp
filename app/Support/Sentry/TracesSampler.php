@@ -55,9 +55,11 @@ class TracesSampler
 
     public static function sample(SamplingContext $context): float
     {
-        // Keeps everything a sampled request or job leads to in the same trace.
-        if ($context->getParentSampled() === true) {
-            return 1.0;
+        // Keeps a distributed trace whole. Jobs only see a parent decision when it was to sample: see ForgetUnsampledTraceDecision.
+        $parentSampled = $context->getParentSampled();
+
+        if ($parentSampled !== null) {
+            return $parentSampled ? 1.0 : 0.0;
         }
 
         $transaction = $context->getTransactionContext();

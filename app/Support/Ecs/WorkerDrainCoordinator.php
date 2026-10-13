@@ -113,26 +113,36 @@ class WorkerDrainCoordinator
         $this->drain(WorkerDrainReason::Manual);
     }
 
-    public function resume(): void
+    /**
+     * Returns false for a drain that cannot be cancelled: a deployment drain, or one that has released protection, so
+     * ECS may already be stopping the task.
+     */
+    public function resume(): bool
     {
         $reason = $this->state->reason();
 
         if ($reason === null) {
-            return;
+            return true;
+        }
+
+        if (($reason === WorkerDrainReason::Deployment) || $this->state->isProtectionReleased()) {
+            return false;
         }
 
         $this->queueAutoscale->start();
         $this->state->clear();
 
         $this->log()->info('Worker task drain cancelled; taking jobs again', ['reason' => $reason->value]);
+
+        return true;
     }
 
     private function evaluate(): void
     {
         $reason = $this->state->reason();
 
-        // Only scale-in drains can become unnecessary; a deployment or manual drain always runs to the end.
-        if (in_array($reason, [WorkerDrainReason::Deployment, WorkerDrainReason::Manual], strict: true)) {
+        // Only a scale-in drain that still holds protection can become unnecessary; any other drain runs to the end.
+        if (in_array($reason, [WorkerDrainReason::Deployment, WorkerDrainReason::Manual], strict: true) || $this->state->isProtectionReleased()) {
             return;
         }
 

@@ -42,7 +42,7 @@ readonly class EcsServiceState
      * @param int $runningCount Includes tasks ECS is already stopping.
      */
     public function __construct(
-        public ?string $primaryDeploymentId,
+        public string $primaryDeploymentId,
         public int $deploymentCount,
         public int $desiredCount,
         public int $runningCount,

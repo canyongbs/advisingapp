@@ -48,7 +48,17 @@ class DrainWorkerCommand extends Command
     public function handle(WorkerDrainCoordinator $coordinator): int
     {
         if ($this->option('cancel')) {
-            $coordinator->resume();
+            if (! $coordinator->isDraining()) {
+                $this->info('This worker is not draining.');
+
+                return self::SUCCESS;
+            }
+
+            if (! $coordinator->resume()) {
+                $this->error('This drain cannot be cancelled: a deployment is replacing the task, or it has already released its ECS protection.');
+
+                return self::FAILURE;
+            }
 
             $this->info('Draining cancelled; this worker takes jobs again.');
 

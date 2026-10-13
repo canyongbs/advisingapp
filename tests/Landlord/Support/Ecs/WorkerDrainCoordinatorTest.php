@@ -142,6 +142,15 @@ describe('deployment', function () use ($drainFixture, $serviceState, $wasLogged
 
         expect($state->reason())->toBe(WorkerDrainReason::Deployment);
     });
+
+    it('refuses to cancel a deployment drain by hand', function () use ($drainFixture) {
+        [$coordinator, $state, , $queueAutoscale] = $drainFixture();
+        $state->start(WorkerDrainReason::Deployment);
+        $queueAutoscale->expects('start')->never();
+
+        expect($coordinator->resume())->toBeFalse()
+            ->and($state->reason())->toBe(WorkerDrainReason::Deployment);
+    });
 });
 
 describe('scale-in', function () use ($drainFixture, $serviceState, $wasLogged, $task) {
@@ -217,6 +226,20 @@ describe('scale-in', function () use ($drainFixture, $serviceState, $wasLogged, 
         $coordinator->check();
 
         expect($state->reason())->toBe(WorkerDrainReason::ScaleIn);
+    });
+
+    it('does not take jobs again once protection was released', function () use ($drainFixture) {
+        [$coordinator, $state, $ecs, $queueAutoscale, , $claims] = $drainFixture();
+        $state->start(WorkerDrainReason::ScaleIn);
+        $state->markProtectionReleased();
+        $ecs->expects('describeService')->never();
+        $claims->expects('reconcile')->never();
+        $queueAutoscale->expects('start')->never();
+
+        $coordinator->check();
+
+        expect($state->reason())->toBe(WorkerDrainReason::ScaleIn)
+            ->and($state->isProtectionReleased())->toBeTrue();
     });
 
     it('does not consider scale-in while a deployment is in progress', function () use ($drainFixture, $serviceState) {
@@ -373,17 +396,25 @@ describe('manual drain', function () use ($drainFixture) {
 
         $coordinator->drainManually();
 
-        expect($state->reason())->toBe(WorkerDrainReason::Manual);
+        expect($state->reason())->toBe(WorkerDrainReason::Manual)
+            ->and($coordinator->resume())->toBeTrue()
+            ->and($state->isDraining())->toBeFalse();
+    });
 
-        $coordinator->resume();
+    it('refuses to cancel once protection was released', function () use ($drainFixture) {
+        [$coordinator, $state, , $queueAutoscale] = $drainFixture();
+        $state->start(WorkerDrainReason::Manual);
+        $state->markProtectionReleased();
+        $queueAutoscale->expects('start')->never();
 
-        expect($state->isDraining())->toBeFalse();
+        expect($coordinator->resume())->toBeFalse()
+            ->and($state->reason())->toBe(WorkerDrainReason::Manual);
     });
 
     it('has nothing to cancel when not draining', function () use ($drainFixture) {
         [$coordinator, , , $queueAutoscale] = $drainFixture();
         $queueAutoscale->expects('start')->never();
 
-        $coordinator->resume();
+        expect($coordinator->resume())->toBeTrue();
     });
 });

@@ -40,6 +40,7 @@ use Aws\Ecs\EcsClient;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
+use UnexpectedValueException;
 
 class EcsWorkerServiceClient
 {
@@ -107,6 +108,11 @@ class EcsWorkerServiceClient
             if (is_array($deployment) && (($deployment['status'] ?? null) === 'PRIMARY') && is_string($deployment['id'] ?? null)) {
                 $primaryDeploymentId = $deployment['id'];
             }
+        }
+
+        // Every task would otherwise look older than the primary deployment and drain.
+        if ($primaryDeploymentId === null) {
+            throw new UnexpectedValueException('ECS described the worker service without a primary deployment.');
         }
 
         $desiredCount = $service['desiredCount'] ?? null;

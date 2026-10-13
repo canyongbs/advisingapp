@@ -49,9 +49,34 @@ it('drains the worker', function () {
 
 it('cancels the drain', function () {
     $coordinator = Mockery::mock(WorkerDrainCoordinator::class);
-    $coordinator->expects('resume')->once();
+    $coordinator->allows('isDraining')->andReturnTrue();
+    $coordinator->expects('resume')->once()->andReturnTrue();
     $coordinator->expects('drainManually')->never();
     app()->instance(WorkerDrainCoordinator::class, $coordinator);
 
-    artisan('ecs:worker-drain', ['--cancel' => true])->assertSuccessful();
+    artisan('ecs:worker-drain', ['--cancel' => true])
+        ->expectsOutput('Draining cancelled; this worker takes jobs again.')
+        ->assertSuccessful();
+});
+
+it('reports a drain that cannot be cancelled', function () {
+    $coordinator = Mockery::mock(WorkerDrainCoordinator::class);
+    $coordinator->allows('isDraining')->andReturnTrue();
+    $coordinator->expects('resume')->once()->andReturnFalse();
+    app()->instance(WorkerDrainCoordinator::class, $coordinator);
+
+    artisan('ecs:worker-drain', ['--cancel' => true])
+        ->expectsOutput('This drain cannot be cancelled: a deployment is replacing the task, or it has already released its ECS protection.')
+        ->assertFailed();
+});
+
+it('has nothing to cancel when the worker is not draining', function () {
+    $coordinator = Mockery::mock(WorkerDrainCoordinator::class);
+    $coordinator->allows('isDraining')->andReturnFalse();
+    $coordinator->expects('resume')->never();
+    app()->instance(WorkerDrainCoordinator::class, $coordinator);
+
+    artisan('ecs:worker-drain', ['--cancel' => true])
+        ->expectsOutput('This worker is not draining.')
+        ->assertSuccessful();
 });

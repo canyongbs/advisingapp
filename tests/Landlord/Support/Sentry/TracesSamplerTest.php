@@ -79,6 +79,11 @@ it('keeps everything under a sampled parent in the trace', function () use ($sam
         ->and(TracesSampler::sample($samplingContext('http.server', '/up', true)))->toBe(1.0);
 });
 
+it('leaves out everything under an unsampled parent', function () use ($samplingContext) {
+    expect(TracesSampler::sample($samplingContext('queue.process', SeedTenantDatabase::class, false)))->toBe(0.0)
+        ->and(TracesSampler::sample($samplingContext('http.server', '/admin/students', false)))->toBe(0.0);
+});
+
 it('does not trace other kinds of transaction', function () use ($samplingContext) {
     expect(TracesSampler::sample($samplingContext('console.command', 'migrate')))->toBe(0.0);
 });
