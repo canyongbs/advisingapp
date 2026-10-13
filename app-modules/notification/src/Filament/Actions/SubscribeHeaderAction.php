@@ -58,7 +58,7 @@ class SubscribeHeaderAction extends Action
                 ->whereHas('user', function (Builder $query) {
                     return $query->where('user_id', auth()->id());
                 })
-                ->exists() ? 'Unsubscribe' : 'Subscribe';
+                ->exists() ? 'Unfollow' : 'Follow';
         });
 
         $this->action(function (Subscribable $record) {

@@ -46,7 +46,7 @@
         {{ $action->getLabel() ?? $action->getName() }}
     </x-filament::button>
     @php
-        $tooltipText = "When you subscribe to a {$record->getMorphClass()}, you will receive updates via notifications on that {$record->getMorphClass()}'s activities. You may subscribe or unsubscribe at any time.";
+        $tooltipText = "When you follow a {$record->getMorphClass()}, you will receive updates via notifications on that {$record->getMorphClass()}'s activities. You may follow or unfollow at any time.";
     @endphp
 
     <div class="cursor-help" x-data x-tooltip.raw="{{ $tooltipText }}">

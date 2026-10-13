@@ -49,7 +49,7 @@ class MyStudents extends StatsOverviewWidget
     {
         return [
             Stat::make(
-                'Students (Subscribed)',
+                'Students (Following)',
                 Number::abbreviate(
                     auth()->user()->subscriptions()
                         ->whereHasMorph(

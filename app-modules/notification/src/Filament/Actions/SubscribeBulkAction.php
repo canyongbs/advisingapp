@@ -54,14 +54,14 @@ class SubscribeBulkAction
     {
         return BulkAction::make('bulkSubscription')
             ->icon('heroicon-s-bell')
-            ->label('Manage Subscriptions')
-            ->modalHeading('Create Bulk Subscription')
+            ->label('Manage Followers')
+            ->modalHeading('Create Bulk Followers')
             ->modalDescription(
-                fn (Collection $records) => "You have selected {$records->count()} " . Str::plural($context, $records->count()) . ' to subscribe.'
+                fn (Collection $records) => "You have selected {$records->count()} " . Str::plural($context, $records->count()) . ' to follow.'
             )
             ->form([
                 Select::make('user_ids')
-                    ->label('Who should be subscribed?')
+                    ->label('Who should be following?')
                     ->options(User::query()->tap(new WithoutAnyAdmin())->pluck('name', 'id'))
                     ->multiple()
                     ->searchable()
@@ -69,9 +69,9 @@ class SubscribeBulkAction
                     ->required()
                     ->exists('users', 'id'),
                 Toggle::make('remove_prior')
-                    ->label('Remove all prior subscriptions?')
+                    ->label('Remove all prior followers?')
                     ->default(false)
-                    ->hintIconTooltip('If checked, all prior subscriptions will be removed.'),
+                    ->hintIconTooltip('If checked, all prior followers will be removed.'),
             ])
             ->action(function (array $data, Collection $records) use ($context) {
                 $records->each(function ($record) use ($data, $context) {
@@ -103,7 +103,7 @@ class SubscribeBulkAction
                 });
 
                 Notification::make()
-                    ->title('Subscriptions created successfully.')
+                    ->title('Followers added successfully.')
                     ->success()
                     ->send();
             })

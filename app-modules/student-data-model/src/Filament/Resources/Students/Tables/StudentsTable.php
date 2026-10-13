@@ -404,8 +404,8 @@ class StudentsTable
         return Constraint::make('subscribed')
             ->operators([
                 Operator::make('subscribed')
-                    ->label(fn (bool $isInverse): string => $isInverse ? 'Not subscribed' : 'Subscribed')
-                    ->summary(fn (bool $isInverse): string => $isInverse ? 'You are not subscribed' : 'You are subscribed')
+                    ->label(fn (bool $isInverse): string => $isInverse ? 'Not following' : 'Following')
+                    ->summary(fn (bool $isInverse): string => $isInverse ? 'You are not following' : 'You are following')
                     ->baseQuery(fn (Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereDoesntHave' : 'whereHas'}(
                         'subscriptions.user',
                         fn (Builder $query) => $query->whereKey(auth()->user()),

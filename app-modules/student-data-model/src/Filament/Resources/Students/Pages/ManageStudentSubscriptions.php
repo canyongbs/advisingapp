@@ -50,5 +50,5 @@ class ManageStudentSubscriptions extends ManageRelatedRecords
 
     protected static string $relationship = 'subscribedUsers';
 
-    protected static ?string $title = 'Subscriptions';
+    protected static ?string $title = 'Followers';
 }

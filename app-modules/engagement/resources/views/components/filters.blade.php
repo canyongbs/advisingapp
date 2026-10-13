@@ -87,7 +87,7 @@
     <label class="flex items-center">
         <x-filament::input.checkbox wire:model.live="filterSubscribed" />
 
-        <span class="ml-2">My Subscriptions</span>
+        <span class="ml-2">Following</span>
     </label>
 
     <label class="flex items-center">

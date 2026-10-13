@@ -135,6 +135,7 @@ class SentItemsTable extends Component implements HasActions, HasForms, HasTable
             ->emptyStateHeading('No Engagements yet.')
             ->filters([
                 Filter::make('subscribed')
+                    ->label('Following')
                     ->query(fn (Builder $query): Builder => $query->whereRelation('recipient.subscriptions.user', 'id', auth()->id())),
                 Filter::make('care_team')
                     ->label('Care Team')
