@@ -41,6 +41,10 @@ use AdvisingApp\StudentDataModel\Filament\Filters\TermAttributeConstraint;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use AdvisingApp\StudentDataModel\Models\Scopes\WithoutArchivedStudents;
 use AdvisingApp\StudentDataModel\Models\Student;
+use App\Features\StudentGroupFilterConsolidationFeature;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\AttributeTextConstraint;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\AttributeTextConstraint\Operators\AttributeTextOperator;
+use App\Filament\Tables\Filters\QueryBuilder\Constraints\AttributeTextConstraint\Operators\PhoneNumberPartOperator;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\ExistingValuesSelectConstraint;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\EqualsOperatorWithEnrollmentSemester;
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\HasMaxOperatorWithEnrollmentSemester;
@@ -48,6 +52,7 @@ use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\
 use App\Filament\Tables\Filters\QueryBuilder\Constraints\RelationshipConstraint\Operators\IsEmptyOperatorWithEnrollmentSemester;
 use Filament\Actions\ViewAction;
 use Filament\QueryBuilder\Constraints\Constraint as BaseConstraint;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\QueryBuilder;
@@ -93,8 +98,7 @@ class StudentsTable
                     ->constraints(static::getQueryBuilderConstraints())
                     ->constraintPickerColumns([
                         'md' => 2,
-                        'lg' => 3,
-                        'xl' => 4,
+                        'lg' => 4,
                     ])
                     ->constraintPickerWidth('7xl'),
             ], layout: FiltersLayout::AboveContent)
@@ -114,6 +118,168 @@ class StudentsTable
      * @return array<BaseConstraint>
      */
     public static function getQueryBuilderConstraints(): array
+    {
+        if (! StudentGroupFilterConsolidationFeature::active()) {
+            return self::getLegacyQueryBuilderConstraints();
+        }
+
+        return [
+            // Advising & Support
+            RelationshipConstraint::make('tags')
+                ->label('Tags')
+                ->icon(Heroicon::Tag)
+                ->selectable(
+                    IsRelatedToOperator::make()
+                        ->titleAttribute('name')
+                        ->multiple()
+                        ->preload(),
+                ),
+            self::makeCareTeamConstraint()
+                ->icon(Heroicon::UserGroup),
+            self::makeSubscribedConstraint()
+                ->label('Following student')
+                ->icon(Heroicon::Eye),
+            ...self::getAlertConstraints(),
+            TextConstraint::make('holds')
+                ->icon(Heroicon::ExclamationTriangle),
+            BooleanConstraint::make('sap')
+                ->label('SAP')
+                ->icon(Heroicon::ClipboardDocumentCheck)
+                ->nullable(),
+
+            // Programs
+            TextConstraint::make('programDivision')
+                ->label('Program College')
+                ->relationship('programs', 'division')
+                ->icon(Heroicon::BuildingLibrary),
+            TextConstraint::make('programName')
+                ->label('Program Name')
+                ->relationship('programs', 'descr')
+                ->icon(Heroicon::AcademicCap),
+            self::makeProgramDetailConstraint()
+                ->icon(Heroicon::DocumentText),
+            TextConstraint::make('programFoi')
+                ->label('Program Field of Interest')
+                ->relationship('programs', 'foi')
+                ->icon(Heroicon::LightBulb),
+            RelationshipConstraint::make('programs')
+                ->multiple()
+                ->label('Number of Programs')
+                ->attributeLabel(fn (array $settings): string => Str::plural('program', $settings['count']))
+                ->icon(Heroicon::Square3Stack3d),
+            NumberConstraint::make('programCumGpa')
+                ->label('Program Cumulative GPA')
+                ->relationship('programs', 'cum_gpa')
+                ->icon(Heroicon::ChartBar),
+
+            // Enrollment
+            self::makeEnrollmentsConstraint()
+                ->icon(Heroicon::FolderOpen),
+            TextConstraint::make('enrollmentDivision')
+                ->label('Enrollment College')
+                ->relationship('enrollments', 'division')
+                ->icon(Heroicon::BuildingLibrary),
+            TextConstraint::make('enrollmentClassNbr')
+                ->label('Enrollment Course')
+                ->relationship('enrollments', 'class_nbr')
+                ->icon(Heroicon::BookOpen),
+            TextConstraint::make('enrollmentCrseGradeOff')
+                ->label('Enrollment Grade')
+                ->relationship('enrollments', 'crse_grade_off')
+                ->icon(Heroicon::AcademicCap),
+            NumberConstraint::make('enrollmentUntTaken')
+                ->label('Enrollment Attempted')
+                ->relationship('enrollments', 'unt_taken')
+                ->icon(Heroicon::Calculator),
+            NumberConstraint::make('enrollmentUntEarned')
+                ->label('Enrollment Earned')
+                ->relationship('enrollments', 'unt_earned')
+                ->icon(Heroicon::CheckBadge),
+            self::createEnrollmentTermConstraint('firstEnrollmentTerm.semester_name', 'First Enrolled Term')
+                ->icon(Heroicon::CalendarDays),
+            self::createEnrollmentTermConstraint('mostRecentEnrollmentTerm.semester_name', 'Most Recent Enrolled Term')
+                ->icon(Heroicon::CalendarDays),
+
+            // Student Characteristics
+            BooleanConstraint::make('firstgen')
+                ->label('First Generation')
+                ->icon(Heroicon::AcademicCap)
+                ->nullable(),
+            BooleanConstraint::make('dual')
+                ->icon(Heroicon::Square2Stack)
+                ->nullable(),
+            ExistingValuesSelectConstraint::make('gender')
+                ->label('Gender')
+                ->icon(Heroicon::UserCircle)
+                ->multiple(),
+            ExistingValuesSelectConstraint::make('ethnicity')
+                ->label('Ethnicity')
+                ->icon(Heroicon::Users)
+                ->multiple(),
+
+            // Identity & Contact
+            AttributeTextConstraint::make('name')
+                ->label('Name')
+                ->icon(Heroicon::User)
+                ->operators([
+                    AttributeTextOperator::make('fullName')
+                        ->label('Full Name')
+                        ->column('full_name'),
+                    AttributeTextOperator::make('firstName')
+                        ->label('First Name')
+                        ->column('first'),
+                    AttributeTextOperator::make('lastName')
+                        ->label('Last Name')
+                        ->column('last'),
+                    AttributeTextOperator::make('preferredName')
+                        ->label('Preferred Name')
+                        ->column('preferred'),
+                ]),
+            AttributeTextConstraint::make('primaryPhone')
+                ->label('Phone')
+                ->icon(Heroicon::Phone)
+                ->operators([
+                    PhoneNumberPartOperator::make('countryCode')
+                        ->label('Country Code')
+                        ->relationship('primaryPhoneNumber')
+                        ->column('number')
+                        ->countryCode(),
+                    PhoneNumberPartOperator::make('areaCode')
+                        ->label('Area Code')
+                        ->relationship('primaryPhoneNumber')
+                        ->column('number')
+                        ->areaCode(),
+                ]),
+            AttributeTextConstraint::make('primaryAddress')
+                ->label('Address')
+                ->icon(Heroicon::MapPin)
+                ->operators([
+                    AttributeTextOperator::make('city')
+                        ->label('City')
+                        ->relationship('primaryAddress'),
+                    AttributeTextOperator::make('state')
+                        ->label('State')
+                        ->relationship('primaryAddress'),
+                    AttributeTextOperator::make('postal')
+                        ->label('Postal Code')
+                        ->relationship('primaryAddress'),
+                    AttributeTextOperator::make('country')
+                        ->label('Country')
+                        ->relationship('primaryAddress'),
+                ]),
+
+            // Privacy
+            BooleanConstraint::make('ferpa')
+                ->label('FERPA')
+                ->icon(Heroicon::LockClosed)
+                ->nullable(),
+        ];
+    }
+
+    /**
+     * @return array<BaseConstraint>
+     */
+    private static function getLegacyQueryBuilderConstraints(): array
     {
         return [
             TextConstraint::make('full_name')
@@ -184,28 +350,10 @@ class StudentsTable
                 ->label('FERPA')
                 ->icon('heroicon-m-lock-open')
                 ->nullable(),
-            Constraint::make('subscribed')
-                ->icon('heroicon-m-bell')
-                ->operators([
-                    Operator::make('subscribed')
-                        ->label(fn (bool $isInverse): string => $isInverse ? 'Not subscribed' : 'Subscribed')
-                        ->summary(fn (bool $isInverse): string => $isInverse ? 'You are not subscribed' : 'You are subscribed')
-                        ->baseQuery(fn (Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereDoesntHave' : 'whereHas'}(
-                            'subscriptions.user',
-                            fn (Builder $query) => $query->whereKey(auth()->user()),
-                        )),
-                ]),
-            Constraint::make('careTeam')
-                ->icon('heroicon-m-user-group')
-                ->operators([
-                    Operator::make('careTeam')
-                        ->label(fn (bool $isInverse): string => $isInverse ? 'Not my care team' : 'My care team')
-                        ->summary('Care team')
-                        ->baseQuery(fn (Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereDoesntHave' : 'whereHas'}(
-                            'careTeam',
-                            fn (Builder $query) => $query->whereKey(auth()->user()),
-                        )),
-                ]),
+            self::makeSubscribedConstraint()
+                ->icon('heroicon-m-bell'),
+            self::makeCareTeamConstraint()
+                ->icon('heroicon-m-user-group'),
             RelationshipConstraint::make('programs')
                 ->multiple()
                 ->label('Number of Programs')
@@ -217,56 +365,14 @@ class StudentsTable
             TextConstraint::make('programName')
                 ->label('Program Name')
                 ->relationship('programs', 'descr'),
-            TextConstraint::make('programDetail')
-                ->label('Program Detail')
-                ->relationship('programs', 'acad_plan')
-                ->operators([
-                    ContainsOperator::make()
-                        ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
-                            $text = strtolower(trim($settings['text']));
-                            $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(CASE WHEN jsonb_typeof(kv.value) = 'array' THEN kv.value ELSE '[]'::jsonb END) AS elem WHERE lower(elem) LIKE ?)";
-
-                            return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, ["%{$text}%"]);
-                        }),
-                    StartsWithOperator::make()
-                        ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
-                            $text = strtolower(trim($settings['text']));
-                            $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(CASE WHEN jsonb_typeof(kv.value) = 'array' THEN kv.value ELSE '[]'::jsonb END) AS elem WHERE lower(elem) LIKE ?)";
-
-                            return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, ["{$text}%"]);
-                        }),
-                    EndsWithOperator::make()
-                        ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
-                            $text = strtolower(trim($settings['text']));
-                            $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(CASE WHEN jsonb_typeof(kv.value) = 'array' THEN kv.value ELSE '[]'::jsonb END) AS elem WHERE lower(elem) LIKE ?)";
-
-                            return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, ["%{$text}"]);
-                        }),
-                    EqualsOperator::make()
-                        ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
-                            $text = strtolower(trim($settings['text']));
-                            $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(CASE WHEN jsonb_typeof(kv.value) = 'array' THEN kv.value ELSE '[]'::jsonb END) AS elem WHERE lower(elem) = ?)";
-
-                            return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, [$text]);
-                        }),
-                ]),
+            self::makeProgramDetailConstraint(),
             TextConstraint::make('programFoi')
                 ->label('Program Field of Interest')
                 ->relationship('programs', 'foi'),
             NumberConstraint::make('programCumGpa')
                 ->label('Program Cumulative GPA')
                 ->relationship('programs', 'cum_gpa'),
-            RelationshipConstraint::make('enrollments')
-                ->multiple()
-                ->operators(
-                    [
-                        EqualsOperatorWithEnrollmentSemester::class,
-                        HasMaxOperatorWithEnrollmentSemester::class,
-                        HasMinOperatorWithEnrollmentSemester::class,
-                        IsEmptyOperatorWithEnrollmentSemester::class,
-                    ]
-                )
-                ->attributeLabel(fn (array $settings): string => Str::plural('enrollment', $settings['count']))
+            self::makeEnrollmentsConstraint()
                 ->icon('heroicon-m-folder-open'),
             TextConstraint::make('enrollmentSisid')
                 ->label('Enrollment SISID')
@@ -291,6 +397,84 @@ class StudentsTable
         ];
     }
 
+    private static function makeSubscribedConstraint(): Constraint
+    {
+        return Constraint::make('subscribed')
+            ->operators([
+                Operator::make('subscribed')
+                    ->label(fn (bool $isInverse): string => $isInverse ? 'Not subscribed' : 'Subscribed')
+                    ->summary(fn (bool $isInverse): string => $isInverse ? 'You are not subscribed' : 'You are subscribed')
+                    ->baseQuery(fn (Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereDoesntHave' : 'whereHas'}(
+                        'subscriptions.user',
+                        fn (Builder $query) => $query->whereKey(auth()->user()),
+                    )),
+            ]);
+    }
+
+    private static function makeCareTeamConstraint(): Constraint
+    {
+        return Constraint::make('careTeam')
+            ->operators([
+                Operator::make('careTeam')
+                    ->label(fn (bool $isInverse): string => $isInverse ? 'Not my care team' : 'My care team')
+                    ->summary('Care team')
+                    ->baseQuery(fn (Builder $query, bool $isInverse) => $query->{$isInverse ? 'whereDoesntHave' : 'whereHas'}(
+                        'careTeam',
+                        fn (Builder $query) => $query->whereKey(auth()->user()),
+                    )),
+            ]);
+    }
+
+    private static function makeEnrollmentsConstraint(): RelationshipConstraint
+    {
+        return RelationshipConstraint::make('enrollments')
+            ->multiple()
+            ->operators([
+                EqualsOperatorWithEnrollmentSemester::class,
+                HasMaxOperatorWithEnrollmentSemester::class,
+                HasMinOperatorWithEnrollmentSemester::class,
+                IsEmptyOperatorWithEnrollmentSemester::class,
+            ])
+            ->attributeLabel(fn (array $settings): string => Str::plural('enrollment', $settings['count']));
+    }
+
+    private static function makeProgramDetailConstraint(): TextConstraint
+    {
+        return TextConstraint::make('programDetail')
+            ->label('Program Detail')
+            ->relationship('programs', 'acad_plan')
+            ->operators([
+                ContainsOperator::make()
+                    ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
+                        $text = strtolower(trim($settings['text']));
+                        $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(CASE WHEN jsonb_typeof(kv.value) = 'array' THEN kv.value ELSE '[]'::jsonb END) AS elem WHERE lower(elem) LIKE ?)";
+
+                        return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, ["%{$text}%"]);
+                    }),
+                StartsWithOperator::make()
+                    ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
+                        $text = strtolower(trim($settings['text']));
+                        $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(CASE WHEN jsonb_typeof(kv.value) = 'array' THEN kv.value ELSE '[]'::jsonb END) AS elem WHERE lower(elem) LIKE ?)";
+
+                        return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, ["{$text}%"]);
+                    }),
+                EndsWithOperator::make()
+                    ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
+                        $text = strtolower(trim($settings['text']));
+                        $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(CASE WHEN jsonb_typeof(kv.value) = 'array' THEN kv.value ELSE '[]'::jsonb END) AS elem WHERE lower(elem) LIKE ?)";
+
+                        return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, ["%{$text}"]);
+                    }),
+                EqualsOperator::make()
+                    ->modifyQueryUsing(function (Builder $query, string $qualifiedColumn, array $settings, bool $isInverse): Builder {
+                        $text = strtolower(trim($settings['text']));
+                        $guardedSql = "{$qualifiedColumn} IS NOT NULL AND jsonb_typeof({$qualifiedColumn}) = 'object' AND EXISTS (SELECT 1 FROM jsonb_each({$qualifiedColumn}) AS kv CROSS JOIN LATERAL jsonb_array_elements_text(CASE WHEN jsonb_typeof(kv.value) = 'array' THEN kv.value ELSE '[]'::jsonb END) AS elem WHERE lower(elem) = ?)";
+
+                        return $query->whereRaw($isInverse ? "NOT ({$guardedSql})" : $guardedSql, [$text]);
+                    }),
+            ]);
+    }
+
     /**
      * @return array<ExistingValuesSelectConstraint>
      */
@@ -300,11 +484,11 @@ class StudentsTable
             self::createEnrollmentTermConstraint(
                 'firstEnrollmentTerm.semester_name',
                 'First Enrolled Term'
-            ),
+            )->icon('heroicon-m-academic-cap'),
             self::createEnrollmentTermConstraint(
                 'mostRecentEnrollmentTerm.semester_name',
                 'Most Recent Enrolled Term'
-            ),
+            )->icon('heroicon-m-academic-cap'),
         ];
     }
 
@@ -312,7 +496,6 @@ class StudentsTable
     {
         return ExistingValuesSelectConstraint::make($field)
             ->label($label)
-            ->icon('heroicon-m-academic-cap')
             ->multiple()
             ->options(function () use ($field) {
                 [$relationship, $column] = explode('.', $field, 2);

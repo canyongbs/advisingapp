@@ -59,6 +59,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
+use Filament\QueryBuilder\View\QueryBuilderIconAlias;
 use Filament\Resources\Pages\ManageRelatedRecords;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Fieldset;
@@ -67,7 +68,9 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
+use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -203,6 +206,10 @@ class FilamentServiceProvider extends ServiceProvider
                 900 => '#7c1f53',
                 950 => '#4b0c2f',
             ],
+        ]);
+
+        FilamentIcon::register([
+            QueryBuilderIconAlias::OR_GROUP_BLOCK => Heroicon::ArrowsRightLeft,
         ]);
 
         $defaultDateTimeDisplayFormat = 'M j, Y <\b\r /> <\s\p\a\n \c\l\a\s\s="\f\i-\d\a\t\e\t\i\m\e-\d\e\s\c\r\i\p\t\i\o\n">g:i a (T)</\s\p\a\n>';

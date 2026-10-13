@@ -54,10 +54,11 @@ $studentLastNameContainsFilters = function (string $text): array {
         'queryBuilder' => [
             'rules' => [
                 'C0Cy' => [
-                    'type' => 'last',
+                    'type' => 'name',
                     'data' => [
-                        'operator' => 'contains',
+                        'operator' => 'lastName',
                         'settings' => [
+                            'operator' => 'contains',
                             'text' => $text,
                         ],
                     ],
@@ -102,10 +103,11 @@ $studentLastNameOrFilters = function (array $lastNames): array {
         $groups["group{$index}"] = [
             'rules' => [
                 "rule{$index}" => [
-                    'type' => 'last',
+                    'type' => 'name',
                     'data' => [
-                        'operator' => 'contains',
+                        'operator' => 'lastName',
                         'settings' => [
+                            'operator' => 'contains',
                             'text' => $lastName,
                         ],
                     ],
