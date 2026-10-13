@@ -141,10 +141,12 @@ class WorkerDrainCoordinator
     {
         $reason = $this->state->reason();
 
-        // Only a scale-in drain that still holds protection can become unnecessary; any other drain runs to the end.
-        if (in_array($reason, [WorkerDrainReason::Deployment, WorkerDrainReason::Manual], strict: true) || $this->state->isProtectionReleased()) {
+        // Only a scale-in drain can become unnecessary; any other drain runs to the end.
+        if (in_array($reason, [WorkerDrainReason::Deployment, WorkerDrainReason::Manual], strict: true) || $this->state->isAwaitingReplacement()) {
             return;
         }
+
+        $isReleased = $this->state->isProtectionReleased();
 
         $task = $this->task ??= $this->ecs->identifyCurrentTask();
 
@@ -155,10 +157,13 @@ class WorkerDrainCoordinator
         $service = $this->ecs->describeService($task);
 
         if ($service->primaryDeploymentId !== $task->startedBy) {
-            $this->drain(WorkerDrainReason::Deployment, [
-                'started_by' => $task->startedBy,
-                'primary_deployment' => $service->primaryDeploymentId,
-            ]);
+            // A task that has released protection is already free for the deployment to stop.
+            if (! $isReleased) {
+                $this->drain(WorkerDrainReason::Deployment, [
+                    'started_by' => $task->startedBy,
+                    'primary_deployment' => $service->primaryDeploymentId,
+                ]);
+            }
 
             return;
         }
@@ -206,8 +211,22 @@ class WorkerDrainCoordinator
                 'running_count' => $runningTaskArns === null ? $service->runningCount : count($runningTaskArns),
             ]);
         } elseif ((! $shouldDrain) && $isClaimed) {
-            $this->resume();
+            if ($isReleased) {
+                $this->replaceIdleTask();
+            } else {
+                $this->resume();
+            }
         }
+    }
+
+    /**
+     * ECS may already be stopping a task that released protection, so instead of taking jobs again it is replaced.
+     */
+    private function replaceIdleTask(): void
+    {
+        $this->state->markForReplacement();
+
+        $this->log()->info('Drained worker task is no longer needed; failing its healthcheck so ECS replaces it');
     }
 
     /**
@@ -263,7 +282,7 @@ class WorkerDrainCoordinator
 
     private function reportOverdueDrain(): void
     {
-        if ($this->hasReportedOverdueDrain || (! $this->state->isOverdue())) {
+        if ($this->hasReportedOverdueDrain || $this->state->isAwaitingReplacement() || (! $this->state->isOverdue())) {
             return;
         }
 

@@ -228,13 +228,49 @@ describe('scale-in', function () use ($drainFixture, $serviceState, $wasLogged, 
         expect($state->reason())->toBe(WorkerDrainReason::ScaleIn);
     });
 
-    it('does not take jobs again once protection was released', function () use ($drainFixture) {
+    it('keeps its claim after releasing protection until ECS stops the task', function () use ($drainFixture, $serviceState, $task) {
         [$coordinator, $state, $ecs, $queueAutoscale, , $claims] = $drainFixture();
         $state->start(WorkerDrainReason::ScaleIn);
         $state->markProtectionReleased();
-        $ecs->expects('describeService')->never();
-        $claims->expects('reconcile')->never();
+        $ecs->allows('describeService')->andReturn($serviceState(desiredCount: 1));
+        $ecs->allows('runningTaskArns')->andReturn(['task-a', 'task-b']);
+        $claims->expects('reconcile')->with($task, null, ['task-a', 'task-b'], 1, true)->andReturnTrue();
         $queueAutoscale->expects('start')->never();
+
+        $coordinator->check();
+
+        expect($state->reason())->toBe(WorkerDrainReason::ScaleIn)
+            ->and($state->isProtectionReleased())->toBeTrue()
+            ->and($state->isAwaitingReplacement())->toBeFalse();
+    });
+
+    it('has ECS replace the task instead of taking jobs again when it is no longer needed after releasing protection', function () use ($drainFixture, $serviceState, $wasLogged) {
+        Exceptions::fake();
+
+        [$coordinator, $state, $ecs, $queueAutoscale, , $claims] = $drainFixture();
+        $state->start(WorkerDrainReason::ScaleIn);
+        $state->markProtectionReleased();
+        $ecs->expects('describeService')->once()->andReturn($serviceState());
+        $ecs->allows('runningTaskArns')->andReturn(['task-a', 'task-b']);
+        $claims->expects('reconcile')->once()->andReturnFalse();
+        $queueAutoscale->expects('start')->never();
+
+        $coordinator->check();
+        $coordinator->check();
+
+        expect($state->isAwaitingReplacement())->toBeTrue()
+            ->and($state->isOverdue())->toBeTrue()
+            ->and($wasLogged('Drained worker task is no longer needed; failing its healthcheck so ECS replaces it'))->toBeTrue();
+
+        Exceptions::assertNothingReported();
+    });
+
+    it('leaves a task that released protection for a deployment to stop', function () use ($drainFixture, $serviceState) {
+        [$coordinator, $state, $ecs, $queueAutoscale] = $drainFixture();
+        $state->start(WorkerDrainReason::ScaleIn);
+        $state->markProtectionReleased();
+        $ecs->allows('describeService')->andReturn($serviceState(primaryDeploymentId: 'ecs-svc/newer', deploymentCount: 2));
+        $queueAutoscale->expects('stop')->never();
 
         $coordinator->check();
 

@@ -72,6 +72,11 @@ class WorkerDrainState
         return ($this->read()['protection_released'] ?? false) === true;
     }
 
+    public function isAwaitingReplacement(): bool
+    {
+        return ($this->read()['awaiting_replacement'] ?? false) === true;
+    }
+
     public function startedAt(): ?CarbonImmutable
     {
         $path = $this->path();
@@ -111,6 +116,26 @@ class WorkerDrainState
         }
     }
 
+    /**
+     * Ages the drain past the healthcheck limit, so ECS replaces the task now rather than once the limit is reached.
+     */
+    public function markForReplacement(): void
+    {
+        $reason = $this->reason();
+
+        if ($reason === null) {
+            return;
+        }
+
+        $this->write([
+            'reason' => $reason->value,
+            'protection_released' => $this->isProtectionReleased(),
+            'awaiting_replacement' => true,
+        ]);
+
+        @touch($this->path(), CarbonImmutable::now()->subMinutes(self::MAX_DRAIN_MINUTES + 1)->getTimestamp());
+    }
+
     public function clear(): void
     {
         @unlink($this->path());
@@ -139,7 +164,7 @@ class WorkerDrainState
     }
 
     /**
-     * @param array{reason: string, protection_released: bool} $state
+     * @param array{reason: string, protection_released: bool, awaiting_replacement?: bool} $state
      */
     private function write(array $state): void
     {

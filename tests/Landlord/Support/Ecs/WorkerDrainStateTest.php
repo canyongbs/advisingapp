@@ -122,4 +122,26 @@ describe('drain age', function () use ($directory) {
     it('is not overdue when not draining', function () use ($directory) {
         expect((new WorkerDrainState($directory))->isOverdue())->toBeFalse();
     });
+
+    it('ages the drain past the healthcheck limit when the task is to be replaced', function () use ($directory) {
+        $state = new WorkerDrainState($directory);
+        $state->start(WorkerDrainReason::ScaleIn);
+        $state->markProtectionReleased();
+
+        $state->markForReplacement();
+
+        expect($state->isAwaitingReplacement())->toBeTrue()
+            ->and($state->isOverdue())->toBeTrue()
+            ->and($state->reason())->toBe(WorkerDrainReason::ScaleIn)
+            ->and($state->isProtectionReleased())->toBeTrue();
+    });
+
+    it('does not mark a task for replacement when not draining', function () use ($directory) {
+        $state = new WorkerDrainState($directory);
+
+        $state->markForReplacement();
+
+        expect($state->isDraining())->toBeFalse()
+            ->and($state->isAwaitingReplacement())->toBeFalse();
+    });
 });
