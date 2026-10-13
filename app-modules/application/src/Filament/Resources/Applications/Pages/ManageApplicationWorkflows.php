@@ -57,10 +57,15 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Url;
 use Throwable;
 
 class ManageApplicationWorkflows extends RelationManager
 {
+    // The `tab` URL key belongs to ViewApplication.
+    #[Url(as: 'state')]
+    public ?string $activeTab = null;
+
     protected static string $relationship = 'workflows';
 
     protected static ?string $relatedResource = WorkflowResource::class;
@@ -160,11 +165,15 @@ class ManageApplicationWorkflows extends RelationManager
             ])
             ->recordActions([
                 EditAction::make()
+                    ->authorize(fn (): bool => $this->canUpdateOwnerRecord())
                     ->url(fn (Workflow $record) => WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $record])),
                 DeleteAction::make()
+                    ->authorize(fn (): bool => $this->canUpdateOwnerRecord())
                     ->modalHeading(fn (Workflow $record) => 'Delete ' . $record->name),
             ])
-            ->recordUrl(fn (Workflow $record) => WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $record]));
+            ->recordUrl(fn (Workflow $record) => $this->canUpdateOwnerRecord()
+                ? WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $record])
+                : null);
     }
 
     /**
@@ -173,7 +182,7 @@ class ManageApplicationWorkflows extends RelationManager
     public function getHeaderActions(): array
     {
         $action = Action::make('create')
-            ->authorize(fn (): bool => auth()->user()->can('update', $this->getOwnerRecord()))
+            ->authorize(fn (): bool => $this->canUpdateOwnerRecord())
             ->label('Create New Workflow')
             ->slideOver()
             ->modalHeading('Create New Workflow')
@@ -235,6 +244,11 @@ class ManageApplicationWorkflows extends RelationManager
                 redirect(WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $workflow]));
             }),
         ];
+    }
+
+    private function canUpdateOwnerRecord(): bool
+    {
+        return auth()->user()->can('update', $this->getOwnerRecord());
     }
 
     private function resolveDefaultStateId(): ?string

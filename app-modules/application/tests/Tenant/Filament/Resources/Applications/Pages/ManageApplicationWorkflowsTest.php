@@ -50,6 +50,7 @@ use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -520,5 +521,57 @@ describe('authorization', function () {
 
         expect(Workflow::query()->count())->toBe(0)
             ->and(WorkflowTrigger::query()->count())->toBe(0);
+    });
+
+    it('does not expose or run the row actions for a view-only user', function () {
+        $user = User::factory()->licensed(LicenseType::cases())->create();
+        $user->givePermissionTo('application.view-any', 'application.*.view');
+        actingAs($user);
+        $application = Application::factory()->create();
+        $workflow = Workflow::factory()
+            ->for(WorkflowTrigger::factory()->state([
+                'related_type' => $application->getMorphClass(),
+                'related_id' => $application->id,
+                'sub_related_type' => 'application_submission_state',
+                'sub_related_id' => ApplicationSubmissionState::query()->value('id'),
+                'event' => WorkflowTriggerEvent::Enter,
+            ]))
+            ->create();
+
+        Livewire::test(ManageApplicationWorkflows::class, [
+            'ownerRecord' => $application,
+            'pageClass' => ViewApplication::class,
+        ])
+            ->assertTableActionHidden(EditAction::class, $workflow)
+            ->assertTableActionHidden(DeleteAction::class, $workflow)
+            ->call('mountAction', 'delete', [], ['table' => true, 'recordKey' => $workflow->getKey()])
+            ->call('callMountedAction');
+
+        expect($workflow->fresh()->trashed())->toBeFalse();
+    });
+
+    it('lets an update-only user delete a workflow from the table', function () {
+        $user = User::factory()->licensed(LicenseType::cases())->create();
+        $user->givePermissionTo('application.view-any', 'application.*.update');
+        actingAs($user);
+        $application = Application::factory()->create();
+        $workflow = Workflow::factory()
+            ->for(WorkflowTrigger::factory()->state([
+                'related_type' => $application->getMorphClass(),
+                'related_id' => $application->id,
+                'sub_related_type' => 'application_submission_state',
+                'sub_related_id' => ApplicationSubmissionState::query()->value('id'),
+                'event' => WorkflowTriggerEvent::Enter,
+            ]))
+            ->create();
+
+        Livewire::test(ManageApplicationWorkflows::class, [
+            'ownerRecord' => $application,
+            'pageClass' => ViewApplication::class,
+        ])
+            ->assertTableActionVisible(DeleteAction::class, $workflow)
+            ->callTableAction(DeleteAction::class, $workflow);
+
+        assertSoftDeleted($workflow);
     });
 });

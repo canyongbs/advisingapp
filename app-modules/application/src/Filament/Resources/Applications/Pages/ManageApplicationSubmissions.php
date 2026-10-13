@@ -61,10 +61,15 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Livewire\Attributes\Url;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ManageApplicationSubmissions extends RelationManager
 {
+    // The `tab` URL key belongs to ViewApplication.
+    #[Url(as: 'state')]
+    public ?string $activeTab = null;
+
     protected string $view = 'application::filament.resources.applications.pages.manage-application-submissions';
 
     protected static string $relationship = 'submissions';

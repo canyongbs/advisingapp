@@ -63,8 +63,15 @@ class RedirectApplicationTab extends Page
 
         abort_unless($tab->canAccess($this->record), 403);
 
+        $query = request()->query();
+
+        // Legacy pages stored the selected state tab under `tab`, which now selects the application tab.
+        if (in_array($tab, [ApplicationTab::Workflows, ApplicationTab::Submissions], true) && isset($query['tab'])) {
+            $query['state'] ??= $query['tab'];
+        }
+
         $this->redirect(ApplicationResource::getUrl('view', [
-            ...request()->query(),
+            ...$query,
             'record' => $this->record,
             'tab' => $tab->value,
         ]));

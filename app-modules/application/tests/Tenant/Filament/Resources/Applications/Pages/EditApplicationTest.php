@@ -386,4 +386,25 @@ describe('authorization', function () {
         expect($application->fresh()->isArchived())->toBeFalse()
             ->and(Application::query()->where('root_id', $application->root_id)->count())->toBe($versionCount);
     });
+
+    it('saves a new version for an update-only user', function () {
+        $user = User::factory()->licensed(LicenseType::cases())->create();
+        $user->givePermissionTo('application.view-any', 'application.*.update');
+        actingAs($user);
+        $application = Application::factory()->create();
+
+        Livewire::test(EditApplication::class, ['record' => $application])
+            ->fillForm(['name' => 'Renamed by update-only user'])
+            ->call('save')
+            ->assertHasNoFormErrors()
+            ->assertNotified();
+
+        $newVersion = Application::query()
+            ->where('root_id', $application->root_id)
+            ->whereKeyNot($application->getKey())
+            ->firstOrFail();
+
+        expect($newVersion->name)->toBe('Renamed by update-only user')
+            ->and($application->fresh()->isArchived())->toBeTrue();
+    });
 });

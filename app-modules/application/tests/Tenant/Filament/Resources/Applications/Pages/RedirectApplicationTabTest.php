@@ -71,6 +71,17 @@ it('preserves submission modal parameters through the legacy redirect', function
         ->assertRedirect(ApplicationResource::getUrl('view', [...$parameters, 'tab' => 'submissions']));
 });
 
+it('maps the legacy state tab to the state parameter', function (string $page, string $tab) {
+    asSuperAdmin();
+    $application = Application::factory()->create();
+
+    get(ApplicationResource::getUrl($page, ['record' => $application, 'tab' => '123']))
+        ->assertRedirect(ApplicationResource::getUrl('view', ['record' => $application, 'tab' => $tab, 'state' => '123']));
+})->with([
+    ['manage-application-workflows', 'workflows'],
+    ['manage-submissions', 'submissions'],
+]);
+
 describe('authorization', function () {
     it('denies a legacy edit URL to a view-only user', function (string $page) {
         $user = User::factory()->licensed(LicenseType::cases())->create();

@@ -176,4 +176,19 @@ describe('authorization', function () {
 
         expect($application->fresh()->notify_via_email)->toBeFalse();
     });
+
+    it('saves settings for an update-only user', function () {
+        $user = User::factory()->licensed(LicenseType::cases())->create();
+        $user->givePermissionTo('application.view-any', 'application.*.update');
+        actingAs($user);
+        $application = Application::factory()->create(['notify_via_email' => false]);
+
+        Livewire::test(ManageApplicationNotifications::class, ['record' => $application])
+            ->fillForm(['notify_via_email' => true])
+            ->call('save')
+            ->assertHasNoFormErrors()
+            ->assertNotified();
+
+        expect($application->fresh()->notify_via_email)->toBeTrue();
+    });
 });

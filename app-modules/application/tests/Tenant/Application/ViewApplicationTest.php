@@ -203,6 +203,37 @@ describe('authorization', function () {
         get(ApplicationResource::getUrl('view', ['record' => $application, 'tab' => $tab]))->assertSuccessful();
     })->with(['edit', 'notifications', 'unknown']);
 
+    it('only lists the tabs the user has permission for', function (array $permissions, array $visible, array $hidden) {
+        seed(ApplicationSubmissionStateSeeder::class);
+        $user = User::factory()->licensed(LicenseType::cases())->create();
+        $user->givePermissionTo('application.view-any', ...$permissions);
+        actingAs($user);
+        $application = Application::factory()->create();
+
+        $document = new DOMDocument();
+        $document->loadHTML(Livewire::test(ViewApplication::class, ['record' => $application->getKey()])->html(), LIBXML_NOERROR | LIBXML_NOWARNING);
+        $tabs = (new DOMXPath($document))->query('//*[@role="tab"]');
+        assert($tabs !== false);
+        $labels = [];
+
+        foreach ($tabs as $tab) {
+            $labels[] = trim((string) preg_replace('/\s+/', ' ', $tab->textContent));
+        }
+
+        $hasTab = fn(string $name): bool => collect($labels)->contains(fn(string $label): bool => str_starts_with($label, $name));
+
+        foreach ($visible as $name) {
+            expect($hasTab($name))->toBeTrue("Expected the {$name} tab to be listed.");
+        }
+
+        foreach ($hidden as $name) {
+            expect($hasTab($name))->toBeFalse("Expected the {$name} tab to be hidden.");
+        }
+    })->with([
+        'view-only' => [['application.*.view'], ['View'], ['Edit', 'Notifications']],
+        'update-only' => [['application.*.update'], ['Edit', 'Notifications'], ['View']],
+    ]);
+
     it('renders only the active manager tab for a view-only user', function (string $tab, string $manager) {
         seed(ApplicationSubmissionStateSeeder::class);
         $user = User::factory()->licensed(LicenseType::cases())->create();
