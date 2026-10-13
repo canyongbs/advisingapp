@@ -58,7 +58,7 @@ class ApplicationNotificationsForm
                         Toggle::make('notify_to_care_team')
                             ->label('Notify to Care Team'),
                         Toggle::make('notify_to_subscribers')
-                            ->label('Notify to Subscribers'),
+                            ->label('Notify to Followers'),
                         Toggle::make('notify_via_app')
                             ->label('Notify via App'),
                         Toggle::make('notify_via_email')

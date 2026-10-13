@@ -38,6 +38,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ManageFormNotifications;
 use AdvisingApp\Form\Models\Form;
 use App\Models\User;
+use Filament\Forms\Components\Toggle;
 use Livewire\Livewire;
 
 use function Tests\asSuperAdmin;
@@ -111,6 +112,15 @@ test('notify_to_subscribers toggle is only visible when form is authenticated', 
 
     Livewire::test(ManageFormNotifications::class, ['record' => $form->getKey()])
         ->assertFormFieldIsVisible('notify_to_subscribers');
+});
+
+test('the notify_to_subscribers toggle is labelled Notify to Followers', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create(['is_authenticated' => true]);
+
+    Livewire::test(ManageFormNotifications::class, ['record' => $form->getKey()])
+        ->assertFormFieldExists('notify_to_subscribers', checkFieldUsing: fn (Toggle $field): bool => $field->getLabel() === 'Notify to Followers');
 });
 
 test('can enable notify_to_care_team on an authenticated form', function () {

@@ -47,6 +47,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
+use Filament\Forms\Components\Toggle;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Features\SupportTesting\Testable;
@@ -476,6 +477,15 @@ describe('edit tab', function () use ($archiveAction) {
 });
 
 describe('notifications tab', function () {
+    it('labels the notify_to_subscribers toggle Notify to Followers', function () {
+        asSuperAdmin();
+
+        $application = Application::factory()->create();
+
+        Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
+            ->assertFormFieldExists('notify_to_subscribers', 'notificationsForm', fn (Toggle $field): bool => $field->getLabel() === 'Notify to Followers');
+    });
+
     it('can save the users to notify', function () {
         asSuperAdmin();
 
