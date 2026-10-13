@@ -40,6 +40,7 @@
 
     import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size';
     import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type';
+    import { defineProps } from 'vue';
 
     // import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.min.css';
     // import 'filepond/dist/filepond.min.css';

@@ -32,7 +32,7 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import { onUnmounted, ref, watch } from 'vue';
+    import { defineProps, onUnmounted, ref, watch } from 'vue';
 
     const props = defineProps({
         active: {
