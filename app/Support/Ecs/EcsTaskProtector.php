@@ -47,19 +47,25 @@ use Throwable;
  * Acquires ECS task scale-in protection for the duration of a long-running job, so scale-in and rolling deployments
  * do not stop the task mid-job.
  *
- * Protection is only ever enabled, never disabled, and left to expire after the last long job starts: several worker
- * processes share one task, so a per-job release would let one worker strip a sibling's protection. A task-local
- * file coalesces requests so the rate-limited UpdateTaskProtection API is not called on every job.
+ * Jobs never disable protection themselves: several worker processes share one task, so a per-job release would let
+ * one worker strip a sibling's protection. It is released only once the task has drained, when no worker is left.
+ * A task-local file coalesces requests so the rate-limited UpdateTaskProtection API is not called on every job.
  */
 class EcsTaskProtector
 {
     public const string STATE_FILENAME = 'advisingapp-ecs-task-protection';
+
+    public const string LOCK_FILENAME = 'advisingapp-ecs-task-protection.lock';
 
     private const int REFRESH_BUFFER_SECONDS = 60;
 
     private const int HTTP_TIMEOUT_SECONDS = 5;
 
     private const int EXPIRY_HEADROOM_MINUTES = 5;
+
+    public function __construct(
+        private ?string $stateDirectory = null,
+    ) {}
 
     public function protectForJobTimeout(int $jobTimeoutSeconds): void
     {
@@ -69,13 +75,41 @@ class EcsTaskProtector
             return;
         }
 
-        if (! $this->needsRefresh($jobTimeoutSeconds)) {
-            return;
-        }
+        // Every request resets the expiry, so checking stale state outside the lock could replace a longer window.
+        $this->whileLocked(function () use ($agentUri, $jobTimeoutSeconds): void {
+            if (! $this->needsRefresh($jobTimeoutSeconds)) {
+                return;
+            }
 
-        $expiresInMinutes = (int) ceil($jobTimeoutSeconds / 60) + self::EXPIRY_HEADROOM_MINUTES;
+            $expiresInMinutes = (int) ceil($jobTimeoutSeconds / 60) + self::EXPIRY_HEADROOM_MINUTES;
 
-        $this->request($agentUri, $expiresInMinutes);
+            if ($this->request($agentUri, ['ProtectionEnabled' => true, 'ExpiresInMinutes' => $expiresInMinutes])) {
+                $this->rememberProtectedUntil(CarbonImmutable::now()->addMinutes($expiresInMinutes));
+            }
+        });
+    }
+
+    /**
+     * Only call once no worker on this task is running a job.
+     */
+    public function release(): bool
+    {
+        $agentUri = $this->agentUri();
+
+        return $this->whileLocked(function () use ($agentUri): bool {
+            if (($agentUri !== null) && (! $this->request($agentUri, ['ProtectionEnabled' => false]))) {
+                return false;
+            }
+
+            @unlink($this->path(self::STATE_FILENAME));
+
+            return true;
+        });
+    }
+
+    public function protectedUntil(): ?CarbonImmutable
+    {
+        return $this->readProtectedUntil();
     }
 
     private function agentUri(): ?string
@@ -93,36 +127,62 @@ class EcsTaskProtector
             || $protectedUntil->subSeconds(self::REFRESH_BUFFER_SECONDS)->isBefore(CarbonImmutable::now()->addSeconds($jobTimeoutSeconds));
     }
 
-    private function request(string $agentUri, int $expiresInMinutes): void
+    /**
+     * @param array<string, bool|int> $state
+     */
+    private function request(string $agentUri, array $state): bool
     {
         try {
             $response = Http::timeout(self::HTTP_TIMEOUT_SECONDS)
                 ->acceptJson()
-                ->put("{$agentUri}/task-protection/v1/state", [
-                    'ProtectionEnabled' => true,
-                    'ExpiresInMinutes' => $expiresInMinutes,
-                ]);
+                ->put("{$agentUri}/task-protection/v1/state", $state);
 
-            if ($response->successful()) {
-                $this->rememberProtectedUntil(CarbonImmutable::now()->addMinutes($expiresInMinutes));
-
-                return;
+            // The agent can answer 200 with a `failure` body when ECS refused the change.
+            if ($response->successful() && ($response->json('failure') === null)) {
+                return true;
             }
 
             report(EcsTaskProtectionException::requestRejected($response->status()));
         } catch (Throwable $exception) {
             report(EcsTaskProtectionException::requestFailed($exception));
         }
+
+        return false;
     }
 
-    private function statePath(): string
+    /**
+     * @template TReturn
+     *
+     * @param callable(): TReturn $callback
+     *
+     * @return TReturn
+     */
+    private function whileLocked(callable $callback): mixed
     {
-        return sys_get_temp_dir() . '/' . self::STATE_FILENAME;
+        $handle = @fopen($this->path(self::LOCK_FILENAME), 'c');
+
+        if ($handle === false) {
+            return $callback();
+        }
+
+        try {
+            flock($handle, LOCK_EX);
+
+            return $callback();
+        } finally {
+            flock($handle, LOCK_UN);
+            fclose($handle);
+        }
+    }
+
+    private function path(string $filename): string
+    {
+        return ($this->stateDirectory ?? sys_get_temp_dir()) . '/' . $filename;
     }
 
     private function readProtectedUntil(): ?CarbonImmutable
     {
-        $path = $this->statePath();
+        $path = $this->path(self::STATE_FILENAME);
 
         if (! is_file($path)) {
             return null;
@@ -145,6 +205,6 @@ class EcsTaskProtector
 
     private function rememberProtectedUntil(CarbonImmutable $until): void
     {
-        @file_put_contents($this->statePath(), (string) $until->getTimestamp(), LOCK_EX);
+        @file_put_contents($this->path(self::STATE_FILENAME), (string) $until->getTimestamp(), LOCK_EX);
     }
 }

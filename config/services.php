@@ -119,4 +119,9 @@ return [
         'secret' => env('AWS_CLOUDWATCH_SECRET_ACCESS_KEY') ?? '',
         'region' => env('AWS_CLOUDWATCH_REGION', 'us-west-2'),
     ],
+
+    // Credentials come only from the ECS task role; the client is used solely by worker tasks running on ECS.
+    'ecs' => [
+        'region' => env('AWS_ECS_REGION', 'us-west-2'),
+    ],
 ];
