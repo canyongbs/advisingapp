@@ -117,6 +117,7 @@ enum CampaignActionType: string implements HasLabel
             CampaignActionType::BulkEngagementSms => 'Text Message',
             CampaignActionType::ProactiveConcern => 'Proactive Concern',
             CampaignActionType::CareTeam => 'Care Team',
+            CampaignActionType::Subscription => 'Follow',
             default => $this->name,
         };
     }

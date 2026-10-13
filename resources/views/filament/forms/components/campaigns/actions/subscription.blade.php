@@ -38,17 +38,17 @@
 @endphp
 
 <x-filament::fieldset>
-    <x-slot name="label">Subscription</x-slot>
+    <x-slot name="label">Follow</x-slot>
 
     <dl class="max-w-md divide-y divide-gray-200 text-gray-900 dark:divide-gray-700 dark:text-white">
         <div class="flex flex-col pb-3">
-            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Users to be subscribed</dt>
+            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Users to be following</dt>
             <dd class="text-sm font-semibold">
                 {{ collect($action['user_ids'])->map(fn (string $userId): User => User::findOrFail($userId))->implode('name', ', ') }}
             </dd>
         </div>
         <div class="flex flex-col pb-3">
-            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Remove all prior subscriptions</dt>
+            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Remove all prior followers</dt>
             <dd class="text-sm font-semibold">{{ $action['remove_prior'] ? 'True' : 'False' }}</dd>
         </div>
         <div class="flex flex-col pt-3">
