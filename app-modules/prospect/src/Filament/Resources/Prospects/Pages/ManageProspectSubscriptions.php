@@ -70,6 +70,8 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
     // TODO: Automatically set from Filament based on relationship name
     protected static ?string $breadcrumb = 'Followers';
 
+    protected static ?string $title = 'Followers';
+
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-user';
 
     //TODO: manually override check canAccess for policy
