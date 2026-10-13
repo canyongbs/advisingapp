@@ -33,7 +33,7 @@
 -->
 <script setup>
     import { RadioGroup, RadioGroupLabel, RadioGroupOption } from '@headlessui/vue';
-    import { onMounted, ref, watch } from 'vue';
+    import { defineProps, onMounted, ref, watch } from 'vue';
 
     const props = defineProps({
         context: Object,

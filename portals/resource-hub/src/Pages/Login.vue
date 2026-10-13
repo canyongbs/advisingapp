@@ -34,6 +34,7 @@
 <script setup>
     import LoginForm from '@common/portal/login/LoginForm.vue';
     import { FormKit } from '@formkit/vue';
+    import { defineEmits, defineModel, defineProps } from 'vue';
 
     const authentication = defineModel('authentication', {
         type: Object,

@@ -32,6 +32,7 @@
 </COPYRIGHT>
 -->
 <script setup>
+    import { defineProps } from 'vue';
     import BaseTable from './BaseTable.vue';
     import BaseTableBody from './BaseTableBody.vue';
     import BaseTableHeader from './BaseTableHeader.vue';
