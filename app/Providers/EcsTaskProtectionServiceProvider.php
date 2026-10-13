@@ -37,23 +37,45 @@
 namespace App\Providers;
 
 use App\Support\Ecs\EcsTaskProtector;
+use Aws\Ecs\EcsClient;
+use Cbox\LaravelQueueAutoscale\Configuration\QueueConfiguration;
 use Illuminate\Queue\Events\JobProcessing;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\ServiceProvider;
 
 class EcsTaskProtectionServiceProvider extends ServiceProvider
 {
     /**
-     * A job's declared timeout bounds how long it can run, so it decides whether the task needs protection.
+     * A job's timeout bounds how long it can run, so it decides whether the task needs protection.
      */
     public const int PROTECT_THRESHOLD_SECONDS = 100;
+
+    public function register(): void
+    {
+        // The ECS task role is the only credential source; this client is only used from inside ECS.
+        $this->app->bind(EcsClient::class, fn (): EcsClient => new EcsClient([
+            'version' => 'latest',
+            'region' => Config::string('services.ecs.region'),
+            // The SDK waits forever by default, and a hung call would stall the drain watcher's loop.
+            'http' => ['connect_timeout' => 5, 'timeout' => 10],
+        ]));
+    }
 
     public function boot(): void
     {
         Queue::before(function (JobProcessing $event): void {
             $timeout = $event->job->payload()['timeout'] ?? null;
 
-            if (is_int($timeout) && $timeout >= self::PROTECT_THRESHOLD_SECONDS) {
+            // A job without its own timeout still runs under the worker's, which its queue's autoscale profile sets.
+            if (! is_int($timeout)) {
+                $timeout = rescue(
+                    fn (): int => QueueConfiguration::fromConfig($event->connectionName, $event->job->getQueue())->workers->timeoutSeconds,
+                    0,
+                );
+            }
+
+            if ($timeout >= self::PROTECT_THRESHOLD_SECONDS) {
                 app(EcsTaskProtector::class)->protectForJobTimeout($timeout);
             }
         });

@@ -257,6 +257,8 @@ jobs:
                   service: 'advisingapp-worker-prod-service'
                   cluster: 'advisingapp-prod'
                   wait-for-service-stability: true
+                  # Old tasks finish their running jobs (up to about 20 minutes) before they stop.
+                  wait-for-minutes: 45
 
             - name: Check if deployment was successful
               id: check-deployment

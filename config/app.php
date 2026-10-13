@@ -138,6 +138,9 @@ return [
     // Injected by ECS into every container; empty everywhere else, which disables task scale-in protection.
     'ecs_agent_uri' => env('ECS_AGENT_URI', ''),
 
+    // Injected by ECS into every container; empty everywhere else, which disables worker draining.
+    'ecs_container_metadata_uri' => env('ECS_CONTAINER_METADATA_URI_V4', ''),
+
     'queue-autoscale-metrics' => [
         // ?: so a blank env value falls back to the default rather than publishing to an empty namespace.
         'namespace' => env('QUEUE_AUTOSCALE_METRICS_NAMESPACE') ?: 'CanyonGBS/QueueAutoscale',
