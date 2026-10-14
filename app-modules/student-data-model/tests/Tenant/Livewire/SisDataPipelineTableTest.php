@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\StudentDataModel\DataTransferObjects\SisPipelineProgress;
 use AdvisingApp\StudentDataModel\Livewire\SisDataPipelineTable;
 use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
@@ -107,6 +108,34 @@ test('The SIS data pipeline table displays correct success and failure counts', 
 
     expect($expectedStudentPercentage)->toBeLessThan(100.0);
     expect($expectedEnrollmentPercentage)->toBeLessThan(100.0);
+});
+
+test('The SIS data pipeline table displays term sync progress and includes it in the total', function () {
+    asSuperAdmin();
+
+    Http::fake([
+        'integrations/*/sis-sync-pipeline-data' => Http::response([
+            'data' => [
+                [
+                    'started_at' => now()->subHour()->format('Y-m-d H:i:s'),
+                    'completed_at' => now()->format('Y-m-d H:i:s'),
+                    'type' => 'all',
+                    'trigger' => 'schedule',
+                    'total_student' => 10,
+                    'processed_students' => 10,
+                    'successful_students' => 8,
+                    'total_term' => 1,
+                    'processed_terms' => 1,
+                    'successful_terms' => 0,
+                ],
+            ],
+        ], 200),
+    ]);
+
+    Livewire::test(SisDataPipelineTable::class)
+        ->assertSuccessful()
+        ->assertTableColumnStateSet('terms', new SisPipelineProgress(processed: 1, total: 1, successful: 0), record: 0)
+        ->assertTableColumnStateSet('total', new SisPipelineProgress(processed: 11, total: 11, successful: 8), record: 0);
 });
 
 test('The SIS data pipeline table calculates percentages correctly for the original bug scenario', function () {
