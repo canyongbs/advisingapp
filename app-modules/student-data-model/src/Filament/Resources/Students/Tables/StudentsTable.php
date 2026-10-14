@@ -205,6 +205,7 @@ class StudentsTable
                     ->icon(Heroicon::CalendarDays),
                 self::createEnrollmentTermConstraint('mostRecentEnrollmentTerm.semester_name', 'Most Recent Enrolled Term')
                     ->icon(Heroicon::CalendarDays),
+                TermAttributeConstraint::make('termAttribute'),
             ],
             'Student Characteristics' => [
                 BooleanConstraint::make('firstgen')
