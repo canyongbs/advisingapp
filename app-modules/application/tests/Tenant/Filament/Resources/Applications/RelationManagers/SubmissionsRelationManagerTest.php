@@ -307,7 +307,8 @@ test('archive action successfully archives a submission', function () use ($test
 
     $testSubmissions($application)
         ->callTableAction('archive', $submission)
-        ->assertNotified();
+        ->assertNotified()
+        ->assertDispatched('refresh-page');
 
     expect($submission->fresh()->isArchived())->toBeTrue();
 });
@@ -330,7 +331,8 @@ test('bulk archive action successfully archives multiple submissions', function 
 
     $testSubmissions($application)
         ->callTableBulkAction('archive', $submissions)
-        ->assertNotified();
+        ->assertNotified()
+        ->assertDispatched('refresh-page');
 
     $submissions->each(function (ApplicationSubmission $submission): void {
         expect($submission->fresh()->isArchived())->toBeTrue();

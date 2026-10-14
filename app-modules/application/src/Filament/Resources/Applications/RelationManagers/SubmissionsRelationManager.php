@@ -257,6 +257,8 @@ class SubmissionsRelationManager extends RelationManager
 
                         Cache::tags('{application-submission-count}')->flush();
 
+                        $this->dispatch('refresh-page');
+
                         Notification::make()
                             ->title('Submission archived')
                             ->success()
@@ -296,6 +298,8 @@ class SubmissionsRelationManager extends RelationManager
                             });
 
                             Cache::tags('{application-submission-count}')->flush();
+
+                            $this->dispatch('refresh-page');
 
                             Notification::make()
                                 ->title('Submissions archived')
