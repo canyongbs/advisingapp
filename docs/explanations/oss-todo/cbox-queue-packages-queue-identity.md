@@ -2,9 +2,9 @@
 
 This document tracks three related contributions. All three are about the queue name the packages key their data by.
 
-- **Part 1 — `cboxdk/laravel-queue-metrics`:** stored keys are split on every `:`, so a queue name containing a colon is cut short. PR Opened: _not yet_
-- **Part 2 — `cboxdk/laravel-queue-metrics` and `cboxdk/laravel-queue-autoscale`:** processing-side data is keyed by `$job->getQueue()`, which is the full queue URL on SQS, while everything else uses the queue name. PR Opened: _not yet_
-- **Part 3 — `cboxdk/laravel-queue-autoscale`:** jobs run synchronously are discovered as a `sync` workload the autoscaler can never run. PR Opened: _not yet_
+- **Part 1 — `cboxdk/laravel-queue-metrics`:** stored keys are split on every `:`, so a queue name containing a colon is cut short. PR Opened: https://github.com/cboxdk/laravel-queue-metrics/pull/40
+- **Part 2 — `cboxdk/laravel-queue-metrics` and `cboxdk/laravel-queue-autoscale`:** processing-side data is keyed by `$job->getQueue()`, which is the full queue URL on SQS, while everything else uses the queue name. PR Opened: https://github.com/cboxdk/laravel-queue-metrics/pull/39 and https://github.com/cboxdk/laravel-queue-autoscale/pull/75
+- **Part 3 — `cboxdk/laravel-queue-autoscale`:** jobs run synchronously are discovered as a `sync` workload the autoscaler can never run. PR Opened: https://github.com/cboxdk/laravel-queue-autoscale/pull/78
 
 The three parts are independent and can land in any order. Part 2 is the one Advising App works around in code; see [Consuming-app cleanup](#consuming-app-cleanup-after-these-ship).
 

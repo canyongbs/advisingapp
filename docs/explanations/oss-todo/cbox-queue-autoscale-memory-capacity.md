@@ -2,10 +2,10 @@
 
 This document tracks contributions to how the autoscaler decides how many workers a host can hold in memory. Together they let it over-pack hosts until the kernel OOM-killed workers.
 
-- **Part 1:** the measured per-worker memory cost misses a worker's boot peak, and always wins over configured estimates. PR Opened: _not yet_
-- **Part 2:** capacity is read from memory in use right now, so workers that are still booting look free, and a batch of them overshoots. PR Opened: _not yet_
-- **Part 3:** the memory limit and used percentage come from different scopes, so in a container without its own memory limit the autoscaler sizes against the whole VM. This was the root cause. PR Opened: _not yet_
-- **Part 4:** nothing reacts to the kernel OOM-killing workers. PR Opened: _not yet_
+- **Part 1:** the measured per-worker memory cost misses a worker's boot peak, and always wins over configured estimates. PR Opened: https://github.com/cboxdk/laravel-queue-autoscale/pull/81 (boot peak only; configured estimates are not made a floor)
+- **Part 2:** capacity is read from memory in use right now, so workers that are still booting look free, and a batch of them overshoots. PR Opened: https://github.com/cboxdk/laravel-queue-autoscale/pull/79 (combined with Part 3)
+- **Part 3:** the memory limit and used percentage come from different scopes, so in a container without its own memory limit the autoscaler sizes against the whole VM. This was the root cause. PR Opened: https://github.com/cboxdk/laravel-queue-autoscale/pull/79, plus https://github.com/cboxdk/system-metrics/pull/10 for `limits()`
+- **Part 4:** nothing reacts to the kernel OOM-killing workers. PR Opened: https://github.com/cboxdk/laravel-queue-autoscale/pull/80, plus https://github.com/cboxdk/system-metrics/pull/11 for the cgroup v1 counter
 
 Part 3 is the one that caused the incident and the one Advising App overrides; see [Consuming-app cleanup](#consuming-app-cleanup-after-these-ship). Parts 1, 2 and 4 make capacity safer near the limit and are independent improvements.
 

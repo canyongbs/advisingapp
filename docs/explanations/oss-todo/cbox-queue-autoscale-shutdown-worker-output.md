@@ -4,7 +4,7 @@
 - **Version observed:** `4.3.1`
 - **Repository:** https://github.com/cboxdk/laravel-queue-autoscale
 - **Affected code:** `Manager\AutoscaleManager::shutdown()` and `Workers\WorkerTerminator::terminateAll()`.
-- PR Opened: _not yet_
+- PR Opened: https://github.com/cboxdk/laravel-queue-autoscale/pull/77 (combined with the dead worker exit status fix)
 
 ## Environment where reproduced
 

@@ -4,7 +4,7 @@
 - **Version observed:** `4.3.1`
 - **Repository:** https://github.com/cboxdk/laravel-queue-autoscale
 - **Affected code:** `Workers\WorkerScaler::cleanupDeadWorkers()`, called every manager cycle from `Manager\AutoscaleManager`.
-- PR Opened: _not yet_
+- PR Opened: https://github.com/cboxdk/laravel-queue-autoscale/pull/77 (combined with the shutdown worker output fix)
 
 ## Environment where reproduced
 

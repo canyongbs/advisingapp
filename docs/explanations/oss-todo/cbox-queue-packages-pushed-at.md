@@ -2,8 +2,8 @@
 
 This document tracks two related contributions. Both are about the payload's `pushedAt` timestamp.
 
-- **Part 1 — `cboxdk/laravel-queue-metrics`:** job duration is measured from `pushedAt` (dispatch time), not from when processing started. PR Opened: _not yet_
-- **Part 2 — `cboxdk/laravel-queue-autoscale`:** pickup time counts dispatch delays and earlier attempts as waiting, and the package never stamps `pushedAt` itself. PR Opened: _not yet_
+- **Part 1 — `cboxdk/laravel-queue-metrics`:** job duration is measured from `pushedAt` (dispatch time), not from when processing started. PR Opened: https://github.com/cboxdk/laravel-queue-metrics/pull/38
+- **Part 2 — `cboxdk/laravel-queue-autoscale`:** pickup time counts dispatch delays and earlier attempts as waiting, and the package never stamps `pushedAt` itself. PR Opened: https://github.com/cboxdk/laravel-queue-autoscale/pull/76
 
 Part 1 should land first, or together with Part 2. Part 2's optional `pushedAt` stamping would make Part 1's bug hit every user of the package.
 
