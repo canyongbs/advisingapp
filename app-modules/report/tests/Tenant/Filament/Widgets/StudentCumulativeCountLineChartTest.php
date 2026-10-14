@@ -184,10 +184,11 @@ describe('baseline', function () use ($cumulativeStudentsByMonth) {
                 'queryBuilder' => [
                     'rules' => [
                         'C0Cy' => [
-                            'type' => 'last',
+                            'type' => 'name',
                             'data' => [
-                                'operator' => 'contains',
+                                'operator' => 'lastName',
                                 'settings' => [
+                                    'operator' => 'contains',
                                     'text' => 'John',
                                 ],
                             ],
