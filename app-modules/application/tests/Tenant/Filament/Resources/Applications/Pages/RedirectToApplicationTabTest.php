@@ -60,13 +60,13 @@ it('redirects a legacy URL to its tab', function (string $page, string $tab) {
     ['manage-submissions', 'submissions'],
 ]);
 
-it('keeps the query string when redirecting', function () {
+it('keeps the query string and targets the submissions table when redirecting a submission link', function () {
     asSuperAdmin();
     $application = Application::factory()->create();
     $parameters = ['record' => $application, 'tableAction' => 'view', 'tableActionRecord' => $application->submissions()->firstOrFail()->id];
 
     get(ApplicationResource::getUrl('manage-submissions', $parameters))
-        ->assertRedirect(ApplicationResource::getUrl('view', [...$parameters, 'tab' => 'submissions']));
+        ->assertRedirect(ApplicationResource::getUrl('view', [...$parameters, 'tab' => 'submissions', 'actionComponent' => 'submissions']));
 });
 
 describe('authorization', function () {

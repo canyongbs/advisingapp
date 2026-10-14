@@ -70,8 +70,6 @@ class SubmissionsRelationManager extends RelationManager
     #[Url(as: 'state')]
     public ?string $activeTab = null;
 
-    protected string $view = 'application::filament.resources.applications.relation-managers.submissions-relation-manager';
-
     protected static string $relationship = 'submissions';
 
     protected static ?string $title = 'Submissions';
@@ -81,11 +79,24 @@ class SubmissionsRelationManager extends RelationManager
         return ApplicationResource::canAccess() && parent::canViewForRecord($ownerRecord, $pageClass);
     }
 
-    public function mount(): void
+    public function getDefaultActionUrlIdentifier(): string
     {
-        abort_unless(static::canViewForRecord($this->getOwnerRecord(), $this->getPageClass()), 403);
+        return 'submissions';
+    }
 
-        parent::mount();
+    public function mountDefaultActions(): void
+    {
+        parent::mountDefaultActions();
+
+        if (! $this->hasDefaultTableActionMounted) {
+            return;
+        }
+
+        // Consume the link, otherwise returning to this tab remounts the table and reopens the submission.
+        $this->defaultActionComponent = null;
+        $this->defaultTableAction = null;
+        $this->defaultTableActionRecord = null;
+        $this->defaultTableActionArguments = null;
     }
 
     public function getDefaultActiveTab(): string | int | null

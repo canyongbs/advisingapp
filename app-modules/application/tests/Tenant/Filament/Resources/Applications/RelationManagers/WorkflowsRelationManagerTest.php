@@ -36,7 +36,6 @@
 
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
-use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplication;
 use AdvisingApp\Application\Filament\Resources\Applications\RelationManagers\WorkflowsRelationManager;
 use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\Pages\EditWorkflow as ApplicationNestedEditWorkflow;
@@ -50,6 +49,7 @@ use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\Testing\TestAction;
 use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 
@@ -449,7 +449,7 @@ test('tabs render one per non-archived submission state plus All', function () u
     expect($tabs)->toHaveKey('all');
 });
 
-test('manage application workflows page links to nested workflow edit route', function () {
+test('manage application workflows page links to nested workflow edit route', function () use ($testWorkflows) {
     asSuperAdmin();
 
     $application = Application::factory()->create();
@@ -472,9 +472,8 @@ test('manage application workflows page links to nested workflow edit route', fu
         'record' => $workflow,
     ]);
 
-    get(ApplicationResource::getUrl('view', ['record' => $application, 'tab' => 'workflows']))
-        ->assertOk()
-        ->assertSee($nestedEditUrl, false);
+    $testWorkflows($application)
+        ->assertActionHasUrl(TestAction::make('edit')->table($workflow), $nestedEditUrl);
 });
 
 test('nested application workflow edit route is scoped to owner application', function () {

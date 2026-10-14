@@ -68,11 +68,6 @@ class ImportExport extends Page
             ->contains(fn (ImportExportTab $tab): bool => $tab->canView());
     }
 
-    public function mount(): void
-    {
-        $this->authorizeAccess();
-    }
-
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -94,22 +89,6 @@ class ImportExport extends Page
                             ]),
                     ]),
             ]);
-    }
-
-    public function updatedActiveTab(): void
-    {
-        $this->authorizeAccess();
-    }
-
-    protected function authorizeAccess(): void
-    {
-        if (ImportExportTab::tryFrom($this->activeTab)?->canView()) {
-            return;
-        }
-
-        $this->activeTab = collect(ImportExportTab::cases())
-            ->first(fn (ImportExportTab $tab): bool => $tab->canView())
-            ->value ?? abort(403);
     }
 
     protected function makeTab(ImportExportTab $tab): Tab

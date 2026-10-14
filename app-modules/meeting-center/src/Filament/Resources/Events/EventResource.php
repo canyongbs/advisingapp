@@ -39,6 +39,7 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\Events;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\CreateEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ListEvents;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ManageEvent;
+use AdvisingApp\MeetingCenter\Filament\Resources\Events\RelationManagers\EventAttendeesRelationManager;
 use AdvisingApp\MeetingCenter\Models\Event;
 use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
@@ -66,6 +67,13 @@ class EventResource extends Resource
     public static function getGlobalSearchResultUrl(Model $record): string
     {
         return EventResource::getUrl('view', ['record' => $record]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            'attendees' => EventAttendeesRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

@@ -65,13 +65,6 @@ class EventAttendeesRelationManager extends RelationManager
         return EventResource::canAccess() && parent::canViewForRecord($ownerRecord, $pageClass);
     }
 
-    public function mount(): void
-    {
-        abort_unless(static::canViewForRecord($this->getOwnerRecord(), $this->getPageClass()), 403);
-
-        parent::mount();
-    }
-
     public function table(Table $table): Table
     {
         return $table

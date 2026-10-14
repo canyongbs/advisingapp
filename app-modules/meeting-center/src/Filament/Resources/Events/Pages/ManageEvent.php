@@ -36,10 +36,8 @@
 
 namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages;
 
-use AdvisingApp\MeetingCenter\Enums\EventTab;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\Concerns\HasEventRegistrationForm;
-use AdvisingApp\MeetingCenter\Filament\Resources\Events\RelationManagers\EventAttendeesRelationManager;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Schemas\EventDetailsForm;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Schemas\EventInfolist;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Schemas\EventLandingPageForm;
@@ -51,8 +49,6 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
-use Filament\Schemas\Components\Livewire;
-use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -70,7 +66,7 @@ class ManageEvent extends EditRecord
     protected static string $resource = EventResource::class;
 
     #[Url(as: 'tab')]
-    public string $activeTab = EventTab::Overview->value;
+    public ?string $activeRelationManager = null;
 
     /** @var array<string, mixed>|null */
     public ?array $landingPageData = [];
@@ -85,38 +81,36 @@ class ManageEvent extends EditRecord
         return __('filament-panels::resources/pages/view-record.breadcrumb');
     }
 
-    public function content(Schema $schema): Schema
+    public function hasCombinedRelationManagerTabsWithContent(): bool
     {
-        return $schema
-            ->components([
-                Tabs::make()
-                    ->livewireProperty('activeTab')
-                    ->tabs([
-                        EventTab::Overview->value => $this->makeTab(EventTab::Overview)
-                            ->schema([
-                                EmbeddedSchema::make('infolist'),
-                            ]),
-                        EventTab::Details->value => $this->makeTab(EventTab::Details)
-                            ->schema([
-                                $this->getFormContentComponent(),
-                            ]),
-                        EventTab::LandingPage->value => $this->makeTab(EventTab::LandingPage)
-                            ->schema([
-                                $this->makeFormContentComponent('landingPageForm', 'saveLandingPage'),
-                            ]),
-                        EventTab::RegistrationForm->value => $this->makeTab(EventTab::RegistrationForm)
-                            ->schema([
-                                $this->makeFormContentComponent('registrationForm', 'saveRegistrationForm'),
-                            ]),
-                        EventTab::Attendees->value => $this->makeTab(EventTab::Attendees)
-                            ->schema([
-                                Livewire::make(EventAttendeesRelationManager::class, fn (): array => [
-                                    'ownerRecord' => $this->getRecord(),
-                                    'pageClass' => static::class,
-                                ])->key(EventAttendeesRelationManager::class),
-                            ]),
-                    ]),
-            ]);
+        return true;
+    }
+
+    public function getTabComponents(): array
+    {
+        $record = $this->getRecord();
+
+        return [
+            '' => Tab::make('Overview')
+                ->visible(fn (): bool => EventResource::canView($record))
+                ->schema([
+                    EmbeddedSchema::make('infolist'),
+                ]),
+            'details' => $this->getContentTabComponent()
+                ->label('Details')
+                ->visible(fn (): bool => EventResource::canEdit($record)),
+            'landing-page' => Tab::make('Landing Page')
+                ->visible(fn (): bool => EventResource::canEdit($record))
+                ->schema([
+                    $this->makeFormContentComponent('landingPageForm', 'saveLandingPage'),
+                ]),
+            'registration-form' => Tab::make('Registration Form')
+                ->visible(fn (): bool => EventResource::canEdit($record))
+                ->schema([
+                    $this->makeFormContentComponent('registrationForm', 'saveRegistrationForm'),
+                ]),
+            'attendees' => $this->getRelationManagerTabComponent('attendees'),
+        ];
     }
 
     public function infolist(Schema $schema): Schema
@@ -136,11 +130,6 @@ class ManageEvent extends EditRecord
             ->model($this->getRecord())
             ->operation('edit')
             ->statePath('landingPageData');
-    }
-
-    public function updatedActiveTab(): void
-    {
-        $this->authorizeAccess();
     }
 
     public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void
@@ -170,46 +159,30 @@ class ManageEvent extends EditRecord
 
     protected function authorizeAccess(): void
     {
-        $activeTab = EventTab::tryFrom($this->activeTab);
-
-        if ($activeTab && $this->canViewTab($activeTab)) {
-            return;
-        }
-
-        $this->activeTab = collect(EventTab::cases())
-            ->first(fn (EventTab $tab): bool => $this->canViewTab($tab))
-            ->value ?? abort(403);
-    }
-
-    protected function canViewTab(EventTab $tab): bool
-    {
         $record = $this->getRecord();
-        assert($record instanceof Event);
 
-        return $tab->canView($record);
+        abort_unless(
+            EventResource::canView($record)
+                || EventResource::canEdit($record)
+                || filled($this->getCachedRelationManagers()),
+            403,
+        );
     }
 
     protected function fillForm(): void
     {
-        $data = $this->getRecord()->attributesToArray();
+        $record = $this->getRecord();
 
-        if ($this->canViewTab(EventTab::Details)) {
-            parent::fillForm();
+        if (! EventResource::canEdit($record)) {
+            return;
         }
 
-        if ($this->canViewTab(EventTab::LandingPage)) {
-            $this->landingPageForm->fill($data);
-        }
+        $data = $record->attributesToArray();
 
-        if ($this->canViewTab(EventTab::RegistrationForm)) {
-            $this->registrationForm->fill($data);
-        }
-    }
+        parent::fillForm();
 
-    protected function makeTab(EventTab $tab): Tab
-    {
-        return Tab::make($tab->getLabel())
-            ->visible(fn (): bool => $this->canViewTab($tab));
+        $this->landingPageForm->fill($data);
+        $this->registrationForm->fill($data);
     }
 
     protected function makeFormContentComponent(string $schema, string $submitHandler): Component
@@ -251,7 +224,7 @@ class ManageEvent extends EditRecord
     {
         return EventResource::getUrl('view', [
             'record' => $this->getRecord(),
-            'tab' => EventTab::Details->value,
+            'tab' => 'details',
         ]);
     }
 }

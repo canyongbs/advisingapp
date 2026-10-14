@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows;
 
-use AdvisingApp\Application\Enums\ApplicationTab;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\Pages\EditWorkflow;
 use AdvisingApp\Application\Models\Application;
@@ -105,7 +104,7 @@ class WorkflowResource extends Resource
         return ApplicationResource::getUrl('view', [
             ...$parameters,
             'record' => $record,
-            'tab' => ApplicationTab::Workflows->value,
+            'tab' => 'workflows',
         ], $isAbsolute, $panel, $tenant, $shouldGuessMissingParameters);
     }
 }

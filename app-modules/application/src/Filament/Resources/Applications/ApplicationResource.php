@@ -40,6 +40,8 @@ use AdvisingApp\Application\Filament\Resources\Applications\Pages\CreateApplicat
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ListApplications;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplication;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\RedirectToApplicationTab;
+use AdvisingApp\Application\Filament\Resources\Applications\RelationManagers\SubmissionsRelationManager;
+use AdvisingApp\Application\Filament\Resources\Applications\RelationManagers\WorkflowsRelationManager;
 use AdvisingApp\Application\Models\Application;
 use App\Enums\NavigationGroup;
 use Filament\Resources\Resource;
@@ -67,6 +69,14 @@ class ApplicationResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()->with(['fields'])->whereNull('archived_at');
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            'workflows' => WorkflowsRelationManager::class,
+            'submissions' => SubmissionsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array

@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Application\Notifications;
 
-use AdvisingApp\Application\Enums\ApplicationTab;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationField;
@@ -111,13 +110,14 @@ class ApplicationSubmissionNotification extends Notification implements ShouldQu
         $this->applicationSubmission->loadMissing(['author', 'fields']);
 
         $submissionUrl = ApplicationResource::getUrl('view', [
-            'tab' => ApplicationTab::Submissions->value,
             'record' => $this->application,
+            'tab' => 'submissions',
+            'actionComponent' => 'submissions',
             'tableAction' => 'view',
             'tableActionRecord' => $this->applicationSubmission->id,
         ]);
 
-        $applicationUrl = ApplicationResource::getUrl('view', ['record' => $this->application, 'tab' => ApplicationTab::Edit->value]);
+        $applicationUrl = ApplicationResource::getUrl('view', ['record' => $this->application, 'tab' => 'edit']);
 
         $timestamp = now()->tz($notifiable->timezone ?? 'UTC')->format('M j, Y g:i a (T)');
 

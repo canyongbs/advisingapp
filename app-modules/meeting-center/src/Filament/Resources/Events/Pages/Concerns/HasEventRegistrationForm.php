@@ -38,7 +38,6 @@ namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\Concerns;
 
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\MeetingCenter\Actions\CreateEventRegistrationFormVersion;
-use AdvisingApp\MeetingCenter\Enums\EventTab;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
@@ -214,7 +213,7 @@ trait HasEventRegistrationForm
         // Saving creates a new registration form version, which every form on the page must reload.
         $this->redirect(EventResource::getUrl('view', [
             'record' => $event,
-            'tab' => EventTab::RegistrationForm->value,
+            'tab' => 'registration-form',
         ]));
     }
 

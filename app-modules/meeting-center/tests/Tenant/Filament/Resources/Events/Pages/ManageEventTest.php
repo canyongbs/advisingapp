@@ -86,7 +86,21 @@ $getTabLabels = function (Testable $component): array {
     return $labels;
 };
 
-$archiveAction = fn (): TestAction => TestAction::make('archive')->schemaComponent('details.form-actions', schema: 'content');
+$getRenderedFormIds = function (Testable $component): array {
+    $document = new DOMDocument();
+    $document->loadHTML($component->html(), LIBXML_NOERROR | LIBXML_NOWARNING);
+    $forms = $document->getElementsByTagName('form');
+
+    $ids = [];
+
+    foreach ($forms as $form) {
+        $ids[] = $form->getAttribute('id');
+    }
+
+    return $ids;
+};
+
+$archiveAction = fn (): TestAction => TestAction::make('archive')->schemaComponent('relationManagerTabs.details.form-actions', schema: 'content');
 
 $getNewRegistrationFormVersion = fn (EventRegistrationForm $form): EventRegistrationForm => EventRegistrationForm::withoutGlobalScopes()
     ->where('root_id', $form->root_id)
@@ -112,7 +126,7 @@ it('can render the manage event page', function () {
         ->assertSuccessful();
 });
 
-describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels) {
+describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $getRenderedFormIds) {
     it('renders the attendees relation manager only on its own tab', function () {
         asSuperAdmin();
 
@@ -131,10 +145,10 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels) {
         $event = Event::factory()->create();
 
         Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()])
-            ->set('activeTab', 'details')
+            ->set('activeRelationManager', 'details')
             ->fillForm(['title' => 'Unsaved title'])
-            ->set('activeTab', 'attendees')
-            ->set('activeTab', 'details')
+            ->set('activeRelationManager', 'attendees')
+            ->set('activeRelationManager', 'details')
             ->assertSchemaStateSet(['title' => 'Unsaved title']);
     });
 
@@ -148,19 +162,36 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels) {
         'view' => [['event.*.view'], ['Overview']],
         'update' => [['event.*.view', 'event.*.update'], ['Overview', 'Details', 'Landing Page', 'Registration Form']],
         'attendees' => [['event.*.view', 'event_attendee.view-any'], ['Overview', 'Attendees']],
+        'update without view' => [['event.*.update'], ['Details', 'Landing Page', 'Registration Form']],
+        'attendees without view' => [['event_attendee.view-any'], ['Attendees']],
     ]);
 
-    it('falls back to the first tab the user can access', function (string $tab) use ($actingAsUserWithPermissions) {
+    it('renders the form of the selected tab only', function (?string $tab, array $formIds) use ($getRenderedFormIds) {
+        asSuperAdmin();
+
+        $event = Event::factory()->create();
+
+        $component = Livewire::withQueryParams(['tab' => $tab])
+            ->test(ManageEvent::class, ['record' => $event->getRouteKey()]);
+
+        expect($getRenderedFormIds($component))->toBe($formIds);
+    })->with([
+        'overview' => [null, []],
+        'details' => ['details', ['form']],
+        'landing page' => ['landing-page', ['landingPageForm']],
+        'registration form' => ['registration-form', ['registrationForm']],
+    ]);
+
+    it('does not render a tab the user cannot access', function (string $tab) use ($actingAsUserWithPermissions, $getRenderedFormIds) {
         $actingAsUserWithPermissions('event.*.view');
 
         $event = Event::factory()->create();
 
-        Livewire::withQueryParams(['tab' => $tab])
-            ->test(ManageEvent::class, ['record' => $event->getRouteKey()])
-            ->assertSet('activeTab', 'overview')
-            ->set('activeTab', $tab)
-            ->assertSet('activeTab', 'overview');
-    })->with(['details', 'registration-form', 'attendees', 'unknown']);
+        $component = Livewire::withQueryParams(['tab' => $tab])
+            ->test(ManageEvent::class, ['record' => $event->getRouteKey()]);
+
+        expect($getRenderedFormIds($component))->toBe([]);
+    })->with(['details', 'landing-page', 'registration-form']);
 });
 
 describe('details tab', function () use ($archiveAction) {
@@ -527,17 +558,14 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
             ->assertSuccessful();
     });
 
-    it('opens the first accessible tab for users without the `event.*.view` permission', function (array $permissions, string $tab) use ($actingAsUserWithPermissions) {
-        $actingAsUserWithPermissions(...$permissions);
+    it('allows access to the manage event page without the `event.*.view` permission when another tab is accessible', function (string $permission) use ($actingAsUserWithPermissions) {
+        $actingAsUserWithPermissions($permission);
 
         $event = Event::factory()->create();
 
-        Livewire::test(ManageEvent::class, ['record' => $event->getRouteKey()])
-            ->assertSet('activeTab', $tab);
-    })->with([
-        'update' => [['event.*.update'], 'details'],
-        'attendees' => [['event_attendee.view-any'], 'attendees'],
-    ]);
+        get(EventResource::getUrl('view', ['record' => $event]))
+            ->assertSuccessful();
+    })->with(['event.*.update', 'event_attendee.view-any']);
 
     it('does not load the editable forms without the `event.*.update` permission', function () use ($actingAsUserWithPermissions) {
         $actingAsUserWithPermissions('event.*.view');

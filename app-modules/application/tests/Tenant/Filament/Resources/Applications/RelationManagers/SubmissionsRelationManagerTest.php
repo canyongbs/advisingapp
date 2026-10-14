@@ -35,7 +35,6 @@
 */
 
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
-use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplication;
 use AdvisingApp\Application\Filament\Resources\Applications\RelationManagers\SubmissionsRelationManager;
 use AdvisingApp\Application\Models\Application;
@@ -47,7 +46,6 @@ use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Laravel\followingRedirects;
 use function Tests\asSuperAdmin;
 
 $testSubmissions = fn (Application $application): Testable => Livewire::test(SubmissionsRelationManager::class, [
@@ -382,40 +380,82 @@ test('archived submissions are visible when the withoutArchived filter is remove
 });
 
 describe('submission links', function () {
-    it('opens the linked submission when the page loads', function (string $page) {
+    $linkTo = fn (ApplicationSubmission $submission, array $query = []): array => [
+        'actionComponent' => 'submissions',
+        'tableAction' => 'view',
+        'tableActionRecord' => $submission->getKey(),
+        ...$query,
+    ];
+
+    it('opens the linked submission', function () use ($linkTo) {
         asSuperAdmin();
 
         ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
         $application = Application::factory()->create();
         $submission = $application->submissions()->firstOrFail();
-        $query = ['tableAction' => 'view', 'tableActionRecord' => $submission->getKey()];
 
-        $response = followingRedirects()
-            ->get(ApplicationResource::getUrl($page, ['record' => $application, 'tab' => 'submissions', ...$query]))
-            ->assertSuccessful();
-
-        $document = new DOMDocument();
-        $document->loadHTML($response->getContent(), LIBXML_NOERROR | LIBXML_NOWARNING);
-        $initializers = (new DOMXPath($document))->query('//*[@class="fi-resource-relation-manager"]/following-sibling::*[@*[name()="wire:init"]]');
-        assert($initializers !== false);
-        $initializer = $initializers->item(0);
-        assert($initializer instanceof DOMElement);
-
-        expect($initializers->length)->toBe(1)
-            ->and($initializer->getAttribute('wire:init'))->toStartWith('mountAction(');
-
-        $component = Livewire::withQueryParams($query)
+        Livewire::withQueryParams($linkTo($submission))
             ->test(SubmissionsRelationManager::class, [
                 'ownerRecord' => $application,
                 'pageClass' => ManageApplication::class,
-            ]);
-        $manager = $component->instance();
-
-        $component
-            ->call('mountAction', $manager->defaultTableAction, [], $manager->getDefaultTableActionUrlContext())
+            ])
+            ->call('mountDefaultActions')
             ->assertSet('mountedActions.0.name', 'view')
             ->assertSet('mountedActions.0.context.recordKey', $submission->getKey());
-    })->with(['view', 'manage-submissions']);
+    });
+
+    it('removes the link from the URL once the submission opens', function () use ($linkTo) {
+        asSuperAdmin();
+
+        ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
+        $application = Application::factory()->create();
+        $submission = $application->submissions()->firstOrFail();
+
+        Livewire::withQueryParams($linkTo($submission))
+            ->test(SubmissionsRelationManager::class, [
+                'ownerRecord' => $application,
+                'pageClass' => ManageApplication::class,
+            ])
+            ->call('mountDefaultActions')
+            ->assertSet('defaultActionComponent', null)
+            ->assertSet('defaultTableAction', null)
+            ->assertSet('defaultTableActionRecord', null);
+    });
+
+    it('ignores links that target another component', function (?string $actionComponent) use ($linkTo) {
+        asSuperAdmin();
+
+        ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
+        $application = Application::factory()->create();
+        $submission = $application->submissions()->firstOrFail();
+
+        Livewire::withQueryParams($linkTo($submission, ['actionComponent' => $actionComponent]))
+            ->test(SubmissionsRelationManager::class, [
+                'ownerRecord' => $application,
+                'pageClass' => ManageApplication::class,
+            ])
+            ->call('mountDefaultActions')
+            ->assertSet('mountedActions', []);
+    })->with([
+        'unqualified' => null,
+        'page' => 'page',
+    ]);
+
+    it('does not open a submission from another application', function () use ($linkTo) {
+        asSuperAdmin();
+
+        ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
+        $application = Application::factory()->create();
+        $foreignSubmission = Application::factory()->create()->submissions()->firstOrFail();
+
+        Livewire::withQueryParams($linkTo($foreignSubmission))
+            ->test(SubmissionsRelationManager::class, [
+                'ownerRecord' => $application,
+                'pageClass' => ManageApplication::class,
+            ])
+            ->call('mountDefaultActions')
+            ->assertSet('mountedActions', []);
+    });
 });
 
 describe('authorization', function () use ($testSubmissions) {
@@ -426,25 +466,6 @@ describe('authorization', function () use ($testSubmissions) {
         $application = Application::factory()->create();
 
         $testSubmissions($application)->assertForbidden();
-    });
-
-    it('does not open a submission from another application through a link', function () {
-        asSuperAdmin();
-
-        ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
-        $application = Application::factory()->create();
-        $foreignSubmission = Application::factory()->create()->submissions()->firstOrFail();
-
-        $component = Livewire::withQueryParams(['tableAction' => 'view', 'tableActionRecord' => $foreignSubmission->getKey()])
-            ->test(SubmissionsRelationManager::class, [
-                'ownerRecord' => $application,
-                'pageClass' => ManageApplication::class,
-            ]);
-        $manager = $component->instance();
-
-        $component
-            ->call('mountAction', $manager->defaultTableAction, [], $manager->getDefaultTableActionUrlContext())
-            ->assertSet('mountedActions', []);
     });
 
     it('does not archive submissions without the `application.*.update` permission', function (bool $isBulk) use ($testSubmissions) {

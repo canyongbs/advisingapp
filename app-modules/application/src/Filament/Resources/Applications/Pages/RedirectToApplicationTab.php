@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 
-use AdvisingApp\Application\Enums\ApplicationTab;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use Filament\Resources\Pages\Page;
 
@@ -46,11 +45,14 @@ class RedirectToApplicationTab extends Page
 
     public function mount(int | string $record): void
     {
+        // Notifications sent before the tabs existed link to `/edit` and `/submissions`, with unscoped submission deep links.
+        $tab = last(request()->segments());
+
         $this->redirect(ApplicationResource::getUrl('view', [
             ...request()->query(),
             'record' => $record,
-            // Notifications sent before the tabs existed link to `/edit` and `/submissions`.
-            'tab' => ApplicationTab::from(last(request()->segments()))->value,
+            'tab' => $tab,
+            ...((($tab === 'submissions') && request()->filled('tableAction')) ? ['actionComponent' => 'submissions'] : []),
         ]));
     }
 }

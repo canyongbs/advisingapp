@@ -84,7 +84,21 @@ $getTabLabels = function (Testable $component): array {
     return $labels;
 };
 
-$archiveAction = fn (): TestAction => TestAction::make('archive')->schemaComponent('edit.form-actions', schema: 'content');
+$getRenderedFormIds = function (Testable $component): array {
+    $document = new DOMDocument();
+    $document->loadHTML($component->html(), LIBXML_NOERROR | LIBXML_NOWARNING);
+    $forms = $document->getElementsByTagName('form');
+
+    $ids = [];
+
+    foreach ($forms as $form) {
+        $ids[] = $form->getAttribute('id');
+    }
+
+    return $ids;
+};
+
+$archiveAction = fn (): TestAction => TestAction::make('archive')->schemaComponent('relationManagerTabs.edit.form-actions', schema: 'content');
 
 it('can render the manage application page', function () {
     asSuperAdmin();
@@ -108,7 +122,7 @@ it('displays the application data', function () {
         ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });
 
-describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels) {
+describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $getRenderedFormIds) {
     it('renders a relation manager only on its own tab', function (string $tab, string $relationManager, string $otherRelationManager) {
         asSuperAdmin();
 
@@ -131,11 +145,11 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels) {
         $application = Application::factory()->create();
 
         Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
-            ->set('activeTab', 'edit')
+            ->set('activeRelationManager', 'edit')
             ->fillForm(['name' => 'Unsaved name'])
             ->fillForm(['notify_via_email' => true], 'notificationsForm')
-            ->set('activeTab', 'workflows')
-            ->set('activeTab', 'edit')
+            ->set('activeRelationManager', 'workflows')
+            ->set('activeRelationManager', 'edit')
             ->assertSchemaStateSet(['name' => 'Unsaved name'])
             ->assertSchemaStateSet(['notify_via_email' => true], 'notificationsForm');
     });
@@ -188,17 +202,31 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels) {
         'update' => [['application.*.view', 'application.*.update'], ['View', 'Edit', 'Workflows', 'Submissions 0', 'Notifications']],
     ]);
 
-    it('falls back to the first tab the user can access', function (string $tab) use ($actingAsUserWithPermissions) {
+    it('renders the form of the selected tab only', function (?string $tab, array $formIds) use ($getRenderedFormIds) {
+        asSuperAdmin();
+
+        $application = Application::factory()->create();
+
+        $component = Livewire::withQueryParams(['tab' => $tab])
+            ->test(ManageApplication::class, ['record' => $application->getRouteKey()]);
+
+        expect($getRenderedFormIds($component))->toBe($formIds);
+    })->with([
+        'view' => [null, []],
+        'edit' => ['edit', ['form']],
+        'notifications' => ['notifications', ['notificationsForm']],
+    ]);
+
+    it('does not render a tab the user cannot access', function (string $tab) use ($actingAsUserWithPermissions, $getRenderedFormIds) {
         $actingAsUserWithPermissions('application.*.view');
 
         $application = Application::factory()->create();
 
-        Livewire::withQueryParams(['tab' => $tab])
-            ->test(ManageApplication::class, ['record' => $application->getRouteKey()])
-            ->assertSet('activeTab', 'view')
-            ->set('activeTab', $tab)
-            ->assertSet('activeTab', 'view');
-    })->with(['edit', 'notifications', 'unknown']);
+        $component = Livewire::withQueryParams(['tab' => $tab])
+            ->test(ManageApplication::class, ['record' => $application->getRouteKey()]);
+
+        expect($getRenderedFormIds($component))->toBe([]);
+    })->with(['edit', 'notifications']);
 });
 
 describe('edit tab', function () use ($archiveAction) {

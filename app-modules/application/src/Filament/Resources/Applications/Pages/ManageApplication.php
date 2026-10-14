@@ -37,11 +37,8 @@
 namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 
 use AdvisingApp\Application\Actions\CreateApplicationVersion;
-use AdvisingApp\Application\Enums\ApplicationTab;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\Concerns\HasSharedFormConfiguration;
-use AdvisingApp\Application\Filament\Resources\Applications\RelationManagers\SubmissionsRelationManager;
-use AdvisingApp\Application\Filament\Resources\Applications\RelationManagers\WorkflowsRelationManager;
 use AdvisingApp\Application\Filament\Resources\Applications\Schemas\ApplicationInfolist;
 use AdvisingApp\Application\Filament\Resources\Applications\Schemas\ApplicationNotificationsForm;
 use AdvisingApp\Application\Models\Application;
@@ -53,13 +50,10 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Repeater;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\EditRecord;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
-use Filament\Schemas\Components\Livewire;
-use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -78,7 +72,7 @@ class ManageApplication extends EditRecord
     protected static string $resource = ApplicationResource::class;
 
     #[Url(as: 'tab')]
-    public string $activeTab = ApplicationTab::View->value;
+    public ?string $activeRelationManager = null;
 
     /** @var array<string, mixed>|null */
     public ?array $infolistData = [];
@@ -99,36 +93,32 @@ class ManageApplication extends EditRecord
         return __('filament-panels::resources/pages/view-record.breadcrumb');
     }
 
-    public function content(Schema $schema): Schema
+    public function hasCombinedRelationManagerTabsWithContent(): bool
     {
-        return $schema
-            ->components([
-                Tabs::make()
-                    ->livewireProperty('activeTab')
-                    ->tabs([
-                        ApplicationTab::View->value => $this->makeTab(ApplicationTab::View)
-                            ->schema([
-                                EmbeddedSchema::make('infolist'),
-                            ]),
-                        ApplicationTab::Edit->value => $this->makeTab(ApplicationTab::Edit)
-                            ->schema([
-                                $this->getFormContentComponent(),
-                            ]),
-                        ApplicationTab::Workflows->value => $this->makeTab(ApplicationTab::Workflows)
-                            ->schema([
-                                $this->makeRelationManager(WorkflowsRelationManager::class),
-                            ]),
-                        ApplicationTab::Submissions->value => $this->makeTab(ApplicationTab::Submissions)
-                            ->badge(fn (): ?string => SubmissionsRelationManager::getBadge($this->getRecord(), static::class))
-                            ->schema([
-                                $this->makeRelationManager(SubmissionsRelationManager::class),
-                            ]),
-                        ApplicationTab::Notifications->value => $this->makeTab(ApplicationTab::Notifications)
-                            ->schema([
-                                $this->makeFormContentComponent('notificationsForm', 'saveNotifications'),
-                            ]),
-                    ]),
-            ]);
+        return true;
+    }
+
+    public function getTabComponents(): array
+    {
+        $record = $this->getRecord();
+
+        return [
+            '' => Tab::make('View')
+                ->visible(fn (): bool => ApplicationResource::canView($record))
+                ->schema([
+                    EmbeddedSchema::make('infolist'),
+                ]),
+            'edit' => $this->getContentTabComponent()
+                ->label('Edit')
+                ->visible(fn (): bool => ApplicationResource::canEdit($record)),
+            'workflows' => $this->getRelationManagerTabComponent('workflows'),
+            'submissions' => $this->getRelationManagerTabComponent('submissions'),
+            'notifications' => Tab::make('Notifications')
+                ->visible(fn (): bool => ApplicationResource::canEdit($record))
+                ->schema([
+                    $this->makeFormContentComponent('notificationsForm', 'saveNotifications'),
+                ]),
+        ];
     }
 
     public function infolist(Schema $schema): Schema
@@ -151,11 +141,6 @@ class ManageApplication extends EditRecord
             ->model($this->getRecord())
             ->operation('edit')
             ->statePath('notificationsData');
-    }
-
-    public function updatedActiveTab(): void
-    {
-        $this->authorizeAccess();
     }
 
     public function save(bool $shouldRedirect = true, bool $shouldSendSavedNotification = true): void
@@ -185,57 +170,30 @@ class ManageApplication extends EditRecord
 
     protected function authorizeAccess(): void
     {
-        $activeTab = ApplicationTab::tryFrom($this->activeTab);
-
-        if ($activeTab && $this->canViewTab($activeTab)) {
-            return;
-        }
-
-        $this->activeTab = collect(ApplicationTab::cases())
-            ->first(fn (ApplicationTab $tab): bool => $this->canViewTab($tab))
-            ->value ?? abort(403);
-    }
-
-    protected function canViewTab(ApplicationTab $tab): bool
-    {
         $record = $this->getRecord();
-        assert($record instanceof Application);
 
-        return $tab->canView($record);
+        abort_unless(
+            ApplicationResource::canView($record)
+                || ApplicationResource::canEdit($record)
+                || filled($this->getCachedRelationManagers()),
+            403,
+        );
     }
 
     protected function fillForm(): void
     {
-        $data = $this->getRecord()->attributesToArray();
+        $record = $this->getRecord();
+        $data = $record->attributesToArray();
 
-        if ($this->canViewTab(ApplicationTab::View)) {
+        if (ApplicationResource::canView($record)) {
             $this->infolist->fill($data);
         }
 
-        if ($this->canViewTab(ApplicationTab::Edit)) {
+        if (ApplicationResource::canEdit($record)) {
             parent::fillForm();
-        }
 
-        if ($this->canViewTab(ApplicationTab::Notifications)) {
             $this->notificationsForm->fill($data);
         }
-    }
-
-    protected function makeTab(ApplicationTab $tab): Tab
-    {
-        return Tab::make($tab->getLabel())
-            ->visible(fn (): bool => $this->canViewTab($tab));
-    }
-
-    /**
-     * @param class-string<RelationManager> $relationManager
-     */
-    protected function makeRelationManager(string $relationManager): Livewire
-    {
-        return Livewire::make($relationManager, fn (): array => [
-            'ownerRecord' => $this->getRecord(),
-            'pageClass' => static::class,
-        ])->key($relationManager);
     }
 
     protected function makeFormContentComponent(string $schema, string $submitHandler): Component
@@ -307,7 +265,7 @@ class ManageApplication extends EditRecord
     {
         return ApplicationResource::getUrl('view', [
             'record' => $this->getRecord(),
-            'tab' => ApplicationTab::Edit->value,
+            'tab' => 'edit',
         ]);
     }
 

@@ -75,11 +75,6 @@ class Inbox extends Page
             ->contains(fn (InboxTab $tab): bool => $tab->canView());
     }
 
-    public function mount(): void
-    {
-        $this->authorizeAccess();
-    }
-
     public function content(Schema $schema): Schema
     {
         return $schema
@@ -97,11 +92,6 @@ class Inbox extends Page
                             ]),
                     ]),
             ]);
-    }
-
-    public function updatedActiveTab(): void
-    {
-        $this->authorizeAccess();
     }
 
     /**
@@ -126,17 +116,6 @@ class Inbox extends Page
                 ->label('New')
                 ->icon(null),
         ];
-    }
-
-    protected function authorizeAccess(): void
-    {
-        if (InboxTab::tryFrom($this->activeTab)?->canView()) {
-            return;
-        }
-
-        $this->activeTab = collect(InboxTab::cases())
-            ->first(fn (InboxTab $tab): bool => $tab->canView())
-            ->value ?? abort(403);
     }
 
     protected function makeTab(InboxTab $tab): Tab

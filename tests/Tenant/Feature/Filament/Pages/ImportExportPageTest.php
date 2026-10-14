@@ -364,7 +364,7 @@ it('defaults the active tab to import when the user has export hub access', func
         ->assertSet('activeTab', 'import');
 });
 
-it('defaults the active tab to student sync when the user can only access student sync', function () {
+it('does not render a tab the user cannot access', function (string $tab, string $table) {
     $settings = app(ManageStudentConfigurationSettings::class);
     $settings->is_enabled = true;
     $settings->save();
@@ -374,26 +374,13 @@ it('defaults the active tab to student sync when the user can only access studen
 
     actingAs($user);
 
-    Livewire::test(ImportExport::class)
-        ->assertSet('activeTab', 'student-sync');
-});
-
-it('falls back to the first tab the user can access', function () {
-    $settings = app(ManageStudentConfigurationSettings::class);
-    $settings->is_enabled = true;
-    $settings->save();
-
-    $user = User::factory()->create();
-    $user->givePermissionTo('record_sync.view-any');
-
-    actingAs($user);
-
-    Livewire::withQueryParams(['tab' => 'export'])
-        ->test(ImportExport::class)
-        ->assertSet('activeTab', 'student-sync')
-        ->set('activeTab', 'import')
-        ->assertSet('activeTab', 'student-sync');
-});
+    get(ImportExport::getUrl(['tab' => $tab]))
+        ->assertSuccessful()
+        ->assertDontSeeLivewire($table);
+})->with([
+    'import' => ['import', ImportsTable::class],
+    'export' => ['export', ExportsTable::class],
+]);
 
 it('syncs the active tab into the component state when switching tabs', function () {
     $user = User::factory()->create();

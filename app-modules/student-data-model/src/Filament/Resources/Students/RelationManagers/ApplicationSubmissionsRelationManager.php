@@ -36,7 +36,6 @@
 
 namespace AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers;
 
-use AdvisingApp\Application\Enums\ApplicationTab;
 use AdvisingApp\Application\Filament\Actions\RequestApplicationSubmission;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\ApplicationSubmission;
@@ -74,7 +73,7 @@ class ApplicationSubmissionsRelationManager extends RelationManager
                 IdColumn::make(),
                 TextColumn::make('submissible.name')
                     ->searchable()
-                    ->url(fn (ApplicationSubmission $record): string => ApplicationResource::getUrl('view', ['record' => $record->submissible, 'tab' => ApplicationTab::Edit->value])),
+                    ->url(fn (ApplicationSubmission $record): string => ApplicationResource::getUrl('view', ['record' => $record->submissible, 'tab' => 'edit'])),
                 TextColumn::make('state')
                     ->badge()
                     ->state(function (ApplicationSubmission $record) {

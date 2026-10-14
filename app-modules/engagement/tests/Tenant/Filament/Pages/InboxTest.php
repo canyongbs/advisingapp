@@ -87,17 +87,15 @@ it('syncs the active tab into the component state when switching tabs', function
         ->assertSet('activeTab', 'sent-items');
 });
 
-it('falls back to the first tab the user can access', function () {
+it('does not render a tab the user cannot access', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $user->givePermissionTo('engagement.view-any', 'engagement.*.view');
 
     actingAs($user);
 
-    Livewire::withQueryParams(['tab' => 'inbox'])
-        ->test(Inbox::class)
-        ->assertSet('activeTab', 'sent-items')
-        ->set('activeTab', 'inbox')
-        ->assertSet('activeTab', 'sent-items');
+    get(Inbox::getUrl(['tab' => 'inbox']))
+        ->assertOk()
+        ->assertDontSeeLivewire(InboxTable::class);
 });
 
 it('can properly filter sender type', function () {

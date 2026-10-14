@@ -76,13 +76,6 @@ class WorkflowsRelationManager extends RelationManager
         return ApplicationResource::canAccess() && parent::canViewForRecord($ownerRecord, $pageClass);
     }
 
-    public function mount(): void
-    {
-        abort_unless(static::canViewForRecord($this->getOwnerRecord(), $this->getPageClass()), 403);
-
-        parent::mount();
-    }
-
     public function getDefaultActiveTab(): string | int | null
     {
         // @phpstan-ignore method.notFound
