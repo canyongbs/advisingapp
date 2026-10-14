@@ -105,6 +105,13 @@ runs:
           shell: bash
           run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
 
+        # Local path-repo packages (e.g. app-modules/**) can add/remove classes without changing
+        # composer.lock, leaving a cache hit's autoloader stale. Regenerating is fast and network-free.
+        - if: ${{ steps.cache-composer.outputs.cache-hit == 'true' }}
+          name: Refresh autoloader for local path repositories
+          shell: bash
+          run: composer dump-autoload -q --no-ansi --no-interaction --optimize
+
         - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
           with:
               node-version-file: '.nvmrc'
