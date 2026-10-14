@@ -49,6 +49,7 @@ use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Component;
 use Filament\Schemas\Components\EmbeddedSchema;
 use Filament\Schemas\Components\Form;
+use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -84,6 +85,14 @@ class ManageEvent extends EditRecord
     public function hasCombinedRelationManagerTabsWithContent(): bool
     {
         return true;
+    }
+
+    public function getRelationManagersContentComponent(): Component
+    {
+        $tabs = parent::getRelationManagersContentComponent();
+        assert($tabs instanceof Tabs);
+
+        return $tabs->contained();
     }
 
     public function getTabComponents(): array
