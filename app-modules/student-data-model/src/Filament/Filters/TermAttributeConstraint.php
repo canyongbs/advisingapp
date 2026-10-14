@@ -39,6 +39,7 @@ namespace AdvisingApp\StudentDataModel\Filament\Filters;
 use AdvisingApp\StudentDataModel\Settings\StudentInformationSystemSettings;
 use Filament\Forms\Components\Builder\Block;
 use Filament\QueryBuilder\Constraints\Constraint;
+use Filament\Support\Icons\Heroicon;
 
 /**
  * Always registered so saved groups using it keep resolving, but it can only be added
@@ -50,7 +51,7 @@ class TermAttributeConstraint extends Constraint
     {
         parent::setUp();
 
-        $this->icon('heroicon-m-calendar-days');
+        $this->icon(Heroicon::CalendarDays);
 
         $this->label('Term Attribute');
 

@@ -133,10 +133,11 @@ it('displays engagements and responses based on group filters', function () {
             'queryBuilder' => [
                 'rules' => [
                     'C0Cy' => [
-                        'type' => 'last',
+                        'type' => 'name',
                         'data' => [
-                            'operator' => 'contains',
+                            'operator' => 'lastName',
                             'settings' => [
+                                'operator' => 'contains',
                                 'text' => 'John',
                             ],
                         ],

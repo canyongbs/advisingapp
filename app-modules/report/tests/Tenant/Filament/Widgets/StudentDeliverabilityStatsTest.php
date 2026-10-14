@@ -105,10 +105,11 @@ it('returns correct percentages of students Email missing, Email unhealthy, Phon
             'queryBuilder' => [
                 'rules' => [
                     'C0Cy' => [
-                        'type' => 'last',
+                        'type' => 'name',
                         'data' => [
-                            'operator' => 'contains',
+                            'operator' => 'lastName',
                             'settings' => [
+                                'operator' => 'contains',
                                 'text' => 'John',
                             ],
                         ],

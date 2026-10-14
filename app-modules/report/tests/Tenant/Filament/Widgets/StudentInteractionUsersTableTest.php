@@ -309,10 +309,11 @@ it('displays only users with student interactions based on group filter', functi
             'queryBuilder' => [
                 'rules' => [
                     'C0Cy' => [
-                        'type' => 'last',
+                        'type' => 'name',
                         'data' => [
-                            'operator' => 'contains',
+                            'operator' => 'lastName',
                             'settings' => [
+                                'operator' => 'contains',
                                 'text' => 'John',
                             ],
                         ],

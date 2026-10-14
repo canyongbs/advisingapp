@@ -104,10 +104,11 @@ it('returns top engaged students engagements based on group filter', function ()
             'queryBuilder' => [
                 'rules' => [
                     'C0Cy' => [
-                        'type' => 'last',
+                        'type' => 'name',
                         'data' => [
-                            'operator' => 'contains',
+                            'operator' => 'lastName',
                             'settings' => [
+                                'operator' => 'contains',
                                 'text' => 'John',
                             ],
                         ],

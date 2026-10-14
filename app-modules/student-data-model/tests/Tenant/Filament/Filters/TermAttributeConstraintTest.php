@@ -47,7 +47,7 @@ it('is registered on the students table regardless of the SIS', function () {
     $sisSettings->sis_system = null;
     $sisSettings->save();
 
-    expect(collect(StudentsTable::getQueryBuilderConstraints())->first(fn (Constraint $constraint): bool => $constraint->getName() === 'termAttribute'))
+    expect(collect(StudentsTable::getQueryBuilderConstraints())->flatten()->first(fn (Constraint $constraint): bool => $constraint->getName() === 'termAttribute'))
         ->toBeInstanceOf(TermAttributeConstraint::class);
 });
 

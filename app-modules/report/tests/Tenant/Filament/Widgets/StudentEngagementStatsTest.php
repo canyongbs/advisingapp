@@ -95,10 +95,11 @@ it('returns correct counts of students, emails, texts, and staff engagements bas
             'queryBuilder' => [
                 'rules' => [
                     'C0Cy' => [
-                        'type' => 'last',
+                        'type' => 'name',
                         'data' => [
-                            'operator' => 'contains',
+                            'operator' => 'lastName',
                             'settings' => [
+                                'operator' => 'contains',
                                 'text' => 'John',
                             ],
                         ],

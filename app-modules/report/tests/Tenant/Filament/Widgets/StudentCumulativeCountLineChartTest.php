@@ -81,10 +81,11 @@ it('returns correct cumulative student counts grouped by month based on group fi
             'queryBuilder' => [
                 'rules' => [
                     'C0Cy' => [
-                        'type' => 'last',
+                        'type' => 'name',
                         'data' => [
-                            'operator' => 'contains',
+                            'operator' => 'lastName',
                             'settings' => [
+                                'operator' => 'contains',
                                 'text' => 'John',
                             ],
                         ],
@@ -183,10 +184,11 @@ describe('baseline', function () use ($cumulativeStudentsByMonth) {
                 'queryBuilder' => [
                     'rules' => [
                         'C0Cy' => [
-                            'type' => 'last',
+                            'type' => 'name',
                             'data' => [
-                                'operator' => 'contains',
+                                'operator' => 'lastName',
                                 'settings' => [
+                                    'operator' => 'contains',
                                     'text' => 'John',
                                 ],
                             ],
