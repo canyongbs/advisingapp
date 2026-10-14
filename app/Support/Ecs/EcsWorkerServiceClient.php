@@ -37,6 +37,8 @@
 namespace App\Support\Ecs;
 
 use Aws\Ecs\EcsClient;
+use Carbon\CarbonImmutable;
+use DateTimeInterface;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Str;
@@ -45,6 +47,10 @@ use UnexpectedValueException;
 class EcsWorkerServiceClient
 {
     private const int METADATA_TIMEOUT_SECONDS = 5;
+
+    private const int TASK_PROTECTION_BATCH_SIZE = 10;
+
+    private const int DESCRIBE_TASKS_BATCH_SIZE = 100;
 
     public function __construct(
         private EcsClient $ecs,
@@ -152,5 +158,49 @@ class EcsWorkerServiceClient
         }
 
         return $runningTaskArns;
+    }
+
+    /**
+     * Of the given tasks, those ECS can stop without a drain: unprotected ones, and unhealthy ones it is replacing.
+     *
+     * @param list<string> $taskArns
+     *
+     * @return list<string>
+     */
+    public function stoppableTaskArns(EcsTaskIdentity $task, array $taskArns): array
+    {
+        $stoppableTaskArns = [];
+
+        foreach (array_chunk($taskArns, self::DESCRIBE_TASKS_BATCH_SIZE) as $chunk) {
+            $tasks = $this->ecs->describeTasks(['cluster' => $task->cluster, 'tasks' => $chunk])->get('tasks');
+
+            foreach (is_array($tasks) ? $tasks : [] as $describedTask) {
+                if (is_array($describedTask) && (($describedTask['healthStatus'] ?? null) === 'UNHEALTHY') && is_string($describedTask['taskArn'] ?? null)) {
+                    $stoppableTaskArns[] = $describedTask['taskArn'];
+                }
+            }
+        }
+
+        $protectedTaskArns = [];
+
+        foreach (array_chunk($taskArns, self::TASK_PROTECTION_BATCH_SIZE) as $chunk) {
+            $protections = $this->ecs->getTaskProtection(['cluster' => $task->cluster, 'tasks' => $chunk])->get('protectedTasks');
+
+            foreach (is_array($protections) ? $protections : [] as $protection) {
+                $expiresAt = is_array($protection) ? ($protection['expirationDate'] ?? null) : null;
+
+                if (
+                    is_array($protection)
+                    && (($protection['protectionEnabled'] ?? false) === true)
+                    && is_string($protection['taskArn'] ?? null)
+                    && ((! $expiresAt instanceof DateTimeInterface) || ($expiresAt > CarbonImmutable::now()))
+                ) {
+                    $protectedTaskArns[] = $protection['taskArn'];
+                }
+            }
+        }
+
+        // A task whose protection ECS did not report counts as stoppable, so doubt never drains a task.
+        return array_values(array_unique([...$stoppableTaskArns, ...array_diff($taskArns, $protectedTaskArns)]));
     }
 }

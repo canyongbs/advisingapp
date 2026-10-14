@@ -75,32 +75,14 @@ class WorkerDrainCoordinator
 
     public function check(): void
     {
-        try {
-            $this->evaluate();
-
-            if ($this->lastFailure !== null) {
-                $this->log()->info('Worker drain checks are working again');
-
-                $this->lastFailure = null;
-            }
-        } catch (Throwable $exception) {
-            $failure = $exception::class . ':' . (($exception instanceof AwsException) ? $exception->getAwsErrorCode() : '');
-
-            // The same failure would otherwise be logged on every check until it is fixed.
-            if ($failure !== $this->lastFailure) {
-                $this->log()->warning('Worker drain check failed; leaving the task as it is', [
-                    'exception' => $exception::class,
-                    'message' => $exception->getMessage(),
-                ]);
-            }
-
-            $this->lastFailure = $failure;
-        }
+        $exception = $this->attempt($this->evaluate(...));
 
         if ($this->state->isDraining()) {
-            $this->finishDrain();
+            $exception ??= $this->attempt($this->finishDrain(...));
             $this->reportOverdueDrain();
         }
+
+        $this->noteOutcome($exception);
     }
 
     public function isDraining(): bool
@@ -135,6 +117,45 @@ class WorkerDrainCoordinator
         $this->log()->info('Worker task drain cancelled; taking jobs again', ['reason' => $reason->value]);
 
         return true;
+    }
+
+    /**
+     * @param callable(): void $step
+     */
+    private function attempt(callable $step): ?Throwable
+    {
+        try {
+            $step();
+
+            return null;
+        } catch (Throwable $exception) {
+            return $exception;
+        }
+    }
+
+    private function noteOutcome(?Throwable $exception): void
+    {
+        if ($exception === null) {
+            if ($this->lastFailure !== null) {
+                $this->log()->info('Worker drain checks are working again');
+
+                $this->lastFailure = null;
+            }
+
+            return;
+        }
+
+        $failure = $exception::class . ':' . (($exception instanceof AwsException) ? $exception->getAwsErrorCode() : '');
+
+        // The same failure would otherwise be logged on every check until it is fixed.
+        if ($failure !== $this->lastFailure) {
+            $this->log()->warning('Worker drain check failed; leaving the task as it is', [
+                'exception' => $exception::class,
+                'message' => $exception->getMessage(),
+            ]);
+        }
+
+        $this->lastFailure = $failure;
     }
 
     private function evaluate(): void
@@ -187,6 +208,11 @@ class WorkerDrainCoordinator
         }
 
         $excess = ($runningTaskArns === null) ? 0 : (count($runningTaskArns) - $service->desiredCount);
+
+        // ECS stops unprotected tasks itself, and runs an extra task while it replaces an unhealthy one, so neither needs a drain.
+        if (($runningTaskArns !== null) && ($excess > 0)) {
+            $excess -= count($this->ecs->stoppableTaskArns($task, array_values(array_diff($runningTaskArns, [$task->taskArn]))));
+        }
 
         if ($excess > 0) {
             $this->excessSince ??= CarbonImmutable::now();

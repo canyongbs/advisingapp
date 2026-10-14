@@ -175,3 +175,32 @@ it('lists every task the service is keeping running', function () use ($clientFo
             'desiredStatus' => 'RUNNING',
         ]);
 });
+
+it('finds the tasks ECS can stop without a drain: unhealthy, unprotected, expired and unreported', function () use ($clientFor, $respond) {
+    $aws = new MockHandler();
+    $calls = new ArrayObject();
+    $taskArns = ['task-b', 'task-c', 'task-d', 'task-e', 'task-f', 'task-g', 'task-h', 'task-i', 'task-j', 'task-k', 'task-l'];
+    $protected = fn (string $taskArn): array => ['taskArn' => $taskArn, 'protectionEnabled' => true, 'expirationDate' => new DateTimeImmutable('+10 minutes')];
+
+    $respond($aws, $calls, 'DescribeTasks', ['tasks' => [
+        ['taskArn' => 'task-b', 'healthStatus' => 'HEALTHY'],
+        ['taskArn' => 'task-c', 'healthStatus' => 'UNHEALTHY'],
+    ]]);
+    $respond($aws, $calls, 'GetTaskProtection', ['protectedTasks' => [
+        $protected('task-b'),
+        $protected('task-c'),
+        ['taskArn' => 'task-d', 'protectionEnabled' => false],
+        ['taskArn' => 'task-e', 'protectionEnabled' => true, 'expirationDate' => new DateTimeImmutable('-1 minute')],
+        ...array_map($protected, ['task-f', 'task-g', 'task-h', 'task-i', 'task-j']),
+    ]]);
+    $respond($aws, $calls, 'GetTaskProtection', ['protectedTasks' => [$protected('task-l')]]);
+
+    $stoppableTaskArns = $clientFor($aws)->stoppableTaskArns(new EcsTaskIdentity('task-a', 'cluster-arn', 'advisingapp-worker-dev-service', 'ecs-svc/111'), $taskArns);
+
+    sort($stoppableTaskArns);
+
+    $protectionBatches = array_map(fn (array $call): mixed => $call['tasks'], array_slice($calls->getArrayCopy(), 1));
+
+    expect($stoppableTaskArns)->toBe(['task-c', 'task-d', 'task-e', 'task-k'])
+        ->and($protectionBatches)->toBe([array_slice($taskArns, 0, 10), ['task-l']]);
+});

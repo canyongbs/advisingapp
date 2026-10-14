@@ -77,6 +77,7 @@ afterEach(function () use ($directory) {
 $drainFixture = function () use ($directory, $task): array {
     $ecs = Mockery::mock(EcsWorkerServiceClient::class);
     $ecs->allows('identifyCurrentTask')->andReturn($task)->byDefault();
+    $ecs->allows('stoppableTaskArns')->andReturn([])->byDefault();
 
     $queueAutoscale = Mockery::mock(QueueAutoscaleService::class);
 
@@ -185,6 +186,23 @@ describe('scale-in', function () use ($drainFixture, $serviceState, $wasLogged, 
 
         $coordinator->check();
         $coordinator->check();
+    });
+
+    it('does not drain for excess tasks ECS can stop itself', function () use ($drainFixture, $serviceState, $task) {
+        [$coordinator, $state, $ecs, $queueAutoscale, , $claims] = $drainFixture();
+        $ecs->allows('describeService')->andReturn($serviceState(desiredCount: 1));
+        $ecs->allows('runningTaskArns')->andReturn(['task-a', 'task-b']);
+        $ecs->expects('stoppableTaskArns')->twice()->with($task, ['task-b'])->andReturn(['task-b']);
+        $claims->expects('reconcile')->twice()->with($task, null, ['task-a', 'task-b'], 0, false)->andReturnFalse();
+        $queueAutoscale->expects('stop')->never();
+
+        $coordinator->check();
+
+        travel(31)->seconds();
+
+        $coordinator->check();
+
+        expect($state->isDraining())->toBeFalse();
     });
 
     it('drains the task when it is chosen to leave', function () use ($drainFixture, $serviceState) {
@@ -344,7 +362,7 @@ describe('failures', function () use ($drainFixture, $serviceState, $wasLogged) 
     });
 });
 
-describe('releasing protection', function () use ($drainFixture, $wasLogged) {
+describe('releasing protection', function () use ($drainFixture, $directory, $wasLogged) {
     it('waits while the queue autoscaler is still stopping its workers', function () use ($drainFixture) {
         [$coordinator, $state, , $queueAutoscale, $protector] = $drainFixture();
         $state->start(WorkerDrainReason::Manual);
@@ -397,6 +415,25 @@ describe('releasing protection', function () use ($drainFixture, $wasLogged) {
         $coordinator->check();
 
         expect($state->isProtectionReleased())->toBeTrue();
+    });
+
+    it('logs a failure to finish the drain once instead of crashing, and still reports the drain overdue', function () use ($drainFixture, $directory) {
+        Exceptions::fake();
+
+        [$coordinator, $state, , $queueAutoscale] = $drainFixture();
+        $state->start(WorkerDrainReason::Manual);
+        $queueAutoscale->allows('isRunning')->andThrow(new RuntimeException('s6-svstat failed'));
+        touch($directory . '/' . WorkerDrainState::FILENAME, now()->subMinutes(31)->getTimestamp());
+
+        $coordinator->check();
+        $coordinator->check();
+
+        $failureLogs = Event::dispatched(MessageLogged::class)
+            ->filter(fn (array $arguments): bool => $arguments[0]->message === 'Worker drain check failed; leaving the task as it is');
+
+        expect($failureLogs)->toHaveCount(1);
+
+        Exceptions::assertReported(WorkerDrainOverdueException::class);
     });
 });
 
