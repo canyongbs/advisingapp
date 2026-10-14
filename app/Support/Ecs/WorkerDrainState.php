@@ -168,7 +168,18 @@ class WorkerDrainState
      */
     private function write(array $state): void
     {
-        file_put_contents($this->path(), json_encode($state, JSON_THROW_ON_ERROR), LOCK_EX);
+        $path = $this->path();
+
+        file_put_contents($path, json_encode($state, JSON_THROW_ON_ERROR), LOCK_EX);
+
+        // ECS Exec runs commands as root, but the drain watcher runs as the app user and must still rewrite and remove the file.
+        if (posix_geteuid() === 0) {
+            $appUserId = fileowner(base_path());
+
+            if ($appUserId !== false) {
+                @chown($path, $appUserId);
+            }
+        }
     }
 
     private function path(): string
