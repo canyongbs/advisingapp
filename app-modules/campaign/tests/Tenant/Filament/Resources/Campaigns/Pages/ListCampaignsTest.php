@@ -234,7 +234,7 @@ it('shows the group name and population as the name column description for a sta
     'a single prospect' => [GroupModel::Prospect, 1, 'Prospect'],
 ]);
 
-it('shows the group name and population as the name column description for a dynamic group', function (GroupModel $model, string $expectedLabel, string $attribute) {
+it('shows the group name and population as the name column description for a dynamic group', function (GroupModel $model, string $expectedLabel, string $attribute, array $rule) {
     asSuperAdmin();
 
     $modelClass = $model->class();
@@ -248,15 +248,7 @@ it('shows the group name and population as the name column description for a dyn
         'filters' => [
             'queryBuilder' => [
                 'rules' => [
-                    'lastName' => [
-                        'type' => $attribute,
-                        'data' => [
-                            'operator' => 'contains',
-                            'settings' => [
-                                'text' => 'Included',
-                            ],
-                        ],
-                    ],
+                    'lastName' => $rule,
                 ],
             ],
         ],
@@ -270,8 +262,25 @@ it('shows the group name and population as the name column description for a dyn
         ->assertCanSeeTableRecords([$campaign])
         ->assertSee("Everyone (4 {$expectedLabel})");
 })->with([
-    'students' => [GroupModel::Student, 'Students', 'last'],
-    'prospects' => [GroupModel::Prospect, 'Prospects', 'last_name'],
+    'students' => [GroupModel::Student, 'Students', 'last', [
+        'type' => 'name',
+        'data' => [
+            'operator' => 'lastName',
+            'settings' => [
+                'operator' => 'contains',
+                'text' => 'Included',
+            ],
+        ],
+    ]],
+    'prospects' => [GroupModel::Prospect, 'Prospects', 'last_name', [
+        'type' => 'last_name',
+        'data' => [
+            'operator' => 'contains',
+            'settings' => [
+                'text' => 'Included',
+            ],
+        ],
+    ]],
 ]);
 
 it('archives and disables every selected campaign without deleting any', function () {
