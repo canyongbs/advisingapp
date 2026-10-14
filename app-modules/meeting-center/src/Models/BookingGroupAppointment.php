@@ -41,7 +41,6 @@ use App\Models\BaseModel;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @mixin IdeHelperBookingGroupAppointment
@@ -53,7 +52,7 @@ class BookingGroupAppointment extends BaseModel
 
     protected $fillable = [
         'booking_group_id',
-        'calendar_event_provider_uid',
+        'calendar_event_id',
         'name',
         'email',
         'starts_at',
@@ -75,11 +74,11 @@ class BookingGroupAppointment extends BaseModel
     }
 
     /**
-     * @return HasMany<CalendarEvent, $this>
+     * @return BelongsTo<CalendarEvent, $this>
      */
-    public function calendarEvents(): HasMany
+    public function calendarEvent(): BelongsTo
     {
-        return $this->hasMany(CalendarEvent::class, 'provider_uid', 'calendar_event_provider_uid');
+        return $this->belongsTo(CalendarEvent::class);
     }
 
     /**

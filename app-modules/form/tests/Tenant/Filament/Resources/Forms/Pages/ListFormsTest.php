@@ -37,53 +37,55 @@
 use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Filament\Resources\Forms\Pages\ListForms;
 use AdvisingApp\Form\Models\Form;
+use AdvisingApp\Form\Models\FormEmailAutoReply;
 use AdvisingApp\Form\Models\FormSubmission;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-function listFormsTestUser(): User
-{
+$listFormsTestUser = function (): User {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->onlineForms = true;
     $settings->save();
 
     return User::factory()->licensed(LicenseType::cases())->create();
-}
+};
 
-it('the create action is gated by the create permission', function () {
-    $user = listFormsTestUser();
+it('the create action is gated by the create permission', function () use ($listFormsTestUser) {
+    $user = $listFormsTestUser();
     $user->givePermissionTo('form.view-any');
 
     actingAs($user);
 
-    livewire(ListForms::class)
+    Livewire::test(ListForms::class)
         ->assertActionHidden('create');
 
     $user->givePermissionTo('form.create');
 
-    livewire(ListForms::class)
+    Livewire::test(ListForms::class)
         ->assertActionVisible('create');
 });
 
-it('the duplicate action is gated by the create permission', function () {
-    $user = listFormsTestUser();
+it('the duplicate action is gated by the create permission', function () use ($listFormsTestUser) {
+    $user = $listFormsTestUser();
     $user->givePermissionTo('form.view-any');
 
     actingAs($user);
 
     $form = Form::factory()->create();
 
-    livewire(ListForms::class)
+    Livewire::test(ListForms::class)
         ->assertTableActionHidden('Duplicate', $form);
 
     $user->givePermissionTo('form.create');
 
-    livewire(ListForms::class)
+    Livewire::test(ListForms::class)
         ->assertTableActionVisible('Duplicate', $form);
 });
 
@@ -96,7 +98,7 @@ it('can duplicate a form its steps and its fields', function () {
     expect(Form::count())->toBe(1);
 
     // And we duplicate it
-    livewire(ListForms::class)
+    Livewire::test(ListForms::class)
         ->assertStatus(200)
         ->callTableAction('Duplicate', $form);
 
@@ -116,7 +118,7 @@ it('does not allow duplicating a form to a name matching another non-archived fo
     Form::factory()->create(['name' => 'Existing Form']);
     $form = Form::factory()->create(['name' => 'Some Form']);
 
-    livewire(ListForms::class)
+    Livewire::test(ListForms::class)
         ->callTableAction('Duplicate', $form, data: ['name' => 'existing form'])
         ->assertHasTableActionErrors(['name' => 'unique']);
 });
@@ -129,7 +131,7 @@ it('allows duplicating a form to a name freed up by an archived form', function 
 
     $form = Form::factory()->create(['name' => 'Some Form']);
 
-    livewire(ListForms::class)
+    Livewire::test(ListForms::class)
         ->callTableAction('Duplicate', $form, data: ['name' => 'reusable name'])
         ->assertHasNoTableActionErrors();
 
@@ -145,7 +147,7 @@ it('will not duplicate form submissions if they exist', function () {
     $submissionCount = $form->submissions()->count();
 
     // And we duplicate it
-    livewire(ListForms::class)
+    Livewire::test(ListForms::class)
         ->assertStatus(200)
         ->callTableAction('Duplicate', $form);
 
@@ -167,7 +169,7 @@ it('displays the correct submissions count for a form', function () {
         'submitted_at' => now(),
     ]);
 
-    livewire(ListForms::class)
+    Livewire::test(ListForms::class)
         ->assertTableColumnStateSet('submissions_count', 5, $form);
 });
 
@@ -191,7 +193,7 @@ it('displays the correct submissions count across all versions', function () {
         'submitted_at' => now(),
     ]);
 
-    livewire(ListForms::class)
+    Livewire::test(ListForms::class)
         ->assertTableColumnStateSet('submissions_count', 7, $form);
 });
 
@@ -212,7 +214,7 @@ it('does not count submissions from unrelated forms in the submissions count', f
         'submitted_at' => now(),
     ]);
 
-    livewire(ListForms::class)
+    Livewire::test(ListForms::class)
         ->assertTableColumnStateSet('submissions_count', 2, $form);
 });
 
@@ -230,7 +232,7 @@ it('does not count archived submissions in the submissions count', function () {
         ->limit(2)
         ->update(['archived_at' => now()]);
 
-    livewire(ListForms::class)
+    Livewire::test(ListForms::class)
         ->assertTableColumnStateSet('submissions_count', 3, $form);
 });
 
@@ -248,11 +250,106 @@ it('archive bulk action archives all selected forms', function () {
 
     $records = collect([$formWithSubmissions, $formWithoutSubmissions]);
 
-    livewire(ListForms::class)
+    Livewire::test(ListForms::class)
         ->selectTableRecords($records->pluck('id')->all())
         ->callAction(TestAction::make('archive')->table()->bulk())
         ->assertNotified();
 
     expect($formWithSubmissions->fresh()->archived_at)->not->toBeNull();
     expect($formWithoutSubmissions->fresh()->archived_at)->not->toBeNull();
+});
+
+describe('duplication', function () {
+    beforeEach(function () {
+        asSuperAdmin();
+    });
+
+    it('gives a duplicated form its own version tree rather than sharing the original', function () {
+        $form = Form::factory()->create();
+
+        Livewire::test(ListForms::class)
+            ->callAction(TestAction::make('Duplicate')->table($form))
+            ->assertHasNoFormErrors();
+
+        $duplicatedForm = Form::query()->whereKeyNot($form->getKey())->firstOrFail();
+
+        expect($duplicatedForm->root_id)->toBe($duplicatedForm->getKey())
+            ->and($duplicatedForm->root_id)->not->toBe($form->root_id);
+    });
+
+    it('does not show the original form submissions count on the duplicated form', function () {
+        $form = Form::factory()->create();
+
+        FormSubmission::factory()->count(3)->create([
+            'form_id' => $form->getKey(),
+            'submitted_at' => now(),
+        ]);
+
+        Livewire::test(ListForms::class)
+            ->callAction(TestAction::make('Duplicate')->table($form))
+            ->assertHasNoFormErrors();
+
+        $duplicatedForm = Form::query()->whereKeyNot($form->getKey())->firstOrFail();
+
+        Livewire::test(ListForms::class)
+            ->assertTableColumnStateSet('submissions_count', 3, record: $form)
+            ->assertTableColumnStateSet('submissions_count', 0, record: $duplicatedForm);
+    });
+
+    it('copies the email auto reply to the duplicated form without adding one to the original', function () {
+        $form = Form::factory()->create();
+
+        $subject = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Thanks for submitting']]]]];
+        $body = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'We received your submission.']]]]];
+
+        $form->emailAutoReply()->updateOrCreate([], [
+            'subject' => $subject,
+            'body' => $body,
+            'is_enabled' => true,
+        ]);
+
+        expect(FormEmailAutoReply::query()->where('form_id', $form->getKey())->count())->toBe(1);
+
+        Livewire::test(ListForms::class)
+            ->callAction(TestAction::make('Duplicate')->table($form))
+            ->assertHasNoFormErrors();
+
+        $duplicatedForm = Form::query()->whereKeyNot($form->getKey())->firstOrFail();
+        $duplicatedEmailAutoReply = $duplicatedForm->emailAutoReply;
+
+        expect(FormEmailAutoReply::query()->where('form_id', $form->getKey())->count())->toBe(1)
+            ->and(FormEmailAutoReply::query()->where('form_id', $duplicatedForm->getKey())->count())->toBe(1)
+            ->and($duplicatedEmailAutoReply?->subject)->toEqual($subject)
+            ->and($duplicatedEmailAutoReply?->body)->toEqual($body)
+            ->and($duplicatedEmailAutoReply?->is_enabled)->toBeTrue();
+    });
+
+    it('copies the email auto reply images to the duplicated form', function () {
+        Storage::fake('s3-public');
+
+        $form = Form::factory()->create();
+
+        $emailAutoReply = $form->emailAutoReply()->firstOrFail();
+        $image = $emailAutoReply->addMedia(UploadedFile::fake()->image('logo.png'))->toMediaCollection('body', 's3-public');
+        $emailAutoReply->update([
+            'body' => ['type' => 'doc', 'content' => [['type' => 'image', 'attrs' => ['id' => $image->uuid]]]],
+            'is_enabled' => true,
+        ]);
+
+        Livewire::test(ListForms::class)
+            ->callAction(TestAction::make('Duplicate')->table($form))
+            ->assertHasNoFormErrors();
+
+        $duplicatedForm = Form::query()->whereKeyNot($form->getKey())->firstOrFail();
+        $duplicatedEmailAutoReply = $duplicatedForm->emailAutoReply()->firstOrFail();
+        $duplicatedImage = $duplicatedEmailAutoReply->getFirstMedia('body');
+
+        expect($duplicatedImage)->not->toBeNull()
+            ->and($duplicatedImage->uuid)->not->toBe($image->uuid)
+            ->and(json_encode($duplicatedEmailAutoReply->body))->toContain($duplicatedImage->uuid)->not->toContain($image->uuid)
+            ->and($emailAutoReply->refresh()->getMedia('body')->pluck('uuid')->all())->toBe([$image->uuid])
+            ->and(json_encode($emailAutoReply->body))->toContain($image->uuid);
+
+        Storage::disk('s3-public')->assertExists($duplicatedImage->getPathRelativeToRoot());
+    });
 });

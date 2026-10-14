@@ -62,11 +62,12 @@ class FetchAiAssistantLinkParsingResults implements ShouldQueue, TenantAware, Sh
 
     public function __construct(
         protected AiAssistantLink $link,
+        protected bool $refreshExistingParsingResults = false,
     ) {}
 
     public function handle(): void
     {
-        if (filled($this->link->parsing_results)) {
+        if (filled($this->link->parsing_results) && ! $this->refreshExistingParsingResults) {
             return;
         }
 
@@ -87,5 +88,10 @@ class FetchAiAssistantLinkParsingResults implements ShouldQueue, TenantAware, Sh
     public function uniqueId(): string
     {
         return $this->link->id;
+    }
+
+    public function refreshesExistingParsingResults(): bool
+    {
+        return $this->refreshExistingParsingResults;
     }
 }

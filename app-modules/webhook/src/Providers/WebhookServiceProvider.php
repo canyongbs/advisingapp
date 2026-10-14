@@ -38,10 +38,12 @@ namespace AdvisingApp\Webhook\Providers;
 
 use AdvisingApp\Webhook\Models\InboundWebhook;
 use AdvisingApp\Webhook\Models\LandlordInboundWebhook;
+use AdvisingApp\Webhook\Support\CachedSnsCertificateFetcher;
 use AdvisingApp\Webhook\WebhookPlugin;
 use Aws\Sns\MessageValidator;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\ServiceProvider;
 
 class WebhookServiceProvider extends ServiceProvider
@@ -52,7 +54,7 @@ class WebhookServiceProvider extends ServiceProvider
 
         $this->app->bind(
             MessageValidator::class,
-            fn () => new MessageValidator()
+            fn () => new MessageValidator(new CachedSnsCertificateFetcher(Cache::store('landlord')))
         );
     }
 

@@ -220,35 +220,28 @@ port you want.
 
 ### Storage
 
-This application makes use of S3 for storage. If you would like to use local storage. In order to do so, create a new
-public s3 bucket with the following policy:
-
-```json
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "AllowPublicRead",
-            "Effect": "Allow",
-            "Principal": {
-                "AWS": "*"
-            },
-            "Action": "s3:GetObject",
-            "Resource": "arn:aws:s3:::[YOUR_S3_BUCKET_NAME]/PUBLIC/*"
-        }
-    ]
-}
-```
-
-After creating the bucket, you can set the following variables in your `.env` file:
+This application makes use of S3 for storage. Locally, it uses the shared RustFS instance from the
+[traefik](https://github.com/canyongbs/traefik) repository at `https://s3.tools.cgbs.local`, which provisions the
+`advisingapp` bucket and its public-read policy on startup. The `.env.example` is already configured for it:
 
 ```dotenv
-AWS_S3_ACCESS_KEY_ID=
-AWS_S3_SECRET_ACCESS_KEY=
-AWS_S3_DEFAULT_REGION=
-AWS_S3_BUCKET=
+AWS_S3_ACCESS_KEY_ID=rustfsadmin
+AWS_S3_SECRET_ACCESS_KEY=rustfsadmin
+AWS_S3_DEFAULT_REGION=us-east-1
+AWS_S3_BUCKET=advisingapp
+AWS_S3_ENDPOINT=https://s3.tools.cgbs.local
+AWS_S3_URL=https://s3.tools.cgbs.local/advisingapp
+AWS_S3_USE_PATH_STYLE_ENDPOINT=true
 AWS_S3_ROOT=
+AWS_S3_PUBLIC_ROOT=PUBLIC
+AWS_S3_VERIFY_SSL=false
 ```
+
+`AWS_S3_VERIFY_SSL=false` is required because RustFS is served with the self-signed local development certificate.
+Stored files can be browsed in the RustFS console at `https://s3-console.tools.cgbs.local`.
+
+Tenants copy the S3 configuration when they are created, so recreate any existing local tenants with `tenants:create`
+after changing these values.
 
 ### Queue and Scheduler
 

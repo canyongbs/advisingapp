@@ -56,6 +56,7 @@ class AiAssistantLinkFactory extends Factory
             'ai_assistant_id' => AiAssistant::factory(),
             'parsing_results' => $this->faker->paragraph,
             'url' => $this->faker->url,
+            'is_keep_current_enabled' => true,
         ];
     }
 }

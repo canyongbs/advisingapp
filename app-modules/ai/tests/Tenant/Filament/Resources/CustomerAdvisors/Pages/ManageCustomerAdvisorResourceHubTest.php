@@ -44,11 +44,11 @@ use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Queue;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertDatabaseMissing;
-use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     $settings = app(LicenseSettings::class);
@@ -70,7 +70,7 @@ test('Manage Customer Advisor Resource Hub is gated with proper access control',
             ])
         )->assertForbidden();
 
-    livewire(ManageCustomerAdvisorResourceHub::class, [
+    Livewire::test(ManageCustomerAdvisorResourceHub::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->assertForbidden();
@@ -101,7 +101,7 @@ test('can enable resource hub knowledge with an article access level and categor
 
     actingAs($user);
 
-    livewire(ManageCustomerAdvisorResourceHub::class, [
+    Livewire::test(ManageCustomerAdvisorResourceHub::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->fillForm([
@@ -150,7 +150,7 @@ test('attaching a resource hub category dispatches the vector store upload job',
     // isolating it from the dispatch already fired by creating the advisor above.
     Queue::fake();
 
-    livewire(ManageCustomerAdvisorResourceHub::class, [
+    Livewire::test(ManageCustomerAdvisorResourceHub::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->fillForm([
@@ -190,7 +190,7 @@ test('detaching a resource hub category dispatches the vector store upload job',
     // category above.
     Queue::fake();
 
-    livewire(ManageCustomerAdvisorResourceHub::class, [
+    Livewire::test(ManageCustomerAdvisorResourceHub::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->fillForm([
@@ -222,7 +222,7 @@ test('disabling resource hub knowledge clears the article access level', functio
 
     actingAs($user);
 
-    livewire(ManageCustomerAdvisorResourceHub::class, [
+    Livewire::test(ManageCustomerAdvisorResourceHub::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->fillForm([
@@ -249,7 +249,7 @@ test('the article access and categories fields are hidden until resource hub kno
 
     actingAs($user);
 
-    livewire(ManageCustomerAdvisorResourceHub::class, [
+    Livewire::test(ManageCustomerAdvisorResourceHub::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->assertFormFieldIsHidden('resource_hub_article_access')

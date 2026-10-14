@@ -1,0 +1,335 @@
+<?php
+
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS Inc.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+
+namespace AdvisingApp\Application\Filament\Resources\Applications\RelationManagers;
+
+use AdvisingApp\Application\Exports\ApplicationSubmissionExport;
+use AdvisingApp\Application\Filament\Resources\Applications\Actions\ApplicationAdmissionActions;
+use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationSubmission;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use App\Filament\Tables\Columns\IdColumn;
+use Filament\Actions\Action;
+use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
+use Filament\Notifications\Notification;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
+use Livewire\Attributes\Url;
+use Maatwebsite\Excel\Facades\Excel;
+
+class SubmissionsRelationManager extends RelationManager
+{
+    // The page owns the `tab` query parameter.
+    #[Url(as: 'state')]
+    public ?string $activeTab = null;
+
+    protected static string $relationship = 'submissions';
+
+    protected static ?string $title = 'Submissions';
+
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        return ApplicationResource::canAccess() && parent::canViewForRecord($ownerRecord, $pageClass);
+    }
+
+    public function getDefaultActionUrlIdentifier(): string
+    {
+        return 'submissions';
+    }
+
+    public function mountDefaultActions(): void
+    {
+        parent::mountDefaultActions();
+
+        if (! $this->hasDefaultTableActionMounted) {
+            return;
+        }
+
+        // Consume the link, otherwise returning to this tab remounts the table and reopens the submission.
+        $this->defaultActionComponent = null;
+        $this->defaultTableAction = null;
+        $this->defaultTableActionRecord = null;
+        $this->defaultTableActionArguments = null;
+    }
+
+    public function getDefaultActiveTab(): string | int | null
+    {
+        // @phpstan-ignore method.notFound
+        $defaultState = ApplicationSubmissionState::query()
+            ->withoutArchivedAndUnused()
+            ->where('is_default', true)
+            ->first();
+
+        return $defaultState
+            ? $defaultState->id
+            : 'all';
+    }
+
+    public function getTabs(): array
+    {
+        $states = ApplicationSubmissionState::query()
+            ->withCount('submissions')
+            ->oldest('id')
+            ->get();
+
+        $tabs = [];
+
+        foreach ($states as $state) {
+            if (filled($state->archived_at) && $state->submissions_count === 0) {
+                continue;
+            }
+
+            $label = $state->name;
+
+            if (filled($state->archived_at)) {
+                $label .= ' (Archived)';
+            }
+
+            $tabs[$state->id] = Tab::make($label)
+                ->modifyQueryUsing(fn (Builder $query) => $query->whereHas(
+                    'state',
+                    fn (Builder $query) => $query->where('id', $state->id),
+                ));
+        }
+
+        $tabs['all'] = Tab::make('All');
+
+        return $tabs;
+    }
+
+    public function table(Table $table): Table
+    {
+        $owner = $this->getOwnerRecord();
+        assert($owner instanceof Application);
+
+        return $table
+            ->query(
+                ApplicationSubmission::query()
+                    ->whereHas(
+                        'submissible',
+                        fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $owner->root_id),
+                    )
+            )
+            ->columns([
+                IdColumn::make(),
+                TextColumn::make('created_at')
+                    ->sortable(),
+                TextColumn::make('author.primaryEmailAddress.address')
+                    ->label('Submitter')
+                    ->searchable(),
+                TextColumn::make('author_type')
+                    ->label('Submitter Type')
+                    ->badge()
+                    ->formatStateUsing(fn (?string $state): ?string => filled($state) ? ucfirst($state) : null)
+                    ->color('success'),
+                TextColumn::make('state')
+                    ->badge()
+                    ->state(function (ApplicationSubmission $record) {
+                        return $record->state->name;
+                    })
+                    ->color(function (ApplicationSubmission $record) {
+                        return $record->state->color->value;
+                    })
+                    ->sortable(query: function (Builder $query, string $direction): Builder {
+                        return $query
+                            ->join('application_submission_states', 'application_submissions.state_id', '=', 'application_submission_states.id')
+                            ->orderBy('application_submission_states.name', $direction);
+                    }),
+            ])
+            ->filters([
+                SelectFilter::make('author_type')
+                    ->label('Submitter Type')
+                    ->options([
+                        'student' => 'Student',
+                        'prospect' => 'Prospect',
+                    ]),
+                Filter::make('withoutArchived')
+                    ->label('Without archived')
+                    ->query(fn (Builder $query) => $query->withoutArchived()) // @phpstan-ignore method.notFound
+                    ->default(),
+            ])
+            ->headerActions([
+                Action::make('export')
+                    ->icon('heroicon-o-arrow-down-tray')
+                    ->action(function () use ($owner) {
+                        $filename = str("application-submissions-{$owner->name}-")
+                            ->append(now()->format('Y-m-d-Hisv'))
+                            ->slug()
+                            ->append('.csv');
+
+                        $query = ApplicationSubmission::query()
+                            ->whereHas(
+                                'submissible',
+                                fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $owner->root_id),
+                            );
+
+                        return Excel::download(new ApplicationSubmissionExport($query->get()), $filename);
+                    }),
+            ])
+            ->recordActions([
+                ViewAction::make()
+                    ->modalHeading(fn (ApplicationSubmission $record) => "Submission Details: {$record->created_at}")
+                    ->schema(fn (ApplicationSubmission $record): array => [
+                        TextEntry::make('state')
+                            ->label('State')
+                            ->badge()
+                            ->state(function (ApplicationSubmission $record) {
+                                return $record->state->name;
+                            })
+                            ->color(function (ApplicationSubmission $record) {
+                                return $record->state->color->value;
+                            }),
+                        Section::make('Authenticated Submitter')
+                            ->schema([
+                                TextEntry::make($record->author ? 'author.' . $record->author::displayNameKey() : 'author')
+                                    ->label('Name')
+                                    ->default('N/A'),
+                                TextEntry::make('author.primaryEmailAddress.address')
+                                    ->label('Email address')
+                                    ->default('N/A'),
+                            ])
+                            ->columns(2),
+                        ViewEntry::make('checklistItems')
+                            ->label('Checklist')
+                            ->view('application::filament.infolists.components.application-submissions-checklist', ['submission' => $record])
+                            ->columnSpanFull(),
+                    ])
+                    ->modalContent(
+                        fn (ApplicationSubmission $record) => view('application::submission', ['submission' => $record])
+                    )
+                    ->extraModalFooterActions(ApplicationAdmissionActions::get()),
+                Action::make('archive')
+                    ->icon('heroicon-o-archive-box')
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalHeading('Archive Submission')
+                    ->modalSubmitActionLabel('Archive')
+                    ->authorize(fn (ApplicationSubmission $record): bool => auth()->user()->can('archive', $record))
+                    ->action(function (ApplicationSubmission $record): void {
+                        $record->archive();
+
+                        Cache::tags('{application-submission-count}')->flush();
+
+                        $this->dispatch('refresh-page');
+
+                        Notification::make()
+                            ->title('Submission archived')
+                            ->success()
+                            ->send();
+                    })
+                    ->hidden(fn (ApplicationSubmission $record): bool => $record->isArchived()),
+            ])
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    BulkAction::make('Export')
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->action(function (Collection $records) use ($owner) {
+                            $filename = str("selected-application-submissions-{$owner->name}-")
+                                ->append(now()->format('Y-m-d-Hisv'))
+                                ->slug()
+                                ->append('.csv');
+
+                            return Excel::download(new ApplicationSubmissionExport($records), $filename);
+                        }),
+                    BulkAction::make('archive')
+                        ->label('Archive')
+                        ->icon('heroicon-o-archive-box')
+                        ->color('warning')
+                        ->requiresConfirmation()
+                        ->modalHeading('Archive Submissions')
+                        ->modalSubmitActionLabel('Archive')
+                        ->authorize(fn () => auth()->user()->can('deleteAny', ApplicationSubmission::class))
+                        ->authorizeIndividualRecords('archive')
+                        ->action(function (Collection $records): void {
+                            /** @phpstan-ignore argument.type */
+                            $records->each(function (ApplicationSubmission $record): void {
+                                if ($record->isArchived()) {
+                                    return;
+                                }
+
+                                $record->archive();
+                            });
+
+                            Cache::tags('{application-submission-count}')->flush();
+
+                            $this->dispatch('refresh-page');
+
+                            Notification::make()
+                                ->title('Submissions archived')
+                                ->success()
+                                ->send();
+                        }),
+                ]),
+            ]);
+    }
+
+    public static function getBadge(Model $ownerRecord, string $pageClass): ?string
+    {
+        assert($ownerRecord instanceof Application);
+
+        $applicationSubmissionsCount = Cache::tags('{application-submission-count}')
+            ->remember(
+                // Licenses limit which submissions a user can count.
+                "application-submission-count-{$ownerRecord->root_id}-" . auth()->id(),
+                now()->addMinutes(5),
+                function () use ($ownerRecord): int {
+                    return ApplicationSubmission::query()
+                        ->whereHas(
+                            'submissible',
+                            fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $ownerRecord->root_id),
+                        )
+                        ->withoutArchived()
+                        ->count();
+                },
+            );
+
+        return (string) $applicationSubmissionsCount;
+    }
+}

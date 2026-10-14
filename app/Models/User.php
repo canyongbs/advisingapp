@@ -523,6 +523,10 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
                 $type = LicenseType::from($type);
             }
 
+            if (! $type->isEnabled()) {
+                return false;
+            }
+
             if ($this->licenses->doesntContain('type', $type)) {
                 return false;
             }
@@ -545,7 +549,7 @@ class User extends Authenticatable implements HasLocalePreference, FilamentUser,
                 $type = LicenseType::from($type);
             }
 
-            if ($this->licenses->contains('type', $type)) {
+            if ($type->isEnabled() && $this->licenses->contains('type', $type)) {
                 return true;
             }
         }

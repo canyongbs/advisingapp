@@ -41,9 +41,9 @@ use AdvisingApp\Ai\Models\AiThread;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     $settings = app(LicenseSettings::class);
@@ -86,7 +86,7 @@ test('Preview Employee Advisor creates a fresh preview thread on mount', functio
 
     expect(AiThread::where('is_preview', true)->count())->toBe(0);
 
-    livewire(PreviewEmployeeAdvisor::class, [
+    Livewire::test(PreviewEmployeeAdvisor::class, [
         'record' => $assistant->getRouteKey(),
     ])
         ->assertSuccessful();
@@ -109,11 +109,11 @@ test('Preview Employee Advisor creates a new thread on each page load', function
 
     actingAs($user);
 
-    livewire(PreviewEmployeeAdvisor::class, [
+    Livewire::test(PreviewEmployeeAdvisor::class, [
         'record' => $assistant->getRouteKey(),
     ]);
 
-    livewire(PreviewEmployeeAdvisor::class, [
+    Livewire::test(PreviewEmployeeAdvisor::class, [
         'record' => $assistant->getRouteKey(),
     ]);
 

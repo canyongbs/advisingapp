@@ -37,8 +37,8 @@
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\CreateEvent;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('exposes the mapped block types to the fields rich editor for the custom block badges', function () {
@@ -48,6 +48,6 @@ it('exposes the mapped block types to the fields rich editor for the custom bloc
 
     asSuperAdmin();
 
-    livewire(CreateEvent::class)
+    Livewire::test(CreateEvent::class)
         ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });

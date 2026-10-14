@@ -109,13 +109,15 @@ class ApplicationSubmissionNotification extends Notification implements ShouldQu
     {
         $this->applicationSubmission->loadMissing(['author', 'fields']);
 
-        $submissionUrl = ApplicationResource::getUrl('manage-submissions', [
+        $submissionUrl = ApplicationResource::getUrl('view', [
             'record' => $this->application,
+            'tab' => 'submissions',
+            'actionComponent' => 'submissions',
             'tableAction' => 'view',
             'tableActionRecord' => $this->applicationSubmission->id,
         ]);
 
-        $applicationUrl = ApplicationResource::getUrl('edit', ['record' => $this->application]);
+        $applicationUrl = ApplicationResource::getUrl('view', ['record' => $this->application, 'tab' => 'edit']);
 
         $timestamp = now()->tz($notifiable->timezone ?? 'UTC')->format('M j, Y g:i a (T)');
 

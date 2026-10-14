@@ -39,8 +39,7 @@ use AdvisingApp\Ai\Models\CustomerAdvisorThread;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\CustomerAdvisorReportTable;
 use AdvisingApp\StudentDataModel\Models\Student;
-
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('displays only CustomerAdvisorThreads added within the selected date range based on tabs', function () {
     $startDate = now()->subDays(10);
@@ -71,7 +70,7 @@ it('displays only CustomerAdvisorThreads added within the selected date range ba
     ];
 
     // for student tab
-    $component = livewire(CustomerAdvisorReportTable::class, [
+    $component = Livewire::test(CustomerAdvisorReportTable::class, [
         'cacheTag' => 'customer-advisor-thread-report-cache',
         'pageFilters' => $filters,
         'activeTab' => CustomerAdvisorReportTableTab::Student->value,
@@ -84,7 +83,7 @@ it('displays only CustomerAdvisorThreads added within the selected date range ba
         ->assertCanNotSeeTableRecords(collect([$customerAdvisorThreadWithinRange1ForProspect, $customerAdvisorThreadWithinRange2ForProspect, $customerAdvisorThreadUnauthorized]));
 
     // for prospect tab
-    $component = livewire(CustomerAdvisorReportTable::class, [
+    $component = Livewire::test(CustomerAdvisorReportTable::class, [
         'cacheTag' => 'customer-advisor-thread-report-cache',
         'pageFilters' => $filters,
         'activeTab' => CustomerAdvisorReportTableTab::Prospect->value,
@@ -97,7 +96,7 @@ it('displays only CustomerAdvisorThreads added within the selected date range ba
         ->assertCanNotSeeTableRecords(collect([$customerAdvisorThreadWithinRange1ForStudent, $customerAdvisorThreadWithinRange2ForStudent, $customerAdvisorThreadUnauthorized]));
 
     // for unauthorized tab
-    $component = livewire(CustomerAdvisorReportTable::class, [
+    $component = Livewire::test(CustomerAdvisorReportTable::class, [
         'cacheTag' => 'customer-advisor-thread-report-cache',
         'pageFilters' => $filters,
         'activeTab' => CustomerAdvisorReportTableTab::Unauthenticated->value,

@@ -40,12 +40,12 @@ use AdvisingApp\Ai\Database\Factories\CustomerAdvisorLinkFactory;
 use AdvisingApp\Ai\Models\Contracts\AiFile;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use App\Models\BaseModel;
+use CanyonGBS\Common\Models\Concerns\Auditable as AuditableTrait;
 use Exception;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**

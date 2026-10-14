@@ -36,7 +36,9 @@
 
 namespace App\Filament\Resources\SystemUsers\RelationManagers;
 
+use App\Enums\Feature;
 use App\Filament\Tables\Columns\IdColumn;
+use App\Models\Scopes\WithoutDisabledFeaturePermissions;
 use App\Models\SystemUser;
 use Filament\Actions\AttachAction;
 use Filament\Actions\DetachAction;
@@ -71,6 +73,7 @@ class PermissionsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->tap(new WithoutDisabledFeaturePermissions()))
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('group.name')
@@ -79,7 +82,11 @@ class PermissionsRelationManager extends RelationManager
             ])
             ->filters([
                 SelectFilter::make('group')
-                    ->relationship('group', 'name')
+                    ->relationship(
+                        'group',
+                        'name',
+                        fn (Builder $query) => $query->whereNotIn('name', Feature::getDisabledPermissionGroupNames()),
+                    )
                     ->searchable()
                     ->preload()
                     ->multiple(),
@@ -92,6 +99,7 @@ class PermissionsRelationManager extends RelationManager
                             $owner = $this->getOwnerRecord();
 
                             return $query
+                                ->tap(new WithoutDisabledFeaturePermissions())
                                 ->where('guard_name', 'api')
                                 ->whereNotIn('name', $owner->getPermissionNames());
                         }

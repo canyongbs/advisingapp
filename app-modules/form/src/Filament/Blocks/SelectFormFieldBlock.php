@@ -36,11 +36,12 @@
 
 namespace AdvisingApp\Form\Filament\Blocks;
 
+use AdvisingApp\Form\Filament\Forms\Components\OptionsKeyValue;
+use AdvisingApp\Form\Filament\Forms\StateCasts\OptionsStateCast;
 use AdvisingApp\Form\Models\Submissible;
 use AdvisingApp\Form\Models\SubmissibleField;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Filament\Forms\Components\KeyValue;
 
 class SelectFormFieldBlock extends FormFieldBlock
 {
@@ -57,9 +58,7 @@ class SelectFormFieldBlock extends FormFieldBlock
     public static function fields(): array
     {
         return [
-            KeyValue::make('options')
-                ->keyLabel('Value')
-                ->valueLabel('Label'),
+            OptionsKeyValue::make('options'),
         ];
     }
 
@@ -70,17 +69,39 @@ class SelectFormFieldBlock extends FormFieldBlock
             'label' => $field->label,
             'name' => $field->getKey(),
             ...($field->is_required ? ['validation' => 'required'] : []),
-            'options' => $field->config['options'],
+            'options' => (new OptionsStateCast())->get($field->config['options']),
             ...self::getDescriptionSectionsSchema($field),
         ];
     }
 
     public static function getValidationRules(SubmissibleField $field): array
     {
+        $options = $field->config['options'];
+        assert(is_array($options));
+
+        $values = isset($options[0]) && is_array($options[0])
+          ? collect($options)->pluck('value')
+          : collect($options)->keys();
+
         return [
             'string',
-            'in:' . collect($field->config['options'])->keys()->join(','),
+            'in:' . $values->join(','),
         ];
+    }
+
+    /**
+     * The editor ignores key order when comparing a block's config, so reordering options alone would leave a stale edit button.
+     * A hidden marker of the order changes the preview, which forces the block to refresh.
+     */
+    public static function toPreviewHtml(array $config): ?string
+    {
+        $options = $config['options'] ?? [];
+        $values = isset($options[0]) && is_array($options[0])
+          ? array_column($options, 'value')
+          : array_keys($options);
+        $order = e(json_encode($values));
+
+        return parent::toPreviewHtml($config) . "<span hidden data-options-order=\"{$order}\"></span>";
     }
 
     protected static function renderedView(): string

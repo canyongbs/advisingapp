@@ -41,9 +41,9 @@ use AdvisingApp\Interaction\Filament\Resources\InteractionDrivers\Pages\ListInte
 use AdvisingApp\Interaction\Models\InteractionDriver;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('ListInteractionDrivers is gated with proper access control', function () {
@@ -68,7 +68,7 @@ test('it can filter by interactable type', function () {
     $studentDrivers = InteractionDriver::factory()->count(3)->create(['interactable_type' => InteractableType::Student]);
     $prospectDrivers = InteractionDriver::factory()->count(3)->create(['interactable_type' => InteractableType::Prospect]);
 
-    livewire(ListInteractionDrivers::class)
+    Livewire::test(ListInteractionDrivers::class)
         ->assertCanSeeTableRecords($studentDrivers->merge($prospectDrivers))
         ->filterTable('interactable_type', InteractableType::Student->value)
         ->assertCanSeeTableRecords($studentDrivers)
@@ -83,11 +83,11 @@ test('the delete bulk action is gated by the delete permission', function () {
     $user->givePermissionTo('settings.view-any');
     actingAs($user);
 
-    livewire(ListInteractionDrivers::class)
+    Livewire::test(ListInteractionDrivers::class)
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 
     $user->givePermissionTo('settings.*.delete');
 
-    livewire(ListInteractionDrivers::class)
+    Livewire::test(ListInteractionDrivers::class)
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

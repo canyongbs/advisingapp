@@ -43,11 +43,11 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Team\Models\Department;
 use App\Models\Authenticatable;
 use Filament\Actions\DeleteBulkAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 
 /** @var array<LicenseType> $licenses */
 $licenses = [
@@ -100,7 +100,7 @@ it('can list records', function () use ($licenses, $permissions) {
 
     assertDatabaseCount(Prompt::class, $records->count());
 
-    livewire(ListPrompts::class)
+    Livewire::test(ListPrompts::class)
         ->set('tableRecordsPerPage', 10)
         ->assertSuccessful()
         ->assertCountTableRecords($records->count())
@@ -115,7 +115,7 @@ it('hides the bulk delete action from a user who is not a super admin', function
 
     Prompt::factory()->count(2)->create();
 
-    livewire(ListPrompts::class)
+    Livewire::test(ListPrompts::class)
         ->assertSuccessful()
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 });
@@ -128,7 +128,7 @@ it('shows the bulk delete action to a super admin', function () use ($licenses, 
 
     Prompt::factory()->count(2)->create();
 
-    livewire(ListPrompts::class)
+    Livewire::test(ListPrompts::class)
         ->assertSuccessful()
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
@@ -146,7 +146,7 @@ it('Filter prompts based on Smart', function () use ($licenses, $permissions) {
         'is_smart' => false,
     ]);
 
-    livewire(ListPrompts::class)
+    Livewire::test(ListPrompts::class)
         ->set('tableRecordsPerPage', 20)
         ->assertSuccessful()
         ->filterTable('is_smart', true)
@@ -210,7 +210,7 @@ test('only shows confidential prompts to authorized users', function () use ($li
     assertDatabaseCount(Prompt::class, 2);
 
     actingAs($unauthorizedUser);
-    livewire(ListPrompts::class)
+    Livewire::test(ListPrompts::class)
         ->assertSuccessful()
         ->assertCanNotSeeTableRecords([
             $confidentialPrompt,
@@ -220,7 +220,7 @@ test('only shows confidential prompts to authorized users', function () use ($li
         ]);
 
     actingAs($superAdmin);
-    livewire(ListPrompts::class)
+    Livewire::test(ListPrompts::class)
         ->assertSuccessful()
         ->assertCanSeeTableRecords([
             $confidentialPrompt,
@@ -228,7 +228,7 @@ test('only shows confidential prompts to authorized users', function () use ($li
         ]);
 
     actingAs($promptCreator);
-    livewire(ListPrompts::class)
+    Livewire::test(ListPrompts::class)
         ->assertSuccessful()
         ->assertCanSeeTableRecords([
             $confidentialPrompt,
@@ -236,7 +236,7 @@ test('only shows confidential prompts to authorized users', function () use ($li
         ]);
 
     actingAs($confidentialPromptUser);
-    livewire(ListPrompts::class)
+    Livewire::test(ListPrompts::class)
         ->assertSuccessful()
         ->assertCanSeeTableRecords([
             $confidentialPrompt,
@@ -244,7 +244,7 @@ test('only shows confidential prompts to authorized users', function () use ($li
         ]);
 
     actingAs($departmentConfidentialPromptUser);
-    livewire(ListPrompts::class)
+    Livewire::test(ListPrompts::class)
         ->assertSuccessful()
         ->assertCanSeeTableRecords([
             $confidentialPrompt,

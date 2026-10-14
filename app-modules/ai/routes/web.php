@@ -40,9 +40,10 @@ use AdvisingApp\Ai\Http\Controllers\Advisors\RetryMessageController;
 use AdvisingApp\Ai\Http\Controllers\Advisors\SendMessageController;
 use AdvisingApp\Ai\Http\Controllers\Advisors\ShowThreadController;
 use AdvisingApp\Ai\Http\Controllers\CustomerAdvisors\PreviewAdvisorEmbedController;
+use AdvisingApp\Ai\Http\Middleware\EnsureEnterpriseAiFeatureIsActive;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['web', 'auth'])
+Route::middleware(['web', 'auth', EnsureEnterpriseAiFeatureIsActive::class])
     ->name('ai.')
     ->group(function () {
         Route::get('ai/advisors/threads/{thread}', ShowThreadController::class)

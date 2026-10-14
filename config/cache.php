@@ -89,6 +89,23 @@ return [
             'connection' => 'cache',
             'lock_connection' => 'default',
         ],
+
+        // Fixed prefix keeps this store out of the per-tenant cache namespace so landlord-level health heartbeats are shared across all tenants.
+        'health' => [
+            'driver' => 'redis',
+            'connection' => 'cache',
+            'lock_connection' => 'default',
+            'prefix' => env('CACHE_PREFIX', '{advisingapp_landlord_cache}') . ':health',
+        ],
+
+        // PrefixCacheTask only re-prefixes the default store, so state shared between tenant contexts (workers, the queue
+        // autoscaler, and the queue monitoring dashboard) must use this store to read and write the same keys.
+        'landlord' => [
+            'driver' => 'redis',
+            'connection' => 'cache',
+            'lock_connection' => 'default',
+            'prefix' => env('CACHE_PREFIX', '{advisingapp_landlord_cache}'),
+        ],
     ],
 
     /*

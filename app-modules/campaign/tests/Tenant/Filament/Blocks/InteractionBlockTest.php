@@ -53,8 +53,8 @@ use AdvisingApp\Interaction\Models\InteractionType;
 use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\Select;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 beforeEach(function () {
@@ -88,7 +88,7 @@ it('shows interaction options only for campaign population model type when editi
             ],
         ]);
 
-    livewire(CampaignActionsRelationManager::class, [
+    Livewire::test(CampaignActionsRelationManager::class, [
         'ownerRecord' => $campaign,
         'pageClass' => ViewCampaign::class,
     ])
@@ -141,7 +141,7 @@ it('shows interaction options only for campaign population model type when editi
             ],
         ]);
 
-    livewire(CampaignActionsRelationManager::class, [
+    Livewire::test(CampaignActionsRelationManager::class, [
         'ownerRecord' => $action->campaign,
         'pageClass' => ViewCampaign::class,
     ])
@@ -184,7 +184,7 @@ it('shows interaction options only for the selected population model type in the
         $excludedRecords[$field] = $model::factory()->create(['interactable_type' => $excluded]);
     }
 
-    $component = livewire(CreateCampaign::class)
+    $component = Livewire::test(CreateCampaign::class)
         ->fillForm([
             'name' => 'Test Campaign',
             'segment_id' => $group->getKey(),
@@ -225,7 +225,7 @@ it('offers no interaction options in the create wizard until a population group 
     InteractionInitiative::factory()->create(['interactable_type' => InteractableType::Student]);
     InteractionInitiative::factory()->create(['interactable_type' => InteractableType::Prospect]);
 
-    livewire(CreateCampaign::class)
+    Livewire::test(CreateCampaign::class)
         ->fillForm([
             'name' => 'Test Campaign',
             'actions' => [

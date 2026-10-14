@@ -37,8 +37,8 @@
 use AdvisingApp\Prospect\Filament\Resources\ProspectTags\Pages\CreateProspectTag;
 use App\Enums\TagType;
 use App\Models\Tag;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('CreateProspectTag does not allow for duplicate names of non-deleted prospect tags case insensitively', function () {
@@ -47,12 +47,12 @@ test('CreateProspectTag does not allow for duplicate names of non-deleted prospe
     $tag = Tag::factory(['name' => 'Prospect Tag', 'type' => TagType::Prospect])->create();
     $tag->delete();
 
-    livewire(CreateProspectTag::class)
+    Livewire::test(CreateProspectTag::class)
         ->fillForm(['name' => 'prospect TAG'])
         ->call('create')
         ->assertHasNoFormErrors();
 
-    livewire(CreateProspectTag::class)
+    Livewire::test(CreateProspectTag::class)
         ->fillForm(['name' => 'prospect tag'])
         ->call('create')
         ->assertHasFormErrors(['name' => 'unique']);
@@ -65,7 +65,7 @@ test('CreateProspectTag does allow for non-duplicate names of non-deleted prospe
     $tag = Tag::factory(['name' => 'Prospect Tag 2', 'type' => TagType::Prospect])->create();
     $tag->delete();
 
-    livewire(CreateProspectTag::class)
+    Livewire::test(CreateProspectTag::class)
         ->fillForm(['name' => 'Prospect Tag 2'])
         ->call('create')
         ->assertHasNoFormErrors();
@@ -76,7 +76,7 @@ test('CreateProspectTag does allow for duplicate names of student tags', functio
 
     Tag::factory(['name' => 'Tag', 'type' => TagType::Student])->create();
 
-    livewire(CreateProspectTag::class)
+    Livewire::test(CreateProspectTag::class)
         ->fillForm(['name' => 'Tag'])
         ->call('create')
         ->assertHasNoFormErrors();

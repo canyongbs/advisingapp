@@ -32,7 +32,7 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import { ref, watch } from 'vue';
+    import { defineProps, ref, watch } from 'vue';
 
     const props = defineProps({
         context: Object,

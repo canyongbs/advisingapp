@@ -39,10 +39,10 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Prospect\Tests\Tenant\ProspectStatus\RequestFactories\CreateProspectStatusRequestFactory;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function PHPUnit\Framework\assertEmpty;
 use function Tests\asSuperAdmin;
@@ -56,7 +56,7 @@ test('A successful action on the CreateProspectStatus page', function () {
 
     $request = CreateProspectStatusRequestFactory::new()->create();
 
-    livewire(CreateProspectStatus::class)
+    Livewire::test(CreateProspectStatus::class)
         ->fillForm($request)
         ->call('create')
         ->assertHasNoFormErrors();
@@ -69,7 +69,7 @@ test('A successful action on the CreateProspectStatus page', function () {
 test('CreateProspectStatus requires valid data', function (CreateProspectStatusRequestFactory $data, array $errors) {
     asSuperAdmin();
 
-    livewire(CreateProspectStatus::class)
+    Livewire::test(CreateProspectStatus::class)
         ->fillForm(CreateProspectStatusRequestFactory::new($data)->create())
         ->call('create')
         ->assertHasFormErrors($errors);
@@ -94,7 +94,7 @@ test('CreateProspectStatus is gated with proper access control', function () {
             ProspectStatusResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateProspectStatus::class)
+    Livewire::test(CreateProspectStatus::class)
         ->assertForbidden();
 
     $user->givePermissionTo('settings.view-any');
@@ -107,7 +107,7 @@ test('CreateProspectStatus is gated with proper access control', function () {
 
     $request = collect(CreateProspectStatusRequestFactory::new()->create());
 
-    livewire(CreateProspectStatus::class)
+    Livewire::test(CreateProspectStatus::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();

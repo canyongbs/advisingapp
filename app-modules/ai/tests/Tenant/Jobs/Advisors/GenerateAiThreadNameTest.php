@@ -47,8 +47,7 @@ use Illuminate\Support\Facades\Exceptions;
 
 use function Tests\asSuperAdmin;
 
-function createNamingTestThread(): AiThread
-{
+$createNamingTestThread = function (): AiThread {
     $assistant = AiAssistant::factory()->create([
         'application' => AiAssistantApplication::Test,
         'is_default' => true,
@@ -64,23 +63,39 @@ function createNamingTestThread(): AiThread
             'name' => 'New Chat 8/13/26 @ 7:10 AM',
             'named_by_user_at' => null,
         ]);
-}
+};
 
-it('only allows a single attempt, so a broadcast failure does not trigger a billed retry', function () {
+/**
+ * @param Closure(): string $complete
+ */
+$bindFakeAiService = function (Closure $complete): void {
+    app()->bind(TestAiService::class, fn () => new class ($complete) extends TestAiService {
+        public function __construct(
+            protected Closure $complete,
+        ) {}
+
+        public function complete(string $prompt, string $content, bool $shouldTrack = true): string
+        {
+            return ($this->complete)();
+        }
+    });
+};
+
+it('only allows a single attempt, so a broadcast failure does not trigger a billed retry', function () use ($createNamingTestThread) {
     asSuperAdmin();
 
-    expect((new GenerateAiThreadName(createNamingTestThread()))->tries)
+    expect((new GenerateAiThreadName($createNamingTestThread()))->tries)
         ->toBe(1);
 });
 
-it('renames a thread using the AI service', function () {
+it('renames a thread using the AI service', function () use ($createNamingTestThread, $bindFakeAiService) {
     asSuperAdmin();
 
     Event::fake([AdvisorThreadRenamed::class]);
 
-    $thread = createNamingTestThread();
+    $thread = $createNamingTestThread();
 
-    bindFakeAiService(fn (): string => 'AI Generated Name');
+    $bindFakeAiService(fn (): string => 'AI Generated Name');
 
     app(GenerateAiThreadName::class, ['thread' => $thread])->handle();
 
@@ -94,7 +109,7 @@ it('renames a thread using the AI service', function () {
     Event::assertDispatched(AdvisorThreadRenamed::class, fn (AdvisorThreadRenamed $event) => $event->thread->is($thread) && $event->thread->name === $thread->name);
 });
 
-it('saves the name and reports the exception if broadcasting AdvisorThreadRenamed fails', function () {
+it('saves the name and reports the exception if broadcasting AdvisorThreadRenamed fails', function () use ($createNamingTestThread, $bindFakeAiService) {
     asSuperAdmin();
 
     Exceptions::fake();
@@ -105,9 +120,9 @@ it('saves the name and reports the exception if broadcasting AdvisorThreadRename
         throw new Exception('The broadcast connection is down.');
     });
 
-    $thread = createNamingTestThread();
+    $thread = $createNamingTestThread();
 
-    bindFakeAiService(fn (): string => 'AI Generated Name');
+    $bindFakeAiService(fn (): string => 'AI Generated Name');
 
     app(GenerateAiThreadName::class, ['thread' => $thread])->handle();
 
@@ -119,12 +134,12 @@ it('saves the name and reports the exception if broadcasting AdvisorThreadRename
     Exceptions::assertReported(fn (Exception $exception): bool => $exception->getMessage() === 'The broadcast connection is down.');
 });
 
-it('does not rename a thread that has already been renamed by the user', function () {
+it('does not rename a thread that has already been renamed by the user', function () use ($createNamingTestThread) {
     asSuperAdmin();
 
     Event::fake([AdvisorThreadRenamed::class]);
 
-    $thread = createNamingTestThread();
+    $thread = $createNamingTestThread();
     $thread->update([
         'name' => 'My Custom Name',
         'named_by_user_at' => now(),
@@ -140,16 +155,16 @@ it('does not rename a thread that has already been renamed by the user', functio
     Event::assertNotDispatched(AdvisorThreadRenamed::class);
 });
 
-it('does not call the AI service for a thread that was deleted before the job runs', function () {
+it('does not call the AI service for a thread that was deleted before the job runs', function () use ($createNamingTestThread, $bindFakeAiService) {
     asSuperAdmin();
 
     Event::fake([AdvisorThreadRenamed::class]);
 
-    $thread = createNamingTestThread();
+    $thread = $createNamingTestThread();
 
     $wasCalled = false;
 
-    bindFakeAiService(function () use (&$wasCalled): string {
+    $bindFakeAiService(function () use (&$wasCalled): string {
         $wasCalled = true;
 
         return 'AI Generated Name';
@@ -165,14 +180,14 @@ it('does not call the AI service for a thread that was deleted before the job ru
     Event::assertNotDispatched(AdvisorThreadRenamed::class);
 });
 
-it('does not rename a thread when the AI service returns a blank name', function () {
+it('does not rename a thread when the AI service returns a blank name', function () use ($createNamingTestThread, $bindFakeAiService) {
     asSuperAdmin();
 
     Event::fake([AdvisorThreadRenamed::class]);
 
-    $thread = createNamingTestThread();
+    $thread = $createNamingTestThread();
 
-    bindFakeAiService(fn (): string => "  \n  ");
+    $bindFakeAiService(fn (): string => "  \n  ");
 
     app(GenerateAiThreadName::class, ['thread' => $thread])->handle();
 
@@ -186,32 +201,15 @@ it('does not rename a thread when the AI service returns a blank name', function
     Event::assertNotDispatched(AdvisorThreadRenamed::class);
 });
 
-/**
- * @param Closure(): string $complete
- */
-function bindFakeAiService(Closure $complete): void
-{
-    app()->bind(TestAiService::class, fn () => new class ($complete) extends TestAiService {
-        public function __construct(
-            protected Closure $complete,
-        ) {}
-
-        public function complete(string $prompt, string $content, bool $shouldTrack = true): string
-        {
-            return ($this->complete)();
-        }
-    });
-}
-
-it('reports the exception and leaves the thread unnamed when the AI service fails', function () {
+it('reports the exception and leaves the thread unnamed when the AI service fails', function () use ($createNamingTestThread, $bindFakeAiService) {
     asSuperAdmin();
 
     Event::fake([AdvisorThreadRenamed::class]);
     Exceptions::fake();
 
-    $thread = createNamingTestThread();
+    $thread = $createNamingTestThread();
 
-    bindFakeAiService(function (): string {
+    $bindFakeAiService(function (): string {
         throw new Exception('The AI service is down.');
     });
 
@@ -229,14 +227,14 @@ it('reports the exception and leaves the thread unnamed when the AI service fail
     Event::assertNotDispatched(AdvisorThreadRenamed::class);
 });
 
-it('does not rename a thread that got renamed by the user while the AI service was generating a name', function () {
+it('does not rename a thread that got renamed by the user while the AI service was generating a name', function () use ($createNamingTestThread, $bindFakeAiService) {
     asSuperAdmin();
 
     Event::fake([AdvisorThreadRenamed::class]);
 
-    $thread = createNamingTestThread();
+    $thread = $createNamingTestThread();
 
-    bindFakeAiService(function () use ($thread): string {
+    $bindFakeAiService(function () use ($thread): string {
         $thread->update([
             'name' => 'Renamed By User Mid-Flight',
             'named_by_user_at' => now(),
@@ -255,14 +253,14 @@ it('does not rename a thread that got renamed by the user while the AI service w
     Event::assertNotDispatched(AdvisorThreadRenamed::class);
 });
 
-it('does not rename a thread that got deleted while the AI service was generating a name', function () {
+it('does not rename a thread that got deleted while the AI service was generating a name', function () use ($createNamingTestThread, $bindFakeAiService) {
     asSuperAdmin();
 
     Event::fake([AdvisorThreadRenamed::class]);
 
-    $thread = createNamingTestThread();
+    $thread = $createNamingTestThread();
 
-    bindFakeAiService(function () use ($thread): string {
+    $bindFakeAiService(function () use ($thread): string {
         $thread->delete();
 
         return 'AI Generated Name';

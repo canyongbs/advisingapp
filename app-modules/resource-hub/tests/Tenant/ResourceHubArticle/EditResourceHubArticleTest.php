@@ -41,11 +41,12 @@ use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Tests\Tenant\ResourceHubArticle\RequestFactories\EditResourceHubArticleRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
+use function Tests\setEnterpriseAiEnabled;
 
 // TODO: Write EditResourceHubArticle tests
 //test('A successful action on the EditResourceHubArticle page', function () {});
@@ -67,7 +68,7 @@ test('EditResourceHubArticle is gated with proper access control', function () {
         ])
     )->assertForbidden();
 
-    livewire(EditResourceHubArticle::class, [
+    Livewire::test(EditResourceHubArticle::class, [
         'record' => $resourceHubArticle->getRouteKey(),
     ])
         ->assertForbidden();
@@ -106,7 +107,7 @@ test('EditResourceHubArticle is gated with proper feature access control', funct
         ])
     )->assertForbidden();
 
-    livewire(EditResourceHubArticle::class, [
+    Livewire::test(EditResourceHubArticle::class, [
         'record' => $resourceHubArticle->getRouteKey(),
     ])
         ->assertForbidden();
@@ -124,6 +125,20 @@ test('EditResourceHubArticle is gated with proper feature access control', funct
     // TODO Restore testing the edit form
 });
 
+it('hides the `draftWithAi` action while Enterprise AI is disabled', function () {
+    asSuperAdmin();
+
+    $resourceHubArticle = ResourceHubArticle::factory()->create();
+
+    Livewire::test(EditResourceHubArticle::class, ['record' => $resourceHubArticle->getRouteKey()])
+        ->assertSchemaComponentVisible('draft-with-ai');
+
+    setEnterpriseAiEnabled(false);
+
+    Livewire::test(EditResourceHubArticle::class, ['record' => $resourceHubArticle->getRouteKey()])
+        ->assertSchemaComponentHidden('draft-with-ai');
+});
+
 test('EditResourceHubArticle does not allow for duplicate article titles of non-deleted articles case insensitively', function () {
     asSuperAdmin();
 
@@ -135,12 +150,12 @@ test('EditResourceHubArticle does not allow for duplicate article titles of non-
 
     $deletedArticle->delete();
 
-    livewire(EditResourceHubArticle::class, ['record' => $article->getRouteKey()])
+    Livewire::test(EditResourceHubArticle::class, ['record' => $article->getRouteKey()])
         ->fillForm($request1->toArray())
         ->call('save')
         ->assertHasNoFormErrors();
 
-    livewire(EditResourceHubArticle::class, ['record' => $article->getRouteKey()])
+    Livewire::test(EditResourceHubArticle::class, ['record' => $article->getRouteKey()])
         ->fillForm($request2->toArray())
         ->call('save')
         ->assertHasFormErrors(['title' => 'unique']);

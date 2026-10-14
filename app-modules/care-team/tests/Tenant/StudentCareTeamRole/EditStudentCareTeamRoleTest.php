@@ -41,10 +41,10 @@ use AdvisingApp\CareTeam\Tests\Tenant\RequestFactories\EditCareTeamRoleRequestFa
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\CareTeamRoleType;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertEquals;
 use function Tests\asSuperAdmin;
 
@@ -60,7 +60,7 @@ test('EditStudentCareTeamRole is gated with proper access control', function () 
             ])
         )->assertForbidden();
 
-    livewire(EditStudentCareTeamRole::class, [
+    Livewire::test(EditStudentCareTeamRole::class, [
         'record' => $careTeamRole->getRouteKey(),
     ])
         ->assertForbidden();
@@ -75,7 +75,7 @@ test('EditStudentCareTeamRole is gated with proper access control', function () 
             ])
         )->assertSuccessful();
 
-    livewire(EditStudentCareTeamRole::class, [
+    Livewire::test(EditStudentCareTeamRole::class, [
         'record' => $careTeamRole->getRouteKey(),
     ])
         ->assertSuccessful();
@@ -94,7 +94,7 @@ test('A successful action on the EditStudentCareTeamRole page', function () {
 
     $editRequest = EditCareTeamRoleRequestFactory::new()->state(['type' => CareTeamRoleType::Student])->create();
 
-    livewire(EditStudentCareTeamRole::class, [
+    Livewire::test(EditStudentCareTeamRole::class, [
         'record' => $careTeamRole->getRouteKey(),
     ])
         ->set('data', $editRequest)
@@ -111,7 +111,7 @@ test('EditStudentCareTeamRole requires valid data', function (EditCareTeamRoleRe
 
     $editRequest = EditCareTeamRoleRequestFactory::new($data)->create();
 
-    livewire(EditStudentCareTeamRole::class, [
+    Livewire::test(EditStudentCareTeamRole::class, [
         'record' => $careTeamRole->getRouteKey(),
     ])
         ->set('data', $editRequest)

@@ -39,10 +39,10 @@ use AdvisingApp\Authorization\Tests\Tenant\Filament\Pages\Auth\RequestFactories\
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertGuest;
-use function Pest\Livewire\livewire;
 
 it("sets the user's password", function () {
     $user = User::factory()->create(['password' => null]);
@@ -51,7 +51,7 @@ it("sets the user's password", function () {
 
     $request = SetPasswordRequestFactory::new()->create();
 
-    livewire(SetPassword::class)
+    Livewire::test(SetPassword::class)
         ->fillForm($request)
         ->call('save')
         ->assertHasNoFormErrors()
@@ -76,7 +76,7 @@ it('regenerates the remember token when the password is set', function () {
 
     actingAs($user);
 
-    livewire(SetPassword::class)
+    Livewire::test(SetPassword::class)
         ->fillForm(SetPasswordRequestFactory::new()->create())
         ->call('save')
         ->assertHasNoFormErrors();
@@ -94,7 +94,7 @@ it('validates the inputs', function (SetPasswordRequestFactory $data, array $err
 
     $request = SetPasswordRequestFactory::new($data)->create();
 
-    livewire(SetPassword::class)
+    Livewire::test(SetPassword::class)
         ->fillForm($request)
         ->call('save')
         ->assertHasFormErrors($errors)
@@ -131,7 +131,7 @@ it('rate limits repeated attempts', function () {
 
     actingAs($user);
 
-    $component = livewire(SetPassword::class)
+    $component = Livewire::test(SetPassword::class)
         ->fillForm(SetPasswordRequestFactory::new()->state(['password' => null])->create());
 
     $component->call('save')->assertNotNotified();
@@ -150,7 +150,7 @@ describe('redirects', function () {
 
         actingAs($user);
 
-        livewire(SetPassword::class)
+        Livewire::test(SetPassword::class)
             ->assertRedirect();
     });
 
@@ -159,7 +159,7 @@ describe('redirects', function () {
 
         actingAs($user);
 
-        livewire(SetPassword::class)
+        Livewire::test(SetPassword::class)
             ->assertRedirect();
     });
 
@@ -168,7 +168,7 @@ describe('redirects', function () {
 
         actingAs($user);
 
-        livewire(SetPassword::class)
+        Livewire::test(SetPassword::class)
             ->assertOk()
             ->assertNoRedirect();
     });

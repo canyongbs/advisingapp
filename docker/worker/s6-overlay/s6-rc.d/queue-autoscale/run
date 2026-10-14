@@ -1,0 +1,16 @@
+#!/command/with-contenv bash
+
+set -e
+
+if [ ! -f "$WEBUSER_HOME/artisan" ]; then
+  echo "Skipping queue autoscaler because we could not detect a Laravel install..."
+  exec tail -f /dev/null
+fi
+
+cd "$WEBUSER_HOME"
+
+echo "Starting Laravel queue autoscaler..."
+
+# Only the manager gets the higher limit (it holds cluster state and its workers' process handles); the workers it
+# spawns keep the default limit.
+exec php -d memory_limit=768M "$WEBUSER_HOME/artisan" queue:autoscale

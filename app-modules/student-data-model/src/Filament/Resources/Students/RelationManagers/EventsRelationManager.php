@@ -44,7 +44,6 @@ use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
 use AdvisingApp\MeetingCenter\Models\EventAttendee;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use App\Enums\Feature;
-use App\Features\EventRegistrationRequestsFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\Action;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -80,8 +79,7 @@ class EventsRelationManager extends RelationManager
             ])
             ->headerActions([
                 RequestEventRegistrationFormSubmission::make()
-                    ->slideOver()
-                    ->visible(fn (): bool => EventRegistrationRequestsFeature::active()),
+                    ->slideOver(),
             ])
             ->recordActions([
                 ViewEventAttendeeAction::make(),

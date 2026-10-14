@@ -61,6 +61,7 @@ use Livewire\Livewire;
 
 use function Pest\Laravel\{actingAs, assertDatabaseHas, assertDatabaseMissing, assertNotSoftDeleted, assertSoftDeleted};
 use function Tests\asSuperAdmin;
+use function Tests\setEnterpriseAiEnabled;
 
 $setUp = function (
     bool $hasUserConsented = true,
@@ -122,6 +123,22 @@ it('is properly gated with access control', function () {
 
     Livewire::test(InstitutionalAdvisor::class)
         ->assertStatus(200);
+});
+
+it('denies a super admin access while Enterprise AI is disabled', function () {
+    ConsentAgreement::factory()->create([
+        'type' => ConsentAgreementType::AzureOpenAI,
+    ]);
+
+    asSuperAdmin();
+
+    Livewire::test(InstitutionalAdvisor::class)
+        ->assertStatus(200);
+
+    setEnterpriseAiEnabled(false);
+
+    Livewire::test(InstitutionalAdvisor::class)
+        ->assertStatus(403);
 });
 
 it('will show a consent modal if the user has not yet agreed to the terms and conditions of use', function () use ($setUp) {

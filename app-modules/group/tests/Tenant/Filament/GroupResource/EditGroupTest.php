@@ -40,9 +40,9 @@ use AdvisingApp\Group\Filament\Resources\Groups\Pages\EditGroup;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('EditGroup is gated with proper access control', function () {
@@ -73,12 +73,12 @@ test('EditGroup does not allow duplicate group names case insensitively, ignorin
 
     $deletedGroup->delete();
 
-    livewire(EditGroup::class, ['record' => $group->getRouteKey()])
+    Livewire::test(EditGroup::class, ['record' => $group->getRouteKey()])
         ->fillForm(['name' => 'group name'])
         ->call('save')
         ->assertHasNoFormErrors(['name']);
 
-    livewire(EditGroup::class, ['record' => $group->getRouteKey()])
+    Livewire::test(EditGroup::class, ['record' => $group->getRouteKey()])
         ->fillForm(['name' => 'OTHER group'])
         ->call('save')
         ->assertHasFormErrors(['name' => 'unique']);
@@ -95,7 +95,7 @@ test('the group builder does not list archived students', function () {
     $archived = Student::factory()->create();
     $archived->archive();
 
-    livewire(EditGroup::class, ['record' => $group->getRouteKey()])
+    Livewire::test(EditGroup::class, ['record' => $group->getRouteKey()])
         ->assertOk()
         ->assertCanSeeTableRecords($active)
         ->assertCanNotSeeTableRecords([$archived]);

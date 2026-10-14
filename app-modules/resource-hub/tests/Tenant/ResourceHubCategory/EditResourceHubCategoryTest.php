@@ -41,9 +41,9 @@ use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Tests\Tenant\ResourceHubCategory\RequestFactories\EditResourceHubCategoryRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertEquals;
 use function Tests\asSuperAdmin;
 
@@ -66,7 +66,7 @@ test('EditResourceHubCategory is gated with proper access control', function () 
             ])
         )->assertForbidden();
 
-    livewire(EditResourceHubCategory::class, [
+    Livewire::test(EditResourceHubCategory::class, [
         'record' => $resourceHubCategory->getRouteKey(),
     ])
         ->assertForbidden();
@@ -83,7 +83,7 @@ test('EditResourceHubCategory is gated with proper access control', function () 
 
     $request = collect(EditResourceHubCategoryRequestFactory::new()->create());
 
-    livewire(EditResourceHubCategory::class, [
+    Livewire::test(EditResourceHubCategory::class, [
         'record' => $resourceHubCategory->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -114,7 +114,7 @@ test('EditResourceHubCategory is gated with proper feature access control', func
             ])
         )->assertForbidden();
 
-    livewire(EditResourceHubCategory::class, [
+    Livewire::test(EditResourceHubCategory::class, [
         'record' => $resourceHubCategory->getRouteKey(),
     ])
         ->assertForbidden();
@@ -132,7 +132,7 @@ test('EditResourceHubCategory is gated with proper feature access control', func
 
     $request = collect(EditResourceHubCategoryRequestFactory::new()->create());
 
-    livewire(EditResourceHubCategory::class, [
+    Livewire::test(EditResourceHubCategory::class, [
         'record' => $resourceHubCategory->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -153,12 +153,12 @@ test('EditResourceHubCategory does not allow for duplicate names of non-deleted 
 
     $deletedCategory->delete();
 
-    livewire(EditResourceHubCategory::class, ['record' => $category->getRouteKey()])
+    Livewire::test(EditResourceHubCategory::class, ['record' => $category->getRouteKey()])
         ->fillForm($request1->toArray())
         ->call('save')
         ->assertHasNoFormErrors();
 
-    livewire(EditResourceHubCategory::class, ['record' => $category->getRouteKey()])
+    Livewire::test(EditResourceHubCategory::class, ['record' => $category->getRouteKey()])
         ->fillForm($request2->toArray())
         ->call('save')
         ->assertHasFormErrors(['name' => 'unique']);

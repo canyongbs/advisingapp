@@ -58,9 +58,11 @@ use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesRejectEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesRenderingFailureEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesSendEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Listeners\HandleSesSubscriptionEvent;
+use Aws\Sqs\SqsClient;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Mail\Events\MessageSending;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
@@ -69,6 +71,23 @@ class IntegrationAwsSesEventHandlingServiceProvider extends ServiceProvider
     public function register()
     {
         Panel::configureUsing(fn (Panel $panel) => ($panel->getId() !== 'admin') || $panel->plugin(new IntegrationAwsSesEventHandlingPlugin()));
+
+        // The ECS task role is the intended credential source; an explicit key and secret are the fallback.
+        $this->app->bind(SqsClient::class, function (): SqsClient {
+            $config = [
+                'version' => 'latest',
+                'region' => Config::string('services.ses_events_queue.region'),
+            ];
+
+            $key = config('services.ses_events_queue.key');
+            $secret = config('services.ses_events_queue.secret');
+
+            if (filled($key) && filled($secret)) {
+                $config['credentials'] = ['key' => $key, 'secret' => $secret];
+            }
+
+            return new SqsClient($config);
+        });
     }
 
     public function boot(): void

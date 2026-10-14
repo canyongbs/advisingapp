@@ -36,13 +36,16 @@
 
 namespace App\Filament\Resources\Users\RelationManagers;
 
+use App\Enums\Feature;
 use App\Filament\Tables\Columns\IdColumn;
+use App\Models\Scopes\WithoutDisabledFeaturePermissions;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class PermissionsRelationManager extends RelationManager
 {
@@ -66,6 +69,7 @@ class PermissionsRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->tap(new WithoutDisabledFeaturePermissions()))
             ->columns([
                 IdColumn::make(),
                 TextColumn::make('group.name')
@@ -75,7 +79,11 @@ class PermissionsRelationManager extends RelationManager
             ])
             ->filters([
                 SelectFilter::make('group')
-                    ->relationship('group', 'name')
+                    ->relationship(
+                        'group',
+                        'name',
+                        fn (Builder $query) => $query->whereNotIn('name', Feature::getDisabledPermissionGroupNames()),
+                    )
                     ->searchable()
                     ->preload()
                     ->multiple(),

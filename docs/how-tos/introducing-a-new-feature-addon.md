@@ -36,12 +36,35 @@ This guide covers gating features behind addon toggles tied to the account subsc
         {
             return [
                 // ...
-                'addons.exampleFeature' => ['nullable', 'boolean'],
+                'addons.exampleFeature' => ['sometimes', 'boolean'],
             ];
         }
     ```
 
-    Additionally, a cleanup task should be created to make this new field required in the future, in both files. Allowing it to be nullable prevents issues if the app is updated before the external API.
+    Additionally, a cleanup task should be created to make this new field required in the future, in both files. Using `sometimes` lets the field be omitted, which prevents issues if the app is updated before the external API. Do not use `nullable`: the DTO property is a non-nullable `bool`, so a `null` would pass validation and then fail when the DTO is built.
+
+    `app/Console/Commands/CreateTenant.php` should also pass the new feature to the constructor of `LicenseAddonsData` in the `handle()` function:
+
+    ```php
+    use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
+    use App\DataTransferObjects\LicenseManagement\LicenseData;
+    use App\Multitenancy\Actions\CreateTenant as CreateTenantAction;
+
+    public function handle(): int
+    {
+        $tenant = app(CreateTenantAction::class)(
+            // ...
+            licenseData: new LicenseData(
+                // ...
+                addons: new LicenseAddonsData(
+                    // ...
+                    exampleFeature: true,
+                ),
+            ),
+        );
+        // ...
+    }
+    ```
 
 4. Add Feature Toggle to License Settings
 
@@ -115,22 +138,71 @@ This guide covers gating features behind addon toggles tied to the account subsc
         }
     ```
 
+    ### Permissions
+
+    Permissions that belong to a disabled feature are hidden wherever permissions are listed (the role permission matrix and the user / programmatic user permission tables), while existing grants are kept. To hide the feature's permissions, add its permission group names to `getPermissionGroupNames()` in `app/Enums/Feature.php`:
+
+    ```php
+    public function getPermissionGroupNames(): array
+    {
+        return match ($this) {
+            // ...
+            Feature::ExampleFeature => [
+                'Example',
+            ],
+            default => [],
+        };
+    }
+    ```
+
+    Use the group names exactly as they are stored in the `permission_groups` table.
+
+    ### Imports and Exports
+
+    Imports and exports created by a disabled feature's importers and exporters are hidden from the Import/Export page, and their files cannot be downloaded, while existing records are kept. To hide them, add the feature's importer and exporter classes to `getImporterAndExporterClasses()` in `app/Enums/Feature.php`:
+
+    ```php
+    public function getImporterAndExporterClasses(): array
+    {
+        return match ($this) {
+            // ...
+            Feature::ExampleFeature => [
+                ExampleImporter::class,
+                ExampleExporter::class,
+            ],
+            default => [],
+        };
+    }
+    ```
+
 6. Tests
 
     Additionally, access control tests should be modified or created for the affected pages and/or resources (one page in a resource, e.g. the list page, is acceptable; but make sure to separately test relationship managers in other resources).
 
+    Begin by adding a helper function to `tests/Helpers.php`:
+
+    ```php
+        use App\Settings\LicenseSettings;
+
+        function setExampleFeatureEnabled(bool $isEnabled): void
+        {
+            $settings = app(LicenseSettings::class);
+            $settings->data->addons->exampleFeature = $isEnabled;
+            $settings->save();
+        }
+    ```
+
+    Then utilizing it in access control tests:
+
     ```php
     use App\Models\User;
-    use App\Settings\LicenseSettings;
 
     use function Pest\Laravel\actingAs;
     use function Pest\Laravel\get;
+    use function Tests\setExampleFeatureEnabled;
 
     it('is gated with proper access control', function () {
-        $settings = app(LicenseSettings::class);
-
-        $settings->data->addons->exampleFeature = false;
-        $settings->save();
+        setExampleFeatureEnabled(false);
 
         $user = User::factory()->create();
 
@@ -140,8 +212,7 @@ This guide covers gating features behind addon toggles tied to the account subsc
 
         get(ListExamples::getUrl())->assertForbidden();
 
-        $settings->data->addons->exampleFeature = true;
-        $settings->save();
+        setExampleFeatureEnabled(true);
 
         $user->revokePermissionTo('example.view-any');
 
@@ -151,4 +222,32 @@ This guide covers gating features behind addon toggles tied to the account subsc
 
         get(ListExamples::getUrl())->assertSuccessful();
     });
+    ```
+
+    Furthermore, new test cases should be added to `tests/Tenant/DataTransferObjects/LicenseManagement/LicenseAddonsDataTest.php`:
+
+    ```php
+    use App\DataTransferObjects\LicenseManagement\LicenseAddonsData;
+
+    describe('example feature', function () {
+        it('enables `exampleFeature` when the addon is missing', function () {
+            expect(LicenseAddonsData::from(['onlineForms' => true])->exampleFeature)->toBeTrue();
+        });
+
+        it('keeps `exampleFeature` as provided', function (bool $isExampleFeatureEnabled) {
+            expect(LicenseAddonsData::from(['exampleFeature' => $isExampleFeatureEnabled])->exampleFeature)->toBe($isExampleFeatureEnabled);
+        })->with([
+            'disabled' => [false],
+            'enabled' => [true],
+        ]);
+    });
+    ```
+
+    Calls to the constructor of `LicenseAddonsData` in `tests/TestCase.php` in the `createTenant()` function should also be updated with the new feature:
+
+    ```php
+    new LicenseAddonsData(
+        // ...
+        exampleFeature: true,
+    )
     ```

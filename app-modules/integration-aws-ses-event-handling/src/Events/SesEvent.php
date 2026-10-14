@@ -47,5 +47,6 @@ abstract class SesEvent
 
     public function __construct(
         public SesEventData $data,
+        public ?string $snsMessageId = null,
     ) {}
 }

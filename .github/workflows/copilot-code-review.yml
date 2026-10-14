@@ -18,7 +18,7 @@ jobs:
     # The job MUST be named `copilot-setup-steps` or Copilot will not pick it up.
     copilot-setup-steps:
         name: Copilot Code Review Setup
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
 
         permissions:
             contents: read
@@ -32,7 +32,7 @@ jobs:
         steps:
             - name: Setup cache environment
               id: extcache
-              uses: shivammathur/cache-extensions@de3c642a5fce0ef91581a1c9831e229f525196d6 #1.15.1
+              uses: shivammathur/cache-extensions@22e24453af1bf3851994136f122ce065ab828a74 #1.15.2
               with:
                   php-version: '8.4'
                   extensions: gd, gmp, redis, mailparse
@@ -42,8 +42,8 @@ jobs:
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
                   path: ${{ steps.extcache.outputs.dir }}
-                  key: ${{ runner.os }}-phpext-8.4-ext-cache-copilot-v1
-                  restore-keys: ${{ runner.os }}-phpext-8.4
+                  key: ${{ runner.os }}-24.04-phpext-8.4-ext-cache-copilot-v1
+                  restore-keys: ${{ runner.os }}-24.04-phpext-8.4
 
             - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
               with:

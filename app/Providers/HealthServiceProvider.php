@@ -38,6 +38,7 @@ namespace App\Providers;
 
 use AdvisingApp\Authorization\Settings\AzureSsoSettings;
 use App\Health\Checks\AzureCredentialsExpiringCheck;
+use App\Health\Checks\ClusterSafeRedisCheck;
 use CanyonGBS\Common\Health\Checks\OpcacheCachedFilesCheck;
 use CanyonGBS\Common\Health\Checks\OpcacheHitRateCheck;
 use CanyonGBS\Common\Health\Services\OpcacheStatusService;
@@ -51,7 +52,7 @@ use Spatie\Health\Checks\Checks\EnvironmentCheck;
 use Spatie\Health\Checks\Checks\OptimizedAppCheck;
 use Spatie\Health\Checks\Checks\PingCheck;
 use Spatie\Health\Checks\Checks\QueueCheck;
-use Spatie\Health\Checks\Checks\RedisCheck;
+use Spatie\Health\Checks\Checks\ScheduleCheck;
 use Spatie\Health\Facades\Health;
 
 class HealthServiceProvider extends ServiceProvider
@@ -86,8 +87,9 @@ class HealthServiceProvider extends ServiceProvider
                 ->timeout(5)
                 ->unless($local),
             QueueCheck::new()
-                ->failAfterMinutes(3),
-            RedisCheck::new(),
+                ->failAfterMinutes(3)
+                ->useCacheStore('health'),
+            ClusterSafeRedisCheck::new(),
             AzureCredentialsExpiringCheck::new()
                 ->if(function () {
                     $azureSsoSettings = app(AzureSsoSettings::class);
@@ -107,8 +109,9 @@ class HealthServiceProvider extends ServiceProvider
             // OpcacheCachedFilesCheck::new()
             //     ->if(fn () => app(OpcacheStatusService::class)->getStatus() !== false)
             //     ->label('OPcache Cached Files'),
-            // ScheduleCheck::new()
-            //     ->heartbeatMaxAgeInMinutes(2),
+            ScheduleCheck::new()
+                ->heartbeatMaxAgeInMinutes(2)
+                ->useCacheStore('health'),
             // ScheduleMonitorCheck::new(),
         ]);
     }

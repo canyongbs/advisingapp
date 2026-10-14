@@ -39,10 +39,10 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Tests\Tenant\ProspectSource\RequestFactories\EditProspectSourceRequestFactory;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertEquals;
 use function Tests\asSuperAdmin;
 
@@ -59,7 +59,7 @@ test('A successful action on the EditProspectSource page', function () {
 
     $editRequest = EditProspectSourceRequestFactory::new()->create();
 
-    livewire(EditProspectSource::class, [
+    Livewire::test(EditProspectSource::class, [
         'record' => $prospectSource->getRouteKey(),
     ])
         ->assertFormSet([
@@ -77,7 +77,7 @@ test('EditProspectSource requires valid data', function (EditProspectSourceReque
 
     $prospectSource = ProspectSource::factory()->create();
 
-    livewire(EditProspectSource::class, [
+    Livewire::test(EditProspectSource::class, [
         'record' => $prospectSource->getRouteKey(),
     ])
         ->assertFormSet([
@@ -109,7 +109,7 @@ test('EditProspectSource is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    livewire(EditProspectSource::class, [
+    Livewire::test(EditProspectSource::class, [
         'record' => $prospectSource->getRouteKey(),
     ])
         ->assertForbidden();
@@ -126,7 +126,7 @@ test('EditProspectSource is gated with proper access control', function () {
 
     $request = collect(EditProspectSourceRequestFactory::new()->create());
 
-    livewire(EditProspectSource::class, [
+    Livewire::test(EditProspectSource::class, [
         'record' => $prospectSource->getRouteKey(),
     ])
         ->fillForm($request->toArray())

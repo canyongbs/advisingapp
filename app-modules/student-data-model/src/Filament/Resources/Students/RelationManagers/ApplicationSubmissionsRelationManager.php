@@ -40,7 +40,6 @@ use AdvisingApp\Application\Filament\Actions\RequestApplicationSubmission;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use App\Enums\Feature;
-use App\Features\OnlineAdmissionRequestsFeature;
 use App\Filament\Tables\Columns\IdColumn;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
@@ -74,7 +73,7 @@ class ApplicationSubmissionsRelationManager extends RelationManager
                 IdColumn::make(),
                 TextColumn::make('submissible.name')
                     ->searchable()
-                    ->url(fn (ApplicationSubmission $record): string => ApplicationResource::getUrl('edit', ['record' => $record->submissible])),
+                    ->url(fn (ApplicationSubmission $record): string => ApplicationResource::getUrl('view', ['record' => $record->submissible, 'tab' => 'edit'])),
                 TextColumn::make('state')
                     ->badge()
                     ->state(function (ApplicationSubmission $record) {
@@ -94,8 +93,7 @@ class ApplicationSubmissionsRelationManager extends RelationManager
             ])
             ->headerActions([
                 RequestApplicationSubmission::make()
-                    ->slideOver()
-                    ->visible(fn (): bool => OnlineAdmissionRequestsFeature::active()),
+                    ->slideOver(),
             ])
             ->recordActions([
                 ViewAction::make()

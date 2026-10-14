@@ -1,0 +1,61 @@
+name: Tenant Shard Timings
+
+on:
+    schedule:
+        - cron: '0 8 * * *'
+    workflow_dispatch:
+
+permissions: {}
+
+# Keep in sync with the Code Checks workflow.
+env:
+    php-extensions: gd, gmp, redis, mailparse
+    php-extensions-key: ext-cache-20250820
+    php-version: '8.4'
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    update-shard-timings:
+        name: Update Tenant Shard Timings
+        runs-on: ubuntu-24.04
+
+        permissions:
+            contents: read
+
+        env:
+            DB_PORT: 5432
+            DB_HOST: 127.0.0.1
+            DB_USERNAME: root
+            DB_PASSWORD: root
+            DB_DATABASE: testing_landlord
+            REDIS_HOST: 127.0.0.1
+            REDIS_PORT: '7000'
+
+        timeout-minutes: 30
+
+        steps:
+            - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+              with:
+                  fetch-depth: 0
+                  fetch-tags: true
+                  persist-credentials: false
+
+            - uses: ./.github/actions/setup-test-environment # zizmor: ignore[self-repository]
+              with:
+                  php-version: ${{ env.php-version }}
+                  php-extensions: ${{ env.php-extensions }}
+                  php-extensions-key: ${{ env.php-extensions-key }}
+
+            # Same runner type and process count as each Tenant shard in Code Checks, so the timings match how the shards run.
+            - name: Run the Tenant suite and record per-class timings
+              run: vendor/bin/pest --configuration phpunit-ci.xml --parallel --testsuite=Tenant --update-shards
+
+            # Only caches saved from the default branch can be restored by pull requests and the merge queue.
+            - name: Save Tenant shard timings
+              uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+              with:
+                  path: tests/.pest/shards.json
+                  key: tenant-shard-timings-${{ github.run_id }}-${{ github.run_attempt }}

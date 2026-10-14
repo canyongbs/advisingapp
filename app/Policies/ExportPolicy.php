@@ -36,8 +36,10 @@
 
 namespace App\Policies;
 
+use App\Enums\Feature;
 use App\Models\Authenticatable;
 use App\Models\Export;
+use App\Support\FeatureAccessResponse;
 use Illuminate\Auth\Access\Response;
 
 class ExportPolicy
@@ -52,8 +54,12 @@ class ExportPolicy
 
     public function view(Authenticatable $authenticatable, Export $export): Response
     {
+        if (in_array($export->exporter, Feature::getDisabledImporterAndExporterClasses(), true)) {
+            return FeatureAccessResponse::deny();
+        }
+
         return $authenticatable->canOrElse(
-            abilities: 'export_hub.view',
+            abilities: 'export_hub.*.view',
             denyResponse: 'You do not have permission to view this export.'
         );
     }
@@ -69,7 +75,7 @@ class ExportPolicy
     public function update(Authenticatable $authenticatable, Export $export): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'export_hub.update',
+            abilities: 'export_hub.*.update',
             denyResponse: 'You do not have permission to update this export.'
         );
     }
@@ -77,7 +83,7 @@ class ExportPolicy
     public function delete(Authenticatable $authenticatable, Export $export): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'export_hub.delete',
+            abilities: 'export_hub.*.delete',
             denyResponse: 'You do not have permission to delete this export.'
         );
     }
@@ -85,7 +91,7 @@ class ExportPolicy
     public function deleteAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'export_hub.delete',
+            abilities: 'export_hub.*.delete',
             denyResponse: 'You do not have permission to delete any export.'
         );
     }
@@ -93,7 +99,7 @@ class ExportPolicy
     public function restore(Authenticatable $authenticatable, Export $export): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'export_hub.restore',
+            abilities: 'export_hub.*.restore',
             denyResponse: 'You do not have permission to restore this export.'
         );
     }
@@ -101,7 +107,7 @@ class ExportPolicy
     public function restoreAny(Authenticatable $authenticatable): Response
     {
         return $authenticatable->canOrElse(
-            abilities: 'export_hub.restore',
+            abilities: 'export_hub.*.restore',
             denyResponse: 'You do not have permission to restore any export.'
         );
     }

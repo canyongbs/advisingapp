@@ -222,18 +222,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Http/Controllers/CustomerAdvisors/SendAdvisorMessageController.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\Advisors\\\\CloneAiThread\\:\\:middleware\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/Advisors/CloneAiThread.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\Advisors\\\\EmailAiThread\\:\\:middleware\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/Advisors/EmailAiThread.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to an undefined method Filament\\\\Notifications\\\\Notification\\:\\:error\\(\\)\\.$#',
     'identifier' => 'method.notFound',
     'count' => 1,
@@ -241,12 +229,6 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\Advisors\\\\PrepareAiThreadCloning\\:\\:__construct\\(\\) has parameter \\$targetIds with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Jobs/Advisors/PrepareAiThreadCloning.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Jobs\\\\Advisors\\\\PrepareAiThreadCloning\\:\\:generateSingleUserShareJobs\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/src/Jobs/Advisors/PrepareAiThreadCloning.php',
@@ -300,12 +282,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/ai/src/Models/AiThread.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Models\\\\AiThreadFolder\\:\\:defaults\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Models/AiThreadFolder.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$query of class AdvisingApp\\\\Audit\\\\Overrides\\\\BelongsToMany constructor expects Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<Illuminate\\\\Database\\\\Eloquent\\\\Model\\>, Illuminate\\\\Database\\\\Eloquent\\\\Builder\\<TRelatedModel of Illuminate\\\\Database\\\\Eloquent\\\\Model\\> given\\.$#',
     'identifier' => 'argument.type',
     'count' => 1,
@@ -352,12 +328,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/ai/src/Services/TestAiService.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Ai\\\\Settings\\\\AiIntegrationsSettings\\:\\:encrypted\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/ai/src/Settings/AiIntegrationsSettings.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Cannot call method getKey\\(\\) on array\\<int, string\\>\\|Pest\\\\Expectation\\<array\\<int, string\\>\\|string\\>\\|Pest\\\\Expectations\\\\EachExpectation\\<array\\<int, string\\>\\|string\\>\\|Pest\\\\Expectations\\\\HigherOrderExpectation\\<Pest\\\\Expectation\\<array\\<int, string\\>\\|string\\>, array\\<int, string\\>\\|string\\|null\\>\\|Pest\\\\Expectations\\\\OppositeExpectation\\<array\\<int, string\\>\\|string\\>\\|string\\.$#',
@@ -474,25 +444,7 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/application/src/Actions/DuplicateApplication.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Actions\\\\DuplicateApplication\\:\\:replicateFields\\(\\) has parameter \\$stepMap with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Actions/DuplicateApplication.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Actions\\\\DuplicateApplication\\:\\:replicateFields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Actions/DuplicateApplication.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Application\\\\Actions\\\\DuplicateApplication\\:\\:replicateSteps\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Actions/DuplicateApplication.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Actions\\\\DuplicateApplication\\:\\:updateStepContent\\(\\) has parameter \\$fieldMap with no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/application/src/Actions/DuplicateApplication.php',
@@ -528,46 +480,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/application/src/Exports/ApplicationSubmissionExport.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Exports\\\\ApplicationSubmissionExport\\:\\:headings\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Exports/ApplicationSubmissionExport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Exports\\\\ApplicationSubmissionExport\\:\\:map\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Exports/ApplicationSubmissionExport.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\Applications\\\\Actions\\\\ApplicationAdmissionActions\\:\\:get\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Actions/ApplicationAdmissionActions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\Applications\\\\Pages\\\\CreateApplication\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/CreateApplication.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Application\\\\Filament\\\\Resources\\\\Applications\\\\Pages\\\\EditApplication\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/EditApplication.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$name\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/ListApplications.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/ManageApplicationSubmissions.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Application\\\\Livewire\\\\RenderApplication\\:\\:\\$data type has no value type specified in iterable type array\\.$#',
@@ -706,12 +622,6 @@ $ignoreErrors[] = [
     'identifier' => 'argument.type',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/application/tests/Tenant/ApplicationWidgetApiTest.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Avoid assertSee\\(\\) and its alternatives\\: they only prove the text appears somewhere in the rendered output, not that it appears where the test actually expects it, so they can pass even when the feature under test is broken\\. Prefer a more precise assertion \\(e\\.g\\. asserting component/view state, a scoped selector, or the specific structure produced\\)\\. If you are certain you specifically need this assertion, add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noAssertSee\\)\\.$#',
-    'identifier' => 'Common.noAssertSee',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/tests/Tenant/Filament/Resources/Applications/Pages/ManageApplicationWorkflowsTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\InstitutionalAdvisor\\:\\:customAssistants\\(\\) return type has no value type specified in iterable type array\\.$#',
@@ -990,6 +900,12 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/authorization/src/Filament/Pages/Auth/Login.php',
 ];
 $ignoreErrors[] = [
+    'message' => '#^Property name "needsMFA" is not in camelCase\\.$#',
+    'identifier' => 'MeliorStan.propertyNameNotCamelCase',
+    'count' => 1,
+    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Pages/Auth/Login.php',
+];
+$ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Authorization\\\\Filament\\\\Pages\\\\Auth\\\\Login\\:\\:getSsoFormActions\\(\\) return type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -999,12 +915,6 @@ $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$value of function collect expects Illuminate\\\\Contracts\\\\Support\\\\Arrayable\\<\\(int\\|string\\), mixed\\>\\|iterable\\<\\(int\\|string\\), mixed\\>\\|null, string\\|null given\\.$#',
     'identifier' => 'argument.type',
     'count' => 2,
-    'path' => __DIR__ . '/app-modules/authorization/src/Filament/Pages/Auth/Login.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Property name "needsMFA" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.propertyNameNotCamelCase',
-    'count' => 1,
     'path' => __DIR__ . '/app-modules/authorization/src/Filament/Pages/Auth/Login.php',
 ];
 $ignoreErrors[] = [
@@ -1258,12 +1168,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/basic-needs/src/Providers/BasicNeedsServiceProvider.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Variable name "\\$basic_needs_category_id" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.variableNameNotCamelCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/basic-needs/tests/Tenant/BasicNeedsProgram/BasicNeedsProgramTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Faker\\\\Generator\\:\\:catchPhrase\\(\\)\\.$#',
@@ -6264,24 +6168,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/webhook/src/Actions/StoreInboundWebhook.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Parameter name "signingCertURL" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.parameterNameNotCamelCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/webhook/src/DataTransferObjects/SnsMessage.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter name "subscribeURL" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.parameterNameNotCamelCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/webhook/src/DataTransferObjects/SnsMessage.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Parameter name "unsubscribeURL" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.parameterNameNotCamelCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/webhook/src/DataTransferObjects/SnsMessage.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Call to function is_array\\(\\) with string will always evaluate to false\\.$#',
     'identifier' => 'function.impossibleType',
     'count' => 1,
@@ -6432,22 +6318,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app/Filament/Resources/Users/Actions/AssignLicensesBulkAction.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method name "showSSOModal" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.methodNameNotCamelCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Resources/Users/Pages/CreateUser.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Parameter \\#2 \\$state of anonymous function has no typehint\\.$#',
     'identifier' => 'MeliorStan.closureParameterMissingTypehint',
     'count' => 1,
     'path' => __DIR__ . '/app/Filament/Resources/Users/Pages/CreateUser.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method name "showSSOModal" is not in camelCase\\.$#',
-    'identifier' => 'MeliorStan.methodNameNotCamelCase',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Filament/Resources/Users/Pages/EditUser.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Avoid strtolower\\(\\) as it is not multibyte\\-safe\\. Use Laravel\'s Str\\:\\:lower\\(\\) instead, or mb_strtolower\\(\\) if a framework\\-free alternative is required\\. If you are certain you specifically need strtolower\\(\\), add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noStrtolower\\)\\.$#',
@@ -6634,24 +6508,6 @@ $ignoreErrors[] = [
     'identifier' => 'argument.templateType',
     'count' => 1,
     'path' => __DIR__ . '/app/Models/User.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Overrides\\\\LaravelSqsExtended\\\\SqsDiskQueue\\:\\:pop\\(\\) should return Illuminate\\\\Contracts\\\\Queue\\\\Job\\|null but return statement is missing\\.$#',
-    'identifier' => 'return.missing',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Overrides/LaravelSqsExtended/SqsDiskQueue.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method App\\\\Overrides\\\\LaravelSqsExtended\\\\SqsDiskQueue\\:\\:pushRaw\\(\\) has parameter \\$options with no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Overrides/LaravelSqsExtended/SqsDiskQueue.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Negated boolean expression is always false\\.$#',
-    'identifier' => 'booleanNot.alwaysFalse',
-    'count' => 1,
-    'path' => __DIR__ . '/app/Overrides/LaravelSqsExtended/SqsDiskQueue.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Parameter \\#1 \\$app of anonymous function has no typehint\\.$#',

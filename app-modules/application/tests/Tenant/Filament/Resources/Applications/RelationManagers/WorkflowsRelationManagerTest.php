@@ -1,0 +1,526 @@
+<?php
+
+/*
+<COPYRIGHT>
+
+    Copyright © 2016-2026, Canyon GBS Inc. All rights reserved.
+
+    Advising App® is licensed under the Elastic License 2.0. For more details,
+    see https://github.com/canyongbs/advisingapp/blob/main/LICENSE.
+
+    Notice:
+
+    - You may not provide the software to third parties as a hosted or managed
+      service, where the service provides users with access to any substantial set of
+      the features or functionality of the software.
+    - You may not move, change, disable, or circumvent the license key functionality
+      in the software, and you may not remove or obscure any functionality in the
+      software that is protected by the license key.
+    - You may not alter, remove, or obscure any licensing, copyright, or other notices
+      of the licensor in the software. Any use of the licensor’s trademarks is subject
+      to applicable law.
+    - Canyon GBS Inc. respects the intellectual property rights of others and expects the
+      same in return. Canyon GBS® and Advising App® are registered trademarks of
+      Canyon GBS Inc., and we are committed to enforcing and protecting our trademarks
+      vigorously.
+    - The software solution, including services, infrastructure, and code, is offered as a
+      Software as a Service (SaaS) by Canyon GBS Inc.
+    - Use of this software implies agreement to the license terms and conditions as stated
+      in the Elastic License 2.0.
+
+    For more information or inquiries please visit our website at
+    https://www.canyongbs.com or contact us via email at legal@canyongbs.com.
+
+</COPYRIGHT>
+*/
+
+use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
+use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplication;
+use AdvisingApp\Application\Filament\Resources\Applications\RelationManagers\WorkflowsRelationManager;
+use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\Pages\EditWorkflow as ApplicationNestedEditWorkflow;
+use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\WorkflowResource;
+use AdvisingApp\Application\Models\Application;
+use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Workflow\Enums\WorkflowTriggerEvent;
+use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
+use AdvisingApp\Workflow\Models\Workflow;
+use AdvisingApp\Workflow\Models\WorkflowTrigger;
+use App\Models\User;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\Testing\TestAction;
+use Livewire\Features\SupportTesting\Testable;
+use Livewire\Livewire;
+
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\assertSoftDeleted;
+use function Pest\Laravel\get;
+use function Pest\Laravel\seed;
+use function Tests\asSuperAdmin;
+
+beforeEach(function () {
+    seed(ApplicationSubmissionStateSeeder::class);
+});
+
+$testWorkflows = fn (Application $application): Testable => Livewire::test(WorkflowsRelationManager::class, [
+    'ownerRecord' => $application,
+    'pageClass' => ManageApplication::class,
+]);
+
+test('can successfully create a new workflow for an application through manage workflows page', function () use ($testWorkflows) {
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+    $user = User::first();
+    expect(WorkflowTrigger::count())->toBe(0);
+
+    $testWorkflows($application)
+        ->callTableAction('create');
+
+    expect(Workflow::count())->toBe(1);
+    expect(WorkflowTrigger::count())->toBe(1);
+
+    $workflow = Workflow::first();
+    $workflowTrigger = WorkflowTrigger::first();
+
+    expect($workflow->name)->toBe('Application Workflow');
+    expect($workflow->is_enabled)->toBeFalse();
+    expect($workflow->workflow_trigger_id)->toBe($workflowTrigger->id);
+
+    expect($workflowTrigger->type)->toBe(WorkflowTriggerType::EventBased);
+    expect($workflowTrigger->related_type)->toBe($application->getMorphClass());
+    expect($workflowTrigger->related_id)->toBe($application->id);
+    expect($workflowTrigger->created_by_id)->toBe($user->id);
+    expect($workflowTrigger->created_by_type)->toBe($user->getMorphClass());
+});
+
+test('creates multiple workflows for the same application without conflicts', function () use ($testWorkflows) {
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+
+    expect(Workflow::count())->toBe(0);
+
+    $testWorkflows($application)
+        ->callTableAction('create');
+
+    expect(Workflow::count())->toBe(1);
+
+    $testWorkflows($application)
+        ->callTableAction('create');
+
+    expect(Workflow::count())->toBe(2);
+
+    $workflows = Workflow::all();
+    $workflowTriggers = WorkflowTrigger::all();
+
+    foreach ($workflowTriggers as $trigger) {
+        expect($trigger->related_type)->toBe($application->getMorphClass());
+        expect($trigger->related_id)->toBe($application->id);
+    }
+
+    foreach ($workflows as $workflow) {
+        expect($workflow->name)->toBe('Application Workflow');
+        expect($workflow->is_enabled)->toBeFalse();
+    }
+});
+
+test('application workflow creation is gated with proper access control', function () use ($testWorkflows) {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $application = Application::factory()->create();
+
+    actingAs($user);
+
+    $testWorkflows($application)
+        ->assertForbidden();
+
+    expect(Workflow::count())->toBe(0);
+    expect(WorkflowTrigger::count())->toBe(0);
+
+    $user->givePermissionTo('application.view-any');
+    $user->givePermissionTo('application.*.update');
+
+    $testWorkflows($application)
+        ->callTableAction('create');
+
+    expect(Workflow::count())->toBe(1);
+    expect(WorkflowTrigger::count())->toBe(1);
+
+    $workflowTrigger = WorkflowTrigger::first();
+    expect($workflowTrigger->created_by_id)->toBe($user->id);
+    expect($workflowTrigger->related_id)->toBe($application->id);
+});
+
+test('can successfully edit workflow name through edit workflow page', function () {
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+    $oldWorkflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()
+                ->state([
+                    'related_type' => $application->getMorphClass(),
+                    'related_id' => $application->id,
+                    'sub_related_type' => 'application_submission_state',
+                    'sub_related_id' => ApplicationSubmissionState::query()
+                        ->where('classification', ApplicationSubmissionStateClassification::Received)
+                        ->value('id'),
+                    'event' => WorkflowTriggerEvent::Enter,
+                ])
+        )
+        ->create();
+
+    $faker = fake();
+    $newWorkflowName = $faker->sentence(3);
+
+    Livewire::test(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $oldWorkflow->getRouteKey(),
+    ])
+        ->fillForm(['name' => $newWorkflowName])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    $oldWorkflow->refresh();
+    expect($oldWorkflow->name)->toBe($newWorkflowName);
+});
+
+test('can enable workflow through edit workflow page', function () {
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()
+                ->state([
+                    'related_type' => $application->getMorphClass(),
+                    'related_id' => $application->id,
+                    'sub_related_type' => 'application_submission_state',
+                    'sub_related_id' => ApplicationSubmissionState::query()
+                        ->where('classification', ApplicationSubmissionStateClassification::Received)
+                        ->value('id'),
+                    'event' => WorkflowTriggerEvent::Enter,
+                ])
+        )
+        ->state(['is_enabled' => false])
+        ->create();
+
+    Livewire::test(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $workflow->getRouteKey(),
+    ])
+        ->fillForm(['is_enabled' => true])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    $workflow->refresh();
+    expect($workflow->is_enabled)->toBeTrue();
+});
+
+test('can disable workflow through edit workflow page', function () {
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()
+                ->state([
+                    'related_type' => $application->getMorphClass(),
+                    'related_id' => $application->id,
+                    'sub_related_type' => 'application_submission_state',
+                    'sub_related_id' => ApplicationSubmissionState::query()
+                        ->where('classification', ApplicationSubmissionStateClassification::Received)
+                        ->value('id'),
+                    'event' => WorkflowTriggerEvent::Enter,
+                ])
+        )
+        ->state(['is_enabled' => true])
+        ->create();
+
+    Livewire::test(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $workflow->getRouteKey(),
+    ])
+        ->fillForm(['is_enabled' => false])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    $workflow->refresh();
+    expect($workflow->is_enabled)->toBeFalse();
+});
+
+test('validates workflow name is required when editing', function () {
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()
+                ->state([
+                    'related_type' => $application->getMorphClass(),
+                    'related_id' => $application->id,
+                    'sub_related_type' => 'application_submission_state',
+                    'sub_related_id' => ApplicationSubmissionState::query()
+                        ->where('classification', ApplicationSubmissionStateClassification::Received)
+                        ->value('id'),
+                    'event' => WorkflowTriggerEvent::Enter,
+                ])
+        )
+        ->create();
+
+    Livewire::test(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $workflow->getRouteKey(),
+    ])
+        ->fillForm(['name' => ''])
+        ->call('save')
+        ->assertHasFormErrors(['name' => 'required']);
+});
+
+test('validates workflow name has maximum length when editing', function () {
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()
+                ->state([
+                    'related_type' => $application->getMorphClass(),
+                    'related_id' => $application->id,
+                    'sub_related_type' => 'application_submission_state',
+                    'sub_related_id' => ApplicationSubmissionState::query()
+                        ->where('classification', ApplicationSubmissionStateClassification::Received)
+                        ->value('id'),
+                    'event' => WorkflowTriggerEvent::Enter,
+                ])
+        )
+        ->create();
+
+    $longName = str_repeat('a', 256);
+
+    Livewire::test(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $workflow->getRouteKey(),
+    ])
+        ->fillForm(['name' => $longName])
+        ->call('save')
+        ->assertHasFormErrors(['name']);
+});
+
+test('workflow editing succeeds with proper permissions', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $application = Application::factory()->create();
+    $oldWorkflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()
+                ->state([
+                    'related_type' => $application->getMorphClass(),
+                    'related_id' => $application->id,
+                    'sub_related_type' => 'application_submission_state',
+                    'sub_related_id' => ApplicationSubmissionState::query()
+                        ->where('classification', ApplicationSubmissionStateClassification::Received)
+                        ->value('id'),
+                    'event' => WorkflowTriggerEvent::Enter,
+                ])
+        )
+        ->create();
+
+    $user->givePermissionTo('application.view-any');
+    $user->givePermissionTo('application.*.update');
+
+    $faker = fake();
+    $newWorkflowName = $faker->sentence(3);
+
+    actingAs($user);
+
+    Livewire::test(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $oldWorkflow->getRouteKey(),
+    ])
+        ->fillForm(['name' => $newWorkflowName])
+        ->call('save')
+        ->assertHasNoFormErrors();
+
+    $oldWorkflow->refresh();
+    expect($oldWorkflow->name)->toBe($newWorkflowName);
+});
+
+test('workflow deletion succeeds with proper permissions', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $application = Application::factory()->create();
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()
+                ->state([
+                    'related_type' => $application->getMorphClass(),
+                    'related_id' => $application->id,
+                    'sub_related_type' => 'application_submission_state',
+                    'sub_related_id' => ApplicationSubmissionState::query()
+                        ->where('classification', ApplicationSubmissionStateClassification::Received)
+                        ->value('id'),
+                    'event' => WorkflowTriggerEvent::Enter,
+                ])
+        )
+        ->create();
+
+    $user->givePermissionTo('application.view-any');
+    $user->givePermissionTo('application.*.update');
+    $user->givePermissionTo('application.*.delete');
+
+    $triggerId = $workflow->workflow_trigger_id;
+
+    actingAs($user);
+
+    Livewire::test(ApplicationNestedEditWorkflow::class, [
+        'parentRecord' => $application,
+        'record' => $workflow->getRouteKey(),
+    ])
+        ->assertActionExists(DeleteAction::class)
+        ->assertActionEnabled(DeleteAction::class)
+        ->callAction(DeleteAction::class);
+
+    assertSoftDeleted($workflow);
+
+    expect(WorkflowTrigger::find($triggerId))->not->toBeNull();
+});
+
+test('create action persists Stage and Trigger event from form data', function () use ($testWorkflows) {
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+
+    $reviewState = ApplicationSubmissionState::query()
+        ->where('classification', ApplicationSubmissionStateClassification::Review)
+        ->firstOrFail();
+
+    $testWorkflows($application)
+        ->callTableAction('create', data: [
+            'sub_related_id' => $reviewState->id,
+            'event' => WorkflowTriggerEvent::Exit->value,
+        ]);
+
+    $workflowTrigger = WorkflowTrigger::firstOrFail();
+    expect($workflowTrigger->sub_related_type)->toBe($reviewState->getMorphClass());
+    expect($workflowTrigger->sub_related_id)->toBe($reviewState->id);
+    expect($workflowTrigger->event)->toBe(WorkflowTriggerEvent::Exit);
+});
+
+test('create action defaults Stage to first non-archived state when no tab is active', function () use ($testWorkflows) {
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+
+    $firstState = ApplicationSubmissionState::query()
+        // @phpstan-ignore method.notFound
+        ->withoutArchived()
+        ->oldest('id')
+        ->firstOrFail();
+
+    $testWorkflows($application)
+        ->callTableAction('create');
+
+    $workflowTrigger = WorkflowTrigger::firstOrFail();
+    expect($workflowTrigger->sub_related_type)->toBe($firstState->getMorphClass());
+    expect($workflowTrigger->sub_related_id)->toBe($firstState->id);
+    expect($workflowTrigger->event)->toBe(WorkflowTriggerEvent::Enter);
+});
+
+test('tabs render one per non-archived submission state plus All', function () use ($testWorkflows) {
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+
+    $expectedStateIds = ApplicationSubmissionState::query()
+        // @phpstan-ignore method.notFound
+        ->withoutArchived()
+        ->oldest('id')
+        ->pluck('id')
+        ->all();
+
+    $tabs = $testWorkflows($application)
+        ->instance()
+        ->getTabs();
+
+    foreach ($expectedStateIds as $stateId) {
+        expect($tabs)->toHaveKey($stateId);
+    }
+
+    expect($tabs)->toHaveKey('all');
+});
+
+test('manage application workflows page links to nested workflow edit route', function () use ($testWorkflows) {
+    asSuperAdmin();
+
+    $application = Application::factory()->create();
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()->state([
+                'related_type' => $application->getMorphClass(),
+                'related_id' => $application->id,
+                'sub_related_type' => 'application_submission_state',
+                'sub_related_id' => ApplicationSubmissionState::query()
+                    ->where('classification', ApplicationSubmissionStateClassification::Received)
+                    ->value('id'),
+                'event' => WorkflowTriggerEvent::Enter,
+            ])
+        )
+        ->create();
+
+    $nestedEditUrl = WorkflowResource::getUrl('edit', [
+        'application' => $application,
+        'record' => $workflow,
+    ]);
+
+    $testWorkflows($application)
+        ->assertActionHasUrl(TestAction::make('edit')->table($workflow), $nestedEditUrl);
+});
+
+test('nested application workflow edit route is scoped to owner application', function () {
+    asSuperAdmin();
+
+    $ownerApplication = Application::factory()->create();
+    $otherApplication = Application::factory()->create();
+
+    $workflow = Workflow::factory()
+        ->for(
+            WorkflowTrigger::factory()->state([
+                'related_type' => $ownerApplication->getMorphClass(),
+                'related_id' => $ownerApplication->id,
+                'sub_related_type' => 'application_submission_state',
+                'sub_related_id' => ApplicationSubmissionState::query()
+                    ->where('classification', ApplicationSubmissionStateClassification::Received)
+                    ->value('id'),
+                'event' => WorkflowTriggerEvent::Enter,
+            ])
+        )
+        ->create();
+
+    get(WorkflowResource::getUrl('edit', [
+        'application' => $ownerApplication,
+        'record' => $workflow,
+    ]))->assertOk();
+
+    get(WorkflowResource::getUrl('edit', [
+        'application' => $otherApplication,
+        'record' => $workflow,
+    ]))->assertNotFound();
+});
+
+describe('authorization', function () use ($testWorkflows) {
+    it('does not create workflows without the `application.*.update` permission', function () use ($testWorkflows) {
+        $user = User::factory()->licensed(LicenseType::cases())->create();
+        $user->givePermissionTo('application.view-any', 'application.*.view');
+        actingAs($user);
+
+        $application = Application::factory()->create();
+
+        $testWorkflows($application)
+            ->assertTableActionHidden('create')
+            ->call('mountAction', 'create', [], ['table' => true])
+            ->call('callMountedAction');
+
+        expect(Workflow::query()->count())->toBe(0)
+            ->and(WorkflowTrigger::query()->count())->toBe(0);
+    });
+});

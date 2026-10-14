@@ -238,6 +238,9 @@ class AiIntegrationsSettings extends Settings
         return 'ai';
     }
 
+    /**
+     * @return array<int, string>
+     */
     public static function encrypted(): array
     {
         return [

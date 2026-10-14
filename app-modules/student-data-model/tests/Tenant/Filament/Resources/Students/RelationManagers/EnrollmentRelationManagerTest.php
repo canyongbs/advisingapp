@@ -38,8 +38,13 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\EnrollmentsRelationManager;
 use AdvisingApp\StudentDataModel\Models\Enrollment;
 use AdvisingApp\StudentDataModel\Models\Student;
+use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+use App\Features\TermAttributesFeature;
+use Filament\Actions\CreateAction;
+use Filament\Actions\Testing\TestAction;
+use Filament\Actions\ViewAction;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can filter by name search', function (): void {
@@ -58,7 +63,7 @@ it('can filter by name search', function (): void {
         ->has($searchableEnrollment, 'enrollments')
         ->create();
 
-    livewire(EnrollmentsRelationManager::class, [
+    Livewire::test(EnrollmentsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -66,4 +71,70 @@ it('can filter by name search', function (): void {
         ->searchTable('Unique')
         ->assertCanSeeTableRecords([$student->enrollments->where('name', 'Unique Course Name')->first()])
         ->assertCanNotSeeTableRecords([$student->enrollments->where('name', 'Regular Course Name')->first()]);
+});
+
+describe('sis term id', function () {
+    beforeEach(function () {
+        asSuperAdmin();
+
+        $studentConfigurationSettings = app(ManageStudentConfigurationSettings::class);
+        $studentConfigurationSettings->is_enabled = true;
+        $studentConfigurationSettings->save();
+    });
+
+    it('can create an enrollment with a `sis_term_id`', function () {
+        $student = Student::factory()->create();
+
+        Livewire::test(EnrollmentsRelationManager::class, [
+            'ownerRecord' => $student,
+            'pageClass' => ViewStudent::class,
+        ])
+            ->callAction(TestAction::make(CreateAction::class)->table(), [
+                'sis_term_id' => '267',
+            ])
+            ->assertHasNoFormErrors();
+
+        expect($student->enrollments()->sole()->sis_term_id)->toBe('267');
+    });
+
+    it('does not save the `sis_term_id` while `TermAttributesFeature` is inactive', function () {
+        $student = Student::factory()->create();
+
+        TermAttributesFeature::deactivate();
+
+        Livewire::test(EnrollmentsRelationManager::class, [
+            'ownerRecord' => $student,
+            'pageClass' => ViewStudent::class,
+        ])
+            ->callAction(TestAction::make(CreateAction::class)->table(), [
+                'sis_term_id' => '267',
+            ])
+            ->assertHasNoFormErrors();
+
+        expect($student->enrollments()->sole()->sis_term_id)->toBeNull();
+    });
+
+    it('shows the `sis_term_id` when viewing an enrollment', function () {
+        $student = Student::factory()->has(Enrollment::factory(['sis_term_id' => '267']), 'enrollments')->create();
+
+        Livewire::test(EnrollmentsRelationManager::class, [
+            'ownerRecord' => $student,
+            'pageClass' => ViewStudent::class,
+        ])
+            ->mountAction(TestAction::make(ViewAction::class)->table($student->enrollments->sole()))
+            ->assertSchemaComponentVisible('sis_term_id');
+    });
+
+    it('hides the `sis_term_id` when viewing an enrollment while `TermAttributesFeature` is inactive', function () {
+        $student = Student::factory()->has(Enrollment::factory(), 'enrollments')->create();
+
+        TermAttributesFeature::deactivate();
+
+        Livewire::test(EnrollmentsRelationManager::class, [
+            'ownerRecord' => $student,
+            'pageClass' => ViewStudent::class,
+        ])
+            ->mountAction(TestAction::make(ViewAction::class)->table($student->enrollments->sole()))
+            ->assertSchemaComponentHidden('sis_term_id');
+    });
 });

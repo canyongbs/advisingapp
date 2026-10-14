@@ -37,11 +37,13 @@
 namespace AdvisingApp\Engagement\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Engagement\Enums\InboxTab;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Notification\Models\EmailMessageEvent;
 use AdvisingApp\Notification\Models\SmsMessageEvent;
+use App\Enums\Feature;
 use App\Infolists\Components\EngagementBody;
 use App\Models\User;
 use Filament\Infolists\Components\RepeatableEntry;
@@ -53,6 +55,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\HtmlString;
 use Livewire\Attributes\Locked;
 
@@ -67,6 +70,10 @@ class ViewEngagement extends Page
 
     public static function canAccess(): bool
     {
+        if (! Gate::check(Feature::UnifiedInbox->getGateName())) {
+            return false;
+        }
+
         $user = auth()->user();
 
         assert($user instanceof User);
@@ -89,7 +96,7 @@ class ViewEngagement extends Page
     public function getBreadcrumbs(): array
     {
         return [
-            Inbox::getUrl(['tab' => 'sent-items']) => 'Unified Inbox',
+            Inbox::getUrl(['tab' => InboxTab::SentItems->value]) => 'Unified Inbox',
             $this->getTitle(),
         ];
     }
@@ -143,7 +150,7 @@ class ViewEngagement extends Page
                                             ->schema([
                                                 TextEntry::make('type')
                                                     ->state(fn (EmailMessageEvent | SmsMessageEvent $record): string => $record->type->getLabel()),
-                                                TextEntry::make('occured_at')
+                                                TextEntry::make('occurred_at')
                                                     ->dateTime()
                                                     ->state(fn (EmailMessageEvent| SmsMessageEvent $record): string => $record->occurred_at->format('Y-m-d H:i:s')),
                                             ])

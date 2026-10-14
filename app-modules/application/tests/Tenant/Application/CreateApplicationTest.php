@@ -39,9 +39,9 @@ use AdvisingApp\Application\Filament\Resources\Applications\Pages\CreateApplicat
 use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 // TODO: Write CreateApplication tests
 //test('A successful action on the CreateApplication page', function () {});
@@ -58,7 +58,7 @@ test('CreateApplication is gated with proper access control', function () {
             ApplicationResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateApplication::class)
+    Livewire::test(CreateApplication::class)
         ->assertForbidden();
 
     $user->givePermissionTo('application.view-any');
@@ -89,7 +89,7 @@ test('CreateApplication is gated with proper feature access control', function (
     $user->givePermissionTo('application.view-any');
     $user->givePermissionTo('application.create');
 
-    livewire(CreateApplication::class)
+    Livewire::test(CreateApplication::class)
         ->assertForbidden();
 
     $settings->data->addons->onlineAdmissions = true;

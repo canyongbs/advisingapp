@@ -41,9 +41,9 @@ use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use AdvisingApp\ResourceHub\Tests\Tenant\ResourceHubStatus\RequestFactories\EditResourceHubStatusRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertEquals;
 use function Tests\asSuperAdmin;
 
@@ -66,7 +66,7 @@ test('EditResourceHubStatus is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    livewire(EditResourceHubStatus::class, [
+    Livewire::test(EditResourceHubStatus::class, [
         'record' => $resourceHubStatus->getRouteKey(),
     ])
         ->assertForbidden();
@@ -83,7 +83,7 @@ test('EditResourceHubStatus is gated with proper access control', function () {
 
     $request = collect(EditResourceHubStatusRequestFactory::new()->create());
 
-    livewire(EditResourceHubStatus::class, [
+    Livewire::test(EditResourceHubStatus::class, [
         'record' => $resourceHubStatus->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -114,7 +114,7 @@ test('EditResourceHubStatus is gated with proper feature access control', functi
             ])
         )->assertForbidden();
 
-    livewire(EditResourceHubStatus::class, [
+    Livewire::test(EditResourceHubStatus::class, [
         'record' => $resourceHubStatus->getRouteKey(),
     ])
         ->assertForbidden();
@@ -132,7 +132,7 @@ test('EditResourceHubStatus is gated with proper feature access control', functi
 
     $request = collect(EditResourceHubStatusRequestFactory::new()->create());
 
-    livewire(EditResourceHubStatus::class, [
+    Livewire::test(EditResourceHubStatus::class, [
         'record' => $resourceHubStatus->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -153,12 +153,12 @@ test('EditResourceHubStatus does not allow for duplicate names of non-deleted st
 
     $deletedStatus->delete();
 
-    livewire(EditResourceHubStatus::class, ['record' => $status->getRouteKey()])
+    Livewire::test(EditResourceHubStatus::class, ['record' => $status->getRouteKey()])
         ->fillForm($request1->toArray())
         ->call('save')
         ->assertHasNoFormErrors();
 
-    livewire(EditResourceHubStatus::class, ['record' => $status->getRouteKey()])
+    Livewire::test(EditResourceHubStatus::class, ['record' => $status->getRouteKey()])
         ->fillForm($request2->toArray())
         ->call('save')
         ->assertHasFormErrors(['name' => 'unique']);

@@ -39,9 +39,9 @@ namespace AdvisingApp\MeetingCenter\Models;
 use AdvisingApp\MeetingCenter\Database\Factories\PersonalBookingPageFactory;
 use App\Models\BaseModel;
 use App\Models\User;
+use CanyonGBS\Common\Models\Concerns\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**

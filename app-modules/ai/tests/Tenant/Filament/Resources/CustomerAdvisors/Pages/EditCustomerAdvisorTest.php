@@ -42,10 +42,10 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -67,7 +67,7 @@ test('Edit Customer Advisor is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    livewire(EditCustomerAdvisor::class, [
+    Livewire::test(EditCustomerAdvisor::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->assertForbidden();
@@ -101,7 +101,7 @@ test('can edit Customer Advisor', function () {
 
     $request = collect(CustomerAdvisorRequestFactory::new()->create());
 
-    livewire(EditCustomerAdvisor::class, [
+    Livewire::test(EditCustomerAdvisor::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -146,7 +146,7 @@ test('Edit Customer Advisor validates the inputs', function (CustomerAdvisorRequ
 
     $request = CustomerAdvisorRequestFactory::new($data)->create();
 
-    livewire(EditCustomerAdvisor::class, [
+    Livewire::test(EditCustomerAdvisor::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->fillForm($request)
@@ -195,7 +195,7 @@ test('archive action visible when Customer Advisor is not archived', function ()
 
     actingAs($user);
 
-    livewire(EditCustomerAdvisor::class, [
+    Livewire::test(EditCustomerAdvisor::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -223,7 +223,7 @@ test('restore action visible when Customer Advisor is archived', function () {
 
     actingAs($user);
 
-    livewire(EditCustomerAdvisor::class, [
+    Livewire::test(EditCustomerAdvisor::class, [
         'record' => $customerAdvisor->getRouteKey(),
     ])
         ->assertSuccessful()

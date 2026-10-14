@@ -46,10 +46,10 @@ use AdvisingApp\Group\Models\Group;
 use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Database\Eloquent\Model;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertModelExists;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can view the all campaigns in the list page', function () {
@@ -67,7 +67,7 @@ it('can view the all campaigns in the list page', function () {
         ->has(CampaignAction::factory(), 'actions')
         ->create();
 
-    livewire(ListCampaigns::class)
+    Livewire::test(ListCampaigns::class)
         ->set('tableRecordsPerPage', 20)
         ->assertCanSeeTableRecords(Campaign::all())
         ->assertCountTableRecords(6);
@@ -84,7 +84,7 @@ it('can filter campaigns by `My Campaigns`', function () {
 
     $filteredOutCampaigns = Campaign::factory()->count(2)->create();
 
-    livewire(ListCampaigns::class)
+    Livewire::test(ListCampaigns::class)
         ->assertCanSeeTableRecords([
             $expectedCampaign,
             ...$filteredOutCampaigns,
@@ -100,7 +100,7 @@ it('can filter campaigns by `Enabled`', function () {
     $enabledCampaigns = Campaign::factory()->count(2)->enabled()->create();
     $disabledCampaigns = Campaign::factory()->count(2)->disabled()->create();
 
-    livewire(ListCampaigns::class)
+    Livewire::test(ListCampaigns::class)
         ->assertCanSeeTableRecords([
             ...$enabledCampaigns,
             ...$disabledCampaigns,
@@ -116,7 +116,7 @@ it('can filter campaigns by `Disabled`', function () {
     $enabledCampaigns = Campaign::factory()->count(2)->enabled()->create();
     $disabledCampaigns = Campaign::factory()->count(2)->disabled()->create();
 
-    livewire(ListCampaigns::class)
+    Livewire::test(ListCampaigns::class)
         ->assertCanSeeTableRecords([
             ...$enabledCampaigns,
             ...$disabledCampaigns,
@@ -142,7 +142,7 @@ it('can filter campaigns by `Completed`', function () {
         ->has(CampaignAction::factory(), 'actions')
         ->create();
 
-    livewire(ListCampaigns::class)
+    Livewire::test(ListCampaigns::class)
         ->assertCanSeeTableRecords([
             $completeCampaign,
             $partiallyCompleteCampaign,
@@ -172,7 +172,7 @@ it('can filter campaigns by `In Progress`', function () {
         ->has(CampaignAction::factory(), 'actions')
         ->create();
 
-    livewire(ListCampaigns::class)
+    Livewire::test(ListCampaigns::class)
         ->assertCanSeeTableRecords([
             $completeCampaign,
             $partiallyCompleteCampaign,
@@ -196,7 +196,7 @@ it('excludes archived campaigns from the list', function () {
 
     $archivedCampaign->archive();
 
-    livewire(ListCampaigns::class)
+    Livewire::test(ListCampaigns::class)
         ->assertCanSeeTableRecords([$activeCampaign])
         ->assertCanNotSeeTableRecords([$archivedCampaign])
         ->assertCountTableRecords(1);
@@ -224,7 +224,7 @@ it('shows the group name and population as the name column description for a sta
         'segment_id' => $group->getKey(),
     ]);
 
-    livewire(ListCampaigns::class)
+    Livewire::test(ListCampaigns::class)
         ->assertCanSeeTableRecords([$campaign])
         ->assertSee("Everyone ({$memberCount} {$expectedLabel})");
 })->with([
@@ -266,7 +266,7 @@ it('shows the group name and population as the name column description for a dyn
         'segment_id' => $group->getKey(),
     ]);
 
-    livewire(ListCampaigns::class)
+    Livewire::test(ListCampaigns::class)
         ->assertCanSeeTableRecords([$campaign])
         ->assertSee("Everyone (4 {$expectedLabel})");
 })->with([
@@ -291,7 +291,7 @@ it('archives and disables every selected campaign without deleting any', functio
             ->and($record->archived_at)->toBeNull();
     }
 
-    livewire(ListCampaigns::class)
+    Livewire::test(ListCampaigns::class)
         ->selectTableRecords($records->pluck('id')->all())
         ->callAction(TestAction::make('archive')->table()->bulk())
         ->assertNotified();
@@ -312,7 +312,7 @@ it('shows the disable and archive confirmation copy with the selected count', fu
 
     $campaigns = Campaign::factory()->count(2)->create();
 
-    livewire(ListCampaigns::class)
+    Livewire::test(ListCampaigns::class)
         ->mountTableBulkAction('archive', $campaigns->pluck('id')->all())
         ->assertMountedActionModalSee('This action will disable and archive 2 selected campaign(s).');
 });
@@ -322,7 +322,7 @@ it('does not render per-row view, edit, or delete actions', function () {
 
     $campaign = Campaign::factory()->create();
 
-    livewire(ListCampaigns::class)
+    Livewire::test(ListCampaigns::class)
         ->assertCanSeeTableRecords([$campaign])
         ->assertTableActionDoesNotExist('view')
         ->assertTableActionDoesNotExist('edit')
@@ -334,7 +334,7 @@ it('links each row to the campaign view page', function () {
 
     $campaign = Campaign::factory()->create();
 
-    livewire(ListCampaigns::class)
+    Livewire::test(ListCampaigns::class)
         ->assertCanSeeTableRecords([$campaign])
         ->assertSee(CampaignResource::getUrl('view', ['record' => $campaign]));
 });
@@ -347,13 +347,13 @@ it('hides the archive bulk action from users without delete permission', functio
 
     $campaigns = Campaign::factory()->count(2)->create();
 
-    livewire(ListCampaigns::class)
+    Livewire::test(ListCampaigns::class)
         ->assertCanSeeTableRecords($campaigns)
         ->assertTableBulkActionHidden('archive');
 
     $user->givePermissionTo('campaign.*.delete');
 
-    livewire(ListCampaigns::class)
+    Livewire::test(ListCampaigns::class)
         ->assertCanSeeTableRecords($campaigns)
         ->assertTableBulkActionVisible('archive');
 });

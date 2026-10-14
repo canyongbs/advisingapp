@@ -93,6 +93,7 @@ class EditResourceHubArticle extends EditRecord
                                 Actions::make([
                                     DraftResourceHubArticleWithAiAction::make(),
                                 ])
+                                    ->key('draft-with-ai')
                                     ->visible(
                                         auth()->user()->hasLicense(LicenseType::ConversationalAi)
                                     ),

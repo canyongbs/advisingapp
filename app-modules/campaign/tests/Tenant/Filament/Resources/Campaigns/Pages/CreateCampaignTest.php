@@ -52,9 +52,9 @@ use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\ToggleButtons;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 use Spatie\Permission\PermissionRegistrar;
 
@@ -68,7 +68,7 @@ it('clears journey steps when the population group is changed', function (GroupM
     $studentGroup = Group::factory()->student()->create(['user_id' => auth()->id()]);
     $newGroup = Group::factory()->create(['model' => $newPopulationModel, 'user_id' => auth()->id()]);
 
-    livewire(CreateCampaign::class)
+    Livewire::test(CreateCampaign::class)
         ->fillForm([
             'name' => 'Test Campaign',
             'segment_id' => $studentGroup->getKey(),
@@ -103,7 +103,7 @@ it('clears journey steps when the population group is changed', function (GroupM
 ]);
 
 it('requires population group on campaign creation', function () {
-    livewire(CreateCampaign::class)
+    Livewire::test(CreateCampaign::class)
         ->fillForm([
             'name' => 'Test Campaign',
         ])
@@ -114,7 +114,7 @@ it('requires population group on campaign creation', function () {
 });
 
 it('allows the population type to be changed when creating a campaign', function () {
-    livewire(CreateCampaign::class)
+    Livewire::test(CreateCampaign::class)
         ->assertFormFieldEnabled('population_type');
 });
 
@@ -130,7 +130,7 @@ it('only offers the user\'s own population groups by default when they lack the 
     $ownGroup = Group::factory()->student()->create(['user_id' => $user->id]);
     $otherUsersGroup = Group::factory()->student()->create();
 
-    livewire(CreateCampaign::class)
+    Livewire::test(CreateCampaign::class)
         ->assertFormFieldExists(
             'segment_id',
             function (Select $field) use ($ownGroup, $otherUsersGroup) {
@@ -152,7 +152,7 @@ it('hides the All Groups ownership option for users without the group.*.view or 
 
     actingAs($user);
 
-    livewire(CreateCampaign::class)
+    Livewire::test(CreateCampaign::class)
         ->assertFormFieldExists(
             'group_ownership',
             fn (ToggleButtons $field) => ! array_key_exists(GroupOwnership::All->value, $field->getOptions()),
@@ -170,7 +170,7 @@ it('rejects a manually supplied All Groups ownership value for users without the
 
     $otherUsersGroup = Group::factory()->student()->create();
 
-    livewire(CreateCampaign::class)
+    Livewire::test(CreateCampaign::class)
         ->fillForm(['group_ownership' => GroupOwnership::All->value])
         ->assertFormFieldExists(
             'segment_id',
@@ -194,7 +194,7 @@ it('offers every population group of the selected type when the All Groups owner
 
     $otherUsersGroup = Group::factory()->student()->create();
 
-    livewire(CreateCampaign::class)
+    Livewire::test(CreateCampaign::class)
         ->fillForm([
             'population_type' => GroupModel::Student->value,
             'group_ownership' => GroupOwnership::All->value,
@@ -224,7 +224,7 @@ it('offers only the groups belonging to the user\'s department when the My Depar
 
     actingAs($user);
 
-    livewire(CreateCampaign::class)
+    Livewire::test(CreateCampaign::class)
         ->fillForm([
             'population_type' => GroupModel::Student->value,
             'group_ownership' => GroupOwnership::Department->value,
@@ -245,7 +245,7 @@ it('filters the population group options by the selected population type', funct
     $studentGroup = Group::factory()->student()->create(['user_id' => auth()->id()]);
     $prospectGroup = Group::factory()->prospect()->create(['user_id' => auth()->id()]);
 
-    livewire(CreateCampaign::class)
+    Livewire::test(CreateCampaign::class)
         ->fillForm(['population_type' => GroupModel::Prospect->value])
         ->assertFormFieldExists(
             'segment_id',
@@ -270,7 +270,7 @@ it('hides the Population Type toggle and defaults to Prospects for a user only l
 
     $prospectGroup = Group::factory()->prospect()->create(['user_id' => $user->id]);
 
-    livewire(CreateCampaign::class)
+    Livewire::test(CreateCampaign::class)
         ->assertFormFieldHidden('population_type')
         ->assertFormFieldExists(
             'segment_id',
@@ -285,7 +285,7 @@ it('hides the Population Type toggle and defaults to Prospects for a user only l
 it('clears the selected population group when the population type changes', function () {
     $studentGroup = Group::factory()->student()->create(['user_id' => auth()->id()]);
 
-    livewire(CreateCampaign::class)
+    Livewire::test(CreateCampaign::class)
         ->fillForm(['segment_id' => $studentGroup->getKey()])
         ->assertSchemaStateSet(['segment_id' => $studentGroup->getKey()])
         ->fillForm(['population_type' => GroupModel::Prospect->value])
@@ -295,7 +295,7 @@ it('clears the selected population group when the population type changes', func
 it('clears the selected population group when the group ownership changes', function () {
     $studentGroup = Group::factory()->student()->create(['user_id' => auth()->id()]);
 
-    livewire(CreateCampaign::class)
+    Livewire::test(CreateCampaign::class)
         ->fillForm(['segment_id' => $studentGroup->getKey()])
         ->assertSchemaStateSet(['segment_id' => $studentGroup->getKey()])
         ->fillForm(['group_ownership' => GroupOwnership::All->value])

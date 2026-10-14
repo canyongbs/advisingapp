@@ -43,7 +43,6 @@ use App\Listeners\ClearTelnyxStaticProperties;
 use App\Listeners\InformOlympusOfDeploymentEvent;
 use App\Listeners\LoadSettingsDefaults;
 use App\Listeners\SetSentryUser;
-use App\Listeners\SyncScheduleMonitor;
 use App\Multitenancy\Events\NewTenantSetupComplete;
 use App\Multitenancy\Events\NewTenantSetupFailure;
 use App\Multitenancy\Listeners\RemoveSentryTenantTag;
@@ -98,7 +97,6 @@ class EventServiceProvider extends ServiceProvider
             LoadSettingsDefaults::class,
         ],
         NewTenantSetupComplete::class => [
-            SyncScheduleMonitor::class,
             InformOlympusOfDeploymentEvent::class,
         ],
         NewTenantSetupFailure::class => [

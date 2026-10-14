@@ -50,10 +50,10 @@ use AdvisingApp\Task\Models\Task;
 use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Filament\Actions\Testing\TestAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 
 it('renders all students correctly in the retention dashboard', function () {
     $allStudents = Student::factory()->has(
@@ -83,7 +83,7 @@ it('renders all students correctly in the retention dashboard', function () {
         ->count(1)
         ->create();
 
-    livewire(StudentsActionCenterWidget::class)
+    Livewire::test(StudentsActionCenterWidget::class)
         ->assertSuccessful()
         ->assertCanSeeTableRecords(
             $allStudents
@@ -107,7 +107,7 @@ it('exposes the advanced filtering population selector on the retention dashboar
         'user_id' => $user->getKey(),
     ]);
 
-    $component = livewire(RetentionCrmDashboard::class)
+    $component = Livewire::test(RetentionCrmDashboard::class)
         ->callAction(
             TestAction::make('selectSavedGroup')->schemaComponent(schema: 'filtersForm'),
             data: ['groupId' => (string) $group->getKey()],

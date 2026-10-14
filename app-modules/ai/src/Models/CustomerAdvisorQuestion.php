@@ -38,10 +38,10 @@ namespace AdvisingApp\Ai\Models;
 
 use AdvisingApp\Ai\Observers\CustomerAdvisorQuestionObserver;
 use App\Models\BaseModel;
+use CanyonGBS\Common\Models\Concerns\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**

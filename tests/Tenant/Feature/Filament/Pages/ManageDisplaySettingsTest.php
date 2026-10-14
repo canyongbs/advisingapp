@@ -38,10 +38,10 @@ use App\Filament\Pages\ManageDisplaySettings;
 use App\Models\User;
 use App\Settings\DisplaySettings;
 use Filament\Actions\Testing\TestAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 
 it('requires proper permissions to access', function () {
     $user = User::factory()->create();
@@ -63,12 +63,12 @@ it('disables the form without the `settings.*.update` permission', function () {
     $user->givePermissionTo('settings.view-any');
     actingAs($user);
 
-    livewire(ManageDisplaySettings::class)
+    Livewire::test(ManageDisplaySettings::class)
         ->assertFormFieldDisabled('timezone');
 
     $user->givePermissionTo('settings.*.update');
 
-    livewire(ManageDisplaySettings::class)
+    Livewire::test(ManageDisplaySettings::class)
         ->assertFormFieldEnabled('timezone');
 });
 
@@ -78,12 +78,12 @@ it('hides the `save` action without the `settings.*.update` permission', functio
     $user->givePermissionTo('settings.view-any');
     actingAs($user);
 
-    livewire(ManageDisplaySettings::class)
+    Livewire::test(ManageDisplaySettings::class)
         ->assertActionDoesNotExist(TestAction::make('save')->schemaComponent('form-actions', schema: 'content'));
 
     $user->givePermissionTo('settings.*.update');
 
-    livewire(ManageDisplaySettings::class)
+    Livewire::test(ManageDisplaySettings::class)
         ->assertActionVisible(TestAction::make('save')->schemaComponent('form-actions', schema: 'content'));
 });
 
@@ -97,7 +97,7 @@ it('requires proper permissions to update settings', function () {
     $settings->timezone = 'America/Chicago';
     $settings->save();
 
-    livewire(ManageDisplaySettings::class)
+    Livewire::test(ManageDisplaySettings::class)
         ->fillForm([
             'timezone' => 'America/New_York',
         ])
@@ -107,7 +107,7 @@ it('requires proper permissions to update settings', function () {
 
     $user->givePermissionTo('settings.*.update');
 
-    livewire(ManageDisplaySettings::class)
+    Livewire::test(ManageDisplaySettings::class)
         ->fillForm([
             'timezone' => 'America/New_York',
         ])

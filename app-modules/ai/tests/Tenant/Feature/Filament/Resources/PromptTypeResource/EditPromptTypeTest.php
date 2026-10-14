@@ -39,12 +39,12 @@ use AdvisingApp\Ai\Filament\Resources\PromptTypes\PromptTypeResource;
 use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Authorization\Enums\LicenseType;
 use Filament\Actions\DeleteAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertNotNull;
 
 /** @var array<LicenseType> $licenses */
@@ -108,7 +108,7 @@ it('can edit a record', function () use ($licenses, $permissions) {
 
     $record = PromptType::factory()->make();
 
-    livewire(EditPromptType::class, [
+    Livewire::test(EditPromptType::class, [
         'record' => PromptType::factory()->create()->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -133,7 +133,7 @@ it('can delete a record', function () use ($licenses, $permissions) {
 
     assertDatabaseHas(PromptType::class, $record->toArray());
 
-    livewire(EditPromptType::class, [
+    Livewire::test(EditPromptType::class, [
         'record' => $record->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -156,7 +156,7 @@ it('prevents editing a prompt type with a case-insensitively duplicate title', f
     $record = PromptType::factory()->create(['title' => 'First Title']);
     PromptType::factory()->create(['title' => 'Second Title']);
 
-    livewire(EditPromptType::class, [
+    Livewire::test(EditPromptType::class, [
         'record' => $record->getRouteKey(),
     ])
         ->fillForm(['title' => 'second title'])
@@ -173,7 +173,7 @@ it('allows reusing the title of a soft-deleted prompt type', function () use ($l
     $record = PromptType::factory()->create(['title' => 'Active Title']);
     PromptType::factory()->create(['title' => 'Archived Title'])->delete();
 
-    livewire(EditPromptType::class, [
+    Livewire::test(EditPromptType::class, [
         'record' => $record->getRouteKey(),
     ])
         ->fillForm(['title' => 'archived title'])

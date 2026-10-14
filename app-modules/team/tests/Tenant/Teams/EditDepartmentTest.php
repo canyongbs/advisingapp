@@ -43,9 +43,9 @@ use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Actions\AssociateAction;
 use Filament\Forms\Components\Select;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 // Permission Tests
@@ -62,7 +62,7 @@ test('EditDepartment is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    livewire(EditDepartment::class, [
+    Livewire::test(EditDepartment::class, [
         'record' => $department->getRouteKey(),
     ])
         ->assertForbidden();
@@ -81,7 +81,7 @@ test('EditDepartment is gated with proper access control', function () {
     /** @var Department $request */
     $request = Department::factory()->make();
 
-    livewire(EditDepartment::class, [
+    Livewire::test(EditDepartment::class, [
         'record' => $department->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -112,7 +112,7 @@ test('Non Super Admin Users can be added to a department', function () {
             ])
         )->assertSuccessful();
 
-    livewire(UsersRelationManager::class, [
+    Livewire::test(UsersRelationManager::class, [
         'ownerRecord' => $department,
         'pageClass' => EditDepartment::class,
     ])
@@ -143,7 +143,7 @@ test('Super Admin Users cannot be added to a department', function () {
             ])
         )->assertSuccessful();
 
-    livewire(UsersRelationManager::class, [
+    Livewire::test(UsersRelationManager::class, [
         'ownerRecord' => $department,
         'pageClass' => EditDepartment::class,
     ])
@@ -175,7 +175,7 @@ test('Super Admin Users do not show up in UsersRelationManager for Departments s
             ])
         )->assertSuccessful();
 
-    livewire(UsersRelationManager::class, [
+    Livewire::test(UsersRelationManager::class, [
         'ownerRecord' => $department,
         'pageClass' => EditDepartment::class,
     ])
@@ -200,14 +200,14 @@ test('the associate action in the department users relation manager is gated by 
 
     actingAs($user);
 
-    livewire(UsersRelationManager::class, [
+    Livewire::test(UsersRelationManager::class, [
         'ownerRecord' => $department,
         'pageClass' => ViewDepartment::class,
     ])->assertTableActionHidden(AssociateAction::class);
 
     $user->givePermissionTo('department.*.update');
 
-    livewire(UsersRelationManager::class, [
+    Livewire::test(UsersRelationManager::class, [
         'ownerRecord' => $department,
         'pageClass' => ViewDepartment::class,
     ])->assertTableActionVisible(AssociateAction::class);
@@ -220,12 +220,12 @@ test('EditDepartment does not allow for duplicate names of non-deleted departmen
     $department = Department::factory(['name' => 'Test Department'])->create();
     Department::factory(['name' => 'Other Department'])->create();
 
-    livewire(EditDepartment::class, ['record' => $department->getRouteKey()])
+    Livewire::test(EditDepartment::class, ['record' => $department->getRouteKey()])
         ->fillForm(['name' => 'Department'])
         ->call('save')
         ->assertHasNoFormErrors();
 
-    livewire(EditDepartment::class, ['record' => $department->getRouteKey()])
+    Livewire::test(EditDepartment::class, ['record' => $department->getRouteKey()])
         ->fillForm(['name' => 'OTHER Department'])
         ->call('save')
         ->assertHasFormErrors(['name' => 'unique']);

@@ -44,22 +44,23 @@ use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\RestoreBulkAction;
 use Lab404\Impersonate\Services\ImpersonateManager;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertFalse;
 use function PHPUnit\Framework\assertTrue;
 
 use STS\FilamentImpersonate\Actions\Impersonate;
 
 use function Tests\asSuperAdmin;
+use function Tests\setEnterpriseAiEnabled;
 
 it('renders impersonate button for non super admin users when user is super admin', function () {
     asSuperAdmin();
 
     $user = User::factory()->create();
 
-    $component = livewire(ListUsers::class);
+    $component = Livewire::test(ListUsers::class);
 
     $component
         ->assertSuccessful()
@@ -76,7 +77,7 @@ it('does not render impersonate button for super admin users when user is not su
         ->givePermissionTo('user.view-any', 'user.*.view');
     actingAs($user);
 
-    $component = livewire(ListUsers::class);
+    $component = Livewire::test(ListUsers::class);
 
     $component
         ->assertSuccessful()
@@ -92,7 +93,7 @@ it('does not render impersonate button for super admin users at all', function (
     $user = User::factory()->create();
     asSuperAdmin($user);
 
-    $component = livewire(ListUsers::class);
+    $component = Livewire::test(ListUsers::class);
 
     $component
         ->assertSuccessful()
@@ -111,7 +112,7 @@ it('does not render impersonate button for super admin users even if user is als
 
     actingAs($user);
 
-    $component = livewire(ListUsers::class);
+    $component = Livewire::test(ListUsers::class);
 
     $component
         ->assertSuccessful()
@@ -125,7 +126,7 @@ it('allows super admin user to impersonate', function () {
 
     $user = User::factory()->create();
 
-    $component = livewire(ListUsers::class);
+    $component = Livewire::test(ListUsers::class);
 
     $component
         ->assertSuccessful()
@@ -160,7 +161,7 @@ it('hides the bulk delete action from a user without the delete permission', fun
 
     User::factory(2)->create();
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->assertSuccessful()
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 });
@@ -172,7 +173,7 @@ it('shows the bulk delete action to a user with the delete permission', function
 
     User::factory(2)->create();
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->assertSuccessful()
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });
@@ -184,7 +185,7 @@ it('hides the bulk restore action from a user without the restore permission', f
 
     User::factory(2)->create()->each(fn (User $record) => $record->delete());
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->assertSuccessful()
         ->assertTableBulkActionHidden(RestoreBulkAction::class);
 });
@@ -196,7 +197,7 @@ it('shows the bulk restore action to a user with the restore permission', functi
 
     User::factory(2)->create()->each(fn (User $record) => $record->delete());
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->assertSuccessful()
         ->filterTable('trashed', '0')
         ->assertTableBulkActionVisible(RestoreBulkAction::class);
@@ -217,7 +218,7 @@ it('does not allow a user without permission to assign licenses in bulk', functi
 
     $records = User::factory(2)->create()->prepend($user);
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->assertSuccessful()
         ->assertCountTableRecords($records->count())
         ->assertTableBulkActionHidden(AssignLicensesBulkAction::class);
@@ -251,7 +252,7 @@ it('allows a user with permission to assign licenses in bulk', function () {
         $licenseTypes->each(fn ($license) => assertFalse($record->hasLicense($license)));
     });
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->assertSuccessful()
         ->assertCountTableRecords($records->count())
         ->callTableBulkAction(AssignLicensesBulkAction::class, $records, [
@@ -300,7 +301,7 @@ it('can filter users by multiple departments', function () {
         $user->department()->associate($supportDepartment)->save();
     });
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($adminDepartmentGroup->merge($modsDepartmentGroup)->merge($supportDepartmentGroup))
         ->filterTable('department', [$adminDepartment->id, $modDepartment->id])
@@ -334,7 +335,7 @@ it('it filters users based on department', function () {
 
     $unassignedUser = User::factory()->count(2)->create();
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($unassignedUser->merge($userInDepartmentA)->merge($userInDepartmentB))
         ->filterTable('department', [$departmentA->getKey()])
@@ -390,7 +391,7 @@ it('filters users based on roles', function () {
 
     $noRolesUsers = User::factory()->count(2)->create();
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->set('tableRecordsPerPage', 10)
         ->filterTable('roles', [$roleA->getKey()])
         ->assertCanSeeTableRecords(
@@ -449,7 +450,7 @@ it('Filter users based on licenses', function () {
         ->count(3)
         ->create();
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->filterTable('licenses', [LicenseType::RetentionCrm->value])
         ->assertCanSeeTableRecords($usersWithRetentionCrmLicense)
         ->assertCanNotSeeTableRecords($usersWithRecruitmentCrmLicense->merge($usersWithConversationalAiLicense)->merge($usersWithoutLicense))
@@ -488,10 +489,78 @@ it('Filter users based on Created After', function () {
         )
         ->create();
 
-    livewire(ListUsers::class)
+    Livewire::test(ListUsers::class)
         ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($createdAfterUsers->merge($createdBeforeUsers))
         ->filterTable('created_after', ['created_at' => '11/20/2024 23:00:00'])
         ->assertCanSeeTableRecords($createdAfterUsers)
         ->assertCanNotSeeTableRecords($createdBeforeUsers);
+});
+
+describe('enterprise ai', function () {
+    it('hides the `ConversationalAi` license column while Enterprise AI is disabled', function () {
+        asSuperAdmin();
+
+        Livewire::test(ListUsers::class)
+            ->assertTableColumnVisible(LicenseType::ConversationalAi->value . '_enabled');
+
+        setEnterpriseAiEnabled(false);
+
+        Livewire::test(ListUsers::class)
+            ->assertTableColumnHidden(LicenseType::ConversationalAi->value . '_enabled')
+            ->assertTableColumnVisible(LicenseType::RetentionCrm->value . '_enabled');
+    });
+
+    it('excludes the `ConversationalAi` license from the license filter while Enterprise AI is disabled', function () {
+        asSuperAdmin();
+
+        $licenseFilterOptions = fn (): array => Livewire::test(ListUsers::class)
+            ->instance()
+            ->getTable()
+            ->getFilter('licenses')
+            ->getOptions()['Licenses'];
+
+        expect($licenseFilterOptions())->toHaveKey(LicenseType::ConversationalAi->value);
+
+        setEnterpriseAiEnabled(false);
+
+        expect($licenseFilterOptions())->not->toHaveKey(LicenseType::ConversationalAi->value)
+            ->toHaveKeys([LicenseType::RetentionCrm->value, LicenseType::RecruitmentCrm->value]);
+    });
+
+    it('treats users with only a `ConversationalAi` license as having no assigned license while Enterprise AI is disabled', function () {
+        asSuperAdmin();
+
+        $aiOnlyUser = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+        $retentionUser = User::factory()->licensed(LicenseType::RetentionCrm)->create();
+        $unlicensedUser = User::factory()->create();
+
+        Livewire::test(ListUsers::class)
+            ->filterTable('licenses', ['no_assigned_license'])
+            ->assertCanSeeTableRecords([$unlicensedUser])
+            ->assertCanNotSeeTableRecords([$aiOnlyUser, $retentionUser]);
+
+        setEnterpriseAiEnabled(false);
+
+        Livewire::test(ListUsers::class)
+            ->filterTable('licenses', ['no_assigned_license'])
+            ->assertCanSeeTableRecords([$unlicensedUser, $aiOnlyUser])
+            ->assertCanNotSeeTableRecords([$retentionUser]);
+    });
+
+    it('does not filter by the `ConversationalAi` license while Enterprise AI is disabled', function () {
+        asSuperAdmin();
+
+        $aiOnlyUser = User::factory()->licensed(LicenseType::ConversationalAi)->create();
+
+        Livewire::test(ListUsers::class)
+            ->filterTable('licenses', [LicenseType::ConversationalAi->value])
+            ->assertCanSeeTableRecords([$aiOnlyUser]);
+
+        setEnterpriseAiEnabled(false);
+
+        Livewire::test(ListUsers::class)
+            ->filterTable('licenses', [LicenseType::ConversationalAi->value])
+            ->assertCanNotSeeTableRecords([$aiOnlyUser]);
+    });
 });

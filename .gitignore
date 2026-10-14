@@ -49,3 +49,6 @@ storage/framework/lsp-*.php
 /.ai/skills/
 /.ai/guidelines/
 # END canyongbs/common (common:publish)
+
+# Tenant shard timings come from the CI cache (see the Code Checks workflow).
+/tests/.pest/shards.json

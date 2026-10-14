@@ -38,12 +38,12 @@ use AdvisingApp\Ai\Filament\Resources\PromptTypes\Pages\CreatePromptType;
 use AdvisingApp\Ai\Filament\Resources\PromptTypes\PromptTypeResource;
 use AdvisingApp\Ai\Models\PromptType;
 use AdvisingApp\Authorization\Enums\LicenseType;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 
 /** @var array<LicenseType> $licenses */
 $licenses = [
@@ -94,7 +94,7 @@ it('can create a record', function () use ($permissions, $licenses) {
 
     assertDatabaseCount(PromptType::class, 0);
 
-    livewire(CreatePromptType::class)
+    Livewire::test(CreatePromptType::class)
         ->assertSuccessful()
         ->fillForm($record->toArray())
         ->call('create')
@@ -113,7 +113,7 @@ it('prevents creating a prompt type with a case-insensitively duplicate title', 
 
     PromptType::factory()->create(['title' => 'Existing Title']);
 
-    livewire(CreatePromptType::class)
+    Livewire::test(CreatePromptType::class)
         ->fillForm(['title' => 'existing title'])
         ->call('create')
         ->assertHasFormErrors(['title' => 'unique']);
@@ -127,7 +127,7 @@ it('allows reusing the title of a soft-deleted prompt type', function () use ($l
 
     PromptType::factory()->create(['title' => 'Reusable Title'])->delete();
 
-    livewire(CreatePromptType::class)
+    Livewire::test(CreatePromptType::class)
         ->fillForm(['title' => 'reusable title'])
         ->call('create')
         ->assertHasNoFormErrors();

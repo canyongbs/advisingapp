@@ -59,7 +59,7 @@ use Tests\TenantTestCase;
 
 uses(TenantTestCase::class)->in('../tests/Tenant', '../app-modules/*/tests/Tenant');
 uses(LandlordTestCase::class)->in('../tests/Landlord', '../app-modules/*/tests/Landlord');
-uses(TenantMigrationTestCase::class)->in('../tests/TenantMigrationTests.php');
+uses(TenantMigrationTestCase::class)->in('../tests/TenantMigrations');
 
 /*
 |--------------------------------------------------------------------------

@@ -40,6 +40,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Authorization\Models\Role;
 use App\Actions\Paths\ModulePath;
 use App\Models\User;
+use App\Settings\LicenseSettings;
 use Illuminate\Foundation\Testing\TestCase;
 
 use function Pest\Laravel\actingAs;
@@ -55,6 +56,20 @@ function asSuperAdmin(?User $user = null): TestCase
     $superAdmin->assignRole($superAdminRoles);
 
     return actingAs($superAdmin);
+}
+
+function setEnterpriseAiEnabled(bool $isEnabled): void
+{
+    $licenseSettings = app(LicenseSettings::class);
+    $licenseSettings->data->addons->enterpriseAi = $isEnabled;
+    $licenseSettings->save();
+}
+
+function setUnifiedInboxEnabled(bool $isEnabled): void
+{
+    $settings = app(LicenseSettings::class);
+    $settings->data->addons->unifiedInbox = $isEnabled;
+    $settings->save();
 }
 
 function loadFixtureFromModule(string $module, string $file): mixed

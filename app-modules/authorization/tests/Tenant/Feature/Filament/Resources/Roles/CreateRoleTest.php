@@ -36,9 +36,12 @@
 
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\CreateRole;
 use AdvisingApp\Authorization\Models\Role;
+use App\Enums\Feature;
+use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
+use function Tests\setEnterpriseAiEnabled;
 
 test('CreateRole does not allow duplicate role names case insensitively within a guard', function () {
     asSuperAdmin();
@@ -46,14 +49,44 @@ test('CreateRole does not allow duplicate role names case insensitively within a
     Role::factory()->create(['name' => 'Support Team', 'guard_name' => 'web']);
 
     // The same name under a different guard is allowed.
-    livewire(CreateRole::class)
+    Livewire::test(CreateRole::class)
         ->fillForm(['name' => 'support team', 'guard_name' => 'api'])
         ->call('create')
         ->assertHasNoFormErrors();
 
     // A case-insensitive duplicate under the same guard is rejected.
-    livewire(CreateRole::class)
+    Livewire::test(CreateRole::class)
         ->fillForm(['name' => 'SUPPORT team', 'guard_name' => 'web'])
         ->call('create')
         ->assertHasFormErrors(['name' => 'unique']);
+});
+
+describe('enterprise ai', function () {
+    it('hides the Enterprise AI permission groups while Enterprise AI is disabled', function () {
+        asSuperAdmin();
+
+        $getAvailablePermissionGroupNames = function (): array {
+            $availablePermissionGroupNames = [];
+
+            Livewire::test(CreateRole::class)
+                ->fillForm(['guard_name' => 'web'])
+                ->assertFormFieldExists('permissions', function (PermissionsMatrix $field) use (&$availablePermissionGroupNames): bool {
+                    $availablePermissionGroupNames = array_keys($field->getAvailablePermissions());
+
+                    return true;
+                });
+
+            return $availablePermissionGroupNames;
+        };
+
+        expect(array_values(array_intersect($getAvailablePermissionGroupNames(), Feature::EnterpriseAi->getPermissionGroupNames())))
+            ->toEqualCanonicalizing(Feature::EnterpriseAi->getPermissionGroupNames());
+
+        setEnterpriseAiEnabled(false);
+
+        $availablePermissionGroupNames = $getAvailablePermissionGroupNames();
+
+        expect(array_intersect($availablePermissionGroupNames, Feature::EnterpriseAi->getPermissionGroupNames()))->toBeEmpty()
+            ->and($availablePermissionGroupNames)->toContain('User', 'Role');
+    });
 });

@@ -43,17 +43,14 @@ use Laravel\Sanctum\NewAccessToken;
 /**
  * @return array{access_token: NewAccessToken, refresh_token: NewAccessToken}|null
  */
-function refreshCustomerAdvisorTokensFor(Student $student): ?array
-{
+$refreshCustomerAdvisorTokensFor = function (Student $student): ?array {
     $refreshToken = $student->createToken(
         'customer_advisor_refresh_token',
         [TokenAbility::IssueCustomerAdvisorAccessToken],
         now()->addDays(3),
     )->plainTextToken;
-
     $request = Request::create('/', 'POST');
     $request->cookies->set('advising_app_customer_advisor_refresh_token', $refreshToken);
-
     $refresher = new class () {
         use CanRefreshCustomerAdvisorTokens;
 
@@ -67,19 +64,19 @@ function refreshCustomerAdvisorTokensFor(Student $student): ?array
     };
 
     return $refresher->refresh($request);
-}
+};
 
-it('issues new tokens for an active student', function () {
+it('issues new tokens for an active student', function () use ($refreshCustomerAdvisorTokensFor) {
     $student = Student::factory()->create();
 
-    expect(refreshCustomerAdvisorTokensFor($student))->toBeArray();
+    expect($refreshCustomerAdvisorTokensFor($student))->toBeArray();
 });
 
 // The refresh endpoint is not behind the authorization middleware, so without this check an
 // archived student could keep minting access tokens for as long as the cookie lives.
-it('does not refresh tokens for an archived student', function () {
+it('does not refresh tokens for an archived student', function () use ($refreshCustomerAdvisorTokensFor) {
     $student = Student::factory()->create();
     $student->archive();
 
-    expect(refreshCustomerAdvisorTokensFor($student))->toBeNull();
+    expect($refreshCustomerAdvisorTokensFor($student))->toBeNull();
 });

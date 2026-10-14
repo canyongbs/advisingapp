@@ -46,6 +46,7 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\Ev
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\FormSubmissionsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\InteractionsRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\ProgramsRelationManager;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\TermAttributesRelationManager;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\Schemas\StudentProfileInfolist;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
 use Filament\Resources\Pages\ViewRecord;
@@ -72,6 +73,7 @@ class ViewStudent extends ViewRecord
             EducatableRelationManagerTabs::make('relation-manager-tabs', [
                 'programs' => ProgramsRelationManager::class,
                 'enrollments' => EnrollmentsRelationManager::class,
+                'term-attributes' => TermAttributesRelationManager::class,
                 'messages' => EngagementsRelationManager::class,
                 'interactions' => InteractionsRelationManager::class,
                 'files' => EngagementFilesRelationManager::class,

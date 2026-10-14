@@ -37,35 +37,35 @@
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages\ListApplicationSubmissionStates;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('can view list of application submission states', function () {
     asSuperAdmin();
 
-    livewire(ListApplicationSubmissionStates::class)
+    Livewire::test(ListApplicationSubmissionStates::class)
         ->assertSuccessful();
 });
 
 test('states table displays classification column', function () {
     asSuperAdmin();
 
-    livewire(ListApplicationSubmissionStates::class)
+    Livewire::test(ListApplicationSubmissionStates::class)
         ->assertTableColumnExists('classification');
 });
 
 test('states table displays submissions count column', function () {
     asSuperAdmin();
 
-    livewire(ListApplicationSubmissionStates::class)
+    Livewire::test(ListApplicationSubmissionStates::class)
         ->assertTableColumnExists('submissions_count');
 });
 
 test('view action is available on each state record', function () {
     asSuperAdmin();
 
-    livewire(ListApplicationSubmissionStates::class)
+    Livewire::test(ListApplicationSubmissionStates::class)
         ->assertTableActionExists('view');
 });
 
@@ -74,7 +74,7 @@ test('can see all created states in the list', function () {
 
     $states = ApplicationSubmissionState::factory()->count(3)->create();
 
-    livewire(ListApplicationSubmissionStates::class)
+    Livewire::test(ListApplicationSubmissionStates::class)
         ->assertCanSeeTableRecords($states);
 });
 
@@ -88,6 +88,6 @@ test('archived state with no submissions is not visible in the list', function (
     // @phpstan-ignore method.notFound
     $state->archive();
 
-    livewire(ListApplicationSubmissionStates::class)
+    Livewire::test(ListApplicationSubmissionStates::class)
         ->assertCanNotSeeTableRecords([$state]);
 });

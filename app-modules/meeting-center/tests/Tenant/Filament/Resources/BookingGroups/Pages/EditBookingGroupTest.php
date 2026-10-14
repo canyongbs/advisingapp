@@ -43,11 +43,11 @@ use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseMissing;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can render with proper permission', function () {
@@ -83,7 +83,7 @@ it('validates the inputs', function (EditBookingGroupRequestFactory $data, array
     $bookingGroup = BookingGroup::factory()->for($user, 'createdBy')->create();
     $request = EditBookingGroupRequestFactory::new($data)->create();
 
-    livewire(EditBookingGroup::class, [
+    Livewire::test(EditBookingGroup::class, [
         'record' => $bookingGroup->getRouteKey(),
     ])
         ->fillForm($request)
@@ -153,7 +153,7 @@ it('can edit a booking group', function () {
         'meeting_owner_id' => $meetingOwner->id,
     ])->create();
 
-    livewire(EditBookingGroup::class, [
+    Livewire::test(EditBookingGroup::class, [
         'record' => $bookingGroup->getRouteKey(),
     ])
         ->fillForm($request)
@@ -193,7 +193,7 @@ it('tracks last_updated_by user correctly', function () {
         'meeting_owner_id' => $meetingOwner->id,
     ])->create();
 
-    livewire(EditBookingGroup::class, [
+    Livewire::test(EditBookingGroup::class, [
         'record' => $bookingGroup->getRouteKey(),
     ])
         ->fillForm($request)
@@ -224,7 +224,7 @@ it('blocks save when meeting owner is no longer in selected users or departments
         'meeting_owner_id' => $meetingOwner->id,
     ])->create();
 
-    livewire(EditBookingGroup::class, [
+    Livewire::test(EditBookingGroup::class, [
         'record' => $bookingGroup->getRouteKey(),
     ])
         ->fillForm($request)
@@ -248,7 +248,7 @@ it('validates meeting owner must have a connected calendar', function () {
         'meeting_owner_id' => $meetingOwner->id,
     ])->create();
 
-    livewire(EditBookingGroup::class, [
+    Livewire::test(EditBookingGroup::class, [
         'record' => $bookingGroup->getRouteKey(),
     ])
         ->fillForm($request)
@@ -267,7 +267,7 @@ it('users UserSelect does not show admin users in options by default on EditBook
         ->for(User::factory(), 'createdBy')
         ->create();
 
-    livewire(EditBookingGroup::class, [
+    Livewire::test(EditBookingGroup::class, [
         'record' => $bookingGroup->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -289,7 +289,7 @@ it('users UserSelect shows all users when filter_admins_from_selection config is
         ->for(User::factory(), 'createdBy')
         ->create();
 
-    livewire(EditBookingGroup::class, [
+    Livewire::test(EditBookingGroup::class, [
         'record' => $bookingGroup->getRouteKey(),
     ])
         ->assertSuccessful()

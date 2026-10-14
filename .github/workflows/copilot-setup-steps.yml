@@ -19,7 +19,7 @@ jobs:
     # The job MUST be named `copilot-setup-steps` or Copilot will not pick it up.
     copilot-setup-steps:
         name: Copilot Setup Steps
-        runs-on: ubuntu-22.04
+        runs-on: ubuntu-24.04
 
         permissions:
             contents: read
@@ -36,14 +36,9 @@ jobs:
             DB_PASSWORD: root
             DB_DATABASE: testing_landlord
             REDIS_HOST: 127.0.0.1
+            REDIS_PORT: '7000'
 
         services:
-            cache:
-                image: redis:7.4.11@sha256:91d0f7e8c748ec7a4c2b4fb2c4f84edab794dd91d01e095e38dc906db9d684ab
-                ports:
-                    - 6379:6379
-                options: --health-cmd="redis-cli ping" --health-interval=10s --health-timeout=5s --health-retries=3
-
             postgres:
                 image: postgres:15@sha256:6eb0add3b77c081df18aa518ce43df58fdcc40f2e6d868a6fd08038dc7acd425
                 ports:
@@ -59,6 +54,27 @@ jobs:
                     --health-retries 5
 
         steps:
+            # A real 3-master cluster (ports 7000-7002) matching the cluster-mode ElastiCache Serverless used in staging and production.
+            - name: Start Redis (3-master cluster)
+              run: |
+                  docker run -d --name redis --network host \
+                    redis:7.4.11@sha256:91d0f7e8c748ec7a4c2b4fb2c4f84edab794dd91d01e095e38dc906db9d684ab \
+                    sh -c '
+                      for port in 7000 7001 7002; do
+                        redis-server --daemonize yes --port "$port" --appendonly no --save "" \
+                          --cluster-enabled yes --cluster-config-file "nodes-$port.conf" --cluster-node-timeout 5000
+                      done
+                      for port in 7000 7001 7002; do
+                        until redis-cli -p "$port" ping | grep -q PONG; do sleep 1; done
+                      done
+                      redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 --cluster-replicas 0 --cluster-yes
+                      tail -f /dev/null
+                    '
+
+                  for port in 7000 7001 7002; do
+                    until docker exec redis redis-cli -p "$port" cluster info | grep -q 'cluster_state:ok'; do sleep 1; done
+                  done
+
             - name: Create tenant database
               run: psql -h 127.0.0.1 -d testing_landlord -U root -c 'CREATE DATABASE testing_tenant;'
               env:
@@ -66,7 +82,7 @@ jobs:
 
             - name: Setup cache environment
               id: extcache
-              uses: shivammathur/cache-extensions@de3c642a5fce0ef91581a1c9831e229f525196d6 #1.15.1
+              uses: shivammathur/cache-extensions@22e24453af1bf3851994136f122ce065ab828a74 #1.15.2
               with:
                   php-version: ${{ env.php-version }}
                   extensions: ${{ env.php-extensions }}
@@ -76,8 +92,8 @@ jobs:
               uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
               with:
                   path: ${{ steps.extcache.outputs.dir }}
-                  key: ${{ runner.os }}-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
-                  restore-keys: ${{ runner.os }}-phpext-${{ env.php-version }}
+                  key: ${{ runner.os }}-24.04-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
+                  restore-keys: ${{ runner.os }}-24.04-phpext-${{ env.php-version }}
 
             - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
               with:

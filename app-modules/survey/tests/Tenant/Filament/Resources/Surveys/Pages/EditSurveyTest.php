@@ -37,9 +37,9 @@
 use AdvisingApp\Survey\Filament\Resources\Surveys\Pages\EditSurvey;
 use AdvisingApp\Survey\Models\Survey;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 beforeEach(function () {
@@ -53,7 +53,7 @@ beforeEach(function () {
 it('can update a survey', function () {
     $survey = Survey::factory()->create(['name' => 'Original Name']);
 
-    livewire(EditSurvey::class, ['record' => $survey->id])
+    Livewire::test(EditSurvey::class, ['record' => $survey->id])
         ->fillForm(['name' => 'Updated Name'])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -67,7 +67,7 @@ it('can update a survey', function () {
 it('allows saving a survey without changing its own name', function () {
     $survey = Survey::factory()->create(['name' => 'Keep Name']);
 
-    livewire(EditSurvey::class, ['record' => $survey->id])
+    Livewire::test(EditSurvey::class, ['record' => $survey->id])
         ->fillForm(['name' => 'keep name'])
         ->call('save')
         ->assertHasNoFormErrors();
@@ -77,7 +77,7 @@ it('prevents renaming a survey to a case-insensitive duplicate', function () {
     $survey = Survey::factory()->create(['name' => 'First Survey']);
     Survey::factory()->create(['name' => 'Second Survey']);
 
-    livewire(EditSurvey::class, ['record' => $survey->id])
+    Livewire::test(EditSurvey::class, ['record' => $survey->id])
         ->fillForm(['name' => 'second survey'])
         ->call('save')
         ->assertHasFormErrors(['name' => 'unique']);
@@ -87,7 +87,7 @@ it('allows renaming a survey to the name of a soft-deleted survey', function () 
     $survey = Survey::factory()->create(['name' => 'Active Survey']);
     Survey::factory()->create(['name' => 'Archived Survey'])->delete();
 
-    livewire(EditSurvey::class, ['record' => $survey->id])
+    Livewire::test(EditSurvey::class, ['record' => $survey->id])
         ->fillForm(['name' => 'archived survey'])
         ->call('save')
         ->assertHasNoFormErrors();

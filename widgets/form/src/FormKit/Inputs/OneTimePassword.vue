@@ -32,7 +32,7 @@
 </COPYRIGHT>
 -->
 <script setup>
-    import { ref } from 'vue';
+    import { defineProps, ref } from 'vue';
 
     const props = defineProps({
         context: Object,

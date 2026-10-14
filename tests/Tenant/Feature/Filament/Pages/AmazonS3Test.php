@@ -38,10 +38,10 @@ use App\Filament\Pages\AmazonS3;
 use App\Models\Tenant;
 use App\Models\User;
 use App\Multitenancy\DataTransferObjects\TenantConfig;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('prevents access to the Amazon S3 Settings when you do not have the necessary permissions', function () {
@@ -73,7 +73,7 @@ it('renders the correct Amazon S3 settings for the Tenant', function () {
     /** @var TenantConfig $config */
     $config = $tenant->config;
 
-    livewire(AmazonS3::class)
+    Livewire::test(AmazonS3::class)
         ->assertFormSet([
             's3.key' => $config->s3Filesystem->key,
             's3.secret' => $config->s3Filesystem->secret,
@@ -104,7 +104,7 @@ it('correctly edits the Amazon S3 settings for the Tenant', function () {
     /** @var Tenant $tenant */
     $tenant = Tenant::current();
 
-    livewire(AmazonS3::class)
+    Livewire::test(AmazonS3::class)
         ->fillForm([
             's3.key' => 'new-key',
             's3.secret' => 'new-secret',

@@ -40,9 +40,9 @@ use AdvisingApp\Interaction\Filament\Resources\InteractionRelations\Pages\EditIn
 use AdvisingApp\Interaction\Models\Interaction;
 use AdvisingApp\Interaction\Models\InteractionRelation;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('EditInteractionRelation is gated with proper access control', function () {
@@ -71,6 +71,6 @@ test('it cannot delete instances used by an interaction', function () {
 
     Interaction::factory()->for($relation, 'relation')->create();
 
-    livewire(EditInteractionRelation::class, ['record' => $relation->id])
+    Livewire::test(EditInteractionRelation::class, ['record' => $relation->id])
         ->assertActionHidden('delete');
 });

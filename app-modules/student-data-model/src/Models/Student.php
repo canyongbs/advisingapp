@@ -300,6 +300,14 @@ class Student extends BaseAuthenticatable implements Auditable, Subscribable, Ed
     }
 
     /**
+     * @return HasMany<StudentTermAttribute, $this>
+     */
+    public function termAttributes(): HasMany
+    {
+        return $this->hasMany(StudentTermAttribute::class, 'sisid', 'sisid');
+    }
+
+    /**
      * @return HasMany<Hold, $this>
      */
     public function holds(): HasMany

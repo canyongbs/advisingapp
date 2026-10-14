@@ -43,8 +43,7 @@ use AdvisingApp\StudentDataModel\Models\SmsOptOutPhoneNumber;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Carbon\Carbon;
 use Filament\Tables\Columns\TextColumn;
-
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('it returns deliverability data only for students created within the given date range', function () {
     $startDate = now()->subDays(10);
@@ -84,7 +83,7 @@ it('it returns deliverability data only for students created within the given da
         'endDate' => $endDate->toDateString(),
     ];
 
-    livewire(StudentDeliverableTable::class, [
+    Livewire::test(StudentDeliverableTable::class, [
         'cacheTag' => 'report-student-deliverability',
         'pageFilters' => $filters,
     ])
@@ -128,14 +127,14 @@ it('it returns deliverability data only for students based on group filters', fu
         'populationGroup' => $group->getKey(),
     ];
 
-    livewire(StudentDeliverableTable::class, [
+    Livewire::test(StudentDeliverableTable::class, [
         'cacheTag' => 'report-student-deliverability',
         'pageFilters' => $filters,
     ])
         ->assertCanSeeTableRecords($studentWithJoeName)
         ->assertCanNotSeeTableRecords($studentWithDoeName);
 
-    livewire(StudentDeliverableTable::class, [
+    Livewire::test(StudentDeliverableTable::class, [
         'cacheTag' => 'report-student-deliverability',
         'filters' => [],
     ])
@@ -157,12 +156,12 @@ it('can filter table based on email bounce status', function () {
         ->count(2)
         ->create();
 
-    livewire(StudentDeliverableTable::class, [
+    Livewire::test(StudentDeliverableTable::class, [
         'cacheTag' => 'report-student-deliverability',
     ])
         ->assertCanSeeTableRecords($healthyStudents->merge($unHealthyEmailsStudents));
 
-    livewire(StudentDeliverableTable::class, [
+    Livewire::test(StudentDeliverableTable::class, [
         'cacheTag' => 'report-student-deliverability',
     ])
         ->filterTable('email_status', 'unhealthy')
@@ -188,12 +187,12 @@ it('can filter table based on phone sms opt-out status', function () {
         ->count(2)
         ->create();
 
-    livewire(StudentDeliverableTable::class, [
+    Livewire::test(StudentDeliverableTable::class, [
         'cacheTag' => 'report-student-deliverability',
     ])
         ->assertCanSeeTableRecords($healthyStudents->merge($unHealthyPhoneStudents));
 
-    livewire(StudentDeliverableTable::class, [
+    Livewire::test(StudentDeliverableTable::class, [
         'cacheTag' => 'report-student-deliverability',
     ])
         ->filterTable('phone_status', 'unhealthy')
@@ -209,7 +208,7 @@ it('does not list archived students', function () {
     $archived = Student::factory()->create();
     $archived->archive();
 
-    livewire(StudentDeliverableTable::class, [
+    Livewire::test(StudentDeliverableTable::class, [
         'cacheTag' => 'report-student-deliverability',
         'pageFilters' => [],
     ])
@@ -225,7 +224,7 @@ it('lists a student archived after the reported period without linking to them',
     $archived = Student::factory()->create(['created_at_source' => '2026-03-10']);
     $archived->forceFill(['archived_at' => Carbon::parse('2026-09-15')])->save();
 
-    livewire(StudentDeliverableTable::class, [
+    Livewire::test(StudentDeliverableTable::class, [
         'cacheTag' => 'report-student-deliverability',
         'pageFilters' => [
             'startDate' => '2026-03-01',

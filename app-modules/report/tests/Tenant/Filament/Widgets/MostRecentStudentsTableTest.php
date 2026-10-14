@@ -39,9 +39,9 @@ use App\Models\User;
 use Carbon\Carbon;
 use Filament\Actions\ExportAction;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 it('displays only students added within the selected date range', function () {
     $startDate = now()->subDays(10);
@@ -64,7 +64,7 @@ it('displays only students added within the selected date range', function () {
         'endDate' => $endDate->toDateString(),
     ];
 
-    livewire(MostRecentStudentsTable::class, [
+    Livewire::test(MostRecentStudentsTable::class, [
         'cacheTag' => 'report-students',
         'pageFilters' => $filters,
     ])
@@ -76,7 +76,7 @@ it('displays only students added within the selected date range', function () {
 });
 
 it('has table an export action', function () {
-    livewire(MostRecentStudentsTable::class, [
+    Livewire::test(MostRecentStudentsTable::class, [
         'cacheTag' => 'report-students',
         'filters' => [],
     ])->assertTableActionExists(ExportAction::class);
@@ -91,7 +91,7 @@ it('can start an export, sending a notification', function () {
 
     $students = Student::factory()->count($count)->create();
 
-    livewire(MostRecentStudentsTable::class, [
+    Livewire::test(MostRecentStudentsTable::class, [
         'cacheTag' => 'report-students',
         'filters' => [],
     ])
@@ -106,7 +106,7 @@ it('does not list archived students', function () {
     $archived = Student::factory()->create(['created_at_source' => $createdAt]);
     $archived->archive();
 
-    livewire(MostRecentStudentsTable::class, [
+    Livewire::test(MostRecentStudentsTable::class, [
         'cacheTag' => 'report-students',
         'pageFilters' => [
             'startDate' => now()->subDays(10)->toDateString(),
@@ -123,7 +123,7 @@ it('lists a student archived after the reported period', function () {
     $student = Student::factory()->create(['created_at_source' => '2026-03-10']);
     $student->forceFill(['archived_at' => Carbon::parse('2026-09-15')])->save();
 
-    livewire(MostRecentStudentsTable::class, [
+    Livewire::test(MostRecentStudentsTable::class, [
         'cacheTag' => 'report-students',
         'pageFilters' => [
             'startDate' => '2026-03-01',

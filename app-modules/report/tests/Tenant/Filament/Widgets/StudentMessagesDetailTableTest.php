@@ -51,9 +51,9 @@ use Filament\Tables\Filters\SelectFilter;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 it('displays properly with no filters', function () {
     $student = Student::factory()->create();
@@ -71,7 +71,7 @@ it('displays properly with no filters', function () {
     $holisticEngagementOutbound = HolisticEngagement::where('record_id', $engagement->id)->where('record_type', new Engagement()->getMorphClass())->first();
     $holisticEngagementInbound = HolisticEngagement::where('record_id', $engagementResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
 
-    livewire(StudentMessagesDetailTable::class, [
+    Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
         'filters' => [],
     ])
@@ -115,7 +115,7 @@ it('displays engagements and responses within the given date range', function ()
         'endDate' => $endDate->toDateString(),
     ];
 
-    livewire(StudentMessagesDetailTable::class, [
+    Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
         'pageFilters' => $filters,
     ])
@@ -172,7 +172,7 @@ it('displays engagements and responses based on group filters', function () {
         'populationGroup' => $group->getKey(),
     ];
 
-    livewire(StudentMessagesDetailTable::class, [
+    Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
         'pageFilters' => $filters,
     ])
@@ -183,7 +183,7 @@ it('displays engagements and responses based on group filters', function () {
         ->assertCanNotSeeTableRecords(collect([$holisticEngagementDoe]));
 
     // Without filter
-    livewire(StudentMessagesDetailTable::class, [
+    Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
         'filters' => [],
     ])
@@ -210,7 +210,7 @@ it('ensures direction is set properly for engagements and responses', function (
     $holisticEngagementOutbound = HolisticEngagement::where('record_id', $engagement->id)->where('record_type', new Engagement()->getMorphClass())->first();
     $holisticEngagementInbound = HolisticEngagement::where('record_id', $engagementResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
 
-    livewire(StudentMessagesDetailTable::class, [
+    Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
         'filters' => [],
     ])
@@ -234,7 +234,7 @@ it('ensures status is set properly for engagements and responses', function () {
     $holisticEngagementOutbound = HolisticEngagement::where('record_id', $engagement->id)->where('record_type', new Engagement()->getMorphClass())->first();
     $holisticEngagementInbound = HolisticEngagement::where('record_id', $engagementResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
 
-    livewire(StudentMessagesDetailTable::class, [
+    Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
         'filters' => [],
     ])
@@ -264,7 +264,7 @@ it('ensures type is formatted properly for engagements and responses', function 
     $holisticSmsEngagement = HolisticEngagement::where('record_id', $smsEngagement->id)->where('record_type', new Engagement()->getMorphClass())->first();
     $holisticSmsResponse = HolisticEngagement::where('record_id', $smsResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
 
-    livewire(StudentMessagesDetailTable::class, [
+    Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
         'filters' => [],
     ])
@@ -291,7 +291,7 @@ it('ensures sent_by is properly rendered in the table', function () {
     $holisticEngagementOutbound = HolisticEngagement::where('record_id', $engagement->id)->where('record_type', new Engagement()->getMorphClass())->first();
     $holisticEngagementInbound = HolisticEngagement::where('record_id', $engagementResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
 
-    livewire(StudentMessagesDetailTable::class, [
+    Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
         'filters' => [],
     ])
@@ -315,7 +315,7 @@ it('ensures sent_to is properly rendered in the table', function () {
     $holisticEngagementOutbound = HolisticEngagement::where('record_id', $engagement->id)->where('record_type', new Engagement()->getMorphClass())->first();
     $holisticEngagementInbound = HolisticEngagement::where('record_id', $engagementResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
 
-    livewire(StudentMessagesDetailTable::class, [
+    Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
         'filters' => [],
     ])
@@ -341,7 +341,7 @@ it('ensures type is properly rendered in the table', function () {
     $holisticEngagementOutbound = HolisticEngagement::where('record_id', $engagement->id)->where('record_type', new Engagement()->getMorphClass())->first();
     $holisticEngagementInbound = HolisticEngagement::where('record_id', $engagementResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
 
-    livewire(StudentMessagesDetailTable::class, [
+    Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
         'filters' => [],
     ])
@@ -381,7 +381,7 @@ it('ensures details are properly rendered in the table', function () {
     $holisticResponseEmail = HolisticEngagement::where('record_id', $responseEmail->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
     $holisticResponseSms = HolisticEngagement::where('record_id', $responseSms->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
 
-    livewire(StudentMessagesDetailTable::class, [
+    Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
         'filters' => [],
     ])
@@ -418,7 +418,7 @@ it('ensures campaign is properly rendered in the table', function () {
     $holisticEngagementWithoutCampaign = HolisticEngagement::where('record_id', $engagementWithoutCampaign->id)->where('record_type', new Engagement()->getMorphClass())->first();
     $holisticEngagementResponse = HolisticEngagement::where('record_id', $engagementResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
 
-    livewire(StudentMessagesDetailTable::class, [
+    Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
         'filters' => [],
     ])
@@ -444,7 +444,7 @@ it('filters by direction properly', function () {
     $holisticEngagementInbound = HolisticEngagement::where('record_id', $engagementResponse->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
 
     // Filter by outbound
-    livewire(StudentMessagesDetailTable::class, [
+    Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
         'filters' => [],
     ])
@@ -453,7 +453,7 @@ it('filters by direction properly', function () {
         ->assertCanNotSeeTableRecords(collect([$holisticEngagementInbound]));
 
     // Filter by inbound
-    livewire(StudentMessagesDetailTable::class, [
+    Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
         'filters' => [],
     ])
@@ -463,7 +463,7 @@ it('filters by direction properly', function () {
 });
 
 it('offers email and text as type filter options', function () {
-    livewire(StudentMessagesDetailTable::class, [
+    Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
         'filters' => [],
     ])
@@ -506,7 +506,7 @@ it('filters by type properly', function () {
     $holisticResponseSms = HolisticEngagement::where('record_id', $responseSms->id)->where('record_type', new EngagementResponse()->getMorphClass())->first();
 
     // Filter by email
-    livewire(StudentMessagesDetailTable::class, [
+    Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
         'filters' => [],
     ])
@@ -515,7 +515,7 @@ it('filters by type properly', function () {
         ->assertCanNotSeeTableRecords(collect([$holisticEngagementSms, $holisticResponseSms]));
 
     // Filter by sms
-    livewire(StudentMessagesDetailTable::class, [
+    Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages',
         'filters' => [],
     ])
@@ -537,7 +537,7 @@ it('has export action with correct exporter class', function () {
             ->getMorphClass())
         ->first();
 
-    livewire(StudentMessagesDetailTable::class, [
+    Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages-detail',
         'filters' => [],
     ])
@@ -575,7 +575,7 @@ it('can start an export, sending a notification', function () {
             ]);
     });
 
-    livewire(StudentMessagesDetailTable::class, [
+    Livewire::test(StudentMessagesDetailTable::class, [
         'cacheTag' => 'report-student-messages-detail',
         'filters' => [],
     ])

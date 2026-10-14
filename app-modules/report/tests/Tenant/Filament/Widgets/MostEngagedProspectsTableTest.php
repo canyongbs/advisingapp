@@ -40,8 +40,7 @@ use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Notification\Enums\NotificationChannel;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\MostEngagedProspectsTable;
-
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('returns top engaged prospects based on engagements within the given date range', function () {
     $startDate = now()->subDays(10);
@@ -77,7 +76,7 @@ it('returns top engaged prospects based on engagements within the given date ran
         'endDate' => $endDate->toDateString(),
     ];
 
-    livewire(MostEngagedProspectsTable::class, [
+    Livewire::test(MostEngagedProspectsTable::class, [
         'cacheTag' => 'report-prospect-engagement',
         'pageFilters' => $filters,
     ])
@@ -132,7 +131,7 @@ it('returns top engaged prospects engagements based on group filter', function (
         'populationGroup' => $group->getKey(),
     ];
 
-    livewire(MostEngagedProspectsTable::class, [
+    Livewire::test(MostEngagedProspectsTable::class, [
         'cacheTag' => 'report-prospect-engagement',
         'pageFilters' => $filters,
     ])
@@ -142,7 +141,7 @@ it('returns top engaged prospects engagements based on group filter', function (
         ->assertCanNotSeeTableRecords(collect([$prospect2]));
 
     // without filter
-    livewire(MostEngagedProspectsTable::class, [
+    Livewire::test(MostEngagedProspectsTable::class, [
         'cacheTag' => 'report-prospect-engagement',
         'filters' => [],
     ])

@@ -39,9 +39,9 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Enums\TagType;
 use App\Models\Tag;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 it('can bulk assign tags to students without remove the prior tags', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
@@ -62,7 +62,7 @@ it('can bulk assign tags to students without remove the prior tags', function ()
 
     $newTag = Tag::factory()->state(['type' => TagType::Student])->create();
 
-    livewire(ListStudents::class)
+    Livewire::test(ListStudents::class)
         ->callTableBulkAction('bulkStudentTags', $students, [
             'tag_ids' => [$newTag->getKey()],
             'remove_prior' => false,
@@ -94,7 +94,7 @@ it('can bulk assign tags to students and remove the prior tags', function () {
 
     $newTag = Tag::factory()->state(['type' => TagType::Student])->create();
 
-    livewire(ListStudents::class)
+    Livewire::test(ListStudents::class)
         ->callTableBulkAction('bulkStudentTags', $students, [
             'tag_ids' => [$newTag->getKey()],
             'remove_prior' => true,

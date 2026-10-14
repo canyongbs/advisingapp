@@ -37,8 +37,8 @@
 use AdvisingApp\StudentDataModel\Filament\Resources\StudentTags\Pages\CreateStudentTag;
 use App\Enums\TagType;
 use App\Models\Tag;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('CreateStudentTag does not allow for duplicate names of non-deleted student tags case insensitively', function () {
@@ -47,12 +47,12 @@ test('CreateStudentTag does not allow for duplicate names of non-deleted student
     $tag = Tag::factory(['name' => 'Student Tag', 'type' => TagType::Student])->create();
     $tag->delete();
 
-    livewire(CreateStudentTag::class)
+    Livewire::test(CreateStudentTag::class)
         ->fillForm(['name' => 'student TAG'])
         ->call('create')
         ->assertHasNoFormErrors();
 
-    livewire(CreateStudentTag::class)
+    Livewire::test(CreateStudentTag::class)
         ->fillForm(['name' => 'student tag'])
         ->call('create')
         ->assertHasFormErrors(['name' => 'unique']);
@@ -65,7 +65,7 @@ test('CreateStudentTag does allow for non-duplicate names of non-deleted student
     $tag = Tag::factory(['name' => 'Student Tag 2', 'type' => TagType::Student])->create();
     $tag->delete();
 
-    livewire(CreateStudentTag::class)
+    Livewire::test(CreateStudentTag::class)
         ->fillForm(['name' => 'Student Tag 2'])
         ->call('create')
         ->assertHasNoFormErrors();
@@ -76,7 +76,7 @@ test('CreateStudentTag does allow for duplicate names of prospect tags', functio
 
     Tag::factory(['name' => 'Tag', 'type' => TagType::Prospect])->create();
 
-    livewire(CreateStudentTag::class)
+    Livewire::test(CreateStudentTag::class)
         ->fillForm(['name' => 'Tag'])
         ->call('create')
         ->assertHasNoFormErrors();

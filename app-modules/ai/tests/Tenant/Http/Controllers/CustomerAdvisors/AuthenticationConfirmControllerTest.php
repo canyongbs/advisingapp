@@ -47,19 +47,13 @@ use Illuminate\Testing\TestResponse;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\withHeader;
 
-beforeEach(function () {
-    withHeader('Origin', config('app.url'));
-});
-
 /**
  * Creates an embed enabled advisor and an authentication holding $code for $student, and
  * returns the signed confirm URL for the pair. The URL is returned rather than posted to
  * so callers can hit the same authentication repeatedly.
  */
-function customerAdvisorAuthenticationUrl(Student $student, string $code): string
-{
+$customerAdvisorAuthenticationUrl = function (Student $student, string $code): string {
     $advisor = CustomerAdvisor::factory()->create(['is_embed_enabled' => true]);
-
     $authentication = PortalAuthentication::factory()
         ->state([
             'code' => Hash::make($code),
@@ -73,39 +67,42 @@ function customerAdvisorAuthenticationUrl(Student $student, string $code): strin
         name: 'widgets.ai.customer-advisors.api.authentication.confirm',
         parameters: ['advisor' => $advisor, 'authentication' => $authentication],
     );
-}
+};
 
 /**
  * @return TestResponse<JsonResponse>
  */
-function confirmCustomerAdvisorAuthentication(Student $student, string $code = '123456'): TestResponse
-{
-    return postJson(customerAdvisorAuthenticationUrl($student, $code), ['code' => $code]);
-}
+$confirmCustomerAdvisorAuthentication = function (Student $student, string $code = '123456') use ($customerAdvisorAuthenticationUrl): TestResponse {
+    return postJson($customerAdvisorAuthenticationUrl($student, $code), ['code' => $code]);
+};
 
-it('issues tokens for an active student', function () {
+beforeEach(function () {
+    withHeader('Origin', config('app.url'));
+});
+
+it('issues tokens for an active student', function () use ($confirmCustomerAdvisorAuthentication) {
     $student = Student::factory()->create();
 
-    confirmCustomerAdvisorAuthentication($student)
+    $confirmCustomerAdvisorAuthentication($student)
         ->assertSuccessful()
         ->assertJsonStructure(['access_token']);
 });
 
 // The middleware already rejects an archived student on every functional route, but redeeming
 // the code would still hand out a three day refresh cookie and report a successful sign in.
-it('rejects a code issued before the student was archived', function () {
+it('rejects a code issued before the student was archived', function () use ($confirmCustomerAdvisorAuthentication) {
     $student = Student::factory()->create();
     $student->archive();
 
-    confirmCustomerAdvisorAuthentication($student)
+    $confirmCustomerAdvisorAuthentication($student)
         ->assertForbidden()
         ->assertJson(['message' => 'Authentication code is expired.']);
 });
 
-it('locks out after too many invalid code attempts', function () {
+it('locks out after too many invalid code attempts', function () use ($customerAdvisorAuthenticationUrl) {
     $code = '123456';
 
-    $url = customerAdvisorAuthenticationUrl(Student::factory()->create(), $code);
+    $url = $customerAdvisorAuthenticationUrl(Student::factory()->create(), $code);
 
     for ($attempt = 0; $attempt < AuthenticationCodeRateLimiter::MAX_ATTEMPTS; $attempt++) {
         postJson($url, ['code' => '654321'])
@@ -119,10 +116,10 @@ it('locks out after too many invalid code attempts', function () {
         ->assertJsonValidationErrors(['code' => 'Too many invalid attempts. Please request a new code.']);
 });
 
-it('resets the attempt counter after a successful authentication', function () {
+it('resets the attempt counter after a successful authentication', function () use ($customerAdvisorAuthenticationUrl) {
     $code = '123456';
 
-    $url = customerAdvisorAuthenticationUrl(Student::factory()->create(), $code);
+    $url = $customerAdvisorAuthenticationUrl(Student::factory()->create(), $code);
 
     // Record one failed attempt so the counter is non-zero before the successful attempt.
     postJson($url, ['code' => '654321'])->assertStatus(422);

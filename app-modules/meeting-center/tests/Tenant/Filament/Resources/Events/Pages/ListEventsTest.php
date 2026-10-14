@@ -43,35 +43,36 @@ use AdvisingApp\MeetingCenter\Models\EventRegistrationFormSubmission;
 use App\Models\User;
 use App\Settings\LicenseSettings;
 use Filament\Actions\Testing\TestAction;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-function listEventsTestUser(): User
-{
+$listEventsTestUser = function (): User {
     $settings = app(LicenseSettings::class);
     $settings->data->addons->eventManagement = true;
     $settings->save();
 
     return User::factory()->licensed(LicenseType::cases())->create();
-}
+};
 
-it('the duplicate action is gated by the create permission', function () {
-    $user = listEventsTestUser();
+it('the duplicate action is gated by the create permission', function () use ($listEventsTestUser) {
+    $user = $listEventsTestUser();
     $user->givePermissionTo('event.view-any');
 
     actingAs($user);
 
     $event = Event::factory()->create(['starts_at' => now()->addWeek()]);
 
-    livewire(ListEvents::class)
+    Livewire::test(ListEvents::class)
         ->removeTableFilter('pastEvents')
         ->assertTableActionHidden('Duplicate', $event);
 
     $user->givePermissionTo('event.create');
 
-    livewire(ListEvents::class)
+    Livewire::test(ListEvents::class)
         ->removeTableFilter('pastEvents')
         ->assertTableActionVisible('Duplicate', $event);
 });
@@ -86,7 +87,7 @@ it('can duplicate a event its registration form its steps and its fields', funct
     expect(EventRegistrationForm::count())->toBe(1);
 
     // And we duplicate it
-    livewire(ListEvents::class)
+    Livewire::test(ListEvents::class)
         ->assertStatus(200)
         ->removeTableFilter('pastEvents')
         ->callTableAction('Duplicate', $event);
@@ -108,7 +109,7 @@ it('does not allow duplicating an event to a title matching another non-deleted 
     Event::factory()->create(['title' => 'Existing Event']);
     $event = Event::factory()->create(['title' => 'Some Event']);
 
-    livewire(ListEvents::class)
+    Livewire::test(ListEvents::class)
         ->assertStatus(200)
         ->removeTableFilter('pastEvents')
         ->callTableAction('Duplicate', $event, data: ['title' => 'existing event'])
@@ -123,7 +124,7 @@ it('allows duplicating an event to a title freed up by a soft-deleted event', fu
 
     $event = Event::factory()->create(['title' => 'Some Event']);
 
-    livewire(ListEvents::class)
+    Livewire::test(ListEvents::class)
         ->assertStatus(200)
         ->removeTableFilter('pastEvents')
         ->callTableAction('Duplicate', $event, data: ['title' => 'reusable title'])
@@ -141,7 +142,7 @@ it('will not duplicate event registration form submissions if they exist', funct
     $submissionCount = $event->eventRegistrationForm->submissions()->count();
 
     // And we duplicate it
-    livewire(ListEvents::class)
+    Livewire::test(ListEvents::class)
         ->assertStatus(200)
         ->removeTableFilter('pastEvents')
         ->callTableAction('Duplicate', $event);
@@ -159,7 +160,7 @@ it('gives a duplicated event registration form its own version tree rather than 
 
     $event = Event::factory()->create();
 
-    livewire(ListEvents::class)
+    Livewire::test(ListEvents::class)
         ->assertStatus(200)
         ->removeTableFilter('pastEvents')
         ->callTableAction('Duplicate', $event);
@@ -183,7 +184,7 @@ it('archive bulk action archives all selected events', function () {
 
     $records = collect([$eventWithAttendees, $eventWithoutAttendees]);
 
-    livewire(ListEvents::class)
+    Livewire::test(ListEvents::class)
         ->removeTableFilter('pastEvents')
         ->selectTableRecords($records->pluck('id')->all())
         ->callAction(TestAction::make('archive')->table()->bulk())
@@ -191,4 +192,73 @@ it('archive bulk action archives all selected events', function () {
 
     expect($eventWithAttendees->fresh()->archived_at)->not->toBeNull();
     expect($eventWithoutAttendees->fresh()->archived_at)->not->toBeNull();
+});
+
+describe('duplication', function () {
+    beforeEach(function () {
+        asSuperAdmin();
+    });
+
+    it('leaves the original registration form steps fields submissions and attendees untouched', function () {
+        $event = Event::factory()->create();
+        $originalForm = $event->eventRegistrationForm;
+
+        $originalFieldIds = $originalForm->fields()->pluck('id')->all();
+        $originalStepIds = $originalForm->steps()->pluck('id')->all();
+        $originalSubmissionIds = $originalForm->submissions()->pluck('id')->all();
+        $originalAttendeeCount = $event->attendees()->count();
+
+        expect($originalSubmissionIds)->not->toBeEmpty();
+
+        Livewire::test(ListEvents::class)
+            ->removeTableFilter('pastEvents')
+            ->callAction(TestAction::make('Duplicate')->table($event))
+            ->assertHasNoFormErrors();
+
+        $duplicatedEvent = Event::query()->whereKeyNot($event->getKey())->firstOrFail();
+        $duplicatedForm = $duplicatedEvent->eventRegistrationForm;
+
+        expect($originalForm->fields()->pluck('id')->all())->toEqualCanonicalizing($originalFieldIds)
+            ->and($originalForm->steps()->pluck('id')->all())->toEqualCanonicalizing($originalStepIds)
+            ->and($originalForm->submissions()->pluck('id')->all())->toEqualCanonicalizing($originalSubmissionIds)
+            ->and($event->attendees()->count())->toBe($originalAttendeeCount)
+            ->and($duplicatedForm->fields()->count())->toBe(count($originalFieldIds))
+            ->and($duplicatedForm->fields()->whereIn('id', $originalFieldIds)->exists())->toBeFalse()
+            ->and($duplicatedForm->steps()->count())->toBe(count($originalStepIds))
+            ->and($duplicatedForm->submissions()->count())->toBe(0)
+            ->and($duplicatedEvent->attendees()->count())->toBe(0);
+    });
+
+    it('copies the description images and hero image to the duplicated event', function () {
+        Storage::fake('s3-public');
+
+        $event = Event::factory()->create();
+
+        $descriptionImage = $event->addMedia(UploadedFile::fake()->image('description.png'))->toMediaCollection('description', 's3-public');
+        $event->update(['description' => ['type' => 'doc', 'content' => [['type' => 'image', 'attrs' => ['id' => $descriptionImage->uuid]]]]]);
+
+        $heroImage = $event->addMedia(UploadedFile::fake()->image('hero.png'))->toMediaCollection('hero_image');
+
+        Livewire::test(ListEvents::class)
+            ->removeTableFilter('pastEvents')
+            ->callAction(TestAction::make('Duplicate')->table($event))
+            ->assertHasNoFormErrors();
+
+        $duplicatedEvent = Event::query()->whereKeyNot($event->getKey())->firstOrFail();
+
+        $duplicatedDescriptionImage = $duplicatedEvent->getFirstMedia('description');
+        $duplicatedHeroImage = $duplicatedEvent->getFirstMedia('hero_image');
+
+        expect($duplicatedDescriptionImage)->not->toBeNull()
+            ->and($duplicatedDescriptionImage->uuid)->not->toBe($descriptionImage->uuid)
+            ->and(json_encode($duplicatedEvent->description))->toContain($duplicatedDescriptionImage->uuid)->not->toContain($descriptionImage->uuid)
+            ->and($duplicatedHeroImage)->not->toBeNull()
+            ->and($duplicatedHeroImage->uuid)->not->toBe($heroImage->uuid)
+            ->and($event->refresh()->getMedia('description')->pluck('uuid')->all())->toBe([$descriptionImage->uuid])
+            ->and(json_encode($event->description))->toContain($descriptionImage->uuid)
+            ->and($event->getMedia('hero_image')->pluck('uuid')->all())->toBe([$heroImage->uuid]);
+
+        Storage::disk('s3-public')->assertExists($duplicatedDescriptionImage->getPathRelativeToRoot());
+        Storage::disk('s3-public')->assertExists($duplicatedHeroImage->getPathRelativeToRoot());
+    });
 });

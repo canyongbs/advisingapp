@@ -39,9 +39,9 @@ use AdvisingApp\Prospect\Models\Prospect;
 use App\Enums\TagType;
 use App\Models\Tag;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 it('can bulk assign tags to prospects without remove the prior tags', function () {
     $user = User::factory()->licensed(Prospect::getLicenseType())->create();
@@ -62,7 +62,7 @@ it('can bulk assign tags to prospects without remove the prior tags', function (
 
     $newTag = Tag::factory()->state(['type' => TagType::Prospect])->create();
 
-    livewire(ListProspects::class)
+    Livewire::test(ListProspects::class)
         ->callTableBulkAction('bulkProspectTags', $prospects, [
             'tag_ids' => [$newTag->getKey()],
             'remove_prior' => false,
@@ -94,7 +94,7 @@ it('can bulk assign tags to prospects and remove the prior tags', function () {
 
     $newTag = Tag::factory()->state(['type' => TagType::Prospect])->create();
 
-    livewire(ListProspects::class)
+    Livewire::test(ListProspects::class)
         ->callTableBulkAction('bulkProspectTags', $prospects, [
             'tag_ids' => [$newTag->getKey()],
             'remove_prior' => true,

@@ -39,9 +39,9 @@ use AdvisingApp\Interaction\Filament\Resources\Interactions\InteractionResource;
 use AdvisingApp\Interaction\Filament\Resources\Interactions\Pages\ListInteractions;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 test('ListInteractions is gated with proper access control', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -64,11 +64,11 @@ test('the delete bulk action is gated by the delete permission', function () {
     $user->givePermissionTo('interaction.view-any');
     actingAs($user);
 
-    livewire(ListInteractions::class)
+    Livewire::test(ListInteractions::class)
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 
     $user->givePermissionTo('interaction.*.delete');
 
-    livewire(ListInteractions::class)
+    Livewire::test(ListInteractions::class)
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

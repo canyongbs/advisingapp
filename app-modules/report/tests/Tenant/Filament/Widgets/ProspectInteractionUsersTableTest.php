@@ -42,8 +42,7 @@ use AdvisingApp\Report\Filament\Widgets\ProspectInteractionUsersTable;
 use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Carbon\Carbon;
-
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('can see prospect interaction users table', function () {
     $department = Department::factory()->create();
@@ -106,7 +105,7 @@ it('can see prospect interaction users table', function () {
 
     $tableRecords = collect([$user1, $user2]);
 
-    livewire(ProspectInteractionUsersTable::class, ['cacheTag' => 'report-prospect-interaction'])
+    Livewire::test(ProspectInteractionUsersTable::class, ['cacheTag' => 'report-prospect-interaction'])
         ->assertCanSeeTableRecords($tableRecords)
         ->assertTableColumnStateSet('name', $user1->name, $user1)
         ->assertTableColumnStateSet('name', $user2->name, $user2)
@@ -155,7 +154,7 @@ it('can filter users by name', function () {
             'created_at' => now(),
         ]);
 
-    livewire(ProspectInteractionUsersTable::class, ['cacheTag' => 'report-prospect-interaction'])
+    Livewire::test(ProspectInteractionUsersTable::class, ['cacheTag' => 'report-prospect-interaction'])
         ->filterTable('name', [
             'name' => 'Super Admin',
         ])
@@ -196,7 +195,7 @@ it('can filter users by job title', function () {
             'created_at' => now(),
         ]);
 
-    livewire(ProspectInteractionUsersTable::class, ['cacheTag' => 'report-prospect-interaction'])
+    Livewire::test(ProspectInteractionUsersTable::class, ['cacheTag' => 'report-prospect-interaction'])
         ->filterTable('job_title', [
             'job_title' => 'Computer Operator',
         ])
@@ -237,7 +236,7 @@ it('can filter users by department', function () {
             'created_at' => now(),
         ]);
 
-    livewire(ProspectInteractionUsersTable::class, ['cacheTag' => 'report-prospect-interaction'])
+    Livewire::test(ProspectInteractionUsersTable::class, ['cacheTag' => 'report-prospect-interaction'])
         ->filterTable('department', [
             'department' => $department->getKey(),
         ])
@@ -288,7 +287,7 @@ it('displays only users with prospect interactions within the selected date rang
         'endDate' => $interactionEndDate->toDateString(),
     ];
 
-    livewire(ProspectInteractionUsersTable::class, [
+    Livewire::test(ProspectInteractionUsersTable::class, [
         'cacheTag' => 'report-prospect-interaction',
         'pageFilters' => $filters,
     ])
@@ -352,7 +351,7 @@ it('displays only users with prospect interactions based on group filter', funct
     ];
 
     // with group filter
-    livewire(ProspectInteractionUsersTable::class, [
+    Livewire::test(ProspectInteractionUsersTable::class, [
         'cacheTag' => 'report-prospect-interaction',
         'pageFilters' => $filters,
     ])
@@ -362,7 +361,7 @@ it('displays only users with prospect interactions based on group filter', funct
         ->assertCanNotSeeTableRecords(collect([$userWithoutInteractions, $userWithRecentAndOtherInteractions]));
 
     // without filter
-    livewire(ProspectInteractionUsersTable::class, [
+    Livewire::test(ProspectInteractionUsersTable::class, [
         'cacheTag' => 'report-prospect-interaction',
         'filters' => [],
     ])

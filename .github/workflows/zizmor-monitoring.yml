@@ -18,7 +18,7 @@ concurrency:
 jobs:
     zizmor:
         name: Zizmor (monitoring)
-        runs-on: ubuntu-latest
+        runs-on: ubuntu-24.04
         permissions:
             contents: read
             actions: read # needed by upload-sarif to read workflow run metadata on private repos

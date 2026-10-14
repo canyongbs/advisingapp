@@ -52,6 +52,7 @@ class DuplicateApplication
         $stepMap = $this->replicateSteps();
         $fieldMap = $this->replicateFields($stepMap);
         $this->updateStepContent($fieldMap);
+        $this->replicateContentMedia($this->original, $this->replica);
     }
 
     private function replicateSteps(): array
@@ -63,12 +64,19 @@ class DuplicateApplication
             $newStep->application_id = $this->replica->id;
             $newStep->save();
 
+            $this->replicateContentMedia($step, $newStep);
+
             $stepMap[$step->id] = $newStep->id;
         });
 
         return $stepMap;
     }
 
+    /**
+     * @param  array<string, string>  $stepMap
+     *
+     * @return array<string, string>
+     */
     private function replicateFields(array $stepMap): array
     {
         $fieldMap = [];
@@ -85,6 +93,9 @@ class DuplicateApplication
         return $fieldMap;
     }
 
+    /**
+     * @param  array<string, string>  $fieldMap
+     */
     private function updateStepContent(array $fieldMap): void
     {
         $this->replica->steps()->each(function (ApplicationStep $step) use ($fieldMap) {
@@ -94,6 +105,40 @@ class DuplicateApplication
                 'content' => $this->replaceIdsInContent($content, $fieldMap),
             ]);
         });
+    }
+
+    private function replicateContentMedia(Application|ApplicationStep $source, Application|ApplicationStep $target): void
+    {
+        $mediaUuidMap = [];
+
+        foreach ($source->getMedia('content') as $media) {
+            $mediaUuidMap[$media->uuid] = $media->copy($target, 'content', 's3-public')->uuid;
+        }
+
+        if ($mediaUuidMap === []) {
+            return;
+        }
+
+        $target->content = $this->remapMediaUuids($target->content, $mediaUuidMap);
+        $target->save();
+    }
+
+    /**
+     * @param array<string, mixed>|null $content
+     * @param array<string, string> $mediaUuidMap
+     *
+     * @return array<string, mixed>|null
+     */
+    private function remapMediaUuids(?array $content, array $mediaUuidMap): ?array
+    {
+        if (! $content) {
+            return $content;
+        }
+
+        $json = json_encode($content);
+        $json = str_replace(array_keys($mediaUuidMap), array_values($mediaUuidMap), $json);
+
+        return json_decode($json, true);
     }
 
     /**

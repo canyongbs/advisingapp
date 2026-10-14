@@ -38,10 +38,10 @@ use AdvisingApp\MeetingCenter\Filament\Resources\BookingGroups\Pages\ViewBooking
 use AdvisingApp\MeetingCenter\Models\BookingGroup;
 use AdvisingApp\Team\Models\Department;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 
 it('can render with proper permission', function () {
     $user = User::factory()->create();
@@ -84,7 +84,7 @@ it('displays booking group basic information', function () {
         'description' => 'This is a test description',
     ]);
 
-    livewire(ViewBookingGroup::class, [
+    Livewire::test(ViewBookingGroup::class, [
         'record' => $bookingGroup->getRouteKey(),
     ])
         ->assertSee('Test Booking Group')
@@ -110,7 +110,7 @@ it('displays booking group with both users and departments', function () {
     $bookingGroup->users()->attach($users);
     $bookingGroup->departments()->attach($departments);
 
-    livewire(ViewBookingGroup::class, [
+    Livewire::test(ViewBookingGroup::class, [
         'record' => $bookingGroup->getRouteKey(),
     ])
         ->assertSee('Mixed Booking Group')

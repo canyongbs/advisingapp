@@ -89,3 +89,48 @@ test('Users with a Super Admin role are not counted in the available seats', fun
         LicenseType::RetentionCrm,
         LicenseType::RecruitmentCrm,
     ]);
+
+it('treats the `ConversationalAi` license type as having no seats while Enterprise AI is disabled', function () {
+    $licenseSettings = app(LicenseSettings::class);
+    $licenseSettings->data->limits->conversationalAiSeats = 10;
+    $licenseSettings->save();
+
+    expect(LicenseType::ConversationalAi->isEnabled())->toBeTrue()
+        ->and(LicenseType::ConversationalAi->getSeats())->toBe(10)
+        ->and(LicenseType::ConversationalAi->isLicensable())->toBeTrue()
+        ->and(LicenseType::ConversationalAi->hasAvailableLicenses())->toBeTrue();
+
+    $licenseSettings->data->addons->enterpriseAi = false;
+    $licenseSettings->save();
+
+    expect(LicenseType::ConversationalAi->isEnabled())->toBeFalse()
+        ->and(LicenseType::ConversationalAi->getSeats())->toBe(0)
+        ->and(LicenseType::ConversationalAi->isLicensable())->toBeFalse()
+        ->and(LicenseType::ConversationalAi->hasAvailableLicenses())->toBeFalse();
+});
+
+it('excludes the `ConversationalAi` license type from the enabled cases while Enterprise AI is disabled', function () {
+    expect(LicenseType::enabledCases())->toBe(LicenseType::cases());
+
+    $licenseSettings = app(LicenseSettings::class);
+    $licenseSettings->data->addons->enterpriseAi = false;
+    $licenseSettings->save();
+
+    expect(LicenseType::enabledCases())->toBe([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm]);
+});
+
+it('does not disable CRM license types while Enterprise AI is disabled', function (LicenseType $licenseType) {
+    $licenseSettings = app(LicenseSettings::class);
+    $licenseSettings->data->limits->retentionCrmSeats = 10;
+    $licenseSettings->data->limits->recruitmentCrmSeats = 10;
+    $licenseSettings->data->addons->enterpriseAi = false;
+    $licenseSettings->save();
+
+    expect($licenseType->isEnabled())->toBeTrue()
+        ->and($licenseType->getSeats())->toBe(10)
+        ->and($licenseType->isLicensable())->toBeTrue();
+})
+    ->with([
+        LicenseType::RetentionCrm,
+        LicenseType::RecruitmentCrm,
+    ]);

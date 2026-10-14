@@ -36,6 +36,7 @@
 
 namespace App\Livewire;
 
+use App\Enums\Feature;
 use App\Models\Import;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
@@ -67,7 +68,7 @@ class ImportsTable extends Component implements HasActions, HasForms, HasTable
         $canDownload = auth()->user()->can('export_hub.import');
 
         return $table
-            ->query(Import::query()->with('user'))
+            ->query(Import::query()->with('user')->whereNotIn('importer', Feature::getDisabledImporterAndExporterClasses()))
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('requestor')

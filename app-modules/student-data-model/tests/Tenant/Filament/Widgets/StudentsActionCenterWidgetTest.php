@@ -36,8 +36,8 @@
 
 use AdvisingApp\StudentDataModel\Filament\Widgets\StudentsActionCenterWidget;
 use AdvisingApp\StudentDataModel\Models\Student;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('returns data', function () {})->todo();
@@ -57,7 +57,7 @@ it('does not list archived students', function () {
     $archived = Student::factory()->create();
     $archived->archive();
 
-    livewire(StudentsActionCenterWidget::class)
+    Livewire::test(StudentsActionCenterWidget::class)
         ->assertOk()
         ->assertCanSeeTableRecords($active)
         ->assertCanNotSeeTableRecords([$archived]);

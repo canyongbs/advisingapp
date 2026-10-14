@@ -51,9 +51,9 @@ class SnsMessage extends Data
         public string $timestamp,
         public string $signatureVersion,
         public string $signature,
-        public string $signingCertURL,
-        public string|Optional $subscribeURL,
-        public string|Optional $unsubscribeURL,
+        public string $signingCertUrl,
+        public string|Optional $subscribeUrl,
+        public string|Optional $unsubscribeUrl,
     ) {}
 
     public static function fromRequest(Request $request): SnsMessage
@@ -69,9 +69,9 @@ class SnsMessage extends Data
             timestamp: $data['Timestamp'],
             signatureVersion: $data['SignatureVersion'],
             signature: $data['Signature'],
-            signingCertURL: $data['SigningCertURL'],
-            subscribeURL: $data['SubscribeURL'] ?? Optional::create(),
-            unsubscribeURL: $data['UnsubscribeURL'] ?? Optional::create(),
+            signingCertUrl: $data['SigningCertURL'],
+            subscribeUrl: $data['SubscribeURL'] ?? Optional::create(),
+            unsubscribeUrl: $data['UnsubscribeURL'] ?? Optional::create(),
         );
     }
 }

@@ -37,10 +37,10 @@
 namespace AdvisingApp\Ai\Models;
 
 use App\Models\BaseModel;
+use CanyonGBS\Common\Models\Concerns\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use OwenIt\Auditing\Auditable as AuditableTrait;
 use OwenIt\Auditing\Contracts\Auditable;
 
 /**

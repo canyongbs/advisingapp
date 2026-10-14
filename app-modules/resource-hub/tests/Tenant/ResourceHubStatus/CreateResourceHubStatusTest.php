@@ -41,10 +41,10 @@ use AdvisingApp\ResourceHub\Models\ResourceHubStatus;
 use AdvisingApp\ResourceHub\Tests\Tenant\ResourceHubStatus\RequestFactories\CreateResourceHubStatusRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function Tests\asSuperAdmin;
 
@@ -63,7 +63,7 @@ test('CreateResourceHubStatus is gated with proper access control', function () 
             ResourceHubStatusResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateResourceHubStatus::class)
+    Livewire::test(CreateResourceHubStatus::class)
         ->assertForbidden();
 
     $user->givePermissionTo('settings.view-any');
@@ -76,7 +76,7 @@ test('CreateResourceHubStatus is gated with proper access control', function () 
 
     $request = collect(CreateResourceHubStatusRequestFactory::new()->create());
 
-    livewire(CreateResourceHubStatus::class)
+    Livewire::test(CreateResourceHubStatus::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
@@ -103,7 +103,7 @@ test('CreateResourceHubStatus is gated with proper feature access control', func
             ResourceHubStatusResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateResourceHubStatus::class)
+    Livewire::test(CreateResourceHubStatus::class)
         ->assertForbidden();
 
     $settings->data->addons->resourceHub = true;
@@ -117,7 +117,7 @@ test('CreateResourceHubStatus is gated with proper feature access control', func
 
     $request = collect(CreateResourceHubStatusRequestFactory::new()->create());
 
-    livewire(CreateResourceHubStatus::class)
+    Livewire::test(CreateResourceHubStatus::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
@@ -136,12 +136,12 @@ test('CreateResourceHubStatus does not allow for duplicate names of non-deleted 
 
     $status->delete();
 
-    livewire(CreateResourceHubStatus::class)
+    Livewire::test(CreateResourceHubStatus::class)
         ->fillForm($request1->toArray())
         ->call('create')
         ->assertHasNoActionErrors();
 
-    livewire(CreateResourceHubStatus::class)
+    Livewire::test(CreateResourceHubStatus::class)
         ->fillForm($request2->toArray())
         ->call('create')
         ->assertHasFormErrors(['name' => 'unique']);

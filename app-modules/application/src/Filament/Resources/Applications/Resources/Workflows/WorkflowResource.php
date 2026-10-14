@@ -101,9 +101,10 @@ class WorkflowResource extends Resource
         $record = $parameters['application'] ?? null;
         unset($parameters['application']);
 
-        return ApplicationResource::getUrl('manage-application-workflows', [
+        return ApplicationResource::getUrl('view', [
             ...$parameters,
             'record' => $record,
+            'tab' => 'workflows',
         ], $isAbsolute, $panel, $tenant, $shouldGuessMissingParameters);
     }
 }

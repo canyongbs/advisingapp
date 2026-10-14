@@ -39,9 +39,9 @@ use AdvisingApp\ResourceHub\Enums\ConcernStatus;
 use AdvisingApp\ResourceHub\Filament\Widgets\ResourceHubArticleConcernsTable;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 it('renders the change concern status action based on proper access', function () {
     $user = User::factory()->licensed(LicenseType::cases())->create();
@@ -53,7 +53,7 @@ it('renders the change concern status action based on proper access', function (
 
     actingAs($user);
 
-    livewire(ResourceHubArticleConcernsTable::class, ['record' => $concern->resourceHubArticle])
+    Livewire::test(ResourceHubArticleConcernsTable::class, ['record' => $concern->resourceHubArticle])
         ->assertOk()
         ->assertTableActionHidden('changeConcernStatus', $concern);
 
@@ -61,7 +61,7 @@ it('renders the change concern status action based on proper access', function (
 
     $user->refresh();
 
-    livewire(ResourceHubArticleConcernsTable::class, ['record' => $concern->resourceHubArticle])
+    Livewire::test(ResourceHubArticleConcernsTable::class, ['record' => $concern->resourceHubArticle])
         ->assertOk()
         ->assertTableActionVisible('changeConcernStatus', $concern);
 });

@@ -40,6 +40,7 @@ use AdvisingApp\Authorization\Enums\PermissionDescription;
 use AdvisingApp\Authorization\Filament\Resources\Roles\RoleResource;
 use AdvisingApp\Authorization\Models\PermissionGroup;
 use AdvisingApp\Authorization\Models\Role;
+use App\Enums\Feature;
 use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -88,7 +89,8 @@ class EditRole extends EditRecord
                     ->columnSpanFull()
                     ->guard(fn (Get $get): string => $get('guard_name'))
                     ->descriptions(PermissionDescription::cases())
-                    ->permissionGroupModel(PermissionGroup::class),
+                    ->permissionGroupModel(PermissionGroup::class)
+                    ->hiddenPermissionGroups(fn (): array => Feature::getDisabledPermissionGroupNames()),
             ]);
     }
 

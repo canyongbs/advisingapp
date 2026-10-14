@@ -46,8 +46,8 @@ use App\Settings\LicenseSettings;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\ViewAction;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('is hidden when the OnlineForms feature is disabled', function () {
@@ -59,7 +59,7 @@ it('is hidden when the OnlineForms feature is disabled', function () {
 
     asSuperAdmin();
 
-    livewire(ViewStudent::class, [
+    Livewire::test(ViewStudent::class, [
         'record' => $student->getKey(),
     ])
         ->assertOk()
@@ -75,7 +75,7 @@ it('is visible when the OnlineForms feature is enabled', function () {
 
     asSuperAdmin();
 
-    livewire(ViewStudent::class, [
+    Livewire::test(ViewStudent::class, [
         'record' => $student->getKey(),
     ])
         ->assertOk()
@@ -92,7 +92,7 @@ it('can list form submissions for a student', function () {
         'author_id' => $student->getKey(),
     ]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -115,7 +115,7 @@ it('does not show submissions belonging to other students', function () {
         'author_id' => $otherStudent->getKey(),
     ]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -128,7 +128,7 @@ it('has the expected table columns', function () {
 
     $student = Student::factory()->create();
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -159,7 +159,7 @@ it('can search submissions by form name', function () {
         'author_id' => $student->getKey(),
     ]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -185,7 +185,7 @@ it('can sort submissions by submitted_at', function () {
         'submitted_at' => now(),
     ]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -222,7 +222,7 @@ it('can filter submissions by status', function () {
         'request_method' => FormSubmissionRequestDeliveryMethod::Email,
     ]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -256,7 +256,7 @@ it('shows the view action only for submitted submissions', function () {
         'request_method' => FormSubmissionRequestDeliveryMethod::Email,
     ]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -277,7 +277,7 @@ it('hides the view action for canceled submissions', function () {
         'request_method' => FormSubmissionRequestDeliveryMethod::Email,
     ]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -294,7 +294,7 @@ it('can delete a form submission', function () {
         'author_id' => $student->getKey(),
     ]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -308,7 +308,7 @@ it('has the bulk delete action available', function () {
 
     $student = Student::factory()->create();
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -325,7 +325,7 @@ it('can bulk delete form submissions', function () {
         'author_id' => $student->getKey(),
     ]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -350,7 +350,7 @@ it('displays the requester name for submissions that have a requester', function
     $submission->requester()->associate($requester);
     $submission->save();
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -379,7 +379,7 @@ it('shows requested_at only when a requester is present', function () {
         'submitted_at' => now(),
     ]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -414,7 +414,7 @@ it('shows the correct status badge for each submission state', function () {
         'request_method' => FormSubmissionRequestDeliveryMethod::Email,
     ]);
 
-    livewire(FormSubmissionsRelationManager::class, [
+    Livewire::test(FormSubmissionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])

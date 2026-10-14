@@ -49,8 +49,7 @@ use function Pest\Laravel\actingAs;
 /**
  * @return array<string, mixed>
  */
-function studentLastNameContainsFilters(string $text): array
-{
+$studentLastNameContainsFilters = function (string $text): array {
     return [
         'queryBuilder' => [
             'rules' => [
@@ -66,15 +65,14 @@ function studentLastNameContainsFilters(string $text): array
             ],
         ],
     ];
-}
+};
 
 /**
  * @param array<int, string> $tagIds
  *
  * @return array<string, mixed>
  */
-function studentTaggedWithFilters(array $tagIds): array
-{
+$studentTaggedWithFilters = function (array $tagIds): array {
     return [
         'queryBuilder' => [
             'rules' => [
@@ -90,15 +88,14 @@ function studentTaggedWithFilters(array $tagIds): array
             ],
         ],
     ];
-}
+};
 
 /**
  * @param array<int, string> $lastNames
  *
  * @return array<string, mixed>
  */
-function studentLastNameOrFilters(array $lastNames): array
-{
+$studentLastNameOrFilters = function (array $lastNames): array {
     $groups = [];
 
     foreach (array_values($lastNames) as $index => $lastName) {
@@ -129,12 +126,12 @@ function studentLastNameOrFilters(array $lastNames): array
             ],
         ],
     ];
-}
+};
 
-it('resolves ad-hoc live filters to the same records as an equivalent saved group', function () {
+it('resolves ad-hoc live filters to the same records as an equivalent saved group', function () use ($studentLastNameContainsFilters) {
     actingAs(User::factory()->licensed(LicenseType::cases())->create());
 
-    $filters = studentLastNameContainsFilters('John');
+    $filters = $studentLastNameContainsFilters('John');
 
     Student::factory()->count(3)->create(['last' => 'John']);
     Student::factory()->count(2)->create(['last' => 'Doe']);
@@ -154,10 +151,10 @@ it('resolves ad-hoc live filters to the same records as an equivalent saved grou
         ->and($rawIds)->toEqual($savedIds);
 });
 
-it('applies ad-hoc live filters onto an existing query', function () {
+it('applies ad-hoc live filters onto an existing query', function () use ($studentLastNameContainsFilters) {
     actingAs(User::factory()->licensed(LicenseType::cases())->create());
 
-    $filters = studentLastNameContainsFilters('John');
+    $filters = $studentLastNameContainsFilters('John');
 
     Student::factory()->count(4)->create(['last' => 'John']);
     Student::factory()->count(6)->create(['last' => 'Doe']);
@@ -183,7 +180,7 @@ it('treats empty ad-hoc live filters as no filter', function () {
     expect($ids)->toHaveCount(5);
 });
 
-it('resolves relationship constraints identically for saved and ad-hoc live filters', function () {
+it('resolves relationship constraints identically for saved and ad-hoc live filters', function () use ($studentTaggedWithFilters) {
     actingAs(User::factory()->licensed(LicenseType::cases())->create());
 
     $tag = Tag::factory()->create(['type' => TagType::Student]);
@@ -193,7 +190,7 @@ it('resolves relationship constraints identically for saved and ad-hoc live filt
 
     Student::factory()->count(2)->create();
 
-    $filters = studentTaggedWithFilters([$tag->getKey()]);
+    $filters = $studentTaggedWithFilters([$tag->getKey()]);
 
     $group = Group::factory()->create([
         'model' => GroupModel::Student,
@@ -210,14 +207,14 @@ it('resolves relationship constraints identically for saved and ad-hoc live filt
         ->and($rawIds)->toEqual($savedIds);
 });
 
-it('resolves OR blocks identically for saved and ad-hoc live filters', function () {
+it('resolves OR blocks identically for saved and ad-hoc live filters', function () use ($studentLastNameOrFilters) {
     actingAs(User::factory()->licensed(LicenseType::cases())->create());
 
     Student::factory()->count(3)->create(['last' => 'John']);
     Student::factory()->count(2)->create(['last' => 'Doe']);
     Student::factory()->count(4)->create(['last' => 'Smith']);
 
-    $filters = studentLastNameOrFilters(['John', 'Doe']);
+    $filters = $studentLastNameOrFilters(['John', 'Doe']);
 
     $group = Group::factory()->create([
         'model' => GroupModel::Student,

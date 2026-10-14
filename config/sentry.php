@@ -34,6 +34,8 @@
 </COPYRIGHT>
 */
 
+use App\Support\Sentry\TracesSampler;
+
 /**
  * Sentry Laravel SDK configuration file.
  *
@@ -61,6 +63,9 @@ return [
 
     // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#traces-sample-rate
     'traces_sample_rate' => env('SENTRY_TRACES_SAMPLE_RATE') === null ? null : (float) env('SENTRY_TRACES_SAMPLE_RATE'),
+
+    // Takes precedence over traces_sample_rate; rates are in config/sentry-sampling.php.
+    'traces_sampler' => [TracesSampler::class, 'sample'],
 
     // @see: https://docs.sentry.io/platforms/php/guides/laravel/configuration/options/#profiles-sample-rate
     'profiles_sample_rate' => env('SENTRY_PROFILES_SAMPLE_RATE') === null ? null : (float) env('SENTRY_PROFILES_SAMPLE_RATE'),
@@ -140,7 +145,7 @@ return [
         'http_client_requests' => env('SENTRY_TRACE_HTTP_CLIENT_REQUESTS_ENABLED', true),
 
         // Capture Laravel cache events (hits, writes etc.) as spans
-        'cache' => env('SENTRY_TRACE_CACHE_ENABLED', true),
+        'cache' => env('SENTRY_TRACE_CACHE_ENABLED', false),
 
         // Capture Redis operations as spans (this enables Redis events in Laravel)
         'redis_commands' => env('SENTRY_TRACE_REDIS_COMMANDS', false),

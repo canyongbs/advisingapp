@@ -65,6 +65,9 @@ class CloneAiThread implements ShouldQueue
         protected User $recipient,
     ) {}
 
+    /**
+     * @return array<int, object>
+     */
     public function middleware(): array
     {
         return [new SkipIfBatchCancelled()];

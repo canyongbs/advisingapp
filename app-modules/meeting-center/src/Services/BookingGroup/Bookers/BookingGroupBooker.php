@@ -44,7 +44,6 @@ use AdvisingApp\MeetingCenter\Models\CalendarEvent;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use App\Models\User;
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Collection;
 
@@ -133,31 +132,30 @@ abstract class BookingGroupBooker
         string $email,
         ?string $meetingOwnerId = null,
     ): array {
-        $description = 'Booked via group booking page: ' . $bookingGroup->name;
+        assert($calendarOwner->calendar !== null);
 
         $calendarEvent = CalendarEvent::create([
             'calendar_id' => $calendarOwner->calendar->id,
             'title' => 'Group Meeting with ' . $name,
-            'description' => $description,
+            'description' => 'Booked via group booking page: ' . $bookingGroup->name,
             'starts_at' => $startsAt,
             'ends_at' => $endsAt,
             'attendees' => $attendees,
             'transparency' => EventTransparency::Busy,
         ]);
 
-        if ($calendarEvent->provider_uid === null) {
-            report(new Exception('Calendar event was created but provider UID was not returned.'));
-        }
-
-        $appointment = BookingGroupAppointment::create([
+        $appointmentAttributes = [
             'booking_group_id' => $bookingGroup->id,
-            'calendar_event_provider_uid' => $calendarEvent->provider_uid,
             'name' => $name,
             'email' => $email,
             'starts_at' => $startsAt,
             'ends_at' => $endsAt,
             'meeting_owner_id' => $meetingOwnerId,
-        ]);
+        ];
+
+        $appointmentAttributes['calendar_event_id'] = $calendarEvent->id;
+
+        $appointment = BookingGroupAppointment::create($appointmentAttributes);
 
         return [$calendarEvent, $appointment];
     }

@@ -34,6 +34,8 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Ai\Filament\Exports\AssistantUtilizationExporter;
+use AdvisingApp\Ai\Filament\Imports\EmployeeAdvisorQuestionImporter;
 use AdvisingApp\Report\Filament\Exports\UserExporter;
 use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
 use App\Filament\Imports\UserImporter;
@@ -44,10 +46,11 @@ use App\Models\Export;
 use App\Models\Import;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
+use function Tests\setEnterpriseAiEnabled;
 
 // Access Control Tests
 
@@ -108,7 +111,7 @@ it('renders the import table', function () {
 
     actingAs($user);
 
-    livewire(ImportsTable::class)
+    Livewire::test(ImportsTable::class)
         ->assertSuccessful();
 });
 
@@ -126,7 +129,7 @@ it('displays import records in the import table', function () {
     $import->total_rows = 100;
     $import->save();
 
-    livewire(ImportsTable::class)
+    Livewire::test(ImportsTable::class)
         ->assertCanSeeTableRecords([$import]);
 });
 
@@ -150,7 +153,7 @@ it('shows download button when import is completed and file exists and user has 
 
     Storage::disk('s3')->put("imports/{$import->getKey()}.csv", 'test,data');
 
-    livewire(ImportsTable::class)
+    Livewire::test(ImportsTable::class)
         ->assertTableActionVisible('download', $import);
 });
 
@@ -173,7 +176,7 @@ it('hides download button when import is not completed', function () {
 
     Storage::disk('s3')->put("imports/{$import->getKey()}.csv", 'test,data');
 
-    livewire(ImportsTable::class)
+    Livewire::test(ImportsTable::class)
         ->assertTableActionHidden('download', $import);
 });
 
@@ -195,7 +198,7 @@ it('hides download button when import file does not exist on disk', function () 
     $import->completed_at = now();
     $import->save();
 
-    livewire(ImportsTable::class)
+    Livewire::test(ImportsTable::class)
         ->assertTableActionHidden('download', $import);
 });
 
@@ -218,7 +221,7 @@ it('hides download button when user lacks export_hub.import permission', functio
 
     Storage::disk('s3')->put("imports/{$import->getKey()}.csv", 'test,data');
 
-    livewire(ImportsTable::class)
+    Livewire::test(ImportsTable::class)
         ->assertTableActionHidden('download', $import);
 });
 
@@ -238,7 +241,7 @@ it('displays export records in the export table', function () {
     $export->total_rows = 200;
     $export->save();
 
-    livewire(ExportsTable::class)
+    Livewire::test(ExportsTable::class)
         ->assertCanSeeTableRecords([$export]);
 });
 
@@ -258,7 +261,7 @@ it('shows the export download button when the export is completed and the user h
     $export->completed_at = now();
     $export->save();
 
-    livewire(ExportsTable::class)
+    Livewire::test(ExportsTable::class)
         ->assertTableActionVisible('download', $export);
 });
 
@@ -277,7 +280,7 @@ it('hides the export download button when the export is not completed', function
     $export->total_rows = 200;
     $export->save();
 
-    livewire(ExportsTable::class)
+    Livewire::test(ExportsTable::class)
         ->assertTableActionHidden('download', $export);
 });
 
@@ -296,7 +299,7 @@ it('hides the export download button when the user lacks the export_hub.import p
     $export->completed_at = now();
     $export->save();
 
-    livewire(ExportsTable::class)
+    Livewire::test(ExportsTable::class)
         ->assertTableActionHidden('download', $export);
 });
 
@@ -357,11 +360,11 @@ it('defaults the active tab to import when the user has export hub access', func
 
     actingAs($user);
 
-    livewire(ImportExport::class)
+    Livewire::test(ImportExport::class)
         ->assertSet('activeTab', 'import');
 });
 
-it('defaults the active tab to student sync when the user can only access student sync', function () {
+it('does not render a tab the user cannot access', function (string $tab, string $table) {
     $settings = app(ManageStudentConfigurationSettings::class);
     $settings->is_enabled = true;
     $settings->save();
@@ -371,9 +374,13 @@ it('defaults the active tab to student sync when the user can only access studen
 
     actingAs($user);
 
-    livewire(ImportExport::class)
-        ->assertSet('activeTab', 'student-sync');
-});
+    get(ImportExport::getUrl(['tab' => $tab]))
+        ->assertSuccessful()
+        ->assertDontSeeLivewire($table);
+})->with([
+    'import' => ['import', ImportsTable::class],
+    'export' => ['export', ExportsTable::class],
+]);
 
 it('syncs the active tab into the component state when switching tabs', function () {
     $user = User::factory()->create();
@@ -381,7 +388,7 @@ it('syncs the active tab into the component state when switching tabs', function
 
     actingAs($user);
 
-    livewire(ImportExport::class)
+    Livewire::test(ImportExport::class)
         ->assertSet('activeTab', 'import')
         ->set('activeTab', 'export')
         ->assertSet('activeTab', 'export');
@@ -393,7 +400,7 @@ it('marks the active tab as current', function () {
 
     actingAs($user);
 
-    $html = livewire(ImportExport::class)
+    $html = Livewire::test(ImportExport::class)
         ->set('activeTab', 'export')
         ->html();
 
@@ -404,4 +411,68 @@ it('marks the active tab as current', function () {
     }
 
     expect($activeLabel)->toContain('Export');
+});
+
+describe('enterprise ai', function () {
+    it('hides Enterprise AI exports from the export table while Enterprise AI is disabled', function () {
+        $user = User::factory()->create();
+        $user->givePermissionTo('export_hub.view-any');
+
+        actingAs($user);
+
+        $createExport = function (string $exporter) use ($user): Export {
+            $export = new Export();
+            $export->user()->associate($user);
+            $export->file_name = 'test-export.csv';
+            $export->file_disk = 's3';
+            $export->exporter = $exporter;
+            $export->total_rows = 200;
+            $export->save();
+
+            return $export;
+        };
+
+        $enterpriseAiExport = $createExport(AssistantUtilizationExporter::class);
+        $otherExport = $createExport(UserExporter::class);
+
+        Livewire::test(ExportsTable::class)
+            ->assertCanSeeTableRecords([$enterpriseAiExport, $otherExport]);
+
+        setEnterpriseAiEnabled(false);
+
+        Livewire::test(ExportsTable::class)
+            ->assertCanSeeTableRecords([$otherExport])
+            ->assertCanNotSeeTableRecords([$enterpriseAiExport]);
+    });
+
+    it('hides Enterprise AI imports from the import table while Enterprise AI is disabled', function () {
+        $user = User::factory()->create();
+        $user->givePermissionTo('export_hub.view-any');
+
+        actingAs($user);
+
+        $createImport = function (string $importer) use ($user): Import {
+            $import = new Import();
+            $import->user()->associate($user);
+            $import->file_name = 'test-import.csv';
+            $import->file_path = '/tmp/test-import.csv';
+            $import->importer = $importer;
+            $import->total_rows = 100;
+            $import->save();
+
+            return $import;
+        };
+
+        $enterpriseAiImport = $createImport(EmployeeAdvisorQuestionImporter::class);
+        $otherImport = $createImport(UserImporter::class);
+
+        Livewire::test(ImportsTable::class)
+            ->assertCanSeeTableRecords([$enterpriseAiImport, $otherImport]);
+
+        setEnterpriseAiEnabled(false);
+
+        Livewire::test(ImportsTable::class)
+            ->assertCanSeeTableRecords([$otherImport])
+            ->assertCanNotSeeTableRecords([$enterpriseAiImport]);
+    });
 });

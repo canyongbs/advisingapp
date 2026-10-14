@@ -36,8 +36,8 @@
 
 use App\Filament\Resources\SystemUsers\Pages\EditSystemUser;
 use App\Models\SystemUser;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('EditSystemUser does not allow for duplicate names of non-deleted system users case insensitively', function () {
@@ -49,12 +49,12 @@ test('EditSystemUser does not allow for duplicate names of non-deleted system us
 
     $deletedSystemUser->delete();
 
-    livewire(EditSystemUser::class, ['record' => $systemUser->getRouteKey()])
+    Livewire::test(EditSystemUser::class, ['record' => $systemUser->getRouteKey()])
         ->fillForm(['name' => 'system user'])
         ->call('save')
         ->assertHasNoFormErrors();
 
-    livewire(EditSystemUser::class, ['record' => $systemUser->getRouteKey()])
+    Livewire::test(EditSystemUser::class, ['record' => $systemUser->getRouteKey()])
         ->fillForm(['name' => 'OTHER System user'])
         ->call('save')
         ->assertHasFormErrors(['name' => 'unique']);

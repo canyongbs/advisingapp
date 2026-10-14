@@ -40,12 +40,12 @@ use AdvisingApp\MeetingCenter\Models\Calendar;
 use AdvisingApp\MeetingCenter\Models\PersonalBookingPage;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 
 beforeEach(function () {
     $settings = app(LicenseSettings::class);
@@ -86,7 +86,7 @@ it('creates a personal booking page when enabled', function () {
 
     actingAs($user);
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->fillForm([
             'is_enabled' => true,
             'slug' => 'test-user-booking',
@@ -124,7 +124,7 @@ it('validates slug is required when enabled', function () {
 
     actingAs($user);
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->fillForm([
             'is_enabled' => true,
             'slug' => '',
@@ -157,7 +157,7 @@ it('validates slug must be unique', function () {
 
     actingAs($user);
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->fillForm([
             'is_enabled' => true,
             'slug' => 'existing-slug',
@@ -184,7 +184,7 @@ it('validates slug must be alpha dash', function () {
 
     actingAs($user);
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->fillForm([
             'is_enabled' => true,
             'slug' => 'invalid slug with spaces',
@@ -211,7 +211,7 @@ it('validates slug max length', function () {
 
     actingAs($user);
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->fillForm([
             'is_enabled' => true,
             'slug' => str_repeat('a', 256),
@@ -238,7 +238,7 @@ it('validates default appointment duration is required when enabled', function (
 
     actingAs($user);
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->fillForm([
             'is_enabled' => true,
             'slug' => 'test-slug',
@@ -265,7 +265,7 @@ it('validates office hours must be enabled when booking page is enabled', functi
 
     actingAs($user);
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->fillForm([
             'is_enabled' => true,
             'slug' => 'test-slug',
@@ -284,7 +284,7 @@ it('validates at least one day must have office hours configured', function () {
 
     actingAs($user);
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->fillForm([
             'is_enabled' => true,
             'slug' => 'test-slug',
@@ -312,7 +312,7 @@ it('can update an existing personal booking page', function () {
 
     actingAs($user);
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->fillForm([
             'is_enabled' => true,
             'slug' => 'updated-slug',
@@ -350,7 +350,7 @@ it('can disable a personal booking page', function () {
 
     actingAs($user);
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->fillForm([
             'is_enabled' => false,
             'slug' => 'test-slug',
@@ -381,7 +381,7 @@ it('saves office hours configuration to user', function () {
         'sunday' => ['is_enabled' => false],
     ];
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->fillForm([
             'is_enabled' => true,
             'slug' => 'test-slug',
@@ -410,7 +410,7 @@ it('validates office hours must have at least one enabled day with times configu
 
     actingAs($user);
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->fillForm([
             'is_enabled' => true,
             'slug' => 'test-slug',
@@ -440,7 +440,7 @@ it('saves out of office configuration to user', function () {
     $outOfOfficeStartsAt = now()->addDay();
     $outOfOfficeEndsAt = now()->addDays(7);
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->fillForm([
             'is_enabled' => true,
             'slug' => 'test-slug',
@@ -476,7 +476,7 @@ it('validates out of office start date is required when out of office enabled', 
 
     actingAs($user);
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->fillForm([
             'is_enabled' => true,
             'slug' => 'test-slug',
@@ -506,7 +506,7 @@ it('validates out of office end date is required when out of office enabled', fu
 
     actingAs($user);
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->fillForm([
             'is_enabled' => true,
             'slug' => 'test-slug',
@@ -554,7 +554,7 @@ it('pre-fills form with existing booking page data', function () {
 
     actingAs($user);
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->assertFormSet([
             'is_enabled' => true,
             'slug' => 'existing-slug',
@@ -579,7 +579,7 @@ it('generates default slug from user name when no booking page exists', function
 
     actingAs($user);
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->assertFormSet([
             'is_enabled' => false,
             'slug' => 'john-doe',
@@ -597,7 +597,7 @@ it('hides view booking page action when booking page is disabled', function () {
 
     actingAs($user);
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->assertActionHidden('view_booking_page');
 });
 
@@ -614,7 +614,7 @@ it('shows view booking page action when booking page is enabled', function () {
 
     actingAs($user);
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->assertActionVisible('view_booking_page');
 });
 
@@ -635,7 +635,7 @@ it('can save booking page with office hours on multiple days', function () {
         'sunday' => ['is_enabled' => false],
     ];
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->fillForm([
             'is_enabled' => true,
             'slug' => 'test-slug',
@@ -681,7 +681,7 @@ it('can update slug without affecting unique constraint for same user', function
 
     actingAs($user);
 
-    livewire(ManagePersonalBookingPage::class)
+    Livewire::test(ManagePersonalBookingPage::class)
         ->fillForm([
             'is_enabled' => true,
             'slug' => 'original-slug',

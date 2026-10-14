@@ -36,9 +36,12 @@
 
 use AdvisingApp\Authorization\Filament\Resources\Roles\Pages\EditRole;
 use AdvisingApp\Authorization\Models\Role;
+use App\Enums\Feature;
+use CanyonGBS\Common\Filament\Forms\Components\PermissionsMatrix;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
+use function Tests\setEnterpriseAiEnabled;
 
 test('EditRole does not allow duplicate role names case insensitively within a guard', function () {
     asSuperAdmin();
@@ -47,14 +50,65 @@ test('EditRole does not allow duplicate role names case insensitively within a g
     Role::factory()->create(['name' => 'Second Role', 'guard_name' => 'web']);
 
     // Editing a role to its own name in a different case is allowed (record is ignored).
-    livewire(EditRole::class, ['record' => $role->getRouteKey()])
+    Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
         ->fillForm(['name' => 'first role'])
         ->call('save')
         ->assertHasNoFormErrors();
 
     // Colliding with another role's name case-insensitively is rejected.
-    livewire(EditRole::class, ['record' => $role->getRouteKey()])
+    Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
         ->fillForm(['name' => 'SECOND role'])
         ->call('save')
         ->assertHasFormErrors(['name' => 'unique']);
+});
+
+describe('enterprise ai', function () {
+    it('hides the Enterprise AI permission groups while Enterprise AI is disabled', function () {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['guard_name' => 'web']);
+
+        $getAvailablePermissionGroupNames = function () use ($role): array {
+            $availablePermissionGroupNames = [];
+
+            Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+                ->assertFormFieldExists('permissions', function (PermissionsMatrix $field) use (&$availablePermissionGroupNames): bool {
+                    $availablePermissionGroupNames = array_keys($field->getAvailablePermissions());
+
+                    return true;
+                });
+
+            return $availablePermissionGroupNames;
+        };
+
+        expect(array_values(array_intersect($getAvailablePermissionGroupNames(), Feature::EnterpriseAi->getPermissionGroupNames())))
+            ->toEqualCanonicalizing(Feature::EnterpriseAi->getPermissionGroupNames());
+
+        setEnterpriseAiEnabled(false);
+
+        $availablePermissionGroupNames = $getAvailablePermissionGroupNames();
+
+        expect(array_intersect($availablePermissionGroupNames, Feature::EnterpriseAi->getPermissionGroupNames()))->toBeEmpty()
+            ->and($availablePermissionGroupNames)->toContain('User', 'Role');
+    });
+
+    it('keeps a role\'s hidden Enterprise AI permissions when it is saved while Enterprise AI is disabled', function () {
+        asSuperAdmin();
+
+        $role = Role::factory()->create(['name' => 'Advisors', 'guard_name' => 'web']);
+        $role->givePermissionTo(['prompt.view-any', 'user.view-any']);
+
+        setEnterpriseAiEnabled(false);
+
+        Livewire::test(EditRole::class, ['record' => $role->getRouteKey()])
+            ->fillForm(['name' => 'Renamed Advisors'])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $role->refresh();
+
+        expect($role->name)->toBe('Renamed Advisors')
+            ->and($role->hasPermissionTo('prompt.view-any'))->toBeTrue()
+            ->and($role->hasPermissionTo('user.view-any'))->toBeTrue();
+    });
 });

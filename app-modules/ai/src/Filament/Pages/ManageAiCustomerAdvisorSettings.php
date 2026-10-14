@@ -39,6 +39,7 @@ namespace AdvisingApp\Ai\Filament\Pages;
 use AdvisingApp\Ai\Enums\AiModel;
 use AdvisingApp\Ai\Enums\AiModelApplicabilityFeature;
 use AdvisingApp\Ai\Settings\AiCustomerAdvisorSettings;
+use App\Enums\Feature;
 use App\Filament\Clusters\GlobalArtificialIntelligence;
 use App\Models\User;
 use Filament\Forms\Components\Select;
@@ -46,6 +47,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 
 class ManageAiCustomerAdvisorSettings extends ManageAiEmployeeAdvisorSettings
@@ -62,6 +64,10 @@ class ManageAiCustomerAdvisorSettings extends ManageAiEmployeeAdvisorSettings
 
     public static function canAccess(): bool
     {
+        if (! Gate::check(Feature::EnterpriseAi->getGateName())) {
+            return false;
+        }
+
         $user = auth()->user();
 
         assert($user instanceof User);

@@ -71,7 +71,7 @@ it('dispatches the proper notifications to subscribers on created', function () 
 
     Concern::factory()->create([
         'concern_id' => $student->sisid,
-        'concern_type' => Student::class,
+        'concern_type' => $student->getMorphClass(),
     ]);
 
     $student->refresh();
@@ -97,7 +97,7 @@ it('only notifies active users of concerns', function () {
 
     Concern::factory()->create([
         'concern_id' => $student->sisid,
-        'concern_type' => Student::class,
+        'concern_type' => $student->getMorphClass(),
     ]);
 
     Notification::assertNotSentTo($deletedUser, ConcernCreatedNotification::class);

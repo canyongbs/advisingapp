@@ -36,7 +36,7 @@
     import Header from '@common/portal/Header.vue';
     import { HomeIcon } from '@heroicons/vue/24/outline';
     import { storeToRefs } from 'pinia';
-    import { computed, onMounted, ref } from 'vue';
+    import { computed, defineProps, onMounted, ref } from 'vue';
     import { RouterView, useRoute, useRouter } from 'vue-router';
     import { useIsDataLoading } from 'vue-router/experimental';
     import BootScreen from './Components/BootScreen.vue';

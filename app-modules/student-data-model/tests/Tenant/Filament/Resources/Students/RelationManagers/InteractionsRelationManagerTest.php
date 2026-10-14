@@ -44,9 +44,9 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\InteractionsRelationManager;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 it('renders the InteractionsRelationManager based on proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
@@ -60,7 +60,7 @@ it('renders the InteractionsRelationManager based on proper access', function ()
 
     $relationManager = InteractionsRelationManager::class;
 
-    livewire(ViewStudent::class, [
+    Livewire::test(ViewStudent::class, [
         'record' => $student->getKey(),
     ])
         ->assertOk()
@@ -68,7 +68,7 @@ it('renders the InteractionsRelationManager based on proper access', function ()
 
     $user->givePermissionTo('interaction.view-any');
 
-    livewire(ViewStudent::class, [
+    Livewire::test(ViewStudent::class, [
         'record' => $student->getKey(),
     ])
         ->assertOk()
@@ -92,7 +92,7 @@ it('renders only the interactions associated with student', function () {
 
     actingAs($user);
 
-    livewire(InteractionsRelationManager::class, [
+    Livewire::test(InteractionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -122,7 +122,7 @@ it('renders the initiative select filter', function () {
 
     actingAs($user);
 
-    livewire(InteractionsRelationManager::class, [
+    Livewire::test(InteractionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -155,7 +155,7 @@ it('renders the driver select filter', function () {
 
     actingAs($user);
 
-    livewire(InteractionsRelationManager::class, [
+    Livewire::test(InteractionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -188,7 +188,7 @@ it('renders the type select filter', function () {
 
     actingAs($user);
 
-    livewire(InteractionsRelationManager::class, [
+    Livewire::test(InteractionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -221,7 +221,7 @@ it('renders the status select filter', function () {
 
     actingAs($user);
 
-    livewire(InteractionsRelationManager::class, [
+    Livewire::test(InteractionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -254,7 +254,7 @@ it('renders the created by select filter', function () {
 
     actingAs($user);
 
-    livewire(InteractionsRelationManager::class, [
+    Livewire::test(InteractionsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])

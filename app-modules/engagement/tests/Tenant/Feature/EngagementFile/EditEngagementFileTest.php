@@ -39,9 +39,9 @@ use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\EngagementFileReso
 use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\Pages\EditEngagementFile;
 use AdvisingApp\Engagement\Models\EngagementFile;
 use App\Models\User;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 // TODO: Add tests for the EditEngagementFile
 //test('A successful action on the EditEngagementFile page', function () {});
@@ -62,7 +62,7 @@ test('EditEngagementFile is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    livewire(EditEngagementFile::class, [
+    Livewire::test(EditEngagementFile::class, [
         'record' => $engagementFile->getRouteKey(),
     ])
         ->assertForbidden();
@@ -81,7 +81,7 @@ test('EditEngagementFile is gated with proper access control', function () {
 
     //$request = collect(EditEngagementFileRequestFactory::new()->create());
     //
-    //livewire(EngagementFileResource\Pages\EditEngagementFile::class, [
+    //Livewire::test(EngagementFileResource\Pages\EditEngagementFile::class, [
     //    'record' => $engagementFile->getRouteKey(),
     //])
     //    ->fillForm($request->toArray())

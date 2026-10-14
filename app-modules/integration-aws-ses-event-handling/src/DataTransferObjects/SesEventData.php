@@ -59,7 +59,21 @@ class SesEventData extends Data
 
     public static function fromRequest(Request $request)
     {
-        $data = json_decode(json_decode($request->getContent(), true)['Message'], true);
+        $envelope = json_decode($request->getContent(), true);
+
+        assert(is_array($envelope));
+
+        return static::createFromSnsEnvelope($envelope);
+    }
+
+    /**
+     * @param array<array-key, mixed> $envelope The SNS envelope, carrying the SES event JSON in its "Message" key.
+     */
+    public static function createFromSnsEnvelope(array $envelope): self
+    {
+        assert(is_string($envelope['Message'] ?? null));
+
+        $data = json_decode($envelope['Message'], true);
 
         return new self(
             eventType: $data['eventType'],

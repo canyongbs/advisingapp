@@ -34,36 +34,26 @@
 </COPYRIGHT>
 */
 
-use App\Features\EventRegistrationRequestsFeature;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class () extends Migration {
     public function up(): void
     {
-        DB::transaction(function () {
-            Schema::table('event_registration_form_submissions', function (Blueprint $table) {
-                $table->timestamp('canceled_at')->nullable();
-                $table->string('request_method')->nullable();
-                $table->text('request_note')->nullable();
-                $table->foreignUuid('requester_id')->nullable()->constrained('users')->nullOnDelete();
-            });
-
-            EventRegistrationRequestsFeature::activate();
+        Schema::table('event_registration_form_submissions', function (Blueprint $table) {
+            $table->timestamp('canceled_at')->nullable();
+            $table->string('request_method')->nullable();
+            $table->text('request_note')->nullable();
+            $table->foreignUuid('requester_id')->nullable()->constrained('users')->nullOnDelete();
         });
     }
 
     public function down(): void
     {
-        DB::transaction(function () {
-            EventRegistrationRequestsFeature::deactivate();
-
-            Schema::table('event_registration_form_submissions', function (Blueprint $table) {
-                $table->dropConstrainedForeignId('requester_id');
-                $table->dropColumn(['canceled_at', 'request_method', 'request_note']);
-            });
+        Schema::table('event_registration_form_submissions', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('requester_id');
+            $table->dropColumn(['canceled_at', 'request_method', 'request_note']);
         });
     }
 };

@@ -36,14 +36,14 @@
 
 use AdvisingApp\Theme\Filament\Pages\ManageBrandConfigurationSettings;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('stores the email-facing logo publicly and keeps browser-only assets private', function () {
     asSuperAdmin();
 
-    livewire(ManageBrandConfigurationSettings::class)
+    Livewire::test(ManageBrandConfigurationSettings::class)
         ->assertFormFieldExists(
             'logo',
             checkFieldUsing: fn (SpatieMediaLibraryFileUpload $field): bool => $field->getDiskName() === 's3-public' && $field->getVisibility() === 'public'

@@ -40,8 +40,7 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\MostRecentTasksTable;
 use AdvisingApp\StudentDataModel\Models\Student;
 use AdvisingApp\Task\Models\Task;
-
-use function Pest\Livewire\livewire;
+use Livewire\Livewire;
 
 it('displays only tasks added within the selected date range for students', function () {
     $startDate = now()->subDays(10);
@@ -73,7 +72,7 @@ it('displays only tasks added within the selected date range for students', func
         'endDate' => $endDate->toDateString(),
     ];
 
-    livewire(MostRecentTasksTable::class, [
+    Livewire::test(MostRecentTasksTable::class, [
         'cacheTag' => 'report-tasks',
         'educatableType' => Student::class,
         'pageFilters' => $filters,
@@ -115,7 +114,7 @@ it('displays only tasks added within the selected date range for prospects', fun
         'endDate' => $endDate->toDateString(),
     ];
 
-    livewire(MostRecentTasksTable::class, [
+    Livewire::test(MostRecentTasksTable::class, [
         'cacheTag' => 'report-tasks',
         'educatableType' => Prospect::class,
         'pageFilters' => $filters,
@@ -151,7 +150,7 @@ it('properly filters students by group', function () {
 
     $nonGroupTask = Task::factory()->concerningStudent(Student::factory()->create(['last' => 'Doe']))->state(['is_confidential' => false])->create();
 
-    livewire(MostRecentTasksTable::class, [
+    Livewire::test(MostRecentTasksTable::class, [
         'cacheTag' => 'report-tasks',
         'educatableType' => Student::class,
         'pageFilters' => [],
@@ -162,7 +161,7 @@ it('properly filters students by group', function () {
         'populationGroup' => $group->getKey(),
     ];
 
-    livewire(MostRecentTasksTable::class, [
+    Livewire::test(MostRecentTasksTable::class, [
         'cacheTag' => 'report-tasks',
         'educatableType' => Student::class,
         'pageFilters' => $filters,
@@ -195,7 +194,7 @@ it('properly filters prospects by group', function () {
 
     $nonGroupTask = Task::factory()->concerningProspect(Prospect::factory()->create(['last_name' => 'Doe']))->state(['is_confidential' => false])->create();
 
-    livewire(MostRecentTasksTable::class, [
+    Livewire::test(MostRecentTasksTable::class, [
         'cacheTag' => 'report-tasks',
         'educatableType' => Prospect::class,
         'pageFilters' => [],
@@ -206,7 +205,7 @@ it('properly filters prospects by group', function () {
         'populationGroup' => $group->getKey(),
     ];
 
-    livewire(MostRecentTasksTable::class, [
+    Livewire::test(MostRecentTasksTable::class, [
         'cacheTag' => 'report-tasks',
         'educatableType' => Prospect::class,
         'pageFilters' => $filters,

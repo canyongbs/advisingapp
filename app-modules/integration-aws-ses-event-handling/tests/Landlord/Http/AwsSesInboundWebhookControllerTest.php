@@ -44,9 +44,11 @@ use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRejectEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRenderingFailureEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesSendEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesSubscriptionEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Exceptions\CouldNotFindTenantFromData;
 use AdvisingApp\Webhook\Http\Middleware\VerifyAwsSnsRequest;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Exceptions;
 
 use function Pest\Laravel\withHeaders;
 use function Pest\Laravel\withoutMiddleware;
@@ -376,4 +378,18 @@ it('handles a Subscription event', function () {
     $response->assertOk();
 
     Event::assertDispatched(SesSubscriptionEvent::class);
+});
+
+it('reports an event it cannot route to a tenant and tells SNS not to retry it', function () {
+    Exceptions::fake();
+
+    $snsData = loadFixtureFromModule('integration-aws-ses-event-handling', 'sns-notification');
+    $snsData['Message'] = json_encode(loadFixtureFromModule('integration-aws-ses-event-handling', 'Bounce'));
+
+    withHeaders(['x-amz-sns-message-type' => 'Notification'])
+        ->postJson(route('landlord.api.inbound.webhook.awsses'), $snsData)
+        ->assertNotFound();
+
+    Exceptions::assertReported(CouldNotFindTenantFromData::class);
+    Event::assertNotDispatched(SesBounceEvent::class);
 });

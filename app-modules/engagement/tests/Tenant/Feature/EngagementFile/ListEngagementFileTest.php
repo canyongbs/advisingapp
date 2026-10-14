@@ -39,9 +39,9 @@ use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\EngagementFileReso
 use AdvisingApp\Engagement\Filament\Resources\EngagementFiles\Pages\ListEngagementFiles;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 // TODO: Add tests for the ListEngagementFiles
 //test('The correct details are displayed on the ListEngagementFiles page', function () {});
@@ -72,7 +72,7 @@ it('hides the delete bulk action for users without the delete permission', funct
 
     actingAs($user);
 
-    livewire(ListEngagementFiles::class)
+    Livewire::test(ListEngagementFiles::class)
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 });
 
@@ -83,6 +83,6 @@ it('shows the delete bulk action for users with the delete permission', function
 
     actingAs($user);
 
-    livewire(ListEngagementFiles::class)
+    Livewire::test(ListEngagementFiles::class)
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

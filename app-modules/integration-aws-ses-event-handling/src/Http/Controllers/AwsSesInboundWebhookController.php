@@ -36,46 +36,27 @@
 
 namespace AdvisingApp\IntegrationAwsSesEventHandling\Http\Controllers;
 
+use AdvisingApp\IntegrationAwsSesEventHandling\Actions\DispatchSesEvent;
 use AdvisingApp\IntegrationAwsSesEventHandling\DataTransferObjects\SesEventData;
-use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesBounceEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesClickEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesComplaintEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesDeliveryDelayEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesDeliveryEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesOpenEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRejectEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesRenderingFailureEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesSendEvent;
-use AdvisingApp\IntegrationAwsSesEventHandling\Events\SesSubscriptionEvent;
+use AdvisingApp\IntegrationAwsSesEventHandling\Exceptions\CouldNotFindTenantFromData;
 use App\Http\Controllers\Controller;
-use App\Models\Tenant;
-use Exception;
 use Illuminate\Http\Request;
 
+// TODO: Cleanup Task (ses-sqs): delete this controller and its route once the HTTP SNS subscription is removed everywhere.
 class AwsSesInboundWebhookController extends Controller
 {
-    public function __invoke(Request $request)
+    public function __invoke(Request $request, DispatchSesEvent $dispatchSesEvent)
     {
-        $data = SesEventData::fromRequest($request);
+        $snsMessageId = $request->json('MessageId');
 
-        /** @var Tenant $tenant */
-        $tenant = Tenant::query()->findOrFail(data_get($data->mail->tags, 'tenant_id'))->first();
+        try {
+            $dispatchSesEvent(SesEventData::fromRequest($request), is_string($snsMessageId) ? $snsMessageId : null);
+        } catch (CouldNotFindTenantFromData $exception) {
+            report($exception);
 
-        $tenant->execute(function () use ($data) {
-            match ($data->eventType) {
-                'Bounce' => SesBounceEvent::dispatch($data),
-                'Click' => SesClickEvent::dispatch($data),
-                'Complaint' => SesComplaintEvent::dispatch($data),
-                'Delivery' => SesDeliveryEvent::dispatch($data),
-                'DeliveryDelay' => SesDeliveryDelayEvent::dispatch($data),
-                'Open' => SesOpenEvent::dispatch($data),
-                'Reject' => SesRejectEvent::dispatch($data),
-                'RenderingFailure' => SesRenderingFailureEvent::dispatch($data),
-                'Send' => SesSendEvent::dispatch($data),
-                'Subscription' => SesSubscriptionEvent::dispatch($data),
-                default => throw new Exception('Unknown AWS SES event type'),
-            };
-        });
+            // A 4xx tells SNS not to retry an event that can never be routed.
+            return response(status: 404);
+        }
 
         return response(status: 200);
     }

@@ -39,9 +39,9 @@ use AdvisingApp\Team\Filament\Resources\Departments\Pages\ListDepartments;
 use AdvisingApp\Team\Models\Department;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 // Permission Tests
 
@@ -68,7 +68,7 @@ test('hides the bulk delete action from a user without the delete permission', f
 
     Department::factory()->count(2)->create();
 
-    livewire(ListDepartments::class)
+    Livewire::test(ListDepartments::class)
         ->assertSuccessful()
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 });
@@ -80,7 +80,7 @@ test('shows the bulk delete action to a user with the delete permission', functi
 
     Department::factory()->count(2)->create();
 
-    livewire(ListDepartments::class)
+    Livewire::test(ListDepartments::class)
         ->assertSuccessful()
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

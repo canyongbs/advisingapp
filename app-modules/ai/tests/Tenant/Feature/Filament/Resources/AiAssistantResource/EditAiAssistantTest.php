@@ -45,11 +45,11 @@ use App\Models\User;
 use App\Settings\LicenseSettings;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
@@ -141,7 +141,7 @@ it('can edit a record', function () use ($licenses, $permissions) {
 
     $request = collect(EditAiAssistantRequestFactory::new()->create());
 
-    livewire(EditAiAssistant::class, [
+    Livewire::test(EditAiAssistant::class, [
         'record' => $aiAssistant->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -184,7 +184,7 @@ it('validates the inputs', function (EditAiAssistantRequestFactory $data, array 
 
     $aiAssistant = AiAssistant::factory()->create();
 
-    livewire(EditAiAssistant::class, [
+    Livewire::test(EditAiAssistant::class, [
         'record' => $aiAssistant->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -243,7 +243,7 @@ it('ai_assistant_confidential_users UserSelect does not show admin users in opti
 
     $aiAssistant = AiAssistant::factory()->create(['is_confidential' => true]);
 
-    livewire(EditAiAssistant::class, [
+    Livewire::test(EditAiAssistant::class, [
         'record' => $aiAssistant->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -270,7 +270,7 @@ it('ai_assistant_confidential_users UserSelect shows all users when filter_admin
 
     $aiAssistant = AiAssistant::factory()->create(['is_confidential' => true]);
 
-    livewire(EditAiAssistant::class, [
+    Livewire::test(EditAiAssistant::class, [
         'record' => $aiAssistant->getRouteKey(),
     ])
         ->assertSuccessful()

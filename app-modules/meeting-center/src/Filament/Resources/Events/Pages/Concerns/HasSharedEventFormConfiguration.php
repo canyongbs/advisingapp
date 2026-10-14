@@ -43,7 +43,6 @@ use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
-use App\Features\StepDescriptionFeature;
 use CanyonGBS\Common\Filament\Forms\Components\ColorSelect;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
@@ -162,8 +161,7 @@ trait HasSharedEventFormConfiguration
                             Textarea::make('description')
                                 ->label('Step Description')
                                 ->string()
-                                ->columnSpanFull()
-                                ->visible(fn (): bool => StepDescriptionFeature::active()),
+                                ->columnSpanFull(),
                             $this->fieldBuilder(),
                         ])
                         ->addActionLabel('New step')

@@ -41,10 +41,10 @@ use AdvisingApp\ResourceHub\Models\ResourceHubCategory;
 use AdvisingApp\ResourceHub\Tests\Tenant\ResourceHubCategory\RequestFactories\CreateResourceHubCategoryRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertCount;
 use function Tests\asSuperAdmin;
 
@@ -63,7 +63,7 @@ test('CreateResourceHubCategory is gated with proper access control', function (
             ResourceHubCategoryResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateResourceHubCategory::class)
+    Livewire::test(CreateResourceHubCategory::class)
         ->assertForbidden();
 
     $user->givePermissionTo('settings.view-any');
@@ -76,7 +76,7 @@ test('CreateResourceHubCategory is gated with proper access control', function (
 
     $request = collect(CreateResourceHubCategoryRequestFactory::new()->create());
 
-    livewire(CreateResourceHubCategory::class)
+    Livewire::test(CreateResourceHubCategory::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
@@ -103,7 +103,7 @@ test('CreateResourceHubCategory is gated with proper feature access control', fu
             ResourceHubCategoryResource::getUrl('create')
         )->assertForbidden();
 
-    livewire(CreateResourceHubCategory::class)
+    Livewire::test(CreateResourceHubCategory::class)
         ->assertForbidden();
 
     $settings->data->addons->resourceHub = true;
@@ -117,7 +117,7 @@ test('CreateResourceHubCategory is gated with proper feature access control', fu
 
     $request = collect(CreateResourceHubCategoryRequestFactory::new()->create());
 
-    livewire(CreateResourceHubCategory::class)
+    Livewire::test(CreateResourceHubCategory::class)
         ->fillForm($request->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
@@ -136,12 +136,12 @@ test('CreateResourceHubCategory does not allow for duplicate names of non-delete
 
     $category->delete();
 
-    livewire(CreateResourceHubCategory::class)
+    Livewire::test(CreateResourceHubCategory::class)
         ->fillForm($request1->toArray())
         ->call('create')
         ->assertHasNoActionErrors();
 
-    livewire(CreateResourceHubCategory::class)
+    Livewire::test(CreateResourceHubCategory::class)
         ->fillForm($request2->toArray())
         ->call('create')
         ->assertHasFormErrors(['name' => 'unique']);

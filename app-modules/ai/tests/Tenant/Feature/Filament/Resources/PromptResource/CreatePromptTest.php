@@ -42,12 +42,12 @@ use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use App\Models\User;
 use Illuminate\Support\Facades\Config;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 
 /** @var array<LicenseType> $licenses */
 $licenses = [
@@ -98,7 +98,7 @@ it('can create a record', function () use ($licenses, $permissions) {
 
     assertDatabaseCount(Prompt::class, 0);
 
-    livewire(CreatePrompt::class)
+    Livewire::test(CreatePrompt::class)
         ->assertSuccessful()
         ->fillForm($record->toArray())
         ->call('create')
@@ -119,7 +119,7 @@ it('confidential_prompt_users UserSelect does not show admin users in options by
     $adminUser = User::factory()->create();
     $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
-    livewire(CreatePrompt::class)
+    Livewire::test(CreatePrompt::class)
         ->assertSuccessful()
         ->assertFormFieldExists('confidential_prompt_users', checkFieldUsing: function (UserSelect $field) use ($regularUser, $adminUser): bool {
             return ! empty($field->getSearchResults($regularUser->name))
@@ -138,7 +138,7 @@ it('confidential_prompt_users UserSelect shows all users when filter_admins_from
     $adminUser = User::factory()->create();
     $adminUser->assignRole(Authenticatable::SUPER_ADMIN_ROLE);
 
-    livewire(CreatePrompt::class)
+    Livewire::test(CreatePrompt::class)
         ->assertSuccessful()
         ->assertFormFieldExists('confidential_prompt_users', checkFieldUsing: function (UserSelect $field) use ($adminUser): bool {
             return ! empty($field->getSearchResults($adminUser->name));
@@ -158,7 +158,7 @@ it('prevents creating a prompt with a case-insensitively duplicate title', funct
         'type_id' => $existingPrompt->type_id,
     ]);
 
-    livewire(CreatePrompt::class)
+    Livewire::test(CreatePrompt::class)
         ->fillForm($record->toArray())
         ->call('create')
         ->assertHasFormErrors(['title' => 'unique']);
@@ -179,7 +179,7 @@ it('allows reusing the title of a soft-deleted prompt', function () use ($licens
         'type_id' => $typeId,
     ]);
 
-    livewire(CreatePrompt::class)
+    Livewire::test(CreatePrompt::class)
         ->fillForm($record->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
@@ -200,7 +200,7 @@ it('allows creating a prompt with the same title as one in another type', functi
 
     $record = Prompt::factory()->make(['title' => 'shared title']);
 
-    livewire(CreatePrompt::class)
+    Livewire::test(CreatePrompt::class)
         ->fillForm($record->toArray())
         ->call('create')
         ->assertHasNoFormErrors();

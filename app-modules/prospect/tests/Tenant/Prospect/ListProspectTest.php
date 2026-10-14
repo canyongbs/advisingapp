@@ -50,9 +50,9 @@ use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 // TODO: Write ListProspects page test
@@ -87,7 +87,7 @@ test('ListProspects can bulk update characteristics', function () {
 
     $prospects = Prospect::factory()->count(3)->create();
 
-    $component = livewire(ListProspects::class);
+    $component = Livewire::test(ListProspects::class);
 
     $component->assertCanSeeTableRecords($prospects)
         ->assertCountTableRecords($prospects->count())
@@ -152,7 +152,7 @@ it('can filter prospects by `subscribed` prospects', function () {
 
     $notSubscribedProspects = Prospect::factory()->count(3)->create();
 
-    livewire(ListProspects::class)
+    Livewire::test(ListProspects::class)
         ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($notSubscribedProspects->merge($subscribedProspects))
         ->filterTable('subscribed')
@@ -199,7 +199,7 @@ it('can filter prospect by concerns', function () {
 
     $prospectsWithoutConcerns = Prospect::factory()->count(5)->create();
 
-    livewire(ListProspects::class)
+    Livewire::test(ListProspects::class)
         ->set('tableRecordsPerPage', 10)
         ->assertCanSeeTableRecords($prospectsWithoutConcerns->merge([$prospectWithStatusActive, $prospectWithStatusInprogress]))
         ->filterTable('concerns', [$activeStatusConcern, $inprogressStatusConcern])
@@ -289,7 +289,7 @@ it('renders the bulk create concern action based on proper access', function () 
 
     actingAs($user);
 
-    livewire(ListProspects::class)
+    Livewire::test(ListProspects::class)
         ->assertOk()
         ->assertTableBulkActionHidden('createConcern');
 
@@ -298,7 +298,7 @@ it('renders the bulk create concern action based on proper access', function () 
 
     $user->refresh();
 
-    livewire(ListProspects::class)
+    Livewire::test(ListProspects::class)
         ->assertOk()
         ->assertTableBulkActionVisible('createConcern');
 });
@@ -313,13 +313,13 @@ it('shows bulk assign tags action for authorized user', function () {
 
     $prospects = Prospect::factory()->count(5)->create();
 
-    livewire(ListProspects::class)
+    Livewire::test(ListProspects::class)
         ->assertCanSeeTableRecords($prospects)
         ->assertTableBulkActionHidden('bulkProspectTags');
 
     $user->givePermissionTo('prospect.*.update');
 
-    livewire(ListProspects::class)
+    Livewire::test(ListProspects::class)
         ->assertCanSeeTableRecords($prospects)
         ->assertTableBulkActionVisible('bulkProspectTags');
 });
@@ -332,13 +332,13 @@ it('renders the bulk create interaction action based on proper access', function
 
     actingAs($user);
 
-    livewire(ListProspects::class)
+    Livewire::test(ListProspects::class)
         ->assertOk()
         ->assertTableBulkActionHidden('createInteraction');
 
     $user->givePermissionTo('prospect.*.update');
 
-    livewire(ListProspects::class)
+    Livewire::test(ListProspects::class)
         ->assertOk()
         ->assertTableBulkActionVisible('createInteraction');
 });
@@ -351,7 +351,7 @@ it('shows bulk subscription action for authorized user', function () {
 
     actingAs($user);
 
-    livewire(ListProspects::class)
+    Livewire::test(ListProspects::class)
         ->assertOk()
         ->assertTableBulkActionHidden('bulkSubscription');
 
@@ -359,7 +359,7 @@ it('shows bulk subscription action for authorized user', function () {
 
     $prospects = Prospect::factory()->count(5)->create();
 
-    livewire(ListProspects::class)
+    Livewire::test(ListProspects::class)
         ->assertCanSeeTableRecords($prospects)
         ->assertTableBulkActionVisible('bulkSubscription')
         ->assertSuccessful();
@@ -372,13 +372,13 @@ test('the delete bulk action is gated by the delete permission', function () {
 
     actingAs($user);
 
-    livewire(ListProspects::class)
+    Livewire::test(ListProspects::class)
         ->assertOk()
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 
     $user->givePermissionTo('prospect.*.delete');
 
-    livewire(ListProspects::class)
+    Livewire::test(ListProspects::class)
         ->assertOk()
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

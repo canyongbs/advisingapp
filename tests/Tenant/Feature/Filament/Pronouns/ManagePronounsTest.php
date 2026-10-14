@@ -38,9 +38,9 @@ use App\Filament\Resources\Pronouns\Pages\ManagePronouns;
 use App\Models\Pronouns;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 it('hides the bulk delete action from a user without the delete permission', function () {
     $user = User::factory()->create();
@@ -49,7 +49,7 @@ it('hides the bulk delete action from a user without the delete permission', fun
 
     Pronouns::factory(2)->create();
 
-    livewire(ManagePronouns::class)
+    Livewire::test(ManagePronouns::class)
         ->assertSuccessful()
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 });
@@ -61,7 +61,7 @@ it('shows the bulk delete action to a user with the delete permission', function
 
     Pronouns::factory(2)->create();
 
-    livewire(ManagePronouns::class)
+    Livewire::test(ManagePronouns::class)
         ->assertSuccessful()
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

@@ -35,10 +35,8 @@
 */
 
 use AdvisingApp\Engagement\Models\EngagementFile;
-use Illuminate\Console\Scheduling\Event;
-use Illuminate\Console\Scheduling\Schedule;
+use App\Jobs\PruneModels;
 use Illuminate\Database\Console\PruneCommand;
-use Illuminate\Support\Collection;
 
 use function Pest\Laravel\artisan;
 use function Pest\Laravel\assertModelExists;
@@ -66,15 +64,14 @@ it('correctly prunes EngagementFiles based on retention_date', function () {
     assertModelExists($futureRetentionDateFile);
 });
 
-it('is scheduled to prune EngagementFiles daily during scheduler run', function () {
-    $schedule = app()->make(Schedule::class);
+it('is pruned by the daily `PruneModels` job', function () {
+    $expiredFile = EngagementFile::factory()->create([
+        'retention_date' => now()->subDay(),
+    ]);
 
-    $events = (new Collection($schedule->events()))->filter(function (Event $event) {
-        $engagementFileClass = preg_quote(EngagementFile::class);
+    assertModelExists($expiredFile);
 
-        return preg_match("/model:prune\s--model=.*{$engagementFileClass}.*/", $event->command)
-            && $event->expression === '0 0 * * *';
-    });
+    (new PruneModels())->handle();
 
-    expect($events)->toHaveCount(1);
+    assertModelMissing($expiredFile);
 });

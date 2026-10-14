@@ -41,15 +41,11 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Route;
 use Symfony\Component\HttpFoundation\Response;
 
-function handleCustomerAdvisorRequest(Student $student): Response
-{
+$handleCustomerAdvisorRequest = function (Student $student): Response {
     $advisor = CustomerAdvisor::factory()->create(['is_requires_authentication_enabled' => true]);
-
     $token = $student->createToken('customer-advisor-access-token')->plainTextToken;
-
     $request = Request::create('/', 'GET');
     $request->headers->set('Authorization', "Bearer {$token}");
-
     $route = new Route(['GET'], '/{advisor}', fn () => null);
     $route->bind($request);
     $route->setParameter('advisor', $advisor);
@@ -59,19 +55,19 @@ function handleCustomerAdvisorRequest(Student $student): Response
         $request,
         fn (): Response => response()->json(['ok' => true]),
     );
-}
+};
 
-it('allows a student with a valid token through', function () {
+it('allows a student with a valid token through', function () use ($handleCustomerAdvisorRequest) {
     $student = Student::factory()->create();
 
-    expect(handleCustomerAdvisorRequest($student)->getStatusCode())->toBe(200);
+    expect($handleCustomerAdvisorRequest($student)->getStatusCode())->toBe(200);
 });
 
-it('rejects a token belonging to an archived student', function () {
+it('rejects a token belonging to an archived student', function () use ($handleCustomerAdvisorRequest) {
     $student = Student::factory()->create();
     $student->archive();
 
-    $response = handleCustomerAdvisorRequest($student);
+    $response = $handleCustomerAdvisorRequest($student);
 
     expect($response->getStatusCode())->toBe(401)
         ->and(json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR))

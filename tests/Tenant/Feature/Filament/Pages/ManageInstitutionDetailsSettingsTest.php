@@ -38,10 +38,10 @@ use App\Filament\Pages\ManageInstitutionDetailsSettings;
 use App\Models\User;
 use App\Settings\InstitutionDetailsSettings;
 use Filament\Actions\Testing\TestAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 
 it('requires proper permissions to access', function () {
     $user = User::factory()->create();
@@ -63,7 +63,7 @@ it('disables the form without the `settings.*.update` permission', function () {
     $user->givePermissionTo('settings.view-any');
     actingAs($user);
 
-    livewire(ManageInstitutionDetailsSettings::class)
+    Livewire::test(ManageInstitutionDetailsSettings::class)
         ->assertFormFieldDisabled('ipeds_id')
         ->assertFormFieldDisabled('name')
         ->assertFormFieldDisabled('dark_logo')
@@ -71,7 +71,7 @@ it('disables the form without the `settings.*.update` permission', function () {
 
     $user->givePermissionTo('settings.*.update');
 
-    livewire(ManageInstitutionDetailsSettings::class)
+    Livewire::test(ManageInstitutionDetailsSettings::class)
         ->assertFormFieldEnabled('ipeds_id')
         ->assertFormFieldEnabled('name')
         ->assertFormFieldEnabled('dark_logo')
@@ -84,12 +84,12 @@ it('hides the `save` action without the `settings.*.update` permission', functio
     $user->givePermissionTo('settings.view-any');
     actingAs($user);
 
-    livewire(ManageInstitutionDetailsSettings::class)
+    Livewire::test(ManageInstitutionDetailsSettings::class)
         ->assertActionDoesNotExist(TestAction::make('save')->schemaComponent('form-actions', schema: 'content'));
 
     $user->givePermissionTo('settings.*.update');
 
-    livewire(ManageInstitutionDetailsSettings::class)
+    Livewire::test(ManageInstitutionDetailsSettings::class)
         ->assertActionVisible(TestAction::make('save')->schemaComponent('form-actions', schema: 'content'));
 });
 
@@ -103,7 +103,7 @@ it('requires proper permissions to update settings', function () {
     $settings->name = 'Existing Institution Name';
     $settings->save();
 
-    livewire(ManageInstitutionDetailsSettings::class)
+    Livewire::test(ManageInstitutionDetailsSettings::class)
         ->fillForm([
             'name' => 'New Institution Name',
         ])
@@ -113,7 +113,7 @@ it('requires proper permissions to update settings', function () {
 
     $user->givePermissionTo('settings.*.update');
 
-    livewire(ManageInstitutionDetailsSettings::class)
+    Livewire::test(ManageInstitutionDetailsSettings::class)
         ->fillForm([
             'name' => 'New Institution Name',
         ])

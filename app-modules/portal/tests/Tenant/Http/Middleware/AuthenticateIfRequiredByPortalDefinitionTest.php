@@ -41,14 +41,11 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-function handleResourceHubPortalRequest(Student $student): Response
-{
+$handleResourceHubPortalRequest = function (Student $student): Response {
     $settings = app(PortalSettings::class);
     $settings->resource_hub_portal_requires_authentication = true;
     $settings->save();
-
     $token = $student->createToken('resource-hub-portal-access-token', ['resource-hub-portal'])->plainTextToken;
-
     $request = Request::create('/', 'GET');
     $request->headers->set('Authorization', "Bearer {$token}");
 
@@ -56,17 +53,17 @@ function handleResourceHubPortalRequest(Student $student): Response
         $request,
         fn (): Response => response()->json(['ok' => true]),
     );
-}
+};
 
-it('allows a student with a valid token through', function () {
+it('allows a student with a valid token through', function () use ($handleResourceHubPortalRequest) {
     $student = Student::factory()->create();
 
-    expect(handleResourceHubPortalRequest($student)->getStatusCode())->toBe(200);
+    expect($handleResourceHubPortalRequest($student)->getStatusCode())->toBe(200);
 });
 
-it('rejects a token belonging to an archived student', function () {
+it('rejects a token belonging to an archived student', function () use ($handleResourceHubPortalRequest) {
     $student = Student::factory()->create();
     $student->archive();
 
-    handleResourceHubPortalRequest($student);
+    $handleResourceHubPortalRequest($student);
 })->throws(HttpException::class);

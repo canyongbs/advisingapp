@@ -56,13 +56,13 @@ it('executes email workflow step successfully', function () {
     $student = Student::factory()->create();
 
     $workflowTrigger = WorkflowTrigger::factory()->create([
-        'created_by_type' => User::class,
+        'created_by_type' => $user->getMorphClass(),
         'created_by_id' => $user->id,
     ]);
 
     $workflowRun = WorkflowRun::factory()->create([
         'workflow_trigger_id' => $workflowTrigger->id,
-        'related_type' => Student::class,
+        'related_type' => $student->getMorphClass(),
         'related_id' => $student->getKey(),
     ]);
 
@@ -125,13 +125,13 @@ it('throws exception for non-email channel', function () {
     $student = Student::factory()->create();
 
     $workflowTrigger = WorkflowTrigger::factory()->create([
-        'created_by_type' => User::class,
+        'created_by_type' => $user->getMorphClass(),
         'created_by_id' => $user->id,
     ]);
 
     $workflowRun = WorkflowRun::factory()->create([
         'workflow_trigger_id' => $workflowTrigger->id,
-        'related_type' => Student::class,
+        'related_type' => $student->getMorphClass(),
         'related_id' => $student->getKey(),
     ]);
 
@@ -157,13 +157,13 @@ it('creates an engagement with the correct email_type from workflow details', fu
     $student = Student::factory()->create();
 
     $workflowTrigger = WorkflowTrigger::factory()->create([
-        'created_by_type' => User::class,
+        'created_by_type' => $user->getMorphClass(),
         'created_by_id' => $user->id,
     ]);
 
     $workflowRun = WorkflowRun::factory()->create([
         'workflow_trigger_id' => $workflowTrigger->id,
-        'related_type' => Student::class,
+        'related_type' => $student->getMorphClass(),
         'related_id' => $student->getKey(),
     ]);
 

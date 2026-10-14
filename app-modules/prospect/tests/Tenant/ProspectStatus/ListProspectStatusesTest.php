@@ -40,9 +40,9 @@ use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use App\Models\User;
 use Filament\Actions\DeleteBulkAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('The correct details are displayed on the ListProspectStatuses page', function () {
@@ -53,7 +53,7 @@ test('The correct details are displayed on the ListProspectStatuses page', funct
 
     asSuperAdmin();
 
-    $component = livewire(ListProspectStatuses::class)
+    $component = Livewire::test(ListProspectStatuses::class)
         ->set('tableRecordsPerPage', 10);
 
     $component
@@ -114,13 +114,13 @@ test('the delete bulk action is gated by the delete permission', function () {
 
     actingAs($user);
 
-    livewire(ListProspectStatuses::class)
+    Livewire::test(ListProspectStatuses::class)
         ->assertOk()
         ->assertTableBulkActionHidden(DeleteBulkAction::class);
 
     $user->givePermissionTo('settings.*.delete');
 
-    livewire(ListProspectStatuses::class)
+    Livewire::test(ListProspectStatuses::class)
         ->assertOk()
         ->assertTableBulkActionVisible(DeleteBulkAction::class);
 });

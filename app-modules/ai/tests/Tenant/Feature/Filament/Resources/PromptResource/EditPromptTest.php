@@ -42,13 +42,13 @@ use App\Filament\Forms\Components\UserSelect;
 use App\Models\Authenticatable;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
 use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Laravel\get;
-use function Pest\Livewire\livewire;
 
 /** @var array<LicenseType> $licenses */
 $licenses = [
@@ -111,7 +111,7 @@ it('can edit a record', function () use ($licenses, $permissions) {
 
     $record = Prompt::factory()->make();
 
-    livewire(EditPrompt::class, [
+    Livewire::test(EditPrompt::class, [
         'record' => Prompt::factory()->create()->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -136,7 +136,7 @@ it('can delete a record', function () use ($licenses, $permissions) {
 
     assertDatabaseHas(Prompt::class, $record->attributesToArray());
 
-    livewire(EditPrompt::class, [
+    Livewire::test(EditPrompt::class, [
         'record' => $record->getRouteKey(),
     ])
         ->assertSuccessful()
@@ -157,7 +157,7 @@ it('confidential_prompt_users UserSelect does not show admin users in options by
 
     $prompt = Prompt::factory()->create(['is_confidential' => true]);
 
-    livewire(EditPrompt::class, ['record' => $prompt->getRouteKey()])
+    Livewire::test(EditPrompt::class, ['record' => $prompt->getRouteKey()])
         ->assertSuccessful()
         ->assertFormFieldExists('confidential_prompt_users', checkFieldUsing: function (UserSelect $field) use ($regularUser, $adminUser): bool {
             return ! empty($field->getSearchResults($regularUser->name))
@@ -177,7 +177,7 @@ it('confidential_prompt_users UserSelect loads pre-existing super admin as selec
     $prompt = Prompt::factory()->create(['is_confidential' => true]);
     $prompt->confidentialAccessUsers()->attach($superAdmin->getKey());
 
-    livewire(EditPrompt::class, ['record' => $prompt->getRouteKey()])
+    Livewire::test(EditPrompt::class, ['record' => $prompt->getRouteKey()])
         ->assertSuccessful()
         ->assertFormSet([
             'confidential_prompt_users' => [$superAdmin->getKey()],
@@ -196,7 +196,7 @@ it('prevents editing a prompt with a case-insensitively duplicate title', functi
         'type_id' => $recordToEdit->type_id,
     ]);
 
-    livewire(EditPrompt::class, [
+    Livewire::test(EditPrompt::class, [
         'record' => $recordToEdit->getRouteKey(),
     ])
         ->fillForm(['title' => 'second title'])
@@ -217,7 +217,7 @@ it('allows reusing the title of a soft-deleted prompt', function () use ($licens
     ]);
     $archivedPrompt->delete();
 
-    livewire(EditPrompt::class, [
+    Livewire::test(EditPrompt::class, [
         'record' => $recordToEdit->getRouteKey(),
     ])
         ->fillForm(['title' => 'archived title'])
@@ -239,7 +239,7 @@ it('allows editing a prompt to have the same title as one in another type', func
     $recordToEdit = Prompt::factory()->create();
     Prompt::factory()->create(['title' => 'Shared Title']);
 
-    livewire(EditPrompt::class, [
+    Livewire::test(EditPrompt::class, [
         'record' => $recordToEdit->getRouteKey(),
     ])
         ->fillForm(['title' => 'shared title'])

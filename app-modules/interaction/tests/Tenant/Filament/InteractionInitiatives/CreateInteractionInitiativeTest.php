@@ -41,11 +41,11 @@ use AdvisingApp\Interaction\Filament\Resources\InteractionInitiatives\Pages\Crea
 use AdvisingApp\Interaction\Models\InteractionInitiative;
 use App\Models\User;
 use Filament\Forms\Components\Select;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 test('CreateInteractionInitiative is gated with proper access control', function () {
@@ -73,12 +73,12 @@ test('it can successfully create for student or for prospect', function () {
 
     assertDatabaseCount(InteractionInitiative::class, 0);
 
-    livewire(CreateInteractionInitiative::class)
+    Livewire::test(CreateInteractionInitiative::class)
         ->assertSuccessful()
         ->fillForm($studentInteractionInitiative->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
-    livewire(CreateInteractionInitiative::class)
+    Livewire::test(CreateInteractionInitiative::class)
         ->assertSuccessful()
         ->fillForm($prospectInteractionInitiative->toArray())
         ->call('create')
@@ -98,12 +98,12 @@ test('it can only create if the name is unique per type', function () {
 
     assertDatabaseCount(InteractionInitiative::class, 0);
 
-    livewire(CreateInteractionInitiative::class)
+    Livewire::test(CreateInteractionInitiative::class)
         ->fillForm($interactionInitiative1->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
 
-    livewire(CreateInteractionInitiative::class)
+    Livewire::test(CreateInteractionInitiative::class)
         ->fillForm($interactionInitiative2->toArray())
         ->call('create')
         ->assertHasFormErrors();
@@ -119,12 +119,12 @@ test('it can successfully create with the same name for different types', functi
 
     assertDatabaseCount(InteractionInitiative::class, 0);
 
-    livewire(CreateInteractionInitiative::class)
+    Livewire::test(CreateInteractionInitiative::class)
         ->assertSuccessful()
         ->fillForm($studentInteractionInitiative->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
-    livewire(CreateInteractionInitiative::class)
+    Livewire::test(CreateInteractionInitiative::class)
         ->assertSuccessful()
         ->fillForm($prospectInteractionInitiative->toArray())
         ->call('create')
@@ -144,12 +144,12 @@ test('it can successfully set a default per type', function () {
 
     assertDatabaseCount(InteractionInitiative::class, 0);
 
-    livewire(CreateInteractionInitiative::class)
+    Livewire::test(CreateInteractionInitiative::class)
         ->assertSuccessful()
         ->fillForm($studentInteractionInitiative->toArray())
         ->call('create')
         ->assertHasNoFormErrors();
-    livewire(CreateInteractionInitiative::class)
+    Livewire::test(CreateInteractionInitiative::class)
         ->assertSuccessful()
         ->fillForm($prospectInteractionInitiative->toArray())
         ->call('create')
@@ -167,7 +167,7 @@ test('it only shows licensed interactable types as options', function () {
     $user->givePermissionTo('settings.create');
     actingAs($user);
 
-    livewire(CreateInteractionInitiative::class)
+    Livewire::test(CreateInteractionInitiative::class)
         ->assertFormFieldExists('interactable_type', function (Select $field) {
             expect($field->getOptions())->toBe([
                 InteractableType::Prospect->value => InteractableType::Prospect->getLabel(),
@@ -181,7 +181,7 @@ test('it only shows licensed interactable types as options', function () {
     $user->givePermissionTo('settings.create');
     actingAs($user);
 
-    livewire(CreateInteractionInitiative::class)
+    Livewire::test(CreateInteractionInitiative::class)
         ->assertFormFieldExists('interactable_type', function (Select $field) {
             expect($field->getOptions())->toBe([
                 InteractableType::Student->value => InteractableType::Student->getLabel(),

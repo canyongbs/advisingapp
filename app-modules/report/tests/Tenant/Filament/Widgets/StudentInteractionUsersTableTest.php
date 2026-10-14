@@ -44,8 +44,8 @@ use App\Models\User;
 use Carbon\Carbon;
 use Filament\Actions\ExportAction;
 use Illuminate\Support\Facades\Storage;
+use Livewire\Livewire;
 
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
 it('can see student interaction users table', function () {
@@ -109,7 +109,7 @@ it('can see student interaction users table', function () {
 
     $tableRecords = collect([$user1, $user2]);
 
-    livewire(StudentInteractionUsersTable::class, ['cacheTag' => 'report-student-interaction'])
+    Livewire::test(StudentInteractionUsersTable::class, ['cacheTag' => 'report-student-interaction'])
         ->assertCanSeeTableRecords($tableRecords)
         ->assertTableColumnStateSet('name', $user1->name, $user1)
         ->assertTableColumnStateSet('name', $user2->name, $user2)
@@ -158,7 +158,7 @@ it('can filter users by name', function () {
             'created_at' => now(),
         ]);
 
-    livewire(StudentInteractionUsersTable::class, ['cacheTag' => 'report-student-interaction'])
+    Livewire::test(StudentInteractionUsersTable::class, ['cacheTag' => 'report-student-interaction'])
         ->filterTable('name', [
             'name' => 'Super Admin',
         ])
@@ -199,7 +199,7 @@ it('can filter users by job title', function () {
             'created_at' => now(),
         ]);
 
-    livewire(StudentInteractionUsersTable::class, ['cacheTag' => 'report-student-interaction'])
+    Livewire::test(StudentInteractionUsersTable::class, ['cacheTag' => 'report-student-interaction'])
         ->filterTable('job_title', [
             'job_title' => 'Computer Operator',
         ])
@@ -240,7 +240,7 @@ it('can filter users by department', function () {
             'created_at' => now(),
         ]);
 
-    livewire(StudentInteractionUsersTable::class, ['cacheTag' => 'report-student-interaction'])
+    Livewire::test(StudentInteractionUsersTable::class, ['cacheTag' => 'report-student-interaction'])
         ->filterTable('department', [
             'department' => $department->getKey(),
         ])
@@ -291,7 +291,7 @@ it('displays only users with student interactions within the selected date range
         'endDate' => $interactionEndDate->toDateString(),
     ];
 
-    livewire(StudentInteractionUsersTable::class, [
+    Livewire::test(StudentInteractionUsersTable::class, [
         'cacheTag' => 'report-student-interaction',
         'pageFilters' => $filters,
     ])
@@ -355,7 +355,7 @@ it('displays only users with student interactions based on group filter', functi
     ];
 
     // with group filter
-    livewire(StudentInteractionUsersTable::class, [
+    Livewire::test(StudentInteractionUsersTable::class, [
         'cacheTag' => 'report-student-interaction',
         'pageFilters' => $filters,
     ])
@@ -365,7 +365,7 @@ it('displays only users with student interactions based on group filter', functi
         ->assertCanNotSeeTableRecords(collect([$userWithoutInteractions, $userWithRecentAndOtherInteractions]));
 
     // without filter
-    livewire(StudentInteractionUsersTable::class, [
+    Livewire::test(StudentInteractionUsersTable::class, [
         'cacheTag' => 'report-student-interaction',
         'filters' => [],
     ])
@@ -377,7 +377,7 @@ it('displays only users with student interactions based on group filter', functi
 });
 
 it('has an export action', function () {
-    livewire(StudentInteractionUsersTable::class, [
+    Livewire::test(StudentInteractionUsersTable::class, [
         'cacheTag' => 'report-student-interaction',
         'filters' => [],
     ])->assertTableActionExists(ExportAction::class);
@@ -398,7 +398,7 @@ it('can start an export, sending a notification', function () {
 
     asSuperAdmin();
 
-    livewire(StudentInteractionUsersTable::class, [
+    Livewire::test(StudentInteractionUsersTable::class, [
         'cacheTag' => 'report-student-interaction',
         'filters' => [],
     ])

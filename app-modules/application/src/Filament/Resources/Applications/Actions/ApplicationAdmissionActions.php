@@ -51,10 +51,14 @@ use Throwable;
 // Or we need to restrict creation of these states so that our `first()` logic to grab the desired state is always correct
 class ApplicationAdmissionActions
 {
+    /**
+     * @return array<int, Action>
+     */
     public static function get(): array
     {
         return [
             Action::make('update_submission_state')
+                ->authorize(fn (ApplicationSubmission $record): bool => auth()->user()->can('update', $record))
                 ->label('Update State')
                 ->form(fn (ApplicationSubmission $record): array => [
                     Select::make('state_id')

@@ -39,14 +39,13 @@ use AdvisingApp\BasicNeeds\Models\BasicNeedsProgram;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\StudentDataModel\Models\Student;
 use Filament\Forms\Components\Select;
+use Livewire\Livewire;
 
 use function Pest\Laravel\assertDatabaseCount;
-use function Pest\Livewire\livewire;
 use function Tests\asSuperAdmin;
 
-function assertStudentRecipientSelect(Closure $assertUsing): void
-{
-    livewire(ViewBasicNeedsProgram::class, ['record' => BasicNeedsProgram::factory()->create()->getKey()])
+$assertStudentRecipientSelect = function (Closure $assertUsing): void {
+    Livewire::test(ViewBasicNeedsProgram::class, ['record' => BasicNeedsProgram::factory()->create()->getKey()])
         ->mountAction('send_email')
         ->fillForm(['recipient_type' => 'student'])
         ->assertSchemaComponentExists('recipient_id', checkComponentUsing: function (Select $field) use ($assertUsing): bool {
@@ -54,52 +53,51 @@ function assertStudentRecipientSelect(Closure $assertUsing): void
 
             return true;
         });
-}
+};
 
 /**
  * @param array<array-key, string> $options
  *
  * @return array<string>
  */
-function recipientSisids(array $options): array
-{
+$recipientSisids = function (array $options): array {
     // Numeric-string SIS IDs come back as integer array keys.
     return array_map(strval(...), array_keys($options));
-}
+};
 
-it('offers active students as recipients', function () {
+it('offers active students as recipients', function () use ($assertStudentRecipientSelect, $recipientSisids) {
     asSuperAdmin();
 
     $student = Student::factory()->create(['full_name' => 'Recipient Alpha']);
 
-    assertStudentRecipientSelect(function (Select $field) use ($student): void {
-        expect(recipientSisids($field->getOptions()))->toContain($student->getKey())
-            ->and(recipientSisids($field->getSearchResults('recipient alpha')))->toContain($student->getKey());
+    $assertStudentRecipientSelect(function (Select $field) use ($student, $recipientSisids): void {
+        expect($recipientSisids($field->getOptions()))->toContain($student->getKey())
+            ->and($recipientSisids($field->getSearchResults('recipient alpha')))->toContain($student->getKey());
     });
 });
 
-it('does not offer archived students as recipients', function () {
+it('does not offer archived students as recipients', function () use ($assertStudentRecipientSelect, $recipientSisids) {
     asSuperAdmin();
 
     $student = Student::factory()->create(['full_name' => 'Recipient Beta']);
     $student->archive();
 
-    assertStudentRecipientSelect(function (Select $field) use ($student): void {
-        expect(recipientSisids($field->getOptions()))->not->toContain($student->getKey())
-            ->and(recipientSisids($field->getSearchResults('recipient beta')))->not->toContain($student->getKey());
+    $assertStudentRecipientSelect(function (Select $field) use ($student, $recipientSisids): void {
+        expect($recipientSisids($field->getOptions()))->not->toContain($student->getKey())
+            ->and($recipientSisids($field->getSearchResults('recipient beta')))->not->toContain($student->getKey());
     });
 });
 
-it('does not offer an archived student searched by their SIS ID or email address', function () {
+it('does not offer an archived student searched by their SIS ID or email address', function () use ($assertStudentRecipientSelect, $recipientSisids) {
     asSuperAdmin();
 
     $student = Student::factory()->create();
     $address = $student->primaryEmailAddress->address;
     $student->archive();
 
-    assertStudentRecipientSelect(function (Select $field) use ($student, $address): void {
-        expect(recipientSisids($field->getSearchResults($student->sisid)))->not->toContain($student->getKey())
-            ->and(recipientSisids($field->getSearchResults($address)))->not->toContain($student->getKey());
+    $assertStudentRecipientSelect(function (Select $field) use ($student, $address, $recipientSisids): void {
+        expect($recipientSisids($field->getSearchResults($student->sisid)))->not->toContain($student->getKey())
+            ->and($recipientSisids($field->getSearchResults($address)))->not->toContain($student->getKey());
     });
 });
 
@@ -108,7 +106,7 @@ it('accepts an active student as the submitted recipient', function () {
 
     $student = Student::factory()->create();
 
-    livewire(ViewBasicNeedsProgram::class, ['record' => BasicNeedsProgram::factory()->create()->getKey()])
+    Livewire::test(ViewBasicNeedsProgram::class, ['record' => BasicNeedsProgram::factory()->create()->getKey()])
         ->mountAction('send_email')
         ->fillForm(['recipient_type' => 'student', 'recipient_id' => $student->getKey()])
         ->callMountedAction()
@@ -121,7 +119,7 @@ it('does not send to an archived student even when their id is submitted', funct
     $student = Student::factory()->create();
     $student->archive();
 
-    livewire(ViewBasicNeedsProgram::class, ['record' => BasicNeedsProgram::factory()->create()->getKey()])
+    Livewire::test(ViewBasicNeedsProgram::class, ['record' => BasicNeedsProgram::factory()->create()->getKey()])
         ->mountAction('send_email')
         ->fillForm(['recipient_type' => 'student', 'recipient_id' => $student->getKey()])
         ->callMountedAction()

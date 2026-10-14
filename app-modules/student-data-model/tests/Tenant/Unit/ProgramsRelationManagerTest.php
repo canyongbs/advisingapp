@@ -44,9 +44,9 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ImportAction;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 
 it('renders the Import Programs Action based on proper access', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
@@ -62,7 +62,7 @@ it('renders the Import Programs Action based on proper access', function () {
 
     actingAs($user);
 
-    livewire(ProgramsRelationManager::class, [
+    Livewire::test(ProgramsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -75,7 +75,7 @@ it('renders the Import Programs Action based on proper access', function () {
 
     $user->revokePermissionTo('program.import');
 
-    livewire(ProgramsRelationManager::class, [
+    Livewire::test(ProgramsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -84,7 +84,7 @@ it('renders the Import Programs Action based on proper access', function () {
 
     $user->givePermissionTo('program.import');
 
-    livewire(ProgramsRelationManager::class, [
+    Livewire::test(ProgramsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -106,7 +106,7 @@ it('renders the Create Program Action based on proper access', function () {
 
     actingAs($user);
 
-    livewire(ProgramsRelationManager::class, [
+    Livewire::test(ProgramsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -119,7 +119,7 @@ it('renders the Create Program Action based on proper access', function () {
 
     $user->revokePermissionTo('program.create');
 
-    livewire(ProgramsRelationManager::class, [
+    Livewire::test(ProgramsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -128,7 +128,7 @@ it('renders the Create Program Action based on proper access', function () {
 
     $user->givePermissionTo('program.create');
 
-    livewire(ProgramsRelationManager::class, [
+    Livewire::test(ProgramsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -150,7 +150,7 @@ it('renders the Edit Program Table Action based on proper access', function () {
 
     actingAs($user);
 
-    livewire(ProgramsRelationManager::class, [
+    Livewire::test(ProgramsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -163,7 +163,7 @@ it('renders the Edit Program Table Action based on proper access', function () {
 
     $user->revokePermissionTo('program.*.update');
 
-    livewire(ProgramsRelationManager::class, [
+    Livewire::test(ProgramsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -172,7 +172,7 @@ it('renders the Edit Program Table Action based on proper access', function () {
 
     $user->givePermissionTo('program.*.update');
 
-    livewire(ProgramsRelationManager::class, [
+    Livewire::test(ProgramsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -194,7 +194,7 @@ it('renders the Delete Program Table Action based on proper access', function ()
 
     actingAs($user);
 
-    livewire(ProgramsRelationManager::class, [
+    Livewire::test(ProgramsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -207,7 +207,7 @@ it('renders the Delete Program Table Action based on proper access', function ()
 
     $user->revokePermissionTo('program.*.delete');
 
-    livewire(ProgramsRelationManager::class, [
+    Livewire::test(ProgramsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -216,7 +216,7 @@ it('renders the Delete Program Table Action based on proper access', function ()
 
     $user->givePermissionTo('program.*.delete');
 
-    livewire(ProgramsRelationManager::class, [
+    Livewire::test(ProgramsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -238,7 +238,7 @@ it('renders the Delete Bulk Programs Table Action based on proper access', funct
 
     actingAs($user);
 
-    livewire(ProgramsRelationManager::class, [
+    Livewire::test(ProgramsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -251,7 +251,7 @@ it('renders the Delete Bulk Programs Table Action based on proper access', funct
 
     $user->revokePermissionTo('program.*.delete');
 
-    livewire(ProgramsRelationManager::class, [
+    Livewire::test(ProgramsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])
@@ -260,7 +260,7 @@ it('renders the Delete Bulk Programs Table Action based on proper access', funct
 
     $user->givePermissionTo('program.*.delete');
 
-    livewire(ProgramsRelationManager::class, [
+    Livewire::test(ProgramsRelationManager::class, [
         'ownerRecord' => $student,
         'pageClass' => ViewStudent::class,
     ])

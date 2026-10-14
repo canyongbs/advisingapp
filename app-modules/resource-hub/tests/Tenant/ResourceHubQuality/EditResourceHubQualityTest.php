@@ -41,9 +41,9 @@ use AdvisingApp\ResourceHub\Models\ResourceHubQuality;
 use AdvisingApp\ResourceHub\Tests\Tenant\ResourceHubQuality\RequestFactories\EditResourceHubQualityRequestFactory;
 use App\Models\User;
 use App\Settings\LicenseSettings;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Livewire\livewire;
 use function PHPUnit\Framework\assertEquals;
 use function Tests\asSuperAdmin;
 
@@ -66,7 +66,7 @@ test('EditResourceHubQuality is gated with proper access control', function () {
             ])
         )->assertForbidden();
 
-    livewire(EditResourceHubQuality::class, [
+    Livewire::test(EditResourceHubQuality::class, [
         'record' => $resourceHubQuality->getRouteKey(),
     ])
         ->assertForbidden();
@@ -83,7 +83,7 @@ test('EditResourceHubQuality is gated with proper access control', function () {
 
     $request = collect(EditResourceHubQualityRequestFactory::new()->create());
 
-    livewire(EditResourceHubQuality::class, [
+    Livewire::test(EditResourceHubQuality::class, [
         'record' => $resourceHubQuality->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -114,7 +114,7 @@ test('EditResourceHubQuality is gated with proper feature access control', funct
             ])
         )->assertForbidden();
 
-    livewire(EditResourceHubQuality::class, [
+    Livewire::test(EditResourceHubQuality::class, [
         'record' => $resourceHubQuality->getRouteKey(),
     ])
         ->assertForbidden();
@@ -132,7 +132,7 @@ test('EditResourceHubQuality is gated with proper feature access control', funct
 
     $request = collect(EditResourceHubQualityRequestFactory::new()->create());
 
-    livewire(EditResourceHubQuality::class, [
+    Livewire::test(EditResourceHubQuality::class, [
         'record' => $resourceHubQuality->getRouteKey(),
     ])
         ->fillForm($request->toArray())
@@ -153,12 +153,12 @@ test('EditResourceHubQuality does not allow for duplicate names of non-deleted q
 
     $deletedQuality->delete();
 
-    livewire(EditResourceHubQuality::class, ['record' => $quality->getRouteKey()])
+    Livewire::test(EditResourceHubQuality::class, ['record' => $quality->getRouteKey()])
         ->fillForm($request1->toArray())
         ->call('save')
         ->assertHasNoFormErrors();
 
-    livewire(EditResourceHubQuality::class, ['record' => $quality->getRouteKey()])
+    Livewire::test(EditResourceHubQuality::class, ['record' => $quality->getRouteKey()])
         ->fillForm($request2->toArray())
         ->call('save')
         ->assertHasFormErrors(['name' => 'unique']);

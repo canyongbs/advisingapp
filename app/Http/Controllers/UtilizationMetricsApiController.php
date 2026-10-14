@@ -155,15 +155,17 @@ class UtilizationMetricsApiController extends Controller
             ->values()
             ->all();
 
+        $isEnterpriseAiEnabled = LicenseType::ConversationalAi->isEnabled();
+
         try {
             return response()->json([
                 'data' => [
                     'users' => User::count(),
-                    'ai_users' => User::whereRelation('licenses', 'type', LicenseType::ConversationalAi)->count(),
-                    'ai_exchanges' => TrackedEventCount::where('type', TrackedEventType::AiExchange)->value('count'),
-                    'saved_ai_chats' => AiThread::whereNotNull('name')->whereNotNUll('saved_at')->count(),
-                    'saved_prompts' => Prompt::count(),
-                    'prompts_inserted' => PromptUse::count(),
+                    'ai_users' => $isEnterpriseAiEnabled ? User::whereRelation('licenses', 'type', LicenseType::ConversationalAi)->count() : 0,
+                    'ai_exchanges' => $isEnterpriseAiEnabled ? TrackedEventCount::where('type', TrackedEventType::AiExchange)->value('count') : 0,
+                    'saved_ai_chats' => $isEnterpriseAiEnabled ? AiThread::whereNotNull('name')->whereNotNUll('saved_at')->count() : 0,
+                    'saved_prompts' => $isEnterpriseAiEnabled ? Prompt::count() : 0,
+                    'prompts_inserted' => $isEnterpriseAiEnabled ? PromptUse::count() : 0,
                     'retention_crm_users' => User::whereRelation('licenses', 'type', LicenseType::RetentionCrm)->count(),
                     'recruitment_crm_users' => User::whereRelation('licenses', 'type', LicenseType::RecruitmentCrm)->count(),
                     'student_records' => Student::query()->tap(new WithoutArchivedStudents())->count(),
