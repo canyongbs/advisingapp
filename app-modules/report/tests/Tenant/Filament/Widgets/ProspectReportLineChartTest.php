@@ -37,26 +37,44 @@
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\Report\Filament\Widgets\ProspectReportLineChart;
 
-beforeEach()->skip('Skipping these tests as there are currently issues with these tests or the underlying functionality having to do with overflow dates that needs to be resolved');
+describe('known overflow-date issues', function () {
+    beforeEach()->skip('Skipping these tests as there are currently issues with these tests or the underlying functionality having to do with overflow dates that needs to be resolved');
 
-it('returns correct cumulative prospect counts grouped by month within the given date range', function () {
-    $startDate = now()->subMonthsNoOverflow(3);
-    $endDate = now()->subDays(5);
+    it('returns correct cumulative prospect counts grouped by month within the given date range', function () {
+        $startDate = now()->subMonthsNoOverflow(3);
+        $endDate = now()->subDays(5);
 
-    Prospect::factory()->count(5)->state([
-        'created_at' => $startDate,
-    ])->create();
+        Prospect::factory()->count(5)->state([
+            'created_at' => $startDate,
+        ])->create();
 
-    Prospect::factory()->count(5)->state([
-        'created_at' => $endDate,
-    ])->create();
+        Prospect::factory()->count(5)->state([
+            'created_at' => $endDate,
+        ])->create();
 
-    $widgetInstance = new ProspectReportLineChart();
-    $widgetInstance->cacheTag = 'prospect-report-cache';
-    $widgetInstance->pageFilters = [
-        'startDate' => $startDate->toDateString(),
-        'endDate' => $endDate->toDateString(),
-    ];
+        $widgetInstance = new ProspectReportLineChart();
+        $widgetInstance->cacheTag = 'prospect-report-cache';
+        $widgetInstance->pageFilters = [
+            'startDate' => $startDate->toDateString(),
+            'endDate' => $endDate->toDateString(),
+        ];
 
-    expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
+        expect($widgetInstance->getData()['datasets'][0]['data'])->toMatchSnapshot();
+    });
+});
+
+it('counts a prospect created before the reported period in every bucket', function () {
+    Prospect::factory()->create(['created_at' => '2026-01-10']);
+
+    $widget = new ProspectReportLineChart();
+    $widget->cacheTag = 'prospect-report-cache';
+    $widget->pageFilters = ['startDate' => '2026-04-01', 'endDate' => '2026-06-30'];
+
+    $data = $widget->getData();
+
+    expect(array_combine($data['labels'], $data['datasets'][0]['data']))->toBe([
+        'Apr 2026' => 1,
+        'May 2026' => 1,
+        'Jun 2026' => 1,
+    ]);
 });

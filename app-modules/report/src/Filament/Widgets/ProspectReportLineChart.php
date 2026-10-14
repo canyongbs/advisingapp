@@ -102,12 +102,16 @@ class ProspectReportLineChart extends LineChartReportWidget
 
         $months = $this->getMonthRange($startDate, $endDate);
 
+        // Prospects created before the window are already part of the population the first
+        // bucket should report, not just whoever is added once the window starts.
+        $baseline = Prospect::query()
+            ->when($groupId, fn (Builder $query) => $this->groupFilter($query, $groupId))
+            ->where('created_at', '<', $startDate)
+            ->count();
+
         $monthlyData = Prospect::query()
+            ->when($groupId, fn (Builder $query) => $this->groupFilter($query, $groupId))
             ->whereBetween('created_at', [$startDate, $endDate])
-            ->when(
-                $groupId,
-                fn (Builder $query) => $this->groupFilter($query, $groupId)
-            )
             ->selectRaw("date_trunc('month', created_at) as month, COUNT(*) as monthly_total")
             ->groupByRaw("date_trunc('month', created_at)")
             ->get()
@@ -118,7 +122,7 @@ class ProspectReportLineChart extends LineChartReportWidget
             });
 
         $runningTotal = [];
-        $total = 0;
+        $total = $baseline;
 
         foreach ($months as $month) {
             $key = $month->toDateString();

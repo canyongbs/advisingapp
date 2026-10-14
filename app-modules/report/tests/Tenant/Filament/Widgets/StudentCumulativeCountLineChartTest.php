@@ -153,17 +153,60 @@ describe('archiving', function () use ($cumulativeStudentsByMonth) {
         ]);
     });
 
-    // Subtracting an archived student who was never added — because they were created before
-    // the window the chart is showing — would drive the running total below the students it
-    // actually counted, and the axis minimum would hide it rather than fix it.
-    it('does not subtract a student created before the reported period', function () use ($cumulativeStudentsByMonth) {
+    it('counts a student created before the reported period until they are archived within it', function () use ($cumulativeStudentsByMonth) {
         $archived = Student::factory()->create(['created_at_source' => '2026-01-10']);
         $archived->forceFill(['archived_at' => Carbon::parse('2026-05-20')])->save();
 
         expect($cumulativeStudentsByMonth())->toBe([
-            'Apr 2026' => 0,
+            'Apr 2026' => 1,
             'May 2026' => 0,
             'Jun 2026' => 0,
+        ]);
+    });
+});
+
+describe('baseline', function () use ($cumulativeStudentsByMonth) {
+    it('counts a student created before the reported period in every bucket', function () use ($cumulativeStudentsByMonth) {
+        Student::factory()->create(['created_at_source' => '2026-01-10']);
+
+        expect($cumulativeStudentsByMonth())->toBe([
+            'Apr 2026' => 1,
+            'May 2026' => 1,
+            'Jun 2026' => 1,
+        ]);
+    });
+
+    it('applies the group filter to students counted in the baseline', function () use ($cumulativeStudentsByMonth) {
+        $group = Group::factory()->create([
+            'model' => GroupModel::Student,
+            'filters' => [
+                'queryBuilder' => [
+                    'rules' => [
+                        'C0Cy' => [
+                            'type' => 'last',
+                            'data' => [
+                                'operator' => 'contains',
+                                'settings' => [
+                                    'text' => 'John',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        Student::factory()->create(['created_at_source' => '2026-01-10', 'last' => 'John']);
+        Student::factory()->create(['created_at_source' => '2026-01-10', 'last' => 'Doe']);
+
+        expect($cumulativeStudentsByMonth([
+            'startDate' => '2026-04-01',
+            'endDate' => '2026-06-30',
+            'populationGroup' => $group->getKey(),
+        ]))->toBe([
+            'Apr 2026' => 1,
+            'May 2026' => 1,
+            'Jun 2026' => 1,
         ]);
     });
 });

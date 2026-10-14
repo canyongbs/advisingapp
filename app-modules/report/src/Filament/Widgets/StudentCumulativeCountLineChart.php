@@ -50,7 +50,10 @@ use Illuminate\Support\Facades\Cache;
  * not rewrite the months they were actually present for.
  *
  * The running total therefore falls as well as rises, which is why this is built from monthly
- * additions minus monthly archives rather than a plain cumulative sum of additions.
+ * additions minus monthly archives rather than a plain cumulative sum of additions. It is also
+ * seeded with a baseline headcount of students who already existed before the reported window,
+ * so the first bucket reflects the true active population rather than only students added
+ * since the window started.
  */
 class StudentCumulativeCountLineChart extends LineChartReportWidget
 {
@@ -129,23 +132,35 @@ class StudentCumulativeCountLineChart extends LineChartReportWidget
 
         $months = $this->getMonthRange($startDate, $endDate);
 
-        // Both aggregates run over the same population, so a student can only ever be
-        // subtracted from a bucket if they were added to an earlier one. Archiving a
-        // student created before this window would otherwise take the running total
-        // below the students actually counted in it.
-        $population = fn (): Builder => Student::query()
-            ->whereBetween('created_at_source', [$startDate, $endDate])
-            ->when(
-                $groupId,
-                fn (Builder $query) => $this->groupFilter($query, $groupId)
-            );
+        // Students who existed, and weren't yet archived, before the window are already part
+        // of the population the first bucket should report, not just whoever is added later.
+        $baseline = Student::query()
+            ->when($groupId, fn (Builder $query) => $this->groupFilter($query, $groupId))
+            ->where('created_at_source', '<', $startDate)
+            ->where(fn (Builder $query) => $query
+                ->whereNull('archived_at')
+                ->orWhere('archived_at', '>=', $startDate))
+            ->count();
 
-        $addedPerMonth = $this->countPerMonth($population(), 'created_at_source');
+        $addedPerMonth = $this->countPerMonth(
+            Student::query()
+                ->when($groupId, fn (Builder $query) => $this->groupFilter($query, $groupId))
+                ->whereBetween('created_at_source', [$startDate, $endDate]),
+            'created_at_source'
+        );
 
-        $archivedPerMonth = $this->countPerMonth($population()->onlyArchived(), 'archived_at');
+        // Not scoped to students created inside the window, so archiving one added before it
+        // still drops them from the running total in the month they were archived.
+        $archivedPerMonth = $this->countPerMonth(
+            Student::query()
+                ->when($groupId, fn (Builder $query) => $this->groupFilter($query, $groupId))
+                ->onlyArchived()
+                ->whereBetween('archived_at', [$startDate, $endDate]),
+            'archived_at'
+        );
 
         $runningTotal = [];
-        $total = 0;
+        $total = $baseline;
 
         foreach ($months as $month) {
             $key = $month->toDateString();
