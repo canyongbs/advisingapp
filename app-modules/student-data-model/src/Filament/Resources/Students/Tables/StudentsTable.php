@@ -153,6 +153,76 @@ class StudentsTable
                     ->icon(Heroicon::LockClosed)
                     ->nullable(),
             ],
+            'Programs' => [
+                TextConstraint::make('programDivision')
+                    ->label('Program College')
+                    ->relationship('programs', 'division')
+                    ->icon(Heroicon::BuildingLibrary),
+                TextConstraint::make('programName')
+                    ->label('Program Name')
+                    ->relationship('programs', 'descr')
+                    ->icon(Heroicon::AcademicCap),
+                self::makeProgramDetailConstraint()
+                    ->icon(Heroicon::DocumentText),
+                TextConstraint::make('programFoi')
+                    ->label('Program Field of Interest')
+                    ->relationship('programs', 'foi')
+                    ->icon(Heroicon::LightBulb),
+                RelationshipConstraint::make('programs')
+                    ->multiple()
+                    ->label('Number of Programs')
+                    ->attributeLabel(fn (array $settings): string => Str::plural('program', $settings['count']))
+                    ->icon(Heroicon::Square3Stack3d),
+                NumberConstraint::make('programCumGpa')
+                    ->label('Program Cumulative GPA')
+                    ->relationship('programs', 'cum_gpa')
+                    ->icon(Heroicon::ChartBar),
+            ],
+            'Enrollment' => [
+                self::makeEnrollmentsConstraint()
+                    ->icon(Heroicon::FolderOpen),
+                TextConstraint::make('enrollmentDivision')
+                    ->label('Enrollment College')
+                    ->relationship('enrollments', 'division')
+                    ->icon(Heroicon::BuildingLibrary),
+                TextConstraint::make('enrollmentClassNbr')
+                    ->label('Enrollment Course')
+                    ->relationship('enrollments', 'class_nbr')
+                    ->icon(Heroicon::BookOpen),
+                TextConstraint::make('enrollmentCrseGradeOff')
+                    ->label('Enrollment Grade')
+                    ->relationship('enrollments', 'crse_grade_off')
+                    ->icon(Heroicon::AcademicCap),
+                NumberConstraint::make('enrollmentUntTaken')
+                    ->label('Enrollment Attempted')
+                    ->relationship('enrollments', 'unt_taken')
+                    ->icon(Heroicon::Calculator),
+                NumberConstraint::make('enrollmentUntEarned')
+                    ->label('Enrollment Earned')
+                    ->relationship('enrollments', 'unt_earned')
+                    ->icon(Heroicon::CheckBadge),
+                self::createEnrollmentTermConstraint('firstEnrollmentTerm.semester_name', 'First Enrolled Term')
+                    ->icon(Heroicon::CalendarDays),
+                self::createEnrollmentTermConstraint('mostRecentEnrollmentTerm.semester_name', 'Most Recent Enrolled Term')
+                    ->icon(Heroicon::CalendarDays),
+            ],
+            'Student Characteristics' => [
+                BooleanConstraint::make('firstgen')
+                    ->label('First Generation')
+                    ->icon(Heroicon::AcademicCap)
+                    ->nullable(),
+                BooleanConstraint::make('dual')
+                    ->icon(Heroicon::Square2Stack)
+                    ->nullable(),
+                ExistingValuesSelectConstraint::make('gender')
+                    ->label('Gender')
+                    ->icon(Heroicon::UserCircle)
+                    ->multiple(),
+                ExistingValuesSelectConstraint::make('ethnicity')
+                    ->label('Ethnicity')
+                    ->icon(Heroicon::Users)
+                    ->multiple(),
+            ],
             'Identity & Contact' => [
                 AttributeTextConstraint::make('name')
                     ->label('Name')
@@ -203,76 +273,6 @@ class StudentsTable
                             ->label('Country')
                             ->relationship('primaryAddress'),
                     ]),
-            ],
-            'Student Characteristics' => [
-                BooleanConstraint::make('firstgen')
-                    ->label('First Generation')
-                    ->icon(Heroicon::AcademicCap)
-                    ->nullable(),
-                BooleanConstraint::make('dual')
-                    ->icon(Heroicon::Square2Stack)
-                    ->nullable(),
-                ExistingValuesSelectConstraint::make('gender')
-                    ->label('Gender')
-                    ->icon(Heroicon::UserCircle)
-                    ->multiple(),
-                ExistingValuesSelectConstraint::make('ethnicity')
-                    ->label('Ethnicity')
-                    ->icon(Heroicon::Users)
-                    ->multiple(),
-            ],
-            'Enrollment' => [
-                self::makeEnrollmentsConstraint()
-                    ->icon(Heroicon::FolderOpen),
-                TextConstraint::make('enrollmentDivision')
-                    ->label('Enrollment College')
-                    ->relationship('enrollments', 'division')
-                    ->icon(Heroicon::BuildingLibrary),
-                TextConstraint::make('enrollmentClassNbr')
-                    ->label('Enrollment Course')
-                    ->relationship('enrollments', 'class_nbr')
-                    ->icon(Heroicon::BookOpen),
-                TextConstraint::make('enrollmentCrseGradeOff')
-                    ->label('Enrollment Grade')
-                    ->relationship('enrollments', 'crse_grade_off')
-                    ->icon(Heroicon::AcademicCap),
-                NumberConstraint::make('enrollmentUntTaken')
-                    ->label('Enrollment Attempted')
-                    ->relationship('enrollments', 'unt_taken')
-                    ->icon(Heroicon::Calculator),
-                NumberConstraint::make('enrollmentUntEarned')
-                    ->label('Enrollment Earned')
-                    ->relationship('enrollments', 'unt_earned')
-                    ->icon(Heroicon::CheckBadge),
-                self::createEnrollmentTermConstraint('firstEnrollmentTerm.semester_name', 'First Enrolled Term')
-                    ->icon(Heroicon::CalendarDays),
-                self::createEnrollmentTermConstraint('mostRecentEnrollmentTerm.semester_name', 'Most Recent Enrolled Term')
-                    ->icon(Heroicon::CalendarDays),
-            ],
-            'Programs' => [
-                TextConstraint::make('programDivision')
-                    ->label('Program College')
-                    ->relationship('programs', 'division')
-                    ->icon(Heroicon::BuildingLibrary),
-                TextConstraint::make('programName')
-                    ->label('Program Name')
-                    ->relationship('programs', 'descr')
-                    ->icon(Heroicon::AcademicCap),
-                self::makeProgramDetailConstraint()
-                    ->icon(Heroicon::DocumentText),
-                TextConstraint::make('programFoi')
-                    ->label('Program Field of Interest')
-                    ->relationship('programs', 'foi')
-                    ->icon(Heroicon::LightBulb),
-                RelationshipConstraint::make('programs')
-                    ->multiple()
-                    ->label('Number of Programs')
-                    ->attributeLabel(fn (array $settings): string => Str::plural('program', $settings['count']))
-                    ->icon(Heroicon::Square3Stack3d),
-                NumberConstraint::make('programCumGpa')
-                    ->label('Program Cumulative GPA')
-                    ->relationship('programs', 'cum_gpa')
-                    ->icon(Heroicon::ChartBar),
             ],
         ];
     }
