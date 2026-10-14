@@ -50,13 +50,9 @@ class LicenseAddonsData extends Data
         public bool $resourceHub = false,
         public bool $supportPrograms = false,
         public bool $eventManagement = false,
-        public bool $realtimeChat = false,
-        public bool $mobileApps = false,
         public bool $scheduleAndAppointments = false,
         public bool $employeeAdvisors = false,
-        public bool $researchAdvisor = false,
         public bool $customerAdvisors = false,
-        public bool $dataAdvisor = false,
         public bool $earlyAlert = false,
         public bool $publicProfiles = false,
         // TODO: Cleanup Task (enterprise-ai): once Olympus always sends enterpriseAi, change this default to false.

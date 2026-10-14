@@ -19,7 +19,6 @@ use AdvisingApp\Ai\Models\CustomerAdvisorLink;
 use AdvisingApp\Ai\Models\CustomerAdvisorMessage;
 use AdvisingApp\Ai\Models\CustomerAdvisorQuestion;
 use AdvisingApp\Ai\Models\CustomerAdvisorThread;
-use AdvisingApp\Ai\Models\DataAdvisor;
 use AdvisingApp\Ai\Models\DepartmentConfidentialPrompt;
 use AdvisingApp\Ai\Models\LegacyAiMessageLog;
 use AdvisingApp\Ai\Models\Prompt;
@@ -77,7 +76,6 @@ use AdvisingApp\Form\Models\SubmissibleStep;
 use AdvisingApp\Form\Models\Submission;
 use AdvisingApp\Group\Models\Group;
 use AdvisingApp\Group\Models\GroupSubject;
-use AdvisingApp\IntegrationOpenAi\Models\OpenAiResearchRequestVectorStore;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use AdvisingApp\Interaction\Models\DepartmentConfidentialInteraction;
 use AdvisingApp\Interaction\Models\Interaction;
@@ -119,12 +117,6 @@ use AdvisingApp\Prospect\Models\ProspectSource;
 use AdvisingApp\Prospect\Models\ProspectStatus;
 use AdvisingApp\Report\Models\TrackedEvent;
 use AdvisingApp\Report\Models\TrackedEventCount;
-use AdvisingApp\Research\Models\ResearchRequest;
-use AdvisingApp\Research\Models\ResearchRequestFolder;
-use AdvisingApp\Research\Models\ResearchRequestParsedFile;
-use AdvisingApp\Research\Models\ResearchRequestParsedLink;
-use AdvisingApp\Research\Models\ResearchRequestParsedSearchResults;
-use AdvisingApp\Research\Models\ResearchRequestQuestion;
 use AdvisingApp\ResourceHub\Models\ManagerResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticle;
 use AdvisingApp\ResourceHub\Models\ResourceHubArticleConcern;
@@ -247,7 +239,6 @@ return [
     AiThreadFolder::class,
     DepartmentConfidentialPrompt::class,
     ConfidentialPromptUser::class,
-    DataAdvisor::class,
     LegacyAiMessageLog::class,
     Prompt::class,
     PromptType::class,
@@ -311,7 +302,6 @@ return [
     Submission::class,
     Group::class,
     GroupSubject::class,
-    OpenAiResearchRequestVectorStore::class,
     OpenAiVectorStore::class,
     Interaction::class,
     DepartmentConfidentialInteraction::class,
@@ -353,12 +343,6 @@ return [
     ProspectStatus::class,
     TrackedEvent::class,
     TrackedEventCount::class,
-    ResearchRequest::class,
-    ResearchRequestFolder::class,
-    ResearchRequestParsedFile::class,
-    ResearchRequestParsedLink::class,
-    ResearchRequestParsedSearchResults::class,
-    ResearchRequestQuestion::class,
     ManagerResourceHubArticle::class,
     ResourceHubArticle::class,
     ResourceHubArticleConcern::class,

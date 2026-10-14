@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bafe48d99633e1326f5526608849a52d",
+    "content-hash": "2a493e7d225bb7923dc83ebab1d3458a",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -1931,41 +1931,6 @@
                     "AdvisingApp\\MultifactorAuthentication\\Tests\\": "tests/",
                     "AdvisingApp\\MultifactorAuthentication\\Database\\Factories\\": "database/factories/",
                     "AdvisingApp\\MultifactorAuthentication\\Database\\Seeders\\": "database/seeders/"
-                }
-            },
-            "license": [
-                "proprietary"
-            ],
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
-        },
-        {
-            "name": "canyon-gbs/research",
-            "version": "1.0",
-            "dist": {
-                "type": "path",
-                "url": "app-modules/research",
-                "reference": "dfdc0727711d8c024d5c4635d0efcc6c24fbe055"
-            },
-            "require": {
-                "filament/filament": "^4.0"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "AdvisingApp\\Research\\Providers\\ResearchServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "AdvisingApp\\Research\\": "src/",
-                    "AdvisingApp\\Research\\Tests\\": "tests/",
-                    "AdvisingApp\\Research\\Database\\Factories\\": "database/factories/",
-                    "AdvisingApp\\Research\\Database\\Seeders\\": "database/seeders/"
                 }
             },
             "license": [

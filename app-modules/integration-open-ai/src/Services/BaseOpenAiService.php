@@ -53,7 +53,6 @@ use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\Ai\Support\StreamingChunks\Thinking;
 use AdvisingApp\IntegrationOpenAi\Models\OpenAiVectorStore;
 use AdvisingApp\IntegrationOpenAi\Prism\ValueObjects\Messages\DeveloperMessage;
-use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns\InteractsWithResearchRequests;
 use AdvisingApp\IntegrationOpenAi\Services\BaseOpenAiService\Concerns\InteractsWithVectorStores;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
@@ -92,7 +91,6 @@ use Throwable;
 abstract class BaseOpenAiService implements AiService
 {
     use InteractsWithVectorStores;
-    use InteractsWithResearchRequests;
 
     public const FORMATTING_INSTRUCTIONS = 'When you answer, it is crucial that you format your response using rich text in markdown format. Do not ever mention in your response that the answer is being formatted/rendered in markdown.';
 

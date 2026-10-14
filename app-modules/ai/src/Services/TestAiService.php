@@ -44,7 +44,6 @@ use AdvisingApp\Ai\Support\StreamingChunks\Finish;
 use AdvisingApp\Ai\Support\StreamingChunks\Text;
 use AdvisingApp\Report\Enums\TrackedEventType;
 use AdvisingApp\Report\Jobs\RecordTrackedEvent;
-use AdvisingApp\Research\Models\ResearchRequest;
 use Closure;
 use Exception;
 use Generator;
@@ -133,45 +132,6 @@ class TestAiService implements AiService
     public function areFilesReady(array $files, ?Model $context = null): bool
     {
         return true;
-    }
-
-    public function isResearchRequestReady(ResearchRequest $researchRequest): bool
-    {
-        return true;
-    }
-
-    /**
-     * @return array<string>
-     */
-    public function getResearchRequestRequestSearchQueries(ResearchRequest $researchRequest, string $prompt, string $content): array
-    {
-        return [];
-    }
-
-    /**
-     * @return array{response: array<mixed>, nextRequestOptions: array<string, mixed>}
-     */
-    public function getResearchRequestRequestOutline(ResearchRequest $researchRequest, string $prompt, string $content): array
-    {
-        return ['response' => [], 'nextRequestOptions' => []];
-    }
-
-    /**
-     * @param array<string, mixed> $options
-     */
-    public function getResearchRequestRequestSection(ResearchRequest $researchRequest, string $prompt, string $content, array $options, Closure $nextRequestOptions): Generator
-    {
-        yield fake()->paragraph();
-    }
-
-    public function afterResearchRequestSearchQueriesParsed(ResearchRequest $researchRequest): void
-    {
-        // No-op by design: the test service does not create vector-store resources.
-    }
-
-    public function deleteResearchRequestExternalResources(ResearchRequest $researchRequest): void
-    {
-        // No-op by design: test mode has no external provider resources to delete.
     }
 
     public function hasImageGeneration(): bool
