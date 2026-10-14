@@ -54,3 +54,23 @@ it('logs when it starts and finishes', function () {
         ['Load test job finished', ['job_id' => null, 'sleep_seconds' => 0, 'timeout' => 30]],
     ]);
 });
+
+it('sleeps for its full duration even when a signal interrupts it', function () {
+    config(['queue-autoscale.manager.log_channel' => 'null']);
+
+    $wasAsync = pcntl_async_signals(true);
+    pcntl_signal(SIGALRM, fn (): null => null);
+    pcntl_alarm(1);
+
+    try {
+        $startedAt = microtime(true);
+
+        (new LoadTestJob(2))->handle();
+
+        expect(microtime(true) - $startedAt)->toBeGreaterThanOrEqual(1.9);
+    } finally {
+        pcntl_alarm(0);
+        pcntl_signal(SIGALRM, SIG_DFL);
+        pcntl_async_signals($wasAsync);
+    }
+});

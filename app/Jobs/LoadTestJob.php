@@ -65,7 +65,12 @@ class LoadTestJob implements ShouldQueue, NotTenantAware
         // Written to the container output, whose log stream names the ECS task, to show which task ran the job and that it finished.
         Log::channel(AutoscaleConfiguration::logChannel())->info('Load test job started', $this->logContext());
 
-        sleep(max(0, $this->sleepSeconds));
+        // A signal, such as the SIGTERM the autoscaler sends on scale-down, cuts sleep() short, while a real job would keep running.
+        $finishAt = microtime(true) + max(0, $this->sleepSeconds);
+
+        while (($remainingSeconds = $finishAt - microtime(true)) > 0) {
+            usleep((int) ceil(min($remainingSeconds, 1) * 1_000_000));
+        }
 
         Log::channel(AutoscaleConfiguration::logChannel())->info('Load test job finished', $this->logContext());
     }
