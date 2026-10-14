@@ -68,7 +68,7 @@ it('counts a prospect created before the reported period in every bucket', funct
 
     $widget = new ProspectReportLineChart();
     $widget->cacheTag = 'prospect-report-cache';
-    $widget->filters = ['startDate' => '2026-04-01', 'endDate' => '2026-06-30'];
+    $widget->pageFilters = ['startDate' => '2026-04-01', 'endDate' => '2026-06-30'];
 
     $data = $widget->getData();
 
