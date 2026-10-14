@@ -502,7 +502,7 @@ jobs:
         # Only request a review once the code is known to be green, so Copilot never reviews
         # code that is failing tests or linting. Automatic review must be disabled in the repo
         # settings so this gated job is the only path that requests Copilot.
-        needs: [test, lint]
+        needs: [prep-and-code-consistency, test, lint]
 
         if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'dependabot[bot]' }}
 
