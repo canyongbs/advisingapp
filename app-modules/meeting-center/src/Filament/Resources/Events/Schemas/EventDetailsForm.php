@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Livewire;
+namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Schemas;
 
 use AdvisingApp\Form\Enums\Rounding;
 use AdvisingApp\Form\Rules\IsDomain;
@@ -49,13 +49,11 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rules\Unique;
 
-class EventDetailsManager extends EventFormManager
+class EventDetailsForm
 {
-    public function form(Schema $schema): Schema
+    public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->model($this->record)
-            ->statePath('data')
             ->components([
                 Section::make('Properties')
                     ->schema([
@@ -118,10 +116,5 @@ class EventDetailsManager extends EventFormManager
                     ])
                     ->columns(2),
             ]);
-    }
-
-    protected function attributesToSave(): array
-    {
-        return ['title', 'location', 'capacity', 'starts_at', 'ends_at'];
     }
 }

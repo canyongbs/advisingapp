@@ -486,12 +486,6 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/ListApplications.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/src/Filament/Resources/Applications/Pages/ManageApplicationSubmissions.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Property AdvisingApp\\\\Application\\\\Livewire\\\\RenderApplication\\:\\:\\$data type has no value type specified in iterable type array\\.$#',
     'identifier' => 'missingType.iterableValue',
     'count' => 1,
@@ -633,7 +627,7 @@ $ignoreErrors[] = [
     'message' => '#^Avoid assertSee\\(\\) and its alternatives\\: they only prove the text appears somewhere in the rendered output, not that it appears where the test actually expects it, so they can pass even when the feature under test is broken\\. Prefer a more precise assertion \\(e\\.g\\. asserting component/view state, a scoped selector, or the specific structure produced\\)\\. If you are certain you specifically need this assertion, add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noAssertSee\\)\\.$#',
     'identifier' => 'Common.noAssertSee',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/application/tests/Tenant/Filament/Resources/Applications/Pages/ManageApplicationWorkflowsTest.php',
+    'path' => __DIR__ . '/app-modules/application/tests/Tenant/Filament/Resources/Applications/RelationManagers/WorkflowsRelationManagerTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Method AdvisingApp\\\\Assistant\\\\Filament\\\\Pages\\\\InstitutionalAdvisor\\:\\:customAssistants\\(\\) return type has no value type specified in iterable type array\\.$#',

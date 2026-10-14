@@ -37,9 +37,9 @@
 namespace AdvisingApp\Application\Enums;
 
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
-use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationSubmissions;
-use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationWorkflows;
-use AdvisingApp\Application\Filament\Resources\Applications\Pages\ViewApplication;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplication;
+use AdvisingApp\Application\Filament\Resources\Applications\RelationManagers\SubmissionsRelationManager;
+use AdvisingApp\Application\Filament\Resources\Applications\RelationManagers\WorkflowsRelationManager;
 use AdvisingApp\Application\Models\Application;
 use Filament\Support\Contracts\HasLabel;
 
@@ -55,17 +55,13 @@ enum ApplicationTab: string implements HasLabel
 
     case Notifications = 'notifications';
 
-    public function canAccess(Application $record): bool
+    public function canView(Application $application): bool
     {
-        if ($record->isArchived() || ! ApplicationResource::canAccess()) {
-            return false;
-        }
-
         return match ($this) {
-            self::View => ApplicationResource::canView($record),
-            self::Edit, self::Notifications => ApplicationResource::canEdit($record),
-            self::Workflows => ManageApplicationWorkflows::canViewForRecord($record, ViewApplication::class),
-            self::Submissions => ManageApplicationSubmissions::canViewForRecord($record, ViewApplication::class),
+            self::View => ApplicationResource::canView($application),
+            self::Edit, self::Notifications => ApplicationResource::canEdit($application),
+            self::Workflows => WorkflowsRelationManager::canViewForRecord($application, ManageApplication::class),
+            self::Submissions => SubmissionsRelationManager::canViewForRecord($application, ManageApplication::class),
         };
     }
 

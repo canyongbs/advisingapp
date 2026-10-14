@@ -37,6 +37,7 @@
 namespace AdvisingApp\Engagement\Filament\Pages;
 
 use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Engagement\Enums\InboxTab;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Engagement\Models\Engagement;
 use AdvisingApp\Notification\Enums\NotificationChannel;
@@ -95,7 +96,7 @@ class ViewEngagement extends Page
     public function getBreadcrumbs(): array
     {
         return [
-            Inbox::getUrl(['tab' => 'sent-items']) => 'Unified Inbox',
+            Inbox::getUrl(['tab' => InboxTab::SentItems->value]) => 'Unified Inbox',
             $this->getTitle(),
         ];
     }

@@ -43,9 +43,6 @@ class ClearApplicationSubmissionCountCache
 {
     public function handle(ApplicationSubmissionCreated $event): void
     {
-        Cache::tags('{application-submission-count}')
-            ->forget(
-                "application-submission-count-{$event->submission->submissible->getKey()}"
-            );
+        Cache::tags('{application-submission-count}')->flush();
     }
 }

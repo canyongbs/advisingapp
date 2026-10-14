@@ -36,6 +36,10 @@
 
 namespace AdvisingApp\MeetingCenter\Enums;
 
+use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
+use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ManageEvent;
+use AdvisingApp\MeetingCenter\Filament\Resources\Events\RelationManagers\EventAttendeesRelationManager;
+use AdvisingApp\MeetingCenter\Models\Event;
 use Filament\Support\Contracts\HasLabel;
 
 enum EventTab: string implements HasLabel
@@ -49,6 +53,15 @@ enum EventTab: string implements HasLabel
     case RegistrationForm = 'registration-form';
 
     case Attendees = 'attendees';
+
+    public function canView(Event $event): bool
+    {
+        return match ($this) {
+            self::Overview => EventResource::canView($event),
+            self::Details, self::LandingPage, self::RegistrationForm => EventResource::canEdit($event),
+            self::Attendees => EventAttendeesRelationManager::canViewForRecord($event, ManageEvent::class),
+        };
+    }
 
     public function getLabel(): string
     {

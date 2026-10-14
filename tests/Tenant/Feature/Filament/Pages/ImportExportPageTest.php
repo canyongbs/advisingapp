@@ -378,6 +378,23 @@ it('defaults the active tab to student sync when the user can only access studen
         ->assertSet('activeTab', 'student-sync');
 });
 
+it('falls back to the first tab the user can access', function () {
+    $settings = app(ManageStudentConfigurationSettings::class);
+    $settings->is_enabled = true;
+    $settings->save();
+
+    $user = User::factory()->create();
+    $user->givePermissionTo('record_sync.view-any');
+
+    actingAs($user);
+
+    Livewire::withQueryParams(['tab' => 'export'])
+        ->test(ImportExport::class)
+        ->assertSet('activeTab', 'student-sync')
+        ->set('activeTab', 'import')
+        ->assertSet('activeTab', 'student-sync');
+});
+
 it('syncs the active tab into the component state when switching tabs', function () {
     $user = User::factory()->create();
     $user->givePermissionTo('export_hub.view-any');

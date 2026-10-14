@@ -35,8 +35,8 @@
 */
 
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
-use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationSubmissions;
-use AdvisingApp\Application\Filament\Resources\Applications\Pages\ViewApplication;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplication;
+use AdvisingApp\Application\Filament\Resources\Applications\RelationManagers\SubmissionsRelationManager;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages\CreateApplicationSubmissionState;
 use AdvisingApp\Application\Filament\Resources\ApplicationSubmissionStates\Pages\EditApplicationSubmissionState;
 use AdvisingApp\Application\Models\Application;
@@ -131,7 +131,7 @@ test('getDefaultActiveTab returns the default state id when one exists', functio
 
     $application = Application::factory()->create();
 
-    $component = Livewire::test(ManageApplicationSubmissions::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
+    $component = Livewire::test(SubmissionsRelationManager::class, ['ownerRecord' => $application, 'pageClass' => ManageApplication::class])
         ->instance();
 
     expect($component->getDefaultActiveTab())->toBe($defaultState->id);
@@ -144,7 +144,7 @@ test('getDefaultActiveTab returns all when no default state is set', function ()
 
     $application = Application::factory()->create();
 
-    $component = Livewire::test(ManageApplicationSubmissions::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
+    $component = Livewire::test(SubmissionsRelationManager::class, ['ownerRecord' => $application, 'pageClass' => ManageApplication::class])
         ->instance();
 
     expect($component->getDefaultActiveTab())->toBe('all');

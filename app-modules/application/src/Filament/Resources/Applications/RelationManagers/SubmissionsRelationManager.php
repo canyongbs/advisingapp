@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
+namespace AdvisingApp\Application\Filament\Resources\Applications\RelationManagers;
 
 use AdvisingApp\Application\Exports\ApplicationSubmissionExport;
 use AdvisingApp\Application\Filament\Resources\Applications\Actions\ApplicationAdmissionActions;
@@ -64,13 +64,13 @@ use Illuminate\Support\Facades\Cache;
 use Livewire\Attributes\Url;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ManageApplicationSubmissions extends RelationManager
+class SubmissionsRelationManager extends RelationManager
 {
-    // The `tab` URL key belongs to ViewApplication.
+    // The page owns the `tab` query parameter.
     #[Url(as: 'state')]
     public ?string $activeTab = null;
 
-    protected string $view = 'application::filament.resources.applications.pages.manage-application-submissions';
+    protected string $view = 'application::filament.resources.applications.relation-managers.submissions-relation-manager';
 
     protected static string $relationship = 'submissions';
 
@@ -78,10 +78,7 @@ class ManageApplicationSubmissions extends RelationManager
 
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        return $ownerRecord instanceof Application
-            && ! $ownerRecord->isArchived()
-            && ApplicationResource::canAccess()
-            && parent::canViewForRecord($ownerRecord, $pageClass);
+        return ApplicationResource::canAccess() && parent::canViewForRecord($ownerRecord, $pageClass);
     }
 
     public function mount(): void
@@ -89,11 +86,6 @@ class ManageApplicationSubmissions extends RelationManager
         abort_unless(static::canViewForRecord($this->getOwnerRecord(), $this->getPageClass()), 403);
 
         parent::mount();
-    }
-
-    public function isReadOnly(): bool
-    {
-        return false;
     }
 
     public function getDefaultActiveTab(): string | int | null
@@ -249,11 +241,10 @@ class ManageApplicationSubmissions extends RelationManager
                     ->modalHeading('Archive Submission')
                     ->modalSubmitActionLabel('Archive')
                     ->authorize(fn (ApplicationSubmission $record): bool => auth()->user()->can('archive', $record))
-                    ->action(function (ApplicationSubmission $record) use ($owner): void {
+                    ->action(function (ApplicationSubmission $record): void {
                         $record->archive();
 
-                        Cache::tags('{application-submission-count}')
-                            ->forget("application-submission-count-{$owner->root_id}");
+                        Cache::tags('{application-submission-count}')->flush();
 
                         Notification::make()
                             ->title('Submission archived')
@@ -266,8 +257,8 @@ class ManageApplicationSubmissions extends RelationManager
                 BulkActionGroup::make([
                     BulkAction::make('Export')
                         ->icon('heroicon-o-arrow-down-tray')
-                        ->action(function (Collection $records) {
-                            $filename = str("selected-application-submissions-{$this->getOwnerRecord()->name}-")
+                        ->action(function (Collection $records) use ($owner) {
+                            $filename = str("selected-application-submissions-{$owner->name}-")
                                 ->append(now()->format('Y-m-d-Hisv'))
                                 ->slug()
                                 ->append('.csv');
@@ -283,7 +274,7 @@ class ManageApplicationSubmissions extends RelationManager
                         ->modalSubmitActionLabel('Archive')
                         ->authorize(fn () => auth()->user()->can('deleteAny', ApplicationSubmission::class))
                         ->authorizeIndividualRecords('archive')
-                        ->action(function (Collection $records) use ($owner): void {
+                        ->action(function (Collection $records): void {
                             /** @phpstan-ignore argument.type */
                             $records->each(function (ApplicationSubmission $record): void {
                                 if ($record->isArchived()) {
@@ -293,8 +284,7 @@ class ManageApplicationSubmissions extends RelationManager
                                 $record->archive();
                             });
 
-                            Cache::tags('{application-submission-count}')
-                                ->forget("application-submission-count-{$owner->root_id}");
+                            Cache::tags('{application-submission-count}')->flush();
 
                             Notification::make()
                                 ->title('Submissions archived')
@@ -308,9 +298,11 @@ class ManageApplicationSubmissions extends RelationManager
     public static function getBadge(Model $ownerRecord, string $pageClass): ?string
     {
         assert($ownerRecord instanceof Application);
+
         $applicationSubmissionsCount = Cache::tags('{application-submission-count}')
             ->remember(
-                "application-submission-count-{$ownerRecord->root_id}",
+                // Licenses limit which submissions a user can count.
+                "application-submission-count-{$ownerRecord->root_id}-" . auth()->id(),
                 now()->addMinutes(5),
                 function () use ($ownerRecord): int {
                     return ApplicationSubmission::query()

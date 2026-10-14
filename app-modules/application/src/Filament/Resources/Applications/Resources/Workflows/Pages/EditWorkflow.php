@@ -36,6 +36,7 @@
 
 namespace AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\Pages;
 
+use AdvisingApp\Application\Enums\ApplicationTab;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\WorkflowResource;
 use AdvisingApp\Workflow\Filament\Resources\Workflows\Pages\EditWorkflow as BaseEditWorkflow;
@@ -52,7 +53,7 @@ class EditWorkflow extends BaseEditWorkflow
             DeleteAction::make()
                 ->successRedirectUrl(function (Workflow $record) {
                     return ApplicationResource::getUrl('view', [
-                        'tab' => 'workflows',
+                        'tab' => ApplicationTab::Workflows->value,
                         'record' => $record->workflowTrigger->related_id,
                     ]);
                 }),

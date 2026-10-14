@@ -91,10 +91,7 @@ class ApplicationSubmissionObserver
         $submission->loadMissing('submissible');
 
         if ($submission->submissible instanceof Application) {
-            Cache::tags('{application-submission-count}')
-                ->forget(
-                    "application-submission-count-{$submission->submissible->root_id}"
-                );
+            Cache::tags('{application-submission-count}')->flush();
         }
     }
 

@@ -34,35 +34,23 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\MeetingCenter\Livewire\EventLandingPageManager;
-use AdvisingApp\MeetingCenter\Models\Event;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
-use Livewire\Livewire;
+namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 
-use function Tests\asSuperAdmin;
+use AdvisingApp\Application\Enums\ApplicationTab;
+use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
+use Filament\Resources\Pages\Page;
 
-it('saves the rich description and hero image onto the event', function () {
-    Storage::fake('s3-public');
+class RedirectToApplicationTab extends Page
+{
+    protected static string $resource = ApplicationResource::class;
 
-    asSuperAdmin();
-
-    $event = Event::factory()->create(['description' => null]);
-
-    expect($event->getFirstMedia('hero_image'))->toBeNull();
-
-    $description = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Join us for this event.']]]]];
-
-    Livewire::test(EventLandingPageManager::class, ['record' => $event])
-        ->fillForm([
-            'description' => $description,
-            'hero_image' => UploadedFile::fake()->image('hero.png'),
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors();
-
-    $event = $event->fresh();
-
-    expect($event->description)->toEqual($description)
-        ->and($event->getFirstMedia('hero_image'))->not->toBeNull();
-});
+    public function mount(int | string $record): void
+    {
+        $this->redirect(ApplicationResource::getUrl('view', [
+            ...request()->query(),
+            'record' => $record,
+            // Notifications sent before the tabs existed link to `/edit` and `/submissions`.
+            'tab' => ApplicationTab::from(last(request()->segments()))->value,
+        ]));
+    }
+}

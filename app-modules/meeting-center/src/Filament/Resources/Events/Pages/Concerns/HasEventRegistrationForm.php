@@ -34,10 +34,13 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Livewire;
+namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\Concerns;
 
 use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
 use AdvisingApp\MeetingCenter\Actions\CreateEventRegistrationFormVersion;
+use AdvisingApp\MeetingCenter\Enums\EventTab;
+use AdvisingApp\MeetingCenter\Filament\Resources\Events\EventResource;
+use AdvisingApp\MeetingCenter\Models\Event;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationForm;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormField;
 use AdvisingApp\MeetingCenter\Models\EventRegistrationFormStep;
@@ -56,18 +59,22 @@ use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Support\Facades\DB;
 
-class EventRegistrationFormManager extends EventFormManager
+trait HasEventRegistrationForm
 {
+    /** @var array<string, mixed>|null */
+    public ?array $registrationFormData = [];
+
     protected bool $registrationFormVersionedInCurrentSave = false;
 
     /** @var array<array-key, EventRegistrationFormStep> */
     protected array $wizardStepVersionMap = [];
 
-    public function form(Schema $schema): Schema
+    public function registrationForm(Schema $schema): Schema
     {
         return $schema
-            ->model($this->record)
-            ->statePath('data')
+            ->model($this->getRecord())
+            ->operation('edit')
+            ->statePath('registrationFormData')
             ->components([
                 Fieldset::make('Registration Form')
                     ->relationship('eventRegistrationForm')
@@ -150,7 +157,7 @@ class EventRegistrationFormManager extends EventFormManager
                             ]),
                         Section::make('Form Fields')
                             ->schema([
-                                $this->fieldBuilder(),
+                                $this->registrationFormFieldBuilder(),
                             ])
                             ->hidden(fn (Get $get) => $get('is_wizard'))
                             ->disabled(fn (?EventRegistrationForm $record) => $record?->submissions()->exists()),
@@ -168,7 +175,7 @@ class EventRegistrationFormManager extends EventFormManager
                                     ->label('Step Description')
                                     ->string()
                                     ->columnSpanFull(),
-                                $this->fieldBuilder(),
+                                $this->registrationFormFieldBuilder(),
                             ])
                             ->addActionLabel('New step')
                             ->itemLabel(fn (array $state): ?string => $state['label'] ?? null)
@@ -189,7 +196,29 @@ class EventRegistrationFormManager extends EventFormManager
             ]);
     }
 
-    public function fieldBuilder(): RichEditor
+    public function saveRegistrationForm(): void
+    {
+        $event = $this->getRecord();
+        assert($event instanceof Event);
+
+        EventResource::authorizeEdit($event);
+
+        DB::transaction(function () use ($event): void {
+            $this->registrationForm->getState();
+
+            $this->clearRegistrationFormContentForWizard($event);
+        });
+
+        $this->getSavedNotification()?->send();
+
+        // Saving creates a new registration form version, which every form on the page must reload.
+        $this->redirect(EventResource::getUrl('view', [
+            'record' => $event,
+            'tab' => EventTab::RegistrationForm->value,
+        ]));
+    }
+
+    protected function registrationFormFieldBuilder(): RichEditor
     {
         return RichEditor::make('content')
             ->json()
@@ -246,7 +275,7 @@ class EventRegistrationFormManager extends EventFormManager
      *
      * @return array<int, array<string, mixed>>
      */
-    public function saveFieldsFromComponents(EventRegistrationForm $form, array $components, ?EventRegistrationFormStep $eventRegistrationFormStep): array
+    protected function saveFieldsFromComponents(EventRegistrationForm $form, array $components, ?EventRegistrationFormStep $eventRegistrationFormStep): array
     {
         foreach ($components as $componentKey => $component) {
             if (array_key_exists('content', $component)) {
@@ -321,14 +350,9 @@ class EventRegistrationFormManager extends EventFormManager
         $component->state($content);
     }
 
-    protected function attributesToSave(): array
+    protected function clearRegistrationFormContentForWizard(Event $event): void
     {
-        return [];
-    }
-
-    protected function afterSave(): void
-    {
-        $form = $this->record->eventRegistrationForm;
+        $form = $event->eventRegistrationForm;
 
         if ($form?->is_wizard) {
             $form->content = null;
@@ -336,8 +360,5 @@ class EventRegistrationFormManager extends EventFormManager
         } else {
             $form?->steps()->delete();
         }
-
-        $this->registrationFormVersionedInCurrentSave = false;
-        $this->wizardStepVersionMap = [];
     }
 }

@@ -64,7 +64,7 @@ class Event extends BaseModel implements HasMedia, HasRichContent
     use InteractsWithRichContent;
 
     /**
-     * Single source of truth shared with EventLandingPageManager's hero_image field.
+     * Single source of truth shared with the landing page form's hero_image field.
      *
      * @var array<string>
      */

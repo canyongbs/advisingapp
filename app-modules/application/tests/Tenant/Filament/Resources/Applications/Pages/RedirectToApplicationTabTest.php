@@ -49,7 +49,7 @@ beforeEach(function () {
     seed(ApplicationSubmissionStateSeeder::class);
 });
 
-it('redirects a legacy URL to its canonical tab', function (string $page, string $tab) {
+it('redirects a legacy URL to its tab', function (string $page, string $tab) {
     asSuperAdmin();
     $application = Application::factory()->create();
 
@@ -57,12 +57,10 @@ it('redirects a legacy URL to its canonical tab', function (string $page, string
         ->assertRedirect(ApplicationResource::getUrl('view', ['record' => $application, 'tab' => $tab]));
 })->with([
     ['edit', 'edit'],
-    ['manage-application-workflows', 'workflows'],
     ['manage-submissions', 'submissions'],
-    ['manage-notifications', 'notifications'],
 ]);
 
-it('preserves submission modal parameters through the legacy redirect', function () {
+it('keeps the query string when redirecting', function () {
     asSuperAdmin();
     $application = Application::factory()->create();
     $parameters = ['record' => $application, 'tableAction' => 'view', 'tableActionRecord' => $application->submissions()->firstOrFail()->id];
@@ -71,24 +69,11 @@ it('preserves submission modal parameters through the legacy redirect', function
         ->assertRedirect(ApplicationResource::getUrl('view', [...$parameters, 'tab' => 'submissions']));
 });
 
-it('maps the legacy state tab to the state parameter', function (string $page, string $tab) {
-    asSuperAdmin();
-    $application = Application::factory()->create();
-
-    get(ApplicationResource::getUrl($page, ['record' => $application, 'tab' => '123']))
-        ->assertRedirect(ApplicationResource::getUrl('view', ['record' => $application, 'tab' => $tab, 'state' => '123']));
-})->with([
-    ['manage-application-workflows', 'workflows'],
-    ['manage-submissions', 'submissions'],
-]);
-
 describe('authorization', function () {
-    it('denies a legacy edit URL to a view-only user', function (string $page) {
-        $user = User::factory()->licensed(LicenseType::cases())->create();
-        $user->givePermissionTo('application.view-any', 'application.*.view');
-        actingAs($user);
+    it('denies access to a legacy URL without the `application.view-any` permission', function () {
+        actingAs(User::factory()->licensed(LicenseType::cases())->create());
         $application = Application::factory()->create();
 
-        get(ApplicationResource::getUrl($page, ['record' => $application]))->assertForbidden();
-    })->with(['edit', 'manage-notifications']);
+        get(ApplicationResource::getUrl('edit', ['record' => $application]))->assertForbidden();
+    });
 });

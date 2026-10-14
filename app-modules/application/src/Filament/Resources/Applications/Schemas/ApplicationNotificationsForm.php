@@ -34,46 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
+namespace AdvisingApp\Application\Filament\Resources\Applications\Schemas;
 
-use AdvisingApp\Application\Enums\ApplicationTab;
-use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
-use AdvisingApp\Application\Models\Application;
-use Filament\Resources\Pages\Concerns\InteractsWithRecord;
-use Filament\Resources\Pages\Page;
+use App\Filament\Forms\Components\UserSelect;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
-class RedirectApplicationTab extends Page
+class ApplicationNotificationsForm
 {
-    use InteractsWithRecord;
-
-    protected static string $resource = ApplicationResource::class;
-
-    public function mount(int | string $record): void
+    public static function configure(Schema $schema): Schema
     {
-        $this->record = $this->resolveRecord($record);
-        assert($this->record instanceof Application);
-
-        $tab = match (str(request()->route()?->getName())->afterLast('.')->toString()) {
-            'edit' => ApplicationTab::Edit,
-            'manage-application-workflows' => ApplicationTab::Workflows,
-            'manage-submissions' => ApplicationTab::Submissions,
-            'manage-notifications' => ApplicationTab::Notifications,
-            default => abort(404),
-        };
-
-        abort_unless($tab->canAccess($this->record), 403);
-
-        $query = request()->query();
-
-        // Legacy pages stored the selected state tab under `tab`, which now selects the application tab.
-        if (in_array($tab, [ApplicationTab::Workflows, ApplicationTab::Submissions], true) && isset($query['tab'])) {
-            $query['state'] ??= $query['tab'];
-        }
-
-        $this->redirect(ApplicationResource::getUrl('view', [
-            ...$query,
-            'record' => $this->record,
-            'tab' => $tab->value,
-        ]));
+        return $schema
+            ->components([
+                Section::make()
+                    ->schema([
+                        UserSelect::make('notification_users')
+                            ->label('Users to Notify')
+                            ->relationship('notificationUsers', 'name')
+                            ->multiple()
+                            ->searchable()
+                            ->preload(),
+                        Toggle::make('notify_to_care_team')
+                            ->label('Notify to Care Team'),
+                        Toggle::make('notify_to_subscribers')
+                            ->label('Notify to Subscribers'),
+                        Toggle::make('notify_via_app')
+                            ->label('Notify via App'),
+                        Toggle::make('notify_via_email')
+                            ->label('Notify via Email'),
+                    ]),
+            ]);
     }
 }

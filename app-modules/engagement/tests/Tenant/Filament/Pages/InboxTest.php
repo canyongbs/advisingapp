@@ -44,6 +44,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Livewire\Livewire;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 use function Tests\setUnifiedInboxEnabled;
@@ -83,6 +84,19 @@ it('syncs the active tab into the component state when switching tabs', function
     Livewire::test(Inbox::class)
         ->assertSet('activeTab', 'inbox')
         ->set('activeTab', 'sent-items')
+        ->assertSet('activeTab', 'sent-items');
+});
+
+it('falls back to the first tab the user can access', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('engagement.view-any', 'engagement.*.view');
+
+    actingAs($user);
+
+    Livewire::withQueryParams(['tab' => 'inbox'])
+        ->test(Inbox::class)
+        ->assertSet('activeTab', 'sent-items')
+        ->set('activeTab', 'inbox')
         ->assertSet('activeTab', 'sent-items');
 });
 

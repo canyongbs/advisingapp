@@ -51,15 +51,19 @@ use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
 
 class EventAttendeesRelationManager extends RelationManager
 {
-    protected static string $resource = EventResource::class;
-
     protected static string $relationship = 'attendees';
 
     protected static ?string $title = 'Attendees';
+
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        return EventResource::canAccess() && parent::canViewForRecord($ownerRecord, $pageClass);
+    }
 
     public function mount(): void
     {

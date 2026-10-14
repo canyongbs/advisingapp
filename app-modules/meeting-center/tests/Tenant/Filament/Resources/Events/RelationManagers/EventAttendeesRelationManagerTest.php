@@ -35,7 +35,7 @@
 */
 
 use AdvisingApp\Authorization\Enums\LicenseType;
-use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ViewEvent;
+use AdvisingApp\MeetingCenter\Filament\Resources\Events\Pages\ManageEvent;
 use AdvisingApp\MeetingCenter\Filament\Resources\Events\RelationManagers\EventAttendeesRelationManager;
 use AdvisingApp\MeetingCenter\Jobs\CreateEventAttendees;
 use AdvisingApp\MeetingCenter\Models\Event;
@@ -65,7 +65,7 @@ test('archive action is visible when attendee is not archived', function () {
     $event = Event::factory()->create();
     $attendee = EventAttendee::factory()->create(['event_id' => $event->id]);
 
-    Livewire::test(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ViewEvent::class])
+    Livewire::test(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ManageEvent::class])
         ->assertTableActionVisible('archive', $attendee);
 });
 
@@ -77,7 +77,7 @@ test('archive action successfully archives an attendee', function () {
 
     expect($attendee->isArchived())->toBeFalse();
 
-    Livewire::test(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ViewEvent::class])
+    Livewire::test(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ManageEvent::class])
         ->callTableAction('archive', $attendee)
         ->assertNotified();
 
@@ -94,7 +94,7 @@ test('bulk archive action successfully archives multiple attendees', function ()
         expect($attendee->isArchived())->toBeFalse();
     });
 
-    Livewire::test(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ViewEvent::class])
+    Livewire::test(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ManageEvent::class])
         ->callTableBulkAction('archive', $attendees)
         ->assertNotified();
 
@@ -112,7 +112,7 @@ test('archived attendees are hidden by default', function () {
     $activeAttendee = EventAttendee::factory()->create(['event_id' => $event->id]);
     $archivedAttendee = EventAttendee::factory()->create(['event_id' => $event->id, 'archived_at' => now()]);
 
-    Livewire::test(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ViewEvent::class])
+    Livewire::test(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ManageEvent::class])
         ->loadTable()
         ->assertCanSeeTableRecords([$activeAttendee])
         ->assertCanNotSeeTableRecords([$archivedAttendee]);
@@ -127,7 +127,7 @@ test('archived attendees are visible when the withoutArchived filter is removed'
     $activeAttendee = EventAttendee::factory()->create(['event_id' => $event->id]);
     $archivedAttendee = EventAttendee::factory()->create(['event_id' => $event->id, 'archived_at' => now()]);
 
-    Livewire::test(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ViewEvent::class])
+    Livewire::test(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ManageEvent::class])
         ->loadTable()
         ->removeTableFilter('withoutArchived')
         ->assertCanSeeTableRecords([$activeAttendee, $archivedAttendee]);
@@ -139,7 +139,7 @@ test('invite action dispatches attendee invitations for the owner event', functi
 
     $event = Event::factory()->create();
 
-    Livewire::test(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ViewEvent::class])
+    Livewire::test(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ManageEvent::class])
         ->callAction(TestAction::make('invite')->table(), ['attendees' => ['invitee@example.com']])
         ->assertNotified();
 
@@ -158,7 +158,7 @@ describe('authorization', function () use ($eventAttendeesRelationManagerTestUse
 
         $event = Event::factory()->create();
 
-        Livewire::test(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ViewEvent::class])
+        Livewire::test(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ManageEvent::class])
             ->assertActionVisible(TestAction::make('invite')->table());
     });
 
@@ -169,7 +169,7 @@ describe('authorization', function () use ($eventAttendeesRelationManagerTestUse
 
         $event = Event::factory()->create();
 
-        Livewire::test(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ViewEvent::class])
+        Livewire::test(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ManageEvent::class])
             ->assertActionHidden(TestAction::make('invite')->table());
     });
 
@@ -179,7 +179,7 @@ describe('authorization', function () use ($eventAttendeesRelationManagerTestUse
 
         $event = Event::factory()->create();
 
-        Livewire::test(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ViewEvent::class])
+        Livewire::test(EventAttendeesRelationManager::class, ['ownerRecord' => $event, 'pageClass' => ManageEvent::class])
             ->assertForbidden();
     });
 });

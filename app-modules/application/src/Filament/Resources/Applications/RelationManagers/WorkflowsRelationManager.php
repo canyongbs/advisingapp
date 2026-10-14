@@ -34,11 +34,10 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
+namespace AdvisingApp\Application\Filament\Resources\Applications\RelationManagers;
 
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\WorkflowResource;
-use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerEvent;
 use AdvisingApp\Workflow\Enums\WorkflowTriggerType;
@@ -60,9 +59,9 @@ use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Url;
 use Throwable;
 
-class ManageApplicationWorkflows extends RelationManager
+class WorkflowsRelationManager extends RelationManager
 {
-    // The `tab` URL key belongs to ViewApplication.
+    // The page owns the `tab` query parameter.
     #[Url(as: 'state')]
     public ?string $activeTab = null;
 
@@ -74,10 +73,7 @@ class ManageApplicationWorkflows extends RelationManager
 
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        return $ownerRecord instanceof Application
-            && ! $ownerRecord->isArchived()
-            && ApplicationResource::canAccess()
-            && parent::canViewForRecord($ownerRecord, $pageClass);
+        return ApplicationResource::canAccess() && parent::canViewForRecord($ownerRecord, $pageClass);
     }
 
     public function mount(): void
@@ -85,11 +81,6 @@ class ManageApplicationWorkflows extends RelationManager
         abort_unless(static::canViewForRecord($this->getOwnerRecord(), $this->getPageClass()), 403);
 
         parent::mount();
-    }
-
-    public function isReadOnly(): bool
-    {
-        return false;
     }
 
     public function getDefaultActiveTab(): string | int | null
@@ -148,7 +139,6 @@ class ManageApplicationWorkflows extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-            ->headerActions($this->getHeaderActions())
             ->recordTitleAttribute('id')
             ->columns([
                 TextColumn::make('name'),
@@ -163,26 +153,22 @@ class ManageApplicationWorkflows extends RelationManager
                 TextColumn::make('steps')
                     ->getStateUsing(fn (Workflow $record) => $record->workflowSteps()->count()),
             ])
+            ->headerActions([
+                $this->getCreateAction(),
+            ])
             ->recordActions([
                 EditAction::make()
-                    ->authorize(fn (): bool => $this->canUpdateOwnerRecord())
                     ->url(fn (Workflow $record) => WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $record])),
                 DeleteAction::make()
-                    ->authorize(fn (): bool => $this->canUpdateOwnerRecord())
                     ->modalHeading(fn (Workflow $record) => 'Delete ' . $record->name),
             ])
-            ->recordUrl(fn (Workflow $record) => $this->canUpdateOwnerRecord()
-                ? WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $record])
-                : null);
+            ->recordUrl(fn (Workflow $record) => WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $record]));
     }
 
-    /**
-     * @return array<Action>
-     */
-    public function getHeaderActions(): array
+    protected function getCreateAction(): Action
     {
-        $action = Action::make('create')
-            ->authorize(fn (): bool => $this->canUpdateOwnerRecord())
+        return Action::make('create')
+            ->authorize(fn (): bool => auth()->user()->can('update', $this->getOwnerRecord()))
             ->label('Create New Workflow')
             ->slideOver()
             ->modalHeading('Create New Workflow')
@@ -206,10 +192,8 @@ class ManageApplicationWorkflows extends RelationManager
                     ->required()
                     ->inline()
                     ->inlineLabel(false),
-            ]);
-
-        return [
-            $action->action(function (array $data): void {
+            ])
+            ->action(function (array $data): void {
                 try {
                     DB::beginTransaction();
 
@@ -242,13 +226,7 @@ class ManageApplicationWorkflows extends RelationManager
                 }
 
                 redirect(WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $workflow]));
-            }),
-        ];
-    }
-
-    private function canUpdateOwnerRecord(): bool
-    {
-        return auth()->user()->can('update', $this->getOwnerRecord());
+            });
     }
 
     private function resolveDefaultStateId(): ?string

@@ -36,15 +36,12 @@
 
 namespace AdvisingApp\Engagement\Filament\Pages;
 
-use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Engagement\Enums\InboxTab;
 use AdvisingApp\Engagement\Filament\Actions\SendEngagementAction;
 use AdvisingApp\Engagement\Livewire\InboxTable;
 use AdvisingApp\Engagement\Livewire\SentItemsTable;
-use AdvisingApp\Engagement\Models\Engagement;
-use AdvisingApp\Engagement\Models\EngagementResponse;
 use App\Enums\Feature;
 use App\Enums\NavigationGroup;
-use App\Models\User;
 use Filament\Navigation\NavigationItem;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Livewire;
@@ -66,7 +63,7 @@ class Inbox extends Page
     protected static ?int $navigationSort = 10;
 
     #[Url(as: 'tab')]
-    public string $activeTab = 'inbox';
+    public string $activeTab = InboxTab::Inbox->value;
 
     public static function canAccess(): bool
     {
@@ -74,47 +71,37 @@ class Inbox extends Page
             return false;
         }
 
-        $user = auth()->user();
-
-        assert($user instanceof User);
-
-        if (! $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm])) {
-            return false;
-        }
-
-        // These authorization checks have been preserved from the original message center.
-        return ($user->can('viewAny', EngagementResponse::class) && $user->can('engagement_response.*.view'))
-            || ($user->can('viewAny', Engagement::class) && $user->can('engagement.*.view'));
+        return collect(InboxTab::cases())
+            ->contains(fn (InboxTab $tab): bool => $tab->canView());
     }
 
     public function mount(): void
     {
-        if ($this->isTabVisible($this->activeTab)) {
-            return;
-        }
-
-        $this->activeTab = collect(['inbox', 'sent-items'])
-            ->first(fn (string $tab): bool => $this->isTabVisible($tab)) ?? 'inbox';
+        $this->authorizeAccess();
     }
 
     public function content(Schema $schema): Schema
     {
-        return $schema->components([
-            Tabs::make()
-                ->livewireProperty('activeTab')
-                ->tabs([
-                    'inbox' => Tab::make('Inbox')
-                        ->visible(fn (): bool => $this->isTabVisible('inbox'))
-                        ->schema([
-                            Livewire::make(InboxTable::class),
-                        ]),
-                    'sent-items' => Tab::make('Sent Items')
-                        ->visible(fn (): bool => $this->isTabVisible('sent-items'))
-                        ->schema([
-                            Livewire::make(SentItemsTable::class),
-                        ]),
-                ]),
-        ]);
+        return $schema
+            ->components([
+                Tabs::make()
+                    ->livewireProperty('activeTab')
+                    ->tabs([
+                        InboxTab::Inbox->value => $this->makeTab(InboxTab::Inbox)
+                            ->schema([
+                                Livewire::make(InboxTable::class),
+                            ]),
+                        InboxTab::SentItems->value => $this->makeTab(InboxTab::SentItems)
+                            ->schema([
+                                Livewire::make(SentItemsTable::class),
+                            ]),
+                    ]),
+            ]);
+    }
+
+    public function updatedActiveTab(): void
+    {
+        $this->authorizeAccess();
     }
 
     /**
@@ -141,20 +128,20 @@ class Inbox extends Page
         ];
     }
 
-    protected function isTabVisible(string $tab): bool
+    protected function authorizeAccess(): void
     {
-        $user = auth()->user();
-
-        assert($user instanceof User);
-
-        if (! $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm])) {
-            return false;
+        if (InboxTab::tryFrom($this->activeTab)?->canView()) {
+            return;
         }
 
-        return match ($tab) {
-            'inbox' => $user->can('viewAny', EngagementResponse::class) && $user->can('engagement_response.*.view'),
-            'sent-items' => $user->can('viewAny', Engagement::class) && $user->can('engagement.*.view'),
-            default => false,
-        };
+        $this->activeTab = collect(InboxTab::cases())
+            ->first(fn (InboxTab $tab): bool => $tab->canView())
+            ->value ?? abort(403);
+    }
+
+    protected function makeTab(InboxTab $tab): Tab
+    {
+        return Tab::make($tab->getLabel())
+            ->visible(fn (): bool => $tab->canView());
     }
 }

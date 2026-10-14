@@ -37,11 +37,10 @@
 namespace App\Filament\Pages;
 
 use AdvisingApp\StudentDataModel\Livewire\StudentDataImportsTable;
-use AdvisingApp\StudentDataModel\Settings\ManageStudentConfigurationSettings;
+use App\Enums\ImportExportTab;
 use App\Enums\NavigationGroup;
 use App\Livewire\ExportsTable;
 use App\Livewire\ImportsTable;
-use App\Models\User;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Livewire;
 use Filament\Schemas\Components\Tabs;
@@ -61,66 +60,61 @@ class ImportExport extends Page
     protected static ?int $navigationSort = 30;
 
     #[Url(as: 'tab')]
-    public string $activeTab = 'import';
+    public string $activeTab = ImportExportTab::Import->value;
 
     public static function canAccess(): bool
     {
-        $user = auth()->user();
-        assert($user instanceof User);
-
-        if ($user->can('export_hub.view-any')) {
-            return true;
-        }
-
-        return app(ManageStudentConfigurationSettings::class)->is_enabled
-            && $user->can('record_sync.view-any');
+        return collect(ImportExportTab::cases())
+            ->contains(fn (ImportExportTab $tab): bool => $tab->canView());
     }
 
     public function mount(): void
     {
-        if ($this->isTabVisible($this->activeTab)) {
-            return;
-        }
-
-        $this->activeTab = collect(['import', 'export', 'student-sync'])
-            ->first(fn (string $tab): bool => $this->isTabVisible($tab)) ?? 'import';
+        $this->authorizeAccess();
     }
 
     public function content(Schema $schema): Schema
     {
-        return $schema->components([
-            Tabs::make()
-                ->livewireProperty('activeTab')
-                ->tabs([
-                    'import' => Tab::make('Import')
-                        ->visible(fn (): bool => $this->isTabVisible('import'))
-                        ->schema([
-                            Livewire::make(ImportsTable::class),
-                        ]),
-                    'export' => Tab::make('Export')
-                        ->visible(fn (): bool => $this->isTabVisible('export'))
-                        ->schema([
-                            Livewire::make(ExportsTable::class),
-                        ]),
-                    'student-sync' => Tab::make('Student Sync')
-                        ->visible(fn (): bool => $this->isTabVisible('student-sync'))
-                        ->schema([
-                            Livewire::make(StudentDataImportsTable::class),
-                        ]),
-                ]),
-        ]);
+        return $schema
+            ->components([
+                Tabs::make()
+                    ->livewireProperty('activeTab')
+                    ->tabs([
+                        ImportExportTab::Import->value => $this->makeTab(ImportExportTab::Import)
+                            ->schema([
+                                Livewire::make(ImportsTable::class),
+                            ]),
+                        ImportExportTab::Export->value => $this->makeTab(ImportExportTab::Export)
+                            ->schema([
+                                Livewire::make(ExportsTable::class),
+                            ]),
+                        ImportExportTab::StudentSync->value => $this->makeTab(ImportExportTab::StudentSync)
+                            ->schema([
+                                Livewire::make(StudentDataImportsTable::class),
+                            ]),
+                    ]),
+            ]);
     }
 
-    protected function isTabVisible(string $tab): bool
+    public function updatedActiveTab(): void
     {
-        $user = auth()->user();
-        assert($user instanceof User);
+        $this->authorizeAccess();
+    }
 
-        return match ($tab) {
-            'import', 'export' => $user->can('export_hub.view-any'),
-            'student-sync' => app(ManageStudentConfigurationSettings::class)->is_enabled
-                && $user->can('record_sync.view-any'),
-            default => false,
-        };
+    protected function authorizeAccess(): void
+    {
+        if (ImportExportTab::tryFrom($this->activeTab)?->canView()) {
+            return;
+        }
+
+        $this->activeTab = collect(ImportExportTab::cases())
+            ->first(fn (ImportExportTab $tab): bool => $tab->canView())
+            ->value ?? abort(403);
+    }
+
+    protected function makeTab(ImportExportTab $tab): Tab
+    {
+        return Tab::make($tab->getLabel())
+            ->visible(fn (): bool => $tab->canView());
     }
 }

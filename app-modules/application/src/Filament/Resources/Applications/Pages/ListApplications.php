@@ -37,6 +37,7 @@
 namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
 
 use AdvisingApp\Application\Actions\DuplicateApplication;
+use AdvisingApp\Application\Enums\ApplicationTab;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
@@ -87,7 +88,8 @@ class ListApplications extends ListRecords
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
+                EditAction::make()
+                    ->url(fn (Application $record): string => ApplicationResource::getUrl('view', ['record' => $record, 'tab' => ApplicationTab::Edit->value])),
                 ReplicateAction::make('Duplicate')
                     ->modalHeading('Duplicate Application')
                     ->excludeAttributes(['submissions_count'])

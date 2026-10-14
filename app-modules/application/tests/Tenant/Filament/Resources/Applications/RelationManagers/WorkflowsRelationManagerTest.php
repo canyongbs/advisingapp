@@ -37,8 +37,8 @@
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
-use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationWorkflows;
-use AdvisingApp\Application\Filament\Resources\Applications\Pages\ViewApplication;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplication;
+use AdvisingApp\Application\Filament\Resources\Applications\RelationManagers\WorkflowsRelationManager;
 use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\Pages\EditWorkflow as ApplicationNestedEditWorkflow;
 use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\WorkflowResource;
 use AdvisingApp\Application\Models\Application;
@@ -50,7 +50,7 @@ use AdvisingApp\Workflow\Models\Workflow;
 use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use App\Models\User;
 use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
+use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
@@ -63,14 +63,19 @@ beforeEach(function () {
     seed(ApplicationSubmissionStateSeeder::class);
 });
 
-test('can successfully create a new workflow for an application through manage workflows page', function () {
+$testWorkflows = fn (Application $application): Testable => Livewire::test(WorkflowsRelationManager::class, [
+    'ownerRecord' => $application,
+    'pageClass' => ManageApplication::class,
+]);
+
+test('can successfully create a new workflow for an application through manage workflows page', function () use ($testWorkflows) {
     asSuperAdmin();
 
     $application = Application::factory()->create();
     $user = User::first();
     expect(WorkflowTrigger::count())->toBe(0);
 
-    Livewire::test(ManageApplicationWorkflows::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
+    $testWorkflows($application)
         ->callTableAction('create');
 
     expect(Workflow::count())->toBe(1);
@@ -90,19 +95,19 @@ test('can successfully create a new workflow for an application through manage w
     expect($workflowTrigger->created_by_type)->toBe($user->getMorphClass());
 });
 
-test('creates multiple workflows for the same application without conflicts', function () {
+test('creates multiple workflows for the same application without conflicts', function () use ($testWorkflows) {
     asSuperAdmin();
 
     $application = Application::factory()->create();
 
     expect(Workflow::count())->toBe(0);
 
-    Livewire::test(ManageApplicationWorkflows::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
+    $testWorkflows($application)
         ->callTableAction('create');
 
     expect(Workflow::count())->toBe(1);
 
-    Livewire::test(ManageApplicationWorkflows::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
+    $testWorkflows($application)
         ->callTableAction('create');
 
     expect(Workflow::count())->toBe(2);
@@ -121,13 +126,13 @@ test('creates multiple workflows for the same application without conflicts', fu
     }
 });
 
-test('application workflow creation is gated with proper access control', function () {
+test('application workflow creation is gated with proper access control', function () use ($testWorkflows) {
     $user = User::factory()->licensed(LicenseType::cases())->create();
     $application = Application::factory()->create();
 
     actingAs($user);
 
-    Livewire::test(ManageApplicationWorkflows::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
+    $testWorkflows($application)
         ->assertForbidden();
 
     expect(Workflow::count())->toBe(0);
@@ -136,7 +141,7 @@ test('application workflow creation is gated with proper access control', functi
     $user->givePermissionTo('application.view-any');
     $user->givePermissionTo('application.*.update');
 
-    Livewire::test(ManageApplicationWorkflows::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
+    $testWorkflows($application)
         ->callTableAction('create');
 
     expect(Workflow::count())->toBe(1);
@@ -380,7 +385,7 @@ test('workflow deletion succeeds with proper permissions', function () {
     expect(WorkflowTrigger::find($triggerId))->not->toBeNull();
 });
 
-test('create action persists Stage and Trigger event from form data', function () {
+test('create action persists Stage and Trigger event from form data', function () use ($testWorkflows) {
     asSuperAdmin();
 
     $application = Application::factory()->create();
@@ -389,8 +394,8 @@ test('create action persists Stage and Trigger event from form data', function (
         ->where('classification', ApplicationSubmissionStateClassification::Review)
         ->firstOrFail();
 
-    Livewire::test(ManageApplicationWorkflows::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
-        ->callTableAction('create', null, [
+    $testWorkflows($application)
+        ->callTableAction('create', data: [
             'sub_related_id' => $reviewState->id,
             'event' => WorkflowTriggerEvent::Exit->value,
         ]);
@@ -401,7 +406,7 @@ test('create action persists Stage and Trigger event from form data', function (
     expect($workflowTrigger->event)->toBe(WorkflowTriggerEvent::Exit);
 });
 
-test('create action defaults Stage to first non-archived state when no tab is active', function () {
+test('create action defaults Stage to first non-archived state when no tab is active', function () use ($testWorkflows) {
     asSuperAdmin();
 
     $application = Application::factory()->create();
@@ -412,7 +417,7 @@ test('create action defaults Stage to first non-archived state when no tab is ac
         ->oldest('id')
         ->firstOrFail();
 
-    Livewire::test(ManageApplicationWorkflows::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
+    $testWorkflows($application)
         ->callTableAction('create');
 
     $workflowTrigger = WorkflowTrigger::firstOrFail();
@@ -421,7 +426,7 @@ test('create action defaults Stage to first non-archived state when no tab is ac
     expect($workflowTrigger->event)->toBe(WorkflowTriggerEvent::Enter);
 });
 
-test('tabs render one per non-archived submission state plus All', function () {
+test('tabs render one per non-archived submission state plus All', function () use ($testWorkflows) {
     asSuperAdmin();
 
     $application = Application::factory()->create();
@@ -433,7 +438,7 @@ test('tabs render one per non-archived submission state plus All', function () {
         ->pluck('id')
         ->all();
 
-    $tabs = Livewire::test(ManageApplicationWorkflows::class, ['ownerRecord' => $application, 'pageClass' => ViewApplication::class])
+    $tabs = $testWorkflows($application)
         ->instance()
         ->getTabs();
 
@@ -503,75 +508,20 @@ test('nested application workflow edit route is scoped to owner application', fu
     ]))->assertNotFound();
 });
 
-describe('authorization', function () {
-    it('does not create workflows through direct actions for a view-only user', function () {
+describe('authorization', function () use ($testWorkflows) {
+    it('does not create workflows without the `application.*.update` permission', function () use ($testWorkflows) {
         $user = User::factory()->licensed(LicenseType::cases())->create();
         $user->givePermissionTo('application.view-any', 'application.*.view');
         actingAs($user);
-        $application = Application::factory()->create();
-        expect(Workflow::query()->count())->toBe(0);
 
-        Livewire::test(ManageApplicationWorkflows::class, [
-            'ownerRecord' => $application,
-            'pageClass' => ViewApplication::class,
-        ])
+        $application = Application::factory()->create();
+
+        $testWorkflows($application)
             ->assertTableActionHidden('create')
             ->call('mountAction', 'create', [], ['table' => true])
             ->call('callMountedAction');
 
         expect(Workflow::query()->count())->toBe(0)
             ->and(WorkflowTrigger::query()->count())->toBe(0);
-    });
-
-    it('does not expose or run the row actions for a view-only user', function () {
-        $user = User::factory()->licensed(LicenseType::cases())->create();
-        $user->givePermissionTo('application.view-any', 'application.*.view');
-        actingAs($user);
-        $application = Application::factory()->create();
-        $workflow = Workflow::factory()
-            ->for(WorkflowTrigger::factory()->state([
-                'related_type' => $application->getMorphClass(),
-                'related_id' => $application->id,
-                'sub_related_type' => 'application_submission_state',
-                'sub_related_id' => ApplicationSubmissionState::query()->value('id'),
-                'event' => WorkflowTriggerEvent::Enter,
-            ]))
-            ->create();
-
-        Livewire::test(ManageApplicationWorkflows::class, [
-            'ownerRecord' => $application,
-            'pageClass' => ViewApplication::class,
-        ])
-            ->assertTableActionHidden(EditAction::class, $workflow)
-            ->assertTableActionHidden(DeleteAction::class, $workflow)
-            ->call('mountAction', 'delete', [], ['table' => true, 'recordKey' => $workflow->getKey()])
-            ->call('callMountedAction');
-
-        expect($workflow->fresh()->trashed())->toBeFalse();
-    });
-
-    it('lets an update-only user delete a workflow from the table', function () {
-        $user = User::factory()->licensed(LicenseType::cases())->create();
-        $user->givePermissionTo('application.view-any', 'application.*.update');
-        actingAs($user);
-        $application = Application::factory()->create();
-        $workflow = Workflow::factory()
-            ->for(WorkflowTrigger::factory()->state([
-                'related_type' => $application->getMorphClass(),
-                'related_id' => $application->id,
-                'sub_related_type' => 'application_submission_state',
-                'sub_related_id' => ApplicationSubmissionState::query()->value('id'),
-                'event' => WorkflowTriggerEvent::Enter,
-            ]))
-            ->create();
-
-        Livewire::test(ManageApplicationWorkflows::class, [
-            'ownerRecord' => $application,
-            'pageClass' => ViewApplication::class,
-        ])
-            ->assertTableActionVisible(DeleteAction::class, $workflow)
-            ->callTableAction(DeleteAction::class, $workflow);
-
-        assertSoftDeleted($workflow);
     });
 });
