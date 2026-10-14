@@ -211,13 +211,14 @@ test('2026_10_12_154211_tmp_consolidate_student_group_filters deletes groups usi
                 'type' => 'tags',
                 'data' => ['operator' => 'isRelatedTo', 'settings' => ['values' => [(string) Str::uuid()]]],
             ];
-            $merged = $createGroup(GroupModel::Student, [
+            $legacyRules = [
                 'a' => $rule('last', 'contains', 'Smith'),
                 'b' => $orBlock(
                     ['c' => $rule('first', 'startsWith.inverse', 'A'), 'd' => $tagsRule],
                     ['e' => $orBlock(['f' => $rule('full_name', 'equals', 'Jo Bloggs')], ['g' => $rule('preferred', 'endsWith', 'y')])],
                 ),
-            ]);
+            ];
+            $merged = $createGroup(GroupModel::Student, $legacyRules);
 
             $prospectFilters = [
                 'a' => $rule('phone', 'contains', '555'),
@@ -257,6 +258,12 @@ test('2026_10_12_154211_tmp_consolidate_student_group_filters deletes groups usi
             assertNotSoftDeleted($prospect);
             assertNotSoftDeleted($static);
             assertNotSoftDeleted($withoutFilters);
+
+            $rollback = Artisan::call('migrate:rollback', ['--path' => 'app-modules/group/database/migrations/2026_10_12_154211_tmp_consolidate_student_group_filters.php']);
+
+            expect($rollback)->toBe(Command::SUCCESS)
+                ->and($merged->refresh()->filters['queryBuilder']['rules'])->toBe($legacyRules)
+                ->and(StudentGroupFilterConsolidationFeature::active())->toBeFalse();
         }
     );
 });

@@ -190,6 +190,13 @@ it('does not filter by phone numbers other than the primary one', function () us
     expect($studentsMatchingRule('primaryPhone', 'countryCode', 'equals', '44'))->toBeEmpty();
 });
 
+it('does not match any phone number when the value has no digits', function (string $operator) use ($studentsMatchingRule, $setPrimaryPhoneNumber) {
+    $student = Student::factory()->create();
+    $setPrimaryPhoneNumber($student, '+12025550123');
+
+    expect($studentsMatchingRule('primaryPhone', 'areaCode', $operator, 'abc'))->toBeEmpty();
+})->with(['contains', 'startsWith', 'endsWith', 'equals', 'contains.inverse']);
+
 it('summarizes a rule by its attribute', function () {
     $constraint = collect(StudentsTable::getQueryBuilderConstraints())
         ->flatten()

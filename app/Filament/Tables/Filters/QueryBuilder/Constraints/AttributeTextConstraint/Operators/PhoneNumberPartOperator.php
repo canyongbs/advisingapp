@@ -80,6 +80,11 @@ class PhoneNumberPartOperator extends AttributeTextOperator
 
         $digits = preg_replace('/\D/', '', $textOperator->getSettings()[static::TEXT_SETTING] ?? '');
 
+        // A digit-free value would become a match-all pattern, so match nothing instead.
+        if (blank($digits)) {
+            return $query->whereRaw('false');
+        }
+
         $pattern = match ($textOperator->getName()) {
             'contains' => "%{$digits}%",
             'startsWith' => "{$digits}%",
