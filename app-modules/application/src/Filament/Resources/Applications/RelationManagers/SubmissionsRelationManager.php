@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
+namespace AdvisingApp\Application\Filament\Resources\Applications\RelationManagers;
 
 use AdvisingApp\Application\Exports\ApplicationSubmissionExport;
 use AdvisingApp\Application\Filament\Resources\Applications\Actions\ApplicationAdmissionActions;
@@ -50,7 +50,7 @@ use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\TextColumn;
@@ -59,19 +59,45 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Livewire\Attributes\Url;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ManageApplicationSubmissions extends ManageRelatedRecords
+class SubmissionsRelationManager extends RelationManager
 {
-    protected static string $resource = ApplicationResource::class;
+    // The page owns the `tab` query parameter.
+    #[Url(as: 'state')]
+    public ?string $activeTab = null;
 
-    // TODO: Obsolete when there is no table, remove from Filament
     protected static string $relationship = 'submissions';
 
-    protected static ?string $navigationLabel = 'Submissions';
+    protected static ?string $title = 'Submissions';
 
-    protected static ?string $breadcrumb = 'Submissions';
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        return ApplicationResource::canAccess() && parent::canViewForRecord($ownerRecord, $pageClass);
+    }
+
+    public function getDefaultActionUrlIdentifier(): string
+    {
+        return 'submissions';
+    }
+
+    public function mountDefaultActions(): void
+    {
+        parent::mountDefaultActions();
+
+        if (! $this->hasDefaultTableActionMounted) {
+            return;
+        }
+
+        // Consume the link, otherwise returning to this tab remounts the table and reopens the submission.
+        $this->defaultActionComponent = null;
+        $this->defaultTableAction = null;
+        $this->defaultTableActionRecord = null;
+        $this->defaultTableActionArguments = null;
+    }
 
     public function getDefaultActiveTab(): string | int | null
     {
@@ -226,11 +252,12 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                     ->modalHeading('Archive Submission')
                     ->modalSubmitActionLabel('Archive')
                     ->authorize(fn (ApplicationSubmission $record): bool => auth()->user()->can('archive', $record))
-                    ->action(function (ApplicationSubmission $record) use ($owner): void {
+                    ->action(function (ApplicationSubmission $record): void {
                         $record->archive();
 
-                        Cache::tags('{application-submission-count}')
-                            ->forget("application-submission-count-{$owner->root_id}");
+                        Cache::tags('{application-submission-count}')->flush();
+
+                        $this->dispatch('refresh-page');
 
                         Notification::make()
                             ->title('Submission archived')
@@ -243,8 +270,8 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                 BulkActionGroup::make([
                     BulkAction::make('Export')
                         ->icon('heroicon-o-arrow-down-tray')
-                        ->action(function (Collection $records) {
-                            $filename = str("selected-application-submissions-{$this->getOwnerRecord()->name}-")
+                        ->action(function (Collection $records) use ($owner) {
+                            $filename = str("selected-application-submissions-{$owner->name}-")
                                 ->append(now()->format('Y-m-d-Hisv'))
                                 ->slug()
                                 ->append('.csv');
@@ -259,7 +286,8 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                         ->modalHeading('Archive Submissions')
                         ->modalSubmitActionLabel('Archive')
                         ->authorize(fn () => auth()->user()->can('deleteAny', ApplicationSubmission::class))
-                        ->action(function (Collection $records) use ($owner): void {
+                        ->authorizeIndividualRecords('archive')
+                        ->action(function (Collection $records): void {
                             /** @phpstan-ignore argument.type */
                             $records->each(function (ApplicationSubmission $record): void {
                                 if ($record->isArchived()) {
@@ -269,8 +297,9 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                                 $record->archive();
                             });
 
-                            Cache::tags('{application-submission-count}')
-                                ->forget("application-submission-count-{$owner->root_id}");
+                            Cache::tags('{application-submission-count}')->flush();
+
+                            $this->dispatch('refresh-page');
 
                             Notification::make()
                                 ->title('Submissions archived')
@@ -281,16 +310,14 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
             ]);
     }
 
-    public static function getNavigationItems(array $urlParameters = []): array
+    public static function getBadge(Model $ownerRecord, string $pageClass): ?string
     {
-        $item = parent::getNavigationItems($urlParameters)[0];
+        assert($ownerRecord instanceof Application);
 
-        $ownerRecord = $urlParameters['record'];
-
-        /** @var Application $ownerRecord */
         $applicationSubmissionsCount = Cache::tags('{application-submission-count}')
             ->remember(
-                "application-submission-count-{$ownerRecord->root_id}",
+                // Licenses limit which submissions a user can count.
+                "application-submission-count-{$ownerRecord->root_id}-" . auth()->id(),
                 now()->addMinutes(5),
                 function () use ($ownerRecord): int {
                     return ApplicationSubmission::query()
@@ -303,8 +330,6 @@ class ManageApplicationSubmissions extends ManageRelatedRecords
                 },
             );
 
-        $item->badge((string) $applicationSubmissionsCount);
-
-        return [$item];
+        return (string) $applicationSubmissionsCount;
     }
 }

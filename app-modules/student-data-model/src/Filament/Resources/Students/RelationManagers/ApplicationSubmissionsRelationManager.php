@@ -73,7 +73,7 @@ class ApplicationSubmissionsRelationManager extends RelationManager
                 IdColumn::make(),
                 TextColumn::make('submissible.name')
                     ->searchable()
-                    ->url(fn (ApplicationSubmission $record): string => ApplicationResource::getUrl('edit', ['record' => $record->submissible])),
+                    ->url(fn (ApplicationSubmission $record): string => ApplicationResource::getUrl('view', ['record' => $record->submissible, 'tab' => 'edit'])),
                 TextColumn::make('state')
                     ->badge()
                     ->state(function (ApplicationSubmission $record) {

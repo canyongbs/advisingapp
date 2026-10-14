@@ -87,7 +87,8 @@ class ListApplications extends ListRecords
             ])
             ->recordActions([
                 ViewAction::make(),
-                EditAction::make(),
+                EditAction::make()
+                    ->url(fn (Application $record): string => ApplicationResource::getUrl('view', ['record' => $record, 'tab' => 'edit'])),
                 ReplicateAction::make('Duplicate')
                     ->modalHeading('Duplicate Application')
                     ->excludeAttributes(['submissions_count'])

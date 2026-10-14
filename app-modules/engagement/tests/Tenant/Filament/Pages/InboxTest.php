@@ -44,6 +44,7 @@ use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 use Livewire\Livewire;
 
+use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 use function Tests\setUnifiedInboxEnabled;
@@ -84,6 +85,17 @@ it('syncs the active tab into the component state when switching tabs', function
         ->assertSet('activeTab', 'inbox')
         ->set('activeTab', 'sent-items')
         ->assertSet('activeTab', 'sent-items');
+});
+
+it('does not render a tab the user cannot access', function () {
+    $user = User::factory()->licensed(LicenseType::cases())->create();
+    $user->givePermissionTo('engagement.view-any', 'engagement.*.view');
+
+    actingAs($user);
+
+    get(Inbox::getUrl(['tab' => 'inbox']))
+        ->assertOk()
+        ->assertDontSeeLivewire(InboxTable::class);
 });
 
 it('can properly filter sender type', function () {

@@ -34,44 +34,45 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
+namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Schemas;
 
-use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
-use App\Filament\Forms\Components\UserSelect;
-use Filament\Forms\Components\Toggle;
-use Filament\Resources\Pages\EditRecord;
+use AdvisingApp\MeetingCenter\Models\Event;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
-class ManageApplicationNotifications extends EditRecord
+class EventInfolist
 {
-    protected static string $resource = ApplicationResource::class;
-
-    protected static ?string $navigationLabel = 'Notifications';
-
-    protected static ?string $breadcrumb = 'Notifications';
-
-    public function form(Schema $schema): Schema
+    public static function configure(Schema $schema): Schema
     {
         return $schema
             ->components([
-                Section::make('')
+                Section::make()
                     ->schema([
-                        UserSelect::make('notification_users')
-                            ->label('Users to Notify')
-                            ->relationship('notificationUsers', 'name')
-                            ->multiple()
-                            ->searchable()
-                            ->preload(),
-                        Toggle::make('notify_to_care_team')
-                            ->label('Notify to Care Team'),
-                        Toggle::make('notify_to_subscribers')
-                            ->label('Notify to Subscribers'),
-                        Toggle::make('notify_via_app')
-                            ->label('Notify via App'),
-                        Toggle::make('notify_via_email')
-                            ->label('Notify via Email'),
-                    ]),
+                        TextEntry::make('title'),
+                        TextEntry::make('description')
+                            ->label('Description')
+                            ->state(function (Event $record): string {
+                                if (blank($record->description)) {
+                                    return '-';
+                                }
+
+                                return $record->getRichContentAttribute('description')?->toHtml() ?? '-';
+                            })
+                            ->html()
+                            ->columnSpanFull(),
+                        TextEntry::make('location'),
+                        TextEntry::make('capacity'),
+                        TextEntry::make('starts_at')
+                            ->dateTime(),
+                        TextEntry::make('ends_at')
+                            ->dateTime(),
+                        TextEntry::make('createdBy.name')
+                            ->label('Created By'),
+                        TextEntry::make('lastUpdatedBy.name')
+                            ->label('Last Updated By'),
+                    ])
+                    ->columns(),
             ]);
     }
 }

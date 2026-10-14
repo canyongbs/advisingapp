@@ -34,35 +34,41 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\MeetingCenter\Livewire\EventLandingPageManager;
-use AdvisingApp\MeetingCenter\Models\Event;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
-use Livewire\Livewire;
+namespace AdvisingApp\Engagement\Enums;
 
-use function Tests\asSuperAdmin;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use AdvisingApp\Engagement\Models\Engagement;
+use AdvisingApp\Engagement\Models\EngagementResponse;
+use App\Models\User;
+use Filament\Support\Contracts\HasLabel;
 
-it('saves the rich description and hero image onto the event', function () {
-    Storage::fake('s3-public');
+enum InboxTab: string implements HasLabel
+{
+    case Inbox = 'inbox';
 
-    asSuperAdmin();
+    case SentItems = 'sent-items';
 
-    $event = Event::factory()->create(['description' => null]);
+    public function canView(): bool
+    {
+        $user = auth()->user();
+        assert($user instanceof User);
 
-    expect($event->getFirstMedia('hero_image'))->toBeNull();
+        if (! $user->hasAnyLicense([LicenseType::RetentionCrm, LicenseType::RecruitmentCrm])) {
+            return false;
+        }
 
-    $description = ['type' => 'doc', 'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => 'Join us for this event.']]]]];
+        // These authorization checks have been preserved from the original message center.
+        return match ($this) {
+            self::Inbox => $user->can('viewAny', EngagementResponse::class) && $user->can('engagement_response.*.view'),
+            self::SentItems => $user->can('viewAny', Engagement::class) && $user->can('engagement.*.view'),
+        };
+    }
 
-    Livewire::test(EventLandingPageManager::class, ['record' => $event])
-        ->fillForm([
-            'description' => $description,
-            'hero_image' => UploadedFile::fake()->image('hero.png'),
-        ])
-        ->call('save')
-        ->assertHasNoFormErrors();
-
-    $event = $event->fresh();
-
-    expect($event->description)->toEqual($description)
-        ->and($event->getFirstMedia('hero_image'))->not->toBeNull();
-});
+    public function getLabel(): string
+    {
+        return match ($this) {
+            self::Inbox => 'Inbox',
+            self::SentItems => 'Sent Items',
+        };
+    }
+}

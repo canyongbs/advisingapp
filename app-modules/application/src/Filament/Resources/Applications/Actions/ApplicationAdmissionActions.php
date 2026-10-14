@@ -58,6 +58,7 @@ class ApplicationAdmissionActions
     {
         return [
             Action::make('update_submission_state')
+                ->authorize(fn (ApplicationSubmission $record): bool => auth()->user()->can('update', $record))
                 ->label('Update State')
                 ->form(fn (ApplicationSubmission $record): array => [
                     Select::make('state_id')

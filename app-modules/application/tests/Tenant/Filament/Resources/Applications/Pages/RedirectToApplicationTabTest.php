@@ -35,10 +35,13 @@
 */
 
 use AdvisingApp\Application\Database\Seeders\ApplicationSubmissionStateSeeder;
-use AdvisingApp\Application\Filament\Resources\Applications\Pages\EditApplication;
+use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Models\Application;
-use Livewire\Livewire;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\User;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 use function Pest\Laravel\seed;
 use function Tests\asSuperAdmin;
 
@@ -46,40 +49,31 @@ beforeEach(function () {
     seed(ApplicationSubmissionStateSeeder::class);
 });
 
-it('persists edits to an existing wizard step\'s description onto the new application version', function () {
+it('redirects a legacy URL to its tab', function (string $page, string $tab) {
     asSuperAdmin();
+    $application = Application::factory()->create();
 
-    $application = Application::factory()->create(['is_wizard' => true]);
+    get(ApplicationResource::getUrl($page, ['record' => $application]))
+        ->assertRedirect(ApplicationResource::getUrl('view', ['record' => $application, 'tab' => $tab]));
+})->with([
+    ['edit', 'edit'],
+    ['manage-submissions', 'submissions'],
+]);
 
-    // The factory auto-creates a submission for realism, which would disable
-    // the `is_wizard` toggle (`disabled(fn (?Application $record) => $record?->submissions()->exists())`)
-    // and strip it from the dehydrated form state, unrelated to what this test covers.
-    $application->submissions()->delete();
+it('keeps the query string and targets the submissions table when redirecting a submission link', function () {
+    asSuperAdmin();
+    $application = Application::factory()->create();
+    $parameters = ['record' => $application, 'tableAction' => 'view', 'tableActionRecord' => $application->submissions()->firstOrFail()->id];
 
-    $application->steps()->create([
-        'label' => 'Original label',
-        'description' => 'Original description',
-        'content' => ['type' => 'doc', 'content' => []],
-    ]);
+    get(ApplicationResource::getUrl('manage-submissions', $parameters))
+        ->assertRedirect(ApplicationResource::getUrl('view', [...$parameters, 'tab' => 'submissions', 'actionComponent' => 'submissions']));
+});
 
-    $component = Livewire::test(EditApplication::class, ['record' => $application->getRouteKey()]);
+describe('authorization', function () {
+    it('denies access to a legacy URL without the `application.view-any` permission', function () {
+        actingAs(User::factory()->licensed(LicenseType::cases())->create());
+        $application = Application::factory()->create();
 
-    $formData = $component->get('data');
-    $stepKey = array_key_first($formData['steps']);
-    $formData['steps'][$stepKey]['label'] = 'Updated label';
-    $formData['steps'][$stepKey]['description'] = 'Updated description';
-
-    $component
-        ->fillForm($formData)
-        ->call('save')
-        ->assertHasNoFormErrors();
-
-    $newVersion = Application::query()
-        ->where('root_id', $application->root_id)
-        ->where('id', '!=', $application->id)
-        ->firstOrFail();
-
-    expect($newVersion->steps()->first())
-        ->label->toBe('Updated label')
-        ->description->toBe('Updated description');
+        get(ApplicationResource::getUrl('edit', ['record' => $application]))->assertForbidden();
+    });
 });

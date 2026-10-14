@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Application\Filament\Resources\Applications\Pages;
+namespace AdvisingApp\Application\Filament\Resources\Applications\RelationManagers;
 
 use AdvisingApp\Application\Filament\Resources\Applications\ApplicationResource;
 use AdvisingApp\Application\Filament\Resources\Applications\Resources\Workflows\WorkflowResource;
@@ -48,26 +48,32 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
-use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Url;
 use Throwable;
 
-class ManageApplicationWorkflows extends ManageRelatedRecords
+class WorkflowsRelationManager extends RelationManager
 {
-    protected static string $resource = ApplicationResource::class;
+    // The page owns the `tab` query parameter.
+    #[Url(as: 'state')]
+    public ?string $activeTab = null;
 
     protected static string $relationship = 'workflows';
 
     protected static ?string $relatedResource = WorkflowResource::class;
 
-    public static function getNavigationLabel(): string
+    protected static ?string $title = 'Workflows';
+
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        return 'Workflows';
+        return ApplicationResource::canAccess() && parent::canViewForRecord($ownerRecord, $pageClass);
     }
 
     public function getDefaultActiveTab(): string | int | null
@@ -140,6 +146,9 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
                 TextColumn::make('steps')
                     ->getStateUsing(fn (Workflow $record) => $record->workflowSteps()->count()),
             ])
+            ->headerActions([
+                $this->getCreateAction(),
+            ])
             ->recordActions([
                 EditAction::make()
                     ->url(fn (Workflow $record) => WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $record])),
@@ -149,12 +158,9 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
             ->recordUrl(fn (Workflow $record) => WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $record]));
     }
 
-    /**
-     * @return array<Action>
-     */
-    public function getHeaderActions(): array
+    protected function getCreateAction(): Action
     {
-        $action = Action::make('create')
+        return Action::make('create')
             ->authorize(fn (): bool => auth()->user()->can('update', $this->getOwnerRecord()))
             ->label('Create New Workflow')
             ->slideOver()
@@ -179,10 +185,8 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
                     ->required()
                     ->inline()
                     ->inlineLabel(false),
-            ]);
-
-        return [
-            $action->action(function (array $data): void {
+            ])
+            ->action(function (array $data): void {
                 try {
                     DB::beginTransaction();
 
@@ -215,8 +219,7 @@ class ManageApplicationWorkflows extends ManageRelatedRecords
                 }
 
                 redirect(WorkflowResource::getUrl('edit', ['application' => $this->getOwnerRecord(), 'record' => $workflow]));
-            }),
-        ];
+            });
     }
 
     private function resolveDefaultStateId(): ?string

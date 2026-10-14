@@ -34,30 +34,36 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Enums;
+namespace AdvisingApp\Application\Filament\Resources\Applications\Schemas;
 
-use Filament\Support\Contracts\HasLabel;
+use App\Filament\Forms\Components\UserSelect;
+use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 
-enum EventTab: string implements HasLabel
+class ApplicationNotificationsForm
 {
-    case Overview = 'overview';
-
-    case Details = 'details';
-
-    case LandingPage = 'landing-page';
-
-    case RegistrationForm = 'registration-form';
-
-    case Attendees = 'attendees';
-
-    public function getLabel(): string
+    public static function configure(Schema $schema): Schema
     {
-        return match ($this) {
-            self::Overview => 'Overview',
-            self::Details => 'Details',
-            self::LandingPage => 'Landing Page',
-            self::RegistrationForm => 'Registration Form',
-            self::Attendees => 'Attendees',
-        };
+        return $schema
+            ->components([
+                Section::make()
+                    ->schema([
+                        UserSelect::make('notification_users')
+                            ->label('Users to Notify')
+                            ->relationship('notificationUsers', 'name')
+                            ->multiple()
+                            ->searchable()
+                            ->preload(),
+                        Toggle::make('notify_to_care_team')
+                            ->label('Notify to Care Team'),
+                        Toggle::make('notify_to_subscribers')
+                            ->label('Notify to Subscribers'),
+                        Toggle::make('notify_via_app')
+                            ->label('Notify via App'),
+                        Toggle::make('notify_via_email')
+                            ->label('Notify via Email'),
+                    ]),
+            ]);
     }
 }

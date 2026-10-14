@@ -37,15 +37,13 @@
 namespace AdvisingApp\Application\Filament\Resources\Applications;
 
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\CreateApplication;
-use AdvisingApp\Application\Filament\Resources\Applications\Pages\EditApplication;
 use AdvisingApp\Application\Filament\Resources\Applications\Pages\ListApplications;
-use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationNotifications;
-use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationSubmissions;
-use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationWorkflows;
-use AdvisingApp\Application\Filament\Resources\Applications\Pages\ViewApplication;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplication;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\RedirectToApplicationTab;
+use AdvisingApp\Application\Filament\Resources\Applications\RelationManagers\SubmissionsRelationManager;
+use AdvisingApp\Application\Filament\Resources\Applications\RelationManagers\WorkflowsRelationManager;
 use AdvisingApp\Application\Models\Application;
 use App\Enums\NavigationGroup;
-use Filament\Resources\Pages\Page;
 use Filament\Resources\Resource;
 use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
@@ -73,15 +71,12 @@ class ApplicationResource extends Resource
         return parent::getEloquentQuery()->with(['fields'])->whereNull('archived_at');
     }
 
-    public static function getRecordSubNavigation(Page $page): array
+    public static function getRelations(): array
     {
-        return $page->generateNavigationItems([
-            ViewApplication::class,
-            EditApplication::class,
-            ManageApplicationWorkflows::class,
-            ManageApplicationSubmissions::class,
-            ManageApplicationNotifications::class,
-        ]);
+        return [
+            'workflows' => WorkflowsRelationManager::class,
+            'submissions' => SubmissionsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array
@@ -89,11 +84,9 @@ class ApplicationResource extends Resource
         return [
             'index' => ListApplications::route('/'),
             'create' => CreateApplication::route('/create'),
-            'edit' => EditApplication::route('/{record}/edit'),
-            'view' => ViewApplication::route('/{record}'),
-            'manage-application-workflows' => ManageApplicationWorkflows::route('/{record}/workflows'),
-            'manage-submissions' => ManageApplicationSubmissions::route('/{record}/submissions'),
-            'manage-notifications' => ManageApplicationNotifications::route('/{record}/notifications'),
+            'edit' => RedirectToApplicationTab::route('/{record}/edit'),
+            'view' => ManageApplication::route('/{record}'),
+            'manage-submissions' => RedirectToApplicationTab::route('/{record}/submissions'),
         ];
     }
 }

@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\MeetingCenter\Livewire;
+namespace AdvisingApp\MeetingCenter\Filament\Resources\Events\Schemas;
 
 use AdvisingApp\MeetingCenter\Models\Event;
 use Filament\Forms\Components\RichEditor;
@@ -43,13 +43,11 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
-class EventLandingPageManager extends EventFormManager
+class EventLandingPageForm
 {
-    public function form(Schema $schema): Schema
+    public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->model($this->record)
-            ->statePath('data')
             ->components([
                 Section::make('Landing Page')
                     ->description('Configure your event landing page with a hero image and description content.')
@@ -79,10 +77,5 @@ class EventLandingPageManager extends EventFormManager
                             ->columnSpanFull(),
                     ]),
             ]);
-    }
-
-    protected function attributesToSave(): array
-    {
-        return ['description'];
     }
 }

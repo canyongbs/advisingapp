@@ -35,15 +35,25 @@
 */
 
 use AdvisingApp\Application\Enums\ApplicationSubmissionStateClassification;
-use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplicationSubmissions;
+use AdvisingApp\Application\Filament\Resources\Applications\Pages\ManageApplication;
+use AdvisingApp\Application\Filament\Resources\Applications\RelationManagers\SubmissionsRelationManager;
 use AdvisingApp\Application\Models\Application;
 use AdvisingApp\Application\Models\ApplicationSubmission;
 use AdvisingApp\Application\Models\ApplicationSubmissionState;
+use AdvisingApp\Authorization\Enums\LicenseType;
+use App\Models\User;
+use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 
+use function Pest\Laravel\actingAs;
 use function Tests\asSuperAdmin;
 
-test('tabs are generated for each state', function () {
+$testSubmissions = fn (Application $application): Testable => Livewire::test(SubmissionsRelationManager::class, [
+    'ownerRecord' => $application,
+    'pageClass' => ManageApplication::class,
+]);
+
+test('tabs are generated for each state', function () use ($testSubmissions) {
     asSuperAdmin();
 
     $receivedState = ApplicationSubmissionState::factory()->create([
@@ -56,7 +66,7 @@ test('tabs are generated for each state', function () {
 
     $application = Application::factory()->create();
 
-    $tabs = Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $tabs = $testSubmissions($application)
         ->instance()
         ->getTabs();
 
@@ -65,7 +75,7 @@ test('tabs are generated for each state', function () {
     expect($tabs)->toHaveKey($reviewState->id);
 });
 
-test('tab label includes Archived when the state for that classification is archived but still has submissions', function () {
+test('tab label includes Archived when the state for that classification is archived but still has submissions', function () use ($testSubmissions) {
     asSuperAdmin();
 
     $receivedState = ApplicationSubmissionState::factory()->create([
@@ -82,7 +92,7 @@ test('tab label includes Archived when the state for that classification is arch
     // @phpstan-ignore method.notFound
     $receivedState->archive();
 
-    $tabs = Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $tabs = $testSubmissions($application)
         ->instance()
         ->getTabs();
 
@@ -92,7 +102,7 @@ test('tab label includes Archived when the state for that classification is arch
     expect($tabs[$receivedKey]->getLabel())->toContain('(Archived)');
 });
 
-test('default active tab is the state with is_default true', function () {
+test('default active tab is the state with is_default true', function () use ($testSubmissions) {
     asSuperAdmin();
 
     ApplicationSubmissionState::factory()->create([
@@ -107,14 +117,14 @@ test('default active tab is the state with is_default true', function () {
 
     $application = Application::factory()->create();
 
-    $defaultTab = Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $defaultTab = $testSubmissions($application)
         ->instance()
         ->getDefaultActiveTab();
 
     expect($defaultTab)->toBe($defaultState->id);
 });
 
-test('default active tab falls back to all when the default state is archived and unused', function () {
+test('default active tab falls back to all when the default state is archived and unused', function () use ($testSubmissions) {
     asSuperAdmin();
 
     $defaultState = ApplicationSubmissionState::factory()->create([
@@ -130,14 +140,14 @@ test('default active tab falls back to all when the default state is archived an
     // @phpstan-ignore method.notFound
     $defaultState->archive();
 
-    $defaultTab = Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $defaultTab = $testSubmissions($application)
         ->instance()
         ->getDefaultActiveTab();
 
     expect($defaultTab)->toBe('all');
 });
 
-test('default tab falls back to all when no state has is_default true', function () {
+test('default tab falls back to all when no state has is_default true', function () use ($testSubmissions) {
     asSuperAdmin();
 
     ApplicationSubmissionState::factory()->create([
@@ -152,14 +162,14 @@ test('default tab falls back to all when no state has is_default true', function
 
     $application = Application::factory()->create();
 
-    $defaultTab = Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $defaultTab = $testSubmissions($application)
         ->instance()
         ->getDefaultActiveTab();
 
     expect($defaultTab)->toBe('all');
 });
 
-test('archived state that has submissions still appears as a tab', function () {
+test('archived state that has submissions still appears as a tab', function () use ($testSubmissions) {
     asSuperAdmin();
 
     $receivedState = ApplicationSubmissionState::factory()->create([
@@ -175,14 +185,14 @@ test('archived state that has submissions still appears as a tab', function () {
     // @phpstan-ignore method.notFound
     $receivedState->archive();
 
-    $tabs = Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $tabs = $testSubmissions($application)
         ->instance()
         ->getTabs();
 
     expect($tabs)->toHaveKey($receivedState->id);
 });
 
-test('multiple states with the same classification each get their own tab', function () {
+test('multiple states with the same classification each get their own tab', function () use ($testSubmissions) {
     asSuperAdmin();
 
     $firstReceivedState = ApplicationSubmissionState::factory()->create([
@@ -195,7 +205,7 @@ test('multiple states with the same classification each get their own tab', func
 
     $application = Application::factory()->create();
 
-    $tabs = Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $tabs = $testSubmissions($application)
         ->instance()
         ->getTabs();
 
@@ -203,7 +213,7 @@ test('multiple states with the same classification each get their own tab', func
     expect($tabs)->toHaveKey($secondReceivedState->id);
 });
 
-test('switching tabs filters the table to only show submissions for that state', function () {
+test('switching tabs filters the table to only show submissions for that state', function () use ($testSubmissions) {
     asSuperAdmin();
 
     $receivedState = ApplicationSubmissionState::factory()->create([
@@ -229,7 +239,7 @@ test('switching tabs filters the table to only show submissions for that state',
     $reviewSubmission->state()->associate($reviewState);
     $reviewSubmission->saveQuietly();
 
-    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $testSubmissions($application)
         ->set('activeTab', $receivedState->id)
         ->assertCanSeeTableRecords([$receivedSubmission])
         ->assertCanNotSeeTableRecords([$reviewSubmission])
@@ -238,7 +248,7 @@ test('switching tabs filters the table to only show submissions for that state',
         ->assertCanNotSeeTableRecords([$receivedSubmission]);
 });
 
-test('all tab shows submissions from all states', function () {
+test('all tab shows submissions from all states', function () use ($testSubmissions) {
     asSuperAdmin();
 
     $receivedState = ApplicationSubmissionState::factory()->create([
@@ -264,12 +274,12 @@ test('all tab shows submissions from all states', function () {
     $reviewSubmission->state()->associate($reviewState);
     $reviewSubmission->saveQuietly();
 
-    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $testSubmissions($application)
         ->set('activeTab', 'all')
         ->assertCanSeeTableRecords([$receivedSubmission, $reviewSubmission]);
 });
 
-test('archive action is visible when submission is not archived', function () {
+test('archive action is visible when submission is not archived', function () use ($testSubmissions) {
     asSuperAdmin();
 
     ApplicationSubmissionState::factory()->create([
@@ -279,11 +289,11 @@ test('archive action is visible when submission is not archived', function () {
     $application = Application::factory()->create();
     $submission = ApplicationSubmission::factory()->create(['application_id' => $application->id]);
 
-    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $testSubmissions($application)
         ->assertTableActionVisible('archive', $submission);
 });
 
-test('archive action successfully archives a submission', function () {
+test('archive action successfully archives a submission', function () use ($testSubmissions) {
     asSuperAdmin();
 
     ApplicationSubmissionState::factory()->create([
@@ -295,14 +305,15 @@ test('archive action successfully archives a submission', function () {
 
     expect($submission->isArchived())->toBeFalse();
 
-    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $testSubmissions($application)
         ->callTableAction('archive', $submission)
-        ->assertNotified();
+        ->assertNotified()
+        ->assertDispatched('refresh-page');
 
     expect($submission->fresh()->isArchived())->toBeTrue();
 });
 
-test('bulk archive action successfully archives multiple submissions', function () {
+test('bulk archive action successfully archives multiple submissions', function () use ($testSubmissions) {
     asSuperAdmin();
 
     ApplicationSubmissionState::factory()->create([
@@ -318,16 +329,17 @@ test('bulk archive action successfully archives multiple submissions', function 
         expect($submission->isArchived())->toBeFalse();
     });
 
-    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $testSubmissions($application)
         ->callTableBulkAction('archive', $submissions)
-        ->assertNotified();
+        ->assertNotified()
+        ->assertDispatched('refresh-page');
 
     $submissions->each(function (ApplicationSubmission $submission): void {
         expect($submission->fresh()->isArchived())->toBeTrue();
     });
 });
 
-test('archived submissions are hidden by default', function () {
+test('archived submissions are hidden by default', function () use ($testSubmissions) {
     asSuperAdmin();
 
     ApplicationSubmissionState::factory()->create([
@@ -343,12 +355,12 @@ test('archived submissions are hidden by default', function () {
         'archived_at' => now(),
     ]);
 
-    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $testSubmissions($application)
         ->assertCanSeeTableRecords([$activeSubmission])
         ->assertCanNotSeeTableRecords([$archivedSubmission]);
 });
 
-test('archived submissions are visible when the withoutArchived filter is removed', function () {
+test('archived submissions are visible when the withoutArchived filter is removed', function () use ($testSubmissions) {
     asSuperAdmin();
 
     ApplicationSubmissionState::factory()->create([
@@ -364,7 +376,124 @@ test('archived submissions are visible when the withoutArchived filter is remove
         'archived_at' => now(),
     ]);
 
-    Livewire::test(ManageApplicationSubmissions::class, ['record' => $application->getKey()])
+    $testSubmissions($application)
         ->removeTableFilter('withoutArchived')
         ->assertCanSeeTableRecords([$activeSubmission, $archivedSubmission]);
+});
+
+describe('submission links', function () {
+    $linkTo = fn (ApplicationSubmission $submission, array $query = []): array => [
+        'actionComponent' => 'submissions',
+        'tableAction' => 'view',
+        'tableActionRecord' => $submission->getKey(),
+        ...$query,
+    ];
+
+    it('opens the linked submission', function () use ($linkTo) {
+        asSuperAdmin();
+
+        ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
+        $application = Application::factory()->create();
+        $submission = $application->submissions()->firstOrFail();
+
+        Livewire::withQueryParams($linkTo($submission))
+            ->test(SubmissionsRelationManager::class, [
+                'ownerRecord' => $application,
+                'pageClass' => ManageApplication::class,
+            ])
+            ->call('mountDefaultActions')
+            ->assertSet('mountedActions.0.name', 'view')
+            ->assertSet('mountedActions.0.context.recordKey', $submission->getKey());
+    });
+
+    it('removes the link from the URL once the submission opens', function () use ($linkTo) {
+        asSuperAdmin();
+
+        ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
+        $application = Application::factory()->create();
+        $submission = $application->submissions()->firstOrFail();
+
+        Livewire::withQueryParams($linkTo($submission))
+            ->test(SubmissionsRelationManager::class, [
+                'ownerRecord' => $application,
+                'pageClass' => ManageApplication::class,
+            ])
+            ->call('mountDefaultActions')
+            ->assertSet('defaultActionComponent', null)
+            ->assertSet('defaultTableAction', null)
+            ->assertSet('defaultTableActionRecord', null);
+    });
+
+    it('ignores links that target another component', function (?string $actionComponent) use ($linkTo) {
+        asSuperAdmin();
+
+        ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
+        $application = Application::factory()->create();
+        $submission = $application->submissions()->firstOrFail();
+
+        Livewire::withQueryParams($linkTo($submission, ['actionComponent' => $actionComponent]))
+            ->test(SubmissionsRelationManager::class, [
+                'ownerRecord' => $application,
+                'pageClass' => ManageApplication::class,
+            ])
+            ->call('mountDefaultActions')
+            ->assertSet('mountedActions', []);
+    })->with([
+        'unqualified' => null,
+        'page' => 'page',
+    ]);
+
+    it('does not open a submission from another application', function () use ($linkTo) {
+        asSuperAdmin();
+
+        ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
+        $application = Application::factory()->create();
+        $foreignSubmission = Application::factory()->create()->submissions()->firstOrFail();
+
+        Livewire::withQueryParams($linkTo($foreignSubmission))
+            ->test(SubmissionsRelationManager::class, [
+                'ownerRecord' => $application,
+                'pageClass' => ManageApplication::class,
+            ])
+            ->call('mountDefaultActions')
+            ->assertSet('mountedActions', []);
+    });
+});
+
+describe('authorization', function () use ($testSubmissions) {
+    it('denies access to the submissions without the `application.view-any` permission', function () use ($testSubmissions) {
+        actingAs(User::factory()->licensed(LicenseType::cases())->create());
+
+        ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
+        $application = Application::factory()->create();
+
+        $testSubmissions($application)->assertForbidden();
+    });
+
+    it('does not archive submissions without the `application.*.update` permission', function (bool $isBulk) use ($testSubmissions) {
+        $user = User::factory()->licensed(LicenseType::cases())->create();
+        $user->givePermissionTo('application.view-any', 'application.*.view');
+        actingAs($user);
+
+        ApplicationSubmissionState::factory()->create(['classification' => ApplicationSubmissionStateClassification::Received]);
+        $application = Application::factory()->create();
+        $submission = $application->submissions()->firstOrFail();
+
+        expect($submission->isArchived())->toBeFalse();
+
+        $component = $testSubmissions($application)->set('activeTab', 'all');
+
+        if ($isBulk) {
+            $component->selectTableRecords([$submission->getKey()]);
+        }
+
+        $component
+            ->call('mountAction', 'archive', [], $isBulk ? ['table' => true, 'bulk' => true] : ['table' => true, 'recordKey' => $submission->getKey()])
+            ->call('callMountedAction');
+
+        expect($submission->fresh()->isArchived())->toBeFalse();
+    })->with([
+        'single' => false,
+        'bulk' => true,
+    ]);
 });
