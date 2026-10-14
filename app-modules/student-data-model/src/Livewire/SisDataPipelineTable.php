@@ -70,6 +70,9 @@ class SisDataPipelineTable extends Component implements HasActions, HasForms, Ha
                 SisPipelineProgressColumn::make('total')
                     ->label('Total')
                     ->state(fn (array $record): ?SisPipelineProgress => $this->getTotalProgress($record)),
+                SisPipelineProgressColumn::make('terms')
+                    ->label('Terms')
+                    ->state(fn (array $record): ?SisPipelineProgress => $this->getTermsProgress($record)),
                 SisPipelineProgressColumn::make('students')
                     ->label('Students')
                     ->state(fn (array $record): ?SisPipelineProgress => $this->getStudentsProgress($record)),
@@ -145,11 +148,11 @@ class SisDataPipelineTable extends Component implements HasActions, HasForms, Ha
      */
     protected function getTotalProgress(array $record): ?SisPipelineProgress
     {
-        $totalItems = ($record['total_student'] ?? 0) + ($record['total_enrollment'] ?? 0) + ($record['total_program'] ?? 0);
+        $totalItems = ($record['total_student'] ?? 0) + ($record['total_enrollment'] ?? 0) + ($record['total_program'] ?? 0) + ($record['total_term'] ?? 0);
 
-        $processedItems = ($record['processed_students'] ?? 0) + ($record['processed_enrollments'] ?? 0) + ($record['processed_programs'] ?? 0);
+        $processedItems = ($record['processed_students'] ?? 0) + ($record['processed_enrollments'] ?? 0) + ($record['processed_programs'] ?? 0) + ($record['processed_terms'] ?? 0);
 
-        $successfulItems = ($record['successful_students'] ?? 0) + ($record['successful_enrollments'] ?? 0) + ($record['successful_programs'] ?? 0);
+        $successfulItems = ($record['successful_students'] ?? 0) + ($record['successful_enrollments'] ?? 0) + ($record['successful_programs'] ?? 0) + ($record['successful_terms'] ?? 0);
 
         if ($totalItems === 0) {
             return null;
@@ -159,6 +162,22 @@ class SisDataPipelineTable extends Component implements HasActions, HasForms, Ha
             processed: $processedItems,
             total: $totalItems,
             successful: $successfulItems,
+        );
+    }
+
+    /**
+     * @param array<string, mixed> $record
+     */
+    protected function getTermsProgress(array $record): ?SisPipelineProgress
+    {
+        if (($record['total_term'] ?? 0) === 0) {
+            return null;
+        }
+
+        return new SisPipelineProgress(
+            processed: $record['processed_terms'] ?? 0,
+            total: $record['total_term'] ?? 0,
+            successful: $record['successful_terms'] ?? 0,
         );
     }
 
