@@ -48,6 +48,7 @@ use Filament\QueryBuilder\Models\Scopes\QueryBuilderScope;
 use Filament\Support\Contracts\HasLabel;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Arr;
 
 enum GroupModel: string implements HasLabel
 {
@@ -102,10 +103,10 @@ enum GroupModel: string implements HasLabel
      */
     public function queryBuilderConstraints(): array
     {
-        return match ($this) {
+        return Arr::flatten(match ($this) {
             static::Student => StudentsTable::getQueryBuilderConstraints(),
             static::Prospect => ProspectsTable::getQueryBuilderConstraints(),
-        };
+        });
     }
 
     public static function parse(GroupModel | string $value): ?static

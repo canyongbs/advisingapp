@@ -43,6 +43,7 @@ use App\Features\StudentGroupFilterConsolidationFeature;
 use Filament\QueryBuilder\Constraints\Constraint;
 use Filament\QueryBuilder\Constraints\SelectConstraint;
 use Filament\QueryBuilder\Models\Scopes\QueryBuilderScope;
+use Illuminate\Support\Arr;
 
 use function Tests\asSuperAdmin;
 
@@ -63,7 +64,7 @@ $studentsMatchingRule = function (string $type, string $attribute, string $opera
         ],
     ];
 
-    return QueryBuilderScope::make($rules, StudentsTable::getQueryBuilderConstraints())(Student::query())
+    return QueryBuilderScope::make($rules, Arr::flatten(StudentsTable::getQueryBuilderConstraints()))(Student::query())
         ->pluck((new Student())->getKeyName())
         ->all();
 };
@@ -81,6 +82,7 @@ $setPrimaryPhoneNumber = function (Student $student, string $number): void {
  */
 $enrolledTermConstraintOptions = function (string $name): array {
     $constraint = collect(StudentsTable::getQueryBuilderConstraints())
+        ->flatten()
         ->firstOrFail(fn (Constraint $constraint): bool => $constraint->getName() === $name);
     assert($constraint instanceof SelectConstraint);
 
@@ -190,6 +192,7 @@ it('does not filter by phone numbers other than the primary one', function () us
 
 it('summarizes a rule by its attribute', function () {
     $constraint = collect(StudentsTable::getQueryBuilderConstraints())
+        ->flatten()
         ->firstOrFail(fn (Constraint $constraint): bool => $constraint->getName() === 'name');
 
     $operator = $constraint->getOperator('lastName')
@@ -201,6 +204,7 @@ it('summarizes a rule by its attribute', function () {
 
 it('offers the legacy filters until the consolidation migration has run', function () {
     $constraintNames = fn (): array => collect(StudentsTable::getQueryBuilderConstraints())
+        ->flatten()
         ->map(fn (Constraint $constraint): string => $constraint->getName())
         ->all();
 

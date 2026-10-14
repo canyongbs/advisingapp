@@ -115,7 +115,7 @@ class StudentsTable
      * WARNING: Removing constraints from this list requires a data migration to clean up
      * existing Groups that reference the removed filter types. See docs/explanations/maintaining-group-filters.md
      *
-     * @return array<BaseConstraint>
+     * @return array<BaseConstraint | array<BaseConstraint>>
      */
     public static function getQueryBuilderConstraints(): array
     {
@@ -124,155 +124,156 @@ class StudentsTable
         }
 
         return [
-            // Advising & Support
-            RelationshipConstraint::make('tags')
-                ->label('Tags')
-                ->icon(Heroicon::Tag)
-                ->selectable(
-                    IsRelatedToOperator::make()
-                        ->titleAttribute('name')
-                        ->multiple()
-                        ->preload(),
-                ),
-            self::makeCareTeamConstraint()
-                ->icon(Heroicon::UserGroup),
-            self::makeSubscribedConstraint()
-                ->label('Following student')
-                ->icon(Heroicon::Eye),
-            ...self::getAlertConstraints(),
-            TextConstraint::make('holds')
-                ->icon(Heroicon::ExclamationTriangle),
-            BooleanConstraint::make('sap')
-                ->label('SAP')
-                ->icon(Heroicon::ClipboardDocumentCheck)
-                ->nullable(),
-
-            // Programs
-            TextConstraint::make('programDivision')
-                ->label('Program College')
-                ->relationship('programs', 'division')
-                ->icon(Heroicon::BuildingLibrary),
-            TextConstraint::make('programName')
-                ->label('Program Name')
-                ->relationship('programs', 'descr')
-                ->icon(Heroicon::AcademicCap),
-            self::makeProgramDetailConstraint()
-                ->icon(Heroicon::DocumentText),
-            TextConstraint::make('programFoi')
-                ->label('Program Field of Interest')
-                ->relationship('programs', 'foi')
-                ->icon(Heroicon::LightBulb),
-            RelationshipConstraint::make('programs')
-                ->multiple()
-                ->label('Number of Programs')
-                ->attributeLabel(fn (array $settings): string => Str::plural('program', $settings['count']))
-                ->icon(Heroicon::Square3Stack3d),
-            NumberConstraint::make('programCumGpa')
-                ->label('Program Cumulative GPA')
-                ->relationship('programs', 'cum_gpa')
-                ->icon(Heroicon::ChartBar),
-
-            // Enrollment
-            self::makeEnrollmentsConstraint()
-                ->icon(Heroicon::FolderOpen),
-            TextConstraint::make('enrollmentDivision')
-                ->label('Enrollment College')
-                ->relationship('enrollments', 'division')
-                ->icon(Heroicon::BuildingLibrary),
-            TextConstraint::make('enrollmentClassNbr')
-                ->label('Enrollment Course')
-                ->relationship('enrollments', 'class_nbr')
-                ->icon(Heroicon::BookOpen),
-            TextConstraint::make('enrollmentCrseGradeOff')
-                ->label('Enrollment Grade')
-                ->relationship('enrollments', 'crse_grade_off')
-                ->icon(Heroicon::AcademicCap),
-            NumberConstraint::make('enrollmentUntTaken')
-                ->label('Enrollment Attempted')
-                ->relationship('enrollments', 'unt_taken')
-                ->icon(Heroicon::Calculator),
-            NumberConstraint::make('enrollmentUntEarned')
-                ->label('Enrollment Earned')
-                ->relationship('enrollments', 'unt_earned')
-                ->icon(Heroicon::CheckBadge),
-            self::createEnrollmentTermConstraint('firstEnrollmentTerm.semester_name', 'First Enrolled Term')
-                ->icon(Heroicon::CalendarDays),
-            self::createEnrollmentTermConstraint('mostRecentEnrollmentTerm.semester_name', 'Most Recent Enrolled Term')
-                ->icon(Heroicon::CalendarDays),
-
-            // Student Characteristics
-            BooleanConstraint::make('firstgen')
-                ->label('First Generation')
-                ->icon(Heroicon::AcademicCap)
-                ->nullable(),
-            BooleanConstraint::make('dual')
-                ->icon(Heroicon::Square2Stack)
-                ->nullable(),
-            ExistingValuesSelectConstraint::make('gender')
-                ->label('Gender')
-                ->icon(Heroicon::UserCircle)
-                ->multiple(),
-            ExistingValuesSelectConstraint::make('ethnicity')
-                ->label('Ethnicity')
-                ->icon(Heroicon::Users)
-                ->multiple(),
-
-            // Identity & Contact
-            AttributeTextConstraint::make('name')
-                ->label('Name')
-                ->icon(Heroicon::User)
-                ->operators([
-                    AttributeTextOperator::make('fullName')
-                        ->label('Full Name')
-                        ->column('full_name'),
-                    AttributeTextOperator::make('firstName')
-                        ->label('First Name')
-                        ->column('first'),
-                    AttributeTextOperator::make('lastName')
-                        ->label('Last Name')
-                        ->column('last'),
-                    AttributeTextOperator::make('preferredName')
-                        ->label('Preferred Name')
-                        ->column('preferred'),
-                ]),
-            AttributeTextConstraint::make('primaryPhone')
-                ->label('Phone')
-                ->icon(Heroicon::Phone)
-                ->operators([
-                    PhoneNumberPartOperator::make('countryCode')
-                        ->label('Country Code')
-                        ->relationship('primaryPhoneNumber')
-                        ->column('number')
-                        ->countryCode(),
-                    PhoneNumberPartOperator::make('areaCode')
-                        ->label('Area Code')
-                        ->relationship('primaryPhoneNumber')
-                        ->column('number')
-                        ->areaCode(),
-                ]),
-            AttributeTextConstraint::make('primaryAddress')
-                ->label('Address')
-                ->icon(Heroicon::MapPin)
-                ->operators([
-                    AttributeTextOperator::make('city')
-                        ->label('City')
-                        ->relationship('primaryAddress'),
-                    AttributeTextOperator::make('state')
-                        ->label('State')
-                        ->relationship('primaryAddress'),
-                    AttributeTextOperator::make('postal')
-                        ->label('Postal Code')
-                        ->relationship('primaryAddress'),
-                    AttributeTextOperator::make('country')
-                        ->label('Country')
-                        ->relationship('primaryAddress'),
-                ]),
-
-            // Privacy
-            BooleanConstraint::make('ferpa')
-                ->label('FERPA')
-                ->icon(Heroicon::LockClosed)
-                ->nullable(),
+            'Advising & Support' => [
+                RelationshipConstraint::make('tags')
+                    ->label('Tags')
+                    ->icon(Heroicon::Tag)
+                    ->selectable(
+                        IsRelatedToOperator::make()
+                            ->titleAttribute('name')
+                            ->multiple()
+                            ->preload(),
+                    ),
+                self::makeCareTeamConstraint()
+                    ->icon(Heroicon::UserGroup),
+                self::makeSubscribedConstraint()
+                    ->label('Following student')
+                    ->icon(Heroicon::Eye),
+                ...self::getAlertConstraints(),
+                TextConstraint::make('holds')
+                    ->icon(Heroicon::ExclamationTriangle),
+                BooleanConstraint::make('sap')
+                    ->label('SAP')
+                    ->icon(Heroicon::ClipboardDocumentCheck)
+                    ->nullable(),
+            ],
+            'Privacy' => [
+                BooleanConstraint::make('ferpa')
+                    ->label('FERPA')
+                    ->icon(Heroicon::LockClosed)
+                    ->nullable(),
+            ],
+            'Identity & Contact' => [
+                AttributeTextConstraint::make('name')
+                    ->label('Name')
+                    ->icon(Heroicon::User)
+                    ->operators([
+                        AttributeTextOperator::make('fullName')
+                            ->label('Full Name')
+                            ->column('full_name'),
+                        AttributeTextOperator::make('firstName')
+                            ->label('First Name')
+                            ->column('first'),
+                        AttributeTextOperator::make('lastName')
+                            ->label('Last Name')
+                            ->column('last'),
+                        AttributeTextOperator::make('preferredName')
+                            ->label('Preferred Name')
+                            ->column('preferred'),
+                    ]),
+                AttributeTextConstraint::make('primaryPhone')
+                    ->label('Phone')
+                    ->icon(Heroicon::Phone)
+                    ->operators([
+                        PhoneNumberPartOperator::make('countryCode')
+                            ->label('Country Code')
+                            ->relationship('primaryPhoneNumber')
+                            ->column('number')
+                            ->countryCode(),
+                        PhoneNumberPartOperator::make('areaCode')
+                            ->label('Area Code')
+                            ->relationship('primaryPhoneNumber')
+                            ->column('number')
+                            ->areaCode(),
+                    ]),
+                AttributeTextConstraint::make('primaryAddress')
+                    ->label('Address')
+                    ->icon(Heroicon::MapPin)
+                    ->operators([
+                        AttributeTextOperator::make('city')
+                            ->label('City')
+                            ->relationship('primaryAddress'),
+                        AttributeTextOperator::make('state')
+                            ->label('State')
+                            ->relationship('primaryAddress'),
+                        AttributeTextOperator::make('postal')
+                            ->label('Postal Code')
+                            ->relationship('primaryAddress'),
+                        AttributeTextOperator::make('country')
+                            ->label('Country')
+                            ->relationship('primaryAddress'),
+                    ]),
+            ],
+            'Student Characteristics' => [
+                BooleanConstraint::make('firstgen')
+                    ->label('First Generation')
+                    ->icon(Heroicon::AcademicCap)
+                    ->nullable(),
+                BooleanConstraint::make('dual')
+                    ->icon(Heroicon::Square2Stack)
+                    ->nullable(),
+                ExistingValuesSelectConstraint::make('gender')
+                    ->label('Gender')
+                    ->icon(Heroicon::UserCircle)
+                    ->multiple(),
+                ExistingValuesSelectConstraint::make('ethnicity')
+                    ->label('Ethnicity')
+                    ->icon(Heroicon::Users)
+                    ->multiple(),
+            ],
+            'Enrollment' => [
+                self::makeEnrollmentsConstraint()
+                    ->icon(Heroicon::FolderOpen),
+                TextConstraint::make('enrollmentDivision')
+                    ->label('Enrollment College')
+                    ->relationship('enrollments', 'division')
+                    ->icon(Heroicon::BuildingLibrary),
+                TextConstraint::make('enrollmentClassNbr')
+                    ->label('Enrollment Course')
+                    ->relationship('enrollments', 'class_nbr')
+                    ->icon(Heroicon::BookOpen),
+                TextConstraint::make('enrollmentCrseGradeOff')
+                    ->label('Enrollment Grade')
+                    ->relationship('enrollments', 'crse_grade_off')
+                    ->icon(Heroicon::AcademicCap),
+                NumberConstraint::make('enrollmentUntTaken')
+                    ->label('Enrollment Attempted')
+                    ->relationship('enrollments', 'unt_taken')
+                    ->icon(Heroicon::Calculator),
+                NumberConstraint::make('enrollmentUntEarned')
+                    ->label('Enrollment Earned')
+                    ->relationship('enrollments', 'unt_earned')
+                    ->icon(Heroicon::CheckBadge),
+                self::createEnrollmentTermConstraint('firstEnrollmentTerm.semester_name', 'First Enrolled Term')
+                    ->icon(Heroicon::CalendarDays),
+                self::createEnrollmentTermConstraint('mostRecentEnrollmentTerm.semester_name', 'Most Recent Enrolled Term')
+                    ->icon(Heroicon::CalendarDays),
+            ],
+            'Programs' => [
+                TextConstraint::make('programDivision')
+                    ->label('Program College')
+                    ->relationship('programs', 'division')
+                    ->icon(Heroicon::BuildingLibrary),
+                TextConstraint::make('programName')
+                    ->label('Program Name')
+                    ->relationship('programs', 'descr')
+                    ->icon(Heroicon::AcademicCap),
+                self::makeProgramDetailConstraint()
+                    ->icon(Heroicon::DocumentText),
+                TextConstraint::make('programFoi')
+                    ->label('Program Field of Interest')
+                    ->relationship('programs', 'foi')
+                    ->icon(Heroicon::LightBulb),
+                RelationshipConstraint::make('programs')
+                    ->multiple()
+                    ->label('Number of Programs')
+                    ->attributeLabel(fn (array $settings): string => Str::plural('program', $settings['count']))
+                    ->icon(Heroicon::Square3Stack3d),
+                NumberConstraint::make('programCumGpa')
+                    ->label('Program Cumulative GPA')
+                    ->relationship('programs', 'cum_gpa')
+                    ->icon(Heroicon::ChartBar),
+            ],
         ];
     }
 
