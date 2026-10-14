@@ -38,6 +38,7 @@ namespace App\Providers;
 
 use App\Queue\Connectors\TenantAwareBackgroundConnector;
 use App\Queue\Connectors\TenantFairSqsConnector;
+use App\Support\Sentry\ForgetUnsampledTraceDecision;
 use Illuminate\Queue\Queue;
 use Illuminate\Support\ServiceProvider;
 
@@ -52,5 +53,7 @@ class QueueServiceProvider extends ServiceProvider
         // Lets the queue autoscaler measure how long jobs wait for a worker; Laravel only sets `createdAt`, in whole seconds.
         // It also inflates queue-metrics job durations until upstream is fixed: docs/explanations/oss-todo/cbox-queue-packages-pushed-at.md
         Queue::createPayloadUsing(fn (): array => ['pushedAt' => microtime(true)]);
+
+        Queue::createPayloadUsing(new ForgetUnsampledTraceDecision());
     }
 }

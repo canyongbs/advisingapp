@@ -36,8 +36,10 @@
 
 namespace App\Jobs;
 
+use Cbox\LaravelQueueAutoscale\Configuration\AutoscaleConfiguration;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Log;
 use Spatie\Multitenancy\Jobs\NotTenantAware;
 
 class LoadTestJob implements ShouldQueue, NotTenantAware
@@ -46,16 +48,42 @@ class LoadTestJob implements ShouldQueue, NotTenantAware
 
     public int $tries = 1;
 
-    public int $timeout;
+    public ?int $timeout = null;
 
-    public function __construct(public int $sleepSeconds)
-    {
+    public function __construct(
+        public int $sleepSeconds,
+        bool $withTimeout = true,
+    ) {
         // Kept below the 100s task-protection threshold for short sleeps, so load tests don't hold ECS tasks.
-        $this->timeout = $this->sleepSeconds + 30;
+        if ($withTimeout) {
+            $this->timeout = $this->sleepSeconds + 30;
+        }
     }
 
     public function handle(): void
     {
-        sleep(max(0, $this->sleepSeconds));
+        // Written to the container output, whose log stream names the ECS task, to show which task ran the job and that it finished.
+        Log::channel(AutoscaleConfiguration::logChannel())->info('Load test job started', $this->logContext());
+
+        // A signal, such as the SIGTERM the autoscaler sends on scale-down, cuts sleep() short, while a real job would keep running.
+        $finishAt = microtime(true) + max(0, $this->sleepSeconds);
+
+        while (($remainingSeconds = $finishAt - microtime(true)) > 0) {
+            usleep((int) ceil(min($remainingSeconds, 1) * 1_000_000));
+        }
+
+        Log::channel(AutoscaleConfiguration::logChannel())->info('Load test job finished', $this->logContext());
+    }
+
+    /**
+     * @return array{job_id: ?string, sleep_seconds: int, timeout: ?int}
+     */
+    private function logContext(): array
+    {
+        return [
+            'job_id' => $this->job?->uuid(),
+            'sleep_seconds' => $this->sleepSeconds,
+            'timeout' => $this->timeout,
+        ];
     }
 }

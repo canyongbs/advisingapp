@@ -36,6 +36,12 @@
 
 use App\Providers\EcsTaskProtectionServiceProvider;
 use App\Support\Ecs\EcsTaskProtector;
+use Aws\CommandInterface;
+use Aws\Ecs\EcsClient;
+use Aws\Result;
+use GuzzleHttp\Promise\Create;
+use GuzzleHttp\Promise\PromiseInterface;
+use Illuminate\Contracts\Queue\Job;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Queue\Jobs\SyncJob;
 use Illuminate\Support\Facades\Event;
@@ -49,6 +55,11 @@ beforeEach(function () {
     assert($provider instanceof EcsTaskProtectionServiceProvider);
 
     $provider->boot();
+});
+
+// Teardown refreshes the tenant database, whose queued listeners now also reach the protector.
+afterEach(function () {
+    app()->forgetInstance(EcsTaskProtector::class);
 });
 
 function jobProcessingWithTimeout(?int $timeout): JobProcessing
@@ -67,13 +78,53 @@ it('protects the ECS task while a job with a long timeout runs', function (int $
     'above the threshold' => 1140,
 ]);
 
-it('does not protect the ECS task for a short or unset job timeout', function (?int $timeout) {
+it('protects the ECS task for a job without its own timeout using the worker timeout for its queue', function () {
+    $protector = Mockery::mock(EcsTaskProtector::class);
+    $protector->shouldReceive('protectForJobTimeout')->once()->with(600);
+    app()->instance(EcsTaskProtector::class, $protector);
+
+    event(jobProcessingWithTimeout(null));
+});
+
+it('does not protect the ECS task for a short job timeout', function () {
     $protector = Mockery::mock(EcsTaskProtector::class);
     $protector->shouldNotReceive('protectForJobTimeout');
     app()->instance(EcsTaskProtector::class, $protector);
 
-    event(jobProcessingWithTimeout($timeout));
-})->with([
-    'below the threshold' => 99,
-    'unset' => null,
-]);
+    event(jobProcessingWithTimeout(99));
+});
+
+it('does not protect the ECS task for a job without its own timeout when the worker timeout is short', function () {
+    config(['queue-autoscale.queues.short-timeout-queue' => ['workers' => ['timeout_seconds' => 60]]]);
+
+    $protector = Mockery::mock(EcsTaskProtector::class);
+    $protector->shouldNotReceive('protectForJobTimeout');
+    app()->instance(EcsTaskProtector::class, $protector);
+
+    $job = Mockery::mock(Job::class);
+    $job->allows('payload')->andReturn(['timeout' => null]);
+    $job->allows('getQueue')->andReturn('short-timeout-queue');
+
+    assert($job instanceof Job);
+
+    event(new JobProcessing('sqs', $job));
+});
+
+it('gives up on ECS API calls that hang instead of waiting forever', function () {
+    $client = app(EcsClient::class);
+    $httpOptions = new ArrayObject();
+
+    $client->getHandlerList()->remove('signer');
+    $client->getHandlerList()->setHandler(function (CommandInterface $command) use ($httpOptions): PromiseInterface {
+        $httpOptions->exchangeArray($command['@http']);
+
+        return Create::promiseFor(new Result([]));
+    });
+
+    $client->listTasks(['cluster' => 'cluster-arn']);
+
+    expect($httpOptions->getArrayCopy())->toMatchArray([
+        'connect_timeout' => 5,
+        'timeout' => 10,
+    ]);
+});

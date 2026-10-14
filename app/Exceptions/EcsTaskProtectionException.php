@@ -43,11 +43,11 @@ class EcsTaskProtectionException extends Exception
 {
     public static function requestFailed(Throwable $previous): self
     {
-        return new self('Failed to request ECS task scale-in protection.', previous: $previous);
+        return new self('Failed to update ECS task scale-in protection.', previous: $previous);
     }
 
     public static function requestRejected(int $status): self
     {
-        return new self("ECS rejected the task scale-in protection request with status {$status}.");
+        return new self("ECS rejected the task scale-in protection update with status {$status}.");
     }
 }
