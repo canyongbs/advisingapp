@@ -556,6 +556,35 @@ it('updates existing local events when provider data changes during sync', funct
         ->and($calendar->events()->first()->title)->toBe('Updated Title');
 });
 
+it('looks up existing local events once rather than once per provider event during sync', function () use ($createOutlookCalendar, $createMockOutlookEvent) {
+    CalendarEvent::unsetEventDispatcher();
+
+    $calendar = $createOutlookCalendar();
+    CalendarEvent::factory()->for($calendar)->create([
+        'provider_id' => 'p1',
+        'title' => 'Old Title',
+    ]);
+
+    $manager = Mockery::mock(OutlookCalendarManager::class)->makePartial();
+    $manager->shouldReceive('getEvents')->andReturn([
+        $createMockOutlookEvent('p1', 'Updated Title'),
+        $createMockOutlookEvent('p2', 'New Event'),
+        $createMockOutlookEvent('p3', 'Another New Event'),
+    ]);
+
+    $connection = $calendar->events()->getModel()->getConnection();
+    $connection->enableQueryLog();
+
+    $manager->syncEvents($calendar, new DateTime(now()->subMonth()->startOfDay()->toDateTimeString()), new DateTime(now()->addMonth()->endOfDay()->toDateTimeString())); // @phpstan-ignore method.notFound
+
+    $lookups = collect($connection->getQueryLog())
+        ->filter(fn (array $query): bool => str_starts_with($query['query'], 'select') && str_contains($query['query'], '"provider_id" in'));
+
+    expect($lookups->count())->toBe(1)
+        ->and($calendar->events()->count())->toBe(3)
+        ->and($calendar->events()->where('provider_id', 'p1')->value('title'))->toBe('Updated Title');
+});
+
 it('pushes local events without provider_id to provider during sync', function () use ($createOutlookCalendar) {
     CalendarEvent::unsetEventDispatcher();
 

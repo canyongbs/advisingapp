@@ -102,6 +102,53 @@ it('marks a job stuck processing as timed out', function () {
         ->and($running->refresh()->status)->toBe(JobStatus::PROCESSING);
 });
 
+it('records a completion time and duration on jobs it marks as timed out', function () {
+    $stuck = jobMonitorAged(JobStatus::PROCESSING, CarbonImmutable::now()->subMinutes(400));
+
+    (new PruneQueueMonitorJob())->handle();
+
+    $stuck->refresh();
+
+    expect($stuck->completed_at)->not->toBeNull()
+        ->and($stuck->duration_ms)->toBeGreaterThanOrEqual(400 * 60 * 1000);
+});
+
+it('does not read job rows one at a time while resolving and pruning', function () {
+    JobMonitor::query()->delete();
+
+    foreach (range(1, 6) as $minutes) {
+        jobMonitorAged(JobStatus::PROCESSING, CarbonImmutable::now()->subMinutes(400 + $minutes));
+        jobMonitorAged(JobStatus::COMPLETED, CarbonImmutable::now()->subDays(20 + $minutes));
+    }
+
+    DB::connection((new JobMonitor())->getConnectionName())->enableQueryLog();
+
+    (new PruneQueueMonitorJob())->handle();
+
+    $rowLookups = collect(DB::connection((new JobMonitor())->getConnectionName())->getQueryLog())
+        ->filter(fn (array $query): bool => str_contains($query['query'], 'select * from "queue_monitor_jobs"'));
+
+    expect($rowLookups->count())->toBe(0)
+        ->and(JobMonitor::query()->where('status', JobStatus::TIMEOUT)->count())->toBe(6)
+        ->and(JobMonitor::query()->where('status', JobStatus::COMPLETED)->count())->toBe(0);
+});
+
+it('deletes the oldest finished jobs once the row cap is exceeded', function () {
+    JobMonitor::query()->delete();
+
+    config(['queue-monitor.retention.max_rows' => 2]);
+
+    $oldest = jobMonitorAged(JobStatus::COMPLETED, CarbonImmutable::now()->subDays(3));
+    $middle = jobMonitorAged(JobStatus::COMPLETED, CarbonImmutable::now()->subDays(2));
+    $newest = jobMonitorAged(JobStatus::COMPLETED, CarbonImmutable::now()->subDay());
+
+    (new PruneQueueMonitorJob())->handle();
+
+    expect(JobMonitor::query()->whereKey($oldest->getKey())->exists())->toBeFalse()
+        ->and(JobMonitor::query()->whereKey($middle->getKey())->exists())->toBeTrue()
+        ->and(JobMonitor::query()->whereKey($newest->getKey())->exists())->toBeTrue();
+});
+
 it('keeps old queued jobs that may still be waiting in a backlog', function () {
     $queued = jobMonitorAged(JobStatus::QUEUED, CarbonImmutable::now()->subDays(20));
 
