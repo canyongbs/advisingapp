@@ -176,6 +176,7 @@ class ProspectsTable
                         ->preload(),
                 ),
             Constraint::make('subscribed')
+                ->label('Following')
                 ->icon('heroicon-m-bell')
                 ->operators([
                     Operator::make('subscribed')

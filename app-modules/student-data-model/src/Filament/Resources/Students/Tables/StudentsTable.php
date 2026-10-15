@@ -402,6 +402,7 @@ class StudentsTable
     private static function makeSubscribedConstraint(): Constraint
     {
         return Constraint::make('subscribed')
+            ->label('Following')
             ->operators([
                 Operator::make('subscribed')
                     ->label(fn (bool $isInverse): string => $isInverse ? 'Not following' : 'Following')
