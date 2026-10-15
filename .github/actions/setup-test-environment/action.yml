@@ -60,9 +60,16 @@ runs:
         - name: Wait for PostgreSQL
           shell: bash
           run: |
-              until docker inspect --format='{{.State.Health.Status}}' postgres | grep -q healthy; do
-                sleep 2
+              for _ in $(seq 1 60); do
+                status=$(docker inspect --format='{{.State.Health.Status}}' postgres)
+                [[ "${status}" == healthy || "${status}" == unhealthy ]] && break
+                sleep 1
               done
+              if [[ "${status}" != healthy ]]; then
+                docker logs postgres
+                echo "::error::postgres is ${status} instead of healthy."
+                exit 1
+              fi
 
         - name: Create tenant database
           shell: bash
