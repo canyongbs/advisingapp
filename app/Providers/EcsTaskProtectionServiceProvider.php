@@ -39,6 +39,7 @@ namespace App\Providers;
 use App\Support\Ecs\EcsTaskProtector;
 use Aws\Ecs\EcsClient;
 use Cbox\LaravelQueueAutoscale\Configuration\QueueConfiguration;
+use Cbox\LaravelQueueAutoscale\Support\QueueName;
 use Illuminate\Queue\Events\JobProcessing;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Queue;
@@ -70,7 +71,10 @@ class EcsTaskProtectionServiceProvider extends ServiceProvider
             // A job without its own timeout still runs under the worker's, which its queue's autoscale profile sets.
             if (! is_int($timeout)) {
                 $timeout = rescue(
-                    fn (): int => QueueConfiguration::fromConfig($event->connectionName, $event->job->getQueue())->workers->timeoutSeconds,
+                    fn (): int => QueueConfiguration::fromConfig(
+                        $event->connectionName,
+                        QueueName::normalize($event->connectionName, $event->job->getQueue()),
+                    )->workers->timeoutSeconds,
                     0,
                 );
             }

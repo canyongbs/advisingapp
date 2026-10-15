@@ -37,7 +37,6 @@
 namespace App\Filament\Pages;
 
 use App\Enums\NavigationGroup;
-use App\Features\QueueMonitoringFeature;
 use App\Filament\Widgets\QueueMonitoring\LandlordFailedJobsTable;
 use App\Filament\Widgets\QueueMonitoring\QueueJobsTable;
 use App\Filament\Widgets\QueueMonitoring\QueueOverviewTable;
@@ -65,8 +64,7 @@ class QueueMonitoring extends Page
     {
         $user = auth()->user();
 
-        // TODO: Cleanup Task (queue-monitoring): drop the feature flag check.
-        return $user instanceof User && $user->isSuperAdmin() && QueueMonitoringFeature::active();
+        return $user instanceof User && $user->isSuperAdmin();
     }
 
     public function getHeaderWidgetsColumns(): int | array

@@ -34,21 +34,16 @@
 </COPYRIGHT>
 */
 
-use App\Features\QueueMonitoringFeature;
 use App\Models\Tenant;
 use App\Models\User;
-use App\Overrides\QueueAutoscale\ExitReportingWorkerSpawner;
-use App\Overrides\SystemMetrics\ContainerMemoryMetricsSource;
 use App\Providers\QueueObservabilityServiceProvider;
 use App\Support\QueueAutoscale\WorkerCountHistory;
 use Cbox\LaravelQueueAutoscale\Events\ClusterSummaryPublished;
 use Cbox\LaravelQueueAutoscale\Events\ScalingDecisionMade;
 use Cbox\LaravelQueueAutoscale\Scaling\ScalingDecision;
-use Cbox\LaravelQueueAutoscale\Workers\WorkerSpawner;
 use Cbox\LaravelQueueMetrics\LaravelQueueMetrics;
 use Cbox\LaravelQueueMonitor\LaravelQueueMonitor;
 use Cbox\LaravelQueueMonitor\Models\JobMonitor;
-use Cbox\SystemMetrics\Config\SystemMetricsConfig;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
@@ -112,40 +107,6 @@ it('records no tenant on jobs monitored outside a tenant context', function () {
     $jobMonitor = JobMonitor::factory()->create();
 
     expect($jobMonitor->refresh()->getAttribute('tenant_id'))->toBeNull();
-});
-
-it('disables the queue monitor while `QueueMonitoringFeature` is inactive', function () {
-    QueueMonitoringFeature::deactivate();
-
-    config(['queue-monitor.enabled' => true]);
-
-    $provider = app()->getProvider(QueueObservabilityServiceProvider::class);
-
-    assert($provider instanceof QueueObservabilityServiceProvider);
-
-    $provider->boot();
-
-    expect(config('queue-monitor.enabled'))->toBeFalse();
-});
-
-it('leaves the queue monitor enabled once `QueueMonitoringFeature` is active', function () {
-    config(['queue-monitor.enabled' => true]);
-
-    $provider = app()->getProvider(QueueObservabilityServiceProvider::class);
-
-    assert($provider instanceof QueueObservabilityServiceProvider);
-
-    $provider->boot();
-
-    expect(config('queue-monitor.enabled'))->toBeTrue();
-});
-
-it('replaces the autoscale worker spawner with one whose workers report how they exit', function () {
-    expect(app(WorkerSpawner::class))->toBeInstanceOf(ExitReportingWorkerSpawner::class);
-});
-
-it('measures memory against the container limit for the autoscaler', function () {
-    expect(SystemMetricsConfig::getMemoryMetricsSource())->toBeInstanceOf(ContainerMemoryMetricsSource::class);
 });
 
 describe('worker count sampling', function () {

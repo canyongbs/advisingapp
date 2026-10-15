@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\QueueMonitoringFeature;
 use App\Jobs\PruneQueueMonitorJob;
 use Carbon\CarbonImmutable;
 use Cbox\LaravelQueueMonitor\Enums\JobStatus;
@@ -42,8 +41,7 @@ use Cbox\LaravelQueueMonitor\Models\JobMonitor;
 use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
-    // TODO: Cleanup Task (queue-monitoring): delete this beforeEach once the flag no longer forces the monitor off at boot.
-    // The provider decides this at boot, before parallel testing switches to this process's database.
+    // The test suite runs with the queue monitor disabled.
     config(['queue-monitor.enabled' => true]);
 });
 
@@ -180,16 +178,4 @@ it('nulls cluster event payloads past the payload window while keeping the rows'
     expect(DB::table('queue_monitor_cluster_events')->count())->toBe(2)
         ->and(DB::table('queue_monitor_cluster_events')->where('leader_id', 'old')->value('meta'))->toBeNull()
         ->and(DB::table('queue_monitor_cluster_events')->where('leader_id', 'recent')->value('meta'))->not->toBeNull();
-});
-
-it('does nothing while `QueueMonitoringFeature` is inactive', function () {
-    QueueMonitoringFeature::deactivate();
-
-    $old = jobMonitorAged(JobStatus::COMPLETED, CarbonImmutable::now()->subDays(20));
-    insertScalingEvent('old', CarbonImmutable::now()->subDays(20));
-
-    (new PruneQueueMonitorJob())->handle();
-
-    expect(JobMonitor::query()->whereKey($old->getKey())->exists())->toBeTrue()
-        ->and(DB::table('queue_monitor_scaling_events')->count())->toBe(1);
 });

@@ -263,8 +263,7 @@ return [
         ProvidersQueueServiceProvider::class,
         MultitenancyServiceProvider::class,
         // The queue packages are not auto-discovered so their listeners register after multitenancy's, which makes a
-        // job's tenant current first. QueueObservabilityServiceProvider must boot before the queue monitor's.
-        // TODO: Cleanup Task (queue-monitoring): drop the second sentence above; only the feature flag check needs that order.
+        // job's tenant current first.
         QueueObservabilityServiceProvider::class,
         LaravelQueueAutoscaleServiceProvider::class,
         LaravelQueueMetricsServiceProvider::class,

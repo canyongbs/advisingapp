@@ -39,9 +39,6 @@ namespace App\Queue;
 use App\Models\Tenant;
 use App\Queue\Jobs\TenantFairSqsJob;
 use Illuminate\Queue\SqsQueue;
-
-use function Illuminate\Support\enum_value;
-
 use Illuminate\Support\Str;
 use Override;
 use RuntimeException;
@@ -87,10 +84,8 @@ class TenantFairSqsQueue extends SqsQueue
     #[Override]
     public function pop($queue = null): ?TenantFairSqsJob
     {
-        $queueName = enum_value($queue) ?: $this->default;
-
         $response = $this->sqs->receiveMessage([
-            'QueueUrl' => $queueUrl = $this->getQueue($queueName),
+            'QueueUrl' => $queueUrl = $this->getQueue($queue),
             'AttributeNames' => ['ApproximateReceiveCount'],
         ]);
 
@@ -105,7 +100,6 @@ class TenantFairSqsQueue extends SqsQueue
             $this->connectionName,
             $queueUrl,
             $this->overflowStorage,
-            $queueName,
         );
     }
 
@@ -136,33 +130,5 @@ class TenantFairSqsQueue extends SqsQueue
             '@pointer' => $pointer,
             ...($tenantId === null ? [] : ['tenantId' => $tenantId]),
         ], JSON_THROW_ON_ERROR);
-    }
-
-    /**
-     * Moves `pushedAt` to when a delayed job becomes available, so the delay is not counted as time spent waiting
-     * for a worker.
-     *
-     * @param mixed $job
-     * @param string $queue
-     * @param mixed $data
-     */
-    #[Override]
-    protected function createPayload($job, $queue, $data = '', $delay = null): string
-    {
-        $payload = parent::createPayload($job, $queue, $data, $delay);
-
-        if (empty($delay)) {
-            return $payload;
-        }
-
-        $decodedPayload = json_decode($payload, true);
-
-        if (! is_numeric($decodedPayload['pushedAt'] ?? null)) {
-            return $payload;
-        }
-
-        $decodedPayload['pushedAt'] = (float) $decodedPayload['pushedAt'] + $this->secondsUntil($delay);
-
-        return json_encode($decodedPayload, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR);
     }
 }
