@@ -35,14 +35,13 @@
 */
 
 use AdvisingApp\Notification\Actions\SubscriptionToggle;
-use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
 use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
 
 use function Pest\Laravel\actingAs;
 
-it('labels the action `Follow` for a record the user is not following', function () {
+it('is labelled `Follow` for a record the user is not following', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     actingAs($user);
@@ -52,7 +51,7 @@ it('labels the action `Follow` for a record the user is not following', function
     expect(SubscribeTableAction::make()->record($student)->getLabel())->toBe('Follow');
 });
 
-it('labels the action `Unfollow` for a record the user is following', function () {
+it('is labelled `Unfollow` for a record the user is following', function () {
     $user = User::factory()->licensed(Student::getLicenseType())->create();
 
     actingAs($user);
@@ -62,26 +61,4 @@ it('labels the action `Unfollow` for a record the user is following', function (
     resolve(SubscriptionToggle::class)->handle($user, $student);
 
     expect(SubscribeTableAction::make()->record($student)->getLabel())->toBe('Unfollow');
-});
-
-it('labels the header action `Follow` for a record the user is not following', function () {
-    $user = User::factory()->licensed(Student::getLicenseType())->create();
-
-    actingAs($user);
-
-    $student = Student::factory()->create();
-
-    expect(SubscribeHeaderAction::make()->record($student)->getLabel())->toBe('Follow');
-});
-
-it('labels the header action `Unfollow` for a record the user is following', function () {
-    $user = User::factory()->licensed(Student::getLicenseType())->create();
-
-    actingAs($user);
-
-    $student = Student::factory()->create();
-
-    resolve(SubscriptionToggle::class)->handle($user, $student);
-
-    expect(SubscribeHeaderAction::make()->record($student)->getLabel())->toBe('Unfollow');
 });

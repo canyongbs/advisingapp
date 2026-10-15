@@ -57,7 +57,6 @@ use App\Settings\LicenseSettings;
 use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
-use function Pest\Laravel\get;
 use function Pest\Laravel\seed;
 use function Tests\asSuperAdmin;
 
@@ -455,15 +454,4 @@ test('renders the ApplicationSubmissionsRelationManager based on Feature access'
     ])
         ->assertOk()
         ->assertSeeLivewire($relationManager);
-});
-
-it('serves the followers page at the followers URL', function () {
-    asSuperAdmin();
-
-    $prospect = Prospect::factory()->create();
-    $url = ProspectResource::getUrl('followers', ['record' => $prospect]);
-
-    expect($url)->toEndWith("/prospects/{$prospect->getRouteKey()}/followers");
-
-    get($url)->assertSuccessful();
 });

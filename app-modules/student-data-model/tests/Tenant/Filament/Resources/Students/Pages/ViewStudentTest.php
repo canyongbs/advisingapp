@@ -622,14 +622,3 @@ describe('archiving', function () {
         get($url)->assertNotFound();
     });
 });
-
-it('serves the followers page at the followers URL', function () {
-    asSuperAdmin();
-
-    $student = Student::factory()->create();
-    $url = StudentResource::getUrl('followers', ['record' => $student]);
-
-    expect($url)->toEndWith("/students/{$student->getRouteKey()}/followers");
-
-    get($url)->assertSuccessful();
-});

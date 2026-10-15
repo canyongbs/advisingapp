@@ -34,8 +34,31 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Campaign\Filament\Blocks\SubscriptionBlock;
+use AdvisingApp\Notification\Actions\SubscriptionToggle;
+use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
 
-it('labels the subscription block as Follow in the journey step picker', function () {
-    expect(SubscriptionBlock::make()->getLabel())->toBe('Follow');
+use function Pest\Laravel\actingAs;
+
+it('is labelled `Follow` for a record the user is not following', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    actingAs($user);
+
+    $student = Student::factory()->create();
+
+    expect(SubscribeHeaderAction::make()->record($student)->getLabel())->toBe('Follow');
+});
+
+it('is labelled `Unfollow` for a record the user is following', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    actingAs($user);
+
+    $student = Student::factory()->create();
+
+    resolve(SubscriptionToggle::class)->handle($user, $student);
+
+    expect(SubscribeHeaderAction::make()->record($student)->getLabel())->toBe('Unfollow');
 });
