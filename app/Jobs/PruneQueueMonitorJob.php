@@ -36,7 +36,6 @@
 
 namespace App\Jobs;
 
-use App\Features\QueueMonitoringFeature;
 use Cbox\LaravelQueueMonitor\Enums\JobStatus;
 use Cbox\LaravelQueueMonitor\Models\JobMonitor;
 use Cbox\LaravelQueueMonitor\Services\Contracts\DashboardCacheServiceContract;
@@ -85,11 +84,6 @@ class PruneQueueMonitorJob implements ShouldBeUnique, ShouldQueue, NotTenantAwar
 
     public function handle(): void
     {
-        // TODO: Cleanup Task (queue-monitoring): remove this check; the tables may not exist before the flag is active.
-        if (! QueueMonitoringFeature::active()) {
-            return;
-        }
-
         if (config('queue-monitor.enabled', true)) {
             $this->resolveStuckJobs();
             $this->pruneJobs();

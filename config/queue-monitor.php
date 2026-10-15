@@ -76,10 +76,8 @@ return [
     |
     | This option controls whether the queue monitor package is active.
     | Set to false to completely disable job monitoring without uninstalling.
-    | Also forced off until App\Features\QueueMonitoringFeature is active (App\Providers\QueueObservabilityServiceProvider).
     |
     */
-    // TODO: Cleanup Task (queue-monitoring): remove the QueueMonitoringFeature line from the comment above.
     'enabled' => env('QUEUE_MONITOR_ENABLED', true),
 
     /*
