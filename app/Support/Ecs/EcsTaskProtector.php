@@ -38,8 +38,10 @@ namespace App\Support\Ecs;
 
 use App\Exceptions\EcsTaskProtectionException;
 use Carbon\CarbonImmutable;
+use Cbox\LaravelQueueAutoscale\Configuration\AutoscaleConfiguration;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Throwable;
 
@@ -62,6 +64,8 @@ class EcsTaskProtector
     private const int HTTP_TIMEOUT_SECONDS = 5;
 
     private const int EXPIRY_HEADROOM_MINUTES = 5;
+
+    private const string DEPLOYMENT_BLOCKED = 'DEPLOYMENT_BLOCKED';
 
     public function __construct(
         private ?string $stateDirectory = null,
@@ -137,12 +141,28 @@ class EcsTaskProtector
                 ->acceptJson()
                 ->put("{$agentUri}/task-protection/v1/state", $state);
 
-            // The agent can answer 200 with a `failure` body when ECS refused the change.
-            if ($response->successful() && ($response->json('failure') === null)) {
+            // The agent can answer 200 with a `failure` (ECS refused the change) or `error` (calling ECS failed) body.
+            if ($response->successful() && ($response->json('failure') === null) && ($response->json('error') === null)) {
                 return true;
             }
 
-            report(EcsTaskProtectionException::requestRejected($response->status()));
+            // ECS refuses new protection while it is waiting to stop a task and every task is protected; the drain watcher resolves that.
+            if ($response->json('failure.Reason') === self::DEPLOYMENT_BLOCKED) {
+                Log::channel(AutoscaleConfiguration::logChannel())->info('Task protection not extended: ECS is waiting to stop a protected task');
+
+                return false;
+            }
+
+            $reason = collect([
+                $response->json('failure.Reason'),
+                $response->json('failure.Detail'),
+                $response->json('error.Code'),
+                $response->json('error.Message'),
+            ])
+                ->filter(fn (mixed $value): bool => is_string($value) && filled($value))
+                ->implode(' ');
+
+            report(EcsTaskProtectionException::requestRejected($response->status(), $reason));
         } catch (Throwable $exception) {
             report(EcsTaskProtectionException::requestFailed($exception));
         }
