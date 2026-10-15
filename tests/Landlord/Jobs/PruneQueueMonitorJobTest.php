@@ -125,8 +125,11 @@ it('does not read job rows one at a time while resolving and pruning', function 
 
     (new PruneQueueMonitorJob())->handle();
 
+    // Any SELECT reading job rows or ids; the row-cap COUNT and the id subqueries inside DELETE statements are allowed.
     $rowLookups = collect(DB::connection((new JobMonitor())->getConnectionName())->getQueryLog())
-        ->filter(fn (array $query): bool => str_contains($query['query'], 'select * from "queue_monitor_jobs"'));
+        ->filter(fn (array $query): bool => str_starts_with($query['query'], 'select')
+            && str_contains($query['query'], 'from "queue_monitor_jobs"')
+            && ! str_starts_with($query['query'], 'select count('));
 
     expect($rowLookups->count())->toBe(0)
         ->and(JobMonitor::query()->where('status', JobStatus::TIMEOUT)->count())->toBe(6)
