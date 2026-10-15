@@ -556,6 +556,56 @@ it('updates existing local events when provider data changes during sync', funct
         ->and($calendar->events()->first()->title)->toBe('Updated Title');
 });
 
+it('looks up existing local events once rather than once per provider event during sync', function () use ($createOutlookCalendar, $createMockOutlookEvent) {
+    CalendarEvent::unsetEventDispatcher();
+
+    $calendar = $createOutlookCalendar();
+    CalendarEvent::factory()->for($calendar)->create([
+        'provider_id' => 'p1',
+        'title' => 'Old Title',
+    ]);
+
+    $manager = Mockery::mock(OutlookCalendarManager::class)->makePartial();
+    $manager->shouldReceive('getEvents')->andReturn([
+        $createMockOutlookEvent('p1', 'Updated Title'),
+        $createMockOutlookEvent('p2', 'New Event'),
+        $createMockOutlookEvent('p3', 'Another New Event'),
+    ]);
+
+    $connection = $calendar->events()->getModel()->getConnection();
+    $connection->enableQueryLog();
+
+    $manager->syncEvents($calendar, new DateTime(now()->subMonth()->startOfDay()->toDateTimeString()), new DateTime(now()->addMonth()->endOfDay()->toDateTimeString())); // @phpstan-ignore method.notFound
+
+    // Any SELECT filtering calendar events by provider_id, except the intentional scan for unsynced (null) events.
+    $lookups = collect($connection->getQueryLog())
+        ->filter(fn (array $query): bool => str_starts_with($query['query'], 'select')
+            && str_contains($query['query'], 'from "calendar_events"')
+            && str_contains($query['query'], '"provider_id"')
+            && ! str_contains($query['query'], '"provider_id" is null'));
+
+    expect($lookups->count())->toBe(1)
+        ->and($calendar->events()->count())->toBe(3)
+        ->and($calendar->events()->where('provider_id', 'p1')->value('title'))->toBe('Updated Title');
+});
+
+it('keeps a single local event when the provider returns a new provider id more than once during sync', function () use ($createOutlookCalendar, $createMockOutlookEvent) {
+    CalendarEvent::unsetEventDispatcher();
+
+    $calendar = $createOutlookCalendar();
+
+    $manager = Mockery::mock(OutlookCalendarManager::class)->makePartial();
+    $manager->shouldReceive('getEvents')->andReturn([
+        $createMockOutlookEvent('repeated', 'First Title'),
+        $createMockOutlookEvent('repeated', 'Second Title'),
+    ]);
+
+    $manager->syncEvents($calendar, new DateTime(now()->subMonth()->startOfDay()->toDateTimeString()), new DateTime(now()->addMonth()->endOfDay()->toDateTimeString())); // @phpstan-ignore method.notFound
+
+    expect($calendar->events()->where('provider_id', 'repeated')->count())->toBe(1)
+        ->and($calendar->events()->where('provider_id', 'repeated')->value('title'))->toBe('Second Title');
+});
+
 it('pushes local events without provider_id to provider during sync', function () use ($createOutlookCalendar) {
     CalendarEvent::unsetEventDispatcher();
 
