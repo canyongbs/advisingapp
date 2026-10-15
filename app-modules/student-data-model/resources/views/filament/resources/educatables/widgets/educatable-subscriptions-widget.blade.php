@@ -64,7 +64,7 @@
 
                     @if (filled($subscriber->job_title))
                         <p class="text-sm text-gray-500 dark:text-gray-400">
-                            Followed {{ $subscriber->pivot->created_at->toFormattedDateString() }}
+                            Following since {{ $subscriber->pivot->created_at->toFormattedDateString() }}
                         </p>
                     @endif
                 </div>

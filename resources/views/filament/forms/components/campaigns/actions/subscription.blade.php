@@ -42,7 +42,7 @@
 
     <dl class="max-w-md divide-y divide-gray-200 text-gray-900 dark:divide-gray-700 dark:text-white">
         <div class="flex flex-col pb-3">
-            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Users to be following</dt>
+            <dt class="mb-1 text-sm text-gray-500 dark:text-gray-400">Users who will follow</dt>
             <dd class="text-sm font-semibold">
                 {{ collect($action['user_ids'])->map(fn (string $userId): User => User::findOrFail($userId))->implode('name', ', ') }}
             </dd>

@@ -55,7 +55,7 @@ class SubscribeBulkAction
         return BulkAction::make('bulkSubscription')
             ->icon('heroicon-s-bell')
             ->label('Manage Followers')
-            ->modalHeading('Create Bulk Followers')
+            ->modalHeading('Add Followers')
             ->modalDescription(
                 fn (Collection $records) => "You have selected {$records->count()} " . Str::plural($context, $records->count()) . ' to follow.'
             )
