@@ -1,6 +1,6 @@
 # Upstream fix: `cboxdk/laravel-queue-autoscale` recognises a queue connection only by its driver name
 
-PR Opened: _not yet_
+PR Opened: https://github.com/cboxdk/laravel-queue-autoscale/pull/82
 
 ## Target package
 
