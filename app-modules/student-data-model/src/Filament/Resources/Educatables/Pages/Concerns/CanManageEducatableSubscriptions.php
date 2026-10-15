@@ -107,14 +107,14 @@ trait CanManageEducatableSubscriptions
             ->recordActions([
                 DetachAction::make()
                     ->authorize(fn (): bool => auth()->user()->can('deleteAny', Subscription::class))
-                    ->label('Unfollow')
+                    ->label('Remove')
                     ->modalHeading(function (User $record) {
                         /** @var Student $student */
                         $student = $this->getOwnerRecord();
 
                         return "Remove {$record->name} as a follower of {$student->display_name}";
                     })
-                    ->modalSubmitActionLabel('Unfollow')
+                    ->modalSubmitActionLabel('Remove')
                     ->successNotificationTitle(function (User $record) {
                         /** @var Student $student */
                         $student = $this->getOwnerRecord();
@@ -126,14 +126,14 @@ trait CanManageEducatableSubscriptions
                 BulkActionGroup::make([
                     DetachBulkAction::make()
                         ->authorize(fn (): bool => auth()->user()->can('deleteAny', Subscription::class))
-                        ->label('Unfollow selected')
+                        ->label('Remove selected')
                         ->modalHeading(function () {
                             /** @var Student $student */
                             $student = $this->getOwnerRecord();
 
                             return "Remove selected followers from {$student->display_name}";
                         })
-                        ->modalSubmitActionLabel('Unfollow')
+                        ->modalSubmitActionLabel('Remove')
                         ->successNotificationTitle(function () {
                             /** @var Student $student */
                             $student = $this->getOwnerRecord();

@@ -120,14 +120,14 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
             ->recordActions([
                 DetachAction::make()
                     ->authorize(fn (): bool => auth()->user()->can('deleteAny', Subscription::class))
-                    ->label('Unfollow')
+                    ->label('Remove')
                     ->modalHeading(function (User $record) {
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
 
                         return "Remove {$record->name} as a follower of {$prospect->display_name}";
                     })
-                    ->modalSubmitActionLabel('Unfollow')
+                    ->modalSubmitActionLabel('Remove')
                     ->successNotificationTitle(function (User $record) {
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
@@ -139,14 +139,14 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
                 BulkActionGroup::make([
                     DetachBulkAction::make()
                         ->authorize(fn (): bool => auth()->user()->can('deleteAny', Subscription::class))
-                        ->label('Unfollow selected')
+                        ->label('Remove selected')
                         ->modalHeading(function () {
                             /** @var Prospect $prospect */
                             $prospect = $this->getOwnerRecord();
 
                             return "Remove selected followers from {$prospect->display_name}";
                         })
-                        ->modalSubmitActionLabel('Unfollow')
+                        ->modalSubmitActionLabel('Remove')
                         ->successNotificationTitle(function () {
                             /** @var Prospect $prospect */
                             $prospect = $this->getOwnerRecord();
