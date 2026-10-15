@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "cca6b0eadff87eddafc0d714afc7ccaf",
+    "content-hash": "54a9ef3426950879a6589cd696d5b137",
     "packages": [
         {
             "name": "ably/ably-php",
@@ -2328,16 +2328,16 @@
         },
         {
             "name": "cboxdk/laravel-queue-metrics",
-            "version": "v3.5.0",
+            "version": "v3.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cboxdk/laravel-queue-metrics.git",
-                "reference": "86f067339bd928f1ad675c7805b1787a6ae52560"
+                "reference": "a1a21c7b4120bf79d84ef076a3019d8d4f73bc95"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cboxdk/laravel-queue-metrics/zipball/86f067339bd928f1ad675c7805b1787a6ae52560",
-                "reference": "86f067339bd928f1ad675c7805b1787a6ae52560",
+                "url": "https://api.github.com/repos/cboxdk/laravel-queue-metrics/zipball/a1a21c7b4120bf79d84ef076a3019d8d4f73bc95",
+                "reference": "a1a21c7b4120bf79d84ef076a3019d8d4f73bc95",
                 "shasum": ""
             },
             "require": {
@@ -2405,7 +2405,7 @@
             ],
             "support": {
                 "issues": "https://github.com/cboxdk/laravel-queue-metrics/issues",
-                "source": "https://github.com/cboxdk/laravel-queue-metrics/tree/v3.5.0"
+                "source": "https://github.com/cboxdk/laravel-queue-metrics/tree/v3.5.1"
             },
             "funding": [
                 {
@@ -2413,20 +2413,20 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-10-14T20:30:20+00:00"
+            "time": "2026-10-15T08:29:29+00:00"
         },
         {
             "name": "cboxdk/laravel-queue-monitor",
-            "version": "v1.12.0",
+            "version": "v1.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/cboxdk/laravel-queue-monitor.git",
-                "reference": "cdbbe53b1fc7f285e75b71e163582e916e70d971"
+                "reference": "7409cd1c54baba91f43ac8aaf3a9366d9370217c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/cboxdk/laravel-queue-monitor/zipball/cdbbe53b1fc7f285e75b71e163582e916e70d971",
-                "reference": "cdbbe53b1fc7f285e75b71e163582e916e70d971",
+                "url": "https://api.github.com/repos/cboxdk/laravel-queue-monitor/zipball/7409cd1c54baba91f43ac8aaf3a9366d9370217c",
+                "reference": "7409cd1c54baba91f43ac8aaf3a9366d9370217c",
                 "shasum": ""
             },
             "require": {
@@ -2485,7 +2485,7 @@
             ],
             "support": {
                 "issues": "https://github.com/cboxdk/laravel-queue-monitor/issues",
-                "source": "https://github.com/cboxdk/laravel-queue-monitor/tree/v1.12.0"
+                "source": "https://github.com/cboxdk/laravel-queue-monitor/tree/v1.12.1"
             },
             "funding": [
                 {
@@ -2493,7 +2493,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2026-10-14T20:31:30+00:00"
+            "time": "2026-10-15T21:15:22+00:00"
         },
         {
             "name": "cboxdk/system-metrics",
