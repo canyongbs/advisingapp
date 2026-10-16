@@ -324,7 +324,8 @@ class ManageForm extends EditRecord
                 ->modalSubmitAction(false)
                 ->modalCancelActionLabel('Close')
                 ->hidden(fn (Form $form) => (! FormResource::canView($form)) || (! $form->embed_enabled)),
-            ArchiveAction::make(),
+            ArchiveAction::make()
+                ->authorize(fn (Form $record): bool => FormResource::canEdit($record) && FormResource::canDelete($record)),
         ];
     }
 
