@@ -35,10 +35,12 @@
 */
 
 use App\Providers\EcsTaskProtectionServiceProvider;
+use App\Queue\Jobs\TenantFairSqsJob;
 use App\Support\Ecs\EcsTaskProtector;
 use Aws\CommandInterface;
 use Aws\Ecs\EcsClient;
 use Aws\Result;
+use Aws\Sqs\SqsClient;
 use GuzzleHttp\Promise\Create;
 use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Contracts\Queue\Job;
@@ -106,6 +108,37 @@ it('does not protect the ECS task for a job without its own timeout when the wor
     $job->allows('getQueue')->andReturn('short-timeout-queue');
 
     assert($job instanceof Job);
+
+    event(new JobProcessing('sqs', $job));
+});
+
+it('resolves the worker timeout of an SQS job by its queue name rather than its queue URL', function () {
+    config([
+        'queue.connections.sqs.suffix' => '-production',
+        'queue-autoscale.queues.long-timeout-queue' => ['workers' => ['timeout_seconds' => 1140]],
+    ]);
+
+    $protector = Mockery::mock(EcsTaskProtector::class);
+    $protector->shouldReceive('protectForJobTimeout')->once()->with(1140);
+    app()->instance(EcsTaskProtector::class, $protector);
+
+    $sqs = Mockery::mock(SqsClient::class);
+
+    assert($sqs instanceof SqsClient);
+
+    $job = new TenantFairSqsJob(
+        app(),
+        $sqs,
+        [
+            'MessageId' => 'message-id',
+            'ReceiptHandle' => 'receipt-handle',
+            'Body' => json_encode(['timeout' => null]),
+            'Attributes' => ['ApproximateReceiveCount' => '1'],
+        ],
+        'sqs',
+        'https://sqs.us-east-1.amazonaws.com/123456789012/long-timeout-queue-production',
+        config('queue.connections.sqs.overflow'),
+    );
 
     event(new JobProcessing('sqs', $job));
 });

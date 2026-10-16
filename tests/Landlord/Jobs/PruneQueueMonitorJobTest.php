@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\QueueMonitoringFeature;
 use App\Jobs\PruneQueueMonitorJob;
 use Carbon\CarbonImmutable;
 use Cbox\LaravelQueueMonitor\Enums\JobStatus;
@@ -42,8 +41,7 @@ use Cbox\LaravelQueueMonitor\Models\JobMonitor;
 use Illuminate\Support\Facades\DB;
 
 beforeEach(function () {
-    // TODO: Cleanup Task (queue-monitoring): delete this beforeEach once the flag no longer forces the monitor off at boot.
-    // The provider decides this at boot, before parallel testing switches to this process's database.
+    // The test suite runs with the queue monitor disabled.
     config(['queue-monitor.enabled' => true]);
 });
 
@@ -102,6 +100,56 @@ it('marks a job stuck processing as timed out', function () {
         ->and($running->refresh()->status)->toBe(JobStatus::PROCESSING);
 });
 
+it('records a completion time and duration on jobs it marks as timed out', function () {
+    $stuck = jobMonitorAged(JobStatus::PROCESSING, CarbonImmutable::now()->subMinutes(400));
+
+    (new PruneQueueMonitorJob())->handle();
+
+    $stuck->refresh();
+
+    expect($stuck->completed_at)->not->toBeNull()
+        ->and($stuck->duration_ms)->toBeGreaterThanOrEqual(400 * 60 * 1000);
+});
+
+it('does not read job rows one at a time while resolving and pruning', function () {
+    JobMonitor::query()->delete();
+
+    foreach (range(1, 6) as $minutes) {
+        jobMonitorAged(JobStatus::PROCESSING, CarbonImmutable::now()->subMinutes(400 + $minutes));
+        jobMonitorAged(JobStatus::COMPLETED, CarbonImmutable::now()->subDays(20 + $minutes));
+    }
+
+    DB::connection((new JobMonitor())->getConnectionName())->enableQueryLog();
+
+    (new PruneQueueMonitorJob())->handle();
+
+    // Any SELECT reading job rows or ids; the row-cap COUNT and the id subqueries inside DELETE statements are allowed.
+    $rowLookups = collect(DB::connection((new JobMonitor())->getConnectionName())->getQueryLog())
+        ->filter(fn (array $query): bool => str_starts_with($query['query'], 'select')
+            && str_contains($query['query'], 'from "queue_monitor_jobs"')
+            && ! str_starts_with($query['query'], 'select count('));
+
+    expect($rowLookups->count())->toBe(0)
+        ->and(JobMonitor::query()->where('status', JobStatus::TIMEOUT)->count())->toBe(6)
+        ->and(JobMonitor::query()->where('status', JobStatus::COMPLETED)->count())->toBe(0);
+});
+
+it('deletes the oldest finished jobs once the row cap is exceeded', function () {
+    JobMonitor::query()->delete();
+
+    config(['queue-monitor.retention.max_rows' => 2]);
+
+    $oldest = jobMonitorAged(JobStatus::COMPLETED, CarbonImmutable::now()->subDays(3));
+    $middle = jobMonitorAged(JobStatus::COMPLETED, CarbonImmutable::now()->subDays(2));
+    $newest = jobMonitorAged(JobStatus::COMPLETED, CarbonImmutable::now()->subDay());
+
+    (new PruneQueueMonitorJob())->handle();
+
+    expect(JobMonitor::query()->whereKey($oldest->getKey())->exists())->toBeFalse()
+        ->and(JobMonitor::query()->whereKey($middle->getKey())->exists())->toBeTrue()
+        ->and(JobMonitor::query()->whereKey($newest->getKey())->exists())->toBeTrue();
+});
+
 it('keeps old queued jobs that may still be waiting in a backlog', function () {
     $queued = jobMonitorAged(JobStatus::QUEUED, CarbonImmutable::now()->subDays(20));
 
@@ -130,16 +178,4 @@ it('nulls cluster event payloads past the payload window while keeping the rows'
     expect(DB::table('queue_monitor_cluster_events')->count())->toBe(2)
         ->and(DB::table('queue_monitor_cluster_events')->where('leader_id', 'old')->value('meta'))->toBeNull()
         ->and(DB::table('queue_monitor_cluster_events')->where('leader_id', 'recent')->value('meta'))->not->toBeNull();
-});
-
-it('does nothing while `QueueMonitoringFeature` is inactive', function () {
-    QueueMonitoringFeature::deactivate();
-
-    $old = jobMonitorAged(JobStatus::COMPLETED, CarbonImmutable::now()->subDays(20));
-    insertScalingEvent('old', CarbonImmutable::now()->subDays(20));
-
-    (new PruneQueueMonitorJob())->handle();
-
-    expect(JobMonitor::query()->whereKey($old->getKey())->exists())->toBeTrue()
-        ->and(DB::table('queue_monitor_scaling_events')->count())->toBe(1);
 });

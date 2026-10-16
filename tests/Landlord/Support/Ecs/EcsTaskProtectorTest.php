@@ -134,7 +134,7 @@ it('does not shorten a longer window that another worker is setting at the same 
     expect(CarbonImmutable::now()->diffInMinutes($protector->protectedUntil()))->toBeGreaterThan(23);
 });
 
-it('reports rejected protection requests without throwing', function (int $status, array $body) use ($directory) {
+it('reports rejected protection requests with the reason, without throwing', function (int $status, array $body, string $message) use ($directory) {
     Exceptions::fake();
     config(['app.ecs_agent_uri' => 'http://169.254.170.2/api/task']);
     Http::fake(['*' => Http::response($body, $status)]);
@@ -142,13 +142,35 @@ it('reports rejected protection requests without throwing', function (int $statu
     $protector = new EcsTaskProtector($directory);
     $protector->protectForJobTimeout(600);
 
-    Exceptions::assertReported(EcsTaskProtectionException::class);
+    Exceptions::assertReported(fn (EcsTaskProtectionException $exception): bool => $exception->getMessage() === $message);
 
     expect($protector->protectedUntil())->toBeNull();
 })->with([
-    'an error status' => [500, []],
-    'a failure in a successful response' => [200, ['failure' => ['Reason' => 'TASK_NOT_VALID']]],
+    'an error status' => [500, [], 'ECS rejected the task scale-in protection update with status 500.'],
+    'a failure in a successful response' => [200, ['failure' => ['Reason' => 'TASK_NOT_VALID', 'Detail' => null]], 'ECS rejected the task scale-in protection update with status 200: TASK_NOT_VALID.'],
+    'an error calling ECS' => [200, ['error' => ['Code' => 'ThrottlingException', 'Message' => 'Rate exceeded']], 'ECS rejected the task scale-in protection update with status 200: ThrottlingException Rate exceeded.'],
 ]);
+
+it('does not report protection ECS refuses while it waits to stop a protected task, and asks again on the next job', function () use ($directory) {
+    Exceptions::fake();
+    config(['app.ecs_agent_uri' => 'http://169.254.170.2/api/task', 'queue-autoscale.manager.log_channel' => 'null']);
+    Http::fakeSequence()
+        ->push(['failure' => ['Reason' => 'DEPLOYMENT_BLOCKED', 'Detail' => null]], 200)
+        ->push([], 200);
+
+    $protector = new EcsTaskProtector($directory);
+    $protector->protectForJobTimeout(600);
+
+    Exceptions::assertNothingReported();
+
+    expect($protector->protectedUntil())->toBeNull();
+
+    $protector->protectForJobTimeout(600);
+
+    Http::assertSentCount(2);
+
+    expect($protector->protectedUntil())->not->toBeNull();
+});
 
 it('reports failed protection requests without throwing', function () use ($directory) {
     Exceptions::fake();

@@ -245,9 +245,14 @@ class OutlookCalendarManager implements CalendarInterface
 
         $providerEvents = collect($this->getEvents($calendar, $start, $end, $perPage));
 
+        $existingEvents = $calendar->events()
+            ->whereIn('provider_id', $providerEvents->map(fn (Event $providerEvent) => $providerEvent->getId())->all())
+            ->get()
+            ->keyBy('provider_id');
+
         $providerEvents
-            ->each(function (Event $providerEvent) use ($calendar) {
-                $userEvent = $calendar->events()->where('provider_id', $providerEvent->getId())->first() ?? $calendar->events()->make();
+            ->each(function (Event $providerEvent) use ($calendar, $existingEvents) {
+                $userEvent = $existingEvents->get($providerEvent->getId()) ?? $calendar->events()->make();
 
                 $userEvent->fill([
                     'provider_id' => $providerEvent->getId(),
@@ -265,6 +270,8 @@ class OutlookCalendarManager implements CalendarInterface
                 if ($userEvent->isDirty()) {
                     $userEvent->saveQuietly();
                 }
+
+                $existingEvents->put($providerEvent->getId(), $userEvent);
             });
 
         $calendar->events()

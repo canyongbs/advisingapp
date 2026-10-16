@@ -36,22 +36,17 @@
 
 namespace App\Providers;
 
-use App\Features\QueueMonitoringFeature;
 use App\Listeners\RecordWorkerCountSample;
 use App\Models\Authenticatable;
 use App\Models\Tenant;
 use App\Overrides\Laravel\PostgresBatchRepository;
-use App\Overrides\QueueAutoscale\ExitReportingWorkerSpawner;
-use App\Overrides\SystemMetrics\ContainerMemoryMetricsSource;
 use Aws\CloudWatch\CloudWatchClient;
 use Cbox\LaravelQueueAutoscale\Configuration\AutoscaleConfiguration;
 use Cbox\LaravelQueueAutoscale\Events\ClusterSummaryPublished;
 use Cbox\LaravelQueueAutoscale\Events\ScalingDecisionMade;
-use Cbox\LaravelQueueAutoscale\Workers\WorkerSpawner;
 use Cbox\LaravelQueueMetrics\LaravelQueueMetrics;
 use Cbox\LaravelQueueMonitor\LaravelQueueMonitor;
 use Cbox\LaravelQueueMonitor\Models\JobMonitor;
-use Cbox\SystemMetrics\Config\SystemMetricsConfig;
 use Closure;
 use Illuminate\Bus\BatchFactory;
 use Illuminate\Bus\DatabaseBatchRepository;
@@ -83,11 +78,6 @@ class QueueObservabilityServiceProvider extends ServiceProvider
             return new CloudWatchClient($config);
         });
 
-        // The autoscale package registers after this provider and would overwrite a plain binding, so extend.
-        $this->app->extend(WorkerSpawner::class, fn (WorkerSpawner $spawner, Application $app): WorkerSpawner => $app->make(ExitReportingWorkerSpawner::class));
-
-        SystemMetricsConfig::setMemoryMetricsSource(new ContainerMemoryMetricsSource());
-
         // BusServiceProvider is deferred and would overwrite a plain binding, so extend at resolve time. That also
         // follows SwitchTenantDatabasesTask, which forgets the instance when it switches the batching connection.
         $this->app->extend(DatabaseBatchRepository::class, function (DatabaseBatchRepository $repository, Application $app): DatabaseBatchRepository {
@@ -111,11 +101,6 @@ class QueueObservabilityServiceProvider extends ServiceProvider
 
     public function boot(): void
     {
-        // Must boot before the queue monitor's provider, which only registers its listeners while it is enabled.
-        if (! rescue(fn (): bool => QueueMonitoringFeature::active(), false, report: false)) {
-            config(['queue-monitor.enabled' => false]);
-        }
-
         JobMonitor::creating(function (JobMonitor $jobMonitor): void {
             $jobMonitor->setAttribute('tenant_id', $jobMonitor->getAttribute('tenant_id') ?? Tenant::current()?->getKey());
         });
