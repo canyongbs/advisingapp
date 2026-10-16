@@ -303,7 +303,8 @@ it('exposes the mapped block types to the fields rich editor for the custom bloc
 
     $form = Form::factory()->create();
 
-    Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])
+    Livewire::withQueryParams(['tab' => 'edit'])
+        ->test(ManageForm::class, ['record' => $form->getRouteKey()])
         ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
 });
 
