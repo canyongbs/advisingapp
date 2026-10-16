@@ -151,7 +151,7 @@ trait InteractsWithVectorStores
 
         $deletedVectorStoreIds = [];
 
-        foreach ($this->getValidExistingVectorStoresForFiles($allFiles, $context) as $vectorStore) {
+        foreach ($this->getExistingVectorStoresForFiles($allFiles, $context) as $vectorStore) {
             if (
                 in_array($vectorStore->vector_store_id, $inUseVectorStoreIds, true)
                 || in_array($vectorStore->vector_store_id, $deletedVectorStoreIds, true)

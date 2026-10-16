@@ -616,6 +616,40 @@ it('keeps a vector store that is shared by a blank file and a file with content'
         && preg_match('#/vector_stores/' . preg_quote($sharedVectorStoreId, '#') . '(\?|$)#', $request->url()) === 1);
 });
 
+it('keeps the vector store of a file with content when a blank file has a different vector store', function () {
+    Http::fake([
+        '*/vector_stores/*/files*' => Http::response(['data' => []]),
+        '*/files/*' => Http::response(),
+        '*/vector_stores/*' => Http::response(),
+    ]);
+
+    $service = app(OpenAiGptTestService::class);
+
+    $blankFile = AiMessageFile::factory()
+        ->has(OpenAiVectorStore::factory()->state([
+            'deployment_hash' => $service->getDeploymentHash(),
+        ]), 'openAiVectorStores')
+        ->create(['parsing_results' => '']);
+
+    $fileWithContent = AiMessageFile::factory()
+        ->has(OpenAiVectorStore::factory()->state([
+            'deployment_hash' => $service->getDeploymentHash(),
+        ]), 'openAiVectorStores')
+        ->create();
+
+    $blankFileVectorStore = $blankFile->openAiVectorStores->first();
+    $contentFileVectorStore = $fileWithContent->openAiVectorStores->first();
+
+    $service->areFilesReady([$blankFile, $fileWithContent]);
+
+    assertSoftDeleted($blankFileVectorStore);
+
+    expect($contentFileVectorStore->refresh()->trashed())->toBeFalse();
+
+    Http::assertNotSent(fn (Request $request): bool => $request->method() === 'DELETE'
+        && preg_match('#/vector_stores/' . preg_quote($contentFileVectorStore->vector_store_id, '#') . '(\?|$)#', $request->url()) === 1);
+});
+
 it('deletes every vector store used only by blank files and still reports the files as ready', function () {
     Http::fake([
         '*/vector_stores/*/files*' => Http::response(['data' => []]),
