@@ -34,58 +34,46 @@
 </COPYRIGHT>
 */
 
-use AdvisingApp\Form\Filament\Blocks\FormFieldBlockRegistry;
+use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
-use AdvisingApp\Form\Filament\Resources\Forms\Pages\ViewForm;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
-use Livewire\Livewire;
+use App\Models\User;
 
+use function Pest\Laravel\actingAs;
+use function Pest\Laravel\get;
 use function Tests\asSuperAdmin;
 
-it('archive action is always visible and labeled Archive', function () {
+it('redirects a legacy URL to its tab', function (string $page, string $tab) {
     asSuperAdmin();
-
-    $formWithSubmissions = Form::factory()->create();
-
-    FormSubmission::factory()->create([
-        'form_id' => $formWithSubmissions->id,
-        'submitted_at' => now(),
-    ]);
-
-    $formWithoutSubmissions = Form::factory()->create();
-
-    Livewire::test(ViewForm::class, ['record' => $formWithSubmissions->getRouteKey()])
-        ->assertActionVisible('archive')
-        ->assertActionHasLabel('archive', 'Archive');
-
-    Livewire::test(ViewForm::class, ['record' => $formWithoutSubmissions->getRouteKey()])
-        ->assertActionVisible('archive')
-        ->assertActionHasLabel('archive', 'Archive');
-});
-
-it('archive action archives the form and redirects to the index when the form has submissions', function () {
-    asSuperAdmin();
-
     $form = Form::factory()->create();
 
-    FormSubmission::factory()->create([
-        'form_id' => $form->id,
-        'submitted_at' => now(),
-    ]);
+    get(FormResource::getUrl($page, ['record' => $form]))
+        ->assertRedirect(FormResource::getUrl('view', ['record' => $form, 'tab' => $tab]));
+})->with([
+    ['edit', 'edit'],
+    ['manage-on-screen-response', 'on-screen-response'],
+    ['manage-form-workflows', 'workflows'],
+    ['manage-submissions', 'submissions'],
+    ['manage-email-auto-reply', 'email-auto-reply'],
+    ['manage-notifications', 'notifications'],
+]);
 
-    Livewire::test(ViewForm::class, ['record' => $form->getRouteKey()])
-        ->callAction('archive')
-        ->assertRedirect(FormResource::getUrl('index'));
+it('keeps the query string and targets the submissions table when redirecting a submission link', function () {
+    asSuperAdmin();
+    $form = Form::factory()->create();
+    $submission = FormSubmission::factory()->create(['form_id' => $form->id]);
+    $parameters = ['record' => $form, 'tableAction' => 'view', 'tableActionRecord' => $submission->id];
 
-    expect($form->fresh()->isArchived())->toBeTrue();
+    get(FormResource::getUrl('manage-submissions', $parameters))
+        ->assertRedirect(FormResource::getUrl('view', [...$parameters, 'tab' => 'submissions', 'actionComponent' => 'submissions']));
 });
 
-it('exposes the mapped block types to the read-only fields rich editor for the custom block badges', function () {
-    asSuperAdmin();
+describe('authorization', function () {
+    it('denies access to a legacy URL without the `form.view-any` permission', function () {
+        actingAs(User::factory()->licensed(LicenseType::cases())->create());
+        $form = Form::factory()->create();
 
-    $form = Form::factory()->create();
-
-    Livewire::test(ViewForm::class, ['record' => $form->getRouteKey()])
-        ->assertSeeHtml('data-mapped-block-types="' . implode(',', FormFieldBlockRegistry::getMappedBlockTypes()) . '"');
+        get(FormResource::getUrl('edit', ['record' => $form]))->assertForbidden();
+    });
 });

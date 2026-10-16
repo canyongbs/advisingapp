@@ -34,6 +34,7 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Form\Notifications\FormSubmissionNotification;
@@ -57,6 +58,24 @@ it('links the author name to their student record', function () {
     $body = (new FormSubmissionNotification($form, $submission))->toDatabase(User::factory()->create())['body'];
 
     expect($body)->toContain(StudentResource::getUrl('view', ['record' => $student]));
+});
+
+it('links form and submission details to their canonical tabs', function () {
+    asSuperAdmin();
+
+    $form = Form::factory()->create();
+    $submission = FormSubmission::factory()->create(['form_id' => $form->id]);
+
+    $body = (new FormSubmissionNotification($form, $submission))->toDatabase(User::factory()->create())['body'];
+
+    expect($body)->toContain(FormResource::getUrl('view', ['record' => $form, 'tab' => 'edit']))
+        ->and($body)->toContain(FormResource::getUrl('view', [
+            'record' => $form,
+            'tab' => 'submissions',
+            'actionComponent' => 'submissions',
+            'tableAction' => 'view',
+            'tableActionRecord' => $submission->id,
+        ]));
 });
 
 describe('archiving', function () {

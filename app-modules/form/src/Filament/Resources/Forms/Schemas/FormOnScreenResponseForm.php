@@ -34,28 +34,20 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
+namespace AdvisingApp\Form\Filament\Resources\Forms\Schemas;
 
-use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Schema;
 
-class SubmissionOnScreenResponse extends EditRecord
+class FormOnScreenResponseForm
 {
-    protected static string $resource = FormResource::class;
-
-    protected static ?string $navigationLabel = 'On-Screen Response';
-
-    public function form(Schema $schema): Schema
+    public static function configure(Schema $schema): Schema
     {
         return $schema
-            ->components(
-                [
-                    MarkdownEditor::make('on_screen_response')
-                        ->disableToolbarButtons(['attachFiles'])
-                        ->columnSpanFull(),
-                ]
-            );
+            ->components([
+                MarkdownEditor::make('on_screen_response')
+                    ->disableToolbarButtons(['attachFiles'])
+                    ->columnSpanFull(),
+            ]);
     }
 }

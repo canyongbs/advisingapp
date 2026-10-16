@@ -37,44 +37,22 @@
 namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
 
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
-use AdvisingApp\Form\Models\Form;
-use App\Filament\Forms\Components\UserSelect;
-use Filament\Forms\Components\Toggle;
-use Filament\Resources\Pages\EditRecord;
-use Filament\Schemas\Components\Section;
-use Filament\Schemas\Schema;
+use Filament\Resources\Pages\Page;
 
-class ManageFormNotifications extends EditRecord
+class RedirectToFormTab extends Page
 {
     protected static string $resource = FormResource::class;
 
-    protected static ?string $navigationLabel = 'Notifications';
-
-    protected static ?string $breadcrumb = 'Notifications';
-
-    public function form(Schema $schema): Schema
+    public function mount(int | string $record): void
     {
-        return $schema
-            ->components([
-                Section::make('')
-                    ->schema([
-                        UserSelect::make('notification_users')
-                            ->label('Users to Notify')
-                            ->relationship('notificationUsers', 'name')
-                            ->multiple()
-                            ->searchable()
-                            ->preload(),
-                        Toggle::make('notify_to_care_team')
-                            ->label('Notify to Care Team')
-                            ->visible(fn (Form $form) => $form->is_authenticated),
-                        Toggle::make('notify_to_subscribers')
-                            ->label('Notify to Followers')
-                            ->visible(fn (Form $form) => $form->is_authenticated),
-                        Toggle::make('notify_via_app')
-                            ->label('Notify via App'),
-                        Toggle::make('notify_via_email')
-                            ->label('Notify via Email'),
-                    ]),
-            ]);
+        // Notifications sent before the tabs existed link to the former sub-navigation pages, with unscoped submission deep links.
+        $tab = last(request()->segments());
+
+        $this->redirect(FormResource::getUrl('view', [
+            ...request()->query(),
+            'record' => $record,
+            'tab' => $tab,
+            ...((($tab === 'submissions') && request()->filled('tableAction')) ? ['actionComponent' => 'submissions'] : []),
+        ]));
     }
 }
