@@ -118,6 +118,7 @@ class ListConcerns extends ListRecords
             ])
             ->filters([
                 Filter::make('subscribed')
+                    ->label('Following')
                     ->query(
                         fn (Builder $query): Builder => $query->whereHas(
                             relation: 'concern',

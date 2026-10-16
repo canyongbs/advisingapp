@@ -65,10 +65,12 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
     protected static string $relationship = 'subscribedUsers';
 
     // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $navigationLabel = 'Subscriptions';
+    protected static ?string $navigationLabel = 'Followers';
 
     // TODO: Automatically set from Filament based on relationship name
-    protected static ?string $breadcrumb = 'Subscriptions';
+    protected static ?string $breadcrumb = 'Followers';
+
+    protected static ?string $title = 'Followers';
 
     protected static string | BackedEnum | null $navigationIcon = 'heroicon-o-user';
 
@@ -85,7 +87,7 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
                     ->color('primary'),
                 TextColumn::make('pivot.created_at')
                     ->dateTime()
-                    ->label('Subscribed At'),
+                    ->label('Followed At'),
             ])
             ->headerActions([
                 AttachAction::make()
@@ -95,9 +97,9 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
 
-                        return 'Subscribe a User to ' . $prospect->display_name;
+                        return 'Add a Follower to ' . $prospect->display_name;
                     })
-                    ->modalSubmitActionLabel('Subscribe')
+                    ->modalSubmitActionLabel('Add Follower')
                     ->attachAnother(false)
                     ->color('primary')
                     ->recordSelect(
@@ -112,48 +114,48 @@ class ManageProspectSubscriptions extends ManageRelatedRecords
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
 
-                        return "{$record->name} was subscribed to {$prospect->display_name}";
+                        return "{$record->name} is now following {$prospect->display_name}";
                     }),
             ])
             ->recordActions([
                 DetachAction::make()
                     ->authorize(fn (): bool => auth()->user()->can('deleteAny', Subscription::class))
-                    ->label('Unsubscribe')
+                    ->label('Remove')
                     ->modalHeading(function (User $record) {
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
 
-                        return "Unsubscribe {$record->name} from {$prospect->display_name}";
+                        return "Remove {$record->name} as a follower of {$prospect->display_name}";
                     })
-                    ->modalSubmitActionLabel('Unsubscribe')
+                    ->modalSubmitActionLabel('Remove')
                     ->successNotificationTitle(function (User $record) {
                         /** @var Prospect $prospect */
                         $prospect = $this->getOwnerRecord();
 
-                        return "{$record->name} was unsubscribed from {$prospect->display_name}";
+                        return "{$record->name} is no longer following {$prospect->display_name}";
                     }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DetachBulkAction::make()
                         ->authorize(fn (): bool => auth()->user()->can('deleteAny', Subscription::class))
-                        ->label('Unsubscribe selected')
+                        ->label('Remove selected')
                         ->modalHeading(function () {
                             /** @var Prospect $prospect */
                             $prospect = $this->getOwnerRecord();
 
-                            return "Unsubscribe selected from {$prospect->display_name}";
+                            return "Remove selected followers from {$prospect->display_name}";
                         })
-                        ->modalSubmitActionLabel('Unsubscribe')
+                        ->modalSubmitActionLabel('Remove')
                         ->successNotificationTitle(function () {
                             /** @var Prospect $prospect */
                             $prospect = $this->getOwnerRecord();
 
-                            return "All selected were unsubscribed from {$prospect->display_name}";
+                            return "All selected are no longer following {$prospect->display_name}";
                         }),
                 ]),
             ])
-            ->emptyStateHeading('No Subscriptions')
+            ->emptyStateHeading('No Followers')
             ->inverseRelationship('prospectSubscriptions');
     }
 }

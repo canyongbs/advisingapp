@@ -66,7 +66,7 @@ class NotifyUserOfSubscriptionCreated implements ShouldQueueAfterCommit
 
         Notification::make()
             ->success()
-            ->title("You have been subscribed to {$morph} {$link}")
+            ->title("You are now following {$morph} {$link}")
             ->sendToDatabase($event->subscription->user);
     }
 }

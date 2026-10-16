@@ -42,7 +42,7 @@
             'fi-scrollable' => $subscribedUsers,
         ])
     >
-        <x-slot name="heading">Subscriptions</x-slot>
+        <x-slot name="heading">Followers</x-slot>
 
         <x-slot name="afterHeader">
             <x-filament::button color="gray" tag="a" :href="$manageUrl">Manage</x-filament::button>
@@ -64,7 +64,7 @@
 
                     @if (filled($subscriber->job_title))
                         <p class="text-sm text-gray-500 dark:text-gray-400">
-                            Subscribed {{ $subscriber->pivot->created_at->toFormattedDateString() }}
+                            Following since {{ $subscriber->pivot->created_at->toFormattedDateString() }}
                         </p>
                     @endif
                 </div>
@@ -76,7 +76,7 @@
                         @svg('heroicon-o-x-mark', 'h-6 w-6 text-gray-500 dark:text-gray-400')
                     </div>
 
-                    <h4 class="text-base font-semibold leading-6 text-gray-950 dark:text-white">No subscriptions</h4>
+                    <h4 class="text-base font-semibold leading-6 text-gray-950 dark:text-white">No followers</h4>
                 </div>
             </div>
         @endforelse

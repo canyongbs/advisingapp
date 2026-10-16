@@ -138,6 +138,7 @@ class ListProspects extends ListRecords
                     ->optionsLimit(20)
                     ->query(fn (Builder $query, array $data) => $this->groupFilter($query, $data)),
                 Filter::make('subscribed')
+                    ->label('Following')
                     ->query(fn (Builder $query): Builder => $query->whereRelation('subscriptions.user', 'id', auth()->id())),
                 Filter::make('care_team')
                     ->label('Care Team')
