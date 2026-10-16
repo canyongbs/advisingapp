@@ -93,7 +93,7 @@ $getRenderedFormIds = function (Testable $component): array {
     return $ids;
 };
 
-$archiveAction = fn (): TestAction => TestAction::make('archive')->schemaComponent('relationManagerTabs.edit.form-actions', schema: 'content');
+$archiveAction = fn (): TestAction => TestAction::make('archive');
 
 it('can render the manage form page', function () {
     asSuperAdmin();
@@ -614,7 +614,7 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
         $form = Form::factory()->create();
 
         Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])
-            ->assertActionDoesNotExist($archiveAction());
+            ->assertActionHidden($archiveAction());
     });
 
     it('hides the header actions without the `form.*.view` permission', function (string $action) use ($actingAsUserWithPermissions) {
@@ -632,6 +632,38 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
         $form = Form::factory()->create();
 
         Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])
-            ->assertActionDoesNotExist($archiveAction());
+            ->assertActionHidden($archiveAction());
+    });
+
+    it('does not archive a form through direct invocation without both update and delete permissions', function (string $permission) use ($actingAsUserWithPermissions) {
+        $actingAsUserWithPermissions('form.*.view', $permission);
+
+        $form = Form::factory()->create();
+
+        expect($form->isArchived())->toBeFalse();
+
+        Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->call('mountAction', 'archive')
+            ->call('callMountedAction')
+            ->assertNotNotified();
+
+        expect($form->fresh()->isArchived())->toBeFalse();
+    })->with([
+        'update only' => 'form.*.update',
+        'delete only' => 'form.*.delete',
+    ]);
+
+    it('allows archiving a form with both update and delete permissions', function () use ($actingAsUserWithPermissions, $archiveAction) {
+        $actingAsUserWithPermissions('form.*.view', 'form.*.update', 'form.*.delete');
+
+        $form = Form::factory()->create();
+
+        expect($form->isArchived())->toBeFalse();
+
+        Livewire::test(ManageForm::class, ['record' => $form->getRouteKey()])
+            ->callAction($archiveAction())
+            ->assertRedirect(FormResource::getUrl('index'));
+
+        expect($form->fresh()->isArchived())->toBeTrue();
     });
 });
