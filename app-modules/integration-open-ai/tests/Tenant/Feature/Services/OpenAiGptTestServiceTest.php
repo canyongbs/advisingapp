@@ -542,6 +542,111 @@ it('removes an indexed resource hub article when it no longer has parsing result
         && str_contains($request->url(), "/files/{$fileId}"));
 });
 
+it('deletes the vector store of an indexed file that became blank when another file with content has no vector store yet', function () {
+    Http::fake([
+        '*/vector_stores/*/files*' => Http::response([
+            'data' => [['id' => $blankFileOpenAiId = (string) Str::uuid()]],
+        ]),
+        '*/files/*' => Http::response(),
+        '*/vector_stores/*' => Http::response(),
+        '*/files*' => Http::response(['id' => (string) Str::uuid()]),
+        '*/vector_stores*' => Http::response(['id' => $newVectorStoreId = (string) Str::uuid()]),
+    ]);
+
+    $service = app(OpenAiGptTestService::class);
+
+    $blankFile = AiMessageFile::factory()
+        ->has(OpenAiVectorStore::factory()->state([
+            'deployment_hash' => $service->getDeploymentHash(),
+            'vector_store_file_id' => $blankFileOpenAiId,
+        ]), 'openAiVectorStores')
+        ->create(['parsing_results' => '']);
+
+    $blankFileVectorStore = $blankFile->openAiVectorStores->first();
+
+    $fileWithContent = AiMessageFile::factory()->create();
+
+    expect($blankFileVectorStore->refresh()->trashed())->toBeFalse()
+        ->and($fileWithContent->openAiVectorStores()->count())->toBe(0);
+
+    expect($service->areFilesReady([$blankFile, $fileWithContent]))
+        ->toBeFalse();
+
+    assertSoftDeleted($blankFileVectorStore);
+
+    Http::assertSent(fn (Request $request): bool => $request->method() === 'DELETE'
+        && str_contains($request->url(), "/files/{$blankFileOpenAiId}"));
+
+    expect($fileWithContent->openAiVectorStores()->first())
+        ->vector_store_id->toBe($newVectorStoreId);
+});
+
+it('keeps a vector store that is shared by a blank file and a file with content', function () {
+    Http::fake([
+        '*/vector_stores/*/files*' => Http::response(['data' => []]),
+        '*/files/*' => Http::response(),
+        '*/vector_stores/*' => Http::response(),
+    ]);
+
+    $service = app(OpenAiGptTestService::class);
+
+    $sharedVectorStoreId = (string) Str::uuid();
+
+    $blankFile = AiMessageFile::factory()
+        ->has(OpenAiVectorStore::factory()->state([
+            'deployment_hash' => $service->getDeploymentHash(),
+            'vector_store_id' => $sharedVectorStoreId,
+        ]), 'openAiVectorStores')
+        ->create(['parsing_results' => '']);
+
+    $fileWithContent = AiMessageFile::factory()
+        ->has(OpenAiVectorStore::factory()->state([
+            'deployment_hash' => $service->getDeploymentHash(),
+            'vector_store_id' => $sharedVectorStoreId,
+        ]), 'openAiVectorStores')
+        ->create();
+
+    $contentFileVectorStore = $fileWithContent->openAiVectorStores->first();
+
+    $service->areFilesReady([$blankFile, $fileWithContent]);
+
+    expect($contentFileVectorStore->refresh()->trashed())->toBeFalse();
+
+    Http::assertNotSent(fn (Request $request): bool => $request->method() === 'DELETE'
+        && preg_match('#/vector_stores/' . preg_quote($sharedVectorStoreId, '#') . '(\?|$)#', $request->url()) === 1);
+});
+
+it('deletes every vector store used only by blank files and still reports the files as ready', function () {
+    Http::fake([
+        '*/vector_stores/*/files*' => Http::response(['data' => []]),
+        '*/files/*' => Http::response(),
+        '*/vector_stores/*' => Http::response(),
+    ]);
+
+    $service = app(OpenAiGptTestService::class);
+
+    $blankFiles = AiMessageFile::factory()
+        ->count(2)
+        ->has(OpenAiVectorStore::factory()->state(fn (): array => [
+            'deployment_hash' => $service->getDeploymentHash(),
+        ]), 'openAiVectorStores')
+        ->create(['parsing_results' => '']);
+
+    $vectorStores = $blankFiles->map(fn (AiMessageFile $file): OpenAiVectorStore => $file->openAiVectorStores->first());
+
+    expect($service->areFilesReady($blankFiles->all()))
+        ->toBeTrue();
+
+    $vectorStores->each(fn (OpenAiVectorStore $vectorStore) => assertSoftDeleted($vectorStore));
+});
+
+it('reports an empty list of files as ready', function () {
+    $service = app(OpenAiGptTestService::class);
+
+    expect($service->areFilesReady([]))
+        ->toBeTrue();
+});
+
 it('captures the OpenAI response id from the stream so a conversation can continue', function () {
     asSuperAdmin();
 
