@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
+namespace AdvisingApp\Form\Filament\Resources\Forms\RelationManagers;
 
 use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
 use AdvisingApp\Form\Filament\Resources\Forms\Resources\Workflows\WorkflowResource as FormWorkflowResource;
@@ -44,24 +44,25 @@ use AdvisingApp\Workflow\Models\WorkflowTrigger;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
-use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
-class ManageFormWorkflows extends ManageRelatedRecords
+class WorkflowsRelationManager extends RelationManager
 {
-    protected static string $resource = FormResource::class;
-
     protected static string $relationship = 'workflows';
 
     protected static ?string $relatedResource = FormWorkflowResource::class;
 
-    public static function getNavigationLabel(): string
+    protected static ?string $title = 'Workflows';
+
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        return 'Workflows';
+        return FormResource::canAccess() && parent::canViewForRecord($ownerRecord, $pageClass);
     }
 
     public function table(Table $table): Table
@@ -76,6 +77,9 @@ class ManageFormWorkflows extends ManageRelatedRecords
                 TextColumn::make('steps')
                     ->getStateUsing(fn (Workflow $record) => $record->workflowSteps()->count()),
             ])
+            ->headerActions([
+                $this->getCreateAction(),
+            ])
             ->recordActions([
                 EditAction::make()
                     ->url(fn (Workflow $record): string => FormWorkflowResource::getUrl('edit', ['form' => $this->getOwnerRecord(), 'record' => $record])),
@@ -85,45 +89,40 @@ class ManageFormWorkflows extends ManageRelatedRecords
             ->recordUrl(fn (Workflow $record): string => FormWorkflowResource::getUrl('edit', ['form' => $this->getOwnerRecord(), 'record' => $record]));
     }
 
-    /**
-     * @return array<Action>
-     */
-    public function getHeaderActions(): array
+    protected function getCreateAction(): Action
     {
-        return [
-            Action::make('create')
-                ->authorize(fn (): bool => auth()->user()->can('update', $this->getOwnerRecord()))
-                ->label('Create New Workflow')
-                ->action(function (): void {
-                    try {
-                        DB::beginTransaction();
+        return Action::make('create')
+            ->authorize(fn (): bool => auth()->user()->can('update', $this->getOwnerRecord()))
+            ->label('Create New Workflow')
+            ->action(function ():void {
+                try {
+                    DB::beginTransaction();
 
-                        $workflowTrigger = new WorkflowTrigger([
-                            'type' => WorkflowTriggerType::EventBased,
-                        ]);
+                    $workflowTrigger = new WorkflowTrigger([
+                        'type' => WorkflowTriggerType::EventBased,
+                    ]);
 
-                        $workflowTrigger->related()->associate($this->getOwnerRecord());
-                        $workflowTrigger->createdBy()->associate(auth()->user());
+                    $workflowTrigger->related()->associate($this->getOwnerRecord());
+                    $workflowTrigger->createdBy()->associate(auth()->user());
 
-                        $workflowTrigger->save();
+                    $workflowTrigger->save();
 
-                        $workflow = new Workflow([
-                            'name' => 'Form Workflow',
-                            'is_enabled' => false,
-                        ]);
+                    $workflow = new Workflow([
+                        'name' => 'Form Workflow',
+                        'is_enabled' => false,
+                    ]);
 
-                        $workflow->workflowTrigger()->associate($workflowTrigger);
+                    $workflow->workflowTrigger()->associate($workflowTrigger);
 
-                        $workflow->save();
-                        DB::commit();
-                    } catch (Throwable $throw) {
-                        DB::rollBack();
+                    $workflow->save();
+                    DB::commit();
+                } catch (Throwable $throw) {
+                    DB::rollBack();
 
-                        throw $throw;
-                    }
+                    throw $throw;
+                }
 
-                    redirect(FormWorkflowResource::getUrl('edit', ['form' => $this->getOwnerRecord(), 'record' => $workflow]));
-                }),
-        ];
+                redirect(FormWorkflowResource::getUrl('edit', ['form' => $this->getOwnerRecord(), 'record' => $workflow]));
+            });
     }
 }

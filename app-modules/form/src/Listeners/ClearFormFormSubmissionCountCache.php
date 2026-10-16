@@ -48,10 +48,7 @@ class ClearFormFormSubmissionCountCache implements ShouldQueue
         $event->submission->loadMissing('submissible');
 
         if ($event->submission->submissible instanceof Form) {
-            Cache::tags('{form-submission-count}')
-                ->forget(
-                    "form-submission-count-{$event->submission->submissible->root_id}"
-                );
+            Cache::tags('{form-submission-count}')->flush();
         }
     }
 }

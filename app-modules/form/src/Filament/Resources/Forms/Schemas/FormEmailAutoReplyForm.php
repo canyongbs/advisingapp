@@ -34,11 +34,9 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
+namespace AdvisingApp\Form\Filament\Resources\Forms\Schemas;
 
 use AdvisingApp\Engagement\Models\EmailTemplate;
-use AdvisingApp\Form\Filament\Resources\Forms\FormResource;
-use AdvisingApp\Form\Models\Form;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Checkbox;
@@ -46,7 +44,6 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\RichEditor\ToolbarButtonGroup;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
-use Filament\Resources\Pages\EditRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
@@ -55,29 +52,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Expression;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class ManageFormEmailAutoReply extends EditRecord
+class FormEmailAutoReplyForm
 {
-    protected static string $resource = FormResource::class;
-
-    protected static ?string $navigationLabel = 'Email Auto Reply';
-
-    protected static ?string $breadcrumb = 'Email Auto Reply';
-
-    protected ?string $heading = 'Email Auto Reply';
-
-    public static function canAccess(array $parameters = []): bool
-    {
-        /** @var ?Form $form */
-        $form = $parameters['record'] ?? null;
-
-        if (! $form) {
-            return false;
-        }
-
-        return $form->is_authenticated;
-    }
-
-    public function form(Schema $schema): Schema
+    public static function configure(Schema $schema): Schema
     {
         return $schema
             ->components([

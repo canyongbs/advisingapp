@@ -2730,28 +2730,10 @@ $ignoreErrors[] = [
     'path' => __DIR__ . '/app-modules/form/src/Filament/Blocks/SelectFormFieldBlock.php',
 ];
 $ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\Forms\\\\Pages\\\\CreateForm\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/CreateForm.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Method AdvisingApp\\\\Form\\\\Filament\\\\Resources\\\\Forms\\\\Pages\\\\EditForm\\:\\:fields\\(\\) return type has no value type specified in iterable type array\\.$#',
-    'identifier' => 'missingType.iterableValue',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/EditForm.php',
-];
-$ignoreErrors[] = [
     'message' => '#^Access to an undefined property AdvisingApp\\\\Form\\\\Models\\\\Submissible\\:\\:\\$is_authenticated\\.$#',
     'identifier' => 'property.notFound',
     'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/ManageFormSubmissions.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Access to an undefined property Illuminate\\\\Database\\\\Eloquent\\\\Model\\:\\:\\$name\\.$#',
-    'identifier' => 'property.notFound',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/Pages/ManageFormSubmissions.php',
+    'path' => __DIR__ . '/app-modules/form/src/Filament/Resources/Forms/RelationManagers/SubmissionsRelationManager.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Call to an undefined method Illuminate\\\\Database\\\\Eloquent\\\\Builder\\:\\:canceled\\(\\)\\.$#',
@@ -3094,12 +3076,6 @@ $ignoreErrors[] = [
     'identifier' => 'missingType.return',
     'count' => 1,
     'path' => __DIR__ . '/app-modules/form/src/Providers/FormServiceProvider.php',
-];
-$ignoreErrors[] = [
-    'message' => '#^Avoid assertSee\\(\\) and its alternatives\\: they only prove the text appears somewhere in the rendered output, not that it appears where the test actually expects it, so they can pass even when the feature under test is broken\\. Prefer a more precise assertion \\(e\\.g\\. asserting component/view state, a scoped selector, or the specific structure produced\\)\\. If you are certain you specifically need this assertion, add an inline ignore for this rule \\(// @phpstan\\-ignore Common\\.noAssertSee\\)\\.$#',
-    'identifier' => 'Common.noAssertSee',
-    'count' => 1,
-    'path' => __DIR__ . '/app-modules/form/tests/Tenant/Filament/Resources/Forms/Pages/ManageFormWorkflowsTest.php',
 ];
 $ignoreErrors[] = [
     'message' => '#^Action class "AdvisingApp\\\\Group\\\\Actions\\\\BulkGroupAction" defines disallowed public method "make"\\. Only "__invoke" and "__construct" may be public on action classes\\.$#',
