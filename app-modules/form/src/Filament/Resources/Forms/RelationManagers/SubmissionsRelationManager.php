@@ -34,7 +34,7 @@
 </COPYRIGHT>
 */
 
-namespace AdvisingApp\Form\Filament\Resources\Forms\Pages;
+namespace AdvisingApp\Form\Filament\Resources\Forms\RelationManagers;
 
 use AdvisingApp\Form\Enums\FormSubmissionStatus;
 use AdvisingApp\Form\Exports\FormSubmissionExport;
@@ -50,7 +50,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\ViewAction;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\ManageRelatedRecords;
+use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Schemas\Components\Section;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
@@ -58,19 +58,40 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Facades\Excel;
 
-class ManageFormSubmissions extends ManageRelatedRecords
+class SubmissionsRelationManager extends RelationManager
 {
-    protected static string $resource = FormResource::class;
-
-    // TODO: Obsolete when there is no table, remove from Filament
     protected static string $relationship = 'submissions';
 
-    protected static ?string $navigationLabel = 'Submissions';
+    protected static ?string $title = 'Submissions';
 
-    protected static ?string $breadcrumb = 'Submissions';
+    public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
+    {
+        return FormResource::canAccess() && parent::canViewForRecord($ownerRecord, $pageClass);
+    }
+
+    public function getDefaultActionUrlIdentifier(): string
+    {
+        return 'submissions';
+    }
+
+    public function mountDefaultActions(): void
+    {
+        parent::mountDefaultActions();
+
+        if (! $this->hasDefaultTableActionMounted) {
+            return;
+        }
+
+        // Consume the link, otherwise returning to this tab remounts the table and reopens the submission.
+        $this->defaultActionComponent = null;
+        $this->defaultTableAction = null;
+        $this->defaultTableActionRecord = null;
+        $this->defaultTableActionArguments = null;
+    }
 
     public function table(Table $table): Table
     {
@@ -159,12 +180,13 @@ class ManageFormSubmissions extends ManageRelatedRecords
                     ->modalHeading('Archive Submission')
                     ->modalSubmitActionLabel('Archive')
                     ->authorize(fn (FormSubmission $record): bool => auth()->user()->can('archive', $record))
-                    ->action(function (FormSubmission $record) use ($owner): void {
+                    ->action(function (FormSubmission $record): void {
                         $record->archive();
-                        Cache::tags('{form-submission-count}')
-                            ->forget(
-                                "form-submission-count-{$owner->root_id}"
-                            );
+
+                        Cache::tags('{form-submission-count}')->flush();
+
+                        $this->dispatch('refresh-page');
+
                         Notification::make()
                             ->title('Submission archived')
                             ->success()
@@ -176,8 +198,8 @@ class ManageFormSubmissions extends ManageRelatedRecords
                 BulkActionGroup::make([
                     BulkAction::make('Export')
                         ->icon('heroicon-o-arrow-down-tray')
-                        ->action(function (Collection $records) {
-                            $filename = str("selected-form-submissions-{$this->getOwnerRecord()->name}-")
+                        ->action(function (Collection $records) use ($owner) {
+                            $filename = str("selected-form-submissions-{$owner->name}-")
                                 ->append(now()->format('Y-m-d-Hisv'))
                                 ->slug()
                                 ->append('.csv');
@@ -192,7 +214,8 @@ class ManageFormSubmissions extends ManageRelatedRecords
                         ->modalHeading('Archive Submissions')
                         ->modalSubmitActionLabel('Archive')
                         ->authorize(fn () => auth()->user()->can('deleteAny', FormSubmission::class))
-                        ->action(function (Collection $records) use ($owner): void {
+                        ->authorizeIndividualRecords('archive')
+                        ->action(function (Collection $records): void {
                             /** @phpstan-ignore argument.type */
                             $records->each(function (FormSubmission $record): void {
                                 if ($record->isArchived()) {
@@ -201,10 +224,10 @@ class ManageFormSubmissions extends ManageRelatedRecords
 
                                 $record->archive();
                             });
-                            Cache::tags('{form-submission-count}')
-                                ->forget(
-                                    "form-submission-count-{$owner->root_id}"
-                                );
+
+                            Cache::tags('{form-submission-count}')->flush();
+
+                            $this->dispatch('refresh-page');
 
                             Notification::make()
                                 ->title('Submissions archived')
@@ -215,30 +238,26 @@ class ManageFormSubmissions extends ManageRelatedRecords
             ]);
     }
 
-    public static function getNavigationItems(array $urlParameters = []): array
+    public static function getBadge(Model $ownerRecord, string $pageClass): ?string
     {
-        $item = parent::getNavigationItems($urlParameters)[0];
+        assert($ownerRecord instanceof Form);
 
-        $ownerRecord = $urlParameters['record'];
-
-        /** @var Form $ownerRecord */
         $formSubmissionsCount = Cache::tags('{form-submission-count}')
             ->remember(
-                "form-submission-count-{$ownerRecord->root_id}",
+                // Licenses limit which submissions a user can count.
+                "form-submission-count-{$ownerRecord->root_id}-" . auth()->id(),
                 now()->addMinutes(5),
                 function () use ($ownerRecord): int {
-                    $navQuery = FormSubmission::query()
+                    return FormSubmission::query()
                         ->whereHas(
                             'submissible',
                             fn (Builder $query) => $query->withoutGlobalScopes()->where('root_id', $ownerRecord->root_id),
-                        )->withoutArchived();
-
-                    return $navQuery->count();
+                        )
+                        ->withoutArchived()
+                        ->count();
                 },
             );
 
-        $item->badge((string) $formSubmissionsCount);
-
-        return [$item];
+        return (string) $formSubmissionsCount;
     }
 }
