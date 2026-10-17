@@ -700,13 +700,9 @@ abstract class BaseOpenAiService implements AiService
         $allFiles = $files;
         $files = array_values(array_filter($files, fn (AiFile $file): bool => $this->fileHasParsingResults($file)));
 
+        $this->deleteVectorStoresWithoutParsedFiles($allFiles, $files, $context);
+
         if (! $files) {
-            $primaryVectorStore = Arr::first($this->getValidExistingVectorStoresForFiles($allFiles, $context));
-
-            if (filled($primaryVectorStore)) {
-                $this->deleteVectorStore($primaryVectorStore);
-            }
-
             return true;
         }
 
