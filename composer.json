@@ -83,7 +83,7 @@
         "laravel/socialite": "^5.24.0",
         "laravel/tinker": "^3.0",
         "laravel/ui": "^4.5",
-        "league/commonmark": "^2.9.0",
+        "league/commonmark": "^2.10.2",
         "league/flysystem-aws-s3-v3": "^3.28",
         "league/html-to-markdown": "^5.1",
         "league/oauth2-client": "^2.7",
