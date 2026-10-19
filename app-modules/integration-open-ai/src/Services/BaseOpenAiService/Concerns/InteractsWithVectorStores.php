@@ -136,6 +136,35 @@ trait InteractsWithVectorStores
         return $query->get()->all();
     }
 
+    /**
+     * Deletes the vector stores of files that no longer have parsing results,
+     * unless the store is still used by one of the files that do.
+     *
+     * @param array<AiFile> $allFiles
+     * @param array<AiFile> $filesWithParsingResults
+     */
+    protected function deleteVectorStoresWithoutParsedFiles(array $allFiles, array $filesWithParsingResults, ?Model $context = null): void
+    {
+        $inUseVectorStoreIds = collect($this->getExistingVectorStoresForFiles($filesWithParsingResults, $context))
+            ->pluck('vector_store_id')
+            ->all();
+
+        $deletedVectorStoreIds = [];
+
+        foreach ($this->getExistingVectorStoresForFiles($allFiles, $context) as $vectorStore) {
+            if (
+                in_array($vectorStore->vector_store_id, $inUseVectorStoreIds, true)
+                || in_array($vectorStore->vector_store_id, $deletedVectorStoreIds, true)
+            ) {
+                continue;
+            }
+
+            $this->deleteVectorStore($vectorStore);
+
+            $deletedVectorStoreIds[] = $vectorStore->vector_store_id;
+        }
+    }
+
     protected function deleteVectorStore(OpenAiVectorStore $vectorStore): void
     {
         if (! $vectorStore->exists()) {
