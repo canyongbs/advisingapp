@@ -113,7 +113,7 @@ class ProspectResource extends Resource
             'create' => CreateProspect::route('/create'),
             'edit' => EditProspect::route('/{record}/edit'),
             'concerns' => ManageProspectConcerns::route('/{record}/concerns'),
-            'manage-subscriptions' => ManageProspectSubscriptions::route('/{record}/subscriptions'),
+            'followers' => ManageProspectSubscriptions::route('/{record}/followers'),
             'tasks' => ManageProspectTasks::route('/{record}/tasks'),
             'view' => ViewProspect::route('/{record}'),
             'activity-feed' => ViewProspectActivityFeed::route('/{record}/activity'),

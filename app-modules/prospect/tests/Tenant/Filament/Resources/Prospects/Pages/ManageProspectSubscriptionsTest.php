@@ -34,15 +34,19 @@
 </COPYRIGHT>
 */
 
-use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\Artisan;
+use AdvisingApp\Prospect\Filament\Resources\Prospects\ProspectResource;
+use AdvisingApp\Prospect\Models\Prospect;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        // Workers and the autoscale manager booted before the flag was activated keep queue monitoring off until they restart.
-        Artisan::call('queue:restart');
-    }
+use function Pest\Laravel\get;
+use function Tests\asSuperAdmin;
 
-    public function down(): void {}
-};
+it('serves the followers page at the followers URL', function () {
+    asSuperAdmin();
+
+    $prospect = Prospect::factory()->create();
+    $url = ProspectResource::getUrl('followers', ['record' => $prospect]);
+
+    expect($url)->toEndWith("/prospects/{$prospect->getRouteKey()}/followers");
+
+    get($url)->assertSuccessful();
+});

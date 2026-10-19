@@ -47,6 +47,8 @@ class SubscriptionBlock extends CampaignActionBlock
     {
         parent::setUp();
 
+        $this->label('Follow');
+
         $this->schema($this->generateFields());
     }
 
@@ -54,7 +56,7 @@ class SubscriptionBlock extends CampaignActionBlock
     {
         return [
             Select::make('user_ids')
-                ->label('Who should be subscribed?')
+                ->label('Who should be following?')
                 ->options(User::all()->pluck('name', 'id'))
                 ->multiple()
                 ->searchable()
@@ -62,9 +64,9 @@ class SubscriptionBlock extends CampaignActionBlock
                 ->required()
                 ->exists('users', 'id'),
             Toggle::make('remove_prior')
-                ->label('Remove all prior subscriptions?')
+                ->label('Remove all prior followers?')
                 ->default(false)
-                ->hintIconTooltip('If checked, all prior care subscriptions will be removed.'),
+                ->hintIconTooltip('If checked, all prior followers will be removed.'),
             CampaignDateTimeInput::make(),
         ];
     }

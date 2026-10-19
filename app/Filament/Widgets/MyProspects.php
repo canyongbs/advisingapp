@@ -47,7 +47,7 @@ class MyProspects extends StatsOverviewWidget
     {
         return [
             Stat::make(
-                'Prospects (Subscribed)',
+                'Prospects (Following)',
                 Number::abbreviate(
                     auth()->user()->subscriptions()->where('subscribable_type', (new Prospect())->getMorphClass())->count()
                 )

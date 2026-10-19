@@ -168,8 +168,8 @@ return [
     |
     */
     'excluded' => [
-        // Laravel's SyncJob reports this queue for every job run synchronously, so it is never a real workload.
-        // See docs/explanations/oss-todo/cbox-queue-packages-queue-identity.md
+        // Jobs on the `background` connection run in-process and report this queue. Its custom driver is not on the
+        // package's list of connections workers cannot pop: docs/explanations/oss-todo/cbox-queue-autoscale-custom-queue-drivers.md
         'sync',
     ],
 
@@ -238,6 +238,27 @@ return [
             'enabled' => env('QUEUE_AUTOSCALE_PICKUP_SAMPLING', true),
             'max_per_second' => (int) env('QUEUE_AUTOSCALE_PICKUP_SAMPLES_PER_SECOND', 100),
         ],
+
+        /*
+         * Pickup is measured from the payload's `pushedAt` (plus any dispatch
+         * delay) on a job's first attempt. A job re-pushed with `queue:retry`
+         * keeps its original `pushedAt`, so its sample would count hours or
+         * days of waiting that never happened. Samples above this are dropped.
+         * Keep it well above every SLA target, or breaches are dropped too.
+         * Set to null to keep every sample.
+         */
+        'max_sample_seconds' => is_numeric($maxPickupSampleSeconds = env('QUEUE_AUTOSCALE_PICKUP_MAX_SAMPLE_SECONDS', 3600)) ? (int) $maxPickupSampleSeconds : null,
+
+        /*
+         * Pickup time needs `pushedAt` in the job payload, which only Horizon
+         * writes. Enable this to stamp it on every dispatched job (Horizon
+         * overwrites the stamp with its own, from the same moment).
+         *
+         * Safe with laravel-queue-metrics v3.4.1+ (required by this package),
+         * which measures job duration from processing start rather than from
+         * `pushedAt`.
+         */
+        'stamp_pushed_at' => env('QUEUE_AUTOSCALE_STAMP_PUSHED_AT', true),
     ],
 
     /*
@@ -343,6 +364,33 @@ return [
         'worker_memory_mb_estimate' => 256,
         'worker_cpu_core_estimate' => 0.2,
         'reserve_cpu_cores' => 0.2,
+
+        /*
+         * Memory limit (MB) to size workers against, for a limit this process
+         * cannot see: one set only on a parent cgroup (a Kubernetes pod-level
+         * limit, an ECS task-level limit, a systemd slice). Inside a container
+         * that has its own limit, or on a VM or bare host, leave it null and
+         * the limit is detected. max_memory_percent applies to this limit.
+         */
+        'memory_limit_mb' => is_numeric($memoryLimitMb = env('QUEUE_AUTOSCALE_MEMORY_LIMIT_MB')) ? (int) $memoryLimitMb : null,
+
+        /*
+         * How long a newly spawned worker is charged the rest of its memory
+         * estimate (the estimate minus what it already holds) on top of
+         * measured usage. A worker grows to its footprint while
+         * it boots, so without this a batch spawned in one cycle reads as free
+         * memory in the next and the following batch overshoots.
+         */
+        'worker_settle_seconds' => 30,
+
+        /*
+         * When the kernel OOM-kills processes in this host's cgroup (read from
+         * the cgroup's OOM kill counter), hold the host's worker capacity at its
+         * current count for this many seconds instead of re-filling the memory
+         * the kill just freed. 0 disables. Has no effect where the counter is
+         * not available (outside Linux cgroups).
+         */
+        'oom_backoff_seconds' => (int) env('QUEUE_AUTOSCALE_OOM_BACKOFF_SECONDS', 300),
 
         /*
          * Hard ceiling on total workers this host may run, across every queue

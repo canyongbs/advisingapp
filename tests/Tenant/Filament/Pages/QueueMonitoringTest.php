@@ -34,7 +34,6 @@
 </COPYRIGHT>
 */
 
-use App\Features\QueueMonitoringFeature;
 use App\Filament\Pages\QueueMonitoring;
 use App\Models\User;
 
@@ -50,14 +49,6 @@ it('can be accessed by a super admin', function () {
 
 it('cannot be accessed without the super admin role', function () {
     actingAs(User::factory()->create());
-
-    get(QueueMonitoring::getUrl())->assertForbidden();
-});
-
-it('cannot be accessed while `QueueMonitoringFeature` is inactive', function () {
-    QueueMonitoringFeature::deactivate();
-
-    asSuperAdmin();
 
     get(QueueMonitoring::getUrl())->assertForbidden();
 });

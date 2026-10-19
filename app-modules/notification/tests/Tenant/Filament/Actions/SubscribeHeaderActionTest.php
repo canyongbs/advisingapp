@@ -34,46 +34,31 @@
 </COPYRIGHT>
 */
 
-namespace App\Overrides\QueueAutoscale;
+use AdvisingApp\Notification\Actions\SubscriptionToggle;
+use AdvisingApp\Notification\Filament\Actions\SubscribeHeaderAction;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
 
-use Cbox\LaravelQueueAutoscale\Configuration\SpawnCompensationConfiguration;
-use Cbox\LaravelQueueAutoscale\Configuration\WorkerConfiguration;
-use Cbox\LaravelQueueAutoscale\Workers\WorkerProcess;
-use Cbox\LaravelQueueAutoscale\Workers\WorkerSpawner;
-use Illuminate\Support\Collection;
-use Override;
+use function Pest\Laravel\actingAs;
 
-/**
- * Hands the manager workers that log how they exited. The manager builds its pool from what this returns.
- * Revert once upstream logs it: docs/explanations/oss-todo/cbox-queue-autoscale-dead-worker-exit-status.md
- */
-readonly class ExitReportingWorkerSpawner extends WorkerSpawner
-{
-    /**
-     * @return Collection<int, WorkerProcess>
-     */
-    #[Override]
-    public function spawn(
-        string $connection,
-        string $queue,
-        int $count,
-        SpawnCompensationConfiguration $spawnConfig,
-        ?string $group = null,
-        ?WorkerConfiguration $workerConfig = null,
-    ): Collection {
-        return parent::spawn($connection, $queue, $count, $spawnConfig, $group, $workerConfig)
-            ->map(fn (WorkerProcess $worker): WorkerProcess => $this->reportingExit($worker));
-    }
+it('is labelled `Follow` for a record the user is not following', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
 
-    private function reportingExit(WorkerProcess $worker): WorkerProcess
-    {
-        return new ExitReportingWorkerProcess(
-            process: $worker->process,
-            connection: $worker->connection,
-            queue: $worker->queue,
-            spawnedAt: $worker->spawnedAt,
-            group: $worker->group,
-            pid: $worker->pid(),
-        );
-    }
-}
+    actingAs($user);
+
+    $student = Student::factory()->create();
+
+    expect(SubscribeHeaderAction::make()->record($student)->getLabel())->toBe('Follow');
+});
+
+it('is labelled `Unfollow` for a record the user is following', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    actingAs($user);
+
+    $student = Student::factory()->create();
+
+    resolve(SubscriptionToggle::class)->handle($user, $student);
+
+    expect(SubscribeHeaderAction::make()->record($student)->getLabel())->toBe('Unfollow');
+});

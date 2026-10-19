@@ -68,7 +68,7 @@ class ManageFormNotifications extends EditRecord
                             ->label('Notify to Care Team')
                             ->visible(fn (Form $form) => $form->is_authenticated),
                         Toggle::make('notify_to_subscribers')
-                            ->label('Notify to Subscribers')
+                            ->label('Notify to Followers')
                             ->visible(fn (Form $form) => $form->is_authenticated),
                         Toggle::make('notify_via_app')
                             ->label('Notify via App'),

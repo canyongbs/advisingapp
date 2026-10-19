@@ -34,17 +34,31 @@
 </COPYRIGHT>
 */
 
-use App\Features\QueueMonitoringFeature;
-use Illuminate\Database\Migrations\Migration;
+use AdvisingApp\Notification\Actions\SubscriptionToggle;
+use AdvisingApp\Notification\Filament\Actions\SubscribeTableAction;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
 
-return new class () extends Migration {
-    public function up(): void
-    {
-        QueueMonitoringFeature::activate();
-    }
+use function Pest\Laravel\actingAs;
 
-    public function down(): void
-    {
-        QueueMonitoringFeature::deactivate();
-    }
-};
+it('is labelled `Follow` for a record the user is not following', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    actingAs($user);
+
+    $student = Student::factory()->create();
+
+    expect(SubscribeTableAction::make()->record($student)->getLabel())->toBe('Follow');
+});
+
+it('is labelled `Unfollow` for a record the user is following', function () {
+    $user = User::factory()->licensed(Student::getLicenseType())->create();
+
+    actingAs($user);
+
+    $student = Student::factory()->create();
+
+    resolve(SubscriptionToggle::class)->handle($user, $student);
+
+    expect(SubscribeTableAction::make()->record($student)->getLabel())->toBe('Unfollow');
+});

@@ -36,14 +36,16 @@
 
 namespace App\Jobs;
 
-use App\Features\QueueMonitoringFeature;
-use Cbox\LaravelQueueMonitor\Actions\Core\PruneJobsAction;
+use Cbox\LaravelQueueMonitor\Enums\JobStatus;
+use Cbox\LaravelQueueMonitor\Models\JobMonitor;
+use Cbox\LaravelQueueMonitor\Services\Contracts\DashboardCacheServiceContract;
+use Cbox\LaravelQueueMonitor\Utilities\QueryBuilderHelper;
 use Closure;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use Spatie\Multitenancy\Jobs\NotTenantAware;
@@ -82,16 +84,10 @@ class PruneQueueMonitorJob implements ShouldBeUnique, ShouldQueue, NotTenantAwar
 
     public function handle(): void
     {
-        // TODO: Cleanup Task (queue-monitoring): remove this check; the tables may not exist before the flag is active.
-        if (! QueueMonitoringFeature::active()) {
-            return;
+        if (config('queue-monitor.enabled', true)) {
+            $this->resolveStuckJobs();
+            $this->pruneJobs();
         }
-
-        // Marks jobs stuck in `processing` (their worker was killed mid-job) as timed out, so the prune below reclaims
-        // them. Live `queued` rows are never reclaimed: an old one may still be waiting in a deep backlog.
-        Artisan::call('queue-monitor:resolve-stuck');
-
-        app(PruneJobsAction::class)->execute(self::JOB_RETENTION_DAYS);
 
         // The package prunes each event table in one unbounded statement, which deadlocks against the autoscale
         // listeners' inserts. Prune each table in batches and independently, so one failing never blocks the other.
@@ -112,6 +108,88 @@ class PruneQueueMonitorJob implements ShouldBeUnique, ShouldQueue, NotTenantAwar
         if ($failure !== null) {
             throw $failure;
         }
+    }
+
+    /**
+     * Marks jobs stuck in `processing` (their worker was killed mid-job) as timed out, so the prune reclaims them.
+     * Live `queued` rows are never reclaimed: an old one may still be waiting in a deep backlog. One bulk statement,
+     * where the package's `queue-monitor:resolve-stuck` command re-reads and updates every row individually.
+     */
+    private function resolveStuckJobs(): void
+    {
+        $minutes = config('queue-monitor.retention.resolve_stuck_after_minutes');
+
+        if (! is_numeric($minutes)) {
+            return;
+        }
+
+        $completedAt = now();
+
+        // Clamped to the unsigned integer column so a long-stuck row cannot overflow it.
+        $durationMs = DB::raw("least(2147483647, greatest(0, (extract(epoch from (timestamp '{$completedAt->format('Y-m-d H:i:s')}' - started_at)) * 1000)::bigint))::integer");
+
+        $resolved = QueryBuilderHelper::stuck(max(0, (int) $minutes))->update([
+            'status' => JobStatus::TIMEOUT,
+            'completed_at' => $completedAt,
+            'duration_ms' => $durationMs,
+        ]);
+
+        if ($resolved > 0) {
+            app(DashboardCacheServiceContract::class)->bust();
+        }
+    }
+
+    /**
+     * Deletes finished jobs past the retention window, then the oldest finished jobs beyond the row cap. Each batch is a
+     * single delete over an id subquery, where the package's pruner selects ids 100 at a time before deleting them.
+     */
+    private function pruneJobs(): void
+    {
+        $statuses = config('queue-monitor.retention.prune_statuses', ['completed', 'failed']);
+        assert(is_array($statuses));
+
+        $deleted = $this->deleteJobsInBatches(
+            fn (EloquentBuilder $query): EloquentBuilder => $query
+                ->whereIn('status', $statuses)
+                ->where('created_at', '<', now()->subDays(self::JOB_RETENTION_DAYS)),
+        );
+
+        $maxRows = config('queue-monitor.retention.max_rows');
+
+        if (is_numeric($maxRows) && (int) $maxRows > 0) {
+            $excess = JobMonitor::query()->count() - (int) $maxRows;
+
+            if ($excess > 0) {
+                $deleted += $this->deleteJobsInBatches(
+                    fn (EloquentBuilder $query): EloquentBuilder => $query->whereIn('status', $statuses),
+                    $excess,
+                );
+            }
+        }
+
+        if ($deleted > 0) {
+            app(DashboardCacheServiceContract::class)->bust();
+        }
+    }
+
+    /**
+     * @param  Closure(EloquentBuilder<JobMonitor>): EloquentBuilder<JobMonitor>  $constrain
+     */
+    private function deleteJobsInBatches(Closure $constrain, int $maxRows = PHP_INT_MAX): int
+    {
+        $total = 0;
+
+        do {
+            $limit = min(self::BATCH_SIZE, $maxRows - $total);
+
+            $deleted = JobMonitor::query()
+                ->whereIn('id', $constrain(JobMonitor::query()->select('id'))->orderBy('created_at')->limit($limit))
+                ->delete();
+
+            $total += $deleted;
+        } while ($deleted === $limit && $total < $maxRows);
+
+        return $total;
     }
 
     private function pruneEventTable(string $tableSuffix): void

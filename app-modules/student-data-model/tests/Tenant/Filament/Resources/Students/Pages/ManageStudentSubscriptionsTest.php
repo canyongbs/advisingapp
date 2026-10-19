@@ -34,14 +34,19 @@
 </COPYRIGHT>
 */
 
-namespace App\Features;
+use AdvisingApp\StudentDataModel\Filament\Resources\Students\StudentResource;
+use AdvisingApp\StudentDataModel\Models\Student;
 
-use App\Support\LandlordAbstractFeatureFlag;
+use function Pest\Laravel\get;
+use function Tests\asSuperAdmin;
 
-class QueueMonitoringFeature extends LandlordAbstractFeatureFlag
-{
-    public function resolve(mixed $scope): mixed
-    {
-        return false;
-    }
-}
+it('serves the followers page at the followers URL', function () {
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+    $url = StudentResource::getUrl('followers', ['record' => $student]);
+
+    expect($url)->toEndWith("/students/{$student->getRouteKey()}/followers");
+
+    get($url)->assertSuccessful();
+});

@@ -166,9 +166,14 @@ class GoogleCalendarManager implements CalendarInterface
 
         $events = collect($this->getEvents($calendar, $start, $end, $perPage));
 
+        $existingEvents = $calendar->events()
+            ->whereIn('provider_id', $events->pluck('id')->all())
+            ->get()
+            ->keyBy('provider_id');
+
         $events
             ->each(
-                function (Event $event) use ($calendar) {
+                function (Event $event) use ($calendar, $existingEvents) {
                     $data = [
                         'title' => filled($event->summary) ? $event->summary : '(No Subject)',
                         'description' => $event->description,
@@ -181,7 +186,7 @@ class GoogleCalendarManager implements CalendarInterface
                         'transparency' => EventTransparency::fromGoogleTransparency($event->getTransparency()),
                     ];
 
-                    $userEvent = $calendar->events()->where('provider_id', $event->id)->first();
+                    $userEvent = $existingEvents->get($event->id);
 
                     if ($userEvent) {
                         $userEvent->fill($data);
@@ -190,11 +195,11 @@ class GoogleCalendarManager implements CalendarInterface
                             $userEvent->updateQuietly();
                         }
                     } else {
-                        $calendar->events()
+                        $existingEvents->put($event->id, $calendar->events()
                             ->createQuietly([
                                 'provider_id' => $event->id,
                                 ...$data,
-                            ]);
+                            ]));
                     }
                 }
             );

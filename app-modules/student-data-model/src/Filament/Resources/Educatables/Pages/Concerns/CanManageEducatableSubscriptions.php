@@ -74,7 +74,7 @@ trait CanManageEducatableSubscriptions
                     ->color('primary'),
                 TextColumn::make('pivot.created_at')
                     ->dateTime()
-                    ->label('Subscribed At'),
+                    ->label('Followed At'),
             ])
             ->headerActions([
                 AttachAction::make()
@@ -84,9 +84,9 @@ trait CanManageEducatableSubscriptions
                         /** @var Student $student */
                         $student = $this->getOwnerRecord();
 
-                        return 'Subscribe a User to ' . $student->display_name;
+                        return 'Add a Follower to ' . $student->display_name;
                     })
-                    ->modalSubmitActionLabel('Subscribe')
+                    ->modalSubmitActionLabel('Add Follower')
                     ->attachAnother(false)
                     ->color('primary')
                     ->recordSelect(
@@ -101,48 +101,48 @@ trait CanManageEducatableSubscriptions
                         /** @var Student $student */
                         $student = $this->getOwnerRecord();
 
-                        return "{$record->name} was subscribed to {$student->display_name}";
+                        return "{$record->name} is now following {$student->display_name}";
                     }),
             ])
             ->recordActions([
                 DetachAction::make()
                     ->authorize(fn (): bool => auth()->user()->can('deleteAny', Subscription::class))
-                    ->label('Unsubscribe')
+                    ->label('Remove')
                     ->modalHeading(function (User $record) {
                         /** @var Student $student */
                         $student = $this->getOwnerRecord();
 
-                        return "Unsubscribe {$record->name} from {$student->display_name}";
+                        return "Remove {$record->name} as a follower of {$student->display_name}";
                     })
-                    ->modalSubmitActionLabel('Unsubscribe')
+                    ->modalSubmitActionLabel('Remove')
                     ->successNotificationTitle(function (User $record) {
                         /** @var Student $student */
                         $student = $this->getOwnerRecord();
 
-                        return "{$record->name} was unsubscribed from {$student->display_name}";
+                        return "{$record->name} is no longer following {$student->display_name}";
                     }),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DetachBulkAction::make()
                         ->authorize(fn (): bool => auth()->user()->can('deleteAny', Subscription::class))
-                        ->label('Unsubscribe selected')
+                        ->label('Remove selected')
                         ->modalHeading(function () {
                             /** @var Student $student */
                             $student = $this->getOwnerRecord();
 
-                            return "Unsubscribe selected from {$student->display_name}";
+                            return "Remove selected followers from {$student->display_name}";
                         })
-                        ->modalSubmitActionLabel('Unsubscribe')
+                        ->modalSubmitActionLabel('Remove')
                         ->successNotificationTitle(function () {
                             /** @var Student $student */
                             $student = $this->getOwnerRecord();
 
-                            return "All selected were unsubscribed from {$student->display_name}";
+                            return "All selected are no longer following {$student->display_name}";
                         }),
                 ]),
             ])
-            ->emptyStateHeading('No Subscriptions')
+            ->emptyStateHeading('No Followers')
             ->inverseRelationship('studentSubscriptions');
     }
 }
