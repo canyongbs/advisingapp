@@ -7,7 +7,7 @@ ARG S6_DIR=/opt/s6/
 ARG S6_SRC_DEP="curl xz-utils"
 ARG S6_SRC_URL="https://github.com/just-containers/s6-overlay/releases/download"
 ARG S6_VERSION="v3.2.0.2"
-ARG OTHER_DEP="gnupg ca-certificates software-properties-common"
+ARG OTHER_DEP="ca-certificates"
 
 ENV DEBIAN_FRONTEND="noninteractive" \
     S6_KEEP_ENV=1
@@ -32,7 +32,10 @@ RUN mkdir -p "$S6_DIR"; \
     \
     untar ${S6_SRC_URL}/${S6_VERSION}/s6-overlay-noarch.tar.xz \
     && untar ${S6_SRC_URL}/${S6_VERSION}/s6-overlay-${S6_ARCH}.tar.xz \
-    && add-apt-repository -y ppa:ondrej/php
+    && curl -sSLo /tmp/debsuryorg-archive-keyring.deb https://packages.sury.org/debsuryorg-archive-keyring.deb \
+    && dpkg -i /tmp/debsuryorg-archive-keyring.deb \
+    && rm /tmp/debsuryorg-archive-keyring.deb \
+    && echo "deb [signed-by=/usr/share/keyrings/debsuryorg-archive-keyring.gpg] https://packages.sury.org/php/ noble main" > /etc/apt/sources.list.d/php.list
 
 FROM ${BASE_IMAGE} AS imagemagick-builder
 
@@ -40,11 +43,11 @@ ARG PHP_VERSION='8.4'
 ARG IMAGEMAGICK_VERSION
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Copy ondrej PHP sources for PHP dev headers
+# Copy packages.sury.org PHP sources for PHP dev headers
 COPY --from=setup /etc/apt/sources.list.d/ /etc/apt/sources.list.d/
-COPY --from=setup /etc/apt/trusted.gpg.d/ /etc/apt/trusted.gpg.d/
+COPY --from=setup /usr/share/keyrings/debsuryorg-archive-keyring.gpg /usr/share/keyrings/debsuryorg-archive-keyring.gpg
 
-# Install ca-certificates first to allow HTTPS access to PPAs
+# First update warns on the HTTPS sury source until ca-certificates is installed; the second update succeeds
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ca-certificates gnupg \
     && apt-get update \
@@ -162,8 +165,9 @@ ENV BUILD_PHP_VERSION=$PHP_VERSION \
 # Bring over the s6 overlay setup
 COPY --from=setup /opt/s6/ /
 
-# Bring over the ondrej sources
+# Bring over the packages.sury.org PHP sources
 COPY --from=setup /etc/apt/sources.list.d/ /etc/apt/sources.list.d/
+COPY --from=setup /usr/share/keyrings/debsuryorg-archive-keyring.gpg /usr/share/keyrings/debsuryorg-archive-keyring.gpg
 
 # Bring over ImageMagick 7 libraries and PHP extension
 COPY --from=imagemagick-builder /usr/local/lib/libMagick*.so* /usr/local/lib/
