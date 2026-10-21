@@ -48,9 +48,6 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Query\Expression;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class FormEmailAutoReplyForm
 {
