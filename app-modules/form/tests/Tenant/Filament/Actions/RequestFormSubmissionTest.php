@@ -38,6 +38,7 @@ use AdvisingApp\Authorization\Enums\LicenseType;
 use AdvisingApp\Form\Actions\DeliverFormSubmissionRequestByEmail;
 use AdvisingApp\Form\Actions\DeliverFormSubmissionRequestBySms;
 use AdvisingApp\Form\Enums\FormSubmissionRequestDeliveryMethod;
+use AdvisingApp\Form\Events\FormSubmissionCreated;
 use AdvisingApp\Form\Filament\Tables\RequestableFormsTable;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
@@ -45,8 +46,10 @@ use AdvisingApp\StudentDataModel\Filament\Resources\Students\Pages\ViewStudent;
 use AdvisingApp\StudentDataModel\Filament\Resources\Students\RelationManagers\FormSubmissionsRelationManager;
 use AdvisingApp\StudentDataModel\Models\Student;
 use App\Models\User;
+use Filament\Actions\Testing\TestAction;
 use Filament\Forms\Components\TableSelect\Livewire\TableSelectLivewireComponent;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 
@@ -397,6 +400,33 @@ it('dispatches the sms delivery job when sms method is selected', function () {
         ->assertHasNoTableActionErrors();
 
     Queue::assertPushed(DeliverFormSubmissionRequestBySms::class);
+});
+
+it('does not dispatch `FormSubmissionCreated` when a form submission is requested', function () {
+    Queue::fake();
+
+    asSuperAdmin();
+
+    $student = Student::factory()->create();
+    $form = Form::factory()->create(['is_authenticated' => true]);
+
+    Event::fake(FormSubmissionCreated::class);
+
+    expect($student->formSubmissions()->count())->toBe(0);
+
+    Livewire::test(FormSubmissionsRelationManager::class, [
+        'ownerRecord' => $student,
+        'pageClass' => ViewStudent::class,
+    ])
+        ->callAction(TestAction::make('Request')->table(), data: [
+            'form_id' => $form->id,
+            'request_method' => FormSubmissionRequestDeliveryMethod::Email->value,
+        ])
+        ->assertHasNoFormErrors();
+
+    expect($student->formSubmissions()->count())->toBe(1);
+
+    Event::assertNotDispatched(FormSubmissionCreated::class);
 });
 
 it('sends a success notification after the request is sent', function () {

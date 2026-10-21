@@ -36,9 +36,11 @@
 
 use AdvisingApp\Form\Events\FormSubmissionCreated;
 use AdvisingApp\Form\Listeners\NotifySubscribersOfFormSubmission;
+use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Form\Notifications\AuthorLinkedFormSubmissionCreatedNotification;
 use App\Models\User;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 
 it('dispatches FormSubmissionCreated Event when a FormSubmission is created', function () {
@@ -50,6 +52,60 @@ it('dispatches FormSubmissionCreated Event when a FormSubmission is created', fu
         event: FormSubmissionCreated::class,
         callback: fn (FormSubmissionCreated $event) => $event->submission->is($submission)
     );
+});
+
+it('does not dispatch `FormSubmissionCreated` when a requested `FormSubmission` is created', function () {
+    Event::fake(FormSubmissionCreated::class);
+
+    FormSubmission::factory()->create(['submitted_at' => null]);
+
+    Event::assertNotDispatched(FormSubmissionCreated::class);
+});
+
+it('dispatches `FormSubmissionCreated` when a requested `FormSubmission` is submitted', function () {
+    Event::fake(FormSubmissionCreated::class);
+
+    $submission = FormSubmission::factory()->create(['submitted_at' => null]);
+
+    Event::assertNotDispatched(FormSubmissionCreated::class);
+
+    $submission->update(['submitted_at' => now()]);
+
+    Event::assertDispatchedTimes(FormSubmissionCreated::class, 1);
+    Event::assertDispatched(
+        event: FormSubmissionCreated::class,
+        callback: fn (FormSubmissionCreated $event) => $event->submission->is($submission)
+    );
+});
+
+it('does not dispatch `FormSubmissionCreated` again when a submitted `FormSubmission` is saved again', function () {
+    Event::fake(FormSubmissionCreated::class);
+
+    $submission = FormSubmission::factory()->create();
+
+    Event::assertDispatchedTimes(FormSubmissionCreated::class, 1);
+
+    $submission->request_note = 'Updated note';
+    $submission->save();
+
+    Event::assertDispatchedTimes(FormSubmissionCreated::class, 1);
+});
+
+it('clears the form submission count cache when a requested `FormSubmission` is created', function () {
+    $form = Form::factory()->create();
+
+    $cacheKey = "form-submission-count-{$form->root_id}";
+
+    Cache::tags('{form-submission-count}')->put($cacheKey, 5);
+
+    expect(Cache::tags('{form-submission-count}')->has($cacheKey))->toBeTrue();
+
+    FormSubmission::factory()->create([
+        'form_id' => $form->getKey(),
+        'submitted_at' => null,
+    ]);
+
+    expect(Cache::tags('{form-submission-count}')->has($cacheKey))->toBeFalse();
 });
 
 test('FormSubmissionCreated Event has the proper listeners', function () {

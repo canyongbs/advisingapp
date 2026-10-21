@@ -34,17 +34,30 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Form\Actions\ProcessSubmissionField;
+use AdvisingApp\Form\Events\FormSubmissionCreated;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\Form\Models\FormField;
+use AdvisingApp\Form\Models\FormSubmission;
+use AdvisingApp\Form\Notifications\AuthorLinkedFormSubmissionCreatedNotification;
+use AdvisingApp\Form\Notifications\FormSubmissionAutoReplyNotification;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
+use App\Models\User;
 use App\Settings\LicenseSettings;
 use App\Support\AuthenticationCodeRateLimiter;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Exceptions;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\URL;
+use Mockery\MockInterface;
 
 use function Pest\Laravel\get;
+use function Pest\Laravel\mock;
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\withoutMiddleware;
 use function Tests\asSuperAdmin;
@@ -163,4 +176,126 @@ test('authenticate locks out after too many invalid code attempts', function () 
     ))
         ->assertStatus(422)
         ->assertJsonValidationErrors(['code' => 'Too many invalid attempts. Please request a new code.']);
+});
+
+$createRequestedSubmissionWithAutoReplyAndFollower = function (): array {
+    $form = Form::factory()->create(['is_authenticated' => true]);
+    $form->fields()->delete();
+
+    $field = $form->fields()->create([
+        'label' => 'Tell us about yourself',
+        'type' => 'text_input',
+        'is_required' => false,
+        'config' => [],
+    ]);
+
+    $richText = fn (string $text): array => [
+        'type' => 'doc',
+        'content' => [['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $text]]]],
+    ];
+
+    $form->emailAutoReply->update([
+        'is_enabled' => true,
+        'subject' => $richText('Thanks for submitting'),
+        'body' => $richText('We received your submission.'),
+    ]);
+
+    $student = Student::factory()->create();
+
+    $follower = User::factory()->create();
+    $follower->subscriptions()->create([
+        'subscribable_id' => $student->getKey(),
+        'subscribable_type' => $student->getMorphClass(),
+    ]);
+
+    $requestedSubmission = FormSubmission::factory()->create([
+        'form_id' => $form->getKey(),
+        'author_type' => $student->getMorphClass(),
+        'author_id' => $student->getKey(),
+        'submitted_at' => null,
+    ]);
+
+    $authentication = new FormAuthentication();
+    $authentication->author()->associate($student);
+    $authentication->submissible()->associate($form);
+    $authentication->code = Hash::make('123456');
+    $authentication->save();
+
+    return [$form, $field, $student, $follower, $requestedSubmission, $authentication];
+};
+
+it('completes a requested submission and dispatches `FormSubmissionCreated` once when it is submitted', function () use ($createRequestedSubmissionWithAutoReplyAndFollower) {
+    withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+    Queue::fake();
+
+    [$form, , , , $requestedSubmission, $authentication] = $createRequestedSubmissionWithAutoReplyAndFollower();
+
+    expect($requestedSubmission->submitted_at)->toBeNull();
+
+    Event::fake(FormSubmissionCreated::class);
+
+    postJson(URL::signedRoute(
+        name: 'widgets.forms.api.submit',
+        parameters: ['form' => $form, 'authentication' => $authentication],
+    ))
+        ->assertSuccessful()
+        ->assertJson(['message' => 'Form submitted successfully.']);
+
+    expect($form->submissions()->count())->toBe(1)
+        ->and($requestedSubmission->refresh()->submitted_at)->not->toBeNull();
+
+    Event::assertDispatchedTimes(FormSubmissionCreated::class, 1);
+    Event::assertDispatched(
+        event: FormSubmissionCreated::class,
+        callback: fn (FormSubmissionCreated $event) => $event->submission->is($requestedSubmission)
+    );
+});
+
+it('sends the email auto reply and notifies followers once when a requested submission is submitted', function () use ($createRequestedSubmissionWithAutoReplyAndFollower) {
+    withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+    Notification::fake();
+
+    [$form, $field, $student, $follower, $requestedSubmission, $authentication] = $createRequestedSubmissionWithAutoReplyAndFollower();
+
+    Notification::assertNotSentTo($student, FormSubmissionAutoReplyNotification::class);
+
+    postJson(URL::signedRoute(
+        name: 'widgets.forms.api.submit',
+        parameters: ['form' => $form, 'authentication' => $authentication],
+    ), [$field->getKey() => 'Hello'])
+        ->assertSuccessful();
+
+    expect($requestedSubmission->refresh()->submitted_at)->not->toBeNull();
+
+    Notification::assertSentToTimes($student, FormSubmissionAutoReplyNotification::class, 1);
+    Notification::assertSentToTimes($follower, AuthorLinkedFormSubmissionCreatedNotification::class, 1);
+});
+
+it('does not send the email auto reply or notify followers when a requested submission fails and is rolled back', function () use ($createRequestedSubmissionWithAutoReplyAndFollower) {
+    withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+    Notification::fake();
+    Exceptions::fake();
+
+    [$form, $field, $student, $follower, $requestedSubmission, $authentication] = $createRequestedSubmissionWithAutoReplyAndFollower();
+
+    mock(ProcessSubmissionField::class, function (MockInterface $mock) {
+        $mock->shouldReceive('__invoke')->andThrow(new Exception('Field processing failed.'));
+    });
+
+    postJson(URL::signedRoute(
+        name: 'widgets.forms.api.submit',
+        parameters: ['form' => $form, 'authentication' => $authentication],
+    ), [$field->getKey() => 'Hello'])
+        ->assertInternalServerError();
+
+    Exceptions::assertReported(fn (Exception $exception): bool => $exception->getMessage() === 'Field processing failed.');
+
+    expect($requestedSubmission->refresh()->submitted_at)->toBeNull()
+        ->and(FormAuthentication::query()->whereKey($authentication->getKey())->exists())->toBeTrue();
+
+    Notification::assertNotSentTo($student, FormSubmissionAutoReplyNotification::class);
+    Notification::assertNotSentTo($follower, AuthorLinkedFormSubmissionCreatedNotification::class);
 });
