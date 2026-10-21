@@ -525,7 +525,8 @@ jobs:
         # settings so this gated job is the only path that requests Copilot.
         needs: [prep-and-code-consistency, test, lint]
 
-        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'dependabot[bot]' }}
+        # Release branches merging back into main were already reviewed via their own PRs.
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'dependabot[bot]' && !(startsWith(github.event.pull_request.head.ref, 'release/') && github.event.pull_request.base.ref == 'main') }}
 
         timeout-minutes: 5
 
