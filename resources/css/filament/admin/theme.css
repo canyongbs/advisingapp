@@ -281,3 +281,8 @@
 .fi-datetime-description {
     @apply text-gray-500 dark:text-gray-400;
 }
+
+.dark .fi-btn.fi-color-warning:not(.fi-outlined)[wire\:click*="mountAction('archive'"] {
+    --dark-text: white;
+    --dark-hover-text: white;
+}
