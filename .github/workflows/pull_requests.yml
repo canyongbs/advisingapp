@@ -65,7 +65,7 @@ jobs:
                   key: ${{ runner.os }}-24.04-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
                   restore-keys: ${{ runner.os }}-24.04-phpext-${{ env.php-version }}
 
-            - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
+            - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 #2.40.0
               with:
                   php-version: ${{ env.php-version }}
                   coverage: none
@@ -86,7 +86,14 @@ jobs:
               run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
               shell: bash
 
-            - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+            # Local path-repo packages (e.g. app-modules/**) can add/remove classes without changing
+            # composer.lock, leaving a cache hit's autoloader stale. Regenerating is fast and network-free.
+            - if: ${{ steps.cache-composer.outputs.cache-hit == 'true' }}
+              name: Refresh autoloader for local path repositories
+              run: composer dump-autoload -q --no-ansi --no-interaction --optimize
+              shell: bash
+
+            - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
               with:
                   node-version-file: '.nvmrc'
                   cache: 'npm'
@@ -268,7 +275,7 @@ jobs:
                   key: ${{ runner.os }}-24.04-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
                   restore-keys: ${{ runner.os }}-24.04-phpext-${{ env.php-version }}
 
-            - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
+            - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 #2.40.0
               with:
                   php-version: ${{ env.php-version }}
                   coverage: none
@@ -299,6 +306,13 @@ jobs:
             - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
               name: Install Dependencies
               run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+              shell: bash
+
+            # Local path-repo packages (e.g. app-modules/**) can add/remove classes without changing
+            # composer.lock, leaving a cache hit's autoloader stale. Regenerating is fast and network-free.
+            - if: ${{ steps.cache-composer.outputs.cache-hit == 'true' }}
+              name: Refresh autoloader for local path repositories
+              run: composer dump-autoload -q --no-ansi --no-interaction --optimize
               shell: bash
 
             - name: Check the Tenant shards run every Tenant test exactly once
@@ -436,7 +450,7 @@ jobs:
                   key: ${{ runner.os }}-24.04-phpext-${{ env.php-version }}-${{ env.php-extensions-key }}
                   restore-keys: ${{ runner.os }}-24.04-phpext-${{ env.php-version }}
 
-            - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
+            - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 #2.40.0
               with:
                   php-version: ${{ env.php-version }}
                   coverage: none
@@ -461,6 +475,13 @@ jobs:
             - if: ${{ steps.cache-composer.outputs.cache-hit != 'true' }}
               name: Install Dependencies
               run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
+              shell: bash
+
+            # Local path-repo packages (e.g. app-modules/**) can add/remove classes without changing
+            # composer.lock, leaving a cache hit's autoloader stale. Regenerating is fast and network-free.
+            - if: ${{ steps.cache-composer.outputs.cache-hit == 'true' }}
+              name: Refresh autoloader for local path repositories
+              run: composer dump-autoload -q --no-ansi --no-interaction --optimize
               shell: bash
 
             - name: Generate key
@@ -502,9 +523,10 @@ jobs:
         # Only request a review once the code is known to be green, so Copilot never reviews
         # code that is failing tests or linting. Automatic review must be disabled in the repo
         # settings so this gated job is the only path that requests Copilot.
-        needs: [test, lint]
+        needs: [prep-and-code-consistency, test, lint]
 
-        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'dependabot[bot]' }}
+        # Release branches merging back into main were already reviewed via their own PRs.
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.user.login != 'dependabot[bot]' && !(startsWith(github.event.pull_request.head.ref, 'release/') && github.event.pull_request.base.ref == 'main') }}
 
         timeout-minutes: 5
 

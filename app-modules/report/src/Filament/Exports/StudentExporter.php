@@ -110,7 +110,7 @@ class StudentExporter extends Exporter
                 TaskStatus::cases(),
             ),
             static::notDefault($type::make('subscribed_users_count')
-                ->label('Count of Subscribers')
+                ->label('Count of Followers')
                 ->counts('subscribedUsers')),
             static::notDefault($type::make('interactions_count')
                 ->label('Count of Interactions')

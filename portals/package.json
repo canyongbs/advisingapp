@@ -70,10 +70,10 @@
         "sortablejs": "^1.15.0",
         "tailwindcss-primeui": "^0.6.1",
         "tippy.js": "^6.3.7",
-        "vite": "^8.3.2",
+        "vite": "^8.3.3",
         "vue": "^3.5.43",
         "vue-filepond": "^7.0.4",
-        "vue-router": "^5.3.1"
+        "vue-router": "^5.4.0"
     },
     "allowScripts": {
         "vue-demi@0.14.10": true,

@@ -50,7 +50,7 @@ enum ActionCenterTab: string implements HasLabel
     {
         return match ($this) {
             self::All => 'All',
-            self::Subscribed => 'Subscribed',
+            self::Subscribed => 'Following',
             self::CareTeam => 'Care Team',
         };
     }

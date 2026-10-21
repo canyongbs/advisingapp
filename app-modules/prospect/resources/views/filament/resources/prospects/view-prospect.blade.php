@@ -102,7 +102,7 @@
                         [
                             'educatable' => $this->getRecord(),
                             'lazy' => 'on-load',
-                            'manageUrl' => ProspectResource::getUrl('manage-subscriptions', ['record' => $this->getRecord()]),
+                            'manageUrl' => ProspectResource::getUrl('followers', ['record' => $this->getRecord()]),
                         ]
                     )
                 @endif

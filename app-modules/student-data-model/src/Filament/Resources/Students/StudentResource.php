@@ -152,7 +152,7 @@ class StudentResource extends Resource
             'activity-feed' => ViewStudentActivityFeed::route('/{record}/activity'),
             'concerns' => ManageStudentConcerns::route('/{record}/concerns'),
             'care-team' => ManageStudentCareTeam::route('/{record}/care-team'),
-            'subscriptions' => ManageStudentSubscriptions::route('/{record}/subscriptions'),
+            'followers' => ManageStudentSubscriptions::route('/{record}/followers'),
             'tasks' => ManageStudentTasks::route('/{record}/tasks'),
             'alerts' => ViewStudentAlerts::route('/{record}/alerts'),
         ];

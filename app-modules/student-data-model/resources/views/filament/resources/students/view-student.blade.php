@@ -119,7 +119,7 @@
                         [
                             'educatable' => $this->getRecord(),
                             'lazy' => 'on-load',
-                            'manageUrl' => StudentResource::getUrl('subscriptions', ['record' => $this->getRecord()]),
+                            'manageUrl' => StudentResource::getUrl('followers', ['record' => $this->getRecord()]),
                         ]
                     )
                 @endif

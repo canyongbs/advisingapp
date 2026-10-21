@@ -60,9 +60,16 @@ runs:
         - name: Wait for PostgreSQL
           shell: bash
           run: |
-              until docker inspect --format='{{.State.Health.Status}}' postgres | grep -q healthy; do
-                sleep 2
+              for _ in $(seq 1 60); do
+                status=$(docker inspect --format='{{.State.Health.Status}}' postgres)
+                [[ "${status}" == healthy || "${status}" == unhealthy ]] && break
+                sleep 1
               done
+              if [[ "${status}" != healthy ]]; then
+                docker logs postgres
+                echo "::error::postgres is ${status} instead of healthy."
+                exit 1
+              fi
 
         - name: Create tenant database
           shell: bash
@@ -83,7 +90,7 @@ runs:
               key: ${{ runner.os }}-24.04-phpext-${{ inputs.php-version }}-${{ inputs.php-extensions-key }}
               restore-keys: ${{ runner.os }}-24.04-phpext-${{ inputs.php-version }}
 
-        - uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 #2.37.2
+        - uses: shivammathur/setup-php@eb7c497e18156a6bbabfef1d3a82760b9eda3962 #2.40.0
           with:
               php-version: ${{ inputs.php-version }}
               coverage: none
@@ -105,7 +112,14 @@ runs:
           shell: bash
           run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist --optimize-autoloader
 
-        - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        # Local path-repo packages (e.g. app-modules/**) can add/remove classes without changing
+        # composer.lock, leaving a cache hit's autoloader stale. Regenerating is fast and network-free.
+        - if: ${{ steps.cache-composer.outputs.cache-hit == 'true' }}
+          name: Refresh autoloader for local path repositories
+          shell: bash
+          run: composer dump-autoload -q --no-ansi --no-interaction --optimize
+
+        - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
           with:
               node-version-file: '.nvmrc'
               cache: 'npm'

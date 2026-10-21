@@ -137,6 +137,7 @@ class InboxTable extends Component implements HasActions, HasForms, HasTable
             ])
             ->filters([
                 Filter::make('subscribed')
+                    ->label('Following')
                     ->query(fn (Builder $query): Builder => $query->whereRelation('sender.subscriptions.user', 'id', auth()->id())),
                 Filter::make('care_team')
                     ->label('Care Team')

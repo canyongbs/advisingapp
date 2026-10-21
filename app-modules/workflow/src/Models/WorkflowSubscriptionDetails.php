@@ -71,7 +71,7 @@ class WorkflowSubscriptionDetails extends WorkflowDetails implements Auditable
 
     public function getLabel(): string
     {
-        return 'Subscription';
+        return 'Follow';
     }
 
     public function getBlock(): WorkflowActionBlock
