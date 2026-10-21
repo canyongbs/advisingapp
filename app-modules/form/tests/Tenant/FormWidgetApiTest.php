@@ -34,14 +34,19 @@
 </COPYRIGHT>
 */
 
+use AdvisingApp\Form\Events\FormSubmissionCreated;
 use AdvisingApp\Form\Http\Middleware\EnsureSubmissibleIsEmbeddableAndAuthorized;
 use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormAuthentication;
 use AdvisingApp\Form\Models\FormField;
+use AdvisingApp\Form\Models\FormSubmission;
 use AdvisingApp\Prospect\Models\Prospect;
+use AdvisingApp\StudentDataModel\Models\Student;
 use App\Settings\LicenseSettings;
 use App\Support\AuthenticationCodeRateLimiter;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\URL;
 
 use function Pest\Laravel\get;
@@ -163,4 +168,48 @@ test('authenticate locks out after too many invalid code attempts', function () 
     ))
         ->assertStatus(422)
         ->assertJsonValidationErrors(['code' => 'Too many invalid attempts. Please request a new code.']);
+});
+
+it('completes a requested submission and dispatches `FormSubmissionCreated` once when it is submitted', function () {
+    withoutMiddleware([EnsureSubmissibleIsEmbeddableAndAuthorized::class]);
+
+    Queue::fake();
+
+    $form = Form::factory()->create(['is_authenticated' => true]);
+    $form->fields()->delete();
+
+    $student = Student::factory()->create();
+
+    $requestedSubmission = FormSubmission::factory()->create([
+        'form_id' => $form->getKey(),
+        'author_type' => $student->getMorphClass(),
+        'author_id' => $student->getKey(),
+        'submitted_at' => null,
+    ]);
+
+    $authentication = new FormAuthentication();
+    $authentication->author()->associate($student);
+    $authentication->submissible()->associate($form);
+    $authentication->code = Hash::make('123456');
+    $authentication->save();
+
+    expect($requestedSubmission->submitted_at)->toBeNull();
+
+    Event::fake(FormSubmissionCreated::class);
+
+    postJson(URL::signedRoute(
+        name: 'widgets.forms.api.submit',
+        parameters: ['form' => $form, 'authentication' => $authentication],
+    ))
+        ->assertSuccessful()
+        ->assertJson(['message' => 'Form submitted successfully.']);
+
+    expect($form->submissions()->count())->toBe(1)
+        ->and($requestedSubmission->refresh()->submitted_at)->not->toBeNull();
+
+    Event::assertDispatchedTimes(FormSubmissionCreated::class, 1);
+    Event::assertDispatched(
+        event: FormSubmissionCreated::class,
+        callback: fn (FormSubmissionCreated $event) => $event->submission->is($requestedSubmission)
+    );
 });

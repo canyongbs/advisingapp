@@ -37,15 +37,45 @@
 namespace AdvisingApp\Form\Observers;
 
 use AdvisingApp\Form\Events\FormSubmissionCreated;
+use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Models\FormSubmission;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 
 class FormSubmissionObserver
 {
+    /**
+     * A pending request has no `submitted_at` yet, so it has not actually been submitted and
+     * `FormSubmissionCreated` is deferred until it is (see `updated()`). The form's submission
+     * count includes pending requests, so its cache is cleared here instead of by the
+     * `ClearFormFormSubmissionCountCache` listener.
+     */
     public function created(FormSubmission $submission): void
     {
-        Event::dispatch(
-            event: new FormSubmissionCreated(submission: $submission)
-        );
+        if ($submission->submitted_at) {
+            Event::dispatch(
+                event: new FormSubmissionCreated(submission: $submission)
+            );
+
+            return;
+        }
+
+        $submission->loadMissing('submissible');
+
+        if ($submission->submissible instanceof Form) {
+            Cache::tags('{form-submission-count}')
+                ->forget(
+                    "form-submission-count-{$submission->submissible->root_id}"
+                );
+        }
+    }
+
+    public function updated(FormSubmission $submission): void
+    {
+        if ($submission->wasChanged('submitted_at') && $submission->submitted_at) {
+            Event::dispatch(
+                event: new FormSubmissionCreated(submission: $submission)
+            );
+        }
     }
 }
