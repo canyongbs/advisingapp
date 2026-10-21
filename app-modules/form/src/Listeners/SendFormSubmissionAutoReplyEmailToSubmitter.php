@@ -41,9 +41,9 @@ use AdvisingApp\Form\Models\Form;
 use AdvisingApp\Form\Notifications\FormSubmissionAutoReplyNotification;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
-class SendFormSubmissionAutoReplyEmailToSubmitter implements ShouldQueue
+class SendFormSubmissionAutoReplyEmailToSubmitter implements ShouldQueueAfterCommit
 {
     public function handle(FormSubmissionCreated $event): void
     {

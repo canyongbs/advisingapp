@@ -41,9 +41,9 @@ use AdvisingApp\Form\Notifications\AuthorLinkedFormSubmissionCreatedNotification
 use AdvisingApp\Notification\Models\Subscription;
 use AdvisingApp\Prospect\Models\Prospect;
 use AdvisingApp\StudentDataModel\Models\Student;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Contracts\Queue\ShouldQueueAfterCommit;
 
-class NotifySubscribersOfFormSubmission implements ShouldQueue
+class NotifySubscribersOfFormSubmission implements ShouldQueueAfterCommit
 {
     public function handle(FormSubmissionCreated $event): void
     {
