@@ -52,6 +52,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -163,6 +164,14 @@ class Application extends Submissible implements HasMedia, HasRichContent
         return $this->belongsToMany(User::class, 'application_notification_users', 'application_id', 'user_id')
             ->using(ApplicationNotificationUser::class)
             ->withTimestamps();
+    }
+
+    /**
+     * @return HasOne<ApplicationEmailAutoReply, $this>
+     */
+    public function emailAutoReply(): HasOne
+    {
+        return $this->hasOne(ApplicationEmailAutoReply::class);
     }
 
     /**

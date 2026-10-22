@@ -199,7 +199,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         expect($getTabLabels($component))->toBe($tabs);
     })->with([
         'view' => [['application.*.view'], ['View', 'Workflows', 'Submissions 0']],
-        'update' => [['application.*.view', 'application.*.update'], ['View', 'Edit', 'Workflows', 'Submissions 0', 'Notifications']],
+        'update' => [['application.*.view', 'application.*.update'], ['View', 'Edit', 'Workflows', 'Submissions 0', 'Notifications', 'Email Auto Reply']],
     ]);
 
     it('renders the form of the selected tab only', function (?string $tab, array $formIds) use ($getRenderedFormIds): void {
@@ -215,6 +215,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
         'view' => [null, []],
         'edit' => ['edit', ['form']],
         'notifications' => ['notifications', ['notificationsForm']],
+        'email auto reply' => ['email-auto-reply', ['emailAutoReplyForm']],
     ]);
 
     it('does not render a tab the user cannot access', function (string $tab) use ($actingAsUserWithPermissions, $getRenderedFormIds): void {
@@ -226,7 +227,7 @@ describe('tabs', function () use ($actingAsUserWithPermissions, $getTabLabels, $
             ->test(ManageApplication::class, ['record' => $application->getRouteKey()]);
 
         expect($getRenderedFormIds($component))->toBe([]);
-    })->with(['edit', 'notifications']);
+    })->with(['edit', 'notifications', 'email-auto-reply']);
 });
 
 describe('edit tab', function () use ($archiveAction): void {
@@ -570,7 +571,8 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
 
         Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
             ->assertSet('data', [])
-            ->assertSet('notificationsData', []);
+            ->assertSet('notificationsData', [])
+            ->assertSet('emailAutoReplyData', []);
     });
 
     it('does not save without the `application.*.update` permission', function (string $method) use ($actingAsUserWithPermissions): void {
