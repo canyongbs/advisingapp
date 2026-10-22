@@ -81,7 +81,6 @@
 
     @if (filled($record->exception_trace))
         <pre class="max-h-96 overflow-auto rounded-lg bg-gray-950/5 p-3 text-xs dark:bg-white/5">
-{{ $record->exception_trace }}</pre
-        >
+{{ $record->exception_trace }}</pre>
     @endif
 </div>
