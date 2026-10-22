@@ -256,6 +256,7 @@ class ManageApplication extends EditRecord
                 ->modalSubmitAction(false)
                 ->modalCancelActionLabel('Close')
                 ->hidden(fn (Application $application) => ! $application->embed_enabled),
+            ArchiveAction::make(),
         ];
     }
 
@@ -264,7 +265,6 @@ class ManageApplication extends EditRecord
         return [
             $this->getSaveFormAction()
                 ->label('Save'),
-            ArchiveAction::make(),
             $this->getCancelFormAction()
                 ->url(fn () => ApplicationResource::getUrl('view', ['record' => $this->getRecord()])),
         ];

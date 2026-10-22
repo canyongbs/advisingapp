@@ -98,7 +98,7 @@ $getRenderedFormIds = function (Testable $component): array {
     return $ids;
 };
 
-$archiveAction = fn (): TestAction => TestAction::make('archive')->schemaComponent('relationManagerTabs.edit.form-actions', schema: 'content');
+$archiveAction = fn (): TestAction => TestAction::make('archive');
 
 it('can render the manage application page', function () {
     asSuperAdmin();
@@ -619,6 +619,6 @@ describe('authorization', function () use ($actingAsUserWithPermissions, $archiv
         $application = Application::factory()->create();
 
         Livewire::test(ManageApplication::class, ['record' => $application->getRouteKey()])
-            ->assertActionDoesNotExist($archiveAction());
+            ->assertActionHidden($archiveAction());
     });
 });
