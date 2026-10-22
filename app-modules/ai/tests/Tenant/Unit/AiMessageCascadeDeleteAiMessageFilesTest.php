@@ -42,7 +42,7 @@ use Illuminate\Support\Facades\Event;
 
 use function Pest\Laravel\assertDatabaseCount;
 
-use Pest\Mixins\Expectation;
+use Pest\Expectation;
 
 it('soft deletes related AiMessageFiles when an AiMessage is deleted', function (): void {
     $aiMessage = AiMessage::factory()
